@@ -1,0 +1,4517 @@
+ackage htp;
+
+import java.nio.channels.SelectionKey;
+import java.util.ArrayList;
+
+final class thd_req extends Thread {
+	static ArrayList<thd_req>all=new ArrayList<thd_req>(cfg.htp_reqthreads);
+	req r;
+	private static int seq;
+	thd_req(){
+		super("t"+utl.pad(Integer.toString(seq++),2,'0',"",true));
+		all.add(this);
+	}
+	public void run(){
+		try{
+			while(true){
+				r=null;
+				synchronized(htp.server.pending_req){
+					thd_watch.thdsfree++;
+					while(htp.server.pending_req.isEmpty())
+						htp.server.pending_req.wait();
+					r=htp.server.pending_req.removeFirst();
+					thd_watch.thdsfree--;
+				}
+				try{
+					if(r.is_waiting_for_free_thread())
+						r.run_page();
+					else if(r.is_waiting_for_free_thread_content_proc())
+						r.run_page_content();
+					else
+						throw new IllegalStateException();
+					if(r.selectionKey.isValid()){
+						if(r.is_transfer())
+							r.selectionKey.interestOps(SelectionKey.OP_WRITE);
+						else
+							r.selectionKey.interestOps(SelectionKey.OP_READ);
+						if(!r.is_connection_keep_alive()&&r.is_state_method()){
+							r.close_socketChannel();
+							continue;
+						}
+						r.selectionKey.selector().wakeup();
+					}
+				}catch(Throwable e){
+					r.close_socketChannel();
+					String msg=e.getMessage();
+					if("Broken pipe".equals(msg)){
+					}else if("Connection reset by peer".equals(msg)){
+					}else if(e instanceof ClassNotFoundException){
+					}else htp.log(e);
+				}
+			}
+		}catch(Throwable t){
+			thd_watch._thderr++;
+			t.printStackTrace();
+		}
+	}
+}
+package htp;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.IllegalSelectorException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
+public final class req{
+	static final byte[] h_connection_keep_alive="\nconnection: keep-alive".getBytes();
+	private static final String hdr_key_connection="connection";
+	private static final String hdr_value_keep_alive="keep-alive";
+	private static final String hdr_key_cookie="cookie";
+	private static final String s_bytes_="bytes ";
+	private static final String s_slash="/";
+	private static final String s_minus="-";
+	private static final String s_eq="=";
+	private static final String s_range="range";
+	public final static req get(){
+		return ((thd_req)Thread.currentThread()).r;
+	}
+	static void init_static(){
+		if(cfg.htp_cache_files)
+			cache=new LinkedHashMap<String,cachedresp>(cfg.htp_cache_files_hashlen);
+	}
+	private final static page page=new page();
+	private static LinkedHashMap<String,cachedresp> cache;
+	private static final String s_referer="referer";
+	private static final String text_plain="text/plain";
+	private static final String content_type="content-type";
+	private static final String content_length="content-length";
+	private static final String if_modified_since="if-modified-since";
+	final static byte[] h_http200="HTTP/1.1 200".getBytes();
+	final static byte[] h_last_modified="\nlast-modified: ".getBytes();
+	final static byte[] h_content_length="\ncontent-length: ".getBytes();
+	final static byte[] h_content_type="\ncontent-type: ".getBytes();
+	final static byte[] nl2_b="\n\n".getBytes();
+	private final static byte[] h_http206="HTTP/1.1 206".getBytes();
+	private final static byte[] h_http303="HTTP/1.1 303".getBytes();
+	private final static byte[] h_http304="HTTP/1.1 304".getBytes();
+	private final static byte[] h_http404="HTTP/1.1 404".getBytes();
+	private final static byte[] h_set_cookie="\nset-cookie: i=".getBytes();
+	private final static byte[] h_cookie_append=";path=/;expires=Thu,31-Dec-2020 00:00:00 GMT;".getBytes();
+	private final static byte[] h_location="\nlocation: ".getBytes();
+	private final static byte[] h_transfer_encoding_chunked="\ntransfer-encoding: chunked".getBytes();
+	private final static byte[] h_accept_ranges_byte="\naccept-ranges: bytes".getBytes();
+	private final static byte[] h_content_range="\ncontent-range: ".getBytes();
+	private final static int state_method=1;
+	private final static int state_uri=2;
+	private final static int state_protocol=3;
+	private final static int state_header_name=4;
+	private final static int state_header_value=5;
+	private final static int state_content_name=6;
+	private final static int state_content_value=7;
+	private final static int state_transfer_file=8;
+	private final static int state_transfer_buffers=9;
+	//	private final static int state_after_header=10;
+	private static final int state_waiting_for_free_thread=12;
+	//	private static final int state_after_prot=13;
+	//	private static final int state_done=14;
+	private static final int state_waiting_for_free_thread_content_proc=15;
+	int state;
+	ByteBuffer byteBuffer;
+	SocketChannel socketChannel;
+	SelectionKey selectionKey;
+	public String path_s;
+	public String query_s;
+	String section_s;
+	HashMap<String,String> hdrs;
+	public session ses;
+	path pth;
+	wt wt;
+	HashMap<String,String> content;
+	private byte[] buf;
+	private int buf_off;
+	private int buf_len;
+	private StringBuffer sb_uri;
+	private StringBuffer sb_header_name;
+	private StringBuffer sb_header_value;
+	private String cookie;
+	private boolean cookie_set;
+	private pipe_chunked pipe_chunked;
+	boolean waiting_write;
+	private long contentLength;
+	private String contentType;
+	private StringBuffer sb_content_name;
+	private StringBuffer sb_content_value;
+	private FileInputStream transfer_file_is;
+	private FileChannel transfer_file_channel;
+	private long transfer_file_position;
+	private long transfer_file_remaining;
+	private ByteBuffer[] transfer_buffers;
+	private long transfer_buffers_remaining;
+//	private boolean threaded;
+	private boolean connection_keep_alive=true;
+	//	private ByteBuffer bb_hdr_connection_keep_alive=ByteBuffer.wrap("\nconnection: keep-alive".getBytes());
+	req(){
+		state=state_method;
+		hdrs=new HashMap<String,String>();
+		byteBuffer=ByteBuffer.allocate(cfg.htp_chunk_B);
+		content=new HashMap<String,String>();
+		sb_uri=new StringBuffer(64);
+		sb_header_name=new StringBuffer(16);
+		sb_header_value=new StringBuffer(64);
+		sb_content_name=new StringBuffer(16);
+		sb_content_value=new StringBuffer(256);
+	}
+
+	void close_socketChannel(){
+		try{
+			socketChannel.close();
+		}catch(Throwable t){
+			htp.log(t);
+		}
+	}
+	void read(){
+		byteBuffer.clear();
+		int c=0;
+		try{
+			c=socketChannel.read(byteBuffer);
+		}catch(IOException e){
+			if("Connection reset by peer".equals(e.getMessage())){}else if(e instanceof ClosedChannelException){}else
+				e.printStackTrace();
+			close_socketChannel();
+			return;
+		}
+		if(c==-1){
+			close_socketChannel();
+			return;
+		}
+		if(c==0)
+			throw new IllegalStateException();
+		byteBuffer.flip();
+		buf=byteBuffer.array();
+		buf_off=byteBuffer.position();
+		buf_len=byteBuffer.remaining();
+		thd_watch.input+=c;
+	}
+	void parse() throws Throwable{
+		while(buf_len>0){
+			switch(state){
+			case state_method:
+				parse_method();
+				break;
+			case state_uri:
+				parse_uri();
+				break;
+			case state_protocol:
+				parse_prot();
+				break;
+			case state_header_name:
+				parse_header_name();
+				break;
+			case state_header_value:
+				parse_header_value();
+				break;
+			case state_content_name:
+				parse_content_name();
+				break;
+			case state_content_value:
+				parse_content_value();
+				if(contentLength==0){
+					state=state_waiting_for_free_thread_content_proc;
+				}
+				break;
+			default:
+				throw new IllegalSelectorException();
+			}
+		}
+	}
+	void run_page_content() throws Throwable{
+		if(!contentType.startsWith(text_plain))
+			throw new IllegalStateException("only text/plain allowed");
+		page.resp(this);
+		thd_watch.post++;
+		state=state_method;
+		return;
+	}
+	void run_page() throws Throwable{
+//		threaded=true;
+		page.resp(this);
+		thd_watch.page++;
+		state=state_method;
+//		threaded=false;
+	}
+	private void parse_method(){
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			if(b==' '){
+				state=state_uri;
+				sb_uri.setLength(0);
+				break;
+			}
+		}
+	}
+	private void parse_uri(){
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			if(b==' '){
+				state=state_protocol;
+				break;
+			}
+			sb_uri.append((char)b);
+		}
+	}
+	private void parse_prot() throws Throwable{
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			if(b=='\n'){
+				do_after_prot();
+				break;
+			}
+		}
+	}
+	private void parse_header_name() throws Throwable{
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			if(b==':'){
+				state=state_header_value;
+				break;
+			}else if(b=='\n'){
+				do_after_header();
+				return;
+			}else{
+				sb_header_name.append((char)b);
+			}
+		}
+	}
+	private void parse_header_value(){
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			if(b=='\n'){
+				hdrs.put(sb_header_name.toString().trim().toLowerCase(),sb_header_value.toString().trim());
+				sb_header_name.setLength(0);
+				sb_header_value.setLength(0);
+				state=state_header_name;
+				break;
+			}
+			sb_header_value.append((char)b);
+		}
+	}
+	private void parse_content_name() throws IOException{
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			contentLength--;
+			if(b=='='){
+				state=state_content_value;
+				break;
+			}
+			sb_content_name.append((char)b);
+		}
+	}
+	private void parse_content_value() throws Throwable{
+		while(buf_len!=0){
+			byte b=buf[buf_off++];
+			buf_len--;
+			contentLength--;
+			if(b=='\r'){
+				content.put(sb_content_name.toString(),sb_content_value.toString());
+				sb_content_name.setLength(0);
+				sb_content_value.setLength(0);
+				state=state_content_name;
+				break;
+			}else{
+				sb_content_value.append((char)b);
+			}
+		}
+	}
+	private void do_after_prot() throws Throwable{
+		thd_watch.request++;
+		String s=URLDecoder.decode(sb_uri.toString(),"utf8");
+		int i=s.indexOf('?');
+		if(i==-1){
+			path_s=s;
+			query_s="";
+		}else{
+			path_s=s.substring(0,i);
+			query_s=s.substring(i+1);
+		}
+		hdrs.clear();
+		state=state_header_name;
+		return;
+	}
+	private void do_after_header() throws Throwable{
+		connection_keep_alive=hdr_value_keep_alive.equalsIgnoreCase(hdrs.get(hdr_key_connection));
+		cookie=(String)hdrs.get(hdr_key_cookie);
+		boolean mksession=cookie==null;
+		if(cookie!=null){
+			String[] c=cookie.split(";");
+			c=c[0].split("i=");
+			if(c.length<2)
+				throw new IllegalStateException("empty cookie");
+			cookie=c[1];
+			cookie_set=false;
+			if(ses==null){
+				synchronized(session.all){
+					ses=session.all.get(cookie);
+				}
+				if(ses==null){
+					mksession=true;
+				}
+			}else if(!cookie.equals(ses.id))
+				throw new Error("cookie change");
+		}
+		if(mksession){
+			if(cookie==null){
+				cookie=mkcookieid();
+				cookie_set=true;
+			}
+			ses=new session(cookie);
+			ses.keys().add(ses.id);
+			synchronized(session.all){
+				session.all.put(ses.id,ses);
+			}
+			thd_watch.session++;
+		}
+		ses.n_req++;
+		try{
+			pth=htp.path(path_s);
+		}catch(Throwable e){
+			ByteBuffer[] bb=new ByteBuffer[16];
+			int bi=0;
+			bb[bi++]=ByteBuffer.wrap(h_http404);
+			if(cookie_set){
+				bb[bi++]=ByteBuffer.wrap(h_set_cookie);
+				bb[bi++]=ByteBuffer.wrap(cookie.getBytes());
+				bb[bi++]=ByteBuffer.wrap(h_cookie_append);
+			}
+			bb[bi++]=ByteBuffer.wrap(h_content_length);
+			bb[bi++]=ByteBuffer.wrap(Integer.toString(cfg.htp_maynot_read_msg_b.length).getBytes());
+			bb[bi++]=ByteBuffer.wrap(nl2_b);
+			bb[bi++]=ByteBuffer.wrap(cfg.htp_maynot_read_msg_b);
+			ByteBuffer[] bbf=new ByteBuffer[bi];
+			System.arraycopy(bb,0,bbf,0,bi);
+			transfer_buffers(bbf);
+			throw e;
+		}
+		content.clear();
+		String contentLength_s=(String)hdrs.get(content_length);
+		if(contentLength_s!=null){
+			contentLength=Long.parseLong(contentLength_s);
+			contentType=(String)hdrs.get(content_type);
+			state=state_content_name;
+		}else if(cfg.htp_try_file&&write_try_file()){
+			thd_watch.file++;
+			//			state=state_method;
+		}else{
+			state=state_waiting_for_free_thread;
+		}
+	}
+	private String mkcookieid(){
+		SimpleDateFormat sdf=new SimpleDateFormat("yyMMdd-hhmmss.SSS-");
+		StringBuffer sb=new StringBuffer(sdf.format(new Date())).append(cfg.htp_id);
+		String alf="0123456789abcdef";
+		for(int n=0;n<8;n++)
+			sb.append(alf.charAt((int)(Math.random()*16)));
+		return sb.toString();
+	}
+	private boolean write_try_file() throws Throwable{
+		if(cache!=null){
+			if(write_try_file_cache())
+				return true;
+		}
+		if(!pth.exists())
+			return false;
+		long lastmod_l=pth.lastModified();
+		String lastmod_s=fmt.inst.toLastModified(lastmod_l);
+		String ifModSince=hdrs.get(if_modified_since);
+		if(ifModSince!=null&&ifModSince.equals(lastmod_s)){
+			ByteBuffer[] bba;
+			if(cookie_set){
+				bba=new ByteBuffer[]{ByteBuffer.wrap(h_http304),ByteBuffer.wrap(h_set_cookie),ByteBuffer.wrap(cookie.getBytes()),ByteBuffer.wrap(h_cookie_append),ByteBuffer.wrap(nl2_b)};
+			}else{
+				bba=new ByteBuffer[]{ByteBuffer.wrap(h_http304),ByteBuffer.wrap(nl2_b)};
+			}
+			transfer_buffers(bba);
+			return true;
+		}
+		long path_len=pth.length();
+		long range_from;
+		String range_s=hdrs.get(s_range);
+		ByteBuffer[] bb=new ByteBuffer[16];
+		int i=0;
+		if(range_s!=null){
+			String[] s=range_s.split(s_eq);
+			String[] ss=s[1].split(s_minus);
+			range_from=Long.parseLong(ss[0]);
+			bb[i++]=ByteBuffer.wrap(h_http206);
+			bb[i++]=ByteBuffer.wrap(h_content_length);
+			bb[i++]=ByteBuffer.wrap(Long.toString(path_len-range_from).getBytes());
+			bb[i++]=ByteBuffer.wrap(h_content_range);
+			bb[i++]=ByteBuffer.wrap((s_bytes_+range_from+s_minus+path_len+s_slash+path_len).getBytes());
+		}else{
+			range_from=0;
+			bb[i++]=ByteBuffer.wrap(h_http200);
+			bb[i++]=ByteBuffer.wrap(h_content_length);
+			bb[i++]=ByteBuffer.wrap(Long.toString(path_len).getBytes());
+		}
+		bb[i++]=ByteBuffer.wrap(h_last_modified);
+		bb[i++]=ByteBuffer.wrap(lastmod_s.getBytes());
+		bb[i++]=ByteBuffer.wrap(h_accept_ranges_byte);
+
+		if(cookie_set){
+			bb[i++]=ByteBuffer.wrap(h_set_cookie);
+			bb[i++]=ByteBuffer.wrap(cookie.getBytes());
+			bb[i++]=ByteBuffer.wrap(h_cookie_append);
+		}
+		if(connection_keep_alive){
+			bb[i++]=ByteBuffer.wrap(h_connection_keep_alive);
+		}
+		bb[i++]=ByteBuffer.wrap(nl2_b);
+		//		System.out.println("  sending file  "+path);
+		long remaining=0;
+		for(int n=0;n<i;n++)
+			remaining+=bb[n].remaining();
+		long c=socketChannel.write(bb,0,i);
+		if(c!=remaining)
+			throw new IllegalStateException("unexpected short buffer");
+		transfer_file_is=pth.fileInputStream();
+		transfer_file_channel=transfer_file_is.getChannel();
+		transfer_file_position=range_from;
+		transfer_file_remaining=path_len-range_from;
+		state=state_transfer_file;
+		//		do_transfer_file();
+		return true;
+	}
+	private boolean write_try_file_cache() throws Throwable{
+		cachedresp cachedresp;
+		boolean validated=false;
+		synchronized(cache){
+			cachedresp=cache.get(path_s);
+			if(cachedresp==null){
+				if(pth.isDirectory())
+					pth=pth.file(cfg.htp_default_directory_file);
+				if(!pth.exists())
+					return false;
+				if(pth.length()<=cfg.htp_cache_files_maxsize){
+					cachedresp=new cachedresp(pth);
+					//					if(cachedresp.validate(thd_watch.ms)){
+					if(cachedresp.validate(System.currentTimeMillis())){
+						cache.put(path_s,cachedresp);
+						validated=true;
+						thd_watch.cachef++;
+					}else{
+						cachedresp=null;
+					}
+				}
+			}
+		}
+		if(cachedresp!=null){
+//			if(!validated&&!cachedresp.validate(thd_watch.ms)){
+			if(!validated&&!cachedresp.validate(System.currentTimeMillis())){
+				synchronized(cache){
+					cache.remove(path_s);
+				}
+				thd_watch.cachef--;
+			}else{
+				String ifModSince=hdrs.get(if_modified_since);
+				if(ifModSince!=null&&cachedresp.ifNotModSince(ifModSince)){
+					ByteBuffer[] byteBuffers;
+					if(cookie_set){
+						byteBuffers=new ByteBuffer[]{ByteBuffer.wrap(h_http304),ByteBuffer.wrap(h_set_cookie),ByteBuffer.wrap(cookie.getBytes()),ByteBuffer.wrap(h_cookie_append),ByteBuffer.wrap(nl2_b)};
+					}else{
+						byteBuffers=new ByteBuffer[]{ByteBuffer.wrap(h_http304),ByteBuffer.wrap(nl2_b)};
+					}
+					thd_watch.cachedresp++;
+					transfer_buffers(byteBuffers);
+					return true;
+				}
+				if(!cookie_set){
+					transfer_buffers(new ByteBuffer[]{cachedresp.byteBuffer.slice()});
+					return true;
+				}
+				ByteBuffer[] byteBuffers=new ByteBuffer[]{cachedresp.byteBuffer.slice(),ByteBuffer.wrap(h_set_cookie),ByteBuffer.wrap(cookie.getBytes()),ByteBuffer.wrap(h_cookie_append),cachedresp.byteBuffer.slice()};
+				byteBuffers[0].limit(cachedresp.hdrinsertionix);
+				byteBuffers[4].position(cachedresp.hdrinsertionix);
+				transfer_buffers(byteBuffers);
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean transfer_buffers(ByteBuffer[] bba) throws IOException{
+		long remaining=0;
+		for(ByteBuffer b:bba)
+			remaining+=b.remaining();
+		transfer_buffers=bba;
+		transfer_buffers_remaining=remaining;
+		state=state_transfer_buffers;
+		return do_transfer_buffers();
+	}
+	private boolean do_transfer_buffers(){
+		while(transfer_buffers_remaining!=0){
+			try{
+				long c=socketChannel.write(transfer_buffers);
+				if(c==0){
+					selectionKey.interestOps(SelectionKey.OP_WRITE);
+					selectionKey.selector().wakeup();
+					return false;
+				}
+				transfer_buffers_remaining-=c;
+				thd_watch.output+=c;
+			}catch(IOException e){
+				String msg=e.getMessage();
+				if("Broken pipe".equals(msg)){}else if("Connection reset by peer".equals(msg)){}else
+					e.printStackTrace();
+				state=state_method;
+				try{
+					socketChannel.close();
+				}catch(Throwable t){
+					t.printStackTrace();
+				}
+				return true;
+			}
+		}
+//		threaded=false;
+		//		if(!cfg.htp_keep_alive)
+		//			try{socketChannel.close();}catch(IOException e){e.printStackTrace();}
+		state=state_method;
+		return true;
+	}
+	private boolean do_transfer_file(){
+		try{
+			long buf_size=socketChannel.socket().getSendBufferSize();
+			buf_size=cfg.htp_transfer_file_write_size;
+			long c=transfer_file_channel.transferTo(transfer_file_position,buf_size,socketChannel);
+			//			System.out.println("   do_transfer_file:  "+path+"  pos: "+transfer_file_position+"   wrote "+c+"  wanted:"+buf_size+"  to  "+socketChannel);
+			if(c==0)
+				throw new IllegalStateException("wrote 0 bytes  "+socketChannel);
+			transfer_file_position+=c;
+			transfer_file_remaining-=c;
+			thd_watch.output+=c;
+			if(transfer_file_remaining==0){
+				state=state_method;
+				//				System.out.println("                     done  to:"+socketChannel);
+				try{
+					transfer_file_is.close();
+				}catch(Throwable e2){
+					e2.printStackTrace();
+				}
+				//				if(transfer_file_channel.isOpen())
+				//					throw new IllegalStateException();
+				//				try{transfer_file_channel.close();}catch(Throwable e3){e3.printStackTrace();}
+				return true;
+			}
+			return false;
+		}catch(Throwable e){
+			state=state_method;
+			try{
+				transfer_file_is.close();
+			}catch(Throwable e2){
+				e2.printStackTrace();
+			}
+			//			try{transfer_file_channel.close();}catch(Throwable e3){e3.printStackTrace();}
+			try{
+				socketChannel.close();
+			}catch(IOException e2){
+				e2.printStackTrace();
+			}
+			String msg=e.getMessage();
+			if("Broken pipe".equals(msg)){}else if("Connection reset by peer".equals(msg)){}else
+				e.printStackTrace();
+			return true;
+		}
+	}
+	public OutputStream reply_chunked(String contentType,int chunk_size_bytes) throws Throwable{
+		ByteBuffer[] bb_reply=new ByteBuffer[9];
+		int bbi=0;
+		bb_reply[bbi++]=ByteBuffer.wrap(h_http200);
+		if(cookie_set){
+			bb_reply[bbi++]=ByteBuffer.wrap(h_set_cookie);
+			bb_reply[bbi++]=ByteBuffer.wrap(cookie.getBytes());
+			bb_reply[bbi++]=ByteBuffer.wrap(h_cookie_append);
+		}
+		if(contentType!=null){
+			bb_reply[bbi++]=ByteBuffer.wrap(h_content_type);
+			bb_reply[bbi++]=ByteBuffer.wrap(contentType.getBytes());
+		}
+		bb_reply[bbi++]=ByteBuffer.wrap(h_transfer_encoding_chunked);
+		bb_reply[bbi++]=ByteBuffer.wrap(h_connection_keep_alive);
+		bb_reply[bbi++]=ByteBuffer.wrap(nl2_b);
+		socketChannel.write(bb_reply,0,bbi);
+		pipe_chunked=new pipe_chunked(this,chunk_size_bytes);
+		return pipe_chunked;
+	}
+	public void reply_chunked_end() throws Throwable{
+		pipe_chunked.flush_chunk();
+		if(!connection_keep_alive)
+			socketChannel.close();
+	}
+	public OutputStream reply_chunked(String contentType) throws Throwable{
+		return reply_chunked(contentType,cfg.htp_chunk_B);
+	}
+	public void reply_redirect_to_refererer() throws Throwable{
+		ByteBuffer[] bba=new ByteBuffer[8];
+		int bbai=0;
+
+		bba[bbai++]=ByteBuffer.wrap(h_http303);
+		if(cookie_set){
+			bba[bbai++]=ByteBuffer.wrap(h_set_cookie);
+			bba[bbai++]=ByteBuffer.wrap(cookie.getBytes());
+			bba[bbai++]=ByteBuffer.wrap(h_cookie_append);
+		}
+		bba[bbai++]=ByteBuffer.wrap(h_location);
+		String referer=hdrs.get(s_referer);
+		bba[bbai++]=ByteBuffer.wrap(referer.getBytes());
+		bba[bbai++]=ByteBuffer.wrap(h_content_length);
+		bba[bbai++]=ByteBuffer.wrap(new byte[]{'0'});
+		bba[bbai++]=ByteBuffer.wrap(nl2_b);
+		socketChannel.write(bba,0,bbai);//?
+	}
+	boolean do_transfer(){
+		if(state==state_transfer_file)
+			return do_transfer_file();
+		else if(state==state_transfer_buffers)
+			return do_transfer_buffers();
+		else
+			throw new Error();
+	}
+	boolean is_transfer(){
+		return state==state_transfer_file||state==state_transfer_buffers;
+	}
+	public session session(){
+		return ses;
+	}
+	public String get_client_address(){
+		return socketChannel.socket().getInetAddress().getHostAddress();
+	}
+	public int get_port(){
+		return socketChannel.socket().getPort();
+	}
+	boolean is_waiting_for_free_thread(){
+		return state==state_waiting_for_free_thread;
+	}
+	public String toString(){
+		return new String(buf,buf_off,buf_len);
+	}
+//	boolean is_threaded(){
+//		return threaded;
+//	}
+	boolean is_state_method(){
+		return state==state_method;
+	}
+	boolean is_connection_keep_alive(){
+		return connection_keep_alive;
+	}
+	boolean is_waiting_for_free_thread_content_proc(){
+		return state==state_waiting_for_free_thread_content_proc;
+	}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+public final class pipe_counter extends pipe{
+	public long count=0;
+	public pipe_counter(OutputStream os){super(os);}
+	public void write(byte[]c,int off,int len) throws IOException{
+		super.write(c,off,len);
+		count+=len;
+	}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+
+public final class pipe_boundary extends pipe{
+	private byte[]boundary_b;
+	private int k;
+	public pipe_boundary(OutputStream os,byte[]boundaryB){
+		super(os);
+		boundary_b=boundaryB;
+	}
+	public void write(byte[] bytes,int off,int len) throws IOException{
+		int i=off;
+		int end=off+len;
+		while(i<end){
+			byte b=bytes[i++];
+			if(boundary_b[k]==b){
+				k++;
+				if(k==boundary_b.length){
+					super.write(bytes,off,i-off);
+					signal.eos();
+				}
+			}else{
+				k=0;
+				if(boundary_b[0]==b)
+					k++;
+			}
+		}
+		super.write(bytes,off,len);
+	}
+}
+package htp;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.Map;
+public class fld extends wt{
+	public static final long serialVersionUID=1;
+	protected Serializable value;
+	public boolean isEmpty() {
+		return value==null||value.toString().length()==0;
+	}
+	public String toString(){
+		if(value==null)
+			return "";
+		return value.toString();
+	}
+	public final void onPost(Map<String,String> post) throws Throwable{
+		super.onPost(post);
+		String wid=wid();
+		String v=(String)post.get(wid);
+		if(v==null)
+			return;
+		set(v);
+	}
+	public final void set(String v){
+		value=v;
+	}
+	public void printForRead(xwriter x){
+		printForEdit(x);
+	}
+	public void printForEdit(xwriter x,int size){
+		x.inputText(this,size);
+	}
+	public void printForEdit(xwriter x){
+		x.inputText(this);
+	}
+	public void to(OutputStream os)throws IOException{
+		os.write(utl.noNull(value).getBytes());//?
+	}
+	public void to(xwriter x){
+		printForEdit(x);
+	}
+	public void to(path p)throws IOException{
+		OutputStream os=p.os();
+		to(os);
+		os.close();
+	}
+	public void read(path path) throws Throwable {
+		OutputStream os=new ByteArrayOutputStream((int)path.length());
+		path.to(os);
+		os.close();
+		set(os.toString());
+	}
+}
+package htp;
+
+
+final class jvm_hook_stop extends Thread{
+	public void run(){
+		try{
+			System.out.println(cfg.q+"htp shutdown");
+			htp.sessions_save();
+			System.out.println(cfg.a+"done");
+		}catch(Throwable e){
+			e.printStackTrace();
+		}
+	}
+}package htp;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+public final class session extends HashMap<String,Serializable>{
+	private static final long serialVersionUID=1L;
+	static Map<String,session>all=new HashMap<String,session>(cfg.htp_hash_size_sessions_store);
+	String id;
+	private List<String>keys;
+	int n_req;
+	public session(String id){
+		super(cfg.htp_hash_size_session_values);
+		this.id=id;
+		keys=new LinkedList<String>();
+	}
+	public path path(String path)throws Throwable{
+		return htp.path(cfg.htp_upload_dir+"/"+id+"/"+path);
+	}
+	public String href(){
+		return "/"+cfg.htp_upload_dir+"/"+id+"/";		
+	}
+	public List<String>keys(){return keys;}
+}
+package htp;
+
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+
+public class thd_watch extends Thread{
+	static long ms;
+	static long memused;
+	static long output;
+	static long input;
+	static long pendingreq;
+	static long thdsfree;	
+	static long session;
+	static long select;
+	static long selection;
+	static long accept;	
+	static long read;
+	static long write;
+	static long request;
+	static long page;
+	static long post;
+	static long file;
+	static long cachef;
+	static long cachedresp;
+	static long _thderr;	
+	static long _threads;	
+	static long _thdruns;
+	static long _memfree;
+	static int  _prevry=100;
+	static long _t0=System.currentTimeMillis();
+	static PrintStream _out=System.err;
+	public thd_watch(){
+		super("watch");
+	}
+	public void run(){
+		Field[]fields=getClass().getDeclaredFields();
+		String pad="       ";
+		for(int n=0;n<fields.length;n++){
+			Field field=fields[n];
+			String s=field.getName();
+			if(s.startsWith("_"))
+				continue;
+			if(s.length()>pad.length())
+				s=s.substring(0,pad.length());
+			_out.print(pad.substring(0,pad.length()-s.length()));
+			_out.print(s);
+			_out.print(" ");
+		}
+		_out.print('\n');
+		while(true)
+			try{
+				ms=System.currentTimeMillis()-_t0;
+				_threads=thd_req.all.size();
+				Runtime rt=Runtime.getRuntime();
+				_memfree=rt.freeMemory();
+				memused=rt.totalMemory()-_memfree;
+				pendingreq=htp.server.pending_req.size();
+				for(int n=0;n<fields.length;n++){
+					Field field=fields[n];
+					String s=field.getName();
+					if(s.startsWith("_"))
+						continue;
+					s=field.get(this).toString();
+					if(s.length()>pad.length())
+						s=s.substring(0,pad.length());
+					_out.print(pad.substring(0,pad.length()-s.length()));
+					_out.print(s);
+					_out.print(" ");
+				}
+				_out.print('\r');
+//				if(cfg.htp_perf_1)
+//					server.server.selector.wakeup();
+				sleep(_prevry);
+			}catch(Throwable t){t.printStackTrace();}
+	}
+}
+package htp;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+final class cachedresp{
+	private path path;
+	private long lastModified;
+	private String lastModified_s;
+	private long ts;
+	ByteBuffer byteBuffer;
+	int hdrinsertionix;
+	int hit;
+	private static int hdrlencap=8*64;
+	public cachedresp(path path){
+		this.path=path;
+	}
+	public boolean validate(long t)throws IOException{
+		long dt=t-ts;
+		if(dt<cfg.htp_cache_files_validate_dt)
+			return true;
+		ts=t;
+		if(!path.exists())
+			return false;
+		long path_lastModified=path.lastModified();
+		if(path_lastModified==lastModified)
+			return true;
+		return reload(path_lastModified);
+	}
+	private boolean reload(long path_lastModified) throws IOException {
+		long path_len=path.length();
+		lastModified_s=fmt.inst.toLastModified(path_lastModified);
+		byteBuffer=ByteBuffer.allocateDirect(hdrlencap+(int)path_len);
+		byteBuffer.put(req.h_http200);
+		byteBuffer.put(req.h_content_length);
+		byteBuffer.put(Long.toString(path_len).getBytes());
+		byteBuffer.put(req.h_last_modified);
+		byteBuffer.put(lastModified_s.getBytes());
+		byteBuffer.put(req.h_connection_keep_alive);
+		hdrinsertionix=byteBuffer.position();
+		byteBuffer.put(req.nl2_b);
+		path.to(byteBuffer);
+		byteBuffer.flip();
+		lastModified=path_lastModified;
+		return true;
+	}
+	public boolean ifNotModSince(String ifModSince){return ifModSince.equals(lastModified_s);}
+}
+package htp;
+
+import java.io.PrintStream;
+public class cfg{
+	public final static int  K=1024;
+	public final static int  M=K*K;
+	public final static long G=K*M;
+	public final static long T=M*M;
+	public final static long P=T*K;
+	public final static String q=" ڀ ";
+	public final static String a=" ํ ";
+
+	public static PrintStream htp_out=System.out;
+	public static final String htp_web_widgets_package="wt";
+	public static int     htp_id=1;
+	public static String  htp_hello="public domain server #"+htp_id;
+	public static boolean htp_socket_log=true;
+	public static String  htp_socket_log_dir="t";
+	public static boolean htp_try_file=true;
+	public static String  htp_default_directory_file="index.html";
+	public static boolean htp_try_wt=true;
+	public static String  htp_default_package_class="pkg";
+	public static String  htp_class_uri_handler="htp.page";
+	public static String  htp_server_port="8082";
+	public static String  htp_root_dir=".";
+	public static String  htp_upload_dir="u";
+	public static int     htp_stat_every_x_socket_served=1;
+	public static int     htp_chunk_B=4*K;
+	public static int     htp_io_buf_B=64*K;
+	public static int     htp_hash_size_sessions_store=16*K;
+	public static int     htp_hash_size_session_values=7;
+	public static byte[]  htp_not_found_msg_b="not found\n\n".getBytes();
+	public static byte[]  htp_maynot_read_msg_b="access denied\n\n".getBytes();
+	public static boolean htp_gc_before_stats=false;
+	public static String  htp_sessions_dir="s";
+	public static boolean htp_path_assert_access=false;
+	public static boolean htp_cache_files=true;
+//	public static boolean htp_keep_alive=false;
+//	public static int     htp_reqthreads=1;//Runtime.getRuntime().availableProcessors()<<1;
+	public static int     htp_reqthreads=0;//Runtime.getRuntime().availableProcessors()<<1;
+	public static int     htp_cache_files_maxsize=64*K;
+	public static long    htp_cache_files_validate_dt=1000;
+	public static int     htp_cache_files_hashlen=K;
+	public static int     htp_transfer_file_write_size=64*K;
+}
+package htp;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+
+
+public final class utl{
+//	public static String shortName(Class cls){
+//		if(cls==null)
+//			return "";
+//		String nm=cls.getName();
+//		int i=nm.lastIndexOf('.');
+//		if(i==-1)
+//			return nm;
+//		return nm.substring(i+1);
+//	}
+	public static String errStackTrace(Throwable e){
+		if(e==null)
+			return null;
+		StringWriter sw=new StringWriter();
+		PrintWriter out=new PrintWriter(sw);
+		e.printStackTrace(out);
+		out.close();
+		return sw.toString();
+	}
+	public static String txtCut(String s){
+		return txtCut(s,67);
+	}
+	public static String txtCut(String s,int cutLen){
+		int slen=s.length();
+		int len=Math.min(cutLen,slen);
+		s=s.substring(0,len);
+		return s+(slen!=len?"…":"");
+	}
+	public static String errStackTraceLine(Throwable e){
+		return errStackTrace(e).replace('\n', ' ').replace('\r', ' ').replaceAll("\\s+", " ").replaceAll(" at "," @ ");
+	}
+	public static final String noNull(String string){
+		return noNull(string, "");
+	}
+	public static String noNull(final String string,final String def){
+		if(string==null)
+			return def;
+		return string;
+	}
+	public static String noNull(Object object){
+		if(object==null)
+			return "";
+		return object.toString();
+	}
+	public static boolean isEmpty(String s){
+		return s==null||s.length()==0;
+	}
+	public static String ttoa(long t,int prec){
+		long ms=t%1000;
+		long s=(t/1000);
+		long m=(s/60);
+		long h=(m/60);
+		StringBuffer sb=new StringBuffer();
+		String d=utl.itoa((int)(h%24));
+		if(d.length()==1)
+			sb.append('0');
+		sb.append(d);
+		if(prec==1)
+			return sb.toString();
+		sb.append(':');
+		d=utl.itoa((int)(m%60));
+		if(d.length()==1)
+			sb.append('0');
+		sb.append(d);
+		if(prec==2)
+			return sb.toString();
+		sb.append(':');
+		d=utl.itoa((int)(s%60));
+		if(d.length()==1)
+			sb.append('0');
+		sb.append(d);
+		if(prec==3)
+			return sb.toString();
+		sb.append('.');
+		d=utl.itoa((int)ms);
+		for(int n=3,l=d.length();n!=l;n--)
+			sb.append('0');
+		sb.append(d);
+		return sb.toString();
+	}
+	public static String btoa(long n){
+		long i=n/1024;
+		if(i==0)
+			return Long.toString(n)+" B";
+		return i+" KB";
+	}
+	public static String itoa(int i){
+		return Integer.toString(i);
+	}
+	public static void conf(Class<?>cls)throws Throwable{
+			File f=new File(cls.getName());
+			System.out.println(cfg.q+"conf "+cls+" from file "+f.getCanonicalPath());
+			if(!f.exists()){
+			System.out.println(" "+cfg.a+"not found");
+				return;
+			}
+			long t0=System.currentTimeMillis();
+			BufferedReader in=new BufferedReader(new FileReader(f));
+			int lineno=0;
+			while(true){
+				String line=in.readLine();
+				if(line==null)
+					break;
+				lineno++;
+				if(line.startsWith("#"))
+					continue;
+				int i=line.indexOf("=");
+				if(i==-1)
+					throw new Error("expected key=value in line: "+line);
+				String key=line.substring(0,i).trim();
+				Field fld;
+				try{fld=cls.getField(key);}catch(Throwable t){
+					StringBuffer sb=new StringBuffer(256);
+					sb.append("error in file ").append(f).append(" line ").append(lineno);
+					sb.append("\n").append(line);
+					sb.append("\ncannot get field cfg.x."+key);
+					throw new Error(sb.toString());
+				}
+				String value=line.substring(i+1);
+//				System.out.println(key+"="+value);
+				System.out.println(line);
+				Class<?>type=fld.getType();
+				if(type.equals(String.class)){
+					fld.set(null, value);
+				}else if(type.equals(int.class)){
+					fld.set(null,new Integer(utl.byte_size_to_int(value)));
+				}else if(type.equals(boolean.class)){
+					fld.set(null,"true".equals(value)?Boolean.TRUE:Boolean.FALSE);
+				}else if(type.equals(File.class)){
+					fld.set(null,new File(value));
+				}else{
+					throw new Error("not supported "+fld.getType());
+				}
+	//			System.out.println(key+"="+fld.get(null));
+	
+			}
+			System.out.print(utl.hr);
+			System.out.print(cfg.a+" confed "+cls+" in "+(System.currentTimeMillis()-t0)+" ms");
+		}
+	public static int byte_size_to_int(String s){
+			int acc=0;
+			int multiplier=1;
+			byte[]b=s.getBytes();
+			boolean nodigit=true;
+			for(int n=b.length-1;n>=0;n--){
+				byte d=b[n];
+				if(d>='0'&&d<='9'){
+					acc+=multiplier*(d-'0');
+					multiplier*=10;
+					nodigit=false;
+					continue;
+				}
+				if(d=='K'){
+					multiplier*=cfg.K;
+				}else if(d=='M'){
+					multiplier*=cfg.M;
+				}else if(d=='G'){
+					multiplier*=cfg.G;
+				}
+	
+			}
+			if(nodigit)
+				if(multiplier!=1)
+					acc+=multiplier;
+	//		System.out.println(acc);
+			return acc;
+		}
+	public static String hr="\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n";
+	public static String pad(String s, int width, char fill,String append,boolean align_right) {
+		StringBuffer sb=new StringBuffer();
+		if(s.length()>width)
+			sb.append(s.substring(0,width));
+		else if(s.length()<width){
+			int c=width-s.length();
+			if(align_right)
+				while(c--!=0)
+					sb.append(fill);
+			sb.append(s);
+			if(!align_right)
+				while(c--!=0)
+					sb.append(fill);
+		} else
+			sb.append(s);
+		if(append!=null)
+			sb.append(append);
+		return sb.toString();
+	}
+}
+package htp;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
+final public class pipe_indexer extends pipe{
+//	protected Map os_map=new HashMap();
+	private StringBuffer sb;
+	private String root_path;
+	private String file_path;
+	private Map<String,String>tokens;
+	public int token_size_max=32;
+	public int token_size_min=1;
+	public int count_tokens=0;
+	public int count_files=0;
+	public int count_tokens_wrote=0;
+	public long count_bytes=0;
+	public pipe_indexer(String root_path){
+		super(null);
+		sb=new StringBuffer(32);
+		this.root_path=root_path;
+		file_path="";
+		tokens=new HashMap<String,String>(cfg.K);
+	}
+	public void enter_path(final String s){
+		tokens.clear();
+		file_path=s;
+		count_files++;
+	}
+	public void write(byte[]c,int off,int len)throws IOException{
+		for(int n=0;n<len;n++){
+			byte b=c[off+n];
+			b|=0x20;//lowercase
+			if(b>='a'&&b<='z'){
+				sb.append((char)b);
+				continue;
+			}
+			if(sb.length()==0)
+				continue;
+			try{on_token(sb.toString());}catch(Throwable e){throw new Error(e);}
+			sb.setLength(0);
+		}
+		count_bytes+=len;
+	}
+//	protected void on_token(String token)throws Throwable{
+//		if(words.containsKey(token))
+//			return;
+//		words.put(token,token);
+//		OutputStream os=(OutputStream)os_map.get(token);
+//		if(os==null){
+//			File file_ix=new File(root_path,token);
+//			if(!file_ix.exists())
+//				file_ix.getParentFile().mkdirs();
+//			os=new FileOutputStream(file_ix,true);
+//			os_map.put(token,os);
+//		}
+//		os.write(file_path.getBytes());
+//		os.write("\n".getBytes());
+//	}
+//	final public void close(){
+//		for(Iterator i=os_map.values().iterator();i.hasNext();){
+//			OutputStream os=(OutputStream)i.next();
+//			try{os.close();}catch(Throwable t){t.printStackTrace();}
+//		}
+//	}
+	protected void on_token(String token)throws Throwable{
+		count_tokens++;
+		int len=token.length();
+		if(len<token_size_min)
+			return;
+		if(len>token_size_max)
+			return;
+		if(tokens.containsKey(token))
+			return;
+		tokens.put(token,token);
+		count_tokens_wrote++;
+		File file_ix=new File(root_path,token);
+		if(!file_ix.exists())
+			file_ix.getParentFile().mkdirs();
+		OutputStream os=new FileOutputStream(file_ix,true);
+		os.write(file_path.getBytes());
+		os.write("\n".getBytes());
+		os.close();
+	}
+	public static void tree_visit(path root,pipe_indexer ostk,long t0)throws Throwable{
+		File[]dir=root.listFiles();
+		if(dir==null)
+			return;
+		Arrays.sort(dir,new Comparator<File>(){
+			public int compare(File a,File b){
+				return a.toString().toLowerCase().compareTo(b.toString().toLowerCase());
+			}
+		});
+		for(int i=0;i<dir.length;i++){
+			File file=dir[i];
+			if(file.isDirectory()){
+				tree_visit(htp.path(file.toString()),ostk,t0);
+				continue;
+			}
+			String filename=file.getName().toLowerCase();
+			if(!(filename.endsWith(".txt")||
+				filename.endsWith(".html")||
+				filename.endsWith(".htm")||
+				filename.endsWith(".java")||
+				filename.endsWith(".h")||
+				filename.endsWith(".c")||
+				filename.endsWith(".cc")||
+				filename.endsWith(".cpp")))
+				continue;
+			long dt=System.currentTimeMillis()-t0;
+			cfg.htp_out.println(cfg.q+"ms "+dt+" | B "+ostk.count_bytes+" | "+
+						(dt==0?"--":(ostk.count_bytes/dt+""))+" kB/s avg | "+file.length()+" B | "+file);
+			ostk.enter_path(file.toString());
+			ostk.write(file.getName().getBytes());
+			ostk.write("\n".getBytes());
+			FileInputStream fis=new FileInputStream(file);
+			htp.cp(fis,ostk);
+			fis.close();
+		}
+	}
+	public static String index_rebuild(path path_ixstore,path path_archive,pipe progress) throws Throwable{
+		long t0=System.currentTimeMillis();
+		PrintStream ps=new PrintStream(progress);
+		ps.println(cfg.q+"index "+path_archive+" to "+path_ixstore);
+		path_ixstore.rm();//?
+		ps.println(cfg.a+"ms "+(System.currentTimeMillis()-t0)+"  index deleted");
+		pipe_indexer ostk=new pipe_indexer(path_ixstore.toString());
+		pipe_indexer.tree_visit(path_archive,ostk,t0);
+		long dt=System.currentTimeMillis()-t0;
+		cfg.htp_out.println(cfg.q+"ms "+dt+" | B "+ostk.count_bytes+" | "+(dt==0?"--":(ostk.count_bytes/dt+""))+" kB/s avg | --");
+//		ostk.close();
+//		String msg;
+//		ps.println(x.a+"ms "+(System.currentTimeMillis()-t0)+"  done");
+		ps.println(" "+cfg.a+"indexed "+ostk.count_bytes+" B");
+		ps.println("  "+cfg.a+ostk.count_files+" files");
+		ps.println("   "+cfg.a+ostk.count_tokens+" words");
+		ps.println("    "+cfg.a+ostk.count_tokens_wrote+" writes");
+		return cfg.a+"done in "+(System.currentTimeMillis()-t0)/1000+" seconds";
+	}
+//	public static void main(String[] args)throws Throwable{
+//		if(args.length==0){
+//			System.out.println("example:\n   "+pipe_indexer.class.getName()+" ixstore/ archive/");
+//			return;
+//		}
+//		index_rebuild(path.from(args[0]),path.from(args[1]),new pipe_counter(System.out));
+//	}
+}
+package htp;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
+
+public final class path implements Serializable{
+	private static final long serialVersionUID=1L;
+	private File file;
+	path(File f)throws Throwable{
+		file=f;
+		if(cfg.htp_path_assert_access)
+			assert_access();
+	}
+	public OutputStream os()throws FileNotFoundException{
+		return os(false);
+	}
+	public OutputStream os(boolean append) throws FileNotFoundException{
+		File parent=file.getParentFile();
+		if(parent!=null&&!parent.exists())
+			if(!parent.mkdirs())
+				throw new Error("can not mkdirs\n"+parent);
+		return new FileOutputStream(file,append);
+	}
+	public boolean rm()throws Throwable{
+		if(!file.exists())
+			return true;
+		if(file.isFile())
+			return file.delete();
+		File files[]=file.listFiles();
+		for(int i=0;i<files.length;i++)
+			new path(files[i]).rm();
+		return file.delete();
+	}
+	public String toString(){
+		return file.toString();
+	}
+	public InputStream is() throws FileNotFoundException{
+		return new FileInputStream(file);
+	}
+	public void append(String string,String eos_append)throws Throwable{
+//		cfg.htp_out.print(cfg.q);		
+//		cfg.htp_out.print("file ");
+//		cfg.htp_out.println(f);
+//		cfg.htp_out.print(cfg.q);		
+//		cfg.htp_out.print("append ");
+//		cfg.htp_out.print(string.length());
+//		cfg.htp_out.println(" glyphs");
+//		cfg.htp_out.print(cfg.a);		
+//		cfg.htp_out.println(f.exists()?"exists":"created");
+		if(!file.exists())
+			file.getParentFile().mkdirs();
+		FileOutputStream o=new FileOutputStream(file,true);
+		byte[]stringba=string.getBytes();
+		o.write(stringba);
+		byte[]eosba=eos_append.getBytes();
+		o.write(eos_append.getBytes());
+		o.close();
+		cfg.htp_out.print(cfg.a);		
+		cfg.htp_out.print(" appended ");		
+		cfg.htp_out.print(stringba.length+eosba.length);
+		cfg.htp_out.println(" bytes");		
+	}
+//	public void to(osbuf o) {
+//		String[]s=file.toString().split("/");
+//		for (int i = 0; i < s.length; i++) {
+//			o.p(s[i]).p("\\");
+//		}
+//	}
+	public /*this*/path to(OutputStream os)throws Throwable{
+		FileInputStream is=new FileInputStream(file);
+		htp.cp(is,os);
+		is.close();
+		return this;
+	}
+//	public static path from(String filePath){
+//		return new path(new File(filePath));
+//	}
+	public boolean equals(Object obj){
+		if(!(obj instanceof path))
+			return false;
+		return ((path)obj).file.equals(file);
+	}
+	public void assert_access()throws IOException{
+//		req req=(req)Thread.currentThread();
+//		String uri=req.uri_str();
+		String uri=file.toString().replace('\\','/');
+		if(uri.startsWith("./"))
+			uri=uri.substring(2);
+//		cfg.htp_out.print("  ");
+//		cfg.htp_out.print(req.getName());
+//		cfg.htp_out.print(req.session().id);
+//		cfg.htp_out.print(" → ");
+//		cfg.htp_out.println(uri);
+		String[]uriels=uri.split("/");
+		if(uriels.length==0)
+			uriels=new String[]{""};
+		StringBuffer pathbf=new StringBuffer(cfg.htp_root_dir);
+		for(int n=0;n<uriels.length;n++){
+			String s=uriels[n];
+			if(pathbf.length()>0)
+				pathbf.append("/");
+			pathbf.append(s);
+			File f=new File(pathbf.toString());
+			File keysf;
+			if(f.isDirectory())
+				keysf=new File(f,".key");
+			else
+				continue;
+//				keysf=new File(f+".key");
+			if(!keysf.exists())
+				continue;
+			BufferedReader reader=new BufferedReader(new FileReader(keysf));
+			for(String line=reader.readLine();line!=null;line=reader.readLine())
+				if(line.startsWith("#"))
+					continue;
+//				else if(req.session().keys().contains(line))
+//					return;
+//			cfg.htp_out.print(cfg.a);
+//			cfg.htp_out.println("access denied");
+			throw new Error("access denied "+uri);
+		}
+	}
+	public boolean exists(){return file.exists();}
+	public long lastModified(){return file.lastModified();}
+	public long length(){return file.length();}
+	public RandomAccessFile is_raf()throws Throwable{return new RandomAccessFile(file,"r");}
+	public boolean isFile(){return file.isFile();}
+	public boolean isDirectory(){return file.isDirectory();}
+	public File[] listFiles(){return file.listFiles();}
+	public boolean mkdirs(){return file.mkdirs();}
+	public boolean createNewFile()throws IOException{return file.createNewFile();}
+	public String fullPath()throws IOException{return file.getCanonicalPath();}
+	public path cdm(String newdir)throws Throwable{
+		file=new File(file,newdir);
+		if(!file.isDirectory())
+			if(!file.mkdirs())
+				throw new Error("cannot make dirs "+file);
+		if(cfg.htp_path_assert_access)
+			assert_access();
+		return this;
+	}
+	public path file(String name)throws Throwable{
+		return new path(new File(file,name));//? makes weird path
+	}
+	public path transferTo(WritableByteChannel writableByteChannel,long off)throws IOException{
+		FileInputStream fis=new FileInputStream(file);
+		FileChannel channelFrom=fis.getChannel();
+		channelFrom.transferTo(0,channelFrom.size(),writableByteChannel);
+		channelFrom.close();
+		fis.close();
+		return this;
+	}
+	public path to(ByteBuffer byteBuffer)throws IOException{
+		FileInputStream fis=new FileInputStream(file);
+		FileChannel channelFrom=fis.getChannel();
+		channelFrom.read(byteBuffer);
+		channelFrom.close();
+		fis.close();
+		return this;
+	}
+	public final int hashCode(){
+		return this.file.toString().hashCode();
+	}
+	public FileInputStream fileInputStream()throws IOException{return new FileInputStream(file);}
+	public boolean cpto() {
+		return true;
+	}
+	public String sfx() {
+		String fn=file.getName();
+		int ix=fn.lastIndexOf('.');
+		if(ix==-1)
+			return "";
+		return fn.substring(ix+1);
+	}
+	public String name(){
+		return file.getName();
+	}
+	public boolean delete(){
+		return file.delete();
+	}
+	public String[] list(){
+		return file.list();
+	}
+	public boolean renameTo(path nf){
+		return file.renameTo(nf.file);
+	}
+	public void lastModified(long lastmod){
+		file.setLastModified(lastmod);
+	}
+	public void readOnly(){
+		file.setReadOnly();
+	}
+	public void executable(boolean b){
+		file.setExecutable(b);
+	}
+}
+package htp;
+import java.io.IOException;
+public class pipe_newliner extends pipe{
+	private StringBuffer line=new StringBuffer(256);
+	public pipe_newliner(){super(null);}
+	final public void write(byte[]c,int off,int len)throws IOException{
+		for(int n=0;n<len;n++){
+			byte b=c[off+n];
+			if(b=='\n'){
+				try{on_newline(line.toString());}catch(Throwable e){throw new Error(e);}
+				line.setLength(0);
+			}else
+				line.append((char)b);
+		}
+	}
+	public void on_newline(String line)throws Throwable{System.out.println(line);}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+public class pipe extends OutputStream{
+	protected OutputStream os;
+	public pipe(OutputStream os){this.os=os;}
+	public void write(byte[]c,int off,int len)throws IOException{os.write(c,off,len);}
+	final public void write(byte[]c) throws IOException{this.write(c,0,c.length);}
+	final public void write(int c)throws IOException{throw new Error("cannot");}
+	final public void flush(){throw new Error("cannot");}
+	final public void close(){throw new Error("cannot");}
+}
+package htp;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.RandomAccessFile;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+public class htp{
+	public static final htp server=new htp();
+	LinkedList<req> pending_req=new LinkedList<req>();
+	public static void main(String[] args) throws Throwable{
+		server.run(args);
+	}
+	Selector selector;
+	public void run(String[] args) throws Throwable{
+		String port=cfg.htp_server_port;
+		if(args.length>0&&args[0].equals("?")){
+			System.out.println("example: java "+getClass().getName()+" 8082 4\n  starts server on port 8082, 4 threads");
+			return;
+		}
+		if(args.length>0)
+			port=args[0];
+		if(args.length>1)
+			cfg.htp_reqthreads=Integer.parseInt(args[1]);
+		cfg.htp_out.println("public domain server #1");
+		cfg.htp_out.println("    time: "+fmt.inst.toLastModified(System.currentTimeMillis()));
+		cfg.htp_out.println("    port: "+port);
+		cfg.htp_out.println(" threads: "+cfg.htp_reqthreads);
+		ServerSocketChannel serverSocketChannel=ServerSocketChannel.open();
+		serverSocketChannel.configureBlocking(false);
+		InetSocketAddress inetSocketAddress=new InetSocketAddress(Integer.parseInt(cfg.htp_server_port));
+		ServerSocket serverSocket=serverSocketChannel.socket();
+		serverSocket.bind(inetSocketAddress);
+		selector=Selector.open();
+		//		new thd_watch().start();
+		for(int n=0;n<cfg.htp_reqthreads;n++)
+			new thd_req().start();
+		req.init_static();
+		serverSocketChannel.register(selector,SelectionKey.OP_ACCEPT);
+		while(true){
+			selector.select();
+			thd_watch.select++;
+			Iterator<SelectionKey> iterator=selector.selectedKeys().iterator();
+			while(iterator.hasNext()){
+				thd_watch.selection++;
+				SelectionKey selectionKey=(SelectionKey)iterator.next();
+				iterator.remove();
+				if(!selectionKey.isValid())
+					continue;
+				if(selectionKey.isAcceptable()){
+					thd_watch.accept++;
+					req req=new req();
+					try{
+						req.socketChannel=serverSocketChannel.accept();
+					}catch(IOException e){
+						//						if("Too many open files".equals(e.getMessage())){}else
+						e.printStackTrace();
+						continue;
+					}
+					req.socketChannel.configureBlocking(false);
+					req.selectionKey=req.socketChannel.register(selector,SelectionKey.OP_READ,req);
+				}else if(selectionKey.isReadable()){
+					thd_watch.read++;
+					req r=(req)selectionKey.attachment();
+					r.read();
+					r.parse();
+					if(selectionKey.isValid())
+						selectionKey.interestOps(SelectionKey.OP_WRITE);
+				}else if(selectionKey.isWritable()){
+					req r=(req)selectionKey.attachment();
+					try{
+						thd_watch.write++;
+						selectionKey.interestOps(0);
+						if(r.waiting_write){
+							while(r.waiting_write)
+								synchronized(r){
+									r.notify();
+								}
+							continue;
+						}
+						if(r.is_transfer()){
+							if(r.do_transfer()){
+								if(!r.is_connection_keep_alive()){
+									r.close_socketChannel();
+									continue;
+								}
+								selectionKey.interestOps(SelectionKey.OP_READ);
+							}else{
+								selectionKey.interestOps(SelectionKey.OP_WRITE);
+							}
+							continue;
+						}
+						if(r.is_waiting_for_free_thread()){
+							synchronized(pending_req){
+								pending_req.addLast(r);
+								pending_req.notify();
+							}
+							continue;
+						}
+						if(r.is_waiting_for_free_thread_content_proc()){
+							synchronized(pending_req){
+								pending_req.addLast(r);
+								pending_req.notify();
+							}
+							continue;
+						}
+						if(r.is_transfer()){
+							r.selectionKey.interestOps(SelectionKey.OP_WRITE);
+						}else{
+							if(r.selectionKey.isValid()){
+								r.selectionKey.interestOps(SelectionKey.OP_READ);
+							}
+							if(!r.is_connection_keep_alive()){
+								r.close_socketChannel();
+							}
+						}
+					}catch(Throwable e){
+						r.close_socketChannel();
+						String msg=e.getMessage();
+						if("Broken pipe".equals(msg)){}
+						else if("Connection reset by peer".equals(msg)){}
+						else if(e instanceof ClassNotFoundException){}
+						else htp.log(e);
+					}
+				}else
+					throw new IllegalStateException();
+			}
+		}
+	}
+	public void cp(String[] args) throws Throwable{
+		FileChannel channelFrom=new FileInputStream(args[0]).getChannel();
+		FileChannel channelTo=new FileOutputStream(args[1]).getChannel();
+		channelFrom.transferTo(0,channelFrom.size(),channelTo);
+		channelTo.close();
+		channelFrom.close();
+	}
+	htp nl(){
+		cfg.htp_out.println();
+		return this;
+	}
+	htp p(long v){
+		cfg.htp_out.print(v);
+		return this;
+	}
+	htp p(String s){
+		cfg.htp_out.print(s);
+		return this;
+	}
+	public static void print_stats(OutputStream out) throws Throwable{
+		PrintStream ps=new PrintStream(out);
+		ps.println("             time: "+new Date());
+		ps.println("             port: "+cfg.htp_server_port);
+		ps.println("        downloads: "+new File(cfg.htp_root_dir).getCanonicalPath());
+		ps.println("          uploads: "+new File(cfg.htp_root_dir,cfg.htp_upload_dir).getCanonicalPath());
+		ps.println("   sessions store: "+new File(cfg.htp_root_dir,cfg.htp_sessions_dir).getCanonicalPath());
+		ps.println("  sessions active: "+session.all.size());
+		Runtime rt=Runtime.getRuntime();
+		if(cfg.htp_gc_before_stats)
+			rt.gc();
+		long m1=rt.totalMemory();
+		long m2=rt.freeMemory();
+		ps.println("         ram used: "+((m1-m2)>>10)+" KB");
+		ps.println("         ram free: "+(m2>>10)+" KB");
+	}
+	public static void sessions_save() throws Throwable{
+		File f=new File(utl.isEmpty(cfg.htp_root_dir)?".":cfg.htp_root_dir,cfg.htp_sessions_dir);
+		cfg.htp_out.println(cfg.q+"save "+session.all.size()+" sessions to "+f.getCanonicalPath());
+		long t0=System.currentTimeMillis();
+		//		sessions.save_elems_to_dir(f);
+		long dt=(System.currentTimeMillis()-t0);
+		cfg.htp_out.println(" "+cfg.a+"done in "+dt+" ms");
+	}
+	public static void sessions_load() throws Throwable{
+		File f=new File(utl.isEmpty(cfg.htp_root_dir)?".":cfg.htp_root_dir,cfg.htp_sessions_dir);
+		cfg.htp_out.println(cfg.q+"load sessions from "+f.getCanonicalPath());
+		long t0=System.currentTimeMillis();
+		//		sessions.load_elems_from_dir(f);
+		long dt=(System.currentTimeMillis()-t0);
+		cfg.htp_out.println(" "+cfg.a+"restored "+session.all.size()+" in "+dt+" ms");
+	}
+	public static path path(String path) throws Throwable{
+		if(path.indexOf("..")!=-1)
+			throw new Error("illegal path "+path);
+		if(utl.isEmpty(cfg.htp_root_dir))
+			return new path(new File(".",path));
+		else
+			return new path(new File(cfg.htp_root_dir,path));
+	}
+	public static void cp_dir(File src_dir,File dst_dir) throws Throwable{
+		cfg.htp_out.println("[todo]  cp -rf "+src_dir+" to "+dst_dir);
+		//new sh(Io.out).pl("cp -rfv "+src_dir+"/* to "+dst_dir).pl("exit").wait_for_sh();
+	}
+	public static void cp(byte[] b1,int offset1,byte[] b2,int offset2,int len){
+		System.arraycopy(b1,offset1,b2,offset2,len);
+	}
+	public static int cp(InputStream in,OutputStream out) throws Throwable{
+		int n=0;
+		byte buf[]=new byte[cfg.htp_io_buf_B];
+		while(true){
+			int count=in.read(buf);
+			if(count<=0)
+				break;
+			out.write(buf,0,count);
+			n+=count;
+		}
+		return n;
+	}
+	public static void cp(InputStream in,OutputStream out,long nbytes) throws Throwable{
+		byte buf[]=new byte[cfg.htp_io_buf_B];
+		while(true){
+			int count=in.read(buf,0,nbytes>buf.length?buf.length:(int)nbytes);
+			out.write(buf,0,count);
+			nbytes-=count;
+			if(nbytes<=0||count==0)
+				break;
+		}
+	}
+	public static void cp(File src,File dst) throws Throwable{
+		if(src.isDirectory()){
+			cp_dir(src,dst);
+			return;
+		}
+		cfg.htp_out.println(cfg.q+"cp "+src.getAbsolutePath()+" "+dst.getAbsolutePath());
+		FileInputStream fis=new FileInputStream(src);
+		FileOutputStream fos=new FileOutputStream(dst);
+		fis.getChannel().transferTo(0,src.length(),fos.getChannel());
+		fos.close();
+		fis.close();
+	}
+	public static void cp(RandomAccessFile in,OutputStream out,long nbytes) throws Throwable{
+		byte buf[]=new byte[cfg.htp_io_buf_B];
+		while(true){
+			int count=in.read(buf,0,nbytes>buf.length?buf.length:(int)nbytes);
+			out.write(buf,0,count);
+			nbytes-=count;
+			if(nbytes<=0||count==0)
+				break;
+		}
+	}
+	public static void log(Throwable t){
+		cfg.htp_out.println(utl.errStackTraceLine(t));
+	}
+}
+package htp;
+import java.io.OutputStream;
+import java.io.PrintStream;
+public class page{
+	public static final String FLD_AX = "_ax";
+	public void resp(req r)throws Throwable{
+		wt w=(wt)r.session().get(r.path_s);
+		if(w==null){
+			String cn=r.path_s.replace('/','.');
+			try{
+				w=(wt)Class.forName(cfg.htp_web_widgets_package+cn).newInstance();
+			}catch(Throwable e){
+				try{
+					w=(wt)Class.forName(cfg.htp_web_widgets_package+cn+cfg.htp_default_package_class).newInstance();
+				}catch(Throwable e1){
+					try{
+						w=(wt)Class.forName(cfg.htp_web_widgets_package+cn+"."+cfg.htp_default_package_class).newInstance();
+					}catch(Throwable e2){
+//						server.log_not_found(r,new Object[]{e,e1,e2})
+						OutputStream os=r.reply_chunked("text/plain");//? 404
+						new xwriter(os).p(r.path_s).nl().p(utl.errStackTraceLine(e)).nl().p(utl.errStackTraceLine(e1)).nl().p(utl.errStackTraceLine(e2)).nl();
+						r.reply_chunked_end();
+						return;
+					}
+				}
+			}
+			r.session().put(r.path_s,w);
+		}
+		Throwable err=null;
+		if(!r.content.isEmpty()){
+			try{
+				w.onPost(r.content);
+				String ax=r.content.get(FLD_AX);
+				if(ax!=null&&ax.length()>0){
+					String[]args=ax.split(" ");
+					if(args.length>0){
+						String[]pth=args[0].split("_");
+						for(int n=1;n<pth.length;n++){
+							w=w.childFind(pth[n]);
+						}
+						OutputStream os=r.reply_chunked("text/html;charset=utf-8");
+						xwriter x=new xwriter(os);
+						if(w==null){
+							x.js_alert("widget not found:\\n"+args[0]).nl().nl().p("try").p("reload").nl().nl();
+							x.flush();
+							r.reply_chunked_end();
+							return;
+						}
+						w.ax(x,args);
+						r.reply_chunked_end();
+					}
+					return;
+				}
+				r.reply_redirect_to_refererer();
+				return;
+			}catch(Throwable e){
+				err=e;
+			}
+		}
+		OutputStream os=r.reply_chunked("text/html;charset=utf-8");
+		xwriter x=new xwriter(os);
+		x.p("<html><head><link href=/default.css rel=stylesheet><script src=/default.js></script></head><body onload=ui.onload()><form onsubmit=return(false)>");
+		if(err!=null){
+			x.pl("<code><pre>");
+			x.pl(utl.errStackTrace(err));
+			htp.log(err);
+			x.pl("</pre></code>");
+		}
+		try{
+			w.to(x);
+		}catch(Throwable t){
+			cfg.htp_out.println(utl.errStackTraceLine(t));
+			x.pre();
+			t.printStackTrace(new PrintStream(x.os()));
+		}
+		r.reply_chunked_end();
+	}
+}
+package htp;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
+public class wt implements Serializable{
+	public static final String wt_root = "wt";
+	public static final long serialVersionUID=1;
+//	private Field hld;
+	private String nm;
+	private wt pt;
+	public wt(){
+		try{
+			Field[]f=getClass().getFields();
+			for(int i=0;i<f.length;i++){
+				Field fld=f[i];
+				if(!wt.class.isAssignableFrom(fld.getType()))
+					continue;
+				wt w=(wt)fld.get(this);
+				if(w==null)
+					w=(wt)fld.getType().newInstance();
+				fld.set(this,w);
+				//w.hld=fld;
+				w.nm=fld.getName();
+				w.pt=this;
+			}
+		}catch(Throwable e){
+			throw new Error(e);
+		}
+	}
+//	public final String name(){
+//		if(hld==null)
+//			return wt_root;
+//		return hld.getName();
+//	}
+	public final String name(){
+		if(nm==null)
+			return wt_root;
+		return nm;
+	}
+	public final void ax(xwriter xw,String[]pb)throws Throwable{
+		if(pb.length==1)
+			return;
+		String methodName="ax_"+pb[1];
+		Method m=null;
+		Object[] params=null;
+		try{
+			m=getClass().getMethod(methodName,new Class[]{xwriter.class,String[].class});
+			params=new Object[]{xw,pb};
+		}catch(NoSuchMethodException e){
+			try{
+				m=getClass().getMethod(methodName,new Class[]{xwriter.class});
+				params=new Object[]{xw};
+			}catch(NoSuchMethodException e1){}
+		}
+		if(m==null){
+			Throwable t=new Error("method not found:\\n"+getClass().getName()+"."+methodName+"(xwriter,String[])");
+			xw.js_alert(t.getMessage());
+			return;
+		}
+		try{
+			m.invoke(this,params);
+		}catch(InvocationTargetException e){
+			htp.log(e);
+			String str=utl.errStackTraceLine(e.getTargetException());
+			xw.js_code("alert('");
+			new pipe_esc_nlsq(xw.os()).write(str.getBytes());
+			xw.js_code("');");
+			cfg.htp_out.println(str);
+		}
+	}
+	public final void onPb(String[] pb) throws Throwable{
+		if(pb.length==1)
+			return;
+		String methodName="pb_"+pb[1];
+		Method m=null;
+		Object[] params=null;
+		try{
+			m=getClass().getMethod(methodName,new Class[]{String[].class});
+			params=new Object[]{pb};
+		}catch(NoSuchMethodException e){
+			try{
+				m=getClass().getMethod(methodName,(Class[])null);
+			}catch(NoSuchMethodException e1){}
+		}
+		if(m==null){
+			throw new Error("cannot find: "+getClass().getName()+"."+methodName);
+		}
+		try{
+			m.invoke(this,params);
+		}catch(InvocationTargetException e){
+			throw e.getTargetException();
+		}
+	}
+	public void onPost(Map<String,String>post) throws Throwable{
+		Field[]f=getClass().getFields();
+		for(int i=0;i<f.length;i++){
+			Field fld=f[i];
+			if(!wt.class.isAssignableFrom(fld.getType()))
+				continue;
+			wt w=(wt)fld.get(this);
+			if(w!=null)
+				w.onPost(post);
+		}
+	}
+	public void to(xwriter x) throws Throwable{
+		x.p(name());
+	}
+	public String toString(){
+		return name();
+	}
+	public final String wid(){
+		String s=nm;
+		for(wt p=this;p.pt!=null;p=p.pt){
+			s=utl.noNull(p.pt.nm,"")+"_"+s;
+		}
+		return utl.noNull(s,"_");
+	}
+	protected final wt childFind(String id){
+		String wids=wid();
+		if(id.equals(wids))
+			return this;
+		Field[]f=getClass().getFields();
+		for(int i=0;i<f.length;i++){
+			Field fld=f[i];
+			if(!wt.class.isAssignableFrom(fld.getType()))
+				continue;
+			if(!fld.getName().equals(id))
+				continue;
+			wt w;
+			try{
+				w=(wt)fld.get(this);
+			}catch(Throwable e){
+				throw new Error(e);
+			}
+			return w;
+		}
+		return null;
+	}
+}
+package htp;
+final class fmt{
+	public final static fmt inst=new fmt();
+	final static int day_in_week_0=3;
+	final static int day_yb_tbl[]=new int[]{365,365,366,365};
+	final static int days_in_month[]={31,28,31,30,31,30,31,31,30,31,30,31};
+	final static int days_in_month_leap[]={31,29,31,30,31,30,31,31,30,31,30,31};
+	final static int days_week=7;
+	final static int days_yb=sum(day_yb_tbl);
+	final static int h_d=24;
+	final static int h_day=24;
+	final static int hour_0=7;
+	final static int m_h=60;
+	final static String month_names[]={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+	final static int s_m=60;
+	final static int s_h=s_m*m_h;
+	final static int s_d=s_h*h_day;
+	final static int ms_s=1000;
+	final static long ms_min=ms_s*s_m;
+	final static long ms_h=ms_min*m_h;
+	final static long ms_day=ms_h*h_d;
+	final static int year_0=1970;
+	final String weekday[]={"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
+	public long parseIfLastModified(String date){
+		// Fri, 03 Aug 2007 08:21:21 GMT (cylinder)
+		String parts[]=date.split(" ");
+		int day_in_month=Integer.parseInt(parts[1])-1;
+		String month_name=parts[2];
+		int month=0;
+		for(int n=0;n<month_names.length;n++)
+			if(month_name.equalsIgnoreCase(month_names[n])){
+				month=n;
+				break;
+			}
+		int year=Integer.parseInt(parts[3]);
+		String time_parts[]=parts[4].split(":");
+		int h=Integer.parseInt(time_parts[0]);
+		int m=Integer.parseInt(time_parts[1]);
+		int s=Integer.parseInt(time_parts[2]);
+		int yb=(year-year_0)/day_yb_tbl.length;
+		int yib=(year-year_0)%day_yb_tbl.length;
+		long t=0; // 1970-01-01 07:00:00
+		t+=yb*days_yb*ms_day;
+		for(int n=0;n<yib;n++)
+			t+=day_yb_tbl[n]*ms_day;
+		int dim[]=year%day_yb_tbl.length==0?days_in_month_leap:days_in_month;
+		for(int n=0;n<month;n++)
+			t+=dim[n]*ms_day;
+		t+=day_in_month*ms_day;
+		t+=h*ms_h;
+		t+=m*ms_min;
+		t+=s*ms_s;
+		t-=hour_0*ms_h;
+		return t;
+	}
+	public String toLastModified(long t){
+		t+=hour_0*ms_h;
+		long days=t/ms_day;
+		int yb=(int)(days/days_yb);
+		int day_in_yb=(int)(days%days_yb);
+		int day_in_year=day_in_yb;
+		int year;
+		for(year=0;year<day_yb_tbl.length;year++){
+			int d=day_yb_tbl[year];
+			if(d>day_in_year)
+				break;
+			day_in_year-=d;
+		}
+		year+=year_0+yb*day_yb_tbl.length;
+		int day_in_month=day_in_year;
+		int month;
+		int dim[]=year%day_yb_tbl.length==0?days_in_month_leap:days_in_month;
+		for(month=0;month<dim.length;month++){
+			int d=dim[month];
+			if(d>day_in_month)
+				break;
+			day_in_month-=d;
+		}
+		t/=ms_s;
+		int s=(int)(t%s_m);
+		int m=(int)(t%s_h)/m_h;
+		int h=(int)(t%s_d)/s_h;
+		int day_in_week=(int)((days+day_in_week_0)%days_week);
+		String res=weekday[day_in_week]+", "+(day_in_month+1)+" "+month_names[month]+" "+year+" "+pad(h)+":"+pad(m)+":"+pad(s)
+				+" GMT";
+		return res;
+	}
+	private String pad(int m){
+		if(m>9)
+			return Integer.toString(m);
+		else
+			return "0"+m;
+	}
+	private static int sum(int[] day_yb_tbl2){
+		int sum=0;
+		for(int i=0;i<day_yb_tbl2.length;i++){
+			sum+=day_yb_tbl2[i];
+		}
+		return sum;
+	}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+public final class pipe_tee extends pipe{
+	private OutputStream os[];
+	public pipe_tee(OutputStream[]os){
+		super(null);
+		this.os=os;
+	}
+	public void write(byte[] c,int off,int len)throws IOException{
+		for(int n=0;n<os.length;n++)
+			os[n].write(c,off,len);
+	}
+}
+package htp;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class xwriter{
+	OutputStream os;
+	public xwriter(final OutputStream os){this.os=os;}
+	public xwriter a(final String href){return p("<a href=\"").p(xwriter.encForValue(href)).p("\">");}
+	public xwriter a(final String href,final String txt){return a(href).p(txt).aEnd();}
+	public xwriter aEnd(){return p("</a>");}
+	public xwriter p(final String name,final int value){return p(" ").p(name).p("=").w(value);}
+	public xwriter attr(final String name,final String value){return p(" ").p(name).p("=\"").p(xwriter.encForValue(value)).p("\"");}
+	public xwriter ax_action(final wt w,final String args,final String title){
+		String id=w.wid();
+		return p("<a id=").p(id).p(" href=\"javascript:ui.ax('").p(id).p(" ").p(args).p("')\">").p(title).p("</a>");
+	}
+	public xwriter attrDef(final fld fld){
+		if(fld.name()!=null)
+			attr("title",fld.name());
+		String wid=fld.wid();
+		return attr_wrd("id",wid).attr_wrd("name",wid);
+	}
+	public xwriter br(){return p("<br>\n");}
+	public xwriter div(final String cls){return tagStart("div").attr_wrd("class",cls).tagStartDone();}
+	public xwriter divEnd(){return tagEnd("div");}
+	public void flush() throws IOException{os.flush();}
+	public xwriter js_focus(String wid){
+		if(wid==null)
+			return this;
+//		return script().p("ui.focus('").p(wid).p("')").scriptEnd();
+		return script().p("document.getElementById('").p(wid).p("').focus();").scriptEnd();
+	}
+	public xwriter js_focus(final wt wt){
+		if(wt==null)
+			return this;
+		return js_focus(wt.wid());
+	}
+//	public xwriter hidden(fld fld){
+//		return tagStart("input").attr("value",fld.toString()).attr("type","hidden").attrDef(fld).tagStartDone();
+//	}
+	public xwriter hr(){return p("<hr>\n");}
+	public xwriter inputInt(final fld fld){
+		return tagStart("input").attr("value",fld.toString()).attrDef(fld).attr("type","text").attr("class","nbr").p("size",5).tagStartDone();
+	}
+	public xwriter inputLng(final fld fld){return inputLng(fld);}
+	public xwriter inputText(final fld fld){return inputText(fld,23);}
+	public xwriter inputText(final fld fld,final int size){
+		tagStart("input").attr("value",fld.toString()).attrDef(fld).attr_wrd("type","text");
+		if(size!=0)
+			p("size",size);
+		return attr("onchange","this._changed=true").tagStartDone();
+	}
+	public xwriter nl(){
+		try{
+			os.write(new byte[]{'\n'});
+		}catch(IOException e){
+			throw new Error(e);
+		}
+		return this;
+	}
+	public OutputStream os() throws Throwable{
+//		flush();
+		return os;
+	}
+	public xwriter pre(){return p("<pre>");}
+	public xwriter preEnd(){return p("</pre>");}
+	public xwriter p(final wt w){
+		if(w==null)
+			return this;
+		try{
+			w.to(this);
+		}catch(Throwable t){
+			p(utl.errStackTrace(t));
+		}
+		return this;
+	}
+	public xwriter script(){return p("<script>");}
+	public xwriter scriptEnd(){return p("</script>");}
+	public xwriter table(){return p("<table>");}
+	public xwriter table(final String cls){return p("<table class=").p(xwriter.encForValue(cls)).p(">");}
+	public xwriter table(final String attr,final String value){return tagWithAttr("table",attr,value);}
+	public xwriter tableEnd(){return p("</table>");}
+	public xwriter tag(final String name){return p("<").p(name).p(">");}
+	public xwriter tagEnd(final String name){return p("</").p(name).p(">");}
+	public xwriter tagStart(final String name){return p("<").p(name);}
+	public xwriter tagStartDone(){return p(">");}
+	public xwriter td(){return p("<td>");}
+	public xwriter td(String cls){
+		if(cls==null)
+			return td();
+		return td("class",cls);
+	}
+	public xwriter td(final String attrName,final String attrValue){return tagWithAttr("td",attrName,attrValue,true);}
+	public xwriter tdEnd(){return p("</td>");}
+	public xwriter textArea(final fld fld,final String cls){
+		//ui.dbg('change');
+		tagStart("textarea").attr("class",cls).attrDef(fld).attr("onkeypress","this._changed=true").tagStartDone();
+		//fld.to(this);
+		p(encForTextArea(fld.toString()));
+		tagEnd("textarea");
+		return this;
+	}
+	public xwriter th(){return p("<th>");}
+	public xwriter th(final String cls){
+		if(cls==null)
+			return th();
+		return th("class",cls);
+	}
+	public xwriter th(final String attr,final String value){
+		return p("<th ").p(attr).p("=\"").p(xwriter.encForValue(value)).p("\">");
+	}
+	public xwriter thEnd(){return p("</th>");}
+	public String toString(){return os.toString();}
+	public xwriter tr(){return p("<tr>");}
+	public xwriter tr(final String cls){
+		if(cls==null)
+			return tr();
+		return p("<tr class=").p(xwriter.encForValue(cls)).p(">");
+	}
+	public xwriter trEnd(){return p("</tr>\n");}
+	public xwriter w(final int i){return p(Integer.toString(i));}
+	public xwriter p(final String s){
+		if(s==null)
+			return this;
+		try{
+			os.write(s.getBytes("utf8"));
+		}catch(Throwable e){
+			throw new Error(e);
+		}
+		return this;
+	}
+	public xwriter p(final fld fld){return p(fld.toString());}
+	public xwriter wid(final String widStr){return p("<!--").p(widStr).p("-->");}
+	public xwriter wid(final wt wt){return p("<!--").p(wt.wid()).p("-->");}
+	public xwriter pl(final String string){return p(string).p("\n");}
+	public xwriter pl(final Object o){return p(o==null?"null":o.toString()).p("\n");}
+	private xwriter tagWithAttr(final String tagName,final String attrName,final String attrValue){
+		return p("<").p(tagName).p(" ").p(attrName).p("=\"").p(xwriter.encForValue(attrValue)).p("\">");
+	}
+	private xwriter tagWithAttr(final String tagName,final String attrName,final String attrValue,final boolean noenc){
+		return p("<").p(tagName).p(" ").p(attrName).p("=").p(attrValue).p(">");
+	}
+	public static String encForTextArea(final String string){
+		String s=string;
+		s=s.replaceAll("\\<","lt;");
+		s=s.replaceAll("\\>","gt;");
+		return s;
+	}
+	public static String encForValue(final String text){
+		if(text==null)
+			return "";
+		String s=text;
+		s=s.replaceAll("&","&amp;");
+		s=s.replaceAll("\"","&quot;");
+		return s;
+	}
+	public xwriter js_e_set(final String elemid,final String innerHtml){
+		return p("ui.e_set('").p(elemid).p("','").p(innerHtml).pl("');");
+	}
+	public xwriter js_alert(final String msg){
+		String s=msg;
+//		s=s.replaceAll("\\","\\\\");
+//		s=s.replaceAll("'","\\\\'");
+		return p("alert('").p(s).pl("');");//?! escape ' and \
+	}
+	public xwriter pre(final String style){return p("<pre style=").p(style).p(">");}
+	public xwriter attr_wrd(final String name,final String value){return p(" ").p(name).p("=").p(value);}
+	public xwriter p(Object o){
+		if(o==null)
+			return this;
+		return p(o.toString());
+	}
+	public xwriter p(final char n){return p(""+n);}
+	public xwriter p(final int i){return p(Integer.toString(i));}
+	public xwriter span(final String name){return p("<span id=").p(name).p(">");}
+	public xwriter spanEnd(){return p("</span>");}
+	public xwriter span(final String name,final int intg){return span(name).p(intg).spanEnd();}
+	public xwriter span(final String name,final String txt){return span(name).p(txt).spanEnd();}
+//	public xwriter js_e_innerHtml(fld f, String js_str_enc) {
+//		return p("ui.e_set('").p(f.name()).p("','").p(js_str_enc).p("');").nl();
+//	}
+	public xwriter js_e_setv(final fld f,final String html_quote_enc){
+		return p("ui.e_setv('").p(f.wid()).p("','").p(html_quote_enc).p("');").nl();		
+	}
+	public xwriter js_e_focus(final fld f){
+		return p("ui.e('").p(f.wid()).p("').focus();").nl();		
+	}
+	public xwriter inputText(final fld fld,final int size,final String axpb){
+		tagStart("input").attr("value",fld.toString()).attrDef(fld).attr_wrd("type","text").jsOnKeyPress(fld,axpb);
+		if(size!=0)
+			p("size",size);
+		return attr("onchange","this._changed=true").tagStartDone();
+	}
+	public xwriter attr_js(final String name,final String js){
+		return p(" ").p(name).p("=\"").p(js).p("\"");	
+	}
+	public xwriter jsOnKeyPress(final fld fld,final String ax){
+		return attr_js("onkeypress","return ui._cr(event,this,'"+ax+"')");
+	}
+	public xwriter edit(final fld s) {
+		s.printForEdit(this);
+		return this;
+	}
+	public xwriter edit(final fld s,final int size) {
+		s.printForEdit(this,size);
+		return this;
+	}
+	public xwriter p(final long l) {
+		try{
+			os.write(Long.toString(l).getBytes("utf8"));
+		}catch(Throwable e){
+			throw new Error(e);
+		}
+		return this;
+	}
+	public xwriter js_code(final String js){
+		return p(js);
+	}
+	public xwriter js_e_setInnerHtmlBgn(final String elemid){
+		return p("ui.e_set('").p(elemid).p("','");
+	}
+	public xwriter js_e_setEnd(){
+		return p("');").nl();
+	}
+	public xwriter js_e_setValueBgn(final String elemid){
+		return p("ui.e_setv('").p(elemid).p("','");
+	}
+	public xwriter span(final fld f)throws IOException{
+		span(f.wid());
+		f.to(new pipe_esc_ltgt(os));
+		spanEnd();
+		return this;
+	}
+	public xwriter js_e_set(final fld f)throws Throwable{
+		js_e_setInnerHtmlBgn(f.wid());
+		f.to(new pipe_esc_nlsq(os));
+		js_e_setEnd();
+		return this;
+	}
+	public xwriter js_e_set(final wt w,final String innerHtml)throws IOException{
+		js_e_setInnerHtmlBgn(w.wid());
+		new pipe_esc_nlsq(os).write(innerHtml.getBytes());
+		js_e_setEnd();
+		return this;
+	}
+	public xwriter js_reload(){
+		p("location.reload();");
+		return this;
+	}
+	public void js_flush()throws Throwable{
+		if(os instanceof pipe_chunked){
+			((pipe_chunked)os).flush_chunk();
+		}else{
+			os.flush();
+		}
+	}
+}
+package htp;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+public class cli implements Runnable{
+	public static int stats_cli_actv=1;
+	private Process prc;
+	private PrintStream con;
+	private InputStream is;
+	private Thread thread=new Thread(this,cli.class.getName()+"-"+stats_cli_actv);
+	private int exitValue;
+	private OutputStream os;
+	private String cmd;
+	private StringBuffer sb=new StringBuffer();
+	public cli(String cmd,OutputStream os)throws Throwable{
+		this.cmd=cmd;
+		this.os=os;
+		prc=Runtime.getRuntime().exec(cmd);
+		is=prc.getInputStream();
+		con=new PrintStream(prc.getOutputStream(),true);
+		thread.start();
+	}
+	public final void run(){
+		stats_cli_actv++;
+		try{htp.cp(is,os);}catch(Throwable t){cfg.htp_out.println(utl.errStackTraceLine(t));}//?
+		try{exitValue=prc.waitFor();}catch(InterruptedException e){}
+		stats_cli_actv--;
+	}
+	public final int getExitValue(){return exitValue;}
+	public final cli wait_for_cli(){try{thread.join();}catch(InterruptedException e){}return this;}
+	public final cli p(String sh){
+//		con.print(sh);
+		sb.append(sh);
+		return this;
+	}
+	public final cli nl(){
+		con.println(sb);
+		cfg.htp_out.print(cfg.q);
+		cfg.htp_out.println(sb);
+		sb.setLength(0);
+		return this;		
+	}
+	public cli exit(){return p(";exit").nl().wait_for_cli();}
+	public String toString(){return cmd;}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+public final class pipe_esc_ltgt extends pipe{
+	private static final byte[]b_html_gt="&gt;".getBytes();
+	private static final byte[]b_html_lt="&lt;".getBytes();
+	public pipe_esc_ltgt(OutputStream os){super(os);}
+	public void write(byte[]c,int off,int len)throws IOException{
+		int i=0;
+		for(int n=0;n<len;n++){
+			byte b=c[off+n];
+			if(b=='<'){
+				int l=n-i;
+				if(l!=0)
+					super.write(c,off+i,l);
+				super.write(b_html_lt);
+				i=n+1;
+			}else if(b=='>'){
+				int l=n-i;
+				if(l!=0)
+					super.write(c,off+i,l);
+				super.write(b_html_gt);
+				i=n+1;
+			}
+		}
+		int l=len-i;
+		if(l!=0)
+			super.write(c,off+i,l);
+	}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+public final class pipe_esc_nlsq extends pipe{
+	private static final byte[]b_jsstr_sq="\\'".getBytes();
+	private static final byte[]b_jsstr_nl="\\n".getBytes();
+	public pipe_esc_nlsq(OutputStream os){super(os);}
+	public void write(byte[]c,int off,int len)throws IOException{
+		int i=0;
+		for(int n=0;n<len;n++){
+			byte b=c[off+n];
+			if(b=='\n'){
+				int l=n-i;
+				if(l!=0)
+					super.write(c,off+i,l);
+				super.write(b_jsstr_nl);
+				i=n+1;
+			}else if(b=='\''){
+				int l=n-i;
+				if(l!=0)
+					super.write(c,off+i,l);
+				super.write(b_jsstr_sq);
+				i=n+1;
+			}
+		}
+		int l=len-i;
+		if(l!=0)
+			super.write(c,off+i,l);
+	}
+}
+package htp;
+import java.io.IOException;
+public final class pipe_void extends pipe{
+	public pipe_void(){super(null);}
+	public void write(byte[]c,int off,int len)throws IOException{}
+}
+package htp;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+
+public final class pipe_chunked extends OutputStream{
+	static final ByteBuffer bb_eochunk=ByteBuffer.wrap("\r\n0\r\n\r\n".getBytes());
+	static final ByteBuffer bb_crnl=ByteBuffer.wrap("\r\n".getBytes());
+	private req r;
+	private int chunk_size_bytes;
+	private byte[]chunkhx;
+	private byte[]buf;
+	private int bufi;
+	public pipe_chunked(req req,int chunk_size_bytes)throws Throwable{
+		this.r=req;
+		this.chunk_size_bytes=chunk_size_bytes;
+		this.chunkhx=(Integer.toHexString(chunk_size_bytes)+"\r\n").getBytes();
+		this.buf=new byte[chunk_size_bytes];
+	}
+	public String toString(){
+		return new String(buf,0,bufi);
+	}
+	public void write(int arg0)throws IOException{throw new UnsupportedOperationException();}
+	public void write(byte[]c,int off,int len)throws IOException{
+		int k=bufi+len;
+		int diff=chunk_size_bytes-k;
+		if(diff>=0){
+			System.arraycopy(c,off,buf,bufi,len);
+			bufi+=len;
+			return;
+		}
+		int n=len+diff;
+		ByteBuffer[]bba=new ByteBuffer[]{ByteBuffer.wrap(chunkhx),ByteBuffer.wrap(buf,0,bufi),ByteBuffer.wrap(c,off,n),bb_crnl.slice()};
+		try{write_blocking(bba,bba.length);}catch(InterruptedException e){throw new Error(e);}
+		bufi=0;
+		off+=n;
+		diff=-diff;
+		while(diff>chunk_size_bytes){
+			bba=new ByteBuffer[]{ByteBuffer.wrap(chunkhx),ByteBuffer.wrap(c,off,chunk_size_bytes)};
+			try{write_blocking(bba,bba.length);}catch(InterruptedException e){throw new Error(e);}
+			diff-=chunk_size_bytes;
+			off+=chunk_size_bytes;
+		}
+		if(diff>0)
+			System.arraycopy(c,off,buf,bufi,diff);
+		bufi=diff;
+	}
+	public void flush_chunk()throws InterruptedException,IOException{
+		if(bufi==0)
+			return;
+		ByteBuffer[]bba=new ByteBuffer[]{ByteBuffer.wrap(Integer.toHexString(bufi).getBytes()),bb_crnl.slice(),ByteBuffer.wrap(buf,0,bufi),bb_eochunk.slice()};
+		write_blocking(bba,bba.length);
+		bufi=0;
+	}
+	private void write_blocking(ByteBuffer[]bba,int bbl)throws InterruptedException,IOException{
+		long remaining=0;
+		for(int n=0;n<bbl;n++)
+			remaining+=bba[n].remaining();
+		int i=0;
+		while(remaining!=0){
+			long c=r.socketChannel.write(bba,i,bbl-i);
+//			System.out.println("   chunked_reply: wrote "+c+"  of  "+remaining);
+			if(c==0){
+				System.out.println("   chunked_reply: wrote 0. thread blocked");
+				new thd_req().start();
+				r.waiting_write=true;
+				r.selectionKey.interestOps(SelectionKey.OP_WRITE);
+				r.selectionKey.selector().wakeup();
+				synchronized(r){r.wait();}
+				r.waiting_write=false;
+				System.out.println("\n   chunked_reply: thread unblocked");
+			}
+			remaining-=c;
+			thd_watch.output+=c;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package htp;
+public final class signal extends RuntimeException{
+	private static final long serialVersionUID=1;
+	private Throwable cause;
+	private int sig;
+	signal(int sig){this.sig=sig;}
+	signal(int sig,Throwable cause){this.sig=sig;this.cause=cause;}
+	public Throwable cause(){return cause;}
+	public boolean isEos(){return sig==1;}
+	public boolean isErr(){return sig==2;}
+	public boolean isOob(){return sig==4;}
+	public String toString(){return "sig"+sig+" "+cause;}
+	public static void eos(){throw new signal(1);}
+	public static void err(){throw new signal(2);}
+	public static void err(Throwable t){throw new signal(2,t);}
+	public static void oob(){throw new signal(4);}
+}
+package htp;
+import java.io.IOException;
+import java.io.OutputStream;
+public final class pipe_delay extends pipe{
+	private byte[]delay_b;
+	private int k=0;
+	public pipe_delay(OutputStream os,int len){
+		super(os);
+		delay_b=new byte[len];
+	}
+	public void write(byte[]c,int off,int len)throws IOException{
+		int total=k+len;
+		if(total<=delay_b.length){
+			htp.cp(c,off,delay_b,k,len);
+			k+=len;
+			return;
+		}
+		int dl=len-delay_b.length;
+		if(dl>=0){
+			if(k>0)
+				super.write(delay_b,0,k);
+			if(dl>0)
+				super.write(c,off,dl);
+			htp.cp(c,off+dl,delay_b,0,delay_b.length);
+			k=delay_b.length;
+			return;
+		}
+		int diff=total-delay_b.length;
+		super.write(delay_b,0,diff);
+		htp.cp(delay_b,diff,delay_b,0,delay_b.length-diff);
+		htp.cp(c,off,delay_b,delay_b.length-diff,diff);
+		k=delay_b.length;
+		return;
+	}
+}
+.svn
+package wt;
+
+import htp.fld;
+import htp.wt;
+import htp.xwriter;
+
+public class yliv extends wt{
+	private static final long serialVersionUID=1L;
+	private int count=0;
+	public fld sts;
+	public void to(xwriter x) throws Throwable{
+		x.ax_action(this,"a","try this link "+count+" times").br();
+		x.span(sts);
+	}
+	public void ax_a(xwriter x,String[] p) throws Throwable{
+		count++;
+		x.js_e_set(sts.wid(),""+count);
+		x.js_reload();
+	}
+	public void ax_b(xwriter x,String[] p) throws Throwable{}
+}
+package wt;
+import htp.wt;
+import htp.xwriter;
+public class utf extends wt{
+	private static final long serialVersionUID=1;
+	public void to(xwriter x) throws Throwable{
+		x.p("<center><pre><code>").pre("font-size:27px");
+		char ch=0;
+		int lines=0x20000/33;
+		for(int n=0;n<lines;n++){
+			for(int c=0;c<33;c++){
+				x.p(ch);
+				ch++;
+			}
+			x.pl("\n");
+		}
+		x.pl("\n</code></pre>");
+	}
+}
+//ڀpackage wt;
+
+import htp.fld;
+import htp.wt;
+import htp.xwriter;
+
+public class zliv extends wt{
+	private static final long serialVersionUID=1L;
+	private int count=0;
+	public fld sts;
+	public void to(xwriter x) throws Throwable{
+		x.ax_action(this,"a","try this link "+count+" times").br();
+		x.span(sts);
+	}
+	public void ax_a(xwriter x,String[] p) throws Throwable{
+		while(true){
+			//		x.js_alert("ok "+count+"\"");
+			//		x.js_reload();
+			count++;
+			x.js_e_set(sts.wid(),""+count);
+			Thread.sleep(1000);
+			x.js_flush();
+			//	sts.set("count "+count);
+			//		x.js_code("sleep(1);ui.ax('_ a');");
+			//	x.js_reload();
+			//		x.js_code("status='';");
+		}
+	}
+	public void ax_b(xwriter x,String[] p) throws Throwable{}
+}
+package wt;
+import htp.cli;
+import htp.fld;
+import htp.req;
+import htp.wt;
+import htp.xwriter;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class typealine extends wt{
+	public static final String glyphs="ᐖᐛ";
+	public static final long serialVersionUID=0x00000001;
+	public fld s;
+	public void to(xwriter x)throws Throwable{
+		x.p("<center>").nl().p("<div style=\"text-align:center;border:1px dotted blue;padding:7px\">");
+//		x.a("/").p("upload").aEnd();
+		String wid=wid();
+		x.span(wid+"_st",htp.cfg.q).inputText(s,32,wid+" a").p(" ").ax_action(this,"a",glyph_random());
+		x.js_focus(s).br().br();
+		x.span("disp","");
+//		File f=ses.get().path("log.txt").file();
+//		if(!f.exists())
+//			return;
+//		long len=f!=null?f.length():0;
+//		long skp=len-512;
+//		if(skp<0)
+//			skp=0;
+//		x.pre();
+//		FileInputStream fi=new FileInputStream(f);
+//		fi.skip(skp);		
+//		htp.cp(fi,x.os());
+//		fi.close();
+		x.p("</div>");
+	}
+	public void ax_a(xwriter x,String[]p)throws Throwable{
+		String wid=wid();
+		req.get().session().path("log.txt")
+			.append(new SimpleDateFormat("yyyy-MM-dd---hh:mm:ss.SSS---").format(new Date())+s.toString(),"\n");
+		x.js_e_set(wid+"_st"," ํ "+req.get().session().path("log.txt").length()+" ڀ ");
+		x.js_e_set(this,glyph_random());
+		x.js_e_setv(s,"");
+		x.js_e_focus(s);
+		String sstr=s.toString();
+		if(!sstr.startsWith("←")){//altgr+y
+			s.set("");
+			return;
+		}
+		if(sstr.startsWith("←hello")){
+			x.js_e_setInnerHtmlBgn("disp");
+			new cli("sh",x.os()).p("uname -a").exit();
+			x.p("keywords: look go back select take drop copy<br>");
+			x.js_e_setEnd();
+		}else if(sstr.startsWith("←look")){
+			x.js_e_setInnerHtmlBgn("disp").pre();
+			new cli("sh",x.os()).p("ls -lA "+req.get().session().path("")).exit();
+			x.js_e_setEnd();
+		}else	
+			x.js_e_set("disp","?¡"+sstr);
+	}
+	public static String glyph_random(){
+		int i=(int)(Math.random()*glyphs.length());
+		return glyphs.substring(i,i+1);
+	}
+}
+package wt;
+
+import htp.xwriter;
+
+public class jskeys{
+	private static final long serialVersionUID=1;
+	xwriter w;
+	String wid;
+	public jskeys(xwriter w,String wid){
+		this.w=w;
+		this.wid=wid;
+	}
+	public void open(){
+		w.pl("<script>if(!ui.keys)ui.keys=[];");
+	}
+	public void add(String key,String cmd){
+		w.pl("ui.keys['"+key+"']=\""+cmd+"\";");
+	}
+	public void close(){
+		w.p("</script>");
+	}
+}
+package wt;
+import htp.cfg;
+import htp.fld;
+import htp.path;
+import htp.req;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class q extends wt{
+	public static final long serialVersionUID=1;
+	public static boolean empty_query_display_all=true;
+	public String msg;
+	public fld qf;
+	public boolean f1,f2,f3,f4;
+	public void ax_f1(xwriter x,String[]args){f1=!f1;x.js_reload();}
+	public void ax_f2(xwriter x,String[]args){f2=!f2;x.js_reload();}
+	public void ax_f3(xwriter x,String[]args){f3=!f3;x.js_reload();}
+	public void ax_f4(xwriter x,String[]args){f4=!f4;x.js_reload();}
+	public xwriter ia(xwriter x,String src,String pb,String title){
+		return ia(x,src,pb,false,title);
+	}
+	public xwriter ia(xwriter x,String src,String pb,boolean pressed,String title){
+		x.p("<a href=\"javascript:ui.ax('").p(pb).p("')\"");
+		if(pressed)
+			x.p(" class=prsd");
+		if(title!=null&&title.length()!=0)
+			x.p(" title=\"").p(title).p("\"");
+		return x.p(">").p(src).p("</a>");
+	}
+	String qs="";
+	public void to(final xwriter w) throws Throwable{
+//		req r=req.get();
+//		String qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase();
+////		qs=qs.replace('+',' ');
+//		qs=qs.replace('/',' ');
+//		qs=qs.replace('.',' ');
+//		qs=qs.replace("s+"," ");
+//		qs=qs.trim();
+		if(qs.length()>0)
+			qf.set(qs);
+		else
+			qs=qf.toString();
+		String wid=wid();
+//		jskeys js=new jskeys(w,wid);
+//		js.open();
+//		js.add("c"+(int)'1',"ui.ax('"+wid+" f1')");
+//		js.add("c"+(int)'2',"ui.ax('"+wid+" f2')");
+//		js.add("c"+(int)'3',"ui.ax('"+wid+" f3')");
+//		js.add("c"+(int)'4',"ui.ax('"+wid+" f4')");
+//		js.close();
+//		w.div("icons");
+//		ia(w,"1",wid+" f1",f1,"ctl+1");
+//		ia(w,"2",wid+" f2",f2,"ctl+2");
+//		ia(w,"3",wid+" f3",f3,"ctl+3");
+//		ia(w,"4",wid+" f4",f4,"ctl+4");
+//		w.divEnd();
+
+		long t0=System.currentTimeMillis();
+		String[]q=qs.split(" ");
+		if(q.length==1&&q[0].length()==0)
+			q=new String[0];
+		final String[] qsw=q;
+		final BufferedReader keyword_ix_file_readers[]=new BufferedReader[qsw.length];
+		final long keyword_ix_file_sizes[]=new long[qsw.length];
+		long acc=0;
+		boolean allhit=true;
+		for (int i=0;i<qsw.length;i++) {
+			path path=req.get().ses.path("ix/"+qsw[i]);
+			long filelen=path.length();
+			acc+=filelen;
+			keyword_ix_file_sizes[i]=filelen;
+			if(filelen>0)
+				keyword_ix_file_readers[i]=new BufferedReader(new InputStreamReader(path.is()));
+			else
+				allhit=false;
+		}
+		if(qsw.length==0)
+			allhit=false;
+		final long keyword_ix_sizes_total=acc;
+		List<String> list=new ArrayList<String>(cfg.K);
+		// sample
+		//| a | a | a |
+		//| c | b | b |
+		//| d | d | d |
+		//| g | g | e |
+		String hitstring="";
+		int hitcount=0;
+		int readerix=0;
+		if(allhit)
+			if(q.length==1)
+				for(String line=keyword_ix_file_readers[readerix].readLine();line!=null;line=keyword_ix_file_readers[readerix].readLine())
+					list.add(line);
+				
+			else
+				while(true){
+					String line=keyword_ix_file_readers[readerix].readLine();
+					if(line==null)
+						break;
+					int cmp=line.compareTo(hitstring);
+					if(cmp<0)
+						continue;
+					if(cmp>0){
+						hitstring=line;
+						readerix=(readerix+1)%keyword_ix_file_readers.length;
+						hitcount=1;
+						continue;
+					}
+					hitcount++;
+					if(hitcount==keyword_ix_file_readers.length){
+		//				os_hits.p(line).nl();
+						list.add(line);
+					}
+					readerix=(readerix+1)%keyword_ix_file_readers.length;
+				}
+		for (int i=0;i<keyword_ix_file_readers.length;i++){
+			if(keyword_ix_file_readers[i]!=null)
+				keyword_ix_file_readers[i].close();
+		}
+		long t1=System.currentTimeMillis();
+		msg=msg==null?"":msg;
+		if(f3)
+			msg+="  sort by name"; 
+			Collections.sort(list,new Comparator<String>(){
+				public int compare(String a,String b){
+					return a.toLowerCase().compareTo(b.toLowerCase());
+				}
+			});
+		if(f4)
+			msg+="  folders first"; 
+			Collections.sort(list,new Comparator<String>(){
+				public int compare(String a,String b){
+					boolean da=new File(a).isDirectory();
+					boolean db=new File(b).isDirectory();
+					if(da&&db)
+						return 0;
+					if(!da&&!db)
+						return 0;
+					if(da&&!db)
+						return -1;
+					if(!da&&db)
+						return 1;
+					return 0;
+				}
+			});
+
+		long t2=System.currentTimeMillis();
+		w.nl().p("“").inputText(qf,11+qf.toString().length(),wid+" q").js_focus(qf).p("” found ").p(list.size()).p(" in ").p(t1-t0).p(" ms");
+		w.br();
+		w.p(Arrays.toString(keyword_ix_file_sizes));
+		if(!utl.isEmpty(msg)){
+			w.p("<code><pre>").p(msg).p("</pre></code>");
+			msg=null;
+		}
+
+		StringBuffer sb=new StringBuffer(256);
+		sb.append("'").append(qs).append("' found ").append(list.size()).append(" in ").append(t1-t0).append(" ms");
+		sb.append("    keyword file sizes [");
+		for(int n=0;n<keyword_ix_file_sizes.length;n++){
+			sb.append(keyword_ix_file_sizes[n]).append(",");
+		}
+		sb.setLength(sb.length()-1);
+		sb.append("] bytes ").append(keyword_ix_sizes_total);
+		//w.br().nl().p(sb)
+		String s1="list processing "+(t2-t1)+" ms";
+		cfg.htp_out.println(cfg.a+sb+"\n "+cfg.a+s1);
+//		w.nl().p(s).nl();
+		w.table("files").nl();
+		for(String s:list){
+			File file=new File(s);
+			String path=file.getPath();
+			boolean isDir=file.isDirectory();
+			String iconName;
+			if(isDir)
+				iconName="";
+			else
+				iconName="";
+			w.tr().td("\"icns first\"").p(iconName).td("name");
+			if(file.isFile())
+				w.a(path).p(file.getName()).aEnd();
+			else
+				w.p(path);
+			w.td("date").p(utl.ttoa(file.lastModified(),2));
+			w.td("\"size last\"").p(isDir?"----":utl.btoa(file.length()));
+			w.nl();
+		}
+		w.tableEnd();
+	}
+	public void ax_q(xwriter x,String[]p)throws Throwable{
+		x.js_code("location.href='/q';");
+	}
+}
+package wt;
+import java.util.Iterator;
+import htp.cli;
+import htp.pipe;
+import htp.pipe_esc_ltgt;
+import htp.req;
+import htp.htp;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+public class hello extends wt{
+	private static final long serialVersionUID=1;
+	public void to(xwriter x)throws Throwable{
+		x.p("<pre><code>");
+		x.p("          session: ").p(req.get().session().href()).nl();
+		x.p("             keys: ").p(req.get().session().keys()).nl();
+		htp.print_stats(x.os());
+		x.p("           server: ");
+		pipe pipe=new pipe_esc_ltgt(x.os());
+		new cli("sh",pipe).p("uname -a").exit();
+		x.p("      server home: ");
+		new cli("sh",pipe).p("pwd").exit();
+		x.p("        home size: ");
+		new cli("sh",pipe).p("du -sh .").exit();
+		x.p("          classes: ");
+		new cli("sh",pipe).p("du -sh jar/").exit();
+		x.p(utl.hr).nl();			
+		new cli("sh",pipe).p("free -l").exit();
+		x.p(utl.hr).nl();			
+		new cli("sh",pipe).p("df -h").exit();
+		x.p(utl.hr).nl();			
+		new cli("sh",pipe).p("ifconfig").exit();
+		x.p(utl.hr).nl();			
+		new cli("sh",pipe).p("iwconfig").exit();
+		x.p(utl.hr).nl();
+		for(Iterator<?>i=System.getProperties().entrySet().iterator();i.hasNext();x.pl(i.next()));
+		x.p(utl.hr).nl();		
+		new cli("sh",pipe).p("ps axjf").exit();
+//		x.p(htp.hr).nl();		
+//		new Cli("sh",new os_ltgtesc(x.os())).p("echo 'top'>a.tmp;top -n 1 >>a.tmp;cat a.tmp").exit();
+//		x.p(htp.hr).nl();			
+//		new Cli("sh",x.os()).p("loadavg").exit();
+//		x.p(htp.hr).nl().p("</code><pre>");
+	}
+}
+package wt;
+import htp.fld;
+import htp.wt;
+import htp.xwriter;
+import java.util.HashSet;
+import java.util.Set;
+public class wordcon extends wt{
+	private static final long serialVersionUID=1;
+	public fld txt;
+	
+	public void to(xwriter x)throws Throwable{
+		x.textArea(txt,"editor").br();
+		x.ax_action(this,"ok","wordcon");
+	}
+	public void ax_ok(xwriter x,String[]p){
+		Set<String> set=new HashSet<String>();
+		String[]lines=txt.toString().split("\\n");
+		int lineno=0;
+		for(String line:lines){
+			lineno++;
+			if(line.length()==0)
+				continue;
+			String[]words=line.split(" ");
+			set.clear();
+			for(String word:words){
+				if(word.length()==0)
+					continue;
+				if(set.contains(word)){
+					x.js_alert("repetition of word “"+word+"” on line "+lineno);
+					return;
+				}
+				set.add(word);
+			}
+		}
+		x.js_alert("ok");
+	}
+}
+package wt;
+
+import htp.xwriter;
+
+public class show extends tabs {
+	private static final long serialVersionUID = 1L;
+	public utf utf;
+	public typealine typealine;
+	public typealine typealine2;
+	public qix qix;
+	public q q;
+	public files files;
+	public hello hello;
+
+	protected void init() throws Throwable {
+		els.add(new el("server", new hello()));
+		els.add(new el("index", new qix()));
+		els.add(new el("typealine", new typealine()));
+	}
+
+	public void to(xwriter x) throws Throwable {
+//		super.to(x);
+//		q.to(x);
+		typealine.to(x);
+		typealine2.to(x);
+//		qix.to(x);
+	}
+
+}
+package wt;
+import htp.fld;
+import htp.path;
+import htp.pipe_esc_nlsq;
+import htp.wt;
+import htp.xwriter;
+public final class editor extends wt{
+	public static final long serialVersionUID=1L;
+	protected path path;
+	protected String[]snapshots=new String[24];
+	protected int snapshots_i=0;
+	public fld txt;
+	public fld status;
+	public void path(path path)throws Throwable{
+		if(path.equals(this.path))
+			return;
+		on_path_change(this.path,path);
+		this.path=path;
+	}
+	private void on_path_change(path from, path to)throws Throwable{
+		this.path=to;
+		ax_reload(null,null);
+	}
+	public void to(xwriter x)throws Throwable{
+//		x.p("editor: ").p(path).nl().flush();
+//		path.to(x.os());
+		x.nl();
+		x.ax_action(this, "snapshot", " :: snapshot ");
+		x.ax_action(this, "undo", " :: undo ");
+		x.ax_action(this, "redo", " :: redo ");
+		x.ax_action(this, "save", " :: save ");
+		x.ax_action(this, "reload", " :: reload ");
+//		x.action_ajax(this, "close", " :: close ");
+//		x.action_ajax(this, "savenclose", " :: save and close ");
+		x.nl();
+		if(!status.isEmpty()){
+			x.span(status).nl();
+		}
+		x.textArea(txt,"editor");
+		x.js_focus(txt);
+	}
+	public void ax_save(xwriter x,String[]p)throws Throwable{
+		txt.to(path);//gc
+//		x.js_alert("saved");
+		status.set("saved");
+		x.js_e_set(status);
+	}
+	public void ax_snapshot(xwriter x,String[]p)throws Throwable{
+		snapshots[snapshots_i++]=txt.toString();
+//		x.js_alert("snapshot "+snapshots_i);
+		status.set("snapshot "+snapshots_i);
+		x.js_e_set(status);
+	}
+	public void ax_undo(xwriter x,String[]p)throws Throwable{
+		if(snapshots_i==0){
+			status.set("snapshot "+snapshots_i);
+			if(x!=null)
+				x.js_e_set(status);
+			return;
+		}
+		txt.set(snapshots[--snapshots_i]);
+		x.js_e_setValueBgn(txt.name());
+		txt.to(new pipe_esc_nlsq(x.os()));
+		x.js_e_setEnd();
+//		x.js_alert("undo to snapshot "+snapshots_i);
+		status.set("undo to snapshot "+snapshots_i);
+		x.js_e_set(status);
+	}
+	public void ax_redo(xwriter x,String[]p)throws Throwable{
+		txt.set(snapshots[++snapshots_i]);
+		x.js_e_setValueBgn(txt.name());
+		txt.to(new pipe_esc_nlsq(x.os()));
+		x.js_e_setEnd();
+//		x.js_alert("redo to snapshot "+snapshots_i);
+		status.set("redo to snapshot "+snapshots_i);
+		x.js_e_set(status);
+	}
+	public void ax_reload(xwriter x,String[]p)throws Throwable{
+		if(path==null){
+			status.set("path is empty");
+			if(x!=null)
+				x.js_e_set(status);
+			return;
+		}
+		txt.read(path);
+		status.set("reloaded");
+		if(x!=null){
+			x.js_e_setInnerHtmlBgn(txt.name());
+			txt.to(new pipe_esc_nlsq(x.os()));
+			x.js_e_setEnd();
+			x.js_e_set(status);
+			x.js_focus(txt);
+		}
+	}
+}
+package wt.pk;
+import htp.cli;
+import htp.pipe_esc_ltgt;
+import htp.req;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+
+import java.net.URLDecoder;
+
+final public class info extends wt{
+	private static final long serialVersionUID=1;
+	public void to(final xwriter x)throws Throwable{
+		final req r=req.get();
+		final String[]qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
+		x.p("<pre>").nl();
+		if(utl.isEmpty(qs[0]))
+			return;
+		new cli("sh",new pipe_esc_ltgt(x.os())).p("apt-cache show ").p(qs[0]).exit();
+	}
+}
+
+package wt.pk;
+import htp.cli;
+import htp.pipe_newliner;
+import htp.req;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+
+import java.net.URLDecoder;
+
+final public class all extends wt{
+	private static final long serialVersionUID=1;
+	public void to(final xwriter x)throws Throwable{
+		final req r=req.get();
+		final String qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase().replace(';',' ').replace('&',' ').trim();
+		if(utl.isEmpty(qs))
+			return;
+		x.p("<pre><code><tt>");
+		new cli("sh",new pipe_newliner(){
+			public void on_newline(String line){
+				String s=line.trim().toLowerCase();
+				if(!s.startsWith(qs))
+					return;
+				x.p("<a href=\"").p(getClass().getName().substring(htp.cfg.htp_web_widgets_package.length()).replace('.', '/'));
+				if(qs!=null)
+					x.p("?").p(qs);
+				x.p("\">").p(s).aEnd().nl();
+			};
+		}).p("apt-cache pkgnames ").p(qs).exit();
+	}
+}
+package wt.pk;
+import htp.cli;
+import htp.pipe_newliner;
+import htp.req;
+import htp.wt;
+import htp.xwriter;
+
+import java.net.URLDecoder;
+
+final public class files extends wt{
+	private static final long serialVersionUID=1;
+	public void to(final xwriter x)throws Throwable{
+		final req r=req.get();
+		final String[]qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
+		x.p("<pre><code><tt>");
+		//x.p(qs).nl();
+		new cli("sh",new pipe_newliner(){
+			public void on_newline(String line){
+				String s=line.toLowerCase().trim();
+				x.a(s).p(s).aEnd().nl();
+			};
+		}).p("dpkg-query -L ").p(qs[0]).exit();
+	}
+}
+package wt.pk;
+import htp.fld;
+import htp.req;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
+public class pkg extends wt{
+	private static final long serialVersionUID=1;
+	public fld q;
+	public info info;
+	public requires requires;
+	public files files;
+	public void to(final xwriter x)throws Throwable{
+		final req r=req.get();
+		final String[]qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
+		if(!utl.isEmpty(qs[0]))
+			q.set(qs[0]);
+		x.p("<pre>package “").inputText(q,q.toString().length()+11,wid()+" upd").js_focus(q).p("” ");
+		int i=qs.length>1?Integer.parseInt(qs[1]):0;
+		wt[]wta=new wt[]{files,requires,info};
+		for (int j=0;j< wta.length;j++) {
+			wt wt=wta[j];
+			if(i==j)
+				x.p("  :: ").p(wt.name());
+			else
+				x.p("  :: ").a(r.path_s+"?"+qs[0]+"?"+j).p(wt.name()).aEnd();
+		}
+		x.nl().hr();
+		if(utl.isEmpty(q.toString()))
+			return;
+		x.p(wta[i]).nl().nl();
+	}
+	public void ax_upd(xwriter x,String[]p)throws Throwable{
+		x.js_code("location.href=location.pathname+'?"+URLEncoder.encode(q.toString(),"utf8")+"';");
+	}
+}
+
+package wt.pk;
+import htp.cli;
+import htp.pipe_newliner;
+import htp.req;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+
+import java.net.URLDecoder;
+
+public class requires extends wt{
+	private static final long serialVersionUID=1;
+	public void to(final xwriter x)throws Throwable{
+		final req r=req.get();
+		final String[]qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
+		if(utl.isEmpty(qs[0]))
+			return;
+		final StringBuffer sb=new StringBuffer(r.path_s).append("?");
+		x.p("<pre><code><tt>").nl();
+		final int sbl=sb.length();
+		new cli("sh",new pipe_newliner(){
+			public void on_newline(String line){
+				String s=line.toLowerCase();
+				int i=s.lastIndexOf(":");
+				if(i==-1)
+					return;
+				if(s.indexOf("depends:")==-1)
+					return;
+				s=s.substring(i+1).trim();
+				sb.append(s);
+				x.a(sb.toString()).p(s).aEnd().nl();
+				sb.setLength(sbl);
+			};
+		}).p("apt-cache -i depends ").p(qs[0]).exit();
+	}
+}
+package wt.pk;
+import htp.cli;
+import htp.pipe_newliner;
+import htp.req;
+import htp.wt;
+import htp.cfg;
+import htp.xwriter;
+
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+
+
+final public class depends_rec extends wt{
+	private static final long serialVersionUID=1;
+	public void to(final xwriter x)throws Throwable{
+		final req r=req.get();
+		final String qs=URLDecoder.decode(r.query_s,"utf8").toLowerCase().replace(';',' ').replace('&',' ').trim();
+		list.clear();
+		depends(x,r,qs,"");
+	}
+	private List<String>list=new ArrayList<String>(cfg.K);
+	private void depends(final xwriter x, final req rt,final String qs,final String indent)throws Throwable{
+		new cli("sh",new pipe_newliner(){
+			public void on_newline(String line)throws Throwable{
+				String s=line.toLowerCase();
+				int i=s.lastIndexOf(":");
+				if(i==-1)
+					return;
+				if(s.indexOf("depends:")==-1)
+					return;
+				s=s.substring(i+1).trim();
+				//System.out.println(s);
+				for(int n=0;n<indent.length();n++)
+					x.p("·");
+				x.a(rt.path_s+"?"+s).p(s).aEnd();
+				if(list.contains(s)){
+					x.p("*");
+					x.br().nl();
+					return;
+				}else
+					list.add(s);
+				x.br().nl();
+				depends(x,rt,s,indent+"  ");
+			};
+		}).p("apt-cache depends ").p(qs).exit();
+	}
+}
+package wt.fb;
+
+import htp.path;
+import htp.req;
+import htp.wt;
+import htp.xwriter;
+
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
+import wt.jskeys;
+
+public final class pkg extends wt {
+	private static final long serialVersionUID = 1L;
+	public void to(xwriter xw) throws Throwable {
+		path pth=req.get().session().path("/4g.4g");
+		xw.p("file system buffer 4g");
+		String wid=wid();
+		jskeys jskeys=new jskeys(xw, wid);
+		jskeys.open();
+		jskeys.add("sF", "ui.ax('" + wid + " f')");
+		jskeys.add("sA", "ui.ax('" + wid + " a')");
+		jskeys.add("sD", "ui.ax('" + wid + " d')");
+		jskeys.close();
+		xw.p(" · ").ax_action(this, "f", "<b>f</b>ormat");
+		xw.p(" · ").ax_action(this, "a", "<b>a</b>ttributes");
+		xw.p(" · ").ax_action(this, "d", "<b>d</b>isplay");
+		xw.br().p(pth.length()).p(" bytes").br().br();
+		InputStream is=pth.is();
+		ObjectInputStream ois=new ObjectInputStream(is);
+		int x=ois.readInt();
+		int y=ois.readInt();
+		int z=ois.readInt();
+		int q=ois.readInt();
+		xw.p("x,y,z,q=").p(x).p(',').p(y).p(',').p(z).p(',').p(q).br();
+	}
+	public void ax_f(xwriter xw,String[]args)throws Throwable{
+		path path=req.get().session().path("/4g.4g");
+		OutputStream os=path.os();
+		ObjectOutputStream oos=new ObjectOutputStream(os);
+		oos.writeInt(1);oos.writeInt(0);oos.writeInt(1);oos.writeInt(0);oos.flush();
+		xw.js_reload();
+	}
+}
+package wt;
+
+import htp.fld;
+import htp.htp;
+import htp.path;
+import htp.req;
+import htp.utl;
+import htp.wt;
+import htp.xwriter;
+
+import java.io.File;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+public class files extends wt {
+	private static final long serialVersionUID = 1;
+	public fld name;
+	public fld path;
+	public editor editor;
+	public String msg;
+	boolean f2 = true, f3 = true, f4, f5;
+	Map<String,List<String>>clipboards=new HashMap<String,List<String>>();
+	{clipboards.put("left clipboard",new LinkedList<String>());
+	clipboards.put("right clipboard",new LinkedList<String>());}
+	String clipboards_sl="left clipboard";
+	String clipboards_slr="right clipboard";
+	Map<String,String>ix_sfx_edclsnm=new HashMap<String,String>();
+	{ix_sfx_edclsnm.put("zn","wt.zn.ed");}
+	public void ax_f1(xwriter xw) {
+		pathUp();
+		xw.js_reload();
+	}
+
+	public void ax_f2(xwriter xw) {
+		f2 = !f2;
+		xw.js_reload();
+	}
+
+	public void ax_f3(xwriter xw) {
+		f3 = !f3;
+		xw.js_reload();
+	}
+
+	public void ax_f4(xwriter xw) {
+		f4 = !f4;
+		xw.js_reload();
+	}
+
+	public void ax_navHome(xwriter xw) {
+		path.set("");
+		xw.js_reload();
+	}
+
+	public void ax_op(xwriter xw, String[] args) {
+		pathExp(args[2]);
+		xw.js_reload();
+	}
+
+	public void ax_f6(xwriter x, String[] p) throws Throwable {
+		path pth = req.get().session()
+				.path(path.toString() + "/" + URLDecoder.decode(p[3], "utf8"));
+		if ("1".equals(p[2])) {
+			if (!pth.mkdirs())
+				x.js_alert("cannot create folder");
+		} else if ("0".equals(p[2]))
+			if (!pth.createNewFile())
+				x.js_alert("cannot created file");
+		x.js_code("location.reload()");
+	}
+
+	public path filepath() throws Throwable {
+		return f4 ? htp.path(path.toString()) : req.get().session()
+				.path(path.toString());
+	}
+
+	public void ax_rm(xwriter xw, String[] args) throws Throwable {
+		String nm = URLDecoder.decode(args[2], "utf8");
+		checkNameEnc(nm);
+		filepath().file(nm).rm();
+		xw.js_reload();
+	}
+	public void ax_sl(xwriter xw, String[] args) throws Throwable {
+		String nm = URLDecoder.decode(args[2], "utf8");
+		checkNameEnc(nm);
+		String p=filepath().file(nm).toString();
+		List<String>ls=clipboards.get(clipboards_sl);
+		if(ls==null){
+			ls=new LinkedList<String>();
+			clipboards.put(clipboards_sl,ls);
+		}
+		if(!ls.contains(p))
+			ls.add(p);
+		xw.js_reload();
+	}
+	public void ax_usl(xwriter xw, String[] args) throws Throwable {
+		String p = URLDecoder.decode(args[2], "utf8");
+		checkNameEnc(p);
+		List<String>ls=clipboards.get(clipboards_sl);
+		if(ls==null){
+			ls=new LinkedList<String>();
+			clipboards.put(clipboards_sl,ls);
+		}
+		ls.remove(p);
+		xw.js_reload();
+	}
+	public void ax_sldl(xwriter xw, String[] args) throws Throwable {
+		List<String>ls=clipboards.get(clipboards_sl);
+		if(ls==null)
+			return;
+		for(Iterator<String>i=ls.iterator();i.hasNext();){
+			String s=i.next();
+			if(htp.path(s).rm())
+				i.remove();
+		}
+		xw.js_reload();
+	}
+	public void ax_slcp(xwriter xw, String[] args) throws Throwable {
+		List<String>ls=clipboards.get(clipboards_sl);
+		if(ls==null)
+			return;
+		for(Iterator<String>i=ls.iterator();i.hasNext();){
+			String s=i.next();
+			if(htp.path(s).cpto())
+				i.remove();
+		}
+		xw.js_reload();
+	}
+
+	public xwriter ia(xwriter x, String src, String pb, String title) {
+		return ia(x, src, pb, false, title);
+	}
+
+	public xwriter ia(xwriter x, String src, String pb, boolean pressed,
+			String title) {
+		x.p("<a href=\"javascript:ui.ax('").p(pb).p("')\"");
+		if (pressed) {
+			x.p(" class=prsd");
+		}
+		if (title != null && title.length() != 0) {
+			x.p(" title=\"").p(title).p("\"");
+		}
+		x.p(">").p(src).p("</a>");
+		return x;
+	}
+
+	public interface ieditor{
+		void init(path p);
+		void to(xwriter w);
+	}
+	public void to(xwriter x) throws Throwable {
+		String p = path.toString();
+		// if(utl.isEmpty(p))
+		// p="/";
+		// p=p.replace('+',' ');
+		path path_this = null;
+		try {
+			path_this = f4 ? htp.path(p) : req.get().session().path(p);
+		} catch (Throwable t) {
+			msg = t.getMessage();
+		}
+		String wid = wid();
+		jskeys js = new jskeys(x, wid);
+		js.open();
+		js.add("c1", "ui.ax('" + wid + " f1')");
+		js.add("c2", "ui.ax('" + wid + " f2')");
+		js.add("c3", "ui.ax('" + wid + " f3')");
+		js.add("c4", "ui.ax('" + wid + " f4')");
+		js.add("c5", "ui.ax('" + wid + " f5')");
+		js.add("c0", "var newf=confirm('create folder?');var newn=prompt('name',newf?'folder':'file');if(newn==''){alert('canceled');}else ui.ax('"
+						+ wid + " f6 '+(newf?'1':'0')+' '+escape(newn))");
+		js.close();
+		x.div("icons");
+		ia(x, "1", wid + " f1", path.toString().equals(".")
+				|| path.toString().equals("") ? true : false, "ctl+1");
+		ia(x, "2", wid + " f2", f2, "ctl+2");
+		ia(x, "3", wid + " f3", f3, "ctl+3");
+		ia(x, "4", wid + " f4", f4, "ctl+4");
+		x.divEnd();
+		x.div("path").p(path).divEnd();
+		if (!utl.isEmpty(msg)) {
+			x.p("<b>").p(msg).p("</b>").br();
+			msg = null;
+		}
+		if (path_this == null)
+			return;
+		if (path_this.isFile()) {
+			String editorName=ix_sfx_edclsnm.get(path_this.sfx());
+			if(editorName==null){
+				editor.path(path_this);
+				x.pre();
+				editor.to(x);
+				x.preEnd();				
+			}else{
+				ieditor ed=(ieditor)Class.forName(editorName).newInstance();
+				ed.init(path_this);
+				ed.to(x);
+			}
+				
+		}
+		if (path_this.isDirectory()) {
+			File[] files = path_this.listFiles();
+			if (files != null) {
+				if (f2)
+					Arrays.sort(files, new Comparator<File>() {
+						public int compare(File a, File b) {
+							return a.toString().toLowerCase()
+									.compareTo(b.toString().toLowerCase());
+						}
+					});
+				if (f3)
+					Arrays.sort(files, new Comparator<File>() {
+						public int compare(File a, File b) {
+							boolean da = a.isDirectory();
+							boolean db = b.isDirectory();
+							if (da && db)
+								return 0;
+							if (!da && !db)
+								return 0;
+							if (da && !db)
+								return -1;
+							if (!da && db)
+								return 1;
+							return 0;
+						}
+					});
+				x.table("files");
+				for (int i = 0; i < files.length; i++) {
+					File file = files[i];
+					String name = file.getName();
+					String nameEnc = pbParamEnc(name);
+					boolean isDir = file.isDirectory();
+					String iconName;
+					if (isDir)
+						iconName = "";
+					else
+						iconName = "";
+					x.tr();
+					x.td("icns first").p("<a href=\"javascript:ui.ax('")
+							.p(wid).p(" op ").p(nameEnc).p("')\">").p(iconName)
+							.p("</a>");
+					x.p("<a href=\"javascript:ui.ax('").p(wid).p(" sl ")
+					.p(nameEnc).p("')\">").p("↓").p("</a>");
+					x.p("<a href=\"javascript:ui.ax('").p(wid).p(" rm ")
+					.p(nameEnc).p("')\">").p("ĸ").p("</a>");
+					x.td("name");
+					if (file.isFile())
+						x.a((f4 ? "" : req.get().session().href()) + path + "/"
+								+ nameEnc).p(name).aEnd();
+					else
+						x.p(name);
+
+					x.td("date").p(ttoa(file.lastModified(), 2));
+					x.td("size last").p(isDir ? "--" : btoa(file.length()));
+					x.nl();
+				}
+				x.tableEnd();
+			}
+		}
+		x.br();
+		x.p("<table><tr><td>");
+		List<String>ls=clipboards.get(clipboards_sl);
+		if(ls==null){
+			ls=new LinkedList<String>();
+			clipboards.put(clipboards_sl,ls);
+		}
+		x.p(clipboards_sl);
+		x.br();
+		x.p("<a href=\"javascript:ui.ax('").p(wid).p(" slcp')\">").p("đ").p("</a>").p("cut");
+		x.p("<a href=\"javascript:ui.ax('").p(wid).p(" slcp')\">").p("ĸ").p("</a>").p("copy");
+		x.p("<a href=\"javascript:ui.ax('").p(wid).p(" slpt')\">").p("þ").p("</a>").p("paste");
+		x.p("<a href=\"javascript:ui.ax('").p(wid).p(" sldl')\">").p("ð").p("</a>").p("delete");
+		x.br();
+		for(String pp:ls)
+			x.p("<a href=\"javascript:ui.ax('").p(wid).p(" usl ")
+			.p(pp).p("')\">").p("←").p("</a>").p(pp).br();
+		x.br();
+		
+		x.p("</td>");
+//		w.p("<td>...............<br>copy from left to right<br>move from left to right<br>copy from right to left<br>move from right to left</td><td>");
+//		ls=clipboards.get(clipboards_slr);
+//		if(ls==null){
+//			ls=new LinkedList<String>();
+//			clipboards.put(clipboards_slr,ls);
+//		}
+//		w.p(clipboards_slr).p("   ");
+//		w.br();
+//		w.p("<a href=\"javascript:ui.ax('").p(wid).p(" slcp')\">").p("đ").p("</a>").p("cut");
+//		w.p("<a href=\"javascript:ui.ax('").p(wid).p(" slcp')\">").p("ĸ").p("</a>").p("copy");
+//		w.p("<a href=\"javascript:ui.ax('").p(wid).p(" slpt')\">").p("þ").p("</a>").p("paste");
+//		w.p("<a href=\"javascript:ui.ax('").p(wid).p(" sldl')\">").p("ð").p("</a>").p("delete");
+//		w.br();
+//		for(String pp:ls)
+//			w.p("<a href=\"javascript:ui.ax('").p(wid).p(" usl ")
+//			.p(pp).p("')\">").p("←").p("</a>").p(pp).br();
+//		w.p("</td>");
+		x.p("</tr></table>");
+	}
+
+	private void checkNameEnc(String nameEnc) {
+		if (nameEnc.indexOf("..") != -1)
+			throw new Error(nameEnc);
+	}
+
+	private void pathExp(String nameEnc) {
+		checkNameEnc(nameEnc);
+		String p = path.toString();
+		p = (p == null || p.length() == 0) ? "." : p;
+		path.set(p + "/" + nameEnc);
+	}
+
+	private void pathUp() {
+		int i = path.toString().lastIndexOf("/");
+		if (i == -1) {
+			path.set("");
+			return;
+		}
+		path.set(path.toString().substring(0, i));
+		if (path.toString().equals("."))
+			path.set("");
+	}
+
+	private static String btoa(long n) {
+		long i = n / 1024;
+		if (i == 0)
+			return Long.toString(n) + " B";
+		return i + " KB";
+	}
+
+	private static String itoa(int i) {
+		return Integer.toString(i);
+	}
+
+	private static String pbParamEnc(String param) {
+		return param.replace(' ', '+').replace('/', '-');
+	}
+
+	private static String ttoa(long t, int prec) {
+		long ms = t % 1000;
+		long s = (t / 1000);
+		long m = (s / 60);
+		long h = (m / 60);
+		StringBuffer sb = new StringBuffer();
+		String d = itoa((int) (h % 24));
+		if (d.length() == 1)
+			sb.append('0');
+		sb.append(d);
+		if (prec == 1)
+			return sb.toString();
+		sb.append(':');
+		d = itoa((int) (m % 60));
+		if (d.length() == 1)
+			sb.append('0');
+		sb.append(d);
+		if (prec == 2)
+			return sb.toString();
+		sb.append(':');
+		d = itoa((int) (s % 60));
+		if (d.length() == 1)
+			sb.append('0');
+		sb.append(d);
+		if (prec == 3)
+			return sb.toString();
+		sb.append('.');
+		d = itoa((int) ms);
+		for (int n = 3, l = d.length(); n != l; n--)
+			sb.append('0');
+		sb.append(d);
+		return sb.toString();
+	}
+}
+package wt.zn;
+
+import htp.path;
+import htp.xwriter;
+
+public class ed implements wt.files.ieditor {
+	path pth;
+
+	public void init(path p) {
+		pth = p;
+	}
+
+	public void to(xwriter w) {
+		w.p(pth.toString());
+	}
+	// zen notincah 40b 256 
+	//         not inc add hlf
+	// zn crxm ih ra------ rb------ rc------ niah----   
+	// :: :::: :: -------- imm24--- -------- --------
+	// :: :::: :: imm----- -------- -------- --------
+	// -- c--- -- -------- -------- -------- -------- .  call  imm
+	// -- cr00 00 -------- -------- -------- -------- .  loop  imm        for(int k=0;k<imm;k++)
+	// -- cr10 00 -------- -------- -------- -------- .  lp    ra      rb rc   for(int a=ra,b=rb,c=rc;a<b;a+=c)
+	// -- cr11 01 -------- -------- -------- -------- .  lda   imm        r[0xa]=imm32
+	// -- cr11 10 -------- -------- -------- -------- .  ldr   ra imm24     r[ra]=imm24
+	// -- cr11 11 -------- -------- -------- -------- .  cp    ra      rb rc
+	// -- cr0m 00 -------- -------- -------- -------- .  ld    *ra     rb rc   rc=*(ra+(rb<<2))
+	// -- cr0m i0 -------- -------- -------- -------- .  ld    *ra++   rb rc
+	// -- cr1m 00 -------- -------- -------- -------- .  st    *ra     rb rc   *(ra+(rb<<2))=rc
+	// -- cr1m i0 -------- -------- -------- -------- .  st    *ra++   rb rc
+	// -- cr1m ih -------- -------- -------- -------- .  st    *ra++   rb rc   chr
+	// -- cr1m 0h -------- -------- -------- -------- .  st    *ra     rb rc   chr
+	// -- ---m -- -------- -------- -------- -------- .  niah  *ra     rb rc
+	// -- ---m i- -------- -------- -------- -------- .  niah  *ra++   rb rc
+	// z- ---- -- -------- -------- -------- -------- z  niah  ra      rb rc
+	// -n ---- -- -------- -------- -------- -------- n  niah  ra      rb rc   nxt
+	// zn -r-- -- -------- -------- -------- -------- p  niah  ra      rb rc   ret
+	// -- -rx- -- -------- -------- -------- -------- .  niah  ra      rb rc   nxt   ret
+	// zn crx- lsib niah ra1 ra2
+}
+package wt;
+import htp.cfg;
+import htp.htp;
+import htp.path;
+import htp.pipe_counter;
+import htp.pipe_indexer;
+import htp.req;
+import htp.wt;
+import htp.xwriter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+public class qix extends wt{
+	public static final long serialVersionUID=1;
+	public static boolean empty_query_display_all=false;
+	public static int min_word_len=1;
+	public static int max_word_len=32;
+	public boolean f1,f2,f3,f4;
+	public String msg;
+
+	public void pb_f1(){f1=!f1;}
+	public void pb_f2(){f2=!f2;}
+	public void pb_f3(){f3=!f3;}
+	public void pb_f4(){f4=!f4;}
+	public xwriter ia(xwriter x,String src,String pb,String title){
+		return ia(x,src,pb,false,title);
+	}
+	public xwriter ia(xwriter x,String src,String pb,boolean pressed,String title){
+		x.p("<a href=\"javascript:ui.ax('").p(pb).p("')\"");
+		if(pressed){
+			x.p(" class=prsd");
+		}
+		if(title!=null&&title.length()!=0){
+			x.p(" title=\"").p(title).p("\"");
+		}
+		return x.p(">").p(src).p("</a>");
+	}
+	String qs="";
+	public final void ax_letter(xwriter x,String[]args){
+		qs=args[2];
+		x.js_reload();
+	}
+	public void to(final xwriter w) throws Throwable{
+//		req r=req.get();
+//		String qs=URLDecoder.decode(r.query_s,"utf8");
+//		qs=qs.replace('+',' ');
+//		qs=qs.replace('/',' ');
+//		qs=qs.replace('.',' ');
+//		qs=qs.replace("s+"," ");
+//		qs=qs.trim();
+		String wid=wid();
+		jskeys js=new jskeys(w,wid);
+		js.open();
+		js.add("c"+(int)'1',"ui.ax('"+wid+" f1')");
+		js.add("c"+(int)'2',"ui.ax('"+wid+" f2')");
+		js.add("c"+(int)'3',"ui.ax('"+wid+" f3')");
+		js.add("c"+(int)'4',"ui.ax('"+wid+" f4')");
+		js.close();
+//		w.div("icons");
+//		ia(w,"1",wid+" f1",f1,"ctl+1");
+//		ia(w,"2",wid+" f2",f2,"ctl+2");
+//		ia(w,"3",wid+" f3",f3,"ctl+3");
+//		ia(w,"4",wid+" f4",f4,"ctl+4");
+//		w.divEnd();
+		w.ax_action(this,"reindex",":: reindex");
+		w.p(" ");
+		w.ax_action(this,"update",":: update");
+		w.br();
+		if(msg!=null&&msg.length()>0){
+			w.p("<code><pre>").p(msg).p("</pre></code>").br();
+			msg=null;
+		}
+		w.p(" · ");
+		for(char ch='a';ch<='z';ch++){
+			String chstr=""+ch;
+			if(chstr.equals(qs))
+				w.p(chstr);
+			else
+				w.a("javascript:ui.ax('"+wid+" letter "+ch+"')",chstr);
+			w.p(" · ");
+		}
+		w.br();
+		final List<File>file_list=new ArrayList<File>(cfg.K);
+		final counter counter_rejected=new counter();
+		String[] q=qs.split(" ");
+		if(q.length==1&&q[0].length()==0)
+			q=new String[0];
+		if(!empty_query_display_all&&q.length==0)
+			return;
+		final String[]qs_word_array=q;
+		long t0=System.currentTimeMillis();
+		path pth=req.get().ses.path("ix");
+		cfg.htp_out.println(cfg.q+"tree "+pth.fullPath());
+		visit_files(pth,new Visitor(){
+			public void visit(Object o){
+				File f=(File)o;
+				String path=f.getPath().toLowerCase();
+				path=path.replace('.',' ');
+				path=path.replace('\\',' ');
+				path=path.replace('/',' ');
+				path=path.replace("s+"," ");
+				path=path.trim();
+				String[]pathsplt=path.split(" ");
+				for(int n=0;n<qs_word_array.length;n++){
+					boolean found=false;
+					for(int k=0;k<pathsplt.length;k++)
+						if(pathsplt[k].startsWith(qs_word_array[n])){
+							found=true;
+							break;
+						}
+					if(!found){
+						counter_rejected.inc();
+						return;
+					}
+				}
+				file_list.add(f);
+				return;
+			}
+		});
+		long t1=System.currentTimeMillis();
+		if(f2)
+			Collections.sort(file_list,new Comparator<File>(){
+				public int compare(File a,File b){
+					return a.toString().toLowerCase().compareTo(b.toString().toLowerCase());
+				}
+			});
+		if(f3)
+			Collections.sort(file_list,new Comparator<File>(){
+				public int compare(File a,File b){
+					boolean da=a.isDirectory();
+					boolean db=b.isDirectory();
+					if(da&&db)
+						return 0;
+					if(!da&&!db)
+						return 0;
+					if(da&&!db)
+						return -1;
+					if(!da&&db)
+						return 1;
+					return 0;
+				}
+			});
+		long t2=System.currentTimeMillis();
+		String s="'"+qs+"' found "+file_list.size()+" in "+(t1-t0)+" ms and rejected "+counter_rejected;
+		String s1="list processing "+(t2-t1)+" ms";
+		cfg.htp_out.println(cfg.a+s+"\n "+cfg.a+s1);
+		w.nl().p(s).nl();
+		w.table("files").nl();
+		for(File file:file_list){
+			String path=file.getPath();
+			boolean isDir=file.isDirectory();
+			String iconName;
+			if(isDir)
+				iconName="";
+			else
+				iconName="";
+			w.tr().td("\"icns first\"").p(iconName).td("name");
+			if(file.isFile())
+				w.a(path).p(file.getName()).aEnd();
+			else
+				w.p(path);
+			w.td("date").p(ttoa(file.lastModified(),2));
+			w.td("\"size last\"").p(isDir?"----":btoa(file.length()));
+			w.nl();
+		}
+		w.tableEnd();
+	}
+	interface Visitor{
+		void visit(Object o)throws Throwable;
+	}
+	private void visit_files(path root,Visitor visitor) throws Throwable{
+		File[]dir=root.listFiles();
+		if(dir==null)
+			return;
+		for(int i=0;i<dir.length;i++){
+			File file=dir[i];
+			if(file.isDirectory()){
+				visit_files(htp.path(file.toString()),visitor);
+			}
+			visitor.visit(file);
+		}
+	}
+	public static String btoa(long n){
+		long i=n/1024;
+		if(i==0)
+			return Long.toString(n)+" B";
+		return i+" KB";
+	}
+	private static String itoa(int i){
+		return Integer.toString(i);
+	}
+	private static String ttoa(long t,int prec){
+		long ms=t%1000;
+		long s=(t/1000);
+		long m=(s/60);
+		long h=(m/60);
+		StringBuffer sb=new StringBuffer();
+		String d=itoa((int)(h%24));
+		if(d.length()==1)
+			sb.append('0');
+		sb.append(d);
+		if(prec==1)
+			return sb.toString();
+		sb.append(':');
+		d=itoa((int)(m%60));
+		if(d.length()==1)
+			sb.append('0');
+		sb.append(d);
+		if(prec==2)
+			return sb.toString();
+		sb.append(':');
+		d=itoa((int)(s%60));
+		if(d.length()==1)
+			sb.append('0');
+		sb.append(d);
+		if(prec==3)
+			return sb.toString();
+		sb.append('.');
+		d=itoa((int)ms);
+		for(int n=3,l=d.length();n!=l;n--)
+			sb.append('0');
+		sb.append(d);
+		return sb.toString();
+	}
+	public void ax_reindex(xwriter xw,String[]args) throws Throwable{
+		path path_ix=req.get().session().path("ix");
+		path path_home=req.get().session().path("");
+		msg=pipe_indexer.index_rebuild(path_ix,path_home,new pipe_counter(cfg.htp_out));
+		xw.js_reload();
+	}
+}
+
+class counter{
+	private int c;
+	void inc(){c++;}
+	public String toString(){return Integer.toString(c);}
+	public void reset(){c=0;}
+}
+package wt;
+
+import htp.wt;
+import htp.xwriter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public abstract class tabs extends wt {
+	private static final long serialVersionUID = 1L;
+	protected static class el implements Serializable{
+		private static final long serialVersionUID = 1L;
+		public el(String name,wt wt){this.name=name;this.wt=wt;}
+		String name;
+		wt wt;
+	}
+
+	protected List<el> els = new ArrayList<el>();
+	protected el actel;
+
+	protected abstract void init() throws Throwable;
+	
+	public tabs() {
+		try {
+			init();
+		} catch (Throwable t) {
+			throw new Error(t);
+		}
+	}
+
+	public void to(xwriter x) throws Throwable {
+		x.table().tr().td();
+		for (el e : els) {
+			x.p(" · ");
+			if (e == actel)
+				x.p("<b>");
+			x.p("<a href=\"javascript:ui.ax('"+wid()+" go "+e.name+"')\">");
+			x.p(e.name);
+			x.p("</a>");
+			if (e == actel)
+				x.p("</b>");
+		}
+		x.tdEnd().trEnd().tr().td();
+		if (actel != null)
+			actel.wt.to(x);									
+		x.tdEnd().trEnd().tableEnd();
+	}
+	public final void ax_go(xwriter x,String[]args){
+		String nm=args[2];
+		for(el e:els)
+			if(e.name.equals(nm))
+				actel=e;
+		x.js_reload();
+	}
+}
+package wt.dwn;
+
+import htp.wt;
+import htp.xwriter;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
+
+final public class pkg extends wt{
+	private static final long serialVersionUID=1L;
+	public String dirpath="download";
+	@Override
+	public void to(xwriter x) throws Throwable{
+		String path=System.getenv("HOME")+"/"+dirpath;
+		x.p(path).hr();
+		File dir=new File(path);
+		if(!dir.exists())
+			throw new Error(dir+" does not exist");
+		File[] files=dir.listFiles();
+		Arrays.sort(files,new Comparator<File>(){
+			@Override
+			public int compare(File o1,File o2){
+				return (int)(o2.lastModified()-o1.lastModified());
+			}
+		});
+		x.table("tbl").nl();
+		SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
+		int nrow=0;
+		for(File f:files){
+			if(f.isDirectory())
+				continue;
+			nrow++;
+			x.tr((nrow%2)==0?"evn":"odd");
+			x.td("nbr").p(fmt.format(f.lastModified())).tdEnd();
+			x.td("nbr").p(humanreadblebytes(f.length())).tdEnd();
+			int i=f.getName().lastIndexOf('.');
+			String sfx=i!=-1?f.getName().substring(i+1):"";
+			x.td("nbr").p(sfx).tdEnd();
+			x.td().p(f.getName()).tdEnd();
+			x.trEnd();
+		}
+		x.tableEnd();
+	}
+	public static DecimalFormat bnf=new DecimalFormat("###,###.0");
+	public static String humanreadblebytes(long nbytes){
+		if(nbytes>1000*1024){
+			return bnf.format(nbytes/(1000.0*1024))+" MB";
+		}
+		if(nbytes>1024){
+			return bnf.format(nbytes/1024.0)+" KB";
+		}
+		return bnf.format(nbytes)+"  B";
+	}
+}
+package wt.rch;
+
+import htp.path;
+import htp.req;
+import htp.wt;
+import htp.xwriter;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+public final class inbox extends wt{
+	private static final long serialVersionUID=1L;
+	public static String checksum_alg="md5";
+	public static String inbox_dir="rch/inbox/";
+	public static String store_dir="rch/store/";
+	public static String index_file="rch/store.ix";
+	public static String err_file="rch/store.err";
+	public static String dup_file="rch/store.dup";
+	public static PrintStream log=System.out;
+	private SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--hh:mm:ss.SSS");
+	private byte buf[]=new byte[1024*1024];
+	private int filecount;
+	private int filearched;
+	private int filedups;
+	private int fileerrs;
+	public void to(xwriter x) throws Throwable{
+		x.pre().p("inbox").nl();
+		x.ax_action(this,"rch","archive");
+		x.nl().nl();
+		path inbx=req.get().session().path(inbox_dir);
+		for(String s:inbx.list())
+			x.p(s).nl();
+	}
+	public void ax_rch(xwriter x,String[] p) throws Throwable{
+		filecount=filearched=filedups=fileerrs=0;
+//		x.p("     ·r·chi··").p(new SimpleDateFormat("·····yyyy-MM-dd···hh:mm:ss······").format(new Date())).pl("················");
+		path inbx=req.get().session().path(inbox_dir);
+		if(!inbx.exists())
+			if(!inbx.mkdirs())
+				throw new Error("*** can not create inbox "+inbx.fullPath());
+//		x.p("            inbox: ").pl(path_for_file(inbx));
+		path store=req.get().session().path(store_dir);
+		if(!store.exists())
+			if(!store.mkdirs())
+				throw new Error("*** can not create store "+store.fullPath());
+//		x.p("            store: ").pl(path_for_file(store));
+		path ixfile=req.get().session().path(index_file);
+//		x.p("            index: ").pl(path_for_file(ixfile));
+		//		p("            space:  ").pl(sizestr_for_bytes(store.getUsableSpace()));
+		PrintStream ixps=new PrintStream(ixfile.os(true));
+
+		path errfile=req.get().session().path(err_file);
+//		x.p("           errors: ").pl(path_for_file(errfile));
+		PrintStream errps=new PrintStream(errfile.os(true));
+
+		path dupfile=req.get().session().path(dup_file);
+//		x.p("       duplicates: ").pl(path_for_file(dupfile));
+		PrintStream dupps=new PrintStream(dupfile.os(true));
+
+		MessageDigest md=MessageDigest.getInstance(inbox.checksum_alg);
+		path root=inbx;
+		procdir(x,root,store,md,ixps,errps,dupps);
+		ixps.close();
+		errps.close();
+		dupps.close();
+		x.js_alert("processed "+filecount+"\\n  found "+filedups+"  duplicates     errors "+fileerrs);
+		x.js_reload();
+	}
+	private void procdir(xwriter x,path root,path store,MessageDigest md,PrintStream ixps,PrintStream errps,PrintStream dupps) throws Throwable{
+		if(root.name().startsWith("."))
+			return;
+		String[] list=root.list();
+		for(int i=0;i<list.length;i++){
+			path file=root.file(list[i]);
+			if(file.isDirectory()){
+				procdir(x,file,store,md,ixps,errps,dupps);
+				if(!file.delete())
+					inbox.log.println("!!! could not delete dir "+file.fullPath());
+				continue;
+			}
+			filecount++;
+//			x.pl(new Date(file.lastModified()).toString());
+//			x.p("  found  ").pl(path_for_file(file));
+			String ext=file.sfx();
+//			x.p("   type  ").pl(ext);
+			InputStream fi;
+			try{
+				fi=file.is();
+			}catch(FileNotFoundException e){
+				fileerrs++;
+				errps.println(file.fullPath());
+				continue;
+			}
+			int c=0;
+			md.reset();
+			while(true){
+				c=fi.read(buf);
+				if(c==-1)
+					break;
+				md.update(buf,0,c);
+			}
+			byte hash[]=md.digest();
+			fi.close();
+			String hashstr=filename_for_hash(hash);
+//			x.p(" hashed  ").pl(hashstr);
+			path nf=req.get().session().path(store_dir+hashstr+(ext.length()==0?"":("."+ext)));
+			if(nf.exists()){
+//				x.pl("  found");
+				filedups++;
+				dupps.println(hashstr+" exists "+file.fullPath());
+				dupps.flush();
+				if(!file.delete())
+					throw new Error("could not delete "+file.fullPath());
+				continue;
+			}
+			long lastmod=file.lastModified();
+			if(!file.renameTo(nf))
+				throw new Error("   failed: mv "+file+" "+nf);
+//			x.p(" stored  ").pl(path_for_file(nf));
+			nf.lastModified(lastmod);
+			nf.readOnly();
+			nf.executable(false);
+			ixps.print(hashstr);
+			ixps.print("----");
+			ixps.print(ext);
+			ixps.print("----");
+			ixps.print(df.format(nf.lastModified()));
+			ixps.print("----");
+			ixps.print(df.format(new Date()));
+			ixps.print("----");
+			ixps.print(nf.length());
+			ixps.println();
+			ixps.flush();
+			filearched++;
+//			x.p(" logged  ").pl(file.name());
+		}
+	}
+//	private String path_for_file(path f) throws Throwable{
+//		return f.fullPath()+(f.isDirectory()?File.separator:"");
+//	}
+	public static String sizestr_for_bytes(long b){
+		long mb=b>>10;
+		long gb=mb>>20;
+		if(gb>0)
+			return gb+" GB";
+		else
+			return mb+" MB";
+	}
+	private String filename_for_hash(byte[] hash) throws UnsupportedEncodingException{
+		StringBuffer sb=new StringBuffer(hash.length*2);
+		for(int i=0;i<hash.length;i++){
+			byte b=hash[i];
+			int hex;
+			hex=(b&0xf0)>>4;
+			if(hex<10)
+				sb.append((char)('0'+hex));
+			else
+				sb.append((char)('a'+(hex-10)));
+			hex=b&0x0f;
+			if(hex<10)
+				sb.append((char)('0'+hex));
+			else
+				sb.append((char)('a'+(hex-10)));
+		}
+		return sb.toString();
+	}
+	//	inbox p(String s){
+	//		inbox.log.print(s);
+	//		return this;
+	//	}
+	//	inbox pl(String s){
+	//		inbox.log.println(s);
+	//		return this;
+	//	}
+}
+package wt.rch.store;
+
+import htp.path;
+import htp.req;
+import htp.wt;
+import htp.xwriter;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+public class ix extends wt{
+	private static final long serialVersionUID=1L;
+	public void to(xwriter x) throws Throwable{
+		//x.p("Hello from "+getClass());
+		String href=req.get().session().href();
+		path p=req.get().session().path("rch/store.ix");
+		
+		InputStream is=p.fileInputStream();
+		BufferedReader br=new BufferedReader(new InputStreamReader(is,"utf8"));
+		x.pre();
+		for(String line=br.readLine();line!=null;line=br.readLine()){
+			String md5=line.substring(0,32);
+			String type=line.substring(32+4,32+4+3);
+			x.a(href+"rch/store/"+md5+"."+type).p(type).aEnd().p(line.substring(32+4+3)).nl();
+//			x.p(line).nl();
+		}
+		x.preEnd();
+		is.close();
+	}
+}
