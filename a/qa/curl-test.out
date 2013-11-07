@@ -1,0 +1,13 @@
+Tue Feb 12 12:59:54 CET 2013
+t000: file transfer from cache
+t001: file transfer bigger
+t002: file transfer byterange from 1
+t010: page empty
+t013: page large
+t014: page input utf8
+t015: page post utf8
+t016: page post ut8 read
+t020: upload file applet
+t021: upload file
+cleanup
+ok
