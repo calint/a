@@ -20,7 +20,8 @@ public class $ extends a{
 	public a grph;
 	public a hint;
 	public a in1;
-	public int devthresh;
+//	public float devthresh;
+	public a devthr;{devthr.set(.8f);}
 	final crafty cft=new crafty();
 	public void to(final xwriter x)throws Throwable{
 		x.style();
@@ -34,9 +35,10 @@ public class $ extends a{
 		x.css("table.chsboard td","width:45px;height:45px;align:center;vertical-align:middle");
 		x.css("table.chsboard td.wht","background:white");
 		x.css("table.chsboard td.blk","background:#a0a0a0");
+		x.css(devthr,"border:1px solid green;text-align:right;width:2em");
 		x.styleEnd();
 		x.pre();
-		x.p("paste pgn below:").nl().inputTextArea(in1,"in1").nl().ax(this,null,"•·scan ");
+		x.p("paste pgn below:").nl().inputTextArea(in1,"in1").nl().spc().inputFlt(devthr).ax(this,null,"•·scan");
 		x.output(sts).nl().nl();
 		x.output(grph);
 		x.tag("figure");
@@ -64,7 +66,7 @@ public class $ extends a{
 		cft.reset();
 		int ply=0;
 		boolean found=false;
-		devthresh=1;
+		final float devthresh=devthr.toflt();
 		while(true){
 			final String move=pgn.nextMove();
 			if(move==null)break;
@@ -77,12 +79,18 @@ public class $ extends a{
 			final String cev=cft.move(move).trim();
 			x.xu(sts,"ply "+ply+". "+move+": "+cev).flush();
 			final String[]splt=cev.split("\\s+");
-			final String ev=splt[devthresh];
+			final String ev=splt[1];
 			if((ply%2)==1)
 				x.xp(grph,((ply/2)+1)+". ");
 			x.xp(grph,move+" ("+ev+") ");
 			if((ply%2)!=1)
 				x.xp(grph,"\n");
+			if(ev.contains("Mat")){
+				x.xalert("no blunder at threshold "+devthr);
+//				x.xu(devthr.set(devthr.toflt()/2));
+				x.xfocus(devthr);
+				return;
+			}
 			final float evf=Float.parseFloat(ev);
 			final float devf=evf-prvevf;
 			if(Math.abs(devf)>devthresh){
@@ -143,7 +151,8 @@ public class $ extends a{
 	}
 	
 	static class crafty{
-		public static String crafty="/Users/calin/Documents/workspace4/crafty/crafty";
+//		public static String crafty="/Users/calin/Documents/workspace4/crafty/crafty";
+		public static String crafty="crafty";
 		public int srchdpth=10;
 		private final Process p;
 		private final OutputStream os;
@@ -226,6 +235,7 @@ public class $ extends a{
 			if(!blkmv){
 				//\\{White resigns\\}|\\{Black resigns\\}
 				final String s1=sc.findWithinHorizon("(\\d+\\.\\s*)|"+ptrneom,0);
+				if(s1==null)return null;
 				if(s1.matches(ptrneom))return null;
 			}
 			final String s2=sc.findWithinHorizon("[\\w+\\-\\+]+|"+ptrneom,0);
