@@ -6,9 +6,9 @@ import b.req;
 import b.xwriter;
 final public class info extends a{
 	private static final long serialVersionUID=1;
-	@Override public void to(final xwriter x) throws Throwable{
+	public void to(final xwriter x) throws Throwable{
 		final req r=req.get();
-		final String[] qs=r.query().toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
+		final String[]qs=r.query().toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
 		x.p("<pre>").nl();
 		if(qs[0].length()==0)
 			return;
