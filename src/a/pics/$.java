@@ -5,7 +5,9 @@ import b.req;
 import b.xwriter;
 public class $ extends a{static final long serialVersionUID=1;
 	public void to(final xwriter x)throws Throwable{
-		x.el(this);
+//		x.el(this);
+		x.p("<script>console.log('hello')</script>");
+		x.p("<el onkeydown=\"alert(event)\">");
 		final long t0_ns=System.nanoTime();
 		final req r=req.get();
 		final path p=r.session().path(r.query());
