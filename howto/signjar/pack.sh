@@ -1,7 +1,8 @@
+jar=../upload.jar
+
 cd ../../bin&&
-jar="../upload.jar"&&
 jar cvf $jar applet/*&&
-#jarsigner $jar applet.upload&&
-ls -l $jar
+jarsigner -verbose $jar applet.upload&&
+ls -l $jar;
 echo done
 
