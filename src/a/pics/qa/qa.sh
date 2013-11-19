@@ -1,19 +1,16 @@
-echo "`date`: qa pics"
+echo `date`: qa pics
 
 session=aaaa-131119-095209.788-1aedd1a3
 uri=/pics
 
 hdr=--add-header="cookie:i=$session\n"
-pfx=--num-calls=1
-sfx="httperf --port=8888 --uri=$uri $hdr" 
+sfx=--num-calls=1
+pfx="httperf --port=8888 --uri=$uri $hdr" 
 
-$sfx --print-reply --print-request&&
+$pfx --print-reply --print-request&&
 
-$sfx --num-conns=1      $pfx&&
-$sfx --num-conns=10     $pfx&&
-$sfx --num-conns=100    $pfx&&
-$sfx --num-conns=1000   $pfx&&
-$sfx --num-conns=10000  $pfx&&
-$sfx --num-conns=100000 $pfx&&
+for n in 1 10 100 1000 10000 100000;do
+	$pfx --num-conns=$n $sfx;
+done
 
 echo "`date`: done"
