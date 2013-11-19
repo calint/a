@@ -26,8 +26,8 @@ public @ls(cls=expense.class)class expenses extends lst{
 		x.td();
 		rendldax(x,ee);
 		x.td().p(e.price);
-		sum+=e.price.toint();
 		x.td().p(e.amount);
+		sum+=e.price.toint()*e.amount.toint();
 		x.td().p(e.unit);
 		x.td();
 		renddelax(x,ee,"x");
@@ -35,8 +35,8 @@ public @ls(cls=expense.class)class expenses extends lst{
 	protected void rendlistfoot(final xwriter x){
 		x.nl().tr();
 		x.td();
-		x.td().p(sum);
 		x.td();
+		x.td().p(sum);
 		x.td();
 		x.td();
 
