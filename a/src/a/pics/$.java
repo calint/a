@@ -4,7 +4,6 @@ import b.path;
 import b.req;
 import b.xwriter;
 public class $ extends a{static final long serialVersionUID=1;
-	public a s;
 	public void to(final xwriter x)throws Throwable{
 		final long t0_ns=System.nanoTime();
 		x.pre().pl("ĸoö: ");
