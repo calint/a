@@ -3,8 +3,7 @@ import b.a;
 import b.path;
 import b.req;
 import b.xwriter;
-public class $ extends a{
-	static final long serialVersionUID=1;
+public class $ extends a{static final long serialVersionUID=1;
 	public a s;
 	public void to(final xwriter x)throws Throwable{
 		final long t0_ns=System.nanoTime();
@@ -13,7 +12,8 @@ public class $ extends a{
 		final path p=r.session().path(r.query());
 		x.pl(p.uri());
 		p.visit(new path.visitor(){public void visit(final path p){
-			x.a(p.uri()).p(p.uri()).aEnd().nl();
+			final String s=p.uri();
+			x.a(s).p(s).aEnd().nl();
 		}});
 		final long dt_ns=System.nanoTime()-t0_ns;
 		x.p(dt_ns).spc().p("ns").spc().nl();
