@@ -8,23 +8,19 @@ import java.io.IOException;
 import javax.swing.JApplet;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-
-public class upload extends JApplet{
-	static final long serialVersionUID=1;
+public class upload extends JApplet{static final long serialVersionUID=1;
 	public String host;
 	public String port;
 	public String sesid;
+	public String rootpath="";
 	public stsb sts=new stsbjapplet(this);
 	private JFileChooser flc=new JFileChooser();
 	private final uploader upl=new uploader();
-	private String flcroot;
-	
 	{	flc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		flc.setMultiSelectionEnabled(true);
 		flc.setBounds(0,0,getWidth(),getHeight());
 		flc.setApproveButtonText("Upload");
-		if(flcroot!=null)
-			flc.setCurrentDirectory(new File(flcroot));
+		flc.setCurrentDirectory(new File(rootpath));
 		setContentPane(flc);
 		addComponentListener(new ComponentListener() {
 			public void componentResized(ComponentEvent e){
@@ -44,7 +40,7 @@ public class upload extends JApplet{
 					for(final File f:flc.getSelectedFiles()){
 						if(upl.cancelled())
 							break;
-						upl.send(host,Integer.parseInt(port),sesid,"",f,"-",sts);
+						upl.send(host,Integer.parseInt(port),sesid,rootpath,f,"-",sts);
 						upl.perfstop();
 						sts.sts(f.getName()+": "+(upl.cancelled()?"cancelled":"done")+"   "+upl.kbps+" kB/s   "+upl.dt+" ms");
 						sts.flush();
@@ -64,19 +60,21 @@ public class upload extends JApplet{
 		host=getParameter("host");
 		port=getParameter("port");
 		sesid=getParameter("session");
-		if(sesid==null)
-			sesid="";
+		if(sesid==null)sesid="";
+		rootpath=getParameter("rootpath");
+		if(rootpath==null)rootpath="";
 	}
 	public static void main(String[]a)throws NumberFormatException,IOException{
-		if(a.length<3){
-			System.out.println("i.e. java "+upload.class.getName()+" localhost 8888 aaaa-sessionid");
+		if(a.length<4){
+			System.out.println("i.e. java "+upload.class.getName()+" localhost 8888 \"\" aaaa-sessionid");
 			return;
 		}
 		final upload upl=new upload();
 		upl.host=a[0];
 		upl.port=a[1];
 		upl.sesid=a[2];
-		JFrame frame=new JFrame("upload");
+		upl.rootpath=a[3];
+		final JFrame frame=new JFrame("upload");
 		upl.sts=new stsbjframe(frame);
 		frame.setVisible(true);
 		frame.setContentPane(upl);		
