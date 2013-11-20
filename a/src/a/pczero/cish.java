@@ -15,11 +15,13 @@ public class cish extends a{static final long serialVersionUID=1;
 		x.li().p("input/output     ; io     32K @ 0x1000");
 		x.li().p("out of mem       ; oom        @ 0x1:0000");
 		x.li();
-		x.li().p("loop++");
-		x.li().p("if keyb&1");
-		x.li().p("   'hello from ' to io");
-		x.li().p("   name to io");
-		x.li().p("   .doio");
+		x.li().p("loop");
+		x.li().p("  if keyb&1");
+		x.li().p("     'hello from ' to io");
+		x.li().p("     name to io");
+		x.li().p("     .doio");
+		x.li().p("  .");
+		x.li().p("  counter++");
 		x.li().p(".");
 		x.ol_();
 	}
