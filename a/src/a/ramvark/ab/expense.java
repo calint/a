@@ -4,8 +4,7 @@ import a.ramvark.in;
 import a.ramvark.itm;
 import b.a;
 import b.xwriter;
-public class expense extends itm{
-	static final long serialVersionUID=1;
+public class expense extends itm{static final long serialVersionUID=1;
 	@in(type=3)public expenses subexpenses;
 	@in(type=5)public a unit;
 	@in(type=5)public a amount;
@@ -17,13 +16,13 @@ public class expense extends itm{
 		}
 		return super.validate(x);
 	}
-	protected void onpresave(final xwriter x)throws Throwable{
+	protected void onpresave(final xwriter x)throws Throwable{//?
 		if(subexpenses.isempty()){
 			return;
 		}
 		final class sum{int i;};
 		final sum s=new sum();
-		subexpenses.foreach(null,new cstore.visitable(){public void visit(final itm e)throws Throwable{
+		subexpenses.foreach(null,new cstore.visitor(){public void visit(final itm e)throws Throwable{
 			final int i=((expense)e).price.toint();
 			s.i+=i;
 		}});

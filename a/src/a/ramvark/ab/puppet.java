@@ -3,8 +3,7 @@ import a.ramvark.in;
 import a.ramvark.itm;
 import b.a;
 import b.xwriter;
-public class puppet extends itm{
-	static final long serialVersionUID=1;
+public class puppet extends itm{static final long serialVersionUID=1;
 	@in(type=3)public expenses expenses;
 	@in(type=3)public items items;
 	@in(itm=content.class)public agr content;
