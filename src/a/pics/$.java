@@ -13,8 +13,9 @@ public class $ extends a{static final long serialVersionUID=1;
 		final path p=r.session().path(r.query());
 		p.apply(new path.visitor(){public void visit(final path p){
 			final String s=p.uri();
-			if(s.endsWith(".jpg")||s.endsWith(".png"));
-				x.tago("img").attr("src",s).attr("onkeydown","alert('d')").tagoe();
+			if(!s.endsWith(".jpg")&&!s.endsWith(".png"))
+				return;
+			x.tago("img").attr("src",s).attr("onkeydown","alert('d')").tagoe();
 		}});
 		final long dt_ns=System.nanoTime()-t0_ns;
 		x.p(dt_ns).spc().p("ns").spc().nl();
