@@ -1,8 +1,7 @@
 package a.pczero;
 import b.a;
 import b.xwriter;
-public class cish extends a{static final long serialVersionUID=1;
-	public void to(final xwriter x)throws Throwable{
+public class cish extends a{static final long serialVersionUID=1;public void to(final xwriter x)throws Throwable{
 		x.style().css("html","font-size:13em").styleEnd();
 		x.pre().pl(getClass().toString());
 		x.ol();
