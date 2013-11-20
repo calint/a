@@ -74,10 +74,10 @@ public final class cstore{
 //				if(anot.type()==3)//dontwriteaggmanyfield
 //					continue;
 			final a m=(a)f.get(e);
-			os.write(tobytes(f.getName()));
+			os.write(tobytes(f.getName()));//? f.getName().to(os,enc)
 			os.write(bafieldsep);
 			if(m!=null)
-				os.write(tobytes(m.toString().replace('\n','\07')));
+				os.write(tobytes(m.toString().replace('\n','\07')));//? m.to(os,enc)
 			os.write(balinesep);
 		}
 		os.close();
