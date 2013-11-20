@@ -10,7 +10,7 @@ public class cish extends a{static final long serialVersionUID=1;public void to(
 		x.li().p("loop             : counter 8B @ 0x0010");
 		x.li().p("buttons, 128     : keyb  128b @ 0x0018");
 		x.li().p("free             : free   d0h @ 0x0020");
-		x.li().p("                 : doio       @ 0x0100");
+		x.li().p("code             : doio       @ 0x0100");
 		x.li().p("input/output     : io     32K @ 0x1000");
 		x.li().p("out of mem       : oom        @ 0x1:0000");
 		x.li();
