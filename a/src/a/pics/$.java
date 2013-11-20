@@ -17,7 +17,7 @@ public class $ extends a{static final long serialVersionUID=1;
 			x.tago("img").attr("src",s).tagoe();
 		}});
 		final long dt_ns=System.nanoTime()-t0_ns;
-		x.p(dt_ns).spc().p("ns").spc().nl();
+		x.p(dt_ns).pl(" ns");
 //		x.elend();
 	}
 }
