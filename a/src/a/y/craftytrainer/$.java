@@ -20,18 +20,17 @@ public class $ extends a{
 	public a grph;
 	public a hint;
 	public a in1;
-//	public float devthresh;
 	public a devthr;{devthr.set(.8f);}
 	final crafty cft=new crafty();
 	public void to(final xwriter x)throws Throwable{
 		x.style();
 		x.css(sts,"color:green");
 		x.css(in1,"border:1px dotted green;width:100%;height:200px");
-		x.css(dsp,"border:1px dotted blue;display:block;text-align:center");
+		x.css(dsp,"border:1px dotted blue;display:block");
 		x.css(grph,"display:block;");
 		x.css(diag,"display:block;");
-		x.css(hint,"border:1px dotted yellow;background:#f0fff0;display:block;text-align:center");
-		x.css("table.chsboard","margin-left:auto;margin-right:auto;border:1px solid black");
+		x.css(hint,"border:1px dotted yellow;background:#f0fff0;display:block");
+		x.css("table.chsboard","border:1px solid black");
 		x.css("table.chsboard td","width:45px;height:45px;align:center;vertical-align:middle");
 		x.css("table.chsboard td.wht","background:white");
 		x.css("table.chsboard td.blk","background:#a0a0a0");
@@ -213,7 +212,8 @@ public class $ extends a{
 		public Map<String,String>nextHeader(){
 			final Map<String,String>mp=new LinkedHashMap<String,String>();
 			while(true){
-				final String s1=sc.findWithinHorizon("\\[.*?\\]",0);
+				final String s1=sc.findWithinHorizon("\\[.*?\\]|$",0);
+				if(s1.length()==0)break;
 //				if(s1==null)break;
 //				final String ln=sc.nextLine();
 				final String s2=s1.trim();
@@ -224,7 +224,7 @@ public class $ extends a{
 				final String hdrvl=s4.substring(1,s4.length()-1).trim();
 				mp.put(hdrnm,hdrvl);
 //				System.out.printf("%s %s\n",hdrnm,hdrvl);
-				if(hdrnm.equals("Result"))break;
+//				if(hdrnm.equals(""))break;
 			}
 			return mp;
 		}
