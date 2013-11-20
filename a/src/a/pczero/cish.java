@@ -16,7 +16,7 @@ public class cish extends a{static final long serialVersionUID=1;public void to(
 		x.li();
 		x.li().p("loop");
 		x.li().p("  if keyb&1");
-		x.li().p("     'hello from '+name to io");
+		x.li().p("     io='hello from '+name");
 		x.li().p("     .doio");
 		x.li().p("  counter++");
 		x.ol_();
