@@ -15,10 +15,10 @@ public class cish extends a{static final long serialVersionUID=1;public void to(
 		x.li().p("out of mem       : oom        @ 0x1:0000");
 		x.li();
 		x.li().p("loop");
-		x.li().p("  if keyb&1");
-		x.li().p("     io='hello from '+name");
-		x.li().p("     .doio");
-		x.li().p("  counter++");
+		x.li().p("  if keyb hasbit 1");
+		x.li().p("     io is 'hello from ' name");
+		x.li().p("     do doio");
+		x.li().p("  counter inc");
 		x.ol_();
 	}
 }
