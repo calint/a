@@ -41,9 +41,7 @@ public final class cstore{
 	public static itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{
 		meters.creates++;
 		final itm e=cls.newInstance();
-		if(owner!=null){
-			e.pid.set(owner.did.toString());
-		}
+		if(owner!=null)e.pid.set(owner.did);
 		final String docid=mkdocid();
 		e.did.set(docid);
 		//e.onnew();
@@ -59,13 +57,13 @@ public final class cstore{
 		final path file=root(cls).get(fn);
 		final OutputStream os=file.outputstream(false);
 		//head
+		//. access list,summary,load,append,edit,save,remove
+		//. time created,edited,deleted
+		//. did,pid
 		//. class
 		//. name
 		//. index,...
-		//. did,pid
-		//. time created,edited,deleted
-		//. access list load,edit,append,save,summary
-		os.write(tobytes(e.toString().replace('\n','\07')));
+		os.write(tobytes(e.toString().replace('\n','\07')));//? e.to(os,enc)
 		os.write(balinesep);
 		//key value pairs
 		for(final Field f:cls.getFields()){
@@ -131,7 +129,7 @@ public final class cstore{
 		}
 		e.notnew=true;
 	}
-	public static void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitable v)throws Throwable{
+	public static void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
 		meters.foreaches++;
 		final String[]fns=root(cls).list();
 		for(final String fn:fns){
@@ -150,7 +148,7 @@ public final class cstore{
 			v.visit(e);
 		}
 	}
-	public interface visitable{void visit(final itm e)throws Throwable;}
+	public interface visitor{void visit(final itm e)throws Throwable;}
 	public static class meters extends a implements cacheable{
 		static final long serialVersionUID=1;
 		public static long foreaches,creates,loads,saves,deletes;

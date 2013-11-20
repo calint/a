@@ -3,8 +3,7 @@ import b.xwriter;
 import a.ramvark.itm;
 import a.ramvark.ls;
 import a.ramvark.lst;
-public @ls(cls=expense.class)class expenses extends lst{
-	static final long serialVersionUID=1;
+public @ls(cls=expense.class)class expenses extends lst{static final long serialVersionUID=1;
 	private int sum;
 	protected void rendlisthead(final xwriter x){
 		x.nl().style();
