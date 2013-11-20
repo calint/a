@@ -17,7 +17,7 @@ public class cish extends a{static final long serialVersionUID=1;public void to(
 		x.li().p("loop");
 		x.li().p("  if keyb hasbit 1");
 		x.li().p("     io 'hello 'counter' from 'name");
-		x.li().p("     do doio");
+		x.li().p("     doio.");
 		x.li().p("  counter inc");
 		x.ol_();
 	}
