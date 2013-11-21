@@ -12,6 +12,7 @@ public class bitoid extends a{
 	public String styletextarea="background-color:#000;width:11em;text-align:left";
 
 	boolean disppramble;
+	@SuppressWarnings("static-access")
 	void pramble(final xwriter x){
 		x.pl("vintage 16 bit computing - bitoid quad core ibobs");
 		x.pl("  16b instruction znxr ci.. aaaa dddd ");
@@ -231,6 +232,7 @@ public class bitoid extends a{
 		}
 	}
 	/**run core frame*/
+	@SuppressWarnings("static-access")
 	synchronized public void ax_f(xwriter x,String[]a)throws Throwable{
 		if(running)throw new Error("already running");
 		running=true;

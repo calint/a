@@ -71,17 +71,20 @@ public class $ extends a{static final long serialVersionUID=1;
 		final InputStream is=$.class.getResourceAsStream("names.sur.tbl");
 		final Scanner sc=new Scanner(is);sc.nextLine();
 		while(sc.hasNextLine()){surnames.add(name.from(sc.next()));sc.nextLine();}
+		sc.close();
 		
 		final ArrayList<name>femnames=new ArrayList<name>();
 		final InputStream is1=$.class.getResourceAsStream("names.fem.tbl");
 		final Scanner sc1=new Scanner(is1);sc1.nextLine();
 		while(sc1.hasNextLine()){femnames.add(name.from(sc1.next()));sc1.nextLine();}
-
+		sc1.close();
+		
 		final ArrayList<name>malnames=new ArrayList<name>();
 		final InputStream is2=$.class.getResourceAsStream("names.mal.tbl");
 		final Scanner sc2=new Scanner(is2);sc2.nextLine();
 		while(sc2.hasNextLine()){malnames.add(name.from(sc2.next()));sc2.nextLine();}
-
+		sc2.close();
+		
 		final long t0=System.currentTimeMillis();
 		final int n=100000;
 		final StringBuilder sbssn=new StringBuilder(4);
