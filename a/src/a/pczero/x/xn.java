@@ -9,6 +9,7 @@ import b.xwriter;
 public class xn extends a{
 	static final long serialVersionUID=1;
 	public boolean disppramble;
+	@SuppressWarnings("static-access")
 	void pramble(final xwriter x){
 		x.pl("zn rix vintage multi core computing - notinca 16b ");
 		x.pl(" "+vintage.strdatasize(ram.size)+" x 16b data");
@@ -89,7 +90,7 @@ public class xn extends a{
 		x.nl();
 		for(final vintage c:core){
 			x.el("display:inline-block;vertical-align:top;border:0px solid red");
-//			c.to(x);
+			c.to(x);
 			x.elend();
 		}
 		x.elend();

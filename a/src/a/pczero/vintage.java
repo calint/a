@@ -8,12 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
 import a.x.jskeys;
 import b.a;
 import b.path;
 import b.xwriter;
 final public class vintage extends a{
 	static final long serialVersionUID=1;
+	@SuppressWarnings("static-access")
 	private void pramble(final xwriter x){
 		for(int k=0;k<48;k++)x.p('-');x.nl();
 		x.pl(" vintage 16 bit computing - znxrcis "+vintage.strdatasize(ram.size));
@@ -249,6 +251,7 @@ final public class vintage extends a{
 		ir=rom.get(pcr);
 	}
 	boolean running;
+	@SuppressWarnings("static-access")
 	public void ax_r(xwriter x,String[]a)throws Throwable{
 		running=false;
 		if(x!=null)x.xu(sts.set("reseting")).flush();

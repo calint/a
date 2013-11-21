@@ -214,8 +214,10 @@ public final class applet extends Applet implements Runnable{
 				os.flush();
 				for(int n=0;n<env.plrs.length;n++){
 					final int c=is.read(env.plrs[n].keys());
-					if(c==-1)
+					if(c==-1){
+						sock.close();//? y
 						throw new IOException("connection to server lost");
+					}
 				}
 				playerix=-1;
 				for(int n=0;n<env.plrs.length;n++){
