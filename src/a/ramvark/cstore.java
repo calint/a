@@ -131,18 +131,18 @@ public final class cstore{
 	}
 	public static void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
 		meters.foreaches++;
-		final String[]fns=root(cls).list();
+		final String[]fns=root(cls).list();//?. stream
 		for(final String fn:fns){
 			final path p=root(cls).get(fn);
 			final itm e=cls.newInstance();
 			load(e,p);
-			if(owner!=null){
+			if(owner!=null){//?. implpartialload
 				final String pid=e.pid.toString();
 				final String did=owner.did.toString();
 				if(!pid.equals(did))
 					continue;
 			}
-			final String nm=e.toString();
+			final String nm=e.toString();//?. queryfilename
 			if(q!=null&&q.length()>0&&!nm.startsWith(q))
 				continue;
 			v.visit(e);
