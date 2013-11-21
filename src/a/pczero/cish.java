@@ -21,13 +21,13 @@ public class cish extends a{static final long serialVersionUID=1;public void to(
 		x.li().p("  counter inc");
 		x.ol_();
 	}
-	final static class cishcompiler{
+	final static class cishwriter{
 		private final xwriter x;
 		private int indent=0;
-		public cishcompiler(final xwriter x){this.x=x;}
+		public cishwriter(final xwriter x){this.x=x;}
 		public xwriter xwriter(){return x;}
-		public cishcompiler loop(){x.li().spc(indent*2).p("loop");indent++;return this;}
-		public cishcompiler loopx(){indent--;return this;}
-		public cishcompiler mem(final String fullname,final String shortname,final int size_B,final int addr){return this;}
+		public cishwriter loop(){x.li().spc(indent*2).p("loop");indent++;return this;}
+		public cishwriter loopx(){indent--;return this;}
+		public cishwriter mem(final String fullname,final String shortname,final int size_B,final int addr){return this;}
 	}
 }
