@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.NumberFormat;
 public final class applet extends Applet implements Runnable{
 	static boolean debug=true;
@@ -30,7 +29,7 @@ public final class applet extends Applet implements Runnable{
 	public final static String sdbl(double d){
 		return NumberFormat.getNumberInstance().format(d);
 	}
-	private boolean alive;
+//	private boolean alive;
 	private Dimension buf_dim;
 	private Graphics buf_g;
 	private Image buf_img;
@@ -59,29 +58,23 @@ public final class applet extends Applet implements Runnable{
 	private byte[]keys;
 	public final void init(){
 		final String s=getParameter("setup");
-		if(s!=null&&s.length()!=0)
-			pkg=s;
-		else
-			pkg=cfg.pkg;
-		try{
-			final setup stp=(setup)Class.forName("d3."+pkg+".$").newInstance();
+		if(s!=null&&s.length()!=0)pkg=s;
+		else pkg=cfg.pkg;
+		try{final setup stp=(setup)Class.forName("d3."+pkg+".$").newInstance();
 			env=new setup.env();
 			stp.do_setup(this,env);
 			nplayers=env.plrs.length;
-		}catch(Throwable e){
-			throw new Error(e);
-		}
+		}catch(Throwable e){throw new Error(e);}
 		zm=100.0;
 		keys=new byte[net.protocol_msg_len];
 		enableEvents(KeyEvent.KEY_EVENT_MASK|MouseEvent.MOUSE_EVENT_MASK|MouseEvent.MOUSE_MOTION_EVENT_MASK|MouseEvent.MOUSE_WHEEL_EVENT_MASK);
 		validate();
 		final String s2=getParameter("nplayers");
-		if(s2!=null)
-			nplayers=Integer.parseInt(s2);
+		if(s2!=null)nplayers=Integer.parseInt(s2);
 	}
 	private void keyb(final int key,final boolean prsd){
 //		System.out.println(key);
-		byte v=(byte)(prsd?127:0);
+		final byte v=(byte)(prsd?127:0);
 		switch(key){
 		case 'z':env.win.clp_znear+=zm*dt;break;
 		case 'Z':env.win.clp_znear-=zm*dt;break;
@@ -178,7 +171,7 @@ public final class applet extends Applet implements Runnable{
 		g.drawString("mouse(x,y,btn)="+mouse_x+","+mouse_y+","+mouse_btn,x,y+=dy);
 		g.drawString("net(snd,rec)="+num(metrics.net_rec_dt,2)+","+num(metrics.net_send_dt,2),x,y+=dy);
 		for(int k=0;k<env.plrs.length;k++){
-			obj obj=(obj)env.plrs[k];
+			final obj obj=(obj)env.plrs[k];
 			g.drawString(obj.pos()+"·"+obj.lookvec(),x,y+=dy);
 		}
 	}
@@ -192,15 +185,13 @@ public final class applet extends Applet implements Runnable{
 		}
 		if(e instanceof KeyEvent){
 			final KeyEvent ev=(KeyEvent)e;
-			if(ev.getID()==KeyEvent.KEY_RELEASED)
-				keyb(ev.getKeyChar(),false);
-			else if(ev.getID()==KeyEvent.KEY_PRESSED)
-				keyb(ev.getKeyChar(),true);
+			if(ev.getID()==KeyEvent.KEY_RELEASED)keyb(ev.getKeyChar(),false);
+			else if(ev.getID()==KeyEvent.KEY_PRESSED)keyb(ev.getKeyChar(),true);
 		}
 	}
 	private int playerix;
 	public final void run(){
-		final Socket sock;
+		Socket sock=null;
 		OutputStream os=null;
 		InputStream is=null;
 		if(nplayers>1){
@@ -214,40 +205,33 @@ public final class applet extends Applet implements Runnable{
 				os.flush();
 				for(int n=0;n<env.plrs.length;n++){
 					final int c=is.read(env.plrs[n].keys());
-					if(c==-1){
-						sock.close();//? y
-						throw new IOException("connection to server lost");
-					}
+					if(c==-1)throw new Error("connection to server lost");
 				}
 				playerix=-1;
 				for(int n=0;n<env.plrs.length;n++){
 					final String pid=new String(env.plrs[n].keys());
-					if(pid.equals(playerid))
+					if(pid.equals(playerid)){
+						if(playerix!=-1)throw new Error("fluke");
 						playerix=n;
+					}
 				}
 				env.wld.player(env.plrs[playerix]);
 				for(int k=0;k<env.plrs.length;k++){
 					final byte[]keys=env.plrs[k].keys();
-					for(int n=0;n<keys.length;n++)
-						keys[n]=0;
+					for(int n=0;n<keys.length;n++)keys[n]=0;
 				}
-			}catch(NumberFormatException e){
-				e.printStackTrace();
-			}catch(UnknownHostException e){
-				e.printStackTrace();
-			}catch(IOException e){
-				e.printStackTrace();
+			}catch(final Throwable t){throw new Error(t);}finally{
+				try{sock.close();}catch(final Throwable t){};				
 			}
 		}
-		while(alive){
+//		while(alive){
+		while(thd!=null){
 			final long t0=System.currentTimeMillis();
 			metrics_clear();
 			final Graphics g=getGraphics();
-			if(g==null)
-				continue;
+			if(g==null)continue;
 			dim=getSize();
-			if(dim==null||dim.width==0||dim.height==0)
-				continue;
+			if(dim==null||dim.width==0||dim.height==0)continue;
 			if(buf_img==null||dim.width!=buf_dim.width||dim.height!=buf_dim.height){
 				buf_img=createImage(dim.width*2,dim.height);
 				buf_g=buf_img.getGraphics();
@@ -268,13 +252,10 @@ public final class applet extends Applet implements Runnable{
 			metrics.wld_paint_ms=(int)(t3-t2);
 			frame++;
 			t_ms=System.currentTimeMillis();
-			if(tprv_ms==0)
-				tprv_ms=t_ms;
+			if(tprv_ms==0)tprv_ms=t_ms;
 			dt_ms=t_ms-tprv_ms;
 			tprv_ms=t_ms;
-			if(dt_ms==0){
-				dt_ms=1;
-			}
+			if(dt_ms==0)dt_ms=1;
 			fps_t+=dt_ms;
 			tprv_ms=t_ms;
 			dt=dt_ms/1000.0;
@@ -297,37 +278,26 @@ public final class applet extends Applet implements Runnable{
 			}
 			final long t4=System.currentTimeMillis();
 			if(nplayers>1){
-				for(int n=0;n<env.plrs.length;n++){
-					try{
-						final int c=is.read(env.plrs[n].keys());
-						if(c!=net.protocol_msg_len)
-							throw new IOException("expected 32 B. received:"+c);
-					}catch(IOException e){
-						e.printStackTrace();
-					}
-//					System.out.println(new String(env.plrs[n].keys()));
-				}
-			}else
-				System.arraycopy(keys,0,env.plrs[0].keys(),0,keys.length);
+				for(int n=0;n<env.plrs.length;n++){try{
+					final int c=is.read(env.plrs[n].keys());
+					if(c!=net.protocol_msg_len)throw new IOException("expected 32 B. received:"+c);
+				}catch(IOException e){throw new Error(e);}}
+			}else System.arraycopy(keys,0,env.plrs[0].keys(),0,keys.length);
 			long t5=System.currentTimeMillis();
 			metrics.net_rec_dt=(int)(t5-t4);
-//			System.out.println(" dt: "+dt);
 			env.wld.update(dt);
-			if(cfg.rend_hud)
-				paint_hud(buf_g);
+			if(cfg.rend_hud)paint_hud(buf_g);
 			g.drawImage(buf_img,0,0,null);
 			fps_f++;
 			if(fps_t>1000){
-				fps=1000.0f*fps_f/fps_t;
-				fps_t=0;
-				fps_f=0;
+				fps=1000f*fps_f/fps_t;
+				fps_t=fps_f=0;
 			}
 			long t6=System.currentTimeMillis();
 			long sleep=t6-t0;
 			sleep=cfg.fixed_dt_ms-sleep;
 //			System.out.println(sleep);
-			if(sleep>0)
-				try{Thread.sleep(sleep);}catch(InterruptedException e){}
+			if(sleep>0)try{Thread.sleep(sleep);}catch(InterruptedException e){}
 		}
 	}
 	private String playerid;
@@ -341,12 +311,12 @@ public final class applet extends Applet implements Runnable{
 		playerid=sb.toString();
 	}
 	public final void start(){
-		alive=true;
+//		alive=true;
 		thd=new Thread(this);
 		thd.start();
 	}
 	public final void stop(){
-		alive=false;
+//		alive=false;
 		if(thd==null)
 			return;
 		thd.interrupt();
