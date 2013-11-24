@@ -25,12 +25,12 @@ public class websock extends a implements sock{
 		final String s=key+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		final MessageDigest md=MessageDigest.getInstance("SHA-1");
 		final byte[]sha1ed=md.digest(s.getBytes());
-        final ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        final OutputStream encos=MimeUtility.encode(baos,"base64");
-        encos.write(sha1ed);
-        encos.close();
-        final byte[]b64encd=baos.toByteArray();
-        final String replkey=new String(b64encd);
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		final OutputStream encos=MimeUtility.encode(baos,"base64");
+		encos.write(sha1ed);
+		encos.close();
+		final byte[]b64encd=baos.toByteArray();
+		final String replkey=new String(b64encd);
 		hs.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
 		hs.flip();
 		return op.write;
