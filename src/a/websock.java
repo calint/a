@@ -16,11 +16,11 @@ public class websock extends a implements sock{
 	private sockio so;
 	private final ByteBuffer bbi=ByteBuffer.allocate(b.b.K);
 	private int counter;
-	final public op sockinit(final Map<String,String>hdrs,sockio so)throws Throwable{
+	final public op sockinit(final Map<String,String>hdrs,final sockio so)throws Throwable{
 		this.so=so;
 		// rfc6455#section-1.3
 		// Opening Handshake
-		if(!"13".equals(hdrs.get("sec-websocket-version")))throw new Error("sec-websocket-version not 13");
+//		if(!"13".equals(hdrs.get("sec-websocket-version")))throw new Error("sec-websocket-version not 13");
 		final String key=hdrs.get("sec-websocket-key");
 		final String s=key+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		final MessageDigest md=MessageDigest.getInstance("SHA-1");
@@ -32,7 +32,9 @@ public class websock extends a implements sock{
 		final byte[]b64encd=baos.toByteArray();
 		final String replkey=new String(b64encd);
 		final ByteBuffer bbo=ByteBuffer.allocate(b.b.K>>2);
-		bbo.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
+//		bbo.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
+		bbo.put(("HTTP/1.1 101\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
+//		bbo.put(("HTTP/1.1\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
 		bbo.flip();
 		so.write(bbo);
 		if(bbo.hasRemaining())throw new Error("packetnotfullysent");
@@ -49,14 +51,13 @@ public class websock extends a implements sock{
 		bbi.flip();
 		while(true){
 			final int b0=(int)bbi.get();
-			final boolean fin=(b0&1)==1;
-			final int resv=(b0>>1)&7;
+			final boolean fin=(b0&128)==128;
+			final int resv=(b0>>4)&7;
 			if(resv!=0)throw new Error("websock reserved bits are not 0");
-			final int opcode=(b0>>4)&0xf;// seems to always b close
-			
+			final int opcode=b0&0xf;
 			final int b1=(int)bbi.get();
-			final boolean mask=(b1&1)==1;// always masked
-//			if(!mask)throw new Error("websock client sending unmasked message");
+			final boolean masked=((b1&128)==128);
+			if(!masked)throw new Error("websock client sending unmasked message");
 			long payloadlen=b1&127;
 			if(payloadlen==126){// not tried
 				throw new Error("payloadlen==126");
@@ -65,10 +66,8 @@ public class websock extends a implements sock{
 				throw new Error("payloadlen==127");
 //				payloadlen=bbi.getLong();
 			}
-			
 			final byte maskkey[]=new byte[4];
 			bbi.get(maskkey,0,maskkey.length);
-	
 			//?. demask on array backing bbi
 			final demask dm=new demask(bbi,maskkey);
 			final byte[]req=new byte[(int)payloadlen];
