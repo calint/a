@@ -58,9 +58,11 @@ public class websock extends a implements sock{
 //			if(!mask)throw new Error("websock client sending unmasked message");
 			long payloadlen=b1&127;
 			if(payloadlen==126){// not tried
-				payloadlen=(long)bbi.getShort();//? unsigned short
+				throw new Error("payloadlen==126");
+//				payloadlen=(long)bbi.getShort();//? unsigned short
 			}else if(payloadlen==127){// not tried
-				payloadlen=bbi.getLong();
+				throw new Error("payloadlen==126");
+//				payloadlen=bbi.getLong();
 			}
 			
 			final byte maskkey[]=new byte[4];
@@ -78,7 +80,7 @@ public class websock extends a implements sock{
 			final int ndata=data.length;
 			// build frame
 			int nhdr=0;
-			byte[]hdr=new byte[10];
+			final byte[]hdr=new byte[10];
 			hdr[0]=(byte)129;
 			if(ndata<=125){
 				hdr[1]=(byte)ndata;
@@ -115,6 +117,8 @@ public class websock extends a implements sock{
 		}
 	}
 	protected byte[]reply(final byte[]req)throws Throwable{
+		StringBuilder sb=new StringBuilder();
+		for(int i=0;i<125;i++)sb.append("a");
 		return (counter+++" "+new String(req)+" "+new Date()).getBytes();
 //		System.out.println(new String(msg));
 	}

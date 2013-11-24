@@ -1,13 +1,14 @@
-<!DOCTYPE html><meta charset="utf-8" />
-<div id="output" ></div>
+<!DOCTYPE html><meta charset="utf-8" /><style>html{font-size:3em;}</style><pre>
+<div id="output" />
 <script>
 ws=[];run();
 function p(txt){
-	var p=document.createElement("p").innerHTML=txt;
-	ws.output.appendChild(p);
+	var p=document.createElement("p");
+	p.innerHTML=txt;
+	document.getElementById("output").appendChild(p);
 }
-p("websock");
 function run(){
+	p("websock");
 	ws.uri="ws://localhost:8888/y/websock";
 	ws.output=document.getElementById("output");
 	ws.ws=new WebSocket(ws.uri);
@@ -19,7 +20,7 @@ function run(){
 		alert("close");
 	};
 	ws.ws.onmessage=function(e){
-		//p(e.data);
+		p(e.data);
 //		window.status=e.data;
 		alert(e.data);
 		ws.ws.send("more hello");
@@ -29,9 +30,4 @@ function run(){
 		ws.ws.close();
 	}
 }
-</script>
-	
-	
-	
-	
-	
+</script>	
