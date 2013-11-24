@@ -66,15 +66,15 @@ public class websock extends a implements sock{
 			final byte maskkey[]=new byte[4];
 			bbi.get(maskkey,0,maskkey.length);
 	
+			//?. demask on array backing bbi
 			final demask dm=new demask(bbi,maskkey);
-			final StringBuilder sb=new StringBuilder();
-			long n=payloadlen;if(n<1)throw new Error();
-			while(n--!=0){
-				sb.append((char)dm.nextbyte());
+			final byte[]req=new byte[(int)payloadlen];
+			for(int i=0;i<payloadlen;i++){
+				req[i]=dm.nextbyte();
 			}
 			
-			final String reply=reply(sb.toString());
-			final byte[]data=b.b.tobytes(reply);
+			
+			final byte[]data=reply(req);
 			final int ndata=data.length;
 			// build frame
 			int nhdr=0;
@@ -104,24 +104,18 @@ public class websock extends a implements sock{
 			}
 			final int nframe=nhdr+ndata;
 			byte[]frame=new byte[nframe];
-			int n1=0;
-			for(int i=0;i<nhdr;i++){
-				frame[n1]=hdr[i];
-				n1++;
-			}
-			for(int i=0;i<ndata;i++){
-				frame[n1]=data[i];
-				n1++;
-			}
-			final ByteBuffer bbo=ByteBuffer.wrap(frame,0,n1);
+			int m=0;
+			for(int i=0;i<nhdr;i++)frame[m++]=hdr[i];
+			for(int i=0;i<ndata;i++)frame[m++]=data[i];
+			final ByteBuffer bbo=ByteBuffer.wrap(frame);
 			so.write(bbo);
 			if(bbo.hasRemaining())throw new Error("packet not fully sent "+bbo.limit());
 			if(bbi.hasRemaining())continue;//? waitif op.write
 			return op.read;
 		}
 	}
-	protected String reply(final String req)throws Throwable{
-		return counter+++" "+req+" "+new Date();
+	protected byte[]reply(final byte[]req)throws Throwable{
+		return (counter+++" "+new String(req)+" "+new Date()).getBytes();
 //		System.out.println(new String(msg));
 	}
 	private final static class demask{
@@ -129,9 +123,9 @@ public class websock extends a implements sock{
 		private final byte[]maskkey;
 		private int c;
 		public demask(final ByteBuffer bb,final byte[]maskkey){this.bb=bb;this.maskkey=maskkey;}
-		public int nextbyte(){
+		public byte nextbyte(){
 			if(bb.remaining()==0)return -1;
-			final int b=bb.get()^maskkey[c];
+			final byte b=(byte)(bb.get()^maskkey[c]);
 			c++;
 			c%=maskkey.length;
 			return b;
