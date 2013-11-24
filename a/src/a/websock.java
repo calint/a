@@ -112,14 +112,17 @@ public class websock extends a implements sock{
 				hdr[9]=(byte)(ndata&255);
 				nhdr=10;
 			}
-			final int nframe=nhdr+ndata;
-			final byte[]frame=new byte[nframe];
-			System.arraycopy(hdr,0,frame,0,nhdr);
-			System.arraycopy(data,0,frame,nhdr,ndata);
-			final ByteBuffer bbo=ByteBuffer.wrap(frame);
-			so.write(bbo);//? so.write(bbo[]);
-			if(bbo.hasRemaining())
-				throw new Error("packetnotfullysent "+bbo.limit());
+//			final int nframe=nhdr+ndata;
+//			final byte[]frame=new byte[nframe];
+//			System.arraycopy(hdr,0,frame,0,nhdr);
+//			System.arraycopy(data,0,frame,nhdr,ndata);
+//			final ByteBuffer bbo=ByteBuffer.wrap(frame);
+			final ByteBuffer[]bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),ByteBuffer.wrap(data)};
+			so.write(bbos);
+			for(ByteBuffer b:bbos)if(b.hasRemaining())throw new Error("packetnotfullysent");
+//			so.write(bbo);//? so.write(bbo[]);
+//			if(bbo.hasRemaining())
+//				throw new Error("packetnotfullysent "+bbo.limit());
 			if(bbi.hasRemaining())continue;
 			return op.read;
 		}
