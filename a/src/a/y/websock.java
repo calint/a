@@ -113,10 +113,9 @@ public class websock extends a implements sock{
 				nhdr=10;
 			}
 			final int nframe=nhdr+ndata;
-			byte[]frame=new byte[nframe];
-			int m=0;
-			for(int i=0;i<nhdr;i++)frame[m++]=hdr[i];
-			for(int i=0;i<ndata;i++)frame[m++]=data[i];
+			final byte[]frame=new byte[nframe];
+			System.arraycopy(hdr,0,frame,0,nhdr);
+			System.arraycopy(data,0,frame,nhdr,ndata);
 			final ByteBuffer bbo=ByteBuffer.wrap(frame);
 			so.write(bbo);
 			if(bbo.hasRemaining())
