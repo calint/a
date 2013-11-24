@@ -6,6 +6,7 @@ function p(txt){
 	var p=document.createElement("p").innerHTML=txt;
 	ws.output.appendChild(p);
 }
+p("websock");
 function run(){
 	ws.uri="ws://localhost:8888/y/websock";
 	ws.output=document.getElementById("output");
@@ -18,8 +19,10 @@ function run(){
 		alert("close");
 	};
 	ws.ws.onmessage=function(e){
-		alert("reply: "+e.data);
-		ws.ws.send("hello");
+		//p(e.data);
+//		window.status=e.data;
+		alert(e.data);
+		ws.ws.send("more hello");
 	};
 	ws.ws.onerror=function(e){
 		alert("error");
