@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
+import java.util.Date;
 import java.util.Map;
 
 import b.a;
@@ -70,7 +71,7 @@ public class websock extends a implements sock{
 			while(n--!=0){
 				sb.append((char)dm.nextbyte());
 			}
-			final byte[]msg=(sb+" hello "+counter++).getBytes();
+			final byte[]msg=(counter+++" "+sb+" "+new Date()).getBytes();
 			System.out.println(new String(msg));
 			hs.clear();
 			hs.put(msg,0,msg.length);
