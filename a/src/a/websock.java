@@ -1,4 +1,4 @@
-package a.y;
+package a;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -40,13 +40,14 @@ public class websock extends a implements sock{
 	}
 	final public op write()throws Throwable{throw new IllegalStateException();}
 	final public op read()throws Throwable{
+		// rfc6455#section-5.2
+		// Base Framing Protocol
+
 		//? if bb.hasremaining
 		bbi.clear();
 		so.read(bbi);
 		bbi.flip();
 		while(true){
-			// rfc6455#section-5.2
-			// Base Framing Protocol
 			final int b0=(int)bbi.get();
 			final boolean fin=(b0&1)==1;
 			final int resv=(b0>>1)&7;
