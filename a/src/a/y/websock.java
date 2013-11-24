@@ -76,8 +76,18 @@ public class websock extends a implements sock{
 			}
 			
 			
+			
+			
+			
 			final byte[]data=reply(req);
 			final int ndata=data.length;
+			
+			
+			
+			
+			
+			
+			
 			// build frame
 			int nhdr=0;
 			final byte[]hdr=new byte[10];
@@ -86,22 +96,20 @@ public class websock extends a implements sock{
 				hdr[1]=(byte)ndata;
 				nhdr=2;
 			}else if(ndata>=126&&ndata<=65535){
-				hdr[1]=(byte)126;
-				byte len=(byte)ndata;
-				hdr[2]=(byte)((len>>8)&(byte)255);
-				hdr[3]=(byte)(len&(byte)255); 
+				hdr[1]=126;
+				hdr[2]=(byte)(ndata>>8&255);
+				hdr[3]=(byte)(ndata&255); 
 				nhdr=4;
 			}else{
-				hdr[1]=(byte)127;
-				byte len=(byte)ndata;
-				hdr[2]=(byte)((len>>56)&(byte)255);
-				hdr[3]=(byte)((len>>48)&(byte)255);
-				hdr[4]=(byte)((len>>40)&(byte)255);
-				hdr[5]=(byte)((len>>32)&(byte)255);
-				hdr[6]=(byte)((len>>24)&(byte)255);
-				hdr[7]=(byte)((len>>16)&(byte)255);
-				hdr[8]=(byte)((len>>8)&(byte)255);
-				hdr[9]=(byte)(len&(byte)255);
+				hdr[1]=127;
+				hdr[2]=(byte)(ndata>>56&255);
+				hdr[3]=(byte)(ndata>>48&255);
+				hdr[4]=(byte)(ndata>>40&255);
+				hdr[5]=(byte)(ndata>>32&255);
+				hdr[6]=(byte)(ndata>>24&255);
+				hdr[7]=(byte)(ndata>>16&255);
+				hdr[8]=(byte)(ndata>>8&255);
+				hdr[9]=(byte)(ndata&255);
 				nhdr=10;
 			}
 			final int nframe=nhdr+ndata;
@@ -111,15 +119,16 @@ public class websock extends a implements sock{
 			for(int i=0;i<ndata;i++)frame[m++]=data[i];
 			final ByteBuffer bbo=ByteBuffer.wrap(frame);
 			so.write(bbo);
-			if(bbo.hasRemaining())throw new Error("packet not fully sent "+bbo.limit());
+			if(bbo.hasRemaining())
+				throw new Error("packet not fully sent "+bbo.limit());
 			if(bbi.hasRemaining())continue;//? waitif op.write
 			return op.read;
 		}
 	}
 	protected byte[]reply(final byte[]req)throws Throwable{
 		StringBuilder sb=new StringBuilder();
-		for(int i=0;i<125;i++)sb.append("a");
-		return (counter+++" "+new String(req)+" "+new Date()).getBytes();
+		for(int i=0;i<200;i++)sb.append("a");
+		return (counter+++" "+new String(req)+" "+new Date()+" "+sb).getBytes();
 //		System.out.println(new String(msg));
 	}
 	private final static class demask{

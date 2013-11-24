@@ -10,7 +10,6 @@ function p(txt){
 function run(){
 	p("websock");
 	ws.uri="ws://localhost:8888/y/websock";
-	ws.output=document.getElementById("output");
 	ws.ws=new WebSocket(ws.uri);
 	ws.ws.onopen=function(e){
 		alert("sending");
@@ -20,9 +19,9 @@ function run(){
 		alert("close");
 	};
 	ws.ws.onmessage=function(e){
+		alert(e.data);
 		p(e.data);
 //		window.status=e.data;
-		alert(e.data);
 		ws.ws.send("more hello");
 	};
 	ws.ws.onerror=function(e){
