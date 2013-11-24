@@ -32,9 +32,7 @@ public class websock extends a implements sock{
 		final byte[]b64encd=baos.toByteArray();
 		final String replkey=new String(b64encd);
 		final ByteBuffer bbo=ByteBuffer.allocate(b.b.K>>2);
-//		bbo.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
 		bbo.put(("HTTP/1.1 101\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
-//		bbo.put(("HTTP/1.1\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
 		bbo.flip();
 		so.write(bbo);
 		if(bbo.hasRemaining())throw new Error("packetnotfullysent");
@@ -42,7 +40,6 @@ public class websock extends a implements sock{
 	}
 	final public op write()throws Throwable{throw new IllegalStateException();}
 	final public op read()throws Throwable{
-		//? if bb.hasremaining
 		bbi.clear();
 		so.read(bbi);
 		bbi.flip();
@@ -113,7 +110,7 @@ public class websock extends a implements sock{
 		}
 	}
 	protected byte[]reply(final byte[]req)throws Throwable{
-		StringBuilder sb=new StringBuilder();
+		final StringBuilder sb=new StringBuilder();
 		for(int i=0;i<200;i++)sb.append("a");
 		return (counter+++" "+new String(req)+" "+new Date()+" "+sb).getBytes();
 //		System.out.println(new String(msg));
