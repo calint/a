@@ -47,24 +47,7 @@ public class websock extends a implements sock{
 		final boolean mask=(b1&1)==1;
 		final int payloadlen=(b1>>1)&127;
 		
-		long ll=bb.get();//? bb.getLong();
-		ll<<=8;
-		ll|=bb.get();
-		ll<<=8;
-		
-		ll|=bb.get();
-		ll<<=8;
-		ll|=bb.get();
-		ll<<=8;
-		ll|=bb.get();
-		ll<<=8;
-		ll|=bb.get();
-
-		ll<<=8;
-		ll|=bb.get();
-		ll<<=8;
-		ll|=bb.get();
-		final long extpayloadlen=ll;
+		final long extpayloadlen=bb.getLong();
 		
 		byte maskkey[]=new byte[4];
 		maskkey[0]=bb.get();
