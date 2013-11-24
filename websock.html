@@ -9,7 +9,7 @@ function p(txt){
 }
 function run(){
 	p("websock");
-	ws.uri="ws://localhost:8888/y/websock";
+	ws.uri="ws://localhost:8888/websock";
 	ws.ws=new WebSocket(ws.uri);
 	ws.ws.onopen=function(e){
 		alert("sending");
