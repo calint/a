@@ -61,7 +61,7 @@ public class websock extends a implements sock{
 				throw new Error("payloadlen==126");
 //				payloadlen=(long)bbi.getShort();//? unsigned short
 			}else if(payloadlen==127){// not tried
-				throw new Error("payloadlen==126");
+				throw new Error("payloadlen==127");
 //				payloadlen=bbi.getLong();
 			}
 			
