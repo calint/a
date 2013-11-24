@@ -36,7 +36,7 @@ public class websock extends a implements sock{
 		so.read(bb);
 		bb.flip();
 		// decode frame
-		// process
+		// process (?onthread)
 		// reply
 //		final String s=new String(bb.array(),2,bb.limit(),"utf8");
 		return op.close;
