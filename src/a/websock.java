@@ -56,7 +56,7 @@ public class websock extends a implements sock{
 			if(resv!=0)throw new Error("websock reserved bits are not 0");
 			final int opcode=b0&0xf;
 			final int b1=(int)bbi.get();
-			final boolean masked=((b1&128)==128);
+			final boolean masked=(b1&128)==128;
 			if(!masked)throw new Error("websock client sending unmasked message");
 			long payloadlen=b1&127;
 			if(payloadlen==126){// not tried
@@ -66,7 +66,7 @@ public class websock extends a implements sock{
 				throw new Error("payloadlen==127");
 //				payloadlen=bbi.getLong();
 			}
-			final byte maskkey[]=new byte[4];
+			final byte[]maskkey=new byte[4];
 			bbi.get(maskkey,0,maskkey.length);
 			//?. demask on array backing bbi
 			final demask dm=new demask(bbi,maskkey);
