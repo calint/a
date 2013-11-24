@@ -36,10 +36,63 @@ public class websock extends a implements sock{
 		so.read(bb);
 		bb.flip();
 		// decode frame
-		// process (?onthread)
-		// reply
-//		final String s=new String(bb.array(),2,bb.limit(),"utf8");
-		return op.close;
+		// rfc6455#section-5.2
+		final int b0=(int)bb.get();
+		final boolean fin=(b0&1)==1;
+		final int opcode=(b0>>4)&0xf;
+		
+		final int b1=(int)bb.get();
+		final boolean mask=(b1&1)==1;
+		final int payloadlen=(b1>>1)&127;
+		
+		long ll=bb.get();//? bb.getLong();
+		ll<<=8;
+		ll|=bb.get();
+		ll<<=8;
+		
+		ll|=bb.get();
+		ll<<=8;
+		ll|=bb.get();
+		ll<<=8;
+		ll|=bb.get();
+		ll<<=8;
+		ll|=bb.get();
+
+		ll<<=8;
+		ll|=bb.get();
+		ll<<=8;
+		ll|=bb.get();
+		final long extpayloadlen=ll;
+		
+		byte maskkey[]=new byte[4];
+		maskkey[0]=bb.get();
+		maskkey[1]=bb.get();
+		maskkey[2]=bb.get();
+		maskkey[3]=bb.get();
+		
+		return process(bb,maskkey,false);
+	}
+	private final static class demask{
+		private final ByteBuffer bb;
+		private final byte[]maskkey;
+		private int c;
+		public demask(final ByteBuffer bb,final byte[]maskkey){this.bb=bb;this.maskkey=maskkey;}
+		public int nextbyte(){
+			if(bb.remaining()==0)return -1;
+			final int b=bb.get()^maskkey[c];
+			c++;
+			c%=maskkey.length;
+			return b;
+		}
+	}
+	private op process(final ByteBuffer bb,final byte[]maskkey,boolean async)throws Throwable{
+		final demask dm=new demask(bb,maskkey);
+		int b;
+		while((b=dm.nextbyte())!=-1){
+			System.out.println((char)b);
+		}
+		System.out.println();
+		return op.read;
 	}
 	public op write()throws Throwable{
 		if(state==0){
