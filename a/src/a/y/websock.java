@@ -31,7 +31,6 @@ public class websock extends a implements sock{
         encos.close();
         final byte[]b64encd=baos.toByteArray();
         final String replkey=new String(b64encd);
-//		hs.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\nSec-WebSocket-Protocol: chat\r\n\r\n").getBytes());
 		hs.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
 		hs.flip();
 		return op.write;
@@ -39,34 +38,36 @@ public class websock extends a implements sock{
 	public op read()throws Throwable{
 		so.read(bb);
 		bb.flip();
-		// rfc6455#section-5.2
-		// Base Framing Protocol
-		final int b0=(int)bb.get();
-		final boolean fin=(b0&1)==1;
-		final int resv=(b0>>1)&7;
-		if(resv!=0)throw new Error("websockprot resv!=0");
-		final int opcode=(b0>>4)&0xf;
-		
-		final int b1=(int)bb.get();
-		final boolean mask=(b1&1)==1;
-		long payloadlen=b1&127;
-		if(payloadlen==126){
-			payloadlen=(long)bb.getShort();//? unsigned short
-		}else if(payloadlen==127){
-			payloadlen=bb.getLong();
+		while(true){
+			// rfc6455#section-5.2
+			// Base Framing Protocol
+			final int b0=(int)bb.get();
+			final boolean fin=(b0&1)==1;
+			final int resv=(b0>>1)&7;
+			if(resv!=0)throw new Error("websock reserved bits are not 0");
+			final int opcode=(b0>>4)&0xf;
+			
+			final int b1=(int)bb.get();
+			final boolean mask=(b1&1)==1;
+//			if(!mask)throw new Error("websock client sending unmasked message");
+			long payloadlen=b1&127;
+			if(payloadlen==126){
+				payloadlen=(long)bb.getShort();//? unsigned short
+			}else if(payloadlen==127){
+				payloadlen=bb.getLong();
+			}
+			
+			final byte maskkey[]=new byte[4];
+			bb.get(maskkey,0,maskkey.length);
+			
+	//		if(opcode==8){//close
+	//			process(bb,maskkey,false);
+	//			return op.close;
+	//		}
+			process(bb,maskkey,payloadlen,false);
+			if(bb.hasRemaining())continue;
+			return op.read;
 		}
-		
-		byte maskkey[]=new byte[4];
-		maskkey[0]=bb.get();
-		maskkey[1]=bb.get();
-		maskkey[2]=bb.get();
-		maskkey[3]=bb.get();
-		
-		if(opcode==8){//close
-			process(bb,maskkey,false);
-			return op.close;
-		}
-		return op.read;
 	}
 	private final static class demask{
 		private final ByteBuffer bb;
@@ -82,26 +83,24 @@ public class websock extends a implements sock{
 		}
 	}
 	private StringBuilder sb=new StringBuilder();
-	private op process(final ByteBuffer bb,final byte[]maskkey,boolean async)throws Throwable{
+	private void process(final ByteBuffer bb,final byte[]maskkey,final long len,boolean async)throws Throwable{
 		final demask dm=new demask(bb,maskkey);
 		sb.setLength(0);
-		int b;
-		while((b=dm.nextbyte())!=-1){
-			sb.append((char)b);
-//			System.out.println((char)b);
+		long n=len;	if(n<1)throw new Error();
+		while(n--!=0){
+			sb.append((char)dm.nextbyte());
 		}
-//		System.out.println();
 		System.out.println(sb.toString());
-		return op.close;
 	}
 	public op write()throws Throwable{
-		if(state==0){
-			// build frame
+		if(state==0){// handshake
 			so.write(hs);
-			if(hs.remaining()!=0)
-				return op.write;
-			state=1;
+			if(hs.remaining()!=0)return op.write;
+			state=1;// duplex
 		}
+		// build frame
+		// write
+		// waitforread
 		return op.read;
 	}
 
