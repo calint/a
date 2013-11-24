@@ -12,17 +12,19 @@ function run(){
 	ws.ws=new WebSocket(ws.uri);
 	ws.ws.onopen=function(e){
 		alert("sending");
-//		var i=0;
-//		while(true){
-	//		setTimeout(function(){ws.ws.send("hello"+i++);},1000);}
-			ws.ws.send("hello");
-			ws.ws.send("hello2");
-//			ws.ws.send("hello"+i++);
-//		}
+		ws.ws.send("hello");
 	}
-	ws.ws.onclose=function(e){alert("close");};
-	ws.ws.onmessage=function(e){alert("message:"+e.data);ws.ws.close();};
-	ws.ws.onerror=function(e){alert("error");ws.ws.close();}
+	ws.ws.onclose=function(e){
+		alert("close");
+	};
+	ws.ws.onmessage=function(e){
+		alert("reply: "+e.data);
+		ws.ws.send("hello");
+	};
+	ws.ws.onerror=function(e){
+		alert("error");
+		ws.ws.close();
+	}
 }
 </script>
 	
