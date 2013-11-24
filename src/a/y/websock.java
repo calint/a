@@ -117,7 +117,7 @@ public class websock extends a implements sock{
 			System.arraycopy(hdr,0,frame,0,nhdr);
 			System.arraycopy(data,0,frame,nhdr,ndata);
 			final ByteBuffer bbo=ByteBuffer.wrap(frame);
-			so.write(bbo);
+			so.write(bbo);//? so.write(bbo[]);
 			if(bbo.hasRemaining())
 				throw new Error("packet not fully sent "+bbo.limit());
 			if(bbi.hasRemaining())continue;//? waitif op.write
