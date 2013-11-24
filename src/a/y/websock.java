@@ -49,13 +49,11 @@ public class websock extends a implements sock{
 		
 		final int b1=(int)bb.get();
 		final boolean mask=(b1&1)==1;
-		final int payloadlen=((b1>>1)&127);//? bug
+		long payloadlen=b1&127;
 		if(payloadlen==126){
-			final long extpayloadlen=bb.getShort();//? unsigned short
-			bb.getShort();
-			bb.getInt();
+			payloadlen=(long)bb.getShort();//? unsigned short
 		}else if(payloadlen==127){
-			final long extpayloadlen=bb.getLong();
+			payloadlen=bb.getLong();
 		}
 		
 		byte maskkey[]=new byte[4];
