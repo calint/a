@@ -10,7 +10,7 @@ function run(){
 	ws.uri="ws://localhost:8888/y/websock";
 	ws.output=document.getElementById("output");
 	ws.ws=new WebSocket(ws.uri);
-	ws.ws.onopen=function(e){alert("sending");ws.ws.send("hello from websock");}
+	ws.ws.onopen=function(e){alert("sending");ws.ws.send("hello");}
 	ws.ws.onclose=function(e){alert("close");};
 	ws.ws.onmessage=function(e){alert("message:"+e.data);ws.ws.close();};
 	ws.ws.onerror=function(e){alert("error");ws.ws.close();}
