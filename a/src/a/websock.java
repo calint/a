@@ -42,14 +42,13 @@ public class websock extends a implements sock{
 	}
 	final public op write()throws Throwable{throw new IllegalStateException();}
 	final public op read()throws Throwable{
-		// rfc6455#section-5.2
-		// Base Framing Protocol
-
 		//? if bb.hasremaining
 		bbi.clear();
 		so.read(bbi);
 		bbi.flip();
 		while(true){
+			// rfc6455#section-5.2
+			// Base Framing Protocol
 			final int b0=(int)bbi.get();
 			final boolean fin=(b0&128)==128;
 			final int resv=(b0>>4)&7;
@@ -67,16 +66,14 @@ public class websock extends a implements sock{
 //				payloadlen=bbi.getLong();
 			}
 			final byte[]maskkey=new byte[4];
-			bbi.get(maskkey,0,maskkey.length);
+			bbi.get(maskkey);
+			
+			
+			
 			//?. demask on array backing bbi
 			final demask dm=new demask(bbi,maskkey);
 			final byte[]req=new byte[(int)payloadlen];
-			for(int i=0;i<payloadlen;i++){
-				req[i]=dm.nextbyte();
-			}
-			
-			
-			
+			for(int i=0;i<payloadlen;i++)req[i]=dm.nextbyte();
 			
 			
 			final byte[]data=reply(req);
@@ -84,11 +81,7 @@ public class websock extends a implements sock{
 			
 			
 			
-			
-			
-			
-			
-			// build frame
+			// reply frame
 			int nhdr=0;
 			final byte[]hdr=new byte[10];
 			hdr[0]=(byte)129;
@@ -112,17 +105,9 @@ public class websock extends a implements sock{
 				hdr[9]=(byte)(ndata&255);
 				nhdr=10;
 			}
-//			final int nframe=nhdr+ndata;
-//			final byte[]frame=new byte[nframe];
-//			System.arraycopy(hdr,0,frame,0,nhdr);
-//			System.arraycopy(data,0,frame,nhdr,ndata);
-//			final ByteBuffer bbo=ByteBuffer.wrap(frame);
 			final ByteBuffer[]bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),ByteBuffer.wrap(data)};
 			so.write(bbos);
-			for(ByteBuffer b:bbos)if(b.hasRemaining())throw new Error("packetnotfullysent");
-//			so.write(bbo);//? so.write(bbo[]);
-//			if(bbo.hasRemaining())
-//				throw new Error("packetnotfullysent "+bbo.limit());
+			for(final ByteBuffer b:bbos)if(b.hasRemaining())throw new Error("packetnotfullysent");
 			if(bbi.hasRemaining())continue;
 			return op.read;
 		}
