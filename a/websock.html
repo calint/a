@@ -14,15 +14,17 @@ function run(){
 	ws.ws.onopen=function(e){
 		alert("sending");
 		ws.ws.send("hello");
+//		ws.ws.close();return;
 	}
 	ws.ws.onclose=function(e){
 		alert("close");
 	};
 	ws.ws.onmessage=function(e){
-		alert(e.data);
+		alert();
 		p(e.data);
 //		window.status=e.data;
 		ws.ws.send("more hello");
+		//ws.ws.close();
 	};
 	ws.ws.onerror=function(e){
 		alert("error");
