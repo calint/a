@@ -36,6 +36,7 @@ public class websock extends a implements sock{
 		return op.write;
 	}
 	public op read()throws Throwable{
+		//? if bb.hasremaining
 		so.read(bb);
 		bb.flip();
 		while(true){
@@ -45,28 +46,24 @@ public class websock extends a implements sock{
 			final boolean fin=(b0&1)==1;
 			final int resv=(b0>>1)&7;
 			if(resv!=0)throw new Error("websock reserved bits are not 0");
-			final int opcode=(b0>>4)&0xf;
+			final int opcode=(b0>>4)&0xf;// seems to always b close
 			
 			final int b1=(int)bb.get();
-			final boolean mask=(b1&1)==1;
+			final boolean mask=(b1&1)==1;// always masked
 //			if(!mask)throw new Error("websock client sending unmasked message");
 			long payloadlen=b1&127;
-			if(payloadlen==126){
+			if(payloadlen==126){// not tried
 				payloadlen=(long)bb.getShort();//? unsigned short
-			}else if(payloadlen==127){
+			}else if(payloadlen==127){// not tried
 				payloadlen=bb.getLong();
 			}
 			
 			final byte maskkey[]=new byte[4];
 			bb.get(maskkey,0,maskkey.length);
 			
-	//		if(opcode==8){//close
-	//			process(bb,maskkey,false);
-	//			return op.close;
-	//		}
-			process(bb,maskkey,payloadlen,false);
-			if(bb.hasRemaining())continue;
-			return op.read;
+			final op op=process(bb,maskkey,payloadlen,false);
+			if(bb.hasRemaining())continue;//? waitif op.write
+			return op;
 		}
 	}
 	private final static class demask{
@@ -83,7 +80,7 @@ public class websock extends a implements sock{
 		}
 	}
 	private StringBuilder sb=new StringBuilder();
-	private void process(final ByteBuffer bb,final byte[]maskkey,final long len,boolean async)throws Throwable{
+	private op process(final ByteBuffer bb,final byte[]maskkey,final long len,boolean async)throws Throwable{
 		final demask dm=new demask(bb,maskkey);
 		sb.setLength(0);
 		long n=len;	if(n<1)throw new Error();
@@ -91,6 +88,7 @@ public class websock extends a implements sock{
 			sb.append((char)dm.nextbyte());
 		}
 		System.out.println(sb.toString());
+		return op.read;
 	}
 	public op write()throws Throwable{
 		if(state==0){// handshake
