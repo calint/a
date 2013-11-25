@@ -7,18 +7,24 @@ function p(txt){
 	p.innerHTML=txt;
 	document.getElementById("output").appendChild(p);
 }
+function bench_bigsend(){
+	var s='';
+	for(var i=0;i<20000;i++)s+='a';
+	alert('messagelen:'+s.length);
+	ws.ws.send(s);
+}
 function run(){
 	p("websock");
 	ws.uri="ws://localhost:8888/websock";
 	ws.ws=new WebSocket(ws.uri);
 	ws.ws.onopen=function(e){
 		alert("sending");
-		ws.ws.send("hello");
+//		bench_bigsend();
+		ws.ws.send("hello1");
+//		ws.ws.send("hello2");
 //		ws.ws.close();return;
+		alert("sent");
 	}
-	ws.ws.onclose=function(e){
-		alert("close");
-	};
 	ws.ws.onmessage=function(e){
 		alert("datalen:"+e.data.length);
 		p(e.data);
@@ -26,9 +32,7 @@ function run(){
 		ws.ws.send("more hello");
 		//ws.ws.close();
 	};
-	ws.ws.onerror=function(e){
-		alert("error");
-		ws.ws.close();
-	}
+	ws.ws.onclose=function(e){alert("close");};
+	ws.ws.onerror=function(e){alert("error");ws.ws.close();}
 }
 </script>	
