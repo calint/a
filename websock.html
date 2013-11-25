@@ -10,7 +10,7 @@ function p(txt){
 function bench_bigsend(){
 	var s='';
 	for(var i=0;i<20000;i++)s+='a';
-	alert('messagelen:'+s.length);
+	alert('bigsendmsglen:'+s.length);
 	ws.ws.send(s);
 }
 function run(){
@@ -18,12 +18,12 @@ function run(){
 	ws.uri="ws://localhost:8888/websock";
 	ws.ws=new WebSocket(ws.uri);
 	ws.ws.onopen=function(e){
-		alert("sending");
-//		bench_bigsend();
-		ws.ws.send("hello1");
+//		alert("sending");
+//		ws.ws.send("hello1");
 //		ws.ws.send("hello2");
-//		ws.ws.close();return;
-		alert("sent");
+		bench_bigsend();
+//		ws.ws.close();
+//		alert("sent");
 	}
 	ws.ws.onmessage=function(e){
 		alert("datalen:"+e.data.length);
@@ -33,6 +33,6 @@ function run(){
 		//ws.ws.close();
 	};
 	ws.ws.onclose=function(e){alert("close");};
-	ws.ws.onerror=function(e){alert("error");ws.ws.close();}
+	ws.ws.onerror=function(e){alert("error");}
 }
 </script>	
