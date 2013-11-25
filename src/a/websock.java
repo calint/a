@@ -1,15 +1,13 @@
 package a;
 import java.nio.ByteBuffer;
 import java.util.Date;
-//?
 public class websock extends b.websock{static final long serialVersionUID=1;
 	private int counter;
 	protected op parse(final ByteBuffer bb,final int nbytes)throws Throwable{
 		final String msg=new String(bb.array(),bb.position(),nbytes);
-		payloadlendec-=nbytes;
 		bb.position(bb.position()+nbytes);
-		System.out.println(msg);
-		if(payloadlendec!=0)return continue_reading_frame_payload();
+//		System.out.println(msg);
+		if(!ispayloadreaddone())return continue_reading_frame_payload();
 
 		//frame payload processed
 		final StringBuilder sb=new StringBuilder();
