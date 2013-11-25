@@ -123,7 +123,7 @@ public class websock extends a implements sock{
 	}
 	protected byte[]reply(final byte[]req)throws Throwable{
 		final StringBuilder sb=new StringBuilder();
-		for(int i=0;i<200000;i++)sb.append("a");
+		for(int i=0;i<200000;i++)sb.append((char)b.b.rndint('a','z'));
 		return (counter+++" "+new String(req)+" "+new Date()+" "+sb).getBytes();
 //		System.out.println(new String(msg));
 	}
