@@ -20,7 +20,7 @@ function run(){
 		alert("close");
 	};
 	ws.ws.onmessage=function(e){
-		alert();
+		alert("datalen:"+e.data.length);
 		p(e.data);
 //		window.status=e.data;
 		ws.ws.send("more hello");
