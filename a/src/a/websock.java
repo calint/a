@@ -38,7 +38,6 @@ public class websock extends a implements sock{
 		if(bbo.hasRemaining())throw new Error("packetnotfullysent");
 		return op.read;
 	}
-	final public op write()throws Throwable{throw new IllegalStateException();}
 	final public op read()throws Throwable{
 		bbi.clear();
 		so.read(bbi);
@@ -87,31 +86,44 @@ public class websock extends a implements sock{
 				nhdr=2;
 			}else if(ndata>=126&&ndata<=65535){
 				hdr[1]=126;
-				hdr[2]=(byte)(ndata>>8&255);
-				hdr[3]=(byte)(ndata&255); 
+				hdr[2]=(byte)((ndata>>8)&255);
+				hdr[3]=(byte)( ndata    &255);
 				nhdr=4;
 			}else{
 				hdr[1]=127;
-				hdr[2]=(byte)(ndata>>56&255);
-				hdr[3]=(byte)(ndata>>48&255);
-				hdr[4]=(byte)(ndata>>40&255);
-				hdr[5]=(byte)(ndata>>32&255);
-				hdr[6]=(byte)(ndata>>24&255);
-				hdr[7]=(byte)(ndata>>16&255);
-				hdr[8]=(byte)(ndata>>8&255);
-				hdr[9]=(byte)(ndata&255);
+//				hdr[2]=(byte)((ndata>>56)&255);
+//				hdr[3]=(byte)((ndata>>48)&255);
+//				final long la=ndata>>40;
+//				final long laa=la&255;
+//				hdr[4]=(byte)((ndata>>40)&255);
+//				hdr[5]=(byte)((ndata>>32)&255);
+				hdr[6]=(byte)((ndata>>24)&255);
+				hdr[7]=(byte)((ndata>>16)&255);
+				hdr[8]=(byte)((ndata>> 8)&255);
+				hdr[9]=(byte)( ndata     &255);
 				nhdr=10;
 			}
-			final ByteBuffer[]bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),ByteBuffer.wrap(data)};
+			bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),ByteBuffer.wrap(data)};
 			so.write(bbos);
-			for(final ByteBuffer b:bbos)if(b.hasRemaining())throw new Error("packetnotfullysent");
+			for(final ByteBuffer b:bbos)
+				if(b.hasRemaining())
+					return op.write;
+//					throw new Error("packetnotfullysent");
 			if(bbi.hasRemaining())continue;
 			return op.read;
 		}
 	}
+	private ByteBuffer[]bbos;
+	final public op write()throws Throwable{
+		so.write(bbos);
+		for(final ByteBuffer b:bbos)
+			if(b.hasRemaining())
+				return op.write;
+		return op.read;
+	}
 	protected byte[]reply(final byte[]req)throws Throwable{
 		final StringBuilder sb=new StringBuilder();
-		for(int i=0;i<200;i++)sb.append("a");
+		for(int i=0;i<200000;i++)sb.append("a");
 		return (counter+++" "+new String(req)+" "+new Date()+" "+sb).getBytes();
 //		System.out.println(new String(msg));
 	}
