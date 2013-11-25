@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.Map;
 
 import b.a;
+import b.req;
+import b.session;
 import b.sock;
 import b.sockio;
 
@@ -15,15 +17,16 @@ public class websock extends a implements sock{
 	static final long serialVersionUID=1;
 	private sockio so;
 	private final ByteBuffer bbi=ByteBuffer.allocate(b.b.K);
-	private static enum state{closed,handshake,parse_next_frame,continue_read_payload,sending};
+	private static enum state{closed,handshake,read_next_frame,read_payload,sending};
 	private state st=state.closed;
 	private final byte[]maskkey=new byte[4];
-//	private int payloadlen;//? long
 	private int payloadlendec;
 	private ByteBuffer result;
 	private ByteBuffer[]bbos;
+	private session ses;
 	final public op sockinit(final Map<String,String>hdrs,final sockio so)throws Throwable{
 		this.so=so;
+		ses=req.get().session();
 		st=state.handshake;
 		// rfc6455#section-1.3
 		// Opening Handshake
@@ -45,7 +48,7 @@ public class websock extends a implements sock{
 		if(bbo.hasRemaining())throw new Error("packetnotfullysent");
 		
 		bbi.position(bbi.limit());//enterloopreadyforread
-		st=state.parse_next_frame;
+		st=state.read_next_frame;
 		return op.read;
 	}
 	final public op read()throws Throwable{
@@ -53,23 +56,22 @@ public class websock extends a implements sock{
 			bbi.clear();
 			final int n=so.read(bbi);
 			if(n==-1){
+				//? send opcode close
 				st=state.closed;
 				return op.close;
 			}
+			if(n==0)throw new Error("read0bytes");
 			bbi.flip();
 		}
-		while(true){
-			switch(dobbi()){default:throw new Error();
+		while(true)switch(dobbi()){default:throw new Error();
 			case read:if(bbi.hasRemaining())continue;return op.read;
 			case write:return op.write;
 			case close:return op.close;
-			}
-		}
+		}		
 	}
-	private int counter;
 	private op dobbi()throws Throwable{
 		switch(st){	default:throw new Error();
-		case parse_next_frame:
+		case read_next_frame:
 			// rfc6455#section-5.2
 			// Base Framing Protocol
 			final int b0=(int)bbi.get();
@@ -90,8 +92,8 @@ public class websock extends a implements sock{
 			if(opcode==8&&payloadlen==0){return op.close;};//?. sendcloseframe
 			bbi.get(maskkey);
 			payloadlendec=payloadlen;
-			st=state.continue_read_payload;
-		case continue_read_payload:
+			st=state.read_payload;
+		case read_payload:
 			//demask
 			final byte[]bbia=bbi.array();
 			final int lim=bbi.limit();
@@ -142,9 +144,15 @@ public class websock extends a implements sock{
 	final public op write()throws Throwable{
 		so.write(bbos);
 		for(final ByteBuffer b:bbos)if(b.hasRemaining())return op.write;
-		st=state.parse_next_frame;
+		st=state.read_next_frame;
 		return op.read;
 	}
+
+	
+	
+	
+	
+	private int counter;
 	protected op parse(final ByteBuffer bb,final int nbytes)throws Throwable{
 		final String msg=new String(bb.array(),bb.position(),nbytes);
 		payloadlendec-=nbytes;
@@ -157,7 +165,7 @@ public class websock extends a implements sock{
 		for(int i=0;i<200000;i++)sb.append((char)b.b.rndint('a','z'));
 		result=ByteBuffer.wrap((counter+++" "+msg+" "+new Date()+" "+sb).getBytes());
 
-		st=state.parse_next_frame;
+		st=state.read_next_frame;
 		return op.write;
 	}
 }
