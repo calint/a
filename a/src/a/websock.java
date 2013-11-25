@@ -15,9 +15,13 @@ public class websock extends a implements sock{
 	static final long serialVersionUID=1;
 	private sockio so;
 	private final ByteBuffer bbi=ByteBuffer.allocate(b.b.K);
-	private int counter;
-	private static enum state{handshake,parse_next_frame,continue_read_payload,write,writecont,closed};
+	private static enum state{closed,handshake,parse_next_frame,continue_read_payload,sending};
 	private state st=state.closed;
+	private final byte[]maskkey=new byte[4];
+//	private int payloadlen;//? long
+	private int payloadlendec;
+	private ByteBuffer result;
+	private ByteBuffer[]bbos;
 	final public op sockinit(final Map<String,String>hdrs,final sockio so)throws Throwable{
 		this.so=so;
 		st=state.handshake;
@@ -47,21 +51,24 @@ public class websock extends a implements sock{
 	final public op read()throws Throwable{
 		if(!bbi.hasRemaining()){
 			bbi.clear();
-			so.read(bbi);
+			final int n=so.read(bbi);
+			if(n==-1){
+				st=state.closed;
+				return op.close;
+			}
 			bbi.flip();
 		}
 		while(true){
 			switch(dobbi()){default:throw new Error();
 			case read:if(bbi.hasRemaining())continue;return op.read;
 			case write:return op.write;
+			case close:return op.close;
 			}
 		}
 	}
-	private final byte[]maskkey=new byte[4];
-	private int payloadlen;//? long
-	private byte[]data;
+	private int counter;
 	private op dobbi()throws Throwable{
-		switch(st){
+		switch(st){	default:throw new Error();
 		case parse_next_frame:
 			// rfc6455#section-5.2
 			// Base Framing Protocol
@@ -73,95 +80,84 @@ public class websock extends a implements sock{
 			final int b1=(int)bbi.get();
 			final boolean masked=(b1&128)==128;
 			if(!masked)throw new Error("websock client sending unmasked message");
-			payloadlen=b1&127;
+			int payloadlen=b1&127;
 			if(payloadlen==126){
 				payloadlen=(((int)bbi.get())<<8)+bbi.get();
-			}else if(payloadlen==127){// not tried
-				throw new Error("payloadlen==127");
+			}else if(payloadlen==127){
+				bbi.get();bbi.get();bbi.get();bbi.get();
+				payloadlen=(((int)bbi.get())<<24)+(((int)bbi.get())<<16)+(((int)bbi.get())<<8)+bbi.get();
 			}
 			if(opcode==8&&payloadlen==0){return op.close;};//?. sendcloseframe
 			bbi.get(maskkey);
+			payloadlendec=payloadlen;
 			st=state.continue_read_payload;
 		case continue_read_payload:
-			{//demask
+			//demask
 			final byte[]bbia=bbi.array();
 			final int lim=bbi.limit();
 			final int pos=bbi.position();
-			final int n=bbi.remaining()>payloadlen?pos+payloadlen:lim;
+			final int n=bbi.remaining()>payloadlendec?pos+payloadlendec:lim;
 			int c=0;
 			for(int i=pos;i<n;i++){
 				final byte b=(byte)(bbia[i]^maskkey[c]);
 				bbia[i]=b;
 				c++;
 				c%=maskkey.length;
-			}}
-			break;
-		default:throw new Error();
-		}
-		switch(parse(bbi)){	default:throw new Error();
-		case 2://more read
-			return op.read;
-		case 1://send frame
-			final int ndata=data.length;
-			// reply frame
-			int nhdr=0;
-			final byte[]hdr=new byte[10];
-			hdr[0]=(byte)129;
-			if(ndata<=125){
-				hdr[1]=(byte)ndata;
-				nhdr=2;
-			}else if(ndata>=126&&ndata<=65535){
-				hdr[1]=126;
-				hdr[2]=(byte)((ndata>>8)&255);
-				hdr[3]=(byte)( ndata    &255);
-				nhdr=4;
-			}else{
-				hdr[1]=127;
-	//			hdr[2]=(byte)((ndata>>56)&255);
-	//			hdr[3]=(byte)((ndata>>48)&255);
-	//			final long la=ndata>>40;
-	//			final long laa=la&255;
-	//			hdr[4]=(byte)((ndata>>40)&255);
-	//			hdr[5]=(byte)((ndata>>32)&255);
-				hdr[6]=(byte)((ndata>>24)&255);
-				hdr[7]=(byte)((ndata>>16)&255);
-				hdr[8]=(byte)((ndata>> 8)&255);
-				hdr[9]=(byte)( ndata     &255);
-				nhdr=10;
 			}
-			bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),ByteBuffer.wrap(data)};
-			st=state.parse_next_frame;//state after write done
-			return write();
+			switch(parse(bbi,n-pos)){default:throw new Error();
+			case read:return op.read;
+			case write:
+				final int ndata=result.remaining();
+				int nhdr=0;
+				final byte[]hdr=new byte[10];
+				hdr[0]=(byte)129;
+				if(ndata<=125){
+					hdr[1]=(byte)ndata;
+					nhdr=2;
+				}else if(ndata>=126&&ndata<=65535){
+					hdr[1]=126;
+					hdr[2]=(byte)((ndata>>8)&255);
+					hdr[3]=(byte)( ndata    &255);
+					nhdr=4;
+				}else{
+					hdr[1]=127;
+		//			hdr[2]=(byte)((ndata>>56)&255);
+		//			hdr[3]=(byte)((ndata>>48)&255);
+		//			final long la=ndata>>40;
+		//			final long laa=la&255;
+		//			hdr[4]=(byte)((ndata>>40)&255);
+		//			hdr[5]=(byte)((ndata>>32)&255);
+					hdr[6]=(byte)((ndata>>24)&255);
+					hdr[7]=(byte)((ndata>>16)&255);
+					hdr[8]=(byte)((ndata>> 8)&255);
+					hdr[9]=(byte)( ndata     &255);
+					nhdr=10;
+				}
+				bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),result};
+				st=state.sending;
+				return write();
+			}
 		}
 	}
-	private ByteBuffer[]bbos;
 	final public op write()throws Throwable{
 		so.write(bbos);
 		for(final ByteBuffer b:bbos)if(b.hasRemaining())return op.write;
-//		if(bbi.hasRemaining())return dobbi();
+		st=state.parse_next_frame;
 		return op.read;
 	}
-	protected int parse(final ByteBuffer bb)throws Throwable{
-		final String msg=new String(bb.array(),bb.position(),payloadlen);
-		bb.position(bb.position()+payloadlen);
+	protected op parse(final ByteBuffer bb,final int nbytes)throws Throwable{
+		final String msg=new String(bb.array(),bb.position(),nbytes);
+		payloadlendec-=nbytes;
+		bb.position(bb.position()+nbytes);
 		System.out.println(msg);
+		if(payloadlendec!=0)return op.read;
+
+		//frame payload processed
 		final StringBuilder sb=new StringBuilder();
-//		for(int i=0;i<200000;i++)sb.append((char)b.b.rndint('a','z'));
-		data=(counter+++" "+msg+" "+new Date()+" "+sb).getBytes();
-		return 1;
-//		System.out.println(new String(msg));
-	}
-	private final static class demask{
-		private final ByteBuffer bb;
-		private final byte[]maskkey;
-		private int c;
-		public demask(final ByteBuffer bb,final byte[]maskkey){this.bb=bb;this.maskkey=maskkey;}
-		public byte nextbyte(){
-			if(bb.remaining()==0)return -1;
-			final byte b=(byte)(bb.get()^maskkey[c]);
-			c++;
-			c%=maskkey.length;
-			return b;
-		}
+		for(int i=0;i<200000;i++)sb.append((char)b.b.rndint('a','z'));
+		result=ByteBuffer.wrap((counter+++" "+msg+" "+new Date()+" "+sb).getBytes());
+
+		st=state.parse_next_frame;
+		return op.write;
 	}
 }
