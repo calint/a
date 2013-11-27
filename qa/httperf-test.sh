@@ -3,4 +3,4 @@ httperf --port=8888 --uri=/qa.t010 --num-calls=10000 --num-conns=20000 --add-hea
 
 ab -k -c1 -n20000 -v4 http://localhost:8888/qa.t014
 ab -k -c1 -n20000 -v4 -Ci=aaaa-131127-104112.687-b23ac992 http://localhost:8888/qa.t014
-ab -k -c1 -n2 -v4 -Ci=aaaa-131127-104112.687-b23ac992 http://localhost:8888/typealine
+ab -k -c1 -n2 -v4 -Ci=aaaa-131127-104112.687-b23ac992 http://localhost:8888/qa.t014
