@@ -2,4 +2,5 @@
 <param name="host" value="localhost">
 <param name="port" value=8888>
 <param name="session" value="aaaa-110307-064915.110-cb48e04f">
+<param name="rootpath" value="">
 </applet>

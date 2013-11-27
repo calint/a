@@ -53,7 +53,7 @@ diff -q file t020.cmp &&
 rm file &&
 
 echo t021: upload file &&
-java -cp ../bin/ applet.uploader localhost 8888 $sessionid upload $uploadfile q&& 
+java -cp ../../auplo/bin/ applet.uploader localhost 8888 $sessionid upload $uploadfile q&& 
 #curl -s -b $cookie --header "Content-Type: $content" --data-binary @$uploadfile http://$host/upload
 diff -q ../u/$sessionid/upload/$uploadfile $uploadfile&&
 bck=`pwd`&&
