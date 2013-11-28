@@ -7,7 +7,7 @@ public class websock extends b.websock{static final long serialVersionUID=1;
 		final String msg=new String(bb.array(),bb.position(),nbytes);
 		bb.position(bb.position()+nbytes);
 //		System.out.println(msg);
-		if(!ispayloadreaddone())return continue_reading_frame_payload();
+		if(!is_payload_read_done())return continue_reading_frame_payload();
 
 		//frame payload processed
 		final StringBuilder sb=new StringBuilder();
