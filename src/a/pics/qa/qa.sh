@@ -1,4 +1,4 @@
-echo `date`: qa pics
+echo `date`: a.qa pics
 
 session=aaaa-131119-095209.788-1aedd1a3
 uri=/pics
