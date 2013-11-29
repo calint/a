@@ -48,13 +48,12 @@ diff -q file t016.cmp &&
 rm file &&
 
 echo t020: upload file applet &&
-curl -s -b $cookie http://$host/upload?$content > file &&
+curl -s -b $cookie http://$host/upload > file &&
 diff -q file t020.cmp &&
 rm file &&
 
 echo t021: upload file &&
 java -cp ../../auplo/bin/ applet.uploader localhost 8888 $sessionid upload $uploadfile q&& 
-#curl -s -b $cookie --header "Content-Type: $content" --data-binary @$uploadfile http://$host/upload
 diff -q ../u/$sessionid/upload/$uploadfile $uploadfile&&
 bck=`pwd`&&
 fl=$bck/file1&&
@@ -84,6 +83,8 @@ rm file&&
 
 
 echo t024: create dir todo&&
+echo t027: websock init todo&&
+echo t028: http 304 todo&&
 echo t025: sokio todo&&
 echo t026: chained small uploads todo&&
 
