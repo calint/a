@@ -63,7 +63,7 @@ ls -l $uploadfile>$fl&&
 cd $bck&&
 ls -l $uploadfile>file2&&
 diff -q file1 file2&&
-
+rm file1 file2&&
 
 echo t021: resource from jar&&
 curl -s http://$host/x.css>file&&
@@ -89,7 +89,6 @@ echo t026: chained small uploads todo&&
 
 
 echo cleanup&&
-rm file1 file2&&
 rm -rf ../u/$sessionid &&
 
 echo ok
