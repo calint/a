@@ -83,7 +83,7 @@ diff -q file t023.cmp&&
 rm file&&
 
 
-echo t023: create dir todo&&
+echo t024: create dir todo&&
 echo t025: sokio todo&&
 echo t026: chained small uploads todo&&
 
