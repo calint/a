@@ -6,44 +6,44 @@ uploadfile="logo.jpg"
 
 echo `date` &&
 echo t000: file transfer from cache &&
-curl -s http://$host/qa/t000.html > file &&
-curl -s http://$host/qa/t000.html > file &&
+curl -s http://$host/a.qa/t000.html > file &&
+curl -s http://$host/a.qa/t000.html > file &&
 diff -q file t000.html &&
 rm file &&
 
 echo t001: file transfer bigger  &&
-curl -s http://$host/qa/t001.txt > file &&
+curl -s http://$host/a.qa/t001.txt > file &&
 diff -q file t001.txt &&
 rm file &&
 
 echo t002: file transfer byterange from 1  &&
-curl -s -r 1- http://$host/qa/t001.txt > file &&
+curl -s -r 1- http://$host/a.qa/t001.txt > file &&
 diff -q file t002.cmp &&
 rm file &&
 
 echo t010: page empty &&
-curl -s http://$host/qa/t010 > file &&
+curl -s http://$host/a.qa/t010 > file &&
 diff -q file t010.cmp &&
 rm file &&
 
 echo t013: page large &&
-curl -s http://$host/qa/t013 > file &&
+curl -s http://$host/a.qa/t013 > file &&
 diff -q file t013.cmp &&
 rm file &&
 
 echo t014: page input utf8 &&
-curl -s -b $cookie http://$host/qa/t014?rst > file &&
-curl -s -b $cookie http://$host/qa/t014 > file &&
+curl -s -b $cookie http://$host/a.qa/t014?rst > file &&
+curl -s -b $cookie http://$host/a.qa/t014 > file &&
 diff -q file t014.cmp &&
 rm file &&
 
 echo t015: page post utf8 &&
-curl -s -b $cookie --header "Content-Type: text/plain; charset=utf-8" --data-binary @t015.dat http://$host/qa/t014 > file &&
+curl -s -b $cookie --header "Content-Type: text/plain; charset=utf-8" --data-binary @t015.dat http://$host/a.qa/t014 > file &&
 diff -q ../u/$sessionid/test.txt t015.cmp &&
 rm -f ../u/$sessionid/test.txt &&
 
 echo t016: page post ut8 read &&
-curl -s -b $cookie http://$host/qa/t014 > file &&
+curl -s -b $cookie http://$host/a.qa/t014 > file &&
 diff -q file t016.cmp &&
 rm file &&
 
@@ -70,14 +70,14 @@ diff -q file t021.cmp&&
 rm file&&
 
 echo t022: big chunks reply&&
-curl -s http://$host/qa.t022>file&&
+curl -s http://$host/a.qa.t022>file&&
 diff -q file t022.cmp&&
 rm file&&
 
 echo t023: cached uri&&
-curl -s -b $cookie http://$host/qa.t023>file&&
+curl -s -b $cookie http://$host/a.qa.t023>file&&
 diff -q file t023.cmp&&
-curl -s -b $cookie http://$host/qa.t023>file&&
+curl -s -b $cookie http://$host/a.qa.t023>file&&
 diff -q file t023.cmp&&
 rm file&&
 
