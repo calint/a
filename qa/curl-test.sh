@@ -64,6 +64,30 @@ cd $bck&&
 ls -l $uploadfile>file2&&
 diff -q file1 file2&&
 
+
+echo t021: resource from jar&&
+curl -s http://$host/x.css>file&&
+diff -q file t021.cmp&&
+rm file&&
+
+echo t022: big chunks reply&&
+curl -s http://$host/qa.t022>file&&
+diff -q file t022.cmp&&
+rm file&&
+
+echo t023: cached uri&&
+curl -s -b $cookie http://$host/qa.t023>file&&
+diff -q file t023.cmp&&
+curl -s -b $cookie http://$host/qa.t023>file&&
+diff -q file t023.cmp&&
+rm file&&
+
+
+echo t023: create dir todo&&
+echo t025: sokio todo&&
+echo t026: chained small uploads todo&&
+
+
 echo cleanup&&
 rm file1 file2&&
 rm -rf ../u/$sessionid &&
