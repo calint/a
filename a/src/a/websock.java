@@ -3,7 +3,7 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 public class websock extends b.websock{static final long serialVersionUID=1;
 	private int counter;
-	protected op parse(final ByteBuffer bb,final int nbytes)throws Throwable{
+	protected op onpayload(final ByteBuffer bb, final int nbytes)throws Throwable{
 		final String msg=new String(bb.array(),bb.position(),nbytes);
 		bb.position(bb.position()+nbytes);
 //		System.out.println(msg);
