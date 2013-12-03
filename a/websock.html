@@ -19,8 +19,8 @@ function run(){
 	ws.ws=new WebSocket(ws.uri);
 	ws.ws.onopen=function(e){
 //		alert("sending");
-//		ws.ws.send("hello1");
-//		ws.ws.send("hello2");
+//		ws.ws.endpoint_recv("hello1");
+//		ws.ws.endpoint_recv("hello2");
 		bench_bigsend();
 //		ws.ws.close();
 //		alert("sent");
