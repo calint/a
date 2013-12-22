@@ -63,16 +63,16 @@ final public class sokio extends a implements sock{
 		out.clear();
 		return op.read;
 	}
-	public static void scantillnexttoken(final ByteBuffer bb){
+	private void in_tillnexttoken(){
 		while(true){
-			final byte b=bb.get();
+			final byte b=in.get();
 			if(b==' ')break;
 			if(b=='\n')break;
 		}
 	}
 	protected boolean dodo()throws Throwable{
 		final byte cmd=in.get();
-		scantillnexttoken(in);
+		in_tillnexttoken();
 		try{
 			switch(cmd){
 			case'l':look();break;
@@ -133,7 +133,7 @@ final public class sokio extends a implements sock{
 		void things_remove(final thing o);
 		void things_foreach(final visitor v)throws Throwable;
 		
-		int sockios_size();
+		int sokios_size();
 		void sokios_add(final sokio s);
 		void sokios_remove(final sokio s);
 		void sokios_recv(final String msg,final sokio exclude);	
@@ -168,7 +168,7 @@ final public class sokio extends a implements sock{
 		public void things_add(final thing o){}
 		public void things_remove(final thing o){}
 
-		public int sockios_size(){return 0;}
+		public int sokios_size(){return 0;}
 		public void sokios_foreach(sokiovisitor v)throws Throwable{}
 		public void sokios_add(final sokio s){}
 		public void sokios_remove(final sokio s){}
@@ -227,7 +227,7 @@ final public class sokio extends a implements sock{
 		}
 		public int things_size(){if(things==null)return 0;return things.size();}
 		public void things_remove(final thing o){if(things==null)return;things.remove(o);}
-		public int sockios_size(){return sokios==null?0:sokios.size();}
+		public int sokios_size(){return sokios==null?0:sokios.size();}
 		public List<sokio>sokios(){return sokios;}
 		public void things_add(final thing o){
 			if(o.place!=null)
@@ -309,7 +309,7 @@ final public class sokio extends a implements sock{
 		}
 	}
 
-	public static anyplace root=new hallway();
+	private static anyplace root=new hallway();
 	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
 	private List<thing>inventory=new LinkedList<thing>();
@@ -354,7 +354,7 @@ final public class sokio extends a implements sock{
 		}});
 		if(!e.things_isempty()){
 			out.put(tobytes("\nu c"));
-			final int n=e.things_size();
+//			final int n=e.things_size();
 //			if(n<5){
 //				boolean first=true;
 //				for(final Iterator<thing>it=e.things().iterator();it.hasNext();){
@@ -384,7 +384,7 @@ final public class sokio extends a implements sock{
 //			}
 			out.put(tobytes("\n"));
 		}
-		final int n=e.sockios_size();
+		final int n=e.sokios_size();
 		if(n>1){
 			out.put(tobytes("\n"));
 			e.sokios_foreach(new place.sokiovisitor(){public boolean visit(final sokio o)throws Throwable{
@@ -442,7 +442,7 @@ final public class sokio extends a implements sock{
 		}});
 		out.put(tobytes("not found"));
 	}
-	thing inventory_get(final String qry){
+	private thing inventory_get(final String qry){
 		for(final thing e:inventory){
 			if(e.toString().startsWith(qry)){
 				return e;
