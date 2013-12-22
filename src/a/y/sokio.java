@@ -36,6 +36,8 @@ final public class sokio extends a implements sock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		name=req.get().session().id();
+		in.put(so.spil());
+		in.flip();
 //		sokios.add(this);
 //		out.clear();
 		help();
@@ -43,7 +45,6 @@ final public class sokio extends a implements sock{
 		out.flip();
 		place().sokios_recv(name+" arrived",this);
 		place().sokios_add(this);
-		in.position(in.limit());
 		return write();
 	}
 	public long meters_input;
@@ -76,10 +77,11 @@ final public class sokio extends a implements sock{
 		return proc();//? stakrain
 	}
 	private void in_tillnexttoken(){
+		wasonewordcmd=false;
 		while(true){
 			final byte b=in.get();
 			if(b==' ')break;
-			if(b=='\n')break;
+			if(b=='\n'){wasonewordcmd=true;break;}
 		}
 	}
 	protected boolean dodo()throws Throwable{
@@ -112,7 +114,7 @@ final public class sokio extends a implements sock{
 	}
 	private void out_prompt(){out.put("\n< ".getBytes());}
 	
-	static public interface place{
+	static public interface place extends Serializable{
 		String description();
 		
 		place places_get(final String qry);
@@ -342,6 +344,7 @@ final public class sokio extends a implements sock{
 				location_print(loc);
 				return;				
 			}
+			out.put("not found".getBytes());
 		}
 	}
 	private void location_print(final place e)throws Throwable{
@@ -503,7 +506,9 @@ final public class sokio extends a implements sock{
 		place().places_add(nl);
 		place().sokios_recv(name+" created "+nl,this);
 	}
+	private boolean wasonewordcmd;
 	private String in_toeol(){
+		if(wasonewordcmd)return null;
 		if(!in.hasRemaining())return null;
 		final StringBuilder sb=new StringBuilder(32);
 		while(true){
