@@ -43,25 +43,37 @@ final public class sokio extends a implements sock{
 		out.flip();
 		place().sokios_recv(name+" arrived",this);
 		place().sokios_add(this);
+		in.position(in.limit());
 		return write();
 	}
+	public long meters_input;
 	final public op read()throws Throwable{
 		in.clear();
 		final int c=so.read(in);
 		if(c==-1)return op.close;
 		if(c==0)return op.read;
+		meters_input+=c;
 		in.flip();
-		if(dodo()){
-			out.flip();
-			return write();
-		}else return op.read;
+		return proc();
 	}
+	private op proc()throws Throwable{
+		while(in.hasRemaining()){
+			if(dodo()){
+				out.flip();
+				if(write()==op.write)
+					return op.write;
+			}
+		}
+		return op.read;
+	}
+	public long meters_output;
 	final public op write()throws Throwable{
-		final int cc=so.write(out);if(cc==0);
+		final int c=so.write(out);
+		meters_output+=c;
 		if(out.hasRemaining())
 			return op.write;
 		out.clear();
-		return op.read;
+		return proc();//? stakrain
 	}
 	private void in_tillnexttoken(){
 		while(true){
