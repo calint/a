@@ -117,6 +117,7 @@ final public class sokio extends a implements sock{
 			return s.substring(i+1);
 		}
 	}
+	
 	static public interface place{
 		String description();
 		
@@ -146,8 +147,8 @@ final public class sokio extends a implements sock{
 		final private path p;
 		pathplace(final path p){this.p=p;}
 		public String toString(){return p.name();}
-		public int sockios_size(){return 0;}
 		public String description(){try{return p.readstr();}catch(final Throwable t){throw new Error(t);}}
+
 		private List<place>places(){
 			final List<place>dir=new LinkedList<place>();
 			for(final String s:p.list()){
@@ -160,19 +161,20 @@ final public class sokio extends a implements sock{
 			for(final place p:places())
 				if(!v.visit(p))break;
 		}
-		public void sokios_foreach(sokiovisitor v)throws Throwable{}
+		public boolean things_isempty(){return true;}
 		public int things_size(){return 0;}
 		public void things_foreach(final visitor v)throws Throwable{}
-		public List<thing>things(){return null;}
-		public void things_remove(final thing o){}
-		public List<sokio>sokios(){return null;}
-		public boolean things_isempty(){return true;}
 		public thing things_get(final String qry){return null;}
 		public void things_add(final thing o){}
+		public void things_remove(final thing o){}
+
+		public int sockios_size(){return 0;}
+		public void sokios_foreach(sokiovisitor v)throws Throwable{}
 		public void sokios_add(final sokio s){}
 		public void sokios_remove(final sokio s){}
 		public void sokios_recv(final String msg,final sokio exclude){}
-		public boolean exits_isempty(){return p.list().length==0;}
+
+		public boolean places_isempty(){return p.list().length==0;}
 		public place places_get(final String qry){
 			for(final String s:p.list()){
 				final path pp=p.get(s);
@@ -223,23 +225,15 @@ final public class sokio extends a implements sock{
 			for(final sokio s:sokios)
 				if(!v.visit(s))break;
 		}
-		public List<thing>things(){return things;}
-		public int things_size(){
-			if(things==null)return 0;
-			return things.size();
-		}
-		public void things_remove(final thing o){
-			if(things==null)return;
-			things.remove(o);
-		}
+		public int things_size(){if(things==null)return 0;return things.size();}
+		public void things_remove(final thing o){if(things==null)return;things.remove(o);}
 		public int sockios_size(){return sokios==null?0:sokios.size();}
 		public List<sokio>sokios(){return sokios;}
 		public void things_add(final thing o){
 			if(o.place!=null)
 				o.place.things.remove(o);
 			o.place=this;
-			if(things==null)
-				things=Collections.synchronizedList(new LinkedList<thing>());
+			if(things==null)things=Collections.synchronizedList(new LinkedList<thing>());
 			things.add(o);
 		}
 		public void sokios_add(final sokio s){
@@ -264,7 +258,7 @@ final public class sokio extends a implements sock{
 		}
 		public place places_get(final String qry){
 			if(exits==null)return null;
-			for(final place e:exits()){
+			for(final place e:exits){
 				if(e.toString().startsWith(qry)){
 					return e;
 				}
@@ -284,10 +278,10 @@ final public class sokio extends a implements sock{
 			if(things==null)return true;
 			return things.isEmpty();
 		}
-		public boolean exits_isempty() {
-			if(exits==null)return true;
-			return exits.isEmpty();
-		}
+//		public boolean exits_isempty() {
+//			if(exits==null)return true;
+//			return exits.isEmpty();
+//		}
 		public place places_enter(final sokio so,final String qry){
 			place dest=places_get(qry);
 			if(dest==null)dest=things_get(qry);
