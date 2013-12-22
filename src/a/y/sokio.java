@@ -34,8 +34,10 @@ public class sokio extends a implements sock{
 		return op.read;
 	}
 	protected boolean dodo()throws Throwable{
-		out.put("> u typed ".getBytes());
-		out.put(in.array(),in.position(),in.remaining());
+		out.put("\n".getBytes());
+		root.lookable(this);
+//		out.put("> u typed ".getBytes());
+//		out.put(in.array(),in.position(),in.remaining());
 		out.put("\n< ".getBytes());
 		return true;
 	}
@@ -47,17 +49,40 @@ public class sokio extends a implements sock{
 	public static interface takeable{}
 	
 	public static class any{
+		protected String name;
 		protected String description;		
 	}
 	public static class location extends any implements lookable,enterable{
 		public void lookable(final sokio so){
 			so.out.put(tobytes(description));
+			so.out.put("\n".getBytes());
+			for(final enterable e:exits){
+				so.out.put("   ".getBytes());
+				so.out.put(tobytes(e.toString()));
+				so.out.put("\n".getBytes());
+			}
 		}
+		protected List<location>exits=new LinkedList<location>();
+		protected List<any>things=new LinkedList<any>();
+		public String toString(){return name;}
 	}
-	private static class rootloc extends location{
-		rootloc(){description="u r in initial location";}
-	}
-	public static location root=new rootloc();
+	private static class locdeps extends location{locdeps(){
+		name="hallway";
+		description="u r in the hallway of departments";
+		exits.add(new depguns());
+		exits.add(new dephealth());
+		exits.add(new deptreasury());
+	}}
+	private static class depguns extends location{depguns(){
+		name="guns";
+	}}
+	private static class dephealth extends location{dephealth(){
+		name="health";
+	}}
+	private static class deptreasury extends location{deptreasury(){
+		name="treasury";		
+	}}
+	public static location root=new locdeps();
 	private Stack<enterable>path=new Stack<enterable>();{path.push(root);}
 	private List<List<selectable>>selectlists=new LinkedList<List<selectable>>();{selectlists.add(new LinkedList<selectable>());}
 	private List<takeable>inventory=new LinkedList<takeable>();
