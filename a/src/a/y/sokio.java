@@ -15,8 +15,9 @@ public class sokio extends a implements sock{
 		so=s;
 		name=req.get().session().id();
 		sokios.add(this);
-		out.clear();
-		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
+//		out.clear();
+		help();
+		out_prompt();
 		out.flip();
 		return write();
 	}
@@ -61,9 +62,10 @@ public class sokio extends a implements sock{
 		case'h':help();break;
 		default:
 		}
-		out.put("\n< ".getBytes());
+		out_prompt();
 		return true;
 	}
+	private void out_prompt(){out.put("\n< ".getBytes());}
 	
 	
 	
@@ -85,11 +87,9 @@ public class sokio extends a implements sock{
 		public String toString(){return name;}
 	}
 	public static class location extends any implements lookable{
-		protected List<location>exits=new LinkedList<location>();
-		protected List<thing>things=new LinkedList<thing>();
-		protected List<sokio>sokios=new LinkedList<sokio>();
-//		public List<location>exits(){return exits;}
-//		public List<thing>things(){return things;}
+		protected List<location>exits=Collections.synchronizedList(new LinkedList<location>());
+		protected List<thing>things=Collections.synchronizedList(new LinkedList<thing>());
+		protected List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 		public void things_put(final thing o){
 			if(o.location!=null){
 				o.location.things.remove(o);
@@ -148,7 +148,7 @@ public class sokio extends a implements sock{
 	private List<thing>inventory=new LinkedList<thing>();
 	
 	public void help(){
-		
+		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n".getBytes());
 	}
 	public void look(){
 		final location e=location();
@@ -269,8 +269,7 @@ public class sokio extends a implements sock{
 		for(final thing e:inventory){
 			if(e.toString().startsWith(what)){
 				inventory.remove(e);
-				e.location=location();
-				e.location.things.add(e);
+				location().things_put(e);
 				e.location.sokiomes(name+" dropped "+e,this);
 				return;
 			}
@@ -291,10 +290,10 @@ public class sokio extends a implements sock{
 	public void inventory(){
 		out.put(tobytes("\nu hav"));
 		for(final thing t:inventory)
-			out.put("\n  ".getBytes()).put(tobytes(t.toString())).put("\n".getBytes());
+			out.put("\n  ".getBytes()).put(tobytes(t.toString()));
 		if(inventory.isEmpty())
-			out.put(tobytes(" nothing\n"));
-		out.put(tobytes("\nu hav selected"));
+			out.put(tobytes(" nothing"));
+		out.put(tobytes("\n\nu hav selected"));
 		for(final thing s:selection())
 			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.location.toString()));
 		if(selection().isEmpty())
