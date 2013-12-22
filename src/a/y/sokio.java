@@ -45,7 +45,7 @@ public class sokio extends a implements sock{
 	public static interface enterable{} 
 	public static interface selectable{}
 	public static interface takeable{}
-	public static interface location{}
+	public static class location{}
 	
 	private Stack<enterable>path=new Stack<enterable>();
 	private List<List<selectable>>selectlists=new LinkedList<List<selectable>>();{selectlists.add(new LinkedList<selectable>());}
