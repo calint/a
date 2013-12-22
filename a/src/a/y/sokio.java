@@ -85,6 +85,8 @@ final public class sokio extends a implements sock{
 		private static final long serialVersionUID=1;
 		protected String name;
 		protected String description;
+		public String name(){return name;}
+		public String description(){return description;}
 		public String toString(){return name;}
 	}
 	public static class place extends any{
@@ -140,6 +142,10 @@ final public class sokio extends a implements sock{
 		public boolean things_isempty(){
 			if(things==null)return true;
 			return things.isEmpty();
+		}
+		public boolean exits_isempty() {
+			if(exits==null)return true;
+			return exits.isEmpty();
 		}
 	}
 	public static class thing extends place implements Cloneable{
@@ -220,10 +226,12 @@ final public class sokio extends a implements sock{
 			out.put(tobytes(e.description));
 			out.put("\n".getBytes());
 		}
-		for(final place ee:e.exits){
-			out.put("   ".getBytes());
-			out.put(tobytes(ee.toString()));
-			out.put("\n".getBytes());
+		if(!e.exits_isempty()){
+			for(final place ee:e.exits){
+				out.put("   ".getBytes());
+				out.put(tobytes(ee.toString()));
+				out.put("\n".getBytes());
+			}
 		}
 		if(!e.things_isempty()){
 			out.put(tobytes("\nu c"));
@@ -311,6 +319,7 @@ final public class sokio extends a implements sock{
 				final thing copy=(thing)e.clone();
 				copy.place=null;
 				copy.name="copy of "+copy.name;
+				copy.aan="a";
 				inventory.add(copy);
 				place().sokios_recv(name+" copied the "+e,this);
 				return;
@@ -361,17 +370,17 @@ final public class sokio extends a implements sock{
 	}
 	public void back(){
 		final place loc=place();
-		loc.sokios.remove(this);
+		loc.sokios_remove(this);
 		path.pop();
 		loc.sokios_recv(name+" departed to "+place(),this);
-		place().sokios.add(this);
+		place().sokios_add(this);
 		place().sokios_recv(name+" arrived from "+loc,this);
 	}
 	public void newplace(){
 		final String nm=in_toeol();
 		final place nl=new place();
 		nl.name=nm;
-		place().exits.add(nl);
+		place().exits_add(nl);
 		place().sokios_recv(name+" created "+nl,this);
 	}
 	private String in_toeol(){
