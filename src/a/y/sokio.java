@@ -190,8 +190,8 @@ final public class sokio extends a implements sock{
 		private static final long serialVersionUID=1;
 		protected String name;
 		protected String description;
-		public String name(){return name;}
-		public String description(){return description;}
+		final public String name(){return name;}
+		final public String description(){return description;}
 		public String toString(){
 			if(name!=null)return name;
 			final String s=getClass().getName().replace('_',' ');
@@ -204,8 +204,8 @@ final public class sokio extends a implements sock{
 		static final long serialVersionUID=1;
 		private List<place>exits;
 		private List<thing>things;
-		transient protected List<sokio>sokios;
-		public List<place>exits(){return exits;}
+		transient private List<sokio>sokios;
+//		public List<place>exits(){return exits;}
 		public void places_foreach(final visitor v)throws Throwable{
 			if(exits==null)return;
 			for(final place p:exits)
@@ -224,7 +224,7 @@ final public class sokio extends a implements sock{
 		public int things_size(){if(things==null)return 0;return things.size();}
 		public void things_remove(final thing o){if(things==null)return;things.remove(o);}
 		public int sokios_size(){return sokios==null?0:sokios.size();}
-		public List<sokio>sokios(){return sokios;}
+//		public List<sokio>sokios(){return sokios;}
 		public void things_add(final thing o){
 			if(o.place!=null)
 				o.place.things.remove(o);
@@ -295,7 +295,7 @@ final public class sokio extends a implements sock{
 			//? deepcopy
 			try{return super.clone();}catch(CloneNotSupportedException e){throw new Error(e);}
 		}
-		public String aanname(){
+		final public String aanname(){
 			if(aan==null||aan.length()==0)
 				return toString();
 			return aan+" "+toString();
