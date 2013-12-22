@@ -11,7 +11,7 @@ public class sokio extends a implements sock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		out.clear();
-		out.put(" retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
+		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
 		out.flip();
 		return write();
 	}
@@ -75,11 +75,11 @@ public class sokio extends a implements sock{
 		public String toString(){return name;}
 		public any in(final location l){location=l;return this;}
 	}
-	public static class location extends any implements lookable,enterable{
+	public static class location extends any implements lookable{
 		public void lookable(final sokio so){
 			so.out.put(tobytes(description));
 			so.out.put("\n".getBytes());
-			for(final enterable e:exits){
+			for(final location e:exits){
 				so.out.put("   ".getBytes());
 				so.out.put(tobytes(e.toString()));
 				so.out.put("\n".getBytes());
@@ -91,26 +91,34 @@ public class sokio extends a implements sock{
 		public List<location>exits(){return exits;}
 		public List<any>selectables(){return selectables;}
 	}
-	private static class locdeps extends location{locdeps(){
+	private static class locdeps extends location implements enterable{locdeps(){
 		name="hallway";
 		description="u r in the hallway of departments";
 		exits.add(new depguns());
 		exits.add(new dephealth());
 		exits.add(new deptreasury());
 	}}
-	private static class depguns extends location{depguns(){
+	private static class depguns extends location implements enterable{depguns(){
 		name="guns";
 	}}
-	private static class dephealth extends location{dephealth(){
+	private static class dephealth extends location implements enterable{dephealth(){
 		name="health";
 	}}
-	private static class deptreasury extends location{deptreasury(){
+	private static class deptreasury extends location implements enterable{deptreasury(){
 		name="treasury";
 		description="u r in the chamber of echos\n formerly known as treasury";
 		selectables.add(new dust().in(this));
+		selectables.add(new shoebox().in(this));
 	}}
-	private static class dust extends any implements selectable{dust(){
+	private static class dust extends location implements selectable{dust(){
 		name="dust";
+		selectables.add(new footsteps().in(this));
+	}}
+	private static class footsteps extends any implements selectable{footsteps(){
+		name="foot steps";
+	}}
+	private static class shoebox extends any implements selectable{shoebox(){
+		name="shoe box";
 	}}
 	public static location root=new locdeps();
 	private Stack<location>path=new Stack<location>();{path.push(root);}
@@ -165,16 +173,17 @@ public class sokio extends a implements sock{
 		out.put(tobytes("not found"));
 	}
 	public void inventory(){
-		out.put(tobytes("\nu hav "));
+		out.put(tobytes("\nu hav"));
 		for(final takeable t:inventory)
-			out.put(tobytes(t.toString())).put("\n".getBytes());
+			out.put("\n  ".getBytes()).put(tobytes(t.toString())).put("\n".getBytes());
 		if(inventory.isEmpty())
-			out.put(tobytes("nothing\n"));
-		out.put(tobytes("\nu hav selected "));
+			out.put(tobytes(" nothing\n"));
+		out.put(tobytes("\nu hav selected"));
 		for(final any s:selection())
-			out.put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.location.toString())).put("\n".getBytes());
+			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.location.toString()));
 		if(selection().isEmpty())
-			out.put(tobytes("nothing\n"));
+			out.put(tobytes(" nothing"));
+		out.put("\n".getBytes());
 	}
 	public void xit(){path.pop();}
 	public location loc(){return path.peek();}
