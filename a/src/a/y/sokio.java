@@ -19,6 +19,8 @@ public class sokio extends a implements sock{
 		help();
 		out_prompt();
 		out.flip();
+		location().sokios.add(this);
+		location().sokiomes(name+" arrived",this);
 		return write();
 	}
 	final public op read()throws Throwable{
