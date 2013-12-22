@@ -41,19 +41,41 @@ public class sokio extends a implements sock{
 	}
 	
 	
-	public static interface lookable{void lookable(final sokio so,final lookable o);} 
+	public static interface lookable{void lookable(final sokio so);} 
 	public static interface enterable{} 
 	public static interface selectable{}
 	public static interface takeable{}
-	public static class location{}
 	
-	private Stack<enterable>path=new Stack<enterable>();
+	public static class any{
+		protected String description;		
+	}
+	public static class location extends any implements lookable,enterable{
+		public void lookable(final sokio so){
+			so.out.put(tobytes(description));
+		}
+	}
+	private static class rootloc extends location{
+		rootloc(){description="u r in initial location";}
+	}
+	public static location root=new rootloc();
+	private Stack<enterable>path=new Stack<enterable>();{path.push(root);}
 	private List<List<selectable>>selectlists=new LinkedList<List<selectable>>();{selectlists.add(new LinkedList<selectable>());}
 	private List<takeable>inventory=new LinkedList<takeable>();
 	
-	public void look(final lookable o){o.lookable(this,o);}
-	public void enter(final enterable o){path.push(o);}
-	public void select(final selectable o){selection().add(o);}
+	public void look(){
+		final enterable e=loc();
+		if(e instanceof lookable){
+			((lookable)e).lookable(this);
+			return;
+		}
+		out.put(tobytes("not lookable"));
+	}
+	public void enter(final enterable o){
+		path.push(o);
+	}
+	public void select(final selectable o){
+		selection().add(o);
+	}
 	public void inventory(){
 		for(final takeable t:inventory)
 			out.put(tobytes(t.toString())).put("\n".getBytes());
