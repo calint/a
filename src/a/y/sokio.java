@@ -2,7 +2,6 @@ package a.y;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
-
 import b.*;
 import static b.b.*;
 final public class sokio extends a implements sock{
@@ -88,9 +87,9 @@ final public class sokio extends a implements sock{
 		protected String description;
 		public String toString(){return name;}
 	}
-	public static class location extends any{
+	public static class place extends any{
 		private static final long serialVersionUID=1;
-		private List<location>exits;
+		private List<place>exits;
 		private List<thing>things;
 		transient protected List<sokio>sokios;
 		public void things_add(final thing o){
@@ -121,17 +120,17 @@ final public class sokio extends a implements sock{
 			}
 			return null;
 		}
-		public location exits_get(final String qry){
-			for(final location e:exits){
+		public place exits_get(final String qry){
+			for(final place e:exits){
 				if(e.toString().startsWith(qry)){
 					return e;
 				}
 			}
 			return null;
 		}
-		public void exits_add(final location o){
+		public void exits_add(final place o){
 			if(exits==null)
-				exits=Collections.synchronizedList(new LinkedList<location>());
+				exits=Collections.synchronizedList(new LinkedList<place>());
 			exits.add(o);
 		}
 		public void sokios_remove(final sokio s){
@@ -143,9 +142,9 @@ final public class sokio extends a implements sock{
 			return things.isEmpty();
 		}
 	}
-	public static class thing extends location implements Cloneable{
+	public static class thing extends place implements Cloneable{
 		private static final long serialVersionUID=1;
-		protected location location;
+		protected place location;
 		protected String aan;
 		public Object clone(){
 			//? deepcopy
@@ -157,20 +156,20 @@ final public class sokio extends a implements sock{
 			return aan+" "+name;
 		}
 	}
-	private static class locdeps extends location{static final long serialVersionUID=1;{
+	private static class locdeps extends place{static final long serialVersionUID=1;{
 		name="hallway";
 		description="u r in the hallway of departments";
 		exits_add(new depguns());
 		exits_add(new dephealth());
 		exits_add(new deptreasury());
 	}}
-	private static class depguns extends location{static final long serialVersionUID=1;{
+	private static class depguns extends place{static final long serialVersionUID=1;{
 		name="guns";
 	}}
-	private static class dephealth extends location{static final long serialVersionUID=1;{
+	private static class dephealth extends place{static final long serialVersionUID=1;{
 		name="health";
 	}}
-	private static class deptreasury extends location{static final long serialVersionUID=1;{
+	private static class deptreasury extends place{static final long serialVersionUID=1;{
 		name="treasury";
 		description="u r in the chamber of echos\n formerly known as treasury";
 		things_add(new dust());
@@ -185,8 +184,8 @@ final public class sokio extends a implements sock{
 		name="shoe box";
 		description="u c numerous iou notes";
 	}}
-	public static location root=new locdeps();
-	private Stack<location>path=new Stack<location>();{path.push(root);}
+	public static place root=new locdeps();
+	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
 	private List<thing>inventory=new LinkedList<thing>();
 	
@@ -208,20 +207,20 @@ final public class sokio extends a implements sock{
 				location_print(thl);
 				return;
 			}
-			final location loc=location().exits_get(where);
+			final place loc=location().exits_get(where);
 			if(loc!=null){
 				location_print(loc);
 				return;				
 			}
 		}
 	}
-	private void location_print(final location e) {
+	private void location_print(final place e) {
 		if(e.description!=null&&e.description.length()>0){
 			out.put(tobytes("\n"));
 			out.put(tobytes(e.description));
 			out.put("\n".getBytes());
 		}
-		for(final location ee:e.exits){
+		for(final place ee:e.exits){
 			out.put("   ".getBytes());
 			out.put(tobytes(ee.toString()));
 			out.put("\n".getBytes());
@@ -268,7 +267,7 @@ final public class sokio extends a implements sock{
 	}
 	public void enter(){
 		final String where=in_toeol();
-		final location dest=location().exits_get(where);
+		final place dest=location().exits_get(where);
 		if(dest==null){
 			out.put(tobytes("not found"));
 			return;
@@ -361,7 +360,7 @@ final public class sokio extends a implements sock{
 		out.put("\n".getBytes());
 	}
 	public void back(){
-		final location loc=location();
+		final place loc=location();
 		loc.sokios.remove(this);
 		path.pop();
 		loc.sokios_recv(name+" departed to "+location(),this);
@@ -370,7 +369,7 @@ final public class sokio extends a implements sock{
 	}
 	public void newloc(){
 		final String nm=in_toeol();
-		final location nl=new location();
+		final place nl=new place();
 		nl.name=nm;
 		location().exits.add(nl);
 		location().sokios_recv(name+" created "+nl,this);
@@ -411,7 +410,7 @@ final public class sokio extends a implements sock{
 	public void load()throws Throwable{
 //		final String where=in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
-		root=(location)p.readobj();
+		root=(place)p.readobj();
 		path.clear();
 		path.add(root);
 		out.put(("loaded "+p).getBytes());
@@ -420,6 +419,6 @@ final public class sokio extends a implements sock{
 	
 	
 	
-	public location location(){return path.peek();}
+	public place location(){return path.peek();}
 	public List<thing>selection(){return selection;}
 }
