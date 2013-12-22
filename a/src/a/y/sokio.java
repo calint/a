@@ -1,6 +1,8 @@
 package a.y;
+import java.io.IOException;
 import java.nio.*;
 import java.util.*;
+
 import b.*;
 import static b.b.*;
 public class sokio extends a implements sock{
@@ -8,8 +10,10 @@ public class sokio extends a implements sock{
 	private sockio so;
 	protected final ByteBuffer in=ByteBuffer.allocate(128);
 	protected final ByteBuffer out=ByteBuffer.allocate(1024);
+	private static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
+		sokios.add(this);
 		out.clear();
 		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
 		out.flip();
@@ -45,10 +49,14 @@ public class sokio extends a implements sock{
 		scantillnexttoken(in);
 		switch(cmd){
 		case'l':look();break;
-		case'e':enter();break;
+		case'g':case'e':enter();break;
 		case's':select();break;
-		case'x':xit();break;
+		case'x':case'b':back();break;
 		case'i':inventory();break;
+		case't':take();break;
+		case'd':drop();break;
+		case'c':copy();break;
+		case'z':say();break;
 		default:
 		}
 		out.put("\n< ".getBytes());
@@ -63,33 +71,36 @@ public class sokio extends a implements sock{
 	
 	
 	
-	public static interface lookable{void lookable(final sokio so);} 
+	public static interface lookable{} 
 	public static interface enterable{} 
 	public static interface selectable{}
 	public static interface takeable{}
+	public static interface copyable{}
 	
 	public static class any{
 		protected String name="";
 		protected String description="";
-		protected location location;
 		public String toString(){return name;}
-		public any in(final location l){location=l;return this;}
 	}
 	public static class location extends any implements lookable{
-		public void lookable(final sokio so){
-			so.out.put(tobytes(description));
-			so.out.put("\n".getBytes());
-			for(final location e:exits){
-				so.out.put("   ".getBytes());
-				so.out.put(tobytes(e.toString()));
-				so.out.put("\n".getBytes());
-			}
-		}
 		protected List<location>exits=new LinkedList<location>();
-		protected List<any>selectables=new LinkedList<any>();
-		protected List<any>things=new LinkedList<any>();
-		public List<location>exits(){return exits;}
-		public List<any>selectables(){return selectables;}
+		protected List<thing>things=new LinkedList<thing>();
+//		public List<location>exits(){return exits;}
+//		public List<thing>things(){return things;}
+		public void things_put(final thing o){
+			if(o.location!=null){
+				o.location.things.remove(o);
+			}
+			o.location=this;
+			things.add(o);
+		}
+	}
+	public static class thing extends location implements Cloneable{
+		protected location location;
+		public Object clone(){
+			//? deepcopy
+			try{return super.clone();}catch(CloneNotSupportedException e){throw new Error(e);}
+		}
 	}
 	private static class locdeps extends location implements enterable{locdeps(){
 		name="hallway";
@@ -107,32 +118,40 @@ public class sokio extends a implements sock{
 	private static class deptreasury extends location implements enterable{deptreasury(){
 		name="treasury";
 		description="u r in the chamber of echos\n formerly known as treasury";
-		selectables.add(new dust().in(this));
-		selectables.add(new shoebox().in(this));
+		things_put(new dust());
+		things_put(new shoebox());
 	}}
-	private static class dust extends location implements selectable{dust(){
+	private static class dust extends thing implements selectable{dust(){
 		name="dust";
-		selectables.add(new footsteps().in(this));
+		things_put(new footsteps());
 	}}
-	private static class footsteps extends any implements selectable{footsteps(){
+	private static class footsteps extends thing implements selectable{footsteps(){
 		name="foot steps";
+		description="u c foot steps";
 	}}
-	private static class shoebox extends any implements selectable{shoebox(){
+	private static class shoebox extends thing implements selectable{shoebox(){
 		name="shoe box";
+		description="u c numerous iou notes";
 	}}
 	public static location root=new locdeps();
 	private Stack<location>path=new Stack<location>();{path.push(root);}
-	private List<List<any>>selectlists=new LinkedList<List<any>>();{selectlists.add(new LinkedList<any>());}
-	private List<takeable>inventory=new LinkedList<takeable>();
+	private List<thing>selection=new LinkedList<thing>();
+	private List<thing>inventory=new LinkedList<thing>();
 	
 	public void look(){
-		final location e=loc();
+		final location e=location();
 		out.put(tobytes("\n"));
-		e.lookable(this);
-		if(e.selectables.isEmpty())
+		out.put(tobytes(e.description));
+		out.put("\n".getBytes());
+		for(final location ee:e.exits){
+			out.put("   ".getBytes());
+			out.put(tobytes(ee.toString()));
+			out.put("\n".getBytes());
+		}
+		if(e.things.isEmpty())
 			return;
 		out.put(tobytes("\nu c"));
-		for(final any s:e.selectables){
+		for(final any s:e.things){
 			out.put((byte)' ');
 			out.put(tobytes(s.toString()));
 		}
@@ -147,7 +166,7 @@ public class sokio extends a implements sock{
 			sb.append((char)b);
 		}
 		final String where=sb.toString().trim();
-		for(final location l:loc().exits()){
+		for(final location l:location().exits){
 			if(l.toString().startsWith(where)){
 				path.push(l);
 				return;
@@ -164,7 +183,7 @@ public class sokio extends a implements sock{
 			sb.append((char)b);
 		}
 		final String what=sb.toString().trim();
-		for(final any e:loc().selectables()){
+		for(final thing e:location().things){
 			if(e.toString().startsWith(what)){
 				selection().add(e);
 				return;
@@ -172,20 +191,92 @@ public class sokio extends a implements sock{
 		}
 		out.put(tobytes("not found"));
 	}
+	public void take(){
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b==' ')break;
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String what=sb.toString().trim();
+		for(final thing e:location().things){
+			if(e.toString().startsWith(what)){
+				inventory.add(e);
+				location().things.remove(e);
+				e.location=null;
+				return;
+			}
+		}
+		out.put(tobytes("not found"));
+	}
+	public void copy(){
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b==' ')break;
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String what=sb.toString().trim();
+		for(final thing e:location().things){
+			if(e.toString().startsWith(what)){
+				final thing copy=(thing)e.clone();
+				copy.location=null;
+				copy.name="copy of "+copy.name;
+				inventory.add(copy);
+				return;
+			}
+		}
+		out.put(tobytes("not found"));
+	}
+	public void drop(){
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b==' ')break;
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String what=sb.toString().trim();
+		for(final thing e:inventory){
+			if(e.toString().startsWith(what)){
+				inventory.remove(e);
+				e.location=location();
+				e.location.things.add(e);
+				return;
+			}
+		}
+		out.put(tobytes("not have"));
+	}
+	public void say(){
+		final StringBuilder sb=new StringBuilder(64);
+		while(true){
+			final byte b=in.get();
+//			if(b==' ')break;
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String what=sb.toString().trim();
+		for(final sokio e:sokios){
+			try{e.so.write(ByteBuffer.wrap(("\n"+Integer.toHexString(e.hashCode())+" says "+what+"\n").getBytes()));}catch(final IOException ex){throw new Error(ex);}
+		}
+	}
+
 	public void inventory(){
 		out.put(tobytes("\nu hav"));
-		for(final takeable t:inventory)
+		for(final thing t:inventory)
 			out.put("\n  ".getBytes()).put(tobytes(t.toString())).put("\n".getBytes());
 		if(inventory.isEmpty())
 			out.put(tobytes(" nothing\n"));
 		out.put(tobytes("\nu hav selected"));
-		for(final any s:selection())
+		for(final thing s:selection())
 			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.location.toString()));
 		if(selection().isEmpty())
 			out.put(tobytes(" nothing"));
 		out.put("\n".getBytes());
 	}
-	public void xit(){path.pop();}
-	public location loc(){return path.peek();}
-	public List<any>selection(){return selectlists.get(selectlists.size()-1);}
+	public void back(){path.pop();}
+	public location location(){return path.peek();}
+	public List<thing>selection(){return selection;}
 }
