@@ -2,15 +2,16 @@ package a.y;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
+
 import b.*;
 import static b.b.*;
-public class sokio extends a implements sock{
+final public class sokio extends a implements sock{
 	static final long serialVersionUID=1;
 	private sockio so;
-	protected String name;
-	protected final ByteBuffer in=ByteBuffer.allocate(128);
-	protected final ByteBuffer out=ByteBuffer.allocate(1024);
-	private static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
+	private String name;
+	private final ByteBuffer in=ByteBuffer.allocate(128);
+	private final ByteBuffer out=ByteBuffer.allocate(1024);
+	private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		name=req.get().session().id();
@@ -65,6 +66,7 @@ public class sokio extends a implements sock{
 		case'n':name();break;
 		case'k':newloc();break;
 		case'.':save();break;
+		case',':load();break;
 		case'o':newthing();break;
 		default:
 		}
@@ -108,6 +110,22 @@ public class sokio extends a implements sock{
 				if(e==exclude)continue;
 				try{e.so.write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}catch(final IOException ex){throw new Error(ex);}
 			}		
+		}
+		public thing things_get(final String qry){
+			for(final thing e:things){
+				if(e.toString().startsWith(qry)){
+					return e;
+				}
+			}
+			return null;
+		}
+		public location exits_get(final String qry){
+			for(final location e:exits){
+				if(e.toString().startsWith(qry)){
+					return e;
+				}
+			}
+			return null;
 		}
 	}
 	public static class thing extends location implements Cloneable{
@@ -160,7 +178,28 @@ public class sokio extends a implements sock{
 		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n".getBytes());
 	}
 	public void look(){
-		final location e=location();
+		final String where=in_toeol();
+		if(where==null||where.length()==0){
+			location_print(location());
+		}else{
+			final thing th=inventory_get(where);
+			if(th!=null){
+				location_print(th);
+				return;
+			}
+			final thing thl=location().things_get(where);
+			if(thl!=null){
+				location_print(thl);
+				return;
+			}
+			final location loc=location().exits_get(where);
+			if(loc!=null){
+				location_print(loc);
+				return;				
+			}
+		}
+	}
+	private void location_print(final location e) {
 		if(e.description!=null&&e.description.length()>0){
 			out.put(tobytes("\n"));
 			out.put(tobytes(e.description));
@@ -212,42 +251,23 @@ public class sokio extends a implements sock{
 		}
 	}
 	public void enter(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
+		final String where=in_toeol();
+		final location dest=location().exits_get(where);
+		if(dest==null){
+			out.put(tobytes("not found"));
+			return;
 		}
-		final String where=sb.toString().trim();
-		for(final location l:location().exits){
-			if(l.toString().startsWith(where)){
-				location().sokios.remove(this);
-				location().sokiomes(name+" departed to "+l,this);
-				l.sokiomes(name+" arrived from "+location(),this);
-				l.sokios.add(this);
-				path.push(l);
-				return;
-			}
-		}
-		out.put(tobytes("not found"));
+		location().sokios.remove(this);
+		location().sokiomes(name+" departed to "+dest,this);
+		dest.sokiomes(name+" arrived from "+location(),this);
+		dest.sokios.add(this);
+		path.push(dest);
 	}
 	public void name(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		name=sb.toString().trim();
+		name=in_toeol();
 	}
 	public void select(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String what=sb.toString().trim();
+		final String what=in_toeol();
 		for(final thing e:location().things){
 			if(e.toString().startsWith(what)){
 				selection().add(e);
@@ -257,13 +277,7 @@ public class sokio extends a implements sock{
 		out.put(tobytes("not found"));
 	}
 	public void take(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String what=sb.toString().trim();
+		final String what=in_toeol();
 		for(final thing e:location().things){
 			if(e.toString().startsWith(what)){
 				inventory.add(e);
@@ -276,13 +290,7 @@ public class sokio extends a implements sock{
 		out.put(tobytes("not found"));
 	}
 	public void copy(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String what=sb.toString().trim();
+		final String what=in_toeol();
 		for(final thing e:location().things){
 			if(e.toString().startsWith(what)){
 				final thing copy=(thing)e.clone();
@@ -295,33 +303,28 @@ public class sokio extends a implements sock{
 		}
 		out.put(tobytes("not found"));
 	}
-	public void drop(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String what=sb.toString().trim();
+	thing inventory_get(final String qry){
 		for(final thing e:inventory){
-			if(e.toString().startsWith(what)){
-				inventory.remove(e);
-				location().things_add(e);
-				e.location.sokiomes(name+" dropped "+e.aanname(),this);
-				return;
+			if(e.toString().startsWith(qry)){
+				return e;
 			}
 		}
-		out.put(tobytes("not have"));
+		return null;
+	}
+	public void drop(){
+		final String what=in_toeol();
+		final thing e=inventory_get(what);
+		if(e==null){
+			out.put(tobytes("not have"));
+			return;
+		}
+		inventory.remove(e);
+		location().things_add(e);
+		e.location.sokiomes(name+" dropped "+e.aanname(),this);
 	}
 	public void say(){
-		final StringBuilder sb=new StringBuilder(64);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String what=sb.toString().trim();
-		location().sokiomes(name+" says "+what,this);
+		final String say=in_toeol();
+		location().sokiomes(name+" says "+say,this);
 	}
 	public void inventory(){
 		out.put(tobytes("\nu hav"));
@@ -350,19 +353,14 @@ public class sokio extends a implements sock{
 		location().sokiomes(name+" arrived from "+loc,this);
 	}
 	public void newloc(){
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String nm=sb.toString().trim();
-		location nl=new location();
+		final String nm=in_toeol();
+		final location nl=new location();
 		nl.name=nm;
 		location().exits.add(nl);
 		location().sokiomes(name+" created "+nl,this);
 	}
-	public void newthing(){
+	private String in_toeol(){
+		if(!in.hasRemaining())return null;
 		final StringBuilder sb=new StringBuilder(32);
 		while(true){
 			final byte b=in.get();
@@ -370,7 +368,11 @@ public class sokio extends a implements sock{
 			sb.append((char)b);
 		}
 		final String nm=sb.toString().trim();
-		thing o=new thing();
+		return nm;
+	}
+	public void newthing(){
+		final String nm=in_toeol();
+		final thing o=new thing();
 		if(nm.startsWith("a ")){
 			o.aan="a";		
 			o.name=nm.substring("a ".length());
@@ -392,17 +394,17 @@ public class sokio extends a implements sock{
 			sb.append((char)b);
 		}
 		final String where=sb.toString().trim();
-		for(final location l:location().exits){
-			if(l.toString().startsWith(where)){
-				location().sokios.remove(this);
-				location().sokiomes(name+" departed to "+l,this);
-				l.sokiomes(name+" arrived from "+location(),this);
-				l.sokios.add(this);
-				path.push(l);
-				return;
-			}
+		
+	}
+	public void load(){
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b=='\n')break;
+			sb.append((char)b);
 		}
-		out.put(tobytes("not found"));
+		final String where=sb.toString().trim();
+		
 	}
 
 	
