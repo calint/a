@@ -19,8 +19,8 @@ final public class sokio extends a implements sock{
 		help();
 		out_prompt();
 		out.flip();
-		location().sokios_add(this);
-		location().sokios_recv(name+" arrived",this);
+		place().sokios_add(this);
+		place().sokios_recv(name+" arrived",this);
 		return write();
 	}
 	final public op read()throws Throwable{
@@ -64,7 +64,7 @@ final public class sokio extends a implements sock{
 			case'z':say();break;
 			case'h':help();break;
 			case'n':name();break;
-			case'k':newloc();break;
+			case'k':newplace();break;
 			case'.':save();break;
 			case',':load();break;
 			case'o':newthing();break;
@@ -93,9 +93,9 @@ final public class sokio extends a implements sock{
 		private List<thing>things;
 		transient protected List<sokio>sokios;
 		public void things_add(final thing o){
-			if(o.location!=null)
-				o.location.things.remove(o);
-			o.location=this;
+			if(o.place!=null)
+				o.place.things.remove(o);
+			o.place=this;
 			if(things==null)
 				things=Collections.synchronizedList(new LinkedList<thing>());
 			things.add(o);
@@ -144,7 +144,7 @@ final public class sokio extends a implements sock{
 	}
 	public static class thing extends place implements Cloneable{
 		private static final long serialVersionUID=1;
-		protected place location;
+		protected place place;
 		protected String aan;
 		public Object clone(){
 			//? deepcopy
@@ -193,21 +193,21 @@ final public class sokio extends a implements sock{
 		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n".getBytes());
 	}
 	public void look(){
-		final String where=in_toeol();
-		if(where==null||where.length()==0){
-			location_print(location());
+		final String qry=in_toeol();
+		if(qry==null||qry.length()==0){
+			location_print(place());
 		}else{
-			final thing th=inventory_get(where);
+			final thing th=inventory_get(qry);
 			if(th!=null){
 				location_print(th);
 				return;
 			}
-			final thing thl=location().things_get(where);
+			final thing thl=place().things_get(qry);
 			if(thl!=null){
 				location_print(thl);
 				return;
 			}
-			final place loc=location().exits_get(where);
+			final place loc=place().exits_get(qry);
 			if(loc!=null){
 				location_print(loc);
 				return;				
@@ -267,14 +267,14 @@ final public class sokio extends a implements sock{
 	}
 	public void enter(){
 		final String where=in_toeol();
-		final place dest=location().exits_get(where);
+		final place dest=place().exits_get(where);
 		if(dest==null){
 			out.put(tobytes("not found"));
 			return;
 		}
-		location().sokios_remove(this);
-		location().sokios_recv(name+" departed to "+dest,this);
-		dest.sokios_recv(name+" arrived from "+location(),this);
+		place().sokios_remove(this);
+		place().sokios_recv(name+" departed to "+dest,this);
+		dest.sokios_recv(name+" arrived from "+place(),this);
 		dest.sokios_add(this);
 		path.push(dest);
 	}
@@ -283,7 +283,7 @@ final public class sokio extends a implements sock{
 	}
 	public void select(){
 		final String what=in_toeol();
-		for(final thing e:location().things){
+		for(final thing e:place().things){
 			if(e.toString().startsWith(what)){
 				selection().add(e);
 				return;
@@ -293,12 +293,12 @@ final public class sokio extends a implements sock{
 	}
 	public void take(){
 		final String what=in_toeol();
-		for(final thing e:location().things){
+		for(final thing e:place().things){
 			if(e.toString().startsWith(what)){
 				inventory.add(e);
-				location().things.remove(e);
-				e.location=null;
-				location().sokios_recv(name+" took the "+e,this);
+				place().things.remove(e);
+				e.place=null;
+				place().sokios_recv(name+" took the "+e,this);
 				return;
 			}
 		}
@@ -306,13 +306,13 @@ final public class sokio extends a implements sock{
 	}
 	public void copy(){
 		final String what=in_toeol();
-		for(final thing e:location().things){
+		for(final thing e:place().things){
 			if(e.toString().startsWith(what)){
 				final thing copy=(thing)e.clone();
-				copy.location=null;
+				copy.place=null;
 				copy.name="copy of "+copy.name;
 				inventory.add(copy);
-				location().sokios_recv(name+" copied the "+e,this);
+				place().sokios_recv(name+" copied the "+e,this);
 				return;
 			}
 		}
@@ -334,12 +334,12 @@ final public class sokio extends a implements sock{
 			return;
 		}
 		inventory.remove(e);
-		location().things_add(e);
-		e.location.sokios_recv(name+" dropped "+e.aanname(),this);
+		place().things_add(e);
+		e.place.sokios_recv(name+" dropped "+e.aanname(),this);
 	}
 	public void say(){
 		final String say=in_toeol();
-		location().sokios_recv(name+" says "+say,this);
+		place().sokios_recv(name+" says "+say,this);
 	}
 	public void inventory(){
 		out.put(tobytes("\nu hav"));
@@ -354,25 +354,25 @@ final public class sokio extends a implements sock{
 			out.put(tobytes(" nothing"));
 		out.put(tobytes("\n\nu hav selected"));
 		for(final thing s:selection())
-			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.location.toString()));
+			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.place.toString()));
 		if(selection().isEmpty())
 			out.put(tobytes(" nothing"));
 		out.put("\n".getBytes());
 	}
 	public void back(){
-		final place loc=location();
+		final place loc=place();
 		loc.sokios.remove(this);
 		path.pop();
-		loc.sokios_recv(name+" departed to "+location(),this);
-		location().sokios.add(this);
-		location().sokios_recv(name+" arrived from "+loc,this);
+		loc.sokios_recv(name+" departed to "+place(),this);
+		place().sokios.add(this);
+		place().sokios_recv(name+" arrived from "+loc,this);
 	}
-	public void newloc(){
+	public void newplace(){
 		final String nm=in_toeol();
 		final place nl=new place();
 		nl.name=nm;
-		location().exits.add(nl);
-		location().sokios_recv(name+" created "+nl,this);
+		place().exits.add(nl);
+		place().sokios_recv(name+" created "+nl,this);
 	}
 	private String in_toeol(){
 		if(!in.hasRemaining())return null;
@@ -419,6 +419,6 @@ final public class sokio extends a implements sock{
 	
 	
 	
-	public place location(){return path.peek();}
+	public place place(){return path.peek();}
 	public List<thing>selection(){return selection;}
 }
