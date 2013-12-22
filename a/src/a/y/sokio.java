@@ -37,17 +37,17 @@ final public class sokio extends a implements sock,threadedsock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		name=req.get().session().id();
-		in.put(so.spil());
-		in.flip();
-//		sokios.add(this);
-//		out.clear();
 		help();
 		out_prompt();
 		out.flip();
 		place().sokios_recv(name+" arrived",this);
 		place().sokios_add(this);
+		in.put(so.spil());
+		in.flip();
 		return write();
 	}
+//	private static enum state{line,sending};
+//	private state st=state.line;
 	public long meters_input;
 	final public op read()throws Throwable{
 		if(!in.hasRemaining()){
@@ -58,11 +58,8 @@ final public class sokio extends a implements sock,threadedsock{
 			meters_input+=c;
 			in.flip();
 		}
-		return proc();
-	}
-	private op proc()throws Throwable{
 		while(in.hasRemaining()){
-			if(dodo()){
+			if(parse()){
 				out.flip();
 				if(write()==op.write)
 					return op.write;
@@ -78,7 +75,6 @@ final public class sokio extends a implements sock,threadedsock{
 			return op.write;
 		out.clear();
 		return op.read;
-//		return proc();//? stakrain
 	}
 	private boolean in_tillnexttoken(){
 		wasonewordcmd=false;
@@ -90,7 +86,7 @@ final public class sokio extends a implements sock,threadedsock{
 		}
 		return true;
 	}
-	protected boolean dodo()throws Throwable{
+	protected boolean parse()throws Throwable{
 		final byte cmd=in.get();
 		if(!in_tillnexttoken())throw new Error();
 		try{
@@ -244,7 +240,6 @@ final public class sokio extends a implements sock,threadedsock{
 		public int things_size(){if(things==null)return 0;return things.size();}
 		public void things_remove(final thing o){if(things==null)return;things.remove(o);}
 		public int sokios_size(){return sokios==null?0:sokios.size();}
-//		public List<sokio>sokios(){return sokios;}
 		public void things_add(final thing o){
 			if(o.place!=null)
 				o.place.things.remove(o);
@@ -550,17 +545,15 @@ final public class sokio extends a implements sock,threadedsock{
 			o.name=nm;
 		}
 		inventory.add(o);
-//		location().things_add(o);
-//		location().sokiomes(name+" created "+nm,this);
 	}
 	public void save()throws Throwable{
-//		final String where=in_toeol();
+		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		p.writeobj(root);
 		out.put(("saved "+p.size()+" bytes to "+p).getBytes());
 	}
 	public void load()throws Throwable{
-//		final String where=in_toeol();
+		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		root=(anyplace)p.readobj();
 		path.clear();
