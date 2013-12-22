@@ -41,8 +41,8 @@ final public class sokio extends a implements sock{
 		help();
 		out_prompt();
 		out.flip();
-		place().sokios_add(this);
 		place().sokios_recv(name+" arrived",this);
+		place().sokios_add(this);
 		return write();
 	}
 	final public op read()throws Throwable{
@@ -99,24 +99,6 @@ final public class sokio extends a implements sock{
 		return true;
 	}
 	private void out_prompt(){out.put("\n< ".getBytes());}
-	
-	
-	
-	
-	public static class any implements Serializable{
-		private static final long serialVersionUID=1;
-		protected String name;
-		protected String description;
-		public String name(){return name;}
-		public String description(){return description;}
-		public String toString(){
-			if(name!=null)return name;
-			final String s=getClass().getName().replace('_',' ');
-			final int i=s.lastIndexOf('$');
-			if(i==-1)return s;
-			return s.substring(i+1);
-		}
-	}
 	
 	static public interface place{
 		String description();
@@ -204,6 +186,20 @@ final public class sokio extends a implements sock{
 			return dest;
 		}
 	}
+	public static class any implements Serializable{
+		private static final long serialVersionUID=1;
+		protected String name;
+		protected String description;
+		public String name(){return name;}
+		public String description(){return description;}
+		public String toString(){
+			if(name!=null)return name;
+			final String s=getClass().getName().replace('_',' ');
+			final int i=s.lastIndexOf('$');
+			if(i==-1)return s;
+			return s.substring(i+1);
+		}
+	}
 	public static class anyplace extends any implements place{
 		static final long serialVersionUID=1;
 		private List<place>exits;
@@ -279,10 +275,6 @@ final public class sokio extends a implements sock{
 			if(things==null)return true;
 			return things.isEmpty();
 		}
-//		public boolean exits_isempty() {
-//			if(exits==null)return true;
-//			return exits.isEmpty();
-//		}
 		public place places_enter(final sokio so,final String qry){
 			place dest=places_get(qry);
 			if(dest==null)dest=things_get(qry);
