@@ -33,14 +33,34 @@ public class sokio extends a implements sock{
 		out.clear();
 		return op.read;
 	}
+	public static void scantillnexttoken(final ByteBuffer bb){
+		while(true){
+			final byte b=bb.get();
+			if(b==' ')break;
+			if(b=='\n')break;
+		}
+	}
 	protected boolean dodo()throws Throwable{
-		out.put("\n".getBytes());
-		root.lookable(this);
-//		out.put("> u typed ".getBytes());
-//		out.put(in.array(),in.position(),in.remaining());
+		final byte cmd=in.get();
+		scantillnexttoken(in);
+		switch(cmd){
+		case'l':look();break;
+		case'e':enter();break;
+		case's':select();break;
+		case'x':xit();break;
+		case'i':inventory();break;
+		default:
+		}
 		out.put("\n< ".getBytes());
 		return true;
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	public static interface lookable{void lookable(final sokio so);} 
@@ -49,8 +69,11 @@ public class sokio extends a implements sock{
 	public static interface takeable{}
 	
 	public static class any{
-		protected String name;
-		protected String description;		
+		protected String name="";
+		protected String description="";
+		protected location location;
+		public String toString(){return name;}
+		public any in(final location l){location=l;return this;}
 	}
 	public static class location extends any implements lookable,enterable{
 		public void lookable(final sokio so){
@@ -63,8 +86,10 @@ public class sokio extends a implements sock{
 			}
 		}
 		protected List<location>exits=new LinkedList<location>();
+		protected List<any>selectables=new LinkedList<any>();
 		protected List<any>things=new LinkedList<any>();
-		public String toString(){return name;}
+		public List<location>exits(){return exits;}
+		public List<any>selectables(){return selectables;}
 	}
 	private static class locdeps extends location{locdeps(){
 		name="hallway";
@@ -80,32 +105,78 @@ public class sokio extends a implements sock{
 		name="health";
 	}}
 	private static class deptreasury extends location{deptreasury(){
-		name="treasury";		
+		name="treasury";
+		description="u r in the chamber of echos\n formerly known as treasury";
+		selectables.add(new dust().in(this));
+	}}
+	private static class dust extends any implements selectable{dust(){
+		name="dust";
 	}}
 	public static location root=new locdeps();
-	private Stack<enterable>path=new Stack<enterable>();{path.push(root);}
-	private List<List<selectable>>selectlists=new LinkedList<List<selectable>>();{selectlists.add(new LinkedList<selectable>());}
+	private Stack<location>path=new Stack<location>();{path.push(root);}
+	private List<List<any>>selectlists=new LinkedList<List<any>>();{selectlists.add(new LinkedList<any>());}
 	private List<takeable>inventory=new LinkedList<takeable>();
 	
 	public void look(){
-		final enterable e=loc();
-		if(e instanceof lookable){
-			((lookable)e).lookable(this);
+		final location e=loc();
+		out.put(tobytes("\n"));
+		e.lookable(this);
+		if(e.selectables.isEmpty())
 			return;
+		out.put(tobytes("\nu c"));
+		for(final any s:e.selectables){
+			out.put((byte)' ');
+			out.put(tobytes(s.toString()));
 		}
-		out.put(tobytes("not lookable"));
+		out.put(tobytes("\n"));
 	}
-	public void enter(final enterable o){
-		path.push(o);
+	public void enter(){
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b==' ')break;
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String where=sb.toString().trim();
+		for(final location l:loc().exits()){
+			if(l.toString().startsWith(where)){
+				path.push(l);
+				return;
+			}
+		}
+		out.put(tobytes("not found"));
 	}
-	public void select(final selectable o){
-		selection().add(o);
+	public void select(){
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b==' ')break;
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String what=sb.toString().trim();
+		for(final any e:loc().selectables()){
+			if(e.toString().startsWith(what)){
+				selection().add(e);
+				return;
+			}
+		}
+		out.put(tobytes("not found"));
 	}
 	public void inventory(){
+		out.put(tobytes("\nu hav "));
 		for(final takeable t:inventory)
 			out.put(tobytes(t.toString())).put("\n".getBytes());
+		if(inventory.isEmpty())
+			out.put(tobytes("nothing\n"));
+		out.put(tobytes("\nu hav selected "));
+		for(final any s:selection())
+			out.put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.location.toString())).put("\n".getBytes());
+		if(selection().isEmpty())
+			out.put(tobytes("nothing\n"));
 	}
 	public void xit(){path.pop();}
-	public enterable loc(){return path.peek();}
-	public List<selectable>selection(){return selectlists.get(selectlists.size()-1);}
+	public location loc(){return path.peek();}
+	public List<any>selection(){return selectlists.get(selectlists.size()-1);}
 }
