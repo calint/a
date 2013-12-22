@@ -1,11 +1,12 @@
 package a.y;
 import java.io.*;
 import java.nio.*;
+import java.nio.channels.ClosedChannelException;
 import java.util.*;
 
 import b.*;
 import static b.b.*;
-final public class sokio extends a implements sock{
+final public class sokio extends a implements sock,threadedsock{
 	static final long serialVersionUID=1;
 /////////////////////////////////////////////////////////////////////////////////////	
 	private static class hallway extends anyplace{static final long serialVersionUID=1;{
@@ -49,12 +50,14 @@ final public class sokio extends a implements sock{
 	}
 	public long meters_input;
 	final public op read()throws Throwable{
-		in.clear();
-		final int c=so.read(in);
-		if(c==-1)return op.close;
-		if(c==0)return op.read;
-		meters_input+=c;
-		in.flip();
+		if(!in.hasRemaining()){
+			in.clear();
+			final int c=so.read(in);
+			if(c==-1)return op.close;
+			if(c==0)return op.read;
+			meters_input+=c;
+			in.flip();
+		}
 		return proc();
 	}
 	private op proc()throws Throwable{
@@ -74,19 +77,22 @@ final public class sokio extends a implements sock{
 		if(out.hasRemaining())
 			return op.write;
 		out.clear();
-		return proc();//? stakrain
+		return op.read;
+//		return proc();//? stakrain
 	}
-	private void in_tillnexttoken(){
+	private boolean in_tillnexttoken(){
 		wasonewordcmd=false;
 		while(true){
+			if(!in.hasRemaining())return false;
 			final byte b=in.get();
 			if(b==' ')break;
 			if(b=='\n'){wasonewordcmd=true;break;}
 		}
+		return true;
 	}
 	protected boolean dodo()throws Throwable{
 		final byte cmd=in.get();
-		in_tillnexttoken();
+		if(!in_tillnexttoken())throw new Error();
 		try{
 			switch(cmd){
 			case'l':look();break;
@@ -255,7 +261,19 @@ final public class sokio extends a implements sock{
 			for(final sokio e:sokios){
 				if(e==exclude)continue;
 				try{e.so.write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}
-				catch(final IOException ex){throw new Error(ex);}
+				catch(final IOException ex){
+					if("Broken pipe".equals(ex.getMessage())){
+						sokios.remove(e);
+						e.so.close();
+						return;
+					}
+					if(ex instanceof ClosedChannelException){
+						sokios.remove(e);
+						e.so.close();
+						return;
+					}
+					throw new Error(ex);
+				}
 			}		
 		}
 		public thing things_get(final String qry){
