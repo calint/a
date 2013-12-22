@@ -244,7 +244,8 @@ final public class sokio extends a implements sock{
 			if(sokios==null)return;
 			for(final sokio e:sokios){
 				if(e==exclude)continue;
-				try{e.so.write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}catch(final IOException ex){throw new Error(ex);}
+				try{e.so.write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}
+				catch(final IOException ex){throw new Error(ex);}
 			}		
 		}
 		public thing things_get(final String qry){
