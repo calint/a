@@ -85,6 +85,7 @@ public class sokio extends a implements sock{
 	public static class location extends any implements lookable{
 		protected List<location>exits=new LinkedList<location>();
 		protected List<thing>things=new LinkedList<thing>();
+		protected List<sokio>sokios=new LinkedList<sokio>();
 //		public List<location>exits(){return exits;}
 //		public List<thing>things(){return things;}
 		public void things_put(final thing o){
@@ -148,14 +149,22 @@ public class sokio extends a implements sock{
 			out.put(tobytes(ee.toString()));
 			out.put("\n".getBytes());
 		}
-		if(e.things.isEmpty())
-			return;
-		out.put(tobytes("\nu c"));
-		for(final any s:e.things){
-			out.put((byte)' ');
-			out.put(tobytes(s.toString()));
+		if(!e.things.isEmpty()){
+			out.put(tobytes("\nu c"));
+			for(final any s:e.things){
+				out.put((byte)' ');
+				out.put(tobytes(s.toString()));
+			}
+			out.put(tobytes("\n"));
 		}
-		out.put(tobytes("\n"));
+		if(!e.sokios.isEmpty()){
+			for(final sokio s:e.sokios){
+				if(s==this)continue;
+				out.put((byte)' ');
+				out.put(tobytes(Integer.toHexString(s.hashCode())));
+			}
+			out.put(tobytes(" is here\n"));
+		}
 	}
 	public void enter(){
 		final StringBuilder sb=new StringBuilder(32);
@@ -168,6 +177,8 @@ public class sokio extends a implements sock{
 		final String where=sb.toString().trim();
 		for(final location l:location().exits){
 			if(l.toString().startsWith(where)){
+				location().sokios.remove(this);
+				l.sokios.add(this);
 				path.push(l);
 				return;
 			}
@@ -276,7 +287,11 @@ public class sokio extends a implements sock{
 			out.put(tobytes(" nothing"));
 		out.put("\n".getBytes());
 	}
-	public void back(){path.pop();}
+	public void back(){
+		location().sokios.remove(this);
+		path.pop();
+		location().sokios.add(this);
+	}
 	public location location(){return path.peek();}
 	public List<thing>selection(){return selection;}
 }
