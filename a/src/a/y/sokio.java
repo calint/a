@@ -2,6 +2,7 @@ package a.y;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
+
 import b.*;
 import static b.b.*;
 final public class sokio extends a implements sock{
@@ -123,6 +124,7 @@ final public class sokio extends a implements sock{
 			return null;
 		}
 		public place exits_get(final String qry){
+			if(exits==null)return null;
 			for(final place e:exits){
 				if(e.toString().startsWith(qry)){
 					return e;
@@ -146,6 +148,17 @@ final public class sokio extends a implements sock{
 		public boolean exits_isempty() {
 			if(exits==null)return true;
 			return exits.isEmpty();
+		}
+		public place enter(final sokio so,final String qry){
+			place dest=exits_get(qry);
+			if(dest==null)dest=things_get(qry);
+			if(dest==null)return null;
+			so.place().sokios_remove(so);
+			so.place().sokios_recv(name+" departed to "+dest,so);
+			dest.sokios_recv(name+" arrived from "+so.place(),so);
+			dest.sokios_add(so);
+			so.path.push(dest);
+			return dest;
 		}
 	}
 	public static class thing extends place implements Cloneable{
@@ -183,7 +196,10 @@ final public class sokio extends a implements sock{
 	}}
 	private static class dust extends thing{static final long serialVersionUID=1;{
 		name="dust";
-		description="u c foot steps";
+		things_add(new footsteps());
+	}}
+	private static class footsteps extends thing{static final long serialVersionUID=1;{
+		name="foot steps";
 	}}
 	private static class shoebox extends thing{static final long serialVersionUID=1;{
 		aan="a";
@@ -275,29 +291,23 @@ final public class sokio extends a implements sock{
 	}
 	public void enter(){
 		final String where=in_toeol();
-		final place dest=place().exits_get(where);
+		final place dest=place().enter(this,where);
 		if(dest==null){
 			out.put(tobytes("not found"));
 			return;
 		}
-		place().sokios_remove(this);
-		place().sokios_recv(name+" departed to "+dest,this);
-		dest.sokios_recv(name+" arrived from "+place(),this);
-		dest.sokios_add(this);
-		path.push(dest);
 	}
 	public void name(){
 		name=in_toeol();
 	}
 	public void select(){
 		final String what=in_toeol();
-		for(final thing e:place().things){
-			if(e.toString().startsWith(what)){
-				selection().add(e);
-				return;
-			}
+		final thing e=place().things_get(what);
+		if(e==null){
+			out.put(tobytes("not found"));
+			return;
 		}
-		out.put(tobytes("not found"));
+		selection().add(e);
 	}
 	public void take(){
 		final String what=in_toeol();
@@ -369,6 +379,10 @@ final public class sokio extends a implements sock{
 		out.put("\n".getBytes());
 	}
 	public void back(){
+		if(path.size()==1){
+			out.put(tobytes("cannot"));
+			return;
+		}
 		final place loc=place();
 		loc.sokios_remove(this);
 		path.pop();
@@ -414,7 +428,7 @@ final public class sokio extends a implements sock{
 //		final String where=in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		p.writeobj(root);
-		out.put(("saved to "+p).getBytes());
+		out.put(("saved "+p.size()+" bytes to "+p).getBytes());
 	}
 	public void load()throws Throwable{
 //		final String where=in_toeol();
@@ -422,7 +436,7 @@ final public class sokio extends a implements sock{
 		root=(place)p.readobj();
 		path.clear();
 		path.add(root);
-		out.put(("loaded "+p).getBytes());
+		out.put(("loaded "+p.size()+" bytes from "+p).getBytes());
 	}
 
 	
