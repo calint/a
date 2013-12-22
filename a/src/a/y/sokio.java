@@ -11,10 +11,10 @@ final public class sokio extends a implements sock{
 	private static class hallway extends anyplace{static final long serialVersionUID=1;{
 		name="hallway";
 		description="u r in the hallway of departments";
-		exits_add(new guns());
-		exits_add(new health());
-		exits_add(new treasury());
-		exits_add(new pathplace(b.path()));
+		places_add(new guns());
+		places_add(new health());
+		places_add(new treasury());
+		places_add(new pathplace(b.path()));
 	}}
 	private static class guns extends anyplace{static final long serialVersionUID=1;{}}
 	private static class health extends anyplace{static final long serialVersionUID=1;{}}
@@ -120,6 +120,11 @@ final public class sokio extends a implements sock{
 	static public interface place{
 		String description();
 		
+		place places_get(final String qry);
+		void places_add(final place o);
+		void places_foreach(final visitor v)throws Throwable;
+		place places_enter(final sokio so,final String qry);
+		
 		boolean things_isempty();
 		int things_size();
 		thing things_get(final String qry);
@@ -132,11 +137,6 @@ final public class sokio extends a implements sock{
 		void sokios_remove(final sokio s);
 		void sokios_recv(final String msg,final sokio exclude);	
 		void sokios_foreach(final sokiovisitor v)throws Throwable;
-		
-		place exits_get(final String qry);
-		void exits_add(final place o);
-		void exits_foreach(final visitor v)throws Throwable;
-		place exists_enter(final sokio so,final String qry);
 
 		static public interface visitor{boolean visit(final place p)throws Throwable;}
 		static public interface sokiovisitor{boolean visit(final sokio o)throws Throwable;}
@@ -145,12 +145,10 @@ final public class sokio extends a implements sock{
 		static final long serialVersionUID=1;
 		final private path p;
 		pathplace(final path p){this.p=p;}
-		public String toString(){
-			return p.name();
-		}
+		public String toString(){return p.name();}
 		public int sockios_size(){return 0;}
-		public String description(){return null;}
-		public List<place>exits(){
+		public String description(){try{return p.readstr();}catch(final Throwable t){throw new Error(t);}}
+		private List<place>places(){
 			final List<place>dir=new LinkedList<place>();
 			for(final String s:p.list()){
 				final path pp=p.get(s);
@@ -158,8 +156,8 @@ final public class sokio extends a implements sock{
 			}
 			return dir;
 		}
-		public void exits_foreach(final visitor v)throws Throwable{
-			for(final place p:exits())
+		public void places_foreach(final visitor v)throws Throwable{
+			for(final place p:places())
 				if(!v.visit(p))break;
 		}
 		public void sokios_foreach(sokiovisitor v)throws Throwable{}
@@ -175,16 +173,25 @@ final public class sokio extends a implements sock{
 		public void sokios_remove(final sokio s){}
 		public void sokios_recv(final String msg,final sokio exclude){}
 		public boolean exits_isempty(){return p.list().length==0;}
-		public place exits_get(final String qry){
+		public place places_get(final String qry){
 			for(final String s:p.list()){
 				final path pp=p.get(s);
 				if(pp.name().startsWith(qry))return new pathplace(pp);
 			}
 			return null;
 		}
-		public void exits_add(final place o){}
-		public place exists_enter(final sokio so,final String qry){
-			place dest=exits_get(qry);
+		public void places_add(final place o){
+			final path f=p.get(o.toString());
+			if(f.exists())return;
+			final String txt=o.description();
+			if(txt==null||txt.length()==0){
+				try{f.mkfile();}catch(Throwable t){throw new Error(t);}
+				return;
+			}
+			try{f.append(txt);}catch(Throwable t){throw new Error(t);}
+		}
+		public place places_enter(final sokio so,final String qry){
+			place dest=places_get(qry);
 			if(dest==null)dest=things_get(qry);
 			if(dest==null)return null;
 			so.place().sokios_remove(so);
@@ -201,7 +208,7 @@ final public class sokio extends a implements sock{
 		private List<thing>things;
 		transient protected List<sokio>sokios;
 		public List<place>exits(){return exits;}
-		public void exits_foreach(final visitor v)throws Throwable{
+		public void places_foreach(final visitor v)throws Throwable{
 			if(exits==null)return;
 			for(final place p:exits)
 				if(!v.visit(p))break;
@@ -255,7 +262,7 @@ final public class sokio extends a implements sock{
 			}
 			return null;
 		}
-		public place exits_get(final String qry){
+		public place places_get(final String qry){
 			if(exits==null)return null;
 			for(final place e:exits()){
 				if(e.toString().startsWith(qry)){
@@ -264,7 +271,7 @@ final public class sokio extends a implements sock{
 			}
 			return null;
 		}
-		public void exits_add(final place o){
+		public void places_add(final place o){
 			if(exits==null)
 				exits=Collections.synchronizedList(new LinkedList<place>());
 			exits.add(o);
@@ -281,8 +288,8 @@ final public class sokio extends a implements sock{
 			if(exits==null)return true;
 			return exits.isEmpty();
 		}
-		public place exists_enter(final sokio so,final String qry){
-			place dest=exits_get(qry);
+		public place places_enter(final sokio so,final String qry){
+			place dest=places_get(qry);
 			if(dest==null)dest=things_get(qry);
 			if(dest==null)return null;
 			so.place().sokios_remove(so);
@@ -331,7 +338,7 @@ final public class sokio extends a implements sock{
 				location_print(thl);
 				return;
 			}
-			final place loc=place().exits_get(qry);
+			final place loc=place().places_get(qry);
 			if(loc!=null){
 				location_print(loc);
 				return;				
@@ -345,7 +352,7 @@ final public class sokio extends a implements sock{
 			out.put(tobytes(d));
 			out.put("\n".getBytes());
 		}
-		e.exits_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
+		e.places_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
 			out.put("   ".getBytes());
 			out.put(tobytes(p.toString()));
 			out.put("\n".getBytes());
@@ -386,9 +393,8 @@ final public class sokio extends a implements sock{
 		final int n=e.sockios_size();
 		if(n>1){
 			out.put(tobytes("\n"));
-			final sokio th=this;
 			e.sokios_foreach(new place.sokiovisitor(){public boolean visit(final sokio o)throws Throwable{
-				if(o==th)return true;
+				if(o==sokio.this)return true;
 				out.put((byte)' ');
 				out.put(tobytes(o.name));
 				return true;
@@ -398,7 +404,7 @@ final public class sokio extends a implements sock{
 	}
 	public void enter(){
 		final String where=in_toeol();
-		final place dest=place().exists_enter(this,where);
+		final place dest=place().places_enter(this,where);
 		if(dest==null){
 			out.put(tobytes("not found"));
 			return;
@@ -430,7 +436,6 @@ final public class sokio extends a implements sock{
 	}
 	public void copy()throws Throwable{
 		final String what=in_toeol();
-		final sokio th=this;
 		place().things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
 			if(!p.toString().startsWith(what))return true;
 			final thing copy=(thing)((thing)p).clone();
@@ -438,7 +443,7 @@ final public class sokio extends a implements sock{
 			copy.name="copy of "+copy.name;
 			copy.aan="a";
 			inventory.add(copy);
-			place().sokios_recv(name+" copied the "+p,th);
+			place().sokios_recv(name+" copied the "+p,sokio.this);
 			return false;
 		}});
 		out.put(tobytes("not found"));
@@ -500,7 +505,7 @@ final public class sokio extends a implements sock{
 		final String nm=in_toeol();
 		final anyplace nl=new anyplace();
 		nl.name=nm;
-		place().exits_add(nl);
+		place().places_add(nl);
 		place().sokios_recv(name+" created "+nl,this);
 	}
 	private String in_toeol(){
