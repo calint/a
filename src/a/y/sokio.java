@@ -354,34 +354,30 @@ final public class sokio extends a implements sock{
 		}});
 		if(!e.things_isempty()){
 			out.put(tobytes("\nu c"));
-//			final int n=e.things_size();
-//			if(n<5){
-//				boolean first=true;
-//				for(final Iterator<thing>it=e.things().iterator();it.hasNext();){
-//					final thing th=it.next();
-//					if(first){
-//						first=false;
-//						out.put(tobytes(" "));
-//					}else if(!it.hasNext()){
-//						out.put(tobytes(" and "));
-//					}else{
-//						out.put(tobytes(", "));						
-//					}
-//					if(th.aan!=null){
-//						out.put(tobytes(th.aan));
-//						out.put(tobytes(" "));
-//					}
-//					out.put(tobytes(th.toString()));
-//				}
-//			}else{
-//				out.put(tobytes(":"));
+			final int n=e.things_size();
+			if(n<5){
+				final class counter{int c;}final counter c=new counter();
+				e.things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
+					if(c.c==0){
+						out.put(tobytes(" "));						
+					}else if(c.c==n-1){
+						out.put(tobytes(" and "));						
+					}else{
+						out.put(tobytes(", "));						
+					}
+					out.put(tobytes(((thing)p).aanname()));
+					c.c++;
+					return true;
+				}});
+			}else{
+				out.put(tobytes(":"));
 				e.things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
 					out.put(tobytes("\n  "));
 					final String tag=((thing)p).aanname();
 					out.put(tobytes(tag));
 					return true;
 				}});
-//			}
+			}
 			out.put(tobytes("\n"));
 		}
 		final int n=e.sokios_size();
