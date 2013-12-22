@@ -20,7 +20,11 @@ u c numerous iou notes
 
 u c foot steps
 
+> e d
+
 > s f
+
+> x
 
 > x
 
@@ -28,7 +32,7 @@ u c foot steps
 
 u hav nothing
 
-u hav selected foot steps from treasury
+u hav selected foot steps from dust
 
 > x
 
