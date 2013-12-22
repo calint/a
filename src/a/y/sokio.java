@@ -1,18 +1,19 @@
 package a.y;
-import java.io.IOException;
+import java.io.*;
 import java.nio.*;
 import java.util.*;
-
 import b.*;
 import static b.b.*;
 public class sokio extends a implements sock{
 	static final long serialVersionUID=1;
 	private sockio so;
+	protected String name;
 	protected final ByteBuffer in=ByteBuffer.allocate(128);
 	protected final ByteBuffer out=ByteBuffer.allocate(1024);
 	private static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
+		name=req.get().session().id();
 		sokios.add(this);
 		out.clear();
 		out.put("\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
@@ -57,6 +58,7 @@ public class sokio extends a implements sock{
 		case'd':drop();break;
 		case'c':copy();break;
 		case'z':say();break;
+		case'h':help();break;
 		default:
 		}
 		out.put("\n< ".getBytes());
@@ -94,6 +96,12 @@ public class sokio extends a implements sock{
 			}
 			o.location=this;
 			things.add(o);
+		}
+		public void sokiomes(final String msg,final sokio exclude){
+			for(final sokio e:sokios){
+				if(e==exclude)continue;
+				try{e.so.write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}catch(final IOException ex){throw new Error(ex);}
+			}		
 		}
 	}
 	public static class thing extends location implements Cloneable{
@@ -139,6 +147,9 @@ public class sokio extends a implements sock{
 	private List<thing>selection=new LinkedList<thing>();
 	private List<thing>inventory=new LinkedList<thing>();
 	
+	public void help(){
+		
+	}
 	public void look(){
 		final location e=location();
 		out.put(tobytes("\n"));
@@ -157,11 +168,12 @@ public class sokio extends a implements sock{
 			}
 			out.put(tobytes("\n"));
 		}
-		if(!e.sokios.isEmpty()){
+		if(e.sokios.size()>1){
+			out.put(tobytes("\n"));
 			for(final sokio s:e.sokios){
 				if(s==this)continue;
 				out.put((byte)' ');
-				out.put(tobytes(Integer.toHexString(s.hashCode())));
+				out.put(tobytes(name));
 			}
 			out.put(tobytes(" is here\n"));
 		}
@@ -178,6 +190,8 @@ public class sokio extends a implements sock{
 		for(final location l:location().exits){
 			if(l.toString().startsWith(where)){
 				location().sokios.remove(this);
+				location().sokiomes(name+" departed to "+l,this);
+				l.sokiomes(name+" arrived from "+location(),this);
 				l.sokios.add(this);
 				path.push(l);
 				return;
@@ -216,6 +230,7 @@ public class sokio extends a implements sock{
 				inventory.add(e);
 				location().things.remove(e);
 				e.location=null;
+				location().sokiomes(name+" took "+e,this);
 				return;
 			}
 		}
@@ -236,6 +251,7 @@ public class sokio extends a implements sock{
 				copy.location=null;
 				copy.name="copy of "+copy.name;
 				inventory.add(copy);
+				location().sokiomes(name+" copied "+e,this);
 				return;
 			}
 		}
@@ -255,6 +271,7 @@ public class sokio extends a implements sock{
 				inventory.remove(e);
 				e.location=location();
 				e.location.things.add(e);
+				e.location.sokiomes(name+" dropped "+e,this);
 				return;
 			}
 		}
@@ -269,11 +286,8 @@ public class sokio extends a implements sock{
 			sb.append((char)b);
 		}
 		final String what=sb.toString().trim();
-		for(final sokio e:sokios){
-			try{e.so.write(ByteBuffer.wrap(("\n"+Integer.toHexString(e.hashCode())+" says "+what+"\n").getBytes()));}catch(final IOException ex){throw new Error(ex);}
-		}
+		location().sokiomes(name+" says "+what,this);
 	}
-
 	public void inventory(){
 		out.put(tobytes("\nu hav"));
 		for(final thing t:inventory)
@@ -288,9 +302,12 @@ public class sokio extends a implements sock{
 		out.put("\n".getBytes());
 	}
 	public void back(){
-		location().sokios.remove(this);
+		final location loc=location();
+		loc.sokios.remove(this);
 		path.pop();
+		loc.sokiomes(name+" departed to "+location(),this);
 		location().sokios.add(this);
+		location().sokiomes(name+" arrived from "+loc,this);
 	}
 	public location location(){return path.peek();}
 	public List<thing>selection(){return selection;}
