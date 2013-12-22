@@ -7,10 +7,10 @@ import b.*;
 import static b.b.*;
 final public class sokio extends a implements sock{
 	static final long serialVersionUID=1;
-	transient private sockio so;
+	private sockio so;
 	private String name;
-	transient private final ByteBuffer in=ByteBuffer.allocate(128);
-	transient private final ByteBuffer out=ByteBuffer.allocate(32*K);
+	private final ByteBuffer in=ByteBuffer.allocate(1*K);
+	private final ByteBuffer out=ByteBuffer.allocate(4*K);
 //	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
@@ -21,7 +21,7 @@ final public class sokio extends a implements sock{
 		out_prompt();
 		out.flip();
 		location().sokios_add(this);
-		location().sokiomes(name+" arrived",this);
+		location().sokios_recv(name+" arrived",this);
 		return write();
 	}
 	final public op read()throws Throwable{
@@ -83,27 +83,29 @@ final public class sokio extends a implements sock{
 	
 	
 	public static class any implements Serializable{
+		private static final long serialVersionUID=1;
 		protected String name;
 		protected String description;
 		public String toString(){return name;}
 	}
 	public static class location extends any{
-		protected List<location>exits=Collections.synchronizedList(new LinkedList<location>());
-		protected List<thing>things=Collections.synchronizedList(new LinkedList<thing>());
-		transient protected List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
+		private static final long serialVersionUID=1;
+		private List<location>exits;
+		private List<thing>things;
+		transient protected List<sokio>sokios;
 		public void things_add(final thing o){
-			if(o.location!=null){
+			if(o.location!=null)
 				o.location.things.remove(o);
-			}
 			o.location=this;
+			if(things==null)
+				things=Collections.synchronizedList(new LinkedList<thing>());
 			things.add(o);
 		}
 		public void sokios_add(final sokio s){
-			if(sokios==null)
-				sokios=Collections.synchronizedList(new LinkedList<sokio>());
+			if(sokios==null)sokios=Collections.synchronizedList(new LinkedList<sokio>());
 			sokios.add(s);
 		}
-		public void sokiomes(final String msg,final sokio exclude){
+		public void sokios_recv(final String msg,final sokio exclude){
 			if(sokios==null)return;
 			for(final sokio e:sokios){
 				if(e==exclude)continue;
@@ -111,6 +113,7 @@ final public class sokio extends a implements sock{
 			}		
 		}
 		public thing things_get(final String qry){
+			if(things==null)return null;
 			for(final thing e:things){
 				if(e.toString().startsWith(qry)){
 					return e;
@@ -126,12 +129,22 @@ final public class sokio extends a implements sock{
 			}
 			return null;
 		}
+		public void exits_add(final location o){
+			if(exits==null)
+				exits=Collections.synchronizedList(new LinkedList<location>());
+			exits.add(o);
+		}
 		public void sokios_remove(final sokio s){
 			if(sokios==null)return;
 			sokios.remove(s);
 		}
+		public boolean things_isempty(){
+			if(things==null)return true;
+			return things.isEmpty();
+		}
 	}
 	public static class thing extends location implements Cloneable{
+		private static final long serialVersionUID=1;
 		protected location location;
 		protected String aan;
 		public Object clone(){
@@ -144,30 +157,30 @@ final public class sokio extends a implements sock{
 			return aan+" "+name;
 		}
 	}
-	private static class locdeps extends location{{
+	private static class locdeps extends location{static final long serialVersionUID=1;{
 		name="hallway";
 		description="u r in the hallway of departments";
-		exits.add(new depguns());
-		exits.add(new dephealth());
-		exits.add(new deptreasury());
+		exits_add(new depguns());
+		exits_add(new dephealth());
+		exits_add(new deptreasury());
 	}}
-	private static class depguns extends location{{
+	private static class depguns extends location{static final long serialVersionUID=1;{
 		name="guns";
 	}}
-	private static class dephealth extends location{{
+	private static class dephealth extends location{static final long serialVersionUID=1;{
 		name="health";
 	}}
-	private static class deptreasury extends location{{
+	private static class deptreasury extends location{static final long serialVersionUID=1;{
 		name="treasury";
 		description="u r in the chamber of echos\n formerly known as treasury";
 		things_add(new dust());
 		things_add(new shoebox());
 	}}
-	private static class dust extends thing{{
+	private static class dust extends thing{static final long serialVersionUID=1;{
 		name="dust";
 		description="u c foot steps";
 	}}
-	private static class shoebox extends thing{{
+	private static class shoebox extends thing{static final long serialVersionUID=1;{
 		aan="a";
 		name="shoe box";
 		description="u c numerous iou notes";
@@ -213,7 +226,7 @@ final public class sokio extends a implements sock{
 			out.put(tobytes(ee.toString()));
 			out.put("\n".getBytes());
 		}
-		if(!e.things.isEmpty()){
+		if(!e.things_isempty()){
 			out.put(tobytes("\nu c"));
 			final int n=e.things.size();
 			if(n<5){
@@ -261,8 +274,8 @@ final public class sokio extends a implements sock{
 			return;
 		}
 		location().sokios_remove(this);
-		location().sokiomes(name+" departed to "+dest,this);
-		dest.sokiomes(name+" arrived from "+location(),this);
+		location().sokios_recv(name+" departed to "+dest,this);
+		dest.sokios_recv(name+" arrived from "+location(),this);
 		dest.sokios_add(this);
 		path.push(dest);
 	}
@@ -286,7 +299,7 @@ final public class sokio extends a implements sock{
 				inventory.add(e);
 				location().things.remove(e);
 				e.location=null;
-				location().sokiomes(name+" took the "+e,this);
+				location().sokios_recv(name+" took the "+e,this);
 				return;
 			}
 		}
@@ -300,7 +313,7 @@ final public class sokio extends a implements sock{
 				copy.location=null;
 				copy.name="copy of "+copy.name;
 				inventory.add(copy);
-				location().sokiomes(name+" copied the "+e,this);
+				location().sokios_recv(name+" copied the "+e,this);
 				return;
 			}
 		}
@@ -323,11 +336,11 @@ final public class sokio extends a implements sock{
 		}
 		inventory.remove(e);
 		location().things_add(e);
-		e.location.sokiomes(name+" dropped "+e.aanname(),this);
+		e.location.sokios_recv(name+" dropped "+e.aanname(),this);
 	}
 	public void say(){
 		final String say=in_toeol();
-		location().sokiomes(name+" says "+say,this);
+		location().sokios_recv(name+" says "+say,this);
 	}
 	public void inventory(){
 		out.put(tobytes("\nu hav"));
@@ -351,16 +364,16 @@ final public class sokio extends a implements sock{
 		final location loc=location();
 		loc.sokios.remove(this);
 		path.pop();
-		loc.sokiomes(name+" departed to "+location(),this);
+		loc.sokios_recv(name+" departed to "+location(),this);
 		location().sokios.add(this);
-		location().sokiomes(name+" arrived from "+loc,this);
+		location().sokios_recv(name+" arrived from "+loc,this);
 	}
 	public void newloc(){
 		final String nm=in_toeol();
 		final location nl=new location();
 		nl.name=nm;
 		location().exits.add(nl);
-		location().sokiomes(name+" created "+nl,this);
+		location().sokios_recv(name+" created "+nl,this);
 	}
 	private String in_toeol(){
 		if(!in.hasRemaining())return null;
@@ -390,16 +403,18 @@ final public class sokio extends a implements sock{
 //		location().sokiomes(name+" created "+nm,this);
 	}
 	public void save()throws Throwable{
-		final String where=in_toeol();
+//		final String where=in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		p.writeobj(root);
+		out.put(("saved to "+p).getBytes());
 	}
 	public void load()throws Throwable{
-		final String where=in_toeol();
+//		final String where=in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		root=(location)p.readobj();
 		path.clear();
 		path.add(root);
+		out.put(("loaded "+p).getBytes());
 	}
 
 	
