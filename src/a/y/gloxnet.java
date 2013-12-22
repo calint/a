@@ -65,7 +65,7 @@ public class gloxnet extends a implements sock{
 				count=0;
 				for(final gloxnet g:clients)
 					g.notif();
-				return op.cont;
+				return op.noop;
 			}
 		default:throw new IllegalStateException();
 		}

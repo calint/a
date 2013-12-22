@@ -1,11 +1,8 @@
 package a.y;
-
-import java.nio.ByteBuffer;
-import java.util.Map;
-import b.a;
-import b.sock;
-import b.sockio;
-
+import java.nio.*;
+import java.util.*;
+import b.*;
+import static b.b.*;
 public class sokio extends a implements sock{
 	static final long serialVersionUID=1;
 	private sockio so;
@@ -14,7 +11,7 @@ public class sokio extends a implements sock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		out.clear();
-		out.put(" retro text adventure game sockio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
+		out.put(" retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look go back select take drop copy  say goto inventory\n\n< ".getBytes());
 		out.flip();
 		return write();
 	}
@@ -42,4 +39,26 @@ public class sokio extends a implements sock{
 		out.put("\n< ".getBytes());
 		return true;
 	}
+	
+	
+	public static interface lookable{void lookable(final sokio so,final lookable o);} 
+	public static interface enterable{} 
+	public static interface selectable{}
+	public static interface takeable{}
+	public static interface location{}
+	
+	private Stack<enterable>path=new Stack<enterable>();
+	private List<List<selectable>>selectlists=new LinkedList<List<selectable>>();{selectlists.add(new LinkedList<selectable>());}
+	private List<takeable>inventory=new LinkedList<takeable>();
+	
+	public void look(final lookable o){o.lookable(this,o);}
+	public void enter(final enterable o){path.push(o);}
+	public void select(final selectable o){selection().add(o);}
+	public void inventory(){
+		for(final takeable t:inventory)
+			out.put(tobytes(t.toString())).put("\n".getBytes());
+	}
+	public void xit(){path.pop();}
+	public enterable loc(){return path.peek();}
+	public List<selectable>selection(){return selectlists.get(selectlists.size()-1);}
 }
