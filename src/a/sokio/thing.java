@@ -1,7 +1,7 @@
 package a.sokio;
-public class anything extends anyplace implements Cloneable{
+public class thing extends splace implements Cloneable{
 	private static final long serialVersionUID=1;
-	protected anyplace place;
+	protected splace place;
 	protected String aan;
 	public Object clone(){
 		//? deepcopy

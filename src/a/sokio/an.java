@@ -1,6 +1,6 @@
 package a.sokio;
 import java.io.*;
-public class any implements Serializable{
+public class an implements Serializable{
 	private static final long serialVersionUID=1;
 	protected String name;
 	protected String description;
