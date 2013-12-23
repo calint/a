@@ -84,7 +84,7 @@ final public class $ extends a implements sock,threadedsock{
 	private List<thing>inventory=new LinkedList<thing>();
 	
 	final private void c_help(){
-		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n".getBytes());
+		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n");
 	}
 	final private void c_look()throws Throwable{
 		final String qry=in_toeol();
@@ -106,7 +106,7 @@ final public class $ extends a implements sock,threadedsock{
 				print(loc);
 				return;				
 			}
-			out.put("not found\n".getBytes());
+			out.put("not found\n");
 		}
 	}
 	final private void print(final place e)throws Throwable{
@@ -120,51 +120,48 @@ final public class $ extends a implements sock,threadedsock{
 		final b b=new b();
 		e.places_foreach(new place.placevisitor(){public boolean visit(final place p)throws Throwable{
 			b.b=true;
-			out.put("   ".getBytes());
-			out.put(tobytes(p.toString()));
-			out.put("\n".getBytes());
+			out.put("   ").put(p.toString()).put("\n");
 			return true;
 		}});
 		if(!e.things_isempty()){
 			if(d!=null&&!b.b)
-				out.put(tobytes("\n"));
-			out.put(tobytes("u c"));
+				out.put("\n");
+			out.put("u c");
 			final int n=e.things_size();
 			if(n<5){
 				final class counter{int c;}final counter c=new counter();
 				e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
 					if(c.c==0){
-						out.put(tobytes(" "));						
+						out.put(" ");						
 					}else if(c.c==n-1){
-						out.put(tobytes(" and "));						
+						out.put(" and ");						
 					}else{
-						out.put(tobytes(", "));						
+						out.put(", ");						
 					}
-					out.put(tobytes(o.aanname()));
+					out.put(o.aanname());
 					c.c++;
 					return true;
 				}});
 			}else{
-				out.put(tobytes(":"));
+				out.put(":");
 				e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
-					out.put(tobytes("\n  "));
+					out.put("\n  ");
 					final String tag=o.aanname();
-					out.put(tobytes(tag));
+					out.put(tag);
 					return true;
 				}});
 			}
-			out.put(tobytes("\n"));
+			out.put("\n");
 		}
 		final int n=e.sokios_size();
 		if(n>1){
-			out.put(tobytes("\n"));
+			out.put("\n");
 			e.sokios_foreach(new place.sokiovisitor(){public boolean visit(final $ o)throws Throwable{
 				if(o==$.this)return true;
-				out.put(" ".getBytes());
-				out.put(tobytes(o.name));
+				out.put(" ").put(o.name);
 				return true;
 			}});
-			out.put(tobytes(" is here\n"));
+			out.put(" is here\n");
 		}
 	}
 	final private void c_enter(){
@@ -177,7 +174,7 @@ final public class $ extends a implements sock,threadedsock{
 			if(dest==null)dest=place().things_get(where);
 		}
 		if(dest==null){
-			out.put(tobytes("not found\n"));
+			out.put("not found\n");
 			return;
 		}
 		
@@ -197,7 +194,7 @@ final public class $ extends a implements sock,threadedsock{
 		final String what=in_toeol();
 		final thing e=place().things_get(what);
 		if(e==null){
-			out.put(tobytes("not found"));
+			out.put("not found");
 			return;
 		}
 		selection().add(e);
@@ -206,7 +203,7 @@ final public class $ extends a implements sock,threadedsock{
 		final String what=in_toeol();
 		final thing e=place().things_get(what);
 		if(e==null){
-			out.put(tobytes("not found\n"));
+			out.put("not found\n");
 			return;
 		}
 		inventory.add(e);
@@ -226,7 +223,7 @@ final public class $ extends a implements sock,threadedsock{
 			place().sokios_recv(name+" copied the "+o,$.this);
 			return false;
 		}});
-		out.put(tobytes("not found"));
+		out.put("not found\n");
 	}
 	final private thing inventory_get(final String qry){
 		for(final thing e:inventory){
@@ -244,7 +241,7 @@ final public class $ extends a implements sock,threadedsock{
 		final String what=in_toeol();
 		final thing e=(thing)(what!=null?inventory_get(what):placeincontext);
 		if(e==null){
-			out.put(tobytes("not have\n"));
+			out.put("not have\n");
 			return;
 		}
 		drop(e);
@@ -260,27 +257,27 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_inventory(){
 		in.get();//\n
-		out.put(tobytes("\nu hav"));
+		out.put("\nu hav");
 		for(final thing t:inventory){
-			out.put("\n  ".getBytes());
+			out.put("\n  ");
 			if(t.aan!=null){
-				out.put(tobytes(t.aan)).put(" ".getBytes());
+				out.put(t.aan).put(" ");
 			}
-			out.put(tobytes(t.toString()));
+			out.put(t.toString());
 		}
 		if(inventory.isEmpty())
-			out.put(tobytes(" nothing"));
-		out.put(tobytes("\n\nu hav selected"));
+			out.put(" nothing");
+		out.put("\n\nu hav selected");
 		for(final thing s:selection())
-			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.place.toString()));
+			out.put("\n  ").put(s.toString()).put(" from ").put(s.place.toString());
 		if(selection().isEmpty())
-			out.put(tobytes(" nothing"));
-		out.put("\n".getBytes());
+			out.put(" nothing");
+		out.put("\n");
 	}
 	final private void c_back(){
 		in.get();//consume the \n
 		if(path.size()==1){
-			out.put(tobytes("cannot\n"));
+			out.put("cannot\n");
 			return;
 		}
 		final place loc=place();
@@ -351,7 +348,7 @@ final public class $ extends a implements sock,threadedsock{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		p.writeobj(root);
-		out.put(("saved "+p.size()+" bytes to "+p).getBytes());
+		out.put("saved "+p.size()+" bytes to "+p);
 	}
 	final private void c_load()throws Throwable{
 		in_toeol();
@@ -359,7 +356,7 @@ final public class $ extends a implements sock,threadedsock{
 		root=(splace)p.readobj();
 		path.clear();
 		path.add(root);
-		out.put(("loaded "+p.size()+" bytes from "+p).getBytes());
+		out.put("loaded "+p.size()+" bytes from "+p);
 	}
 	final private void c_write(){
 		final String s=in_toeol();
