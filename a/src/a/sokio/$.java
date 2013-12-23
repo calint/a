@@ -69,7 +69,7 @@ final public class $ extends a implements sock,threadedsock{
 		out_prompt();
 		return true;
 	}
-	final private void out_prompt(){out.put("\n< ".getBytes());}
+	final private void out_prompt(){out.put("\n< ");}
 
 	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
