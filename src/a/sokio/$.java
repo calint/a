@@ -45,8 +45,11 @@ final public class $ extends a implements sock,threadedsock{
 		if(c==0)
 			return op.write;
 		meters_output+=c;
-		out.clear();
-		return op.read;
+		if(out.send_isdone()){
+			out.clear();
+			return op.read;
+		}
+		return op.write;
 	}
 	final private boolean c()throws Throwable{
 		final byte cmd=in.get();
@@ -111,8 +114,9 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void print(final place e)throws Throwable{
 		final String d=e.description();
+		out.put("\n");
 		if(d!=null&&d.length()>0){
-			out.put(d).put("\n");
+			out.put("\n").put(d).put("\n");
 		}
 		final class b{boolean b;}
 		final b b=new b();
@@ -122,7 +126,7 @@ final public class $ extends a implements sock,threadedsock{
 			return true;
 		}});
 		if(!e.things_isempty()){
-			if(d!=null&&!b.b)
+			if(b.b||d!=null)
 				out.put("\n");
 			out.put("u c");
 			final int n=e.things_size();
@@ -301,6 +305,9 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_stats(){
 		in.get();//\n
+//		for(int n=0;n<1024*1024;n++){
+//			out.put("ashfaosijf pweo posj dfoijsdfposdofioksdnflksncdlkncds");
+//		}
 		out.put("(input,output)B=("+meters_input+","+meters_output+")\n");
 	}
 
@@ -367,7 +374,7 @@ final public class $ extends a implements sock,threadedsock{
 	private sockio so;
 	private String name;
 	private ByteBuffer in;
-	private final bufx out=new bufx(32);
+	private final bufx out=new bufx(256);
 	//	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final void path_push(final place p){path.push(p);}
 	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}//? msgq
