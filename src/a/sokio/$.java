@@ -235,10 +235,10 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		return null;
 	}
-	private anything inventory_get_first(){
-		if(inventory.isEmpty())return null;
-		return inventory.get(0);
-	}
+//	private anything inventory_get_first(){
+//		if(inventory.isEmpty())return null;
+//		return inventory.get(0);
+//	}
 	public void drop(){
 		final String what=in_toeol();
 		final anything e=what!=null?inventory_get(what):lastnewthing;
