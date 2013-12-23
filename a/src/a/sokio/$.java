@@ -17,7 +17,7 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" arrived",this);
 		place().sokios_add(this);
 		final long n=out.send_start(so);
-		if(n==-1)
+		if(n==0)
 			return op.write;
 		meters_output+=n;
 		return op.read;
@@ -34,7 +34,7 @@ final public class $ extends a implements sock,threadedsock{
 		while(in.hasRemaining())
 			if(c()){
 				final long c=out.send_start(so);
-				if(c==-1)
+				if(c==0)
 					return op.write;
 				meters_output+=c;
 			}
@@ -42,7 +42,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final public op write()throws Throwable{
 		final long c=out.send_resume(so);
-		if(c==-1)
+		if(c==0)
 			return op.write;
 		meters_output+=c;
 		out.clear();
