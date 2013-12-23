@@ -7,9 +7,10 @@ import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
 	static final long serialVersionUID=1;
 //	public static String rootcls="a.sokio.ep2.$$hallway";
-	public static String rootcls=health.class.getName();
-	public static class health extends anyplace{static final long serialVersionUID=1;{
+	public static String rootcls=entry.class.getName();
+	public static class entry extends anyplace{static final long serialVersionUID=1;{
 		description="\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look enter go back exit select take drop copy  say goto inventory\n";
+		places_add(new fileplace(path()));
 	}}
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
@@ -83,6 +84,7 @@ final public class $ extends a implements sock,threadedsock{
 			case'.':save();break;
 			case',':load();break;
 			case'o':newthing();break;
+			case'w':describe();break;
 			default:
 			}
 		}catch(final Throwable t){
@@ -323,6 +325,10 @@ final public class $ extends a implements sock,threadedsock{
 		path.clear();
 		path.add(root);
 		out.put(("loaded "+p.size()+" bytes from "+p).getBytes());
+	}
+	public void describe(){
+		final String s=in_toeol();
+		place().description(s);
 	}
 
 	

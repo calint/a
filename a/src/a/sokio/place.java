@@ -2,6 +2,7 @@ package a.sokio;
 import java.io.*;
 public interface place extends Serializable{
 	String description();
+	void description(final String s);//optional
 	
 	place places_get(final String qry);
 	void places_add(final place o);

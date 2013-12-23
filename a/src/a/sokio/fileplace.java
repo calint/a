@@ -1,13 +1,19 @@
 package a.sokio;
 import java.util.*;
+
 import b.*;
 public class fileplace implements place{
 	static final long serialVersionUID=1;
 	final private path p;
 	public fileplace(final path p){this.p=p;}
 	public String toString(){return p.name();}
-	public String description(){try{return p.readstr();}catch(final Throwable t){throw new Error(t);}}
-
+	public String description(){
+		try{return p.readstr();}catch(final Throwable t){throw new Error(t);}
+	}
+	final public void description(final String s){
+//		if(p.exists()&&!p.isfile())throw new Error("path is directory");
+		try{p.writestr(s);}catch(final Throwable t){throw new Error(t);}
+	}
 	private List<place>places(){
 		final List<place>dir=new LinkedList<place>();
 		for(final String s:p.list()){
