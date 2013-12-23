@@ -20,6 +20,8 @@ final public class $ extends a implements sock,threadedsock{
 		if(n==0)
 			return op.write;
 		meters_output+=n;
+		if(!out.send_isdone())
+			return op.write;
 		return op.read;
 	}
 	final public op read()throws Throwable{
@@ -45,11 +47,10 @@ final public class $ extends a implements sock,threadedsock{
 		if(c==0)
 			return op.write;
 		meters_output+=c;
-		if(out.send_isdone()){
-			out.clear();
-			return op.read;
-		}
-		return op.write;
+		if(!out.send_isdone())
+			return op.write;
+		out.clear();
+		return op.read;
 	}
 	final private boolean c()throws Throwable{
 		final byte cmd=in.get();
