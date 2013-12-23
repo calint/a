@@ -60,7 +60,7 @@ final class bufx{
 		}
 		os.write(ba,0,i);
 	}
-	public boolean send_start(final sockio sc)throws Throwable{
+	public long send_start(final sockio sc)throws Throwable{
 		bboa=new ByteBuffer[n];
 		int x=0;
 		bboa_rem=0;
@@ -79,13 +79,12 @@ final class bufx{
 		bboa_rem+=bb.remaining();
 		return send_resume(sc);
 	}
-	public boolean send_resume(final sockio sc)throws Throwable{
+	public long send_resume(final sockio sc)throws Throwable{
 		while(true){
-			if(bboa_rem==0){bboa=null;clear();return true;}
 			final long c=sc.write(bboa);
-			if(c==0)return false;
-			//? return c or -1
+			if(c==0)return-1;
 			bboa_rem-=c;
+			if(bboa_rem==0){bboa=null;clear();return c;}
 		}
 	}
 	private void lsb_add(byte[]b){
