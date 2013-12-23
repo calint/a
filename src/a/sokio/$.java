@@ -79,7 +79,7 @@ final public class $ extends a implements sock,threadedsock{
 		out_prompt();
 		return true;
 	}
-	final private void out_prompt(){out.put("< ".getBytes());}
+	final private void out_prompt(){out.put("\n< ".getBytes());}
 
 	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
@@ -208,7 +208,7 @@ final public class $ extends a implements sock,threadedsock{
 		final String what=in_toeol();
 		final thing e=place().things_get(what);
 		if(e==null){
-			out.put(tobytes("not found\nl"));
+			out.put(tobytes("not found\n"));
 			return;
 		}
 		inventory.add(e);
@@ -261,6 +261,7 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" says "+say,this);
 	}
 	final private void c_inventory(){
+		in.get();//\n
 		out.put(tobytes("\nu hav"));
 		for(final thing t:inventory){
 			out.put("\n  ".getBytes());
@@ -297,6 +298,7 @@ final public class $ extends a implements sock,threadedsock{
 	final private void c_newplace(){
 		final byte op=in.get();
 		final String nm=in_toeol();
+		if(nm==null)throw new Error("must name");
 		final splace newplace=new splace();
 		placeincontext=newplace;
 		newplace.name=nm;
@@ -324,6 +326,7 @@ final public class $ extends a implements sock,threadedsock{
 	final private void c_newthing(){
 		final byte op=in.get();
 		final String nm=in_toeol();
+		if(nm==null)throw new Error("must name");
 		final thing o=new thing();
 		placeincontext=o;
 		if(nm.startsWith("a ")){
