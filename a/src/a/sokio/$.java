@@ -6,6 +6,8 @@ import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
 	private static final long serialVersionUID=1;
+	public long meters_input;
+	public long meters_output;
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		in=so.inbuf();
@@ -14,11 +16,12 @@ final public class $ extends a implements sock,threadedsock{
 		out_prompt();
 		place().sokios_recv(name+" arrived",this);
 		place().sokios_add(this);
-		if(out.send_start(so))
-			return op.read;
-		return op.write;
+		final long n=out.send_start(so);
+		if(n==-1)
+			return op.write;
+		meters_output+=n;
+		return op.read;
 	}
-	public long meters_input;
 	final public op read()throws Throwable{
 		if(!in.hasRemaining()){
 			in.clear();
@@ -29,15 +32,19 @@ final public class $ extends a implements sock,threadedsock{
 			in.flip();
 		}
 		while(in.hasRemaining())
-			if(c())
-				if(!out.send_start(so))
+			if(c()){
+				final long c=out.send_start(so);
+				if(c==-1)
 					return op.write;
+				meters_output+=c;
+			}
 		return op.read;
 	}
-	public long meters_output;
 	final public op write()throws Throwable{
-		if(!out.send_resume(so))
+		final long c=out.send_resume(so);
+		if(c==-1)
 			return op.write;
+		meters_output+=c;
 		out.clear();
 		return op.read;
 	}
@@ -61,6 +68,7 @@ final public class $ extends a implements sock,threadedsock{
 			case'.':c_save();break;
 			case'h':c_help();break;
 			case'n':c_name();break;
+			case'!':c_stats();break;
 			default:
 			}
 		}catch(final Throwable t){
@@ -291,6 +299,11 @@ final public class $ extends a implements sock,threadedsock{
 			enter(newplace);
 		}
 	}
+	final private void c_stats(){
+		in.get();//\n
+		out.put("(input,output)B=("+meters_input+","+meters_output+")\n");
+	}
+
 	final private String in_toeol(){
 		if(!in.hasRemaining())return null;
 		final StringBuilder sb=new StringBuilder(32);
@@ -354,7 +367,7 @@ final public class $ extends a implements sock,threadedsock{
 	private sockio so;
 	private String name;
 	private ByteBuffer in;
-	private final bufx out=new bufx(16);
+	private final bufx out=new bufx(32);
 	//	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final void path_push(final place p){path.push(p);}
 	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}//? msgq
