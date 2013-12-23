@@ -12,7 +12,7 @@ final public class $ extends a implements sock,threadedsock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		name=req.get().session().id();
-		help();
+		c_help();
 		out_prompt();
 		out.flip();
 		place().sokios_recv(name+" arrived",this);
@@ -67,22 +67,22 @@ final public class $ extends a implements sock,threadedsock{
 		if(!in_tillnexttoken())throw new Error();
 		try{
 			switch(cmd){
-			case'l':look();break;
-			case'g':case'e':enter();break;
-			case's':select();break;
-			case'x':case'b':back();break;
-			case'i':inventory();break;
-			case't':take();break;
-			case'd':drop();break;
-			case'c':copy();break;
-			case'z':say();break;
-			case'h':help();break;
-			case'n':name();break;
-			case'k':newplace();break;
-			case'.':save();break;
-			case',':load();break;
-			case'o':newthing();break;
-			case'w':describe();break;
+			case'l':c_look();break;
+			case'g':case'e':c_enter();break;
+			case's':c_select();break;
+			case'x':case'b':c_back();break;
+			case'i':c_inventory();break;
+			case't':c_take();break;
+			case'd':c_drop();break;
+			case'c':c_copy();break;
+			case'z':c_say();break;
+			case'h':c_help();break;
+			case'n':c_name();break;
+			case'k':c_newplace();break;
+			case'.':c_save();break;
+			case',':c_load();break;
+			case'o':c_newthing();break;
+			case'w':c_write();break;
 			default:
 			}
 		}catch(final Throwable t){
@@ -97,10 +97,10 @@ final public class $ extends a implements sock,threadedsock{
 	private List<thing>selection=new LinkedList<thing>();
 	private List<thing>inventory=new LinkedList<thing>();
 	
-	final private void help(){
+	final private void c_help(){
 		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n".getBytes());
 	}
-	final private void look()throws Throwable{
+	final private void c_look()throws Throwable{
 		final String qry=in_toeol();
 		if(qry==null||qry.length()==0){
 			print(place());
@@ -176,7 +176,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes(" is here\n"));
 		}
 	}
-	final private void enter(){
+	final private void c_enter(){
 		final String where=in_toeol();
 		place dest=null;
 		if(where==null){
@@ -194,10 +194,10 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" departed to "+dest,this);
 		path_push(dest);
 	}
-	final private void name(){
+	final private void c_name(){
 		name=in_toeol();
 	}
-	final private void select(){
+	final private void c_select(){
 		final String what=in_toeol();
 		final thing e=place().things_get(what);
 		if(e==null){
@@ -206,7 +206,7 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		selection().add(e);
 	}
-	final private void take(){
+	final private void c_take(){
 		final String what=in_toeol();
 		final thing e=place().things_get(what);
 		if(e==null){
@@ -218,7 +218,7 @@ final public class $ extends a implements sock,threadedsock{
 		e.place=null;
 		place().sokios_recv(name+" took the "+e,this);
 	}
-	final private void copy()throws Throwable{
+	final private void c_copy()throws Throwable{
 		final String what=in_toeol();
 		place().things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
 			if(!o.toString().startsWith(what))return true;
@@ -244,7 +244,7 @@ final public class $ extends a implements sock,threadedsock{
 //		if(inventory.isEmpty())return null;
 //		return inventory.get(0);
 //	}
-	final private void drop(){
+	final private void c_drop(){
 		final String what=in_toeol();
 		final thing e=what!=null?inventory_get(what):lastnewthing;
 		if(e==null){
@@ -255,11 +255,11 @@ final public class $ extends a implements sock,threadedsock{
 		place().things_add(e);
 		e.place.sokios_recv(name+" dropped "+e.aanname(),this);
 	}
-	final private void say(){
+	final private void c_say(){
 		final String say=in_toeol();
 		place().sokios_recv(name+" says "+say,this);
 	}
-	final private void inventory(){
+	final private void c_inventory(){
 		out.put(tobytes("\nu hav"));
 		for(final thing t:inventory){
 			out.put("\n  ".getBytes());
@@ -277,7 +277,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes(" nothing"));
 		out.put("\n".getBytes());
 	}
-	final private void back(){
+	final private void c_back(){
 		if(path.size()==1){
 			out.put(tobytes("cannot"));
 			return;
@@ -290,7 +290,7 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" arrived from "+loc,this);
 	}
 	private place lastnewplace;
-	final private void newplace(){
+	final private void c_newplace(){
 		final String nm=in_toeol();
 		final splace nl=new splace();
 		lastnewplace=nl;lastnewthing=null;
@@ -312,7 +312,7 @@ final public class $ extends a implements sock,threadedsock{
 		return nm;
 	}
 	private thing lastnewthing;
-	final private void newthing(){
+	final private void c_newthing(){
 		final String nm=in_toeol();
 		final thing o=new thing();
 		lastnewthing=o;lastnewplace=null;
@@ -327,13 +327,13 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		inventory.add(o);
 	}
-	final private void save()throws Throwable{
+	final private void c_save()throws Throwable{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		p.writeobj(root);
 		out.put(("saved "+p.size()+" bytes to "+p).getBytes());
 	}
-	final private void load()throws Throwable{
+	final private void c_load()throws Throwable{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		root=(splace)p.readobj();
@@ -341,7 +341,7 @@ final public class $ extends a implements sock,threadedsock{
 		path.add(root);
 		out.put(("loaded "+p.size()+" bytes from "+p).getBytes());
 	}
-	final private void describe(){
+	final private void c_write(){
 		final String s=in_toeol();
 		final String s1=s.replaceAll("\\\\n","\n");
 		place().description(s1);
