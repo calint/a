@@ -11,15 +11,15 @@ final public class $ extends a implements sock,threadedsock{
 	
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
+		in=so.spil();
 		name=req.get().session().id();
 		c_help();
 		out_prompt();
-		out.flip();
 		place().sokios_recv(name+" arrived",this);
 		place().sokios_add(this);
-		in.put(so.spil());
-		in.flip();
-		return write();
+		if(out.send_start(so))
+			return op.read;
+		return op.write;
 	}
 //	private static enum state{line,sending};
 //	private state st=state.line;
@@ -35,8 +35,8 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		while(in.hasRemaining()){
 			if(c()){
-				out.flip();
-				if(write()==op.write)
+//				out.flip();
+				if(!out.send_start(so))
 					return op.write;
 			}
 		}
@@ -44,9 +44,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	public long meters_output;
 	final public op write()throws Throwable{
-		final int c=so.write(out);
-		meters_output+=c;
-		if(out.hasRemaining())
+		if(!out.send_resume(so))
 			return op.write;
 		out.clear();
 		return op.read;
@@ -162,7 +160,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes("\n"));
 			e.sokios_foreach(new place.sokiovisitor(){public boolean visit(final $ o)throws Throwable{
 				if(o==$.this)return true;
-				out.put((byte)' ');
+				out.put(" ".getBytes());
 				out.put(tobytes(o.name));
 				return true;
 			}});
@@ -266,7 +264,7 @@ final public class $ extends a implements sock,threadedsock{
 		for(final thing t:inventory){
 			out.put("\n  ".getBytes());
 			if(t.aan!=null){
-				out.put(tobytes(t.aan)).put((byte)' ');
+				out.put(tobytes(t.aan)).put(" ".getBytes());
 			}
 			out.put(tobytes(t.toString()));
 		}
@@ -377,9 +375,9 @@ final public class $ extends a implements sock,threadedsock{
 
 	private sockio so;
 	private String name;
-	private final ByteBuffer in=ByteBuffer.allocate(1*K);
-	private final ByteBuffer out=ByteBuffer.allocate(4*K);
-//	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
+	private ByteBuffer in;
+	private final bufx out=new bufx(16);
+	//	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final void path_push(final place p){path.push(p);}
 	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
 	final void so_close(){so.close();}
