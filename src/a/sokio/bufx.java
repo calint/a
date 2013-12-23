@@ -7,7 +7,7 @@ import java.util.List;
 
 import b.sockio;
 final class bufx{
-	public bufx(){}
+	public bufx(final byte[]ba/*takes*/){this.ba=ba;balen=ba.length;n++;}
 	public bufx(final int chunksize_B){balen=chunksize_B;}
 	public bufx put(final String s){return put(s.getBytes());}
 	public bufx put(final byte[]b){return b(b,0,b.length);}

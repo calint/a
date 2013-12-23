@@ -6,9 +6,6 @@ import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
 	private static final long serialVersionUID=1;
-	private static String rootcls=roome.class.getName();
-	private static splace root;static{try{root=(splace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
-	
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		in=so.inbuf();
@@ -21,8 +18,6 @@ final public class $ extends a implements sock,threadedsock{
 			return op.read;
 		return op.write;
 	}
-//	private static enum state{line,sending};
-//	private state st=state.line;
 	public long meters_input;
 	final public op read()throws Throwable{
 		if(!in.hasRemaining()){
@@ -33,13 +28,10 @@ final public class $ extends a implements sock,threadedsock{
 			meters_input+=c;
 			in.flip();
 		}
-		while(in.hasRemaining()){
-			if(c()){
-//				out.flip();
+		while(in.hasRemaining())
+			if(c())
 				if(!out.send_start(so))
 					return op.write;
-			}
-		}
 		return op.read;
 	}
 	public long meters_output;
@@ -72,7 +64,7 @@ final public class $ extends a implements sock,threadedsock{
 			default:
 			}
 		}catch(final Throwable t){
-			out.put(tobytes(stacktrace(t)));
+			out.put(stacktrace(t));
 		}
 		out_prompt();
 		return true;
@@ -112,9 +104,7 @@ final public class $ extends a implements sock,threadedsock{
 	final private void print(final place e)throws Throwable{
 		final String d=e.description();
 		if(d!=null&&d.length()>0){
-//			out.put(tobytes("\n"));
-			out.put(tobytes(d));
-			out.put("\n".getBytes());
+			out.put(d).put("\n");
 		}
 		final class b{boolean b;}
 		final b b=new b();
@@ -286,8 +276,6 @@ final public class $ extends a implements sock,threadedsock{
 		loc.sokios_recv(name+" departed to "+place(),this);
 		place().sokios_add(this);
 		place().sokios_recv(name+" arrived from "+loc,this);
-//		out.put(tobytes(place()+"\n"));
-//		out.put((byte)'\n');
 	}
 	private place placeincontext;
 	final private void c_newplace(){
@@ -298,15 +286,12 @@ final public class $ extends a implements sock,threadedsock{
 		placeincontext=newplace;
 		newplace.name=nm;
 		place().places_add(newplace);
-		place().sokios_recv(name+" created "+newplace,this);
-		
+		place().sokios_recv(name+" created "+newplace,this);	
 		if(op=='e'){
 			enter(newplace);
 		}
 	}
-//	private boolean wasonewordcmd;
 	final private String in_toeol(){
-//		if(wasonewordcmd)return null;
 		if(!in.hasRemaining())return null;
 		final StringBuilder sb=new StringBuilder(32);
 		while(true){
@@ -317,7 +302,6 @@ final public class $ extends a implements sock,threadedsock{
 		final String nm=sb.toString().trim();
 		return nm;
 	}
-//	private thing lastnewthing;
 	final private void c_newthing(){
 		final byte op=in.get();
 		final String nm=in_toeol();
@@ -363,9 +347,6 @@ final public class $ extends a implements sock,threadedsock{
 		final String s1=s.replaceAll("\\\\n","\n");
 		place().description(s1);
 	}
-
-	
-	
 	
 	final place place(){return path.peek();}
 	final private List<thing>selection(){return selection;}
@@ -378,4 +359,8 @@ final public class $ extends a implements sock,threadedsock{
 	final void path_push(final place p){path.push(p);}
 	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}//? msgq
 	final void so_close(){so.close();}
+
+
+	private static String rootcls=roome.class.getName();
+	private static splace root;static{try{root=(splace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}	
 }
