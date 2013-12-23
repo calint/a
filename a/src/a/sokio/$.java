@@ -59,7 +59,7 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		return true;
 	}
-	protected boolean parse()throws Throwable{
+	private boolean parse()throws Throwable{
 		final byte cmd=in.get();
 		if(cmd=='\n'){out_prompt();return true;}
 		if(!in_tillnexttoken())throw new Error();
@@ -96,33 +96,33 @@ final public class $ extends a implements sock,threadedsock{
 	private List<anything>selection=new LinkedList<anything>();
 	private List<anything>inventory=new LinkedList<anything>();
 	
-	public void help(){
+	final private void help(){
 		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n".getBytes());
 	}
-	public void look()throws Throwable{
+	final private void look()throws Throwable{
 		final String qry=in_toeol();
 		if(qry==null||qry.length()==0){
-			location_print(place());
+			print(place());
 		}else{
 			final anything th=inventory_get(qry);
 			if(th!=null){
-				location_print(th);
+				print(th);
 				return;
 			}
 			final anything thl=place().things_get(qry);
 			if(thl!=null){
-				location_print(thl);
+				print(thl);
 				return;
 			}
 			final place loc=place().places_get(qry);
 			if(loc!=null){
-				location_print(loc);
+				print(loc);
 				return;				
 			}
 			out.put("not found".getBytes());
 		}
 	}
-	private void location_print(final place e)throws Throwable{
+	private void print(final place e)throws Throwable{
 		final String d=e.description();
 		if(d!=null&&d.length()>0){
 			out.put(tobytes("\n"));
@@ -175,7 +175,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes(" is here\n"));
 		}
 	}
-	public void enter(){
+	final private void enter(){
 		final String where=in_toeol();
 		place dest=null;
 		if(where==null){
@@ -193,10 +193,10 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" departed to "+dest,this);
 		path_push(dest);
 	}
-	public void name(){
+	final private void name(){
 		name=in_toeol();
 	}
-	public void select(){
+	final private void select(){
 		final String what=in_toeol();
 		final anything e=place().things_get(what);
 		if(e==null){
@@ -205,7 +205,7 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		selection().add(e);
 	}
-	public void take(){
+	final private void take(){
 		final String what=in_toeol();
 		final anything e=place().things_get(what);
 		if(e==null){
@@ -217,7 +217,7 @@ final public class $ extends a implements sock,threadedsock{
 		e.place=null;
 		place().sokios_recv(name+" took the "+e,this);
 	}
-	public void copy()throws Throwable{
+	final private void copy()throws Throwable{
 		final String what=in_toeol();
 		place().things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
 			if(!p.toString().startsWith(what))return true;
@@ -243,7 +243,7 @@ final public class $ extends a implements sock,threadedsock{
 //		if(inventory.isEmpty())return null;
 //		return inventory.get(0);
 //	}
-	public void drop(){
+	final private void drop(){
 		final String what=in_toeol();
 		final anything e=what!=null?inventory_get(what):lastnewthing;
 		if(e==null){
@@ -254,11 +254,11 @@ final public class $ extends a implements sock,threadedsock{
 		place().things_add(e);
 		e.place.sokios_recv(name+" dropped "+e.aanname(),this);
 	}
-	public void say(){
+	final private void say(){
 		final String say=in_toeol();
 		place().sokios_recv(name+" says "+say,this);
 	}
-	public void inventory(){
+	final private void inventory(){
 		out.put(tobytes("\nu hav"));
 		for(final anything t:inventory){
 			out.put("\n  ".getBytes());
@@ -276,7 +276,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes(" nothing"));
 		out.put("\n".getBytes());
 	}
-	public void back(){
+	final private void back(){
 		if(path.size()==1){
 			out.put(tobytes("cannot"));
 			return;
@@ -289,7 +289,7 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" arrived from "+loc,this);
 	}
 	private place lastnewplace;
-	public void newplace(){
+	final private void newplace(){
 		final String nm=in_toeol();
 		final anyplace nl=new anyplace();
 		lastnewplace=nl;lastnewthing=null;
@@ -311,7 +311,7 @@ final public class $ extends a implements sock,threadedsock{
 		return nm;
 	}
 	private anything lastnewthing;
-	public void newthing(){
+	final private void newthing(){
 		final String nm=in_toeol();
 		final anything o=new anything();
 		lastnewthing=o;lastnewplace=null;
@@ -326,13 +326,13 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		inventory.add(o);
 	}
-	public void save()throws Throwable{
+	final private void save()throws Throwable{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		p.writeobj(root);
 		out.put(("saved "+p.size()+" bytes to "+p).getBytes());
 	}
-	public void load()throws Throwable{
+	final private void load()throws Throwable{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
 		root=(anyplace)p.readobj();
@@ -340,7 +340,7 @@ final public class $ extends a implements sock,threadedsock{
 		path.add(root);
 		out.put(("loaded "+p.size()+" bytes from "+p).getBytes());
 	}
-	public void describe(){
+	final private void describe(){
 		final String s=in_toeol();
 		final String s1=s.replaceAll("\\\\n","\n");
 		place().description(s1);
@@ -349,15 +349,15 @@ final public class $ extends a implements sock,threadedsock{
 	
 	
 	
-	public place place(){return path.peek();}
-	public List<anything>selection(){return selection;}
+	final protected place place(){return path.peek();}
+	final private List<anything>selection(){return selection;}
 
 	private sockio so;
 	private String name;
 	private final ByteBuffer in=ByteBuffer.allocate(1*K);
 	private final ByteBuffer out=ByteBuffer.allocate(4*K);
 //	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
-	public void path_push(final place p){path.push(p);}
-	public int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
-	public void so_close(){so.close();}
+	final protected void path_push(final place p){path.push(p);}
+	final protected int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
+	final protected void so_close(){so.close();}
 }
