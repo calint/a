@@ -29,9 +29,9 @@ public class fileplace implements place{
 	public boolean things_isempty(){return true;}
 	public int things_size(){return 0;}
 	public void things_foreach(final place.visitor v)throws Throwable{}
-	public thing things_get(final String qry){return null;}
-	public void things_add(final thing o){}
-	public void things_remove(final thing o){}
+	public anything things_get(final String qry){return null;}
+	public void things_add(final anything o){}
+	public void things_remove(final anything o){}
 
 	public int sokios_size(){return 0;}
 	public void sokios_foreach(place.sokiovisitor v)throws Throwable{}

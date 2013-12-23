@@ -7,7 +7,7 @@ import java.util.*;
 public class anyplace extends any implements place{
 		static final long serialVersionUID=1;
 		private List<place>exits;
-		private List<thing>things;
+		private List<anything>things;
 		transient private List<$>sokios;
 //		public List<place>exits(){return exits;}
 		public void places_foreach(final place.visitor v)throws Throwable{
@@ -17,7 +17,7 @@ public class anyplace extends any implements place{
 		}
 		public void things_foreach(final place.visitor v)throws Throwable{
 			if(things==null)return;
-			for(final thing p:things)
+			for(final anything p:things)
 				if(!v.visit(p))break;
 		}
 		public void sokios_foreach(final place.sokiovisitor v)throws Throwable{
@@ -26,13 +26,13 @@ public class anyplace extends any implements place{
 				if(!v.visit(s))break;
 		}
 		public int things_size(){if(things==null)return 0;return things.size();}
-		public void things_remove(final thing o){if(things==null)return;things.remove(o);}
+		public void things_remove(final anything o){if(things==null)return;things.remove(o);}
 		public int sokios_size(){return sokios==null?0:sokios.size();}
-		public void things_add(final thing o){
+		public void things_add(final anything o){
 			if(o.place!=null)
 				o.place.things.remove(o);
 			o.place=this;
-			if(things==null)things=Collections.synchronizedList(new LinkedList<thing>());
+			if(things==null)things=Collections.synchronizedList(new LinkedList<anything>());
 			things.add(o);
 		}
 		public void sokios_add(final $ s){
@@ -60,9 +60,9 @@ public class anyplace extends any implements place{
 				catch(Throwable t){throw new Error(t);}
 			}		
 		}
-		public thing things_get(final String qry){
+		public anything things_get(final String qry){
 			if(things==null)return null;
-			for(final thing e:things){
+			for(final anything e:things){
 				if(e.toString().startsWith(qry)){
 					return e;
 				}
