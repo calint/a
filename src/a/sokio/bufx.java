@@ -1,7 +1,6 @@
 package a.sokio;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +9,7 @@ import b.sockio;
 final class bufx{
 	public bufx(){}
 	public bufx(final int chunksize_B){balen=chunksize_B;}
+	public bufx put(final String s){return put(s.getBytes());}
 	public bufx put(final byte[]b){return b(b,0,b.length);}
 	public bufx b(final byte[]b,int off,int len){
 		if(ba==null){
@@ -26,7 +26,7 @@ final class bufx{
 			off+=cap;
 			lsb_add(ba);
 			n++;
-			ba=new byte[balen];
+			ba=new byte[balen];//? incbalen
 			while(len>ba.length){
 				System.arraycopy(b,off,ba,0,ba.length);
 				len-=ba.length;
