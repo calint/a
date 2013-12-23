@@ -6,6 +6,7 @@ public class any implements Serializable{
 	protected String description;
 	final public String name(){return name;}
 	final public String description(){return description;}
+	final public void description(final String s){description=s;}
 	public String toString(){
 		if(name!=null)return name;
 		final String s=getClass().getName().replace('_',' ');
