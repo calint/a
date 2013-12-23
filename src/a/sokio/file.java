@@ -2,7 +2,7 @@ package a.sokio;
 import java.util.*;
 
 import b.*;
-public class file implements place{
+final class file implements place{
 	static final long serialVersionUID=1;
 	final private path p;
 	public file(final path p){this.p=p;}
