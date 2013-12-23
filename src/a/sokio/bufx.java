@@ -82,7 +82,7 @@ final class bufx{
 	public long send_resume(final sockio sc)throws Throwable{
 		while(true){
 			final long c=sc.write(bboa);
-			if(c==0)return-1;
+			if(c==0)return 0;
 			bboa_rem-=c;
 			if(bboa_rem==0){bboa=null;clear();return c;}
 		}
