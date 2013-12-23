@@ -5,8 +5,10 @@ import java.util.*;
 import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
-	static final long serialVersionUID=1;
-	public static String rootcls=roome.class.getName();
+	private static final long serialVersionUID=1;
+	private static String rootcls=roome.class.getName();
+	private static splace root;static{try{root=(splace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
+	
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		name=req.get().session().id();
@@ -49,7 +51,7 @@ final public class $ extends a implements sock,threadedsock{
 		out.clear();
 		return op.read;
 	}
-	private boolean in_tillnexttoken(){
+	final private boolean in_tillnexttoken(){
 		wasonewordcmd=false;
 		while(true){
 			if(!in.hasRemaining())return false;
@@ -59,7 +61,7 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		return true;
 	}
-	private boolean parse()throws Throwable{
+	final private boolean parse()throws Throwable{
 		final byte cmd=in.get();
 		if(cmd=='\n'){out_prompt();return true;}
 		if(!in_tillnexttoken())throw new Error();
@@ -89,8 +91,7 @@ final public class $ extends a implements sock,threadedsock{
 		out_prompt();
 		return true;
 	}
-	private void out_prompt(){out.put("\n< ".getBytes());}
-	private static splace root;static{try{root=(splace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
+	final private void out_prompt(){out.put("\n< ".getBytes());}
 
 	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
@@ -122,7 +123,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put("not found".getBytes());
 		}
 	}
-	private void print(final place e)throws Throwable{
+	final private void print(final place e)throws Throwable{
 		final String d=e.description();
 		if(d!=null&&d.length()>0){
 			out.put(tobytes("\n"));
@@ -231,7 +232,7 @@ final public class $ extends a implements sock,threadedsock{
 		}});
 		out.put(tobytes("not found"));
 	}
-	private thing inventory_get(final String qry){
+	final private thing inventory_get(final String qry){
 		for(final thing e:inventory){
 			if(e.toString().startsWith(qry)){
 				return e;
@@ -298,7 +299,7 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" created "+nl,this);
 	}
 	private boolean wasonewordcmd;
-	private String in_toeol(){
+	final private String in_toeol(){
 		if(wasonewordcmd)return null;
 		if(!in.hasRemaining())return null;
 		final StringBuilder sb=new StringBuilder(32);

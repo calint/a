@@ -22,7 +22,7 @@ interface place extends Serializable{
 	void sokios_recv(final String msg,final $ exclude);	
 	void sokios_foreach(final sokiovisitor v)throws Throwable;
 
-	static public interface placevisitor{boolean visit(final place p)throws Throwable;}
-	static public interface thingvisitor{boolean visit(final thing o)throws Throwable;}
-	static public interface sokiovisitor{boolean visit(final $ o)throws Throwable;}
+	static interface placevisitor{boolean visit(final place p)throws Throwable;}
+	static interface thingvisitor{boolean visit(final thing o)throws Throwable;}
+	static interface sokiovisitor{boolean visit(final $ o)throws Throwable;}
 }
