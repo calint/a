@@ -8,7 +8,7 @@ final public class ${
 		places_add(new guns());
 		places_add(new health());
 		places_add(new treasury());
-		places_add(new pathplace(b.path()));
+		places_add(new fileplace(b.path()));
 	}}
 	public static class guns extends anyplace{static final long serialVersionUID=1;{}}
 	public static class health extends anyplace{static final long serialVersionUID=1;{}}

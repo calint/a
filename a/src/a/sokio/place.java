@@ -1,7 +1,5 @@
 package a.sokio;
-
-import java.io.Serializable;
-
+import java.io.*;
 public interface place extends Serializable{
 	String description();
 	

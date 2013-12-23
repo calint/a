@@ -1,14 +1,9 @@
 package a.sokio;
-
-import static b.b.tobytes;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
+import static b.b.*;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.util.*;
 public class anyplace extends any implements place{
 		static final long serialVersionUID=1;
 		private List<place>exits;
