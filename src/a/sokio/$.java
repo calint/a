@@ -11,7 +11,7 @@ final public class $ extends a implements sock,threadedsock{
 	
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
-		in=so.spil();
+		in=so.inbuf();
 		name=req.get().session().id();
 		c_help();
 		out_prompt();
@@ -376,6 +376,6 @@ final public class $ extends a implements sock,threadedsock{
 	private final bufx out=new bufx(16);
 	//	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final void path_push(final place p){path.push(p);}
-	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
+	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}//? msgq
 	final void so_close(){so.close();}
 }
