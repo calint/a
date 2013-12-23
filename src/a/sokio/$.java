@@ -69,20 +69,20 @@ final public class $ extends a implements sock,threadedsock{
 			switch(cmd){
 			case'l':c_look();break;
 			case'g':case'e':c_enter();break;
-			case's':c_select();break;
 			case'x':case'b':c_back();break;
-			case'i':c_inventory();break;
 			case't':c_take();break;
 			case'd':c_drop();break;
 			case'c':c_copy();break;
-			case'z':c_say();break;
-			case'h':c_help();break;
-			case'n':c_name();break;
+			case's':c_select();break;
+			case'i':c_inventory();break;
 			case'p':c_newplace();break;
-			case'.':c_save();break;
-			case',':c_load();break;
 			case'o':c_newthing();break;
 			case'w':c_write();break;
+			case'z':c_say();break;
+			case',':c_load();break;
+			case'.':c_save();break;
+			case'h':c_help();break;
+			case'n':c_name();break;
 			default:
 			}
 		}catch(final Throwable t){
@@ -91,7 +91,7 @@ final public class $ extends a implements sock,threadedsock{
 		out_prompt();
 		return true;
 	}
-	final private void out_prompt(){out.put("\n< ".getBytes());}
+	final private void out_prompt(){out.put("< ".getBytes());}
 
 	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
@@ -126,18 +126,23 @@ final public class $ extends a implements sock,threadedsock{
 	final private void print(final place e)throws Throwable{
 		final String d=e.description();
 		if(d!=null&&d.length()>0){
-			out.put(tobytes("\n"));
+//			out.put(tobytes("\n"));
 			out.put(tobytes(d));
 			out.put("\n".getBytes());
 		}
+		final class b{boolean b;}
+		final b b=new b();
 		e.places_foreach(new place.placevisitor(){public boolean visit(final place p)throws Throwable{
+			b.b=true;
 			out.put("   ".getBytes());
 			out.put(tobytes(p.toString()));
 			out.put("\n".getBytes());
 			return true;
 		}});
 		if(!e.things_isempty()){
-			out.put(tobytes("\nu c"));
+			if(d!=null&&!b.b)
+				out.put(tobytes("\n"));
+			out.put(tobytes("u c"));
 			final int n=e.things_size();
 			if(n<5){
 				final class counter{int c;}final counter c=new counter();
@@ -181,17 +186,18 @@ final public class $ extends a implements sock,threadedsock{
 		place dest;
 		if(where==null||where.length()==0){
 			dest=placeincontext;
-		}else
-			dest=place().places_enter(this,where);
-		
+		}else{
+			dest=place().places_get(where);
+			if(dest==null)dest=place().things_get(where);
+		}
 		if(dest==null){
-			out.put(tobytes("not found"));
+			out.put(tobytes("not found\n"));
 			return;
 		}
 		
 		enter(dest);
 	}
-	private void enter(final place dest){
+	void enter(final place dest){
 		dest.sokios_add(this);
 		dest.sokios_recv(name+" arrived from "+place(),this);
 		place().sokios_remove(this);
@@ -214,7 +220,7 @@ final public class $ extends a implements sock,threadedsock{
 		final String what=in_toeol();
 		final thing e=place().things_get(what);
 		if(e==null){
-			out.put(tobytes("not found"));
+			out.put(tobytes("not found\nl"));
 			return;
 		}
 		inventory.add(e);
@@ -286,7 +292,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_back(){
 		if(path.size()==1){
-			out.put(tobytes("cannot"));
+			out.put(tobytes("cannot\n"));
 			return;
 		}
 		final place loc=place();
@@ -295,6 +301,8 @@ final public class $ extends a implements sock,threadedsock{
 		loc.sokios_recv(name+" departed to "+place(),this);
 		place().sokios_add(this);
 		place().sokios_recv(name+" arrived from "+loc,this);
+//		out.put(tobytes(place()+"\n"));
+//		out.put((byte)'\n');
 	}
 	private place placeincontext;
 	final private void c_newplace(){
