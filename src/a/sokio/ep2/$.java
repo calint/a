@@ -2,11 +2,7 @@ package a.sokio.ep2;
 import a.sokio.*;
 import b.*;
 final public class ${
-	public static class hallway extends anyplace{static final long serialVersionUID=1;
-	public static void main(String[] args) {
-		System.out.println(hallway.class);
-	}
-	{
+	public static class hallway extends anyplace{static final long serialVersionUID=1;{
 		name="hallway";
 		description="u r in the hallway of departments";
 		places_add(new guns());
