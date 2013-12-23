@@ -95,11 +95,12 @@ class splace extends an implements place{
 			place dest=places_get(qry);
 			if(dest==null)dest=things_get(qry);
 			if(dest==null)return null;
-			so.place().sokios_remove(so);
-			so.place().sokios_recv(name+" departed to "+dest,so);
-			dest.sokios_recv(name+" arrived from "+so.place(),so);
-			dest.sokios_add(so);
-			so.path_push(dest);
+			so.enter(dest);
+//			so.place().sokios_remove(so);
+//			so.place().sokios_recv(name+" departed to "+dest,so);
+//			dest.sokios_recv(name+" arrived from "+so.place(),so);
+//			dest.sokios_add(so);
+//			so.path_push(dest);
 			return dest;
 		}
 	}
