@@ -51,20 +51,20 @@ final public class $ extends a implements sock,threadedsock{
 		out.clear();
 		return op.read;
 	}
-	final private boolean in_tillnexttoken(){
-		wasonewordcmd=false;
-		while(true){
-			if(!in.hasRemaining())return false;
-			final byte b=in.get();
-			if(b==' ')break;
-			if(b=='\n'){wasonewordcmd=true;break;}
-		}
-		return true;
-	}
+//	final private boolean in_tillnexttoken(){
+//		wasonewordcmd=false;
+//		while(true){
+//			if(!in.hasRemaining())return false;
+//			final byte b=in.get();
+//			if(b==' ')break;
+//			if(b=='\n'){wasonewordcmd=true;break;}
+//		}
+//		return true;
+//	}
 	final private boolean parse()throws Throwable{
 		final byte cmd=in.get();
 		if(cmd=='\n'){out_prompt();return true;}
-		if(!in_tillnexttoken())throw new Error();
+//		if(!in_tillnexttoken())throw new Error();
 		try{
 			switch(cmd){
 			case'l':c_look();break;
@@ -178,10 +178,9 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_enter(){
 		final String where=in_toeol();
-		place dest=null;
-		if(where==null){
-			if(placeincontext!=null)
-				dest=placeincontext;
+		place dest;
+		if(where==null||where.length()==0){
+			dest=placeincontext;
 		}else
 			dest=place().places_enter(this,where);
 		
@@ -189,6 +188,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes("not found"));
 			return;
 		}
+		
 		dest.sokios_add(this);
 		dest.sokios_recv(name+" arrived from "+place(),this);
 		place().sokios_remove(this);
@@ -299,9 +299,9 @@ final public class $ extends a implements sock,threadedsock{
 		place().places_add(nl);
 		place().sokios_recv(name+" created "+nl,this);
 	}
-	private boolean wasonewordcmd;
+//	private boolean wasonewordcmd;
 	final private String in_toeol(){
-		if(wasonewordcmd)return null;
+//		if(wasonewordcmd)return null;
 		if(!in.hasRemaining())return null;
 		final StringBuilder sb=new StringBuilder(32);
 		while(true){
