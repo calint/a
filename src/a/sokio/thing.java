@@ -1,5 +1,4 @@
 package a.sokio;
-
 public class thing extends anyplace implements Cloneable{
 	private static final long serialVersionUID=1;
 	protected anyplace place;

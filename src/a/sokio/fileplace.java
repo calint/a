@@ -1,14 +1,10 @@
 package a.sokio;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import b.path;
-
-public class pathplace implements place{
+import java.util.*;
+import b.*;
+public class fileplace implements place{
 	static final long serialVersionUID=1;
 	final private path p;
-	public pathplace(final path p){this.p=p;}
+	public fileplace(final path p){this.p=p;}
 	public String toString(){return p.name();}
 	public String description(){try{return p.readstr();}catch(final Throwable t){throw new Error(t);}}
 
@@ -16,7 +12,7 @@ public class pathplace implements place{
 		final List<place>dir=new LinkedList<place>();
 		for(final String s:p.list()){
 			final path pp=p.get(s);
-			dir.add(new pathplace(pp));
+			dir.add(new fileplace(pp));
 		}
 		return dir;
 	}
@@ -41,7 +37,7 @@ public class pathplace implements place{
 	public place places_get(final String qry){
 		for(final String s:p.list()){
 			final path pp=p.get(s);
-			if(pp.name().startsWith(qry))return new pathplace(pp);
+			if(pp.name().startsWith(qry))return new fileplace(pp);
 		}
 		return null;
 	}

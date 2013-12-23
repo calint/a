@@ -6,7 +6,11 @@ import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
 	static final long serialVersionUID=1;
-	public static String rootcls="a.sokio.ep2.$$hallway";
+//	public static String rootcls="a.sokio.ep2.$$hallway";
+	public static String rootcls=health.class.getName();
+	public static class health extends anyplace{static final long serialVersionUID=1;{
+		description="\n\n\n retro text adventure game sokio\n\n u r in roome\n u c me\n exits: none\n todo: find an exit\n\nkeywords: look enter go back exit select take drop copy  say goto inventory\n";
+	}}
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		name=req.get().session().id();
@@ -88,7 +92,7 @@ final public class $ extends a implements sock,threadedsock{
 		return true;
 	}
 	private void out_prompt(){out.put("\n< ".getBytes());}
-	private static anyplace root;{try{root=(anyplace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
+	private static anyplace root;static{try{root=(anyplace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
 
 	private Stack<place>path=new Stack<place>();{path.push(root);}
 	private List<thing>selection=new LinkedList<thing>();
