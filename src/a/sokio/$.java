@@ -78,7 +78,7 @@ final public class $ extends a implements sock,threadedsock{
 			case'z':c_say();break;
 			case'h':c_help();break;
 			case'n':c_name();break;
-			case'k':c_newplace();break;
+			case'p':c_newplace();break;
 			case'.':c_save();break;
 			case',':c_load();break;
 			case'o':c_newthing();break;
@@ -189,6 +189,9 @@ final public class $ extends a implements sock,threadedsock{
 			return;
 		}
 		
+		enter(dest);
+	}
+	private void enter(final place dest){
 		dest.sokios_add(this);
 		dest.sokios_recv(name+" arrived from "+place(),this);
 		place().sokios_remove(this);
@@ -252,6 +255,9 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes("not have"));
 			return;
 		}
+		drop(e);
+	}
+	private void drop(final thing e) {
 		inventory.remove(e);
 		place().things_add(e);
 		if(e.place!=null)e.place.sokios_recv(name+" dropped "+e.aanname(),this);
@@ -292,12 +298,17 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	private place placeincontext;
 	final private void c_newplace(){
+		final byte op=in.get();
 		final String nm=in_toeol();
-		final splace nl=new splace();
-		placeincontext=nl;
-		nl.name=nm;
-		place().places_add(nl);
-		place().sokios_recv(name+" created "+nl,this);
+		final splace newplace=new splace();
+		placeincontext=newplace;
+		newplace.name=nm;
+		place().places_add(newplace);
+		place().sokios_recv(name+" created "+newplace,this);
+		
+		if(op=='e'){
+			enter(newplace);
+		}
 	}
 //	private boolean wasonewordcmd;
 	final private String in_toeol(){
@@ -314,6 +325,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 //	private thing lastnewthing;
 	final private void c_newthing(){
+		final byte op=in.get();
 		final String nm=in_toeol();
 		final thing o=new thing();
 		placeincontext=o;
@@ -327,6 +339,15 @@ final public class $ extends a implements sock,threadedsock{
 			o.name=nm;
 		}
 		inventory.add(o);
+		if(op=='d'){
+			drop(o);
+			return;
+		}
+		if(op=='e'){
+			drop(o);
+			enter(o);
+			return;
+		}
 	}
 	final private void c_save()throws Throwable{
 		in_toeol();
