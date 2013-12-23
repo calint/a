@@ -90,11 +90,11 @@ final public class $ extends a implements sock,threadedsock{
 		return true;
 	}
 	private void out_prompt(){out.put("\n< ".getBytes());}
-	private static anyplace root;static{try{root=(anyplace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
+	private static splace root;static{try{root=(splace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}
 
 	private Stack<place>path=new Stack<place>();{path.push(root);}
-	private List<anything>selection=new LinkedList<anything>();
-	private List<anything>inventory=new LinkedList<anything>();
+	private List<thing>selection=new LinkedList<thing>();
+	private List<thing>inventory=new LinkedList<thing>();
 	
 	final private void help(){
 		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n".getBytes());
@@ -104,12 +104,12 @@ final public class $ extends a implements sock,threadedsock{
 		if(qry==null||qry.length()==0){
 			print(place());
 		}else{
-			final anything th=inventory_get(qry);
+			final thing th=inventory_get(qry);
 			if(th!=null){
 				print(th);
 				return;
 			}
-			final anything thl=place().things_get(qry);
+			final thing thl=place().things_get(qry);
 			if(thl!=null){
 				print(thl);
 				return;
@@ -129,7 +129,7 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes(d));
 			out.put("\n".getBytes());
 		}
-		e.places_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
+		e.places_foreach(new place.placevisitor(){public boolean visit(final place p)throws Throwable{
 			out.put("   ".getBytes());
 			out.put(tobytes(p.toString()));
 			out.put("\n".getBytes());
@@ -140,7 +140,7 @@ final public class $ extends a implements sock,threadedsock{
 			final int n=e.things_size();
 			if(n<5){
 				final class counter{int c;}final counter c=new counter();
-				e.things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
+				e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
 					if(c.c==0){
 						out.put(tobytes(" "));						
 					}else if(c.c==n-1){
@@ -148,15 +148,15 @@ final public class $ extends a implements sock,threadedsock{
 					}else{
 						out.put(tobytes(", "));						
 					}
-					out.put(tobytes(((anything)p).aanname()));
+					out.put(tobytes(o.aanname()));
 					c.c++;
 					return true;
 				}});
 			}else{
 				out.put(tobytes(":"));
-				e.things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
+				e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
 					out.put(tobytes("\n  "));
-					final String tag=((anything)p).aanname();
+					final String tag=o.aanname();
 					out.put(tobytes(tag));
 					return true;
 				}});
@@ -198,7 +198,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void select(){
 		final String what=in_toeol();
-		final anything e=place().things_get(what);
+		final thing e=place().things_get(what);
 		if(e==null){
 			out.put(tobytes("not found"));
 			return;
@@ -207,7 +207,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void take(){
 		final String what=in_toeol();
-		final anything e=place().things_get(what);
+		final thing e=place().things_get(what);
 		if(e==null){
 			out.put(tobytes("not found"));
 			return;
@@ -219,20 +219,20 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void copy()throws Throwable{
 		final String what=in_toeol();
-		place().things_foreach(new place.visitor(){public boolean visit(final place p)throws Throwable{
-			if(!p.toString().startsWith(what))return true;
-			final anything copy=(anything)((anything)p).clone();
+		place().things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
+			if(!o.toString().startsWith(what))return true;
+			final thing copy=(thing)o.clone();
 			copy.place=null;
 			copy.name="copy of "+copy.name;
 			copy.aan="a";
 			inventory.add(copy);
-			place().sokios_recv(name+" copied the "+p,$.this);
+			place().sokios_recv(name+" copied the "+o,$.this);
 			return false;
 		}});
 		out.put(tobytes("not found"));
 	}
-	private anything inventory_get(final String qry){
-		for(final anything e:inventory){
+	private thing inventory_get(final String qry){
+		for(final thing e:inventory){
 			if(e.toString().startsWith(qry)){
 				return e;
 			}
@@ -245,7 +245,7 @@ final public class $ extends a implements sock,threadedsock{
 //	}
 	final private void drop(){
 		final String what=in_toeol();
-		final anything e=what!=null?inventory_get(what):lastnewthing;
+		final thing e=what!=null?inventory_get(what):lastnewthing;
 		if(e==null){
 			out.put(tobytes("not have"));
 			return;
@@ -260,7 +260,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void inventory(){
 		out.put(tobytes("\nu hav"));
-		for(final anything t:inventory){
+		for(final thing t:inventory){
 			out.put("\n  ".getBytes());
 			if(t.aan!=null){
 				out.put(tobytes(t.aan)).put((byte)' ');
@@ -270,7 +270,7 @@ final public class $ extends a implements sock,threadedsock{
 		if(inventory.isEmpty())
 			out.put(tobytes(" nothing"));
 		out.put(tobytes("\n\nu hav selected"));
-		for(final anything s:selection())
+		for(final thing s:selection())
 			out.put("\n  ".getBytes()).put(tobytes(s.toString())).put(tobytes(" from ")).put(tobytes(s.place.toString()));
 		if(selection().isEmpty())
 			out.put(tobytes(" nothing"));
@@ -291,7 +291,7 @@ final public class $ extends a implements sock,threadedsock{
 	private place lastnewplace;
 	final private void newplace(){
 		final String nm=in_toeol();
-		final anyplace nl=new anyplace();
+		final splace nl=new splace();
 		lastnewplace=nl;lastnewthing=null;
 		nl.name=nm;
 		place().places_add(nl);
@@ -310,10 +310,10 @@ final public class $ extends a implements sock,threadedsock{
 		final String nm=sb.toString().trim();
 		return nm;
 	}
-	private anything lastnewthing;
+	private thing lastnewthing;
 	final private void newthing(){
 		final String nm=in_toeol();
-		final anything o=new anything();
+		final thing o=new thing();
 		lastnewthing=o;lastnewplace=null;
 		if(nm.startsWith("a ")){
 			o.aan="a";		
@@ -335,7 +335,7 @@ final public class $ extends a implements sock,threadedsock{
 	final private void load()throws Throwable{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
-		root=(anyplace)p.readobj();
+		root=(splace)p.readobj();
 		path.clear();
 		path.add(root);
 		out.put(("loaded "+p.size()+" bytes from "+p).getBytes());
@@ -350,7 +350,7 @@ final public class $ extends a implements sock,threadedsock{
 	
 	
 	final protected place place(){return path.peek();}
-	final private List<anything>selection(){return selection;}
+	final private List<thing>selection(){return selection;}
 
 	private sockio so;
 	private String name;
