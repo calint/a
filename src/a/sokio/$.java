@@ -187,6 +187,10 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(tobytes("not found"));
 			return;
 		}
+		dest.sokios_add(this);
+		dest.sokios_recv(name+" arrived from "+place(),this);
+		place().sokios_remove(this);
+		place().sokios_recv(name+" departed to "+dest,this);
 		path_push(dest);
 	}
 	public void name(){
