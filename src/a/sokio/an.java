@@ -11,7 +11,9 @@ abstract class an implements Serializable{
 		if(name!=null)return name;
 		final String s=getClass().getName().replace('_',' ');
 		final int i=s.lastIndexOf('$');
-		if(i==-1)return s;
-		return s.substring(i+1);
+		if(i!=-1)s.substring(i+1);
+		final int ii=s.lastIndexOf('.');
+		if(ii==-1)return s;
+		return s.substring(ii+1);
 	}
 }

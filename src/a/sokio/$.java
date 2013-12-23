@@ -34,7 +34,7 @@ final public class $ extends a implements sock,threadedsock{
 			in.flip();
 		}
 		while(in.hasRemaining()){
-			if(parse()){
+			if(c()){
 				out.flip();
 				if(write()==op.write)
 					return op.write;
@@ -51,25 +51,13 @@ final public class $ extends a implements sock,threadedsock{
 		out.clear();
 		return op.read;
 	}
-//	final private boolean in_tillnexttoken(){
-//		wasonewordcmd=false;
-//		while(true){
-//			if(!in.hasRemaining())return false;
-//			final byte b=in.get();
-//			if(b==' ')break;
-//			if(b=='\n'){wasonewordcmd=true;break;}
-//		}
-//		return true;
-//	}
-	final private boolean parse()throws Throwable{
+	final private boolean c()throws Throwable{
 		final byte cmd=in.get();
-		if(cmd=='\n'){out_prompt();return true;}
-//		if(!in_tillnexttoken())throw new Error();
 		try{
 			switch(cmd){
 			case'l':c_look();break;
 			case'g':case'e':c_enter();break;
-			case'x':case'b':c_back();break;
+			case'b':case'x':c_back();break;
 			case't':c_take();break;
 			case'd':c_drop();break;
 			case'c':c_copy();break;
@@ -120,7 +108,7 @@ final public class $ extends a implements sock,threadedsock{
 				print(loc);
 				return;				
 			}
-			out.put("not found".getBytes());
+			out.put("not found\n".getBytes());
 		}
 	}
 	final private void print(final place e)throws Throwable{
@@ -258,7 +246,7 @@ final public class $ extends a implements sock,threadedsock{
 		final String what=in_toeol();
 		final thing e=(thing)(what!=null?inventory_get(what):placeincontext);
 		if(e==null){
-			out.put(tobytes("not have"));
+			out.put(tobytes("not have\n"));
 			return;
 		}
 		drop(e);
@@ -291,6 +279,7 @@ final public class $ extends a implements sock,threadedsock{
 		out.put("\n".getBytes());
 	}
 	final private void c_back(){
+		in.get();//consume the \n
 		if(path.size()==1){
 			out.put(tobytes("cannot\n"));
 			return;
