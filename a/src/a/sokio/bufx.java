@@ -7,13 +7,14 @@ import java.util.List;
 
 import b.sockio;
 final class bufx{
-	public bufx(final byte[]ba/*takes*/){this.ba=ba;balen=ba.length;n++;}
-	public bufx(final int pagesize_B){balen=pagesize_B;}
+	public bufx(){}
+	public bufx(final byte[]ba/*takes*/){this.ba=ba;pagesize_B=ba.length;n++;}
+	public bufx(final int pagesize_B){this.pagesize_B=pagesize_B;}
 	public bufx put(final String s){return put(s.getBytes());}
 	public bufx put(final byte[]b){return b(b,0,b.length);}
 	public bufx b(final byte[]b,int off,int len){
 		if(ba==null){
-			ba=new byte[balen];
+			ba=new byte[pagesize_B];
 			i=0;n++;
 		}
 		final int cap=ba.length-i;
@@ -26,14 +27,14 @@ final class bufx{
 			off+=cap;
 			lsb_add(ba);
 			n++;
-			ba=new byte[balen];//? incbalen
+			ba=new byte[pagesize_B];//? incbalen
 			while(len>ba.length){
 				System.arraycopy(b,off,ba,0,ba.length);
 				len-=ba.length;
 				off+=ba.length;				
 				lsb.add(ba);
 				n++;
-				ba=new byte[balen];
+				ba=new byte[pagesize_B];
 			}
 			if(len!=0){
 				System.arraycopy(b,off,ba,0,len);
@@ -94,7 +95,7 @@ final class bufx{
 	}
 	private List<byte[]>lsb;
 	private byte[]ba;
-	private int balen=1024;
+	private int pagesize_B=1024;
 	private int n,i;
 	private ByteBuffer[]bboa;
 	private long bboa_rem;
