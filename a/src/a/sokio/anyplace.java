@@ -48,20 +48,21 @@ public class anyplace extends any implements place{
 			if(sokios==null)return;
 			for(final $ e:sokios){
 				if(e==exclude)continue;
-				try{e.so.write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}
+				try{e.so_write(ByteBuffer.wrap(tobytes("\n"+msg+"\n")));}
 				catch(final IOException ex){
 					if("Broken pipe".equals(ex.getMessage())){
 						sokios.remove(e);
-						e.so.close();
+						e.so_close();
 						return;
 					}
 					if(ex instanceof ClosedChannelException){
 						sokios.remove(e);
-						e.so.close();
+						e.so_close();
 						return;
 					}
 					throw new Error(ex);
 				}
+				catch(Throwable t){throw new Error(t);}
 			}		
 		}
 		public thing things_get(final String qry){

@@ -1,6 +1,7 @@
 package a.sokio;
 import java.nio.*;
 import java.util.*;
+
 import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
@@ -326,10 +327,12 @@ final public class $ extends a implements sock,threadedsock{
 	public place place(){return path.peek();}
 	public List<thing>selection(){return selection;}
 
-	sockio so;
+	private sockio so;
 	private String name;
 	private final ByteBuffer in=ByteBuffer.allocate(1*K);
 	private final ByteBuffer out=ByteBuffer.allocate(4*K);
 //	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	public void path_push(final place p){path.push(p);}
+	public int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
+	public void so_close(){so.close();}
 }
