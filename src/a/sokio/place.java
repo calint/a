@@ -11,9 +11,9 @@ public interface place extends Serializable{
 	
 	boolean things_isempty();
 	int things_size();
-	thing things_get(final String qry);
-	void things_add(final thing o);
-	void things_remove(final thing o);
+	anything things_get(final String qry);
+	void things_add(final anything o);
+	void things_remove(final anything o);
 	void things_foreach(final place.visitor v)throws Throwable;
 	
 	int sokios_size();
