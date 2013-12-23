@@ -30,7 +30,14 @@ final class file implements place{
 	public int things_size(){return 0;}
 	public void things_foreach(final place.thingvisitor v)throws Throwable{}
 	public thing things_get(final String qry){return null;}
-	public void things_add(final thing o){}
+	public void things_add(final thing o){
+		if(!p.isdir())throw new Error(this+" is not a container");
+		final path f=p.get(o.toString());
+		final String d=o.description();
+		try{
+			if(d!=null)f.writestr(d);else f.mkfile();
+		}catch(final Throwable t){throw new Error(t);}
+	}
 	public void things_remove(final thing o){}
 
 	public int sokios_size(){return 0;}
@@ -49,13 +56,14 @@ final class file implements place{
 	}
 	public void places_add(final place o){
 		final path f=p.get(o.toString());
-		if(f.exists())return;
-		final String txt=o.description();
-		if(txt==null||txt.length()==0){
-			try{f.mkfile();}catch(Throwable t){throw new Error(t);}
-			return;
-		}
-		try{f.append(txt);}catch(Throwable t){throw new Error(t);}
+		try{f.mkdirs();}catch(final Throwable t){throw new Error(t);}
+//		if(f.exists())return;
+//		final String txt=o.description();
+//		if(txt==null||txt.length()==0){
+//			try{f.mkfile();}catch(Throwable t){throw new Error(t);}
+//			return;
+//		}
+//		try{f.append(txt);}catch(Throwable t){throw new Error(t);}
 	}
 	public place places_enter(final $ so,final String qry){
 		place dest=places_get(qry);
