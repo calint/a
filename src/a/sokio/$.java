@@ -66,6 +66,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	protected boolean parse()throws Throwable{
 		final byte cmd=in.get();
+		if(cmd=='\n'){out_prompt();return true;}
 		if(!in_tillnexttoken())throw new Error();
 		try{
 			switch(cmd){
@@ -328,7 +329,8 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	public void describe(){
 		final String s=in_toeol();
-		place().description(s);
+		final String s1=s.replaceAll("\\\\n","\n");
+		place().description(s1);
 	}
 
 	
