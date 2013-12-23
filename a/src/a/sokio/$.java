@@ -350,7 +350,7 @@ final public class $ extends a implements sock,threadedsock{
 	
 	
 	
-	final protected place place(){return path.peek();}
+	final place place(){return path.peek();}
 	final private List<thing>selection(){return selection;}
 
 	private sockio so;
@@ -358,7 +358,7 @@ final public class $ extends a implements sock,threadedsock{
 	private final ByteBuffer in=ByteBuffer.allocate(1*K);
 	private final ByteBuffer out=ByteBuffer.allocate(4*K);
 //	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
-	final protected void path_push(final place p){path.push(p);}
-	final protected int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
-	final protected void so_close(){so.close();}
+	final void path_push(final place p){path.push(p);}
+	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}
+	final void so_close(){so.close();}
 }
