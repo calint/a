@@ -180,10 +180,11 @@ final public class $ extends a implements sock,threadedsock{
 		final String where=in_toeol();
 		place dest=null;
 		if(where==null){
-			if(lastnewthing!=null)dest=lastnewthing;
-			else if(lastnewplace!=null)dest=lastnewplace;
+			if(placeincontext!=null)
+				dest=placeincontext;
 		}else
 			dest=place().places_enter(this,where);
+		
 		if(dest==null){
 			out.put(tobytes("not found"));
 			return;
@@ -246,14 +247,14 @@ final public class $ extends a implements sock,threadedsock{
 //	}
 	final private void c_drop(){
 		final String what=in_toeol();
-		final thing e=what!=null?inventory_get(what):lastnewthing;
+		final thing e=(thing)(what!=null?inventory_get(what):placeincontext);
 		if(e==null){
 			out.put(tobytes("not have"));
 			return;
 		}
 		inventory.remove(e);
 		place().things_add(e);
-		e.place.sokios_recv(name+" dropped "+e.aanname(),this);
+		if(e.place!=null)e.place.sokios_recv(name+" dropped "+e.aanname(),this);
 	}
 	final private void c_say(){
 		final String say=in_toeol();
@@ -289,11 +290,11 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_add(this);
 		place().sokios_recv(name+" arrived from "+loc,this);
 	}
-	private place lastnewplace;
+	private place placeincontext;
 	final private void c_newplace(){
 		final String nm=in_toeol();
 		final splace nl=new splace();
-		lastnewplace=nl;lastnewthing=null;
+		placeincontext=nl;
 		nl.name=nm;
 		place().places_add(nl);
 		place().sokios_recv(name+" created "+nl,this);
@@ -311,11 +312,11 @@ final public class $ extends a implements sock,threadedsock{
 		final String nm=sb.toString().trim();
 		return nm;
 	}
-	private thing lastnewthing;
+//	private thing lastnewthing;
 	final private void c_newthing(){
 		final String nm=in_toeol();
 		final thing o=new thing();
-		lastnewthing=o;lastnewplace=null;
+		placeincontext=o;
 		if(nm.startsWith("a ")){
 			o.aan="a";		
 			o.name=nm.substring("a ".length());
