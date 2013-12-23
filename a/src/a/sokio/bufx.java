@@ -24,7 +24,7 @@ final class bufx{
 			System.arraycopy(b,off,ba,i,cap);
 			len-=cap;
 			off+=cap;
-			lsb.add(ba);
+			lsb_add(ba);
 			n++;
 			ba=new byte[balen];
 			while(len>ba.length){
@@ -44,31 +44,35 @@ final class bufx{
 		}
 		return this;
 	}
-	public void to(final OutputStream os)throws Throwable{
-		final Iterator<byte[]>it=lsb.iterator();
-		while(true){
-			n--;
-			if(n==0)break;
-			os.write(it.next());
-		}
-		os.write(ba,0,i);
-	}
 	public void clear(){
-		lsb.clear();
+		lsb=null;
 		ba=null;
 		i=n=0;
 	}
+	public void to(final OutputStream os)throws Throwable{
+		if(lsb!=null){
+			final Iterator<byte[]>it=lsb.iterator();
+			while(true){
+				n--;
+				if(n==0)break;
+				os.write(it.next());
+			}
+		}
+		os.write(ba,0,i);
+	}
 	public boolean send_start(final sockio sc)throws Throwable{
 		bboa=new ByteBuffer[n];
-		final Iterator<byte[]>it=lsb.iterator();
 		int x=0;
 		bboa_rem=0;
-		while(true){
-			n--;
-			if(n==0)break;
-			final ByteBuffer bb=ByteBuffer.wrap(it.next());
-			bboa[x++]=bb;
-			bboa_rem+=bb.remaining();
+		if(lsb!=null){
+			final Iterator<byte[]>it=lsb.iterator();
+			while(true){
+				n--;
+				if(n==0)break;
+				final ByteBuffer bb=ByteBuffer.wrap(it.next());
+				bboa[x++]=bb;
+				bboa_rem+=bb.remaining();
+			}
 		}
 		final ByteBuffer bb=ByteBuffer.wrap(ba,0,i);
 		bboa[x++]=bb;
@@ -80,10 +84,15 @@ final class bufx{
 			if(bboa_rem==0){bboa=null;clear();return true;}
 			final long c=sc.write(bboa);
 			if(c==0)return false;
+			//? return c or -1
 			bboa_rem-=c;
 		}
 	}
-	final private List<byte[]>lsb=new ArrayList<byte[]>();
+	private void lsb_add(byte[]b){
+		if(lsb==null)lsb=new ArrayList<byte[]>();
+		lsb.add(b);
+	}
+	private List<byte[]>lsb;
 	private byte[]ba;
 	private int balen=16;
 	private int n,i;
