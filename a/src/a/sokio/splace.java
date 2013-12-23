@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
-public class splace extends an implements place{
+class splace extends an implements place{
 		static final long serialVersionUID=1;
 		private List<place>exits;
 		private List<thing>things;
