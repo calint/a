@@ -52,6 +52,8 @@ final public class $ extends a implements sock,threadedsock{
 		out.clear();
 		return op.read;
 	}
+	
+	
 	final private boolean c()throws Throwable{
 		final byte cmd=in.get();
 		try{
@@ -68,11 +70,11 @@ final public class $ extends a implements sock,threadedsock{
 			case'o':c_newthing();break;
 			case'w':c_write();break;
 			case'z':c_say();break;
-			case',':c_load();break;
 			case'.':c_save();break;
-			case'h':c_help();break;
+			case',':c_load();break;
 			case'n':c_name();break;
 			case'!':c_stats();break;
+			case'h':c_help();break;
 			default:
 			}
 		}catch(final Throwable t){
@@ -80,15 +82,6 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		out_prompt();
 		return true;
-	}
-	final private void out_prompt(){out.put("\n< ");}
-
-	private Stack<place>path=new Stack<place>();{path.push(root);}
-	private List<thing>selection=new LinkedList<thing>();
-	private List<thing>inventory=new LinkedList<thing>();
-	
-	final private void c_help(){
-		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n");
 	}
 	final private void c_look()throws Throwable{
 		final String qry=in_toeol();
@@ -190,17 +183,18 @@ final public class $ extends a implements sock,threadedsock{
 		place().sokios_recv(name+" departed to "+dest,this);
 		path_push(dest);
 	}
-	final private void c_name(){
-		name=in_toeol();
-	}
-	final private void c_select(){
-		final String what=in_toeol();
-		final thing e=place().things_get(what);
-		if(e==null){
-			out.put("not found");
+	final private void c_back(){
+		in.get();//consume the \n
+		if(path.size()==1){
+			out.put("cannot\n");
 			return;
 		}
-		selection().add(e);
+		final place loc=place();
+		loc.sokios_remove(this);
+		path.pop();
+		loc.sokios_recv(name+" departed to "+place(),this);
+		place().sokios_add(this);
+		place().sokios_recv(name+" arrived from "+loc,this);
 	}
 	final private void c_take(){
 		final String what=in_toeol();
@@ -213,6 +207,20 @@ final public class $ extends a implements sock,threadedsock{
 		place().things_remove(e);
 		e.place=null;
 		place().sokios_recv(name+" took the "+e,this);
+	}
+	final private void c_drop(){
+		final String what=in_toeol();
+		final thing e=(thing)(what!=null?inventory_get(what):placeincontext);
+		if(e==null){
+			out.put("not have\n");
+			return;
+		}
+		drop(e);
+	}
+	private void drop(final thing e) {
+		inventory.remove(e);
+		place().things_add(e);
+		if(e.place!=null)e.place.sokios_recv(name+" dropped "+e.aanname(),this);
 	}
 	final private void c_copy()throws Throwable{
 		final String what=in_toeol();
@@ -228,35 +236,14 @@ final public class $ extends a implements sock,threadedsock{
 		}});
 		out.put("not found\n");
 	}
-	final private thing inventory_get(final String qry){
-		for(final thing e:inventory){
-			if(e.toString().startsWith(qry)){
-				return e;
-			}
-		}
-		return null;
-	}
-//	private anything inventory_get_first(){
-//		if(inventory.isEmpty())return null;
-//		return inventory.get(0);
-//	}
-	final private void c_drop(){
+	final private void c_select(){
 		final String what=in_toeol();
-		final thing e=(thing)(what!=null?inventory_get(what):placeincontext);
+		final thing e=place().things_get(what);
 		if(e==null){
-			out.put("not have\n");
+			out.put("not found\n");
 			return;
 		}
-		drop(e);
-	}
-	private void drop(final thing e) {
-		inventory.remove(e);
-		place().things_add(e);
-		if(e.place!=null)e.place.sokios_recv(name+" dropped "+e.aanname(),this);
-	}
-	final private void c_say(){
-		final String say=in_toeol();
-		place().sokios_recv(name+" says "+say,this);
+		selection().add(e);
 	}
 	final private void c_inventory(){
 		in.get();//\n
@@ -277,20 +264,6 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(" nothing");
 		out.put("\n");
 	}
-	final private void c_back(){
-		in.get();//consume the \n
-		if(path.size()==1){
-			out.put("cannot\n");
-			return;
-		}
-		final place loc=place();
-		loc.sokios_remove(this);
-		path.pop();
-		loc.sokios_recv(name+" departed to "+place(),this);
-		place().sokios_add(this);
-		place().sokios_recv(name+" arrived from "+loc,this);
-	}
-	private place placeincontext;
 	final private void c_newplace(){
 		final byte op=in.get();
 		final String nm=in_toeol();
@@ -303,25 +276,6 @@ final public class $ extends a implements sock,threadedsock{
 		if(op=='e'){
 			enter(newplace);
 		}
-	}
-	final private void c_stats(){
-		in.get();//\n
-//		for(int n=0;n<1024*1024;n++){
-//			out.put("ashfaosijf pweo posj dfoijsdfposdofioksdnflksncdlkncds");
-//		}
-		out.put("(input,output)B=("+meters_input+","+meters_output+")\n");
-	}
-
-	final private String in_toeol(){
-		if(!in.hasRemaining())return null;
-		final StringBuilder sb=new StringBuilder(32);
-		while(true){
-			final byte b=in.get();
-			if(b=='\n')break;
-			sb.append((char)b);
-		}
-		final String nm=sb.toString().trim();
-		return nm;
 	}
 	final private void c_newthing(){
 		final byte op=in.get();
@@ -349,6 +303,15 @@ final public class $ extends a implements sock,threadedsock{
 			return;
 		}
 	}
+	final private void c_write(){
+		final String s=in_toeol();
+		final String s1=s.replaceAll("\\\\n","\n");
+		place().description(s1);
+	}
+	final private void c_say(){
+		final String say=in_toeol();
+		place().sokios_recv(name+" says "+say,this);
+	}
 	final private void c_save()throws Throwable{
 		in_toeol();
 		final path p=b.path().get("u").get(getClass().getName()).get("root");
@@ -363,24 +326,57 @@ final public class $ extends a implements sock,threadedsock{
 		path.add(root);
 		out.put("loaded "+p.size()+" bytes from "+p);
 	}
-	final private void c_write(){
-		final String s=in_toeol();
-		final String s1=s.replaceAll("\\\\n","\n");
-		place().description(s1);
+	final private void c_name(){
+		name=in_toeol();
+	}
+	final private void c_stats(){
+		in.get();//\n
+		out.put("(input,output)B=("+meters_input+","+meters_output+")\n");
+	}
+	final private void c_help(){
+		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n");
 	}
 	
+	final private void out_prompt(){out.put("\n< ");}
+
+	final private thing inventory_get(final String qry){
+		for(final thing e:inventory){
+			if(e.toString().startsWith(qry)){
+				return e;
+			}
+		}
+		return null;
+	}
+//	private anything inventory_get_first(){
+//		if(inventory.isEmpty())return null;
+//		return inventory.get(0);
+//	}
+	final private String in_toeol(){
+		if(!in.hasRemaining())return null;
+		final StringBuilder sb=new StringBuilder(32);
+		while(true){
+			final byte b=in.get();
+			if(b=='\n')break;
+			sb.append((char)b);
+		}
+		final String nm=sb.toString().trim();
+		return nm;
+	}
 	final place place(){return path.peek();}
 	final private List<thing>selection(){return selection;}
-
-	private sockio so;
-	private String name;
-	private ByteBuffer in;
-	private final bufx out=new bufx(256);
-	//	transient private final static List<sokio>sokios=Collections.synchronizedList(new LinkedList<sokio>());
 	final void path_push(final place p){path.push(p);}
 	final int so_write(final ByteBuffer bb)throws Throwable{return so.write(bb);}//? msgq
 	final void so_close(){so.close();}
+	
+	private sockio so;
+	final private Stack<place>path=new Stack<place>();{path.push(root);}
+	final private List<thing>inventory=new LinkedList<thing>();
+	final private List<thing>selection=new LinkedList<thing>();
 
+	private place placeincontext;
+	private String name;
+	private ByteBuffer in;
+	private final bufx out=new bufx(256);
 
 	private static String rootcls=roome.class.getName();
 	private static splace root;static{try{root=(splace)Class.forName(rootcls).newInstance();}catch(final Throwable t){throw new Error(t);}}	

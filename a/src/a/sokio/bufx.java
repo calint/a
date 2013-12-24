@@ -45,11 +45,7 @@ final class bufx{
 		}
 		return this;
 	}
-	public void clear(){
-		lsb=null;
-		ba=null;
-		i=n=0;
-	}
+	public void clear(){ba=null;lsb=null;bboa=null;i=n=0;}
 	public void to(final OutputStream os)throws Throwable{
 		if(lsb!=null){
 			final Iterator<byte[]>it=lsb.iterator();
@@ -85,7 +81,7 @@ final class bufx{
 			final long c=sc.write(bboa);
 			if(c==0)return 0;
 			bboa_rem-=c;
-			if(bboa_rem==0){bboa=null;clear();return c;}
+			if(bboa_rem==0){clear();return c;}
 		}
 	}
 	public boolean send_isdone(){return bboa_rem==0;}
