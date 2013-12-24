@@ -11,15 +11,11 @@ final public class $ extends a implements sock,threadedsock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		in=so.inbuf();
-//		in=ByteBuffer.allocate(2);
-//		in.position(in.limit());
 		name=req.get().session().id();
 		c_help();
 		out_prompt();
 		enter(null,place());
-		final long n=out.send_start(so);
-//		if(n==0)return op.write;
-		meters_output+=n;
+		meters_output+=out.send_start(so);
 		if(!out.send_isdone())return op.write;
 		return op.read;
 	}
@@ -33,18 +29,14 @@ final public class $ extends a implements sock,threadedsock{
 			in.flip();
 		}
 		while(c()){
-			final long c=out.send_start(so);
-			if(c==0)return op.write;
-			meters_output+=c;
+			meters_output+=out.send_start(so);
+			if(!out.send_isdone())return op.write;
 		}
 		return op.read;
 	}
 	final public op write()throws Throwable{
-		final long c=out.send_resume(so);
-		if(c==0)return op.write;
-		meters_output+=c;
+		meters_output+=out.send_resume(so);
 		if(!out.send_isdone())return op.write;
-//		out.clear();
 		return op.read;
 	}
 	
@@ -369,7 +361,7 @@ final public class $ extends a implements sock,threadedsock{
 //		place().name(s1);
 //	}
 	final private void c_help(){
-		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n");
+		out.put("\nkeywords: look go back select take drop copy  say goto inventory\n");
 	}
 	
 	final private void out_prompt(){out.put("\n< ");}
@@ -385,17 +377,6 @@ final public class $ extends a implements sock,threadedsock{
 //	private anything inventory_get_first(){
 //		if(inventory.isEmpty())return null;
 //		return inventory.get(0);
-//	}
-//	final private String in_toeol(){
-//		if(!in.hasRemaining())return null;
-//		final StringBuilder sb=new StringBuilder(32);
-//		while(true){
-//			final byte b=in.get();
-//			if(b=='\n')break;
-//			sb.append((char)b);
-//		}
-//		final String nm=sb.toString().trim();
-//		return nm;
 //	}
 	final place place(){return path.peek();}
 	final private List<thing>selection(){return selection;}
