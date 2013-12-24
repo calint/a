@@ -1,12 +1,12 @@
 package a.sokio.lib;
 import b.*;
+import static b.b.*;
 public class soi extends a implements bin{
 	private static final long serialVersionUID=1;
 	public String contenttype(){return "text/plain;charset=utf8";}
 	public void to(final xwriter x) throws Throwable{
 		x.pl(" sokio").nl();
-		final path rp=b.path("src");
-		recurse(x,rp);
+		recurse(x,path("src"));
 	}
 	private void recurse(final xwriter x,final path rp)throws Throwable{
 		rp.foreach(new path.visitor(){public boolean visit(final path p)throws Throwable{
