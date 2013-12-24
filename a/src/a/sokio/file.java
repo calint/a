@@ -7,13 +7,10 @@ final class file implements place{
 	final private path p;
 	public file(final path p){this.p=p;}
 	public String toString(){return p.name();}
-	public String description(){
-		try{return p.readstr();}catch(final Throwable t){throw new Error(t);}
-	}
-	final public void description(final String s){
-//		if(p.exists()&&!p.isfile())throw new Error("path is directory");
-		try{p.writestr(s);}catch(final Throwable t){throw new Error(t);}
-	}
+	public String name(){return p.name();}
+	public void name(final String s){p.rename(p.parent().get(s));}
+	public String description(){try{return p.readstr();}catch(final Throwable t){throw new Error(t);}}
+	final public void description(final String s){try{p.writestr(s);}catch(final Throwable t){throw new Error(t);}}
 	private List<place>places(){
 		final List<place>dir=new LinkedList<place>();
 		for(final String s:p.list()){
@@ -22,10 +19,7 @@ final class file implements place{
 		}
 		return dir;
 	}
-	public void places_foreach(final place.placevisitor v)throws Throwable{
-		for(final place p:places())
-			if(!v.visit(p))break;
-	}
+	public void places_foreach(final place.placevisitor v)throws Throwable{for(final place p:places())if(!v.visit(p))break;}
 	public boolean things_isempty(){return true;}
 	public int things_size(){return 0;}
 	public void things_foreach(final place.thingvisitor v)throws Throwable{}
@@ -57,23 +51,12 @@ final class file implements place{
 	public void places_add(final place o){
 		final path f=p.get(o.toString());
 		try{f.mkdirs();}catch(final Throwable t){throw new Error(t);}
-//		if(f.exists())return;
-//		final String txt=o.description();
-//		if(txt==null||txt.length()==0){
-//			try{f.mkfile();}catch(Throwable t){throw new Error(t);}
-//			return;
-//		}
-//		try{f.append(txt);}catch(Throwable t){throw new Error(t);}
 	}
 	public place places_enter(final $ so,final String qry){
 		place dest=places_get(qry);
 		if(dest==null)dest=things_get(qry);
 		if(dest==null)return null;
-		so.place().sokios_remove(so);
-		so.place().sokios_recv(this+" departed to "+dest,so);
-		dest.sokios_recv(this+" arrived from "+so.place(),so);
-		dest.sokios_add(so);
-		so.path_push(dest);
+		so.moveto(dest);
 		return dest;
 	}
 }

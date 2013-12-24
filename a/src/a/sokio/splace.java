@@ -1,5 +1,6 @@
 package a.sokio;
 import static b.b.*;
+
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
@@ -95,7 +96,7 @@ class splace extends an implements place{
 			place dest=places_get(qry);
 			if(dest==null)dest=things_get(qry);
 			if(dest==null)return null;
-			so.enter(dest);
+			so.moveto(dest);
 //			so.place().sokios_remove(so);
 //			so.place().sokios_recv(name+" departed to "+dest,so);
 //			dest.sokios_recv(name+" arrived from "+so.place(),so);
