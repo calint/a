@@ -11,6 +11,8 @@ final public class $ extends a implements sock,threadedsock{
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		in=so.inbuf();
+//		in=ByteBuffer.allocate(2);
+//		in.position(in.limit());
 		name=req.get().session().id();
 		c_help();
 		out_prompt();
@@ -47,77 +49,75 @@ final public class $ extends a implements sock,threadedsock{
 		return op.read;
 	}
 	
-	private static enum state{cmd,readline,parse};
+	private static enum state{cmd,line,nxt};
 	private state st=state.cmd;
-	
 	private StringBuilder in_cmd=new StringBuilder(2);
 	private StringBuilder in_line=new StringBuilder(128);
-	
 	final private boolean c()throws Throwable{
 		while(true){
 			switch(st){
+			case nxt:in_cmd.setLength(0);st=state.cmd;
 			case cmd:{
 				if(!in.hasRemaining())return false;
 				final byte cmd=in.get();
 				if(cmd==' '){
 					in_line.setLength(0);
-					st=state.readline;
+					st=state.line;
 					break;
 				}
 				if(cmd=='\n'){
 					in_line.setLength(0);
-					st=state.parse;
+					st=state.nxt;
+					if(parse())return true;
 					break;
 				}
 				in_cmd.append((char)cmd);
 				break;}
-			case readline:{
+			case line:{
 				if(!in.hasRemaining())return false;
 				final byte ch=in.get();
 				if(ch=='\n'){
-					st=state.parse;
+					st=state.nxt;
+					if(parse())return true;
 					break;
 				}
 				in_line.append((char)ch);
 				break;}
-			case parse:
-				if(in_cmd.length()==0){
-					st=state.cmd;
-					break;
-				}
-				final char ch=in_cmd.charAt(0);
-				try{
-					final String ln=in_line.toString();
-					switch(ch){
-					case'l':c_look(ln);break;
-					case'g':case'e':c_enter(ln);break;
-					case'b':case'x':c_back();break;
-					case't':c_take(ln);break;
-					case'd':c_drop(ln);break;
-					case'c':c_copy(ln);break;
-					case's':c_select(ln);break;
-					case'i':c_inventory();break;
-					case'p':c_newplace(ln);break;
-					case'o':c_newthing(ln);break;
-					case'w':c_write(ln);break;
-					case'z':c_say(ln);break;
-					case'0':c_save(ln);break;
-					case'9':c_load(ln);break;
-					case'3':c_namesok(ln);break;
-					case'2':c_stats();break;
-					case'n':c_nameplace(ln);break;
-					case'1':c_help();break;
-					default:
-					}
-				}catch(final Throwable t){
-					out.put(stacktrace(t));
-				}
-				out_prompt();
-				in_cmd.setLength(0);
-				st=state.cmd;
-				return true;
 			}
 		}
+	}
+	final private boolean parse(){
+		if(in_cmd.length()==0)
+			return false;
+		final char ch=in_cmd.charAt(0);
+		try{
+			final String ln=in_line.toString();
+			switch(ch){
+			case'l':c_look(ln);break;
+			case'g':case'e':c_enter(ln);break;
+			case'b':case'x':c_back();break;
+			case't':c_take(ln);break;
+			case'd':c_drop(ln);break;
+			case'c':c_copy(ln);break;
+			case's':c_select(ln);break;
+			case'i':c_inventory();break;
+			case'p':c_newplace(ln);break;
+			case'o':c_newthing(ln);break;
+			case'w':c_write(ln);break;
+			case'z':c_say(ln);break;
+			case'0':c_save(ln);break;
+			case'9':c_load(ln);break;
+			case'3':c_namesok(ln);break;
+			case'2':c_stats();break;
+			case'n':c_nameplace(ln);break;
+			case'1':c_help();break;
+			default:
+			}
+		}catch(final Throwable t){
+			out.put(stacktrace(t));
+		}
+		out_prompt();
+		return true;
 	}
 	final private void c_look(final String qry)throws Throwable{
 		if(qry==null||qry.length()==0){
