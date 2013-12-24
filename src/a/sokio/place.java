@@ -1,6 +1,8 @@
 package a.sokio;
 import java.io.*;
 interface place extends Serializable{
+	String name();
+	void name(final String s);//optional
 	String description();
 	void description(final String s);//optional
 	
