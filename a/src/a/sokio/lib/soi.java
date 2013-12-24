@@ -16,7 +16,7 @@ public class soi extends a implements bin{
 				x.pl("x");
 			}else{
 				x.p("oe ").pl(p.name());
-				x.p("w ").pl(p.readstr().replaceAll("\\n","\\\\n"));
+				x.p("w ").pl(p.readstr().replaceAll("\\n","\\\\n"));//? p.to(new ossokio(x.outputstream()))
 				x.pl("x");
 			}
 			return false;
