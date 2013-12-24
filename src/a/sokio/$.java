@@ -18,7 +18,7 @@ final public class $ extends a implements sock,threadedsock{
 		out_prompt();
 		enter(null,place());
 		final long n=out.send_start(so);
-		if(n==0)return op.write;
+//		if(n==0)return op.write;
 		meters_output+=n;
 		if(!out.send_isdone())return op.write;
 		return op.read;
@@ -32,12 +32,11 @@ final public class $ extends a implements sock,threadedsock{
 			meters_input+=c;
 			in.flip();
 		}
-		while(in.hasRemaining())
-			if(c()){
-				final long c=out.send_start(so);
-				if(c==0)return op.write;
-				meters_output+=c;
-			}
+		while(c()){
+			final long c=out.send_start(so);
+			if(c==0)return op.write;
+			meters_output+=c;
+		}
 		return op.read;
 	}
 	final public op write()throws Throwable{
@@ -45,40 +44,46 @@ final public class $ extends a implements sock,threadedsock{
 		if(c==0)return op.write;
 		meters_output+=c;
 		if(!out.send_isdone())return op.write;
-		out.clear();
+//		out.clear();
 		return op.read;
 	}
 	
-	private static enum state{cmd,line,nxt};
+	private static enum state{cmd,line};
 	private state st=state.cmd;
 	private StringBuilder in_cmd=new StringBuilder(2);
-	private StringBuilder in_line=new StringBuilder(128);
+	private StringBuilder in_line=new StringBuilder(128);//? whatif>1G
 	final private boolean c()throws Throwable{
 		while(true){
 			switch(st){
-			case nxt:in_cmd.setLength(0);st=state.cmd;
 			case cmd:{
 				if(!in.hasRemaining())return false;
-				final byte cmd=in.get();
-				if(cmd==' '){
+				final byte ch=in.get();
+				if(ch==' '){
 					in_line.setLength(0);
 					st=state.line;
 					break;
 				}
-				if(cmd=='\n'){
+				if(ch=='\n'){
+					final String cmd=in_cmd.toString();
+					in_cmd.setLength(0);
+					final String ln=in_line.toString();
 					in_line.setLength(0);
-					st=state.nxt;
-					if(parse())return true;
+					st=state.cmd;
+					if(parse(cmd,ln))return true;
 					break;
 				}
-				in_cmd.append((char)cmd);
+				in_cmd.append((char)ch);
 				break;}
 			case line:{
 				if(!in.hasRemaining())return false;
 				final byte ch=in.get();
 				if(ch=='\n'){
-					st=state.nxt;
-					if(parse())return true;
+					final String cmd=in_cmd.toString();
+					in_cmd.setLength(0);
+					final String ln=in_line.toString();
+					in_line.setLength(0);
+					st=state.cmd;
+					if(parse(cmd,ln))return true;
 					break;
 				}
 				in_line.append((char)ch);
@@ -86,12 +91,12 @@ final public class $ extends a implements sock,threadedsock{
 			}
 		}
 	}
-	final private boolean parse(){
-		if(in_cmd.length()==0)
+	final private boolean parse(final String cmd,final String ln){
+		if(cmd==null||cmd.length()==0)
 			return false;
-		final char ch=in_cmd.charAt(0);
+		final char ch=cmd.charAt(0);
+		final char ch1=cmd.length()>1?cmd.charAt(1):'\0';
 		try{
-			final String ln=in_line.toString();
 			switch(ch){
 			case'l':c_look(ln);break;
 			case'g':case'e':c_enter(ln);break;
@@ -101,8 +106,8 @@ final public class $ extends a implements sock,threadedsock{
 			case'c':c_copy(ln);break;
 			case's':c_select(ln);break;
 			case'i':c_inventory();break;
-			case'p':c_newplace(ln);break;
-			case'o':c_newthing(ln);break;
+			case'p':c_newplace(ln,ch1);break;
+			case'o':c_newthing(ln,ch1);break;
 			case'w':c_write(ln);break;
 			case'z':c_say(ln);break;
 			case'0':c_save(ln);break;
@@ -303,18 +308,16 @@ final public class $ extends a implements sock,threadedsock{
 			out.put(" nothing");
 		out.put("\n");
 	}
-	final private void c_newplace(final String nm){
+	final private void c_newplace(final String nm,final char op){
 		if(nm==null)throw new Error("must name");
 		final splace newplace=new splace();
 		placeincontext=newplace;
 		newplace.name=nm;
 		place().places_add(newplace);
 		place().sokios_recv(name+" created "+newplace,this);
-		if(in_cmd.length()<2)return;
-		final char op=in_cmd.charAt(1);
 		if(op=='e')moveto(newplace);
 	}
-	final private void c_newthing(final String nm){
+	final private void c_newthing(final String nm,final char op){
 		if(nm==null)throw new Error("must name");
 		final thing o=new thing();
 		placeincontext=o;
@@ -328,16 +331,8 @@ final public class $ extends a implements sock,threadedsock{
 			o.name=nm;
 		}
 		inventory.add(o);
-		if(in_cmd.length()<2)return;
-		final char op=in_cmd.charAt(1);
-		if(op=='d'){
-			drop(o);
-			return;
-		}
-		if(op=='e'){
-			drop(o);
-			moveto(o);
-		}
+		if(op=='d'){drop(o);return;}
+		if(op=='e'){drop(o);moveto(o);}
 	}
 	final private void c_write(final String s){
 		final String s1=s.replaceAll("\\\\n","\n");
