@@ -38,42 +38,27 @@ final public class $ extends a implements sock,threadedsock{
 		meters_output+=out.send_resume(so);
 		if(!out.send_isdone())return op.write;
 		return op.read;
+//		return read();
 	}
 	
 	private static enum state{cmd,line};
 	private state st=state.cmd;
 	private StringBuilder in_cmd=new StringBuilder(2);
 	private StringBuilder in_line=new StringBuilder(128);//? whatif>1G
-	final private boolean c()throws Throwable{
-		while(true){
-			switch(st){
-			case cmd:{
-				if(!in.hasRemaining())return false;
-				final byte ch=in.get();
-				if(ch==' '){
-					in_line.setLength(0);
-					st=state.line;
-					break;
-				}
-				if(ch=='\n'){
-					if(_parse())return true;
-					break;
-				}
-				in_cmd.append((char)ch);
-				break;}
-			case line:{
-				if(!in.hasRemaining())return false;
-				final byte ch=in.get();
-				if(ch=='\n'){
-					if(_parse())return true;
-					break;
-				}
-				in_line.append((char)ch);
-				break;}
-			}
-		}
-	}
-	private boolean _parse() {
+	final private boolean c()throws Throwable{while(true){switch(st){
+		case cmd:{
+			if(!in.hasRemaining())return false;
+			final byte ch=in.get();
+			if(ch==' '){in_line.setLength(0);st=state.line;break;}
+			if(ch=='\n'){if(doparse())return true;break;}
+			in_cmd.append((char)ch);break;}
+		case line:{
+			if(!in.hasRemaining())return false;
+			final byte ch=in.get();
+			if(ch=='\n'){if(doparse())return true;break;}
+			in_line.append((char)ch);break;}
+	}}}
+	private boolean doparse() {
 		final String cmd=in_cmd.toString();
 		in_cmd.setLength(0);
 		final String ln=in_line.toString();
@@ -83,12 +68,10 @@ final public class $ extends a implements sock,threadedsock{
 		return false;
 	}
 	final private boolean parse(final String cmd,final String ln){
-		if(cmd==null||cmd.length()==0)
-			return false;
+		if(cmd==null||cmd.length()==0)return false;
 		final char ch=cmd.charAt(0);
 		final char ch1=cmd.length()>1?cmd.charAt(1):'\0';
-		try{
-			switch(ch){
+		try{switch(ch){
 			case'l':c_look(ln);break;
 			case'g':case'e':c_enter(ln);break;
 			case'b':case'x':c_back();break;
@@ -108,34 +91,19 @@ final public class $ extends a implements sock,threadedsock{
 //			case'n':c_nameplace(ln);break;
 			case'h':c_help();break;
 			default:
-			}
-		}catch(final Throwable t){
-			out.put(stacktrace(t));
-		}
+		}}catch(final Throwable t){out.put(stacktrace(t));}
 		out_prompt();
 		return true;
 	}
 	final private void c_look(final String qry)throws Throwable{
-		if(qry==null||qry.length()==0){
-			print(place());
-		}else{
-			final thing th=inventory_get(qry);
-			if(th!=null){
-				print(th);
-				return;
-			}
-			final thing thl=place().things_get(qry);
-			if(thl!=null){
-				print(thl);
-				return;
-			}
-			final place loc=place().places_get(qry);
-			if(loc!=null){
-				print(loc);
-				return;				
-			}
-			out.put("not found\n");
-		}
+		if(qry==null||qry.length()==0){print(place());return;}
+		final thing th=inventory_get(qry);
+		if(th!=null){print(th);return;}
+		final thing thl=place().things_get(qry);
+		if(thl!=null){print(thl);return;}
+		final place loc=place().places_get(qry);
+		if(loc!=null){print(loc);return;}
+		out.put("not found\n");
 	}
 	private final class lister{
 		private int c;
@@ -143,18 +111,10 @@ final public class $ extends a implements sock,threadedsock{
 		private int linelscap=6;
 		public lister(final int len){lencmp=len-1;}
 		public void put(final String s){
-			if(lencmp>linelscap){
-				out.put("\n  ").put(s);
-				c++;						
-				return;
-			}
-			if(c==0){
-				out.put(" ");						
-			}else if(c==lencmp){
-				out.put(" and ");						
-			}else{
-				out.put(", ");						
-			}
+			if(lencmp>linelscap){out.put("\n  ").put(s);c++;return;}
+			if(c==0){out.put(" ");}
+			else if(c==lencmp){out.put(" and ");}
+			else{out.put(", ");}
 			out.put(s);
 			c++;						
 		}
@@ -163,9 +123,7 @@ final public class $ extends a implements sock,threadedsock{
 		placeincontext=e;
 		final String d=e.description();
 		out.put("\n");
-		if(d!=null&&d.length()>0){
-			out.put("\n").put(d).put("\n");
-		}
+		if(d!=null&&d.length()>0){out.put("\n").put(d).put("\n");}
 		final class b{boolean b;}
 		final b b=new b();
 		e.places_foreach(new place.placevisitor(){public boolean visit(final place p)throws Throwable{
@@ -209,7 +167,7 @@ final public class $ extends a implements sock,threadedsock{
 		}
 		moveto(dest);
 	}
-	void moveto(final place to){
+	final void moveto(final place to){
 		final place from=place();
 		enter(from,to);
 		leave(from,to);
@@ -242,10 +200,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_take(final String what){
 		final thing e=place().things_get(what);
-		if(e==null){
-			out.put("not found\n");
-			return;
-		}
+		if(e==null){out.put("not found\n");return;}
 		inventory.add(e);
 		place().things_remove(e);
 		e.place=null;
@@ -253,10 +208,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_drop(final String what){
 		final thing e=(thing)(what!=null?inventory_get(what):placeincontext);
-		if(e==null){
-			out.put("not have\n");
-			return;
-		}
+		if(e==null){out.put("not have\n");return;}
 		drop(e);
 	}
 	private void drop(final thing e) {
@@ -266,10 +218,7 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_copy(final String what)throws Throwable{
 		final thing o=place().things_get(what);
-		if(o==null){
-			out.put("not found\n");
-			return;
-		}
+		if(o==null){out.put("not found\n");return;}
 		final thing copy=(thing)o.clone();
 		copy.place=null;
 		copy.name="copy of "+copy.name;
@@ -279,28 +228,21 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_select(final String what){
 		final thing e=place().things_get(what);
-		if(e==null){
-			out.put("not found\n");
-			return;
-		}
+		if(e==null){out.put("not found\n");return;}
 		selection().add(e);
 	}
 	final private void c_inventory(){
 		out.put("\nu hav");
 		for(final thing t:inventory){
 			out.put("\n  ");
-			if(t.aan!=null){
-				out.put(t.aan).put(" ");
-			}
+			if(t.aan!=null)out.put(t.aan).put(" ");
 			out.put(t.toString());
 		}
-		if(inventory.isEmpty())
-			out.put(" nothing");
+		if(inventory.isEmpty())	out.put(" nothing");
 		out.put("\n\nu hav selected");
 		for(final thing s:selection())
 			out.put("\n  ").put(s.toString()).put(" from ").put(s.place.toString());
-		if(selection().isEmpty())
-			out.put(" nothing");
+		if(selection().isEmpty())out.put(" nothing");
 		out.put("\n");
 	}
 	final private void c_newplace(final String nm,final char op){
@@ -316,25 +258,16 @@ final public class $ extends a implements sock,threadedsock{
 		if(nm==null)throw new Error("must name");
 		final thing o=new thing();
 		placeincontext=o;
-		if(nm.startsWith("a ")){
-			o.aan="a";		
-			o.name=nm.substring("a ".length());
-		}else if(nm.startsWith("an ")){
-			o.aan="an";
-			o.name=nm.substring("an ".length());
-		}else{
-			o.name=nm;
-		}
+		if(nm.startsWith("a ")){o.aan="a";o.name=nm.substring("a ".length());}
+		else if(nm.startsWith("an ")){o.aan="an";o.name=nm.substring("an ".length());}
+		else{o.name=nm;}
 		inventory.add(o);
 		if(op=='d'){drop(o);return;}
 		if(op=='e'){drop(o);moveto(o);}
 	}
 	final private void c_write(final String s,final char op){
 		final String s1=s.replaceAll("\\\\n","\n");
-		if(op=='n'){
-			place().name(s1);
-			return;
-		}
+		if(op=='n'){place().name(s1);return;}
 		place().description(s1);
 	}
 	final private void c_say(final String s){
@@ -367,11 +300,9 @@ final public class $ extends a implements sock,threadedsock{
 	final private void out_prompt(){out.put("\n< ");}
 
 	final private thing inventory_get(final String qry){
-		for(final thing e:inventory){
-			if(e.toString().startsWith(qry)){
+		for(final thing e:inventory)
+			if(e.toString().startsWith(qry))
 				return e;
-			}
-		}
 		return null;
 	}
 //	private anything inventory_get_first(){
