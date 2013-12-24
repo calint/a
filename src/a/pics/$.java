@@ -8,11 +8,12 @@ public class $ extends a{static final long serialVersionUID=1;
 //		final long t0_ns=System.nanoTime();
 		final req r=req.get();
 		final path p=r.session().path(r.query());
-		p.apply(new path.visitor(){public void visit(final path p){
+		p.apply(new path.visitor(){public boolean visit(final path p){
 			final String s=p.uri();
 			if(!s.endsWith(".jpg")&&!s.endsWith(".png"))
-				return;
+				return false;
 			x.tago("img").attr("src",s).tagoe();
+			return false;
 		}});
 //		final long dt_ns=System.nanoTime()-t0_ns;
 //		x.p(dt_ns).pl(" ns");
