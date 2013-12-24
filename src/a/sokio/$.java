@@ -12,9 +12,10 @@ final public class $ extends a implements sock,threadedsock{
 		so=s;
 		in=so.inbuf();
 		name=req.get().session().id();
-		c_help();
-		out_prompt();
 		enter(null,place());
+		print(place());
+//		c_help();
+		out_prompt();
 		meters_output+=out.send_start(so);
 		if(!out.send_isdone())return op.write;
 		return op.read;
@@ -44,7 +45,7 @@ final public class $ extends a implements sock,threadedsock{
 	private static enum state{cmd,line};
 	private state st=state.cmd;
 	private StringBuilder in_cmd=new StringBuilder(2);
-	private StringBuilder in_line=new StringBuilder(128);//? whatif>1G
+	private StringBuilder in_line=new StringBuilder(128);//? whatif>1G,bufx,buftofile
 	final private boolean c()throws Throwable{while(true){switch(st){
 		case cmd:{
 			if(!in.hasRemaining())return false;
@@ -59,10 +60,8 @@ final public class $ extends a implements sock,threadedsock{
 			in_line.append((char)ch);break;}
 	}}}
 	private boolean doparse() {
-		final String cmd=in_cmd.toString();
-		in_cmd.setLength(0);
-		final String ln=in_line.toString();
-		in_line.setLength(0);
+		final String cmd=in_cmd.toString();in_cmd.setLength(0);
+		final String ln=in_line.toString();in_line.setLength(0);
 		st=state.cmd;
 		if(parse(cmd,ln))return true;
 		return false;
@@ -176,11 +175,8 @@ final public class $ extends a implements sock,threadedsock{
 	final private void enter(final place from,final place to){
 		to.sokios_add(this);
 		final String msg;
-		if(from==null){
-			msg=name+" arrived";
-		}else{
-			msg=name+" arrived from "+from;
-		}
+		if(from==null)msg=name+" arrived";
+		else msg=name+" arrived from "+from;
 		to.sokios_recv(msg,this);//? msgq
 	}
 	final private void leave(final place from,final place to){
@@ -188,10 +184,7 @@ final public class $ extends a implements sock,threadedsock{
 		from.sokios_recv(name+" departed to "+to,this);
 	}
 	final private void c_back(){
-		if(path.size()==1){
-			out.put("cannot\n");
-			return;
-		}
+		if(path.size()==1){out.put("cannot\n");return;}
 		final place from=place();
 		path.pop();
 		final place to=place();
@@ -286,19 +279,14 @@ final public class $ extends a implements sock,threadedsock{
 		out.put("loaded "+p.size()+" bytes from "+p);
 	}
 	final private void c_namesok(final String nm){name=nm;}
-	final private void c_stats(){
-		out.put("(input,output)B=("+meters_input+","+meters_output+")\n");
-	}
+	final private void c_stats(){out.put("(input,output)B=("+meters_input+","+meters_output+")\n");}
 //	final private void c_nameplace(final String s){
 //		final String s1=s.replaceAll("\\\\n","\n");
 //		place().name(s1);
 //	}
-	final private void c_help(){
-		out.put("\nkeywords: look go back select take drop copy  say goto inventory\n");
-	}
+	final private void c_help(){out.put("\nkeywords: look go back select take drop copy  say goto inventory\n");}
 	
 	final private void out_prompt(){out.put("\n< ");}
-
 	final private thing inventory_get(final String qry){
 		for(final thing e:inventory)
 			if(e.toString().startsWith(qry))
