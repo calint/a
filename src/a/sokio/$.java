@@ -61,7 +61,7 @@ final public class $ extends a implements sock,threadedsock{
 	}}}
 	private boolean doparse() {
 		final String cmd=in_cmd.toString();in_cmd.setLength(0);
-		final String ln=in_line.toString();in_line.setLength(0);
+		final String ln=in_line.toString();in_line.setLength(0);//? doublebufs
 		st=state.cmd;
 		if(parse(cmd,ln))return true;
 		return false;
