@@ -146,7 +146,30 @@ final public class $ extends a implements sock,threadedsock{
 			out.put("not found\n");
 		}
 	}
+	private final class lister{
+		private int c;
+		private int lencmp;
+		private int linelscap=6;
+		public lister(final int len){lencmp=len-1;}
+		public void put(final String s){
+			if(lencmp>linelscap){
+				out.put("\n  ").put(s);
+				c++;						
+				return;
+			}
+			if(c==0){
+				out.put(" ");						
+			}else if(c==lencmp){
+				out.put(" and ");						
+			}else{
+				out.put(", ");						
+			}
+			out.put(s);
+			c++;						
+		}
+	}
 	final private void print(final place e)throws Throwable{
+		placeincontext=e;
 		final String d=e.description();
 		out.put("\n");
 		if(d!=null&&d.length()>0){
@@ -163,29 +186,11 @@ final public class $ extends a implements sock,threadedsock{
 			if(b.b||d!=null)out.put("\n");
 			out.put("u c");
 			final int n=e.things_size();
-			if(n<5){
-				final class counter{int c;}final counter c=new counter();
-				e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
-					if(c.c==0){
-						out.put(" ");						
-					}else if(c.c==n-1){
-						out.put(" and ");						
-					}else{
-						out.put(", ");						
-					}
-					out.put(o.aanname());
-					c.c++;
-					return true;
-				}});
-			}else{
-				out.put(":");
-				e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
-					out.put("\n  ");
-					final String tag=o.aanname();
-					out.put(tag);
-					return true;
-				}});
-			}
+			final lister ls=new lister(n);
+			e.things_foreach(new place.thingvisitor(){public boolean visit(final thing o)throws Throwable{
+				ls.put(o.aanname());
+				return true;
+			}});
 			out.put("\n");
 		}
 		final int n=e.sokios_size();
@@ -211,7 +216,6 @@ final public class $ extends a implements sock,threadedsock{
 			out.put("not found\n");
 			return;
 		}
-		
 		moveto(dest);
 	}
 	void moveto(final place to){
