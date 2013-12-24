@@ -64,12 +64,7 @@ final public class $ extends a implements sock,threadedsock{
 					break;
 				}
 				if(ch=='\n'){
-					final String cmd=in_cmd.toString();
-					in_cmd.setLength(0);
-					final String ln=in_line.toString();
-					in_line.setLength(0);
-					st=state.cmd;
-					if(parse(cmd,ln))return true;
+					if(_parse())return true;
 					break;
 				}
 				in_cmd.append((char)ch);
@@ -78,18 +73,22 @@ final public class $ extends a implements sock,threadedsock{
 				if(!in.hasRemaining())return false;
 				final byte ch=in.get();
 				if(ch=='\n'){
-					final String cmd=in_cmd.toString();
-					in_cmd.setLength(0);
-					final String ln=in_line.toString();
-					in_line.setLength(0);
-					st=state.cmd;
-					if(parse(cmd,ln))return true;
+					if(_parse())return true;
 					break;
 				}
 				in_line.append((char)ch);
 				break;}
 			}
 		}
+	}
+	private boolean _parse() {
+		final String cmd=in_cmd.toString();
+		in_cmd.setLength(0);
+		final String ln=in_line.toString();
+		in_line.setLength(0);
+		st=state.cmd;
+		if(parse(cmd,ln))return true;
+		return false;
 	}
 	final private boolean parse(final String cmd,final String ln){
 		if(cmd==null||cmd.length()==0)
@@ -108,14 +107,14 @@ final public class $ extends a implements sock,threadedsock{
 			case'i':c_inventory();break;
 			case'p':c_newplace(ln,ch1);break;
 			case'o':c_newthing(ln,ch1);break;
-			case'w':c_write(ln);break;
+			case'w':c_write(ln,ch1);break;
 			case'z':c_say(ln);break;
 			case'0':c_save(ln);break;
 			case'9':c_load(ln);break;
-			case'3':c_namesok(ln);break;
-			case'2':c_stats();break;
-			case'n':c_nameplace(ln);break;
-			case'1':c_help();break;
+			case'@':c_namesok(ln);break;
+			case'!':c_stats();break;
+//			case'n':c_nameplace(ln);break;
+			case'h':c_help();break;
 			default:
 			}
 		}catch(final Throwable t){
@@ -338,8 +337,12 @@ final public class $ extends a implements sock,threadedsock{
 		if(op=='d'){drop(o);return;}
 		if(op=='e'){drop(o);moveto(o);}
 	}
-	final private void c_write(final String s){
+	final private void c_write(final String s,final char op){
 		final String s1=s.replaceAll("\\\\n","\n");
+		if(op=='n'){
+			place().name(s1);
+			return;
+		}
 		place().description(s1);
 	}
 	final private void c_say(final String s){
@@ -361,10 +364,10 @@ final public class $ extends a implements sock,threadedsock{
 	final private void c_stats(){
 		out.put("(input,output)B=("+meters_input+","+meters_output+")\n");
 	}
-	final private void c_nameplace(final String s){
-		final String s1=s.replaceAll("\\\\n","\n");
-		place().name(s1);
-	}
+//	final private void c_nameplace(final String s){
+//		final String s1=s.replaceAll("\\\\n","\n");
+//		place().name(s1);
+//	}
 	final private void c_help(){
 		out.put("\nkeywords: look go enter back exit select take drop copy  say goto inventory\n");
 	}
