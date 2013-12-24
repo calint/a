@@ -8,8 +8,8 @@ public class soi extends a implements bin{
 		x.pl(" sokio").nl();
 		recurse(x,path("src"));
 	}
-	private void recurse(final xwriter x,final path rp)throws Throwable{
-		rp.foreach(new path.visitor(){public boolean visit(final path p)throws Throwable{
+	private void recurse(final xwriter x,final path rootpath)throws Throwable{
+		rootpath.foreach(new path.visitor(){public boolean visit(final path p)throws Throwable{
 			if(p.isdir()){
 				x.p("pe ").pl(p.name());
 				recurse(x,p);
