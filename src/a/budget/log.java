@@ -43,6 +43,9 @@ public class log extends a{
 		x.hr();
 		x.el(l);
 		x.elend();
+		
+		
+		x.nl().nl();
 		x.p(" from ").inputText(ffr).nl().p("   to ").inputText(fto).nl();
 		x.tableEnd();
 	}
@@ -63,31 +66,48 @@ public class log extends a{
 		path().to(new osnl(){final public void onnewline(final String line)throws Throwable{
 			final String datestr=line.substring(0,datefieldlen);
 			if(fr.length()!=0&&datestr.compareTo(fr)<0)return;
-			if(to.length()!=0&&datestr.compareTo(to)>0)return;
+			if(to.length()!=0&&datestr.compareTo(to)>=0)return;
 			x.pl(line);
 		}});
 	}
 	public void ax_li(final xwriter x,final String[]p)throws Throwable{
 		f.set(p[2]);
 		final Date d=new Date();
+		final Calendar cal=new GregorianCalendar();
+		cal.setTime(d);
+		cal.set(Calendar.HOUR,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
 		switch(Integer.parseInt(p[2])){
 		case 1://today
-			x.xu(ffr.set(tologdatestr(d)));
-			x.xu(fto.set(tologdatestr(d)));
+			x.xu(ffr.set(tologdatestr(cal.getTime())));
+			cal.add(Calendar.DATE,1);
+			x.xu(fto.set(tologdatestr(cal.getTime())));
 			break;
 		case 2://this week
+			cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+			x.xu(ffr.set(tologdatestr(cal.getTime())));
+			cal.add(Calendar.WEEK_OF_MONTH,1);
+			x.xu(fto.set(tologdatestr(cal.getTime())));
 			break;
 		case 3://this month
+			cal.set(Calendar.DATE,1);
+			x.xu(ffr.set(tologdatestr(cal.getTime())));
+			cal.add(Calendar.MONTH,1);
+			x.xu(fto.set(tologdatestr(cal.getTime())));
 			break;
 		case 4://this year
+			cal.set(Calendar.MONTH,Calendar.JANUARY);
+			cal.set(Calendar.DATE,1);
+			x.xu(ffr.set(tologdatestr(cal.getTime())));
+			cal.add(Calendar.YEAR,1);
+			x.xu(fto.set(tologdatestr(cal.getTime())));
 			break;
 		case 5://yesterday
-			final Calendar cal=new GregorianCalendar();
-			cal.setTime(d);
+			x.xu(fto.set(tologdatestr(cal.getTime())));
 			cal.add(Calendar.DATE,-1);
-			final Date yesterday=cal.getTime();
-			x.xu(ffr.set(tologdatestr(yesterday)));
-			x.xu(fto.set(tologdatestr(yesterday)));
+			x.xu(ffr.set(tologdatestr(cal.getTime())));
 			break;
 		default:throw new Error(p[2]);
 		}
