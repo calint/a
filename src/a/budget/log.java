@@ -22,6 +22,8 @@ final public class log extends a{
 		x.css(t,"width:4em;align:right;border:1px dotted green;padding:.5em;margin:.5em;border-radius:.5em");
 		x.css(q,"width:3em;border:1px dotted green;padding:.5em;margin:.5em;border-radius:.5em");
 		x.css(d,"border:1px dotted green;padding:.5em;width:8em;padding:.5em;margin:.5em;border-radius:.5em");
+		x.css(ffr,"border:1px dotted green;width:5em");
+		x.css(fto,"border:1px dotted green;width:5em");
 //		x.css(fo,"float:right");
 		x.css("hr","color:black;height:.5em");
 		x.css("table.log","border-top:3px double brown");
@@ -51,10 +53,7 @@ final public class log extends a{
 		x.el(l);
 		rend_log(x);
 		x.elend();
-		
-		
-		x.nl().nl();
-		x.p(" from ").inputText(ffr).nl().p("   to ").inputText(fto).nl();
+		x.nl().p(" from ").inputText(ffr).nl().p(" to ").inputText(fto).nl();
 		x.tableEnd();
 	}
 	private void rend_filters(final xwriter x){
@@ -84,7 +83,7 @@ final public class log extends a{
 			final int total=sc.nextInt();
 			g.total+=total;
 			final int qty=sc.nextInt();
-			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine()).td().ax(log.this,"rm "+g.lineno,"x");
+			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine().trim()).td().ax(log.this,"rm "+g.lineno,"x");
 			sc.close();
 		}});
 		x.tr("total").td().td("t").p(g.total).td().td().td();
@@ -164,6 +163,7 @@ final public class log extends a{
 			if(line.charAt(0)!=' ')continue;
 			ps.println(line);
 		}
+		sc.close();
 		path().rm();
 		path_rm().rename(path());
 		rend_log(x.xub(l,true,false));x.xube();
