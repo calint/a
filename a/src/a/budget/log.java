@@ -24,6 +24,13 @@ public class log extends a{
 		x.css(d,"border:1px dotted green;padding:.5em;width:8em;padding:.5em;margin:.5em;border-radius:.5em");
 //		x.css(fo,"float:right");
 		x.css("hr","color:black;height:.5em");
+		x.css("table.log","border-top:3px double brown");
+		x.css("table.log tr","border-bottom:1px dotted brown");
+		x.css("table.log tr td","padding:.1em .5em .1em .5em;border-right:1px dotted brown");
+		x.css("table.log tr td.q","text-align:right");
+		x.css("table.log tr td.t","text-align:right");
+		x.css("table.log tr td:last-of-type","border-right:0");
+		x.css("table.log tr.total","font-weight:bold;border-bottom:0");
 		x.styleEnd();
 //		x.pl(getClass().toString());
 //		x.nl();
@@ -42,6 +49,7 @@ public class log extends a{
 		x.elend();
 		x.hr();
 		x.el(l);
+		rend_log(x);
 		x.elend();
 		
 		
@@ -53,7 +61,7 @@ public class log extends a{
 		return req.get().session().path(getClass().getPackage().getName()).get("log");
 	}
 	public void ax_s(final xwriter x,final String[]p)throws Throwable{
-		path().append(tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
+		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
 		rend_log(x.xub(l,true,false));x.xube();
 		x.xu(s.clr());
 		x.xu(q.set("1"));
@@ -62,13 +70,24 @@ public class log extends a{
 	private void rend_log(final xwriter x) throws IOException {
 		final String fr=ffr.toString();
 		final String to=fto.toString();
+		final class gtot{int i;}
+		final gtot g=new gtot();
 		final int datefieldlen=logdatefmt.length();
+		x.table("log");
+//		x.tr().td().p("date").td().p("total").td().p("qty").td().p("item").nl();
 		path().to(new osnl(){final public void onnewline(final String line)throws Throwable{
-			final String datestr=line.substring(0,datefieldlen);
+			final String datestr=line.substring(1,datefieldlen+1);
 			if(fr.length()!=0&&datestr.compareTo(fr)<0)return;
 			if(to.length()!=0&&datestr.compareTo(to)>=0)return;
-			x.pl(line);
+			final Scanner sc=new Scanner(line.substring(datefieldlen+2));
+			final int total=sc.nextInt();
+			g.i+=total;
+			final int qty=sc.nextInt();
+			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine());
+			sc.close();
 		}});
+		x.tr("total").td().td("t").p(g.i).td().td();
+		x.tableEnd();
 	}
 	public void ax_li(final xwriter x,final String[]p)throws Throwable{
 		f.set(p[2]);
@@ -109,6 +128,10 @@ public class log extends a{
 			cal.add(Calendar.DATE,-1);
 			x.xu(ffr.set(tologdatestr(cal.getTime())));
 			break;
+		case 6:
+			x.xu(ffr.clr());
+			x.xu(fto.clr());
+			break;
 		default:throw new Error(p[2]);
 		}
 		rend_filters(x.xub(fo,true,false));x.xube();
@@ -121,6 +144,7 @@ public class log extends a{
 		if(i==2)x.p(" this-week");else x.ax(this,"li 2"," this-week");
 		if(i==3)x.p(" month");else x.ax(this,"li 3"," month");
 		if(i==4)x.p(" year");else x.ax(this,"li 4"," year");
+		if(i==5)x.p(" all");else x.ax(this,"li 6"," all");
 	}
 	
 	final private static String inputdatefmt="yyyy-MM-dd";
