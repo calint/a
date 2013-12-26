@@ -79,10 +79,16 @@ class splace extends an implements place{
 			}
 			return null;
 		}
-		public void places_add(final place o){
-			if(exits==null)
-				exits=Collections.synchronizedList(new LinkedList<place>());
-			exits.add(o);
+		public place places_new(final String nm){
+			if(exits==null)exits=Collections.synchronizedList(new LinkedList<place>());
+			final splace newplace=new splace();
+			newplace.name=nm;
+			exits.add(newplace);
+			return newplace;
+		}
+		public void places_add(final place p){
+			if(exits==null)exits=Collections.synchronizedList(new LinkedList<place>());
+			exits.add(p);
 		}
 		public void sokios_remove(final $ s){
 			if(sokios==null)return;
