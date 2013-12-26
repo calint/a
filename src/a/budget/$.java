@@ -1,20 +1,22 @@
 package a.budget;
 import java.util.*;
+
 import b.*;
 public class $ extends a{
 	static final long serialVersionUID=1l;
 	public static String fsroot=$.class.getPackage().getName();
-	public static String[]colrs={"green","black","blue","green","black","blue"};
+	public static String[]colrs={"black","green","green","green","green","green","","","",""};
 	private Map<path,Boolean>folds=new HashMap<path,Boolean>();
 	public void to(final xwriter x) throws Throwable{
 		x.style();
-		x.css("table.bgt td","border:1px dotted black;padding:3px");
+		x.css("html","font-size:2em;padding-left:4em");
+		x.css("table.bgt td","border:1px dotted black;padding:.5em");
 		x.css("table.bgt td.n","text-align:right");
 		x.styleEnd();
 		x.pre().ax(this,"recalc","::resum").spc().ax(this,"foldall","::fold").nl().nl();
 //		final path p=req.get().session().path(fsroot);
 		final path p=b.path(fsroot);
-		x.table("bgt").tr().td();
+		x.table("bgt").tr().td().td();
 		x.td("n").p("daily");
 		x.td("n").p("weekly");
 		x.td("n").p("monthly");
@@ -31,20 +33,25 @@ public class $ extends a{
 		for(int n=0;n<indent;n++)
 			x.p("&nbsp;").p("&nbsp;").p("&nbsp;");
 		final String nm=p.name();
-		final String in=nm.substring(nm.indexOf('.')+1);
-		if(p.isdir()){
+		final String uri=b.urlencode(p.toString());
+		final String itmname=nm.substring(nm.indexOf('.')+1);
+		if(p.isdir()||!p.exists()){
 //			x.ax(this,"clk "+req.get().session().inpath(p),(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+in);
 			final String[]files=p.list();
-			final boolean leaf=files.length==0||(files.length==1&&"0".equals(files[0]));
-			if(leaf){
-				x.ax(this,"ed "+p,in);
+			final boolean isleaf=files.length==0||(files.length==1&&"0".equals(files[0]));
+			if(isleaf){
+				x.ax(this,"ed "+uri,itmname);
 			}else{
-				x.ax(this,"clk "+p,(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+in);
+				x.ax(this,"clk "+uri,(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+itmname);
 			}
+			x.td();
+			x.ax(this,"ed "+uri," e");
+			x.ax(this,"add "+uri," +");
 		}else{
-			x.ax(this,"ed "+p.toString().replace(' ','+'),in);
+			x.ax(this,"ed "+uri,itmname);
 //			x.p(in);
 		}
+		x.ax(this,"rem "+uri," -");
 		final String txt;
 		if(p.isfile()){
 			txt=p.readstr();
@@ -52,13 +59,14 @@ public class $ extends a{
 			final path sumry=p.get("0");
 			if(sumry.exists())txt=sumry.readstr();
 			else txt="";
-		}else throw new Error();
+		}else txt="";
 		
 		final String[]a=txt.split(" ");
 		for(final String s:a){
 			if(s.length()==0)continue;
-			x.td("n").tago("font").attr("color",colrs[indent]).tagoe().p(s);				
+			x.td("n").tago("span").attr("style","color:"+colrs[indent]).tagoe().p(s).spanEnd();				
 		}
+		x.nl();
 		if(p.isdir()){
 			if(folds.get(p)==Boolean.TRUE){
 				for(final String fn:p.list()){
@@ -72,7 +80,7 @@ public class $ extends a{
 	}
 	public final void ax_clk(final xwriter x,final String[]p){
 //		final path pth=req.get().session().path(p[2]);
-		final path pth=b.path(p[2]);//? accessarbitraryfile
+		final path pth=b.path(p[2].replace('+',' '));//? accessarbitraryfile
 		if(folds.get(pth)==Boolean.TRUE)
 			folds.remove(pth);
 		else
@@ -81,7 +89,7 @@ public class $ extends a{
 	}
 	private void recalc(final path dir)throws Throwable{
 		final String[]fs=dir.list();
-		if(fs.length==1&&"0".equals(fs[0]))return;
+		if(fs.length==0||(fs.length==1&&"0".equals(fs[0])))return;
 		final int[]sum=new int[6];
 		for(final String fn:fs){
 			if("0".equals(fn))
@@ -120,7 +128,19 @@ public class $ extends a{
 		x.xreload();
 	}
 	public final void ax_ed(final xwriter x,final String[]a)throws Throwable{
-		final String pathname=a[2].replace('+',' ');
-		x.xalert("todo: edit "+pathname);
+		final String pathname=b.urldecode(a[2]);
+		x.xlocation("budget.ed?"+b.urlencode(pathname));
+	}
+	public final void ax_add(final xwriter x,final String[]a)throws Throwable{
+		final String pathname=b.urldecode(a[2]);
+		x.xlocation("budget.ed?"+b.urlencode(pathname+"/new"));
+	}
+	public final void ax_rem(final xwriter x,final String[]a)throws Throwable{
+		final String pathname=b.urldecode(a[2]);
+		final path p=b.path(pathname);
+		if(!p.isin(b.path($.fsroot)))
+			throw new Error("not in path: "+p);
+		p.rm();
+		x.xreload();
 	}
 }
