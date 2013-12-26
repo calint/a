@@ -4,7 +4,7 @@ import java.text.*;
 import java.util.*;
 import b.*;
 //import static b.b.*;
-public class log extends a{
+final public class log extends a{
 	static final long serialVersionUID=1;
 	public a s;//item
 	public a t;//total price
@@ -57,39 +57,47 @@ public class log extends a{
 		x.p(" from ").inputText(ffr).nl().p("   to ").inputText(fto).nl();
 		x.tableEnd();
 	}
-	private path path(){
-		return req.get().session().path(getClass().getPackage().getName()).get("log");
+	private void rend_filters(final xwriter x){
+		final int i=f.toint();
+		if(i==1)x.p(" today");else x.ax(this,"li 1"," today");
+		if(i==5)x.p(" yesterday");else x.ax(this,"li 5"," yesterday");
+		if(i==2)x.p(" this-week");else x.ax(this,"li 2"," this-week");
+		if(i==3)x.p(" month");else x.ax(this,"li 3"," month");
+		if(i==4)x.p(" year");else x.ax(this,"li 4"," year");
+		if(i==5)x.p(" all");else x.ax(this,"li 6"," all");
 	}
-	public void ax_s(final xwriter x,final String[]p)throws Throwable{
+	private void rend_log(final xwriter x) throws IOException {
+		final String fr=ffr.toString();
+		final String to=fto.toString();
+		final class gtot{int total;int lineno;}
+		final gtot g=new gtot();
+		final int datefieldlen=logdatefmt.length();
+		x.table("log");
+//		x.tr().td().p("date").td().p("total").td().p("qty").td().p("item").nl();
+		path().to(new osnl(){final public void onnewline(final String line)throws Throwable{
+			if(line.charAt(0)!=' ')return;
+			g.lineno++;
+			final String datestr=line.substring(1,datefieldlen+1);
+			if(fr.length()!=0&&datestr.compareTo(fr)<0)return;
+			if(to.length()!=0&&datestr.compareTo(to)>=0)return;
+			final Scanner sc=new Scanner(line.substring(datefieldlen+2));
+			final int total=sc.nextInt();
+			g.total+=total;
+			final int qty=sc.nextInt();
+			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine()).td().ax(log.this,"rm "+g.lineno,"x");
+			sc.close();
+		}});
+		x.tr("total").td().td("t").p(g.total).td().td().td();
+		x.tableEnd();
+	}
+	final public void ax_s(final xwriter x,final String[]p)throws Throwable{
 		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
 		rend_log(x.xub(l,true,false));x.xube();
 		x.xu(s.clr());
 		x.xu(q.set("1"));
 		x.xfocus(s);
 	}
-	private void rend_log(final xwriter x) throws IOException {
-		final String fr=ffr.toString();
-		final String to=fto.toString();
-		final class gtot{int i;}
-		final gtot g=new gtot();
-		final int datefieldlen=logdatefmt.length();
-		x.table("log");
-//		x.tr().td().p("date").td().p("total").td().p("qty").td().p("item").nl();
-		path().to(new osnl(){final public void onnewline(final String line)throws Throwable{
-			final String datestr=line.substring(1,datefieldlen+1);
-			if(fr.length()!=0&&datestr.compareTo(fr)<0)return;
-			if(to.length()!=0&&datestr.compareTo(to)>=0)return;
-			final Scanner sc=new Scanner(line.substring(datefieldlen+2));
-			final int total=sc.nextInt();
-			g.i+=total;
-			final int qty=sc.nextInt();
-			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine());
-			sc.close();
-		}});
-		x.tr("total").td().td("t").p(g.i).td().td();
-		x.tableEnd();
-	}
-	public void ax_li(final xwriter x,final String[]p)throws Throwable{
+	final public void ax_li(final xwriter x,final String[]p)throws Throwable{
 		f.set(p[2]);
 		final Date d=new Date();
 		final Calendar cal=new GregorianCalendar();
@@ -137,16 +145,31 @@ public class log extends a{
 		rend_filters(x.xub(fo,true,false));x.xube();
 		rend_log(x.xub(l,true,false));x.xube();
 	}
-	private void rend_filters(final xwriter x){
-		final int i=f.toint();
-		if(i==1)x.p(" today");else x.ax(this,"li 1"," today");
-		if(i==5)x.p(" yesterday");else x.ax(this,"li 5"," yesterday");
-		if(i==2)x.p(" this-week");else x.ax(this,"li 2"," this-week");
-		if(i==3)x.p(" month");else x.ax(this,"li 3"," month");
-		if(i==4)x.p(" year");else x.ax(this,"li 4"," year");
-		if(i==5)x.p(" all");else x.ax(this,"li 6"," all");
+	final public void ax_rm(final xwriter x,final String[]p)throws Throwable{
+		final int lineno=Integer.parseInt(p[2]);
+//		x.xalert(lineno+"");
+		//? userandomaccess
+		final Scanner sc=new Scanner(path().fileinputstream());
+		final PrintStream ps=new PrintStream(path_rm().outputstream());
+		int i=0;
+		while(true){
+			final String line=sc.nextLine();
+			if(line.charAt(0)!=' ')continue;
+			i++;
+			if(i==lineno)break;
+			ps.println(line);
+		}
+		while(sc.hasNextLine()){
+			final String line=sc.nextLine();
+			if(line.charAt(0)!=' ')continue;
+			ps.println(line);
+		}
+		path().rm();
+		path_rm().rename(path());
+		rend_log(x.xub(l,true,false));x.xube();
 	}
-	
+	private path path(){return req.get().session().path(getClass().getPackage().getName()).get("log");}
+	private path path_rm(){return req.get().session().path(getClass().getPackage().getName()).get("log.rm");}
 	final private static String inputdatefmt="yyyy-MM-dd";
 	final private static String logdatefmt="yyyyMMdd";
 	final private static Date parse(final String s){try{return new SimpleDateFormat(inputdatefmt).parse(s);}catch(final Throwable t){throw new Error(t);}}
