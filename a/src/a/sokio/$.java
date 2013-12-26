@@ -240,12 +240,10 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_newplace(final String nm,final char op){
 		if(nm==null)throw new Error("must name");
-		final splace newplace=new splace();
-		placeincontext=newplace;
-		newplace.name=nm;
-		place().places_add(newplace);
-		place().sokios_recv(name+" created "+newplace,this);
-		if(op=='e')moveto(newplace);
+		final place to=place().places_new(nm);
+		placeincontext=to;
+		place().sokios_recv(name+" created "+to,this);
+		if(op=='e')moveto(to);
 	}
 	final private void c_newthing(final String nm,final char op){
 		if(nm==null)throw new Error("must name");

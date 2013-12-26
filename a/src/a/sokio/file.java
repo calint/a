@@ -48,9 +48,10 @@ final class file implements place{
 		}
 		return null;
 	}
-	public void places_add(final place o){
-		final path f=p.get(o.toString());
+	public place places_new(final String nm){
+		final path f=p.get(nm);
 		try{f.mkdirs();}catch(final Throwable t){throw new Error(t);}
+		return new file(f);
 	}
 	public place places_enter(final $ so,final String qry){
 		place dest=places_get(qry);
@@ -59,4 +60,5 @@ final class file implements place{
 		so.moveto(dest);
 		return dest;
 	}
+	public void places_add(final place p){throw new Error("not supported");}
 }

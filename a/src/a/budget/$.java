@@ -1,16 +1,9 @@
-package a;
-
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-import b.a;
-import b.path;
-import b.req;
-import b.xwriter;
-public class bgt extends a{
+package a.budget;
+import java.util.*;
+import b.*;
+public class $ extends a{
 	static final long serialVersionUID=1l;
-	public static String fsroot=bgt.class.getName();
+	public static String fsroot=$.class.getPackage().getName();
 	public static String[]colrs={"green","black","blue","green","black","blue"};
 	private Map<path,Boolean>folds=new HashMap<path,Boolean>();
 	public void to(final xwriter x) throws Throwable{
@@ -19,7 +12,8 @@ public class bgt extends a{
 		x.css("table.bgt td.n","text-align:right");
 		x.styleEnd();
 		x.pre().ax(this,"recalc","::resum").spc().ax(this,"foldall","::fold").nl().nl();
-		final path p=req.get().session().path(fsroot);
+//		final path p=req.get().session().path(fsroot);
+		final path p=b.path(fsroot);
 		x.table("bgt").tr().td();
 		x.td("n").p("daily");
 		x.td("n").p("weekly");
@@ -39,24 +33,32 @@ public class bgt extends a{
 		final String nm=p.name();
 		final String in=nm.substring(nm.indexOf('.')+1);
 		if(p.isdir()){
-			x.ax(this,"clk "+req.get().session().inpath(p),(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+in);
+//			x.ax(this,"clk "+req.get().session().inpath(p),(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+in);
+			final String[]files=p.list();
+			final boolean leaf=files.length==0||(files.length==1&&"0".equals(files[0]));
+			if(leaf){
+				x.ax(this,"ed "+p,in);
+			}else{
+				x.ax(this,"clk "+p,(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+in);
+			}
 		}else{
-			x.p(in);
+			x.ax(this,"ed "+p.toString().replace(' ','+'),in);
+//			x.p(in);
 		}
-		final BufferedReader r;
+		final String txt;
 		if(p.isfile()){
-			r=new BufferedReader(p.reader());
+			txt=p.readstr();
 		}else if(p.isdir()){
 			final path sumry=p.get("0");
-			if(!sumry.exists())
-				return;
-			r=new BufferedReader(sumry.reader());
-		}else
-			return;
-		for(String line=r.readLine();line!=null;line=r.readLine()){
-			x.td("n").tago("font").attr("color",colrs[indent]).tagoe().p(line);
+			if(sumry.exists())txt=sumry.readstr();
+			else txt="";
+		}else throw new Error();
+		
+		final String[]a=txt.split(" ");
+		for(final String s:a){
+			if(s.length()==0)continue;
+			x.td("n").tago("font").attr("color",colrs[indent]).tagoe().p(s);				
 		}
-		r.close();
 		if(p.isdir()){
 			if(folds.get(p)==Boolean.TRUE){
 				for(final String fn:p.list()){
@@ -69,7 +71,8 @@ public class bgt extends a{
 		}
 	}
 	public final void ax_clk(final xwriter x,final String[]p){
-		final path pth=req.get().session().path(p[2]);
+//		final path pth=req.get().session().path(p[2]);
+		final path pth=b.path(p[2]);//? accessarbitraryfile
 		if(folds.get(pth)==Boolean.TRUE)
 			folds.remove(pth);
 		else
@@ -77,38 +80,47 @@ public class bgt extends a{
 		x.xreload();
 	}
 	private void recalc(final path dir)throws Throwable{
+		final String[]fs=dir.list();
+		if(fs.length==1&&"0".equals(fs[0]))return;
 		final int[]sum=new int[6];
-		for(final String fn:dir.list()){
+		for(final String fn:fs){
 			if("0".equals(fn))
 				continue;
 			final path f=dir.get(fn);
-			final BufferedReader r;
+			final String txt;
 			if(f.isfile()){
-				r=new BufferedReader(f.reader());
+				txt=f.readstr();
 			}else if(f.isdir()){
 				recalc(f);
-				r=new BufferedReader(f.get("0").reader());
-			}else
-				throw new Error();
-			int si=0;
-			try{for(String line=r.readLine();line!=null;line=r.readLine()){
-				sum[si++]+=Integer.parseInt(line);
-			}}catch(Throwable t){throw new Error(f.fullpath()+":"+b.b.stacktraceline(t));}
-			r.close();
+				final path sumry=f.get("0");
+				if(sumry.exists())txt=sumry.readstr();
+				else txt="";
+			}else throw new Error();
+			final String[]a=txt.split(" ");
+			int i=0;
+			for(final String s:a){
+				if(s.length()==0)continue;
+				sum[i++]+=Integer.parseInt(s);
+			}
 		}
-		final PrintWriter wr=new PrintWriter(dir.get("0").writer(false));
-		for(final int s:sum){
-			wr.println(s);
-		}
-		wr.close();
+		final StringBuilder sb=new StringBuilder();
+		for(final int i:sum)
+			sb.append(Integer.toString(i)).append(" ");
+		if(sb.length()>0)sb.setLength(sb.length()-1);
+		dir.get("0").writestr(sb.toString());
 	}
 	public final void ax_recalc(final xwriter x,final String[]a)throws Throwable{
-		final path p=req.get().session().path(fsroot);
+//		final path p=req.get().session().path(fsroot);
+		final path p=b.path(fsroot);
 		recalc(p);
 		x.xreload();
 	}
 	public final void ax_foldall(final xwriter x,final String[]a)throws Throwable{
 		folds.clear();
 		x.xreload();
+	}
+	public final void ax_ed(final xwriter x,final String[]a)throws Throwable{
+		final String pathname=a[2].replace('+',' ');
+		x.xalert("todo: edit "+pathname);
 	}
 }

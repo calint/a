@@ -7,7 +7,8 @@ interface place extends Serializable{
 	void description(final String s);//optional
 	
 	place places_get(final String qry);
-	void places_add(final place o);
+	place places_new(final String nm);
+	void places_add(final place p);
 	void places_foreach(final placevisitor v)throws Throwable;
 	place places_enter(final $ so,final String qry);
 	
