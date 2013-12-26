@@ -1,7 +1,5 @@
 package a.qa;
-import b.a;
-import b.req;
-import b.xwriter;
+import b.*;
 public class t014 extends a{
 	static final long serialVersionUID=1;
 	public a s;
