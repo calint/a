@@ -8,7 +8,7 @@ final public class log extends a{
 	static final long serialVersionUID=1;
 	public a s;//item
 	public a t;//total price
-	public a q;{q.set("1");}//qty
+//	public a q;{q.set("1");}//qty
 	public a d;{d.set(tostr(new Date()));}//date
 	public a l;//output
 	public a f;//filter
@@ -20,7 +20,7 @@ final public class log extends a{
 		x.css("html","font-size:2em;padding-left:4em;line-height:1.5em");
 		x.css(s,"border:1px dotted green;padding:.5em;padding:.5em;margin:.5em;border-radius:.5em");
 		x.css(t,"width:4em;align:right;border:1px dotted green;padding:.5em;margin:.5em;border-radius:.5em");
-		x.css(q,"width:3em;border:1px dotted green;padding:.5em;margin:.5em;border-radius:.5em");
+//		x.css(q,"width:3em;border:1px dotted green;padding:.5em;margin:.5em;border-radius:.5em");
 		x.css(d,"border:1px dotted green;padding:.5em;width:8em;padding:.5em;margin:.5em;border-radius:.5em");
 		x.css(ffr,"border:1px dotted green;width:5em");
 		x.css(fto,"border:1px dotted green;width:5em");
@@ -39,7 +39,7 @@ final public class log extends a{
 		x.table().tr().td();
 		x.p("  item").inputText(s,null,this,"s").nl();
 		x.p(" total").inputText(t,null,this,"s").nl();
-		x.p("   qty").inputText(q,null,this,"s").nl();
+//		x.p("   qty").inputText(q,null,this,"s").nl();
 		x.p("  date").inputText(d,null,this,"s").nl();
 //		x.p("  time <input type=date name="+d.id()+" value=\""+d+"\">").inputText(d,null,this,"s").nl();
 		x.nl().nl();
@@ -63,7 +63,7 @@ final public class log extends a{
 		if(i==2)x.p(" this-week");else x.ax(this,"li 2"," this-week");
 		if(i==3)x.p(" month");else x.ax(this,"li 3"," month");
 		if(i==4)x.p(" year");else x.ax(this,"li 4"," year");
-		if(i==5)x.p(" all");else x.ax(this,"li 6"," all");
+		if(i==0)x.p(" all");else x.ax(this,"li 0"," all");
 	}
 	private void rend_log(final xwriter x) throws IOException {
 		final String fr=ffr.toString();
@@ -82,18 +82,20 @@ final public class log extends a{
 			final Scanner sc=new Scanner(line.substring(datefieldlen+2));
 			final int total=sc.nextInt();
 			g.total+=total;
-			final int qty=sc.nextInt();
-			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine().trim()).td().ax(log.this,"rm "+g.lineno,"x");
+//			final int qty=sc.nextInt();
+//			x.tr().td().p(datestr).td("t").p(total).td("q").p(qty).td().pl(sc.nextLine().trim()).td().ax(log.this,"rm "+g.lineno,"x");
+			x.tr().td().p(datestr).td("t").p(total).td().pl(sc.nextLine().trim()).td().ax(log.this,"rm "+g.lineno,"x");
 			sc.close();
 		}});
-		x.tr("total").td().td("t").p(g.total).td().td().td();
+		x.tr("total").td().td("t").p(g.total).td().td();
 		x.tableEnd();
 	}
 	final public void ax_s(final xwriter x,final String[]p)throws Throwable{
-		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
+//		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
+		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+s,"\n");
 		rend_log(x.xub(l,true,false));x.xube();
 		x.xu(s.clr());
-		x.xu(q.set("1"));
+//		x.xu(q.set("1"));
 		x.xfocus(s);
 	}
 	final public void ax_li(final xwriter x,final String[]p)throws Throwable{
