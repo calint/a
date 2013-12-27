@@ -137,7 +137,7 @@ final public class log extends a{
 			cal.add(Calendar.DATE,-1);
 			x.xu(ffr.set(tologdatestr(cal.getTime())));
 			break;
-		case 6:
+		case 0:
 			x.xu(ffr.clr());
 			x.xu(fto.clr());
 			break;
