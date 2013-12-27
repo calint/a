@@ -1,20 +1,19 @@
 package a.sokio;
 import java.nio.*;
 import java.util.*;
-
 import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
 	private static final long serialVersionUID=1;
-	public long meters_input;
-	public long meters_output;
+	public static long meters_input;
+	public static long meters_output;
 	final public op sockinit(final Map<String,String>hdrs,final sockio s)throws Throwable{
 		so=s;
 		in=so.inbuf();
 		name=req.get().session().id();
-		enter(null,place());
-		print(place());
-//		c_help();
+		final place p=place();
+		enter(p);
+		print(p);
 		out_prompt();
 		meters_output+=out.send_start(so);
 		if(!out.send_isdone())return op.write;
@@ -45,7 +44,7 @@ final public class $ extends a implements sock,threadedsock{
 	private static enum state{cmd,line};
 	private state st=state.cmd;
 	private StringBuilder in_cmd=new StringBuilder(2);
-	private StringBuilder in_line=new StringBuilder(128);//? whatif>1G,bufx,buftofile
+	private StringBuilder in_line=new StringBuilder(128);//? ifxl,bufx.tofile
 	final private boolean c()throws Throwable{while(true){switch(st){
 		case cmd:{
 			if(!in.hasRemaining())return false;
@@ -87,7 +86,6 @@ final public class $ extends a implements sock,threadedsock{
 			case'9':c_load(ln);break;
 			case'@':c_namesok(ln);break;
 			case'!':c_stats();break;
-//			case'n':c_nameplace(ln);break;
 			case'h':c_help();break;
 			default:
 		}}catch(final Throwable t){out.put(stacktrace(t));}
@@ -172,6 +170,7 @@ final public class $ extends a implements sock,threadedsock{
 		leave(from,to);
 		path_push(to);
 	}
+	final private void enter(final place to){enter(null,to);}
 	final private void enter(final place from,final place to){
 		to.sokios_add(this);
 		final String msg;
@@ -278,10 +277,6 @@ final public class $ extends a implements sock,threadedsock{
 	}
 	final private void c_namesok(final String nm){name=nm;}
 	final private void c_stats(){out.put("(input,output)B=("+meters_input+","+meters_output+")\n");}
-//	final private void c_nameplace(final String s){
-//		final String s1=s.replaceAll("\\\\n","\n");
-//		place().name(s1);
-//	}
 	final private void c_help(){out.put("\nkeywords: look go back select take drop copy  say goto inventory\n");}
 	
 	final private void out_prompt(){out.put("\n< ");}

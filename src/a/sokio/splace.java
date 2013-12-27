@@ -10,7 +10,6 @@ class splace extends an implements place{
 		private List<place>exits;
 		private List<thing>things;
 		transient private List<$>sokios;
-//		public List<place>exits(){return exits;}
 		public void places_foreach(final place.placevisitor v)throws Throwable{
 			if(exits==null)return;
 			for(final place p:exits)
@@ -103,11 +102,6 @@ class splace extends an implements place{
 			if(dest==null)dest=things_get(qry);
 			if(dest==null)return null;
 			so.moveto(dest);
-//			so.place().sokios_remove(so);
-//			so.place().sokios_recv(name+" departed to "+dest,so);
-//			dest.sokios_recv(name+" arrived from "+so.place(),so);
-//			dest.sokios_add(so);
-//			so.path_push(dest);
 			return dest;
 		}
 	}

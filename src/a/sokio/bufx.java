@@ -1,11 +1,8 @@
 package a.sokio;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import b.sockio;
+import java.io.*;
+import java.nio.*;
+import java.util.*;
+import b.*;
 final class bufx{
 	public bufx(){}
 	public bufx(final byte[]ba/*takes*/){this.ba=ba;pagesize_B=ba.length;n++;}
@@ -21,27 +18,27 @@ final class bufx{
 		if(cap>=len){
 			System.arraycopy(b,off,ba,i,len);
 			i+=len;
-		}else{
-			System.arraycopy(b,off,ba,i,cap);
-			len-=cap;
-			off+=cap;
-			lsb_add(ba);
+			return this;
+		}
+		System.arraycopy(b,off,ba,i,cap);
+		len-=cap;
+		off+=cap;
+		lsb_add(ba);
+		n++;
+		ba=new byte[pagesize_B];//? incbalen
+		while(len>ba.length){
+			System.arraycopy(b,off,ba,0,ba.length);
+			len-=ba.length;
+			off+=ba.length;				
+			lsb.add(ba);
 			n++;
-			ba=new byte[pagesize_B];//? incbalen
-			while(len>ba.length){
-				System.arraycopy(b,off,ba,0,ba.length);
-				len-=ba.length;
-				off+=ba.length;				
-				lsb.add(ba);
-				n++;
-				ba=new byte[pagesize_B];
-			}
-			if(len!=0){
-				System.arraycopy(b,off,ba,0,len);
-				i=len;
-				len-=len;
-				off+=len;
-			}
+			ba=new byte[pagesize_B];
+		}
+		if(len!=0){
+			System.arraycopy(b,off,ba,0,len);
+			i=len;
+			len-=len;
+			off+=len;
 		}
 		return this;
 	}
