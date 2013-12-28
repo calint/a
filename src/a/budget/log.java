@@ -150,9 +150,13 @@ final public class log extends a{
 		final int lineno=Integer.parseInt(p[2]);
 //		x.xalert(lineno+"");
 		//? userandomaccess
-		final InputStream is=path().fileinputstream();
+		final path path_log=path();
+		final path path_lognew=path_rm();
+		final path path_logbak=path_bak();
+		
+		final InputStream is=path_log.fileinputstream();
 		final Scanner sc=new Scanner(is);
-		final OutputStream os=path_rm().outputstream();
+		final OutputStream os=path_lognew.outputstream();
 		final PrintStream ps=new PrintStream(os);
 		int i=0;
 		while(true){
@@ -168,22 +172,23 @@ final public class log extends a{
 			ps.println(line);
 		}
 		
-		//?? brokeinwindos
 		sc.close();
 		ps.close();
-		is.close();
-		os.close();
-		path().parent().get("log.bak").rm();
-		if(!path().rename("log.bak")){
-			throw new Error("could not rename "+path()+" to 'log.bak'");
+//		is.close();
+//		os.close();
+
+		path_logbak.rm();//? log.bak.1
+		if(!path_log.rename(path_logbak)){
+			throw new Error("could not rename "+path_log+" to "+path_logbak);
 		}
-		if(!path_rm().rename("blabla")){
-			throw new Error("could not rename "+path_rm()+" to "+path());
+		if(!path_lognew.rename(path_log)){
+			throw new Error("could not rename "+path_lognew+" to "+path_log);
 		}
 		rend_log(x.xub(l,true,false));x.xube();
 	}
 	private path path(){return req.get().session().path(getClass().getPackage().getName()).get("log");}
 	private path path_rm(){return req.get().session().path(getClass().getPackage().getName()).get("log.rm");}
+	private path path_bak(){return req.get().session().path(getClass().getPackage().getName()).get("log.bak");}
 	final private static String inputdatefmt="yyyy-MM-dd";
 	final private static String logdatefmt="yyyyMMdd";
 	final private static Date parse(final String s){try{return new SimpleDateFormat(inputdatefmt).parse(s);}catch(final Throwable t){throw new Error(t);}}
