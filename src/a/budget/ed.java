@@ -15,7 +15,10 @@ public class ed extends a{
 		x.styleEnd();
 		fnm_old=p.name();
 		fnm.set(fnm_old);
-		x.p(p.parent().toString().substring($.fsroot.length())).p("/");
+		if(!p.exists()||p.isdir())
+			x.pl(p.uri());
+		else
+			x.p(p.parent().uri().substring($.fsroot.length())).p("/");
 		final String txt;
 		if(!p.exists()){
 			txt="";

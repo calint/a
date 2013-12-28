@@ -150,8 +150,10 @@ final public class log extends a{
 		final int lineno=Integer.parseInt(p[2]);
 //		x.xalert(lineno+"");
 		//? userandomaccess
-		final Scanner sc=new Scanner(path().fileinputstream());
-		final PrintStream ps=new PrintStream(path_rm().outputstream());
+		final InputStream is=path().fileinputstream();
+		final Scanner sc=new Scanner(is);
+		final OutputStream os=path_rm().outputstream();
+		final PrintStream ps=new PrintStream(os);
 		int i=0;
 		while(true){
 			final String line=sc.nextLine();
@@ -165,9 +167,19 @@ final public class log extends a{
 			if(line.charAt(0)!=' ')continue;
 			ps.println(line);
 		}
+		
+		//?? brokeinwindos
 		sc.close();
-		path().rm();
-		path_rm().rename(path());
+		ps.close();
+		is.close();
+		os.close();
+		path().parent().get("log.bak").rm();
+		if(!path().rename("log.bak")){
+			throw new Error("could not rename "+path()+" to 'log.bak'");
+		}
+		if(!path_rm().rename("blabla")){
+			throw new Error("could not rename "+path_rm()+" to "+path());
+		}
 		rend_log(x.xub(l,true,false));x.xube();
 	}
 	private path path(){return req.get().session().path(getClass().getPackage().getName()).get("log");}
