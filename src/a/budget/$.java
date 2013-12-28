@@ -33,7 +33,7 @@ public class $ extends a{
 		for(int n=0;n<indent;n++)
 			x.p("&nbsp;").p("&nbsp;").p("&nbsp;");
 		final String nm=p.name();
-		final String uri=b.urlencode(p.toString());
+		final String uri=b.urlencode(p.uri());
 		final String itmname=nm.substring(nm.indexOf('.')+1);
 		if(p.isdir()||!p.exists()){
 //			x.ax(this,"clk "+req.get().session().inpath(p),(folds.get(p)==Boolean.TRUE?"↓ ":"→ ")+in);
