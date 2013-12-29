@@ -4,9 +4,8 @@ import b.*;
 import static b.b.*;
 import java.io.*;
 import java.util.*;
-final public class c extends a implements bin,cacheable{static final long serialVersionUID=1;
+final public class c extends a implements cacheable,bin{static final long serialVersionUID=1;
 	public String contenttype(){return "text/plain;charset=utf8";}
-	
 	public boolean cacheforeachuser(){return false;}
 	public long lastmodupdms(){return 1000;}
 	public String filetype(){return "txt";}
