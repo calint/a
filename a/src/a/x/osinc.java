@@ -40,7 +40,9 @@ final public class osinc extends OutputStream{
 	}
 	private void process(final String token)throws IOException{
 		if(token.startsWith("@")){
-			root.get(token.substring(1)).to(this);
+			try{root.get(token.substring(1)).to(this);}catch(final Throwable t){
+				os.write(("•• error at line "+lineno+", "+token+"  "+stacktraceline(t)).getBytes());
+			}
 			return;
 		}
 		final int i0=token.indexOf(' ');
