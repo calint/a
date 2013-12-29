@@ -1,5 +1,9 @@
 `@header`
 
-document
+parser version `version`
+
+`date`
+
+document body
 
 `@footer`
