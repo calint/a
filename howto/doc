@@ -1,11 +1,18 @@
 `@header`
 
-parser version `version`
-
+`figlet -w 128 public domain server #1`
 `date`
 
-home uri: `homeuri`
+`homeuri`
 
-document body
+`imgtoascii /logo.jpg`
+
+`fortune`
+
+`banner banner`
+
+`cowsay cowsay`
+
+parser `version`
 
 `@footer`
