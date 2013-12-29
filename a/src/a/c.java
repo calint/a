@@ -4,7 +4,7 @@ import b.*;
 import static b.b.*;
 import java.io.*;
 import java.util.*;
-public class c extends a implements bin,cacheable{static final long serialVersionUID=1;
+final public class c extends a implements bin,cacheable{static final long serialVersionUID=1;
 	public String contenttype(){return "text/plain;charset=utf8";}
 	
 	public boolean cacheforeachuser(){return false;}
@@ -23,6 +23,7 @@ public class c extends a implements bin,cacheable{static final long serialVersio
 		finally{os.close();}
 	}
 	
+	public final static String version="1";
 	public static void date(final OutputStream os,final String a)throws Throwable{
 		os.write(new Date().toString().getBytes());
 	}
@@ -44,5 +45,4 @@ public class c extends a implements bin,cacheable{static final long serialVersio
 	public static void cowsay(final OutputStream os,final String a)throws Throwable{
 		new cli("cowsay "+a,os).wait_for_cli();
 	}
-	final public static String version="1";
 }
