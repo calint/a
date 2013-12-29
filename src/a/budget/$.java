@@ -80,7 +80,7 @@ public class $ extends a{
 	}
 	public final void ax_clk(final xwriter x,final String[]p){
 //		final path pth=req.get().session().path(p[2]);
-		final path pth=b.path(p[2].replace('+',' '));//? accessarbitraryfile
+		final path pth=b.path(p[2].replace('+',' '));//? isinpath?
 		if(folds.get(pth)==Boolean.TRUE)
 			folds.remove(pth);
 		else
