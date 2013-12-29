@@ -26,5 +26,8 @@ public class c extends a implements bin,cacheable{static final long serialVersio
 	public static void date(final OutputStream os,final String a)throws Throwable{
 		os.write(new Date().toString().getBytes());
 	}
+	public static void homeuri(final OutputStream os,final String a)throws Throwable{
+		os.write(req.get().session().href().getBytes());
+	}	
 	public static String version="1";
 }
