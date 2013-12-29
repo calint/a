@@ -3,6 +3,7 @@ import a.x.*;
 import b.*;
 import static b.b.*;
 import java.io.*;
+import java.util.*;
 public class c extends a implements bin,cacheable{static final long serialVersionUID=1;
 	public String contenttype(){return "text/plain;charset=utf8";}
 	
@@ -16,9 +17,14 @@ public class c extends a implements bin,cacheable{static final long serialVersio
 		final String qs=urldecode(r.query());
 //		final path p=r.session().path(qs);
 		final path p=path(qs);
-		final OutputStream os=new osinc(x.outputstream(),p.parent(),null,null);
+		final OutputStream os=new osinc(x.outputstream(),p.parent(),null,this);
 		try{p.to(os);}
 		catch(final Throwable t){x.p(stacktrace(t));}
 		finally{os.close();}
 	}
+	
+	public static void date(final OutputStream os,final String a)throws Throwable{
+		os.write(new Date().toString().getBytes());
+	}
+	public static String version="1";
 }
