@@ -28,6 +28,21 @@ public class c extends a implements bin,cacheable{static final long serialVersio
 	}
 	public static void homeuri(final OutputStream os,final String a)throws Throwable{
 		os.write(req.get().session().href().getBytes());
-	}	
-	public static String version="1";
+	}
+	public static void imgtoascii(final OutputStream os,final String a)throws Throwable{
+		new cli("jp2a "+path(a),os).wait_for_cli();
+	}
+	public static void fortune(final OutputStream os,final String a)throws Throwable{
+		new cli("fortune",os).wait_for_cli();
+	}
+	public static void banner(final OutputStream os,final String a)throws Throwable{
+		new cli("banner "+a,os).wait_for_cli();
+	}
+	public static void figlet(final OutputStream os,final String a)throws Throwable{
+		new cli("figlet "+a,os).wait_for_cli();
+	}
+	public static void cowsay(final OutputStream os,final String a)throws Throwable{
+		new cli("cowsay "+a,os).wait_for_cli();
+	}
+	final public static String version="1";
 }
