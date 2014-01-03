@@ -7,8 +7,8 @@ public class upload extends a{
 	final public void to(final xwriter x) throws Throwable{
 //		x.br();
 //		x.tago("object").attr("type","application/x-java-applet").attr("width","100%").attr("height","100%").tagoe().nl();
-		x.tago("applet").attr("archive","/upload.jar").attr("code","applet.upload").attr("width","100%").attr("height","100%").tagoe().nl();
-//		x.tago("applet").attr("codebase","/bin").attr("code","applet.upload").attr("width","100%").attr("height","100%").tagoe().nl();
+//		x.tago("applet").attr("archive","/upload.jar").attr("code","applet.upload").attr("width","100%").attr("height","100%").tagoe().nl();
+		x.tago("applet").attr("codebase","/bin").attr("code","applet.upload").attr("width","100%").attr("height","100%").tagoe().nl();
 //		x.tago("param").attr("name","archive").attr("value","/upload.jar").tagoe().nl();
 //		x.tago("param").attr("name","codebase").attr("value","/upload.jar").tagoe().nl();
 //		x.tago("param").attr("name","code").attr("value","applet.upload").tagoe().nl();
