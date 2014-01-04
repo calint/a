@@ -34,6 +34,8 @@ public class hello extends a{
 		x.p(hr).nl();
 		for(final Iterator<?>i=System.getProperties().entrySet().iterator();i.hasNext();x.pl(i.next().toString()));
 		x.p(hr).nl();
+		new cli("sh",s).p("sysctl -A").exit();
+		x.p(hr).nl();
 		new cli("sh",s).p("ps axjf").exit();
 	}
  }
