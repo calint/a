@@ -1,26 +1,9 @@
 package a.ix;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.Writer;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import a.x.xsts;
-import b.b;
-import b.path;
-import b.req;
-import b.session;
-import b.sts;
-
+import java.io.*;
+import java.text.*;
+import java.util.*;
+import a.x.*;
+import b.*;
 public final class ixwriter extends Writer implements Serializable{
 		static final long serialVersionUID=1;
 		public static String[]inctypes={"","txt","text","html","htm","js","css","java","h","c","hpp","cc","cpp","s","asm","sh"};
