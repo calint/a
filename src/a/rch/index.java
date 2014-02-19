@@ -13,7 +13,7 @@ import b.xwriter;
 public class index extends a{
 	private static final long serialVersionUID=1L;
 	public a sts;
-	@Override public void to(xwriter x) throws Throwable{
+	public void to(xwriter x) throws Throwable{
 		session ses=req.get().session();
 		String basehref=ses.href();
 		path p=ses.path("rch/store.ix");

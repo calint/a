@@ -56,7 +56,7 @@ public final class $ extends a{
 		x.br().p("store: ").p(store_dir);
 		x.br().rend(dirox);
 	}
-	public void ax_clrsts(xwriter x,String[]p)throws Throwable{
+	public void x_clrsts(xwriter x,String q)throws Throwable{
 		sts.set("");
 		x.xu(sts);
 	}
@@ -88,7 +88,7 @@ public final class $ extends a{
 	//		String[] duparts=dures.split("\\s");
 	//		return Long.parseLong(duparts[0]);
 	//	}
-	public void ax_rch(final xwriter x,final String[]p)throws Throwable{
+	public void x_rch(final xwriter x,final String q)throws Throwable{
 		final session ses=req.get().session();
 		final xsts stsb=new xsts(x,sts,500);
 		final path inbx=ses.path(inbox_dir);
