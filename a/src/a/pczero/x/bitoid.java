@@ -111,7 +111,7 @@ public class bitoid extends a{
 		}
 		x.elend();
 	}
-	synchronized public void ax_l(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_l(xwriter x,String s)throws Throwable{
 		int i=0;
 		for(final vintage c:core){
 			final path p=req.get().session().path(getClass().getName()).get("c"+i+".src");
@@ -132,36 +132,36 @@ public class bitoid extends a{
 		x.xu(sts);
 //		for(final x1 c:core)x.xu(c);
 	}
-	synchronized public void ax_c(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_c(xwriter x,String s)throws Throwable{
 		for(final vintage e:core){
-			e.ax_c(null,null);
+			e.x_c(null,null);
 		}
 		sts.set("compiled");
 		if(x==null)return;
 		x.xu(sts);
 		for(final vintage c:core)x.xu(c);
 	}
-	public void ax_t(xwriter x,String[]a)throws Throwable{
+	public void x_t(xwriter x,String s)throws Throwable{
 		for(final vintage c:core){
-			c.ax_n(x,null);
+			c.x_n(x,null);
 		}
 		if(x==null)return;
 		x.xu(sts.set("stepped"));
 	}
-	synchronized public void ax_d(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_d(xwriter x,String s)throws Throwable{
 		if((dispbits&1)==0)return;
-		vram.ax_rfh(x,a);
+		vram.x_rfh(x,s);
 	}
-	synchronized public void ax_g(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_g(xwriter x,String s)throws Throwable{
 		x.xu(sts.set("going"));
 		while(true){
-			ax_t(x,a);
+			x_t(x,s);
 			x.flush();
 			Thread.sleep(500);
 		}
 	}
 	/**run to break point*/
-	synchronized public void ax_b(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_b(xwriter x,String s)throws Throwable{
 		if(running)throw new Error("already running");
 		running=true;
 		final long t0=System.currentTimeMillis();
@@ -194,12 +194,12 @@ public class bitoid extends a{
 				c.xfocusline(x);
 			}
 			if((dispbits&1)!=0){
-				vram.ax_rfh(x,a);
+				vram.x_rfh(x,s);
 			}
 		}
 	}
 	/**run*/
-	synchronized public void ax_u(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_u(xwriter x,String s)throws Throwable{
 		final long runms=1000;
 		if(x!=null)x.xu(sts.set("running "+runms+" ms")).flush();
 		long minstr=0;for(final vintage c:core){minstr+=c.mtrinstr;c.sts.clr();}
@@ -228,12 +228,12 @@ public class bitoid extends a{
 		}
 		x.flush();
 		if((dispbits&1)!=0){
-			vram.ax_rfh(x,a);
+			vram.x_rfh(x,s);
 		}
 	}
 	/**run core frame*/
 	@SuppressWarnings("static-access")
-	synchronized public void ax_f(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_f(xwriter x,String s)throws Throwable{
 		if(running)throw new Error("already running");
 		running=true;
 		long t0=System.currentTimeMillis();
@@ -268,19 +268,19 @@ public class bitoid extends a{
 			ev(null,this);
 			if((dispbits&1)!=0){
 				x.xu(sts.set("refreshing display")).flush();
-				vram.ax_rfh(x,a);
+				vram.x_rfh(x,s);
 			}
 		}
 	}
 
-	public void ax_r(xwriter x,String[]a)throws Throwable{
+	public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
 		if(x!=null)x.xu(sts.set("reseting")).flush();
 		for(final vintage c:core){
-			c.ax_r(null,null);
+			c.x_r(null,null);
 			c.src.edit=false;
 		}
-		core[0].ax_r(null,null);//hack copies rom to ram
+		core[0].x_r(null,null);//hack copies rom to ram
 		ev(null,this);
 		if(x==null)return;
 		for(final vintage c:core){
@@ -289,11 +289,11 @@ public class bitoid extends a{
 		}
 		if((dispbits&1)!=0){
 			x.xu(sts.set("refreshing display")).flush();
-			vram.ax_rfh(x,null);
+			vram.x_rfh(x,null);
 		}
 		x.xu(sts.set("reseted"));
 	}
-	synchronized public void ax_s(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_s(xwriter x,String s)throws Throwable{
 		int i=0;
 		for(final vintage c:core){
 			final path p=req.get().session().path(getClass().getName()).get("c"+(i++)+".src");

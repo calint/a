@@ -55,15 +55,16 @@ final public class rom extends a{
 		}
 	}
 	String libgstp="yellow";
-	public void ax_clr(xwriter x,String[]a)throws Throwable{
+	public void x_clr(xwriter x,String s)throws Throwable{
 		for(int i=0;i<rom.length;i++){
 			rom[i]=0;
 		}
 		x.xuo(this);
 	}
-	public void ax_(xwriter x,String[]a){
-		final int row=Integer.parseInt(a[2]);
-		final int bit=Integer.parseInt(a[3]);
+	public void x_(xwriter x,String s){
+		final String[]a=s.split(" ");
+		final int row=Integer.parseInt(a[0]);
+		final int bit=Integer.parseInt(a[1]);
 		final int msk=1<<bit;
 		int v=rom[row];
 		final boolean on=(v&msk)==msk;

@@ -14,7 +14,7 @@ final public class ram extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas id=").p(id()).p(" width=").p(width*scl).p(" height=").p(height*scl).p("></canvas>");
 	}
-	public void ax_rfh(final xwriter x,final String[]a){
+	public void x_rfh(final xwriter x,final String s){
 		final String id=id();
 		x.p("var d2=$('").p(id).p("').getContext('2d');");
 		int cell=0;
