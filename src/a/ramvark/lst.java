@@ -87,8 +87,8 @@ public abstract class lst extends a implements $.labeled{
 	}
 
 	//delete
-	final public synchronized void ax_dl(final xwriter x,final String[]a)throws Throwable{
-		final String did=a[2];
+	final public synchronized void x_dl(final xwriter x,final String s)throws Throwable{
+		final String did=s;
 		cstore.delete(itmcls(),did);
 		if(owner!=null){
 			final String dide=","+did;
@@ -96,8 +96,8 @@ public abstract class lst extends a implements $.labeled{
 			final int i=ix.indexOf(dide);
 			if(i==-1)
 				throw new Error(did+" not found in "+id());
-			final String s=ix.substring(0,i)+ix.substring(i+dide.length());
-			set(s);
+			final String ss=ix.substring(0,i)+ix.substring(i+dide.length());
+			set(ss);
 		}
 			
 		x.xuo(this);
@@ -111,26 +111,26 @@ public abstract class lst extends a implements $.labeled{
 		return cls;
 	}
 	//load
-	final public synchronized void ax_ld(final xwriter x,final String[]a)throws Throwable{
+	final public synchronized void x_ld(final xwriter x,final String s)throws Throwable{
 		if(seltrg!=null){
-			seltrg.set(a[2]);
+			seltrg.set(s);
 			ev(x,this,"cl");
 			x.xfocus(seltrg);
 			return;
 		}
-		final itm e=cstore.load(itmcls(),a[2]);
+		final itm e=cstore.load(itmcls(),s);
 		ev(x,this,e);
 	}
 	
 	//ax qry change
-	public synchronized void ax_ch(final xwriter x,final String[]a)throws Throwable{
+	public synchronized void x_ch(final xwriter x,final String s)throws Throwable{
 		x.xuo(this);
 		x.xfocus(qry);
 	}
 	//ax qry sel
-	public synchronized void ax_sl(final xwriter x,final String[]a)throws Throwable{
+	public synchronized void x_sl(final xwriter x,final String s)throws Throwable{
 		if(frstnm==null){
-			ax_cr(x,a);
+			x_cr(x,s);
 			return;
 		}
 		if(seltrg!=null){
@@ -146,7 +146,7 @@ public abstract class lst extends a implements $.labeled{
 	}
 
 	//create
-	public synchronized void ax_cr(final xwriter x,final String[]a)throws Throwable{
+	public synchronized void x_cr(final xwriter x,final String s)throws Throwable{
 		final String q=qry.toString().trim();
 		if(q.length()==0){
 			x.xalert("enter name");
