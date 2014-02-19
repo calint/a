@@ -8,12 +8,12 @@ public class wordcon extends a{
 	public a txt;
 	public void to(final xwriter x) throws Throwable{
 		x.style();
-		x.css("textarea.editor","border:1px dotted blue;width:100%;height:640px;");
+		x.css(txt,"border:1px dotted blue;width:100%;height:640px;");
 		x.styleEnd();
-		x.ax(this,"ok",":: wordcon");
-		x.inputTextArea(txt,"editor").br();
+		x.ax(this,"ok",":: wordcon").nl();
+		x.inputTextArea(txt).br();
 	}
-	public void ax_ok(final xwriter x,final String[]p){
+	public void x_ok(final xwriter x,final String s){
 		final Set<String>set=new HashSet<String>();
 		final String[]lines=txt.toString().split("\\n");
 		int lineno=0;

@@ -32,7 +32,7 @@ public final class coki3d extends a{
 		x.pre("d").table("t").tr().td("l").output(d0).td("r").output(d1).tableEnd().preEnd().output(s);
 		x.script().p("setTimeout(\"$x('"+id()+" a')\",0)").scriptEnd();
 	}
-	public void ax_a(final xwriter x,final String[]a)throws Throwable{
+	public void x_a(final xwriter x,final String st)throws Throwable{
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:MM:ss.SSS");
 		while(true){			
 			xwriter y=x.xub(d0,true,false);
