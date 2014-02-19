@@ -153,16 +153,16 @@ public abstract class itm extends a implements $.labeled{
 	final protected void inputagr(final xwriter x,final a e) throws Throwable{
 		x.p("<a href=\"javascript:$x('").p(id()).p(" agr ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
 	}
-	final public synchronized void ax_agr(final xwriter x,final String[]a)throws Throwable{
-		final Field f=getClass().getField(a[2]);
+	final public synchronized void x_agr(final xwriter x,final String s)throws Throwable{
+		final Field f=getClass().getField(s);
 		final agr ra=(agr)f.get(this);
 		final itm m=ra.get();
 		m.label=f.getName();
 		m.afterclosefocus=ra;
 		ev(x,this,m);
 	}
-	final public synchronized void ax_agrclr(final xwriter x,final String[]a)throws Throwable{
-		final Field f=getClass().getField(a[2]);
+	final public synchronized void x_agrclr(final xwriter x,final String s)throws Throwable{
+		final Field f=getClass().getField(s);
 		final agr ra=(agr)f.get(this);
 		ra.rm();
 		x.xuo(this);
@@ -173,8 +173,8 @@ public abstract class itm extends a implements $.labeled{
 		x.p("<a href=\"javascript:$x('").p(id()).p(" ref ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
 	}
 	//reference select
-	final public synchronized void ax_ref(final xwriter x,final String[]a)throws Throwable{
-		final Field f=getClass().getField(a[2]);
+	final public synchronized void x_ref(final xwriter x,final String s)throws Throwable{
+		final Field f=getClass().getField(s);
 		final Class<? extends lst>clsls=f.getAnnotation(in.class).lst();
 		final lst ls=clsls.newInstance();
 		final ref rf=(ref)f.get(this);
@@ -189,8 +189,8 @@ public abstract class itm extends a implements $.labeled{
 		ls.label="select "+f.getName();
 		ev(x,this,ls);
 	}
-	final public synchronized void ax_refclr(final xwriter x,final String[]a)throws Throwable{
-		final Field f=getClass().getField(a[2]);
+	final public synchronized void x_refclr(final xwriter x,final String s)throws Throwable{
+		final Field f=getClass().getField(s);
 		final ref rf=(ref)f.get(this);
 		rf.rm();
 		x.xuo(this);
@@ -217,34 +217,31 @@ public abstract class itm extends a implements $.labeled{
 	}
 	
 	//save
-	final public synchronized void ax_sv(final xwriter x,final String[]a)throws Throwable{
-		if(!validate(x))
-			return;
+	final public synchronized void x_sv(final xwriter x,final String s)throws Throwable{
+		if(!validate(x))return;
 		onpresave(x);
 		cstore.save(this);
-		if(selref!=null)
-			selref.set(did.toString());
-		if(aftercloseaddtolist!=null)
-			aftercloseaddtolist.set(aftercloseaddtolist.toString()+","+did);
+		if(selref!=null)selref.set(did.toString());
+		if(aftercloseaddtolist!=null)aftercloseaddtolist.set(aftercloseaddtolist.toString()+","+did);
 	}
 	//close
-	final public synchronized void ax_cl(final xwriter x,final String[]a)throws Throwable{
+	final public synchronized void x_cl(final xwriter x,final String s)throws Throwable{
 		ev(x,this,"cl");
 	}
 	//savevandvclose
-	final public synchronized void ax_sc(final xwriter x,final String[]a)throws Throwable{
+	final public synchronized void x_sc(final xwriter x,final String s)throws Throwable{
 		if(!validate(x))
 			return;
-		ax_sv(x,null);
+		x_sv(x,null);
 		if(selref!=null){
 			ev(x,this,"cl2");
 			x.xfocus(selref);
 			return;
 		}
-		ax_cl(x,null);
+		x_cl(x,null);
 	}
 	//rename
-	public synchronized void ax_rn(final xwriter x,final String[]a)throws Throwable{
+	public synchronized void x_rn(final xwriter x,final String s)throws Throwable{
 		x.xalert("rename");
 	}
 	public String label(){return label!=null?label:toString();}
