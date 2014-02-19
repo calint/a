@@ -14,7 +14,7 @@ public class xed extends a{
 //		x.nl();
 		x.spc().ax(this);
 	}
-	public void ax_(final xwriter x,final String[]a){
+	public void x_(final xwriter x,final String s){
 		x.xalert(toString());
 	}
 }

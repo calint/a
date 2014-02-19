@@ -6,9 +6,9 @@ public class $ extends a{
 	public board brd;
 	public a movefld;
 	private square fromsq;
-	public void ax_rst(final xwriter x,final String[]p){board_setup();x.xreload();}
-	public void ax_clr(final xwriter x,final String[]p){brd.clearx();x.xreload();}
-	public void ax_mov(final xwriter x,final String[]p){
+	public void x_rst(final xwriter x,final String s){board_setup();x.xreload();}
+	public void x_clr(final xwriter x,final String s){brd.clearx();x.xreload();}
+	public void x_mov(final xwriter x,final String s){
 		//		x.x_alert(movefld.toString());
 		//		movefld.x_setValue(x,"");
 		final String m=movefld.toString().trim();
@@ -65,7 +65,7 @@ public class $ extends a{
 		movefld.set("");
 		x.xreload();
 	}
-	public void ax_flp(final xwriter x,final String[]p){brd.flip();x.xreload();}
+	public void x_flp(final xwriter x,final String s){brd.flip();x.xreload();}
 	private void board_setup(){
 		brd.clearx();
 		brd.square(0,0).setPiece(new piecerook(1));

@@ -37,10 +37,10 @@ public class wrds extends a{
 		x.nl().inputText(input,null,this,null).nl();
 		x.div("editor2").output(output).divEnd();
 		x.script().xfocus(input);
-		ax_(x,null);
+		x_(x,null);
 		x.scriptEnd();
 	}
-	public void ax_(xwriter x,String[]a){
+	public void x_(xwriter x,String s){
 		p(x.xub(output,true,false),input.toint());
 		x.xube();
 	}

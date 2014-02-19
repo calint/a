@@ -43,13 +43,13 @@ public class $ extends a{
 			x.ax(this,"a");
 			x.p("</el>");
 		}
-		public void ax_(final xwriter x,final String[]a)throws Throwable{
+		public void x_(final xwriter x,final String s)throws Throwable{
 			this.x+=(int)(Math.random()*3);
 			this.y+=(int)(Math.random()*3);
 			x.pl("var e=$('"+id()+"');e.style.top='"+this.y+"px';e.style.left='"+this.x+"px';");
 //			x.xuo(this);
 		}
-		public void ax_a(final xwriter x,final String[]a)throws Throwable{
+		public void x_a(final xwriter x,final String s)throws Throwable{
 			x.xuo(this);
 		}
 	}

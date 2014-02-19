@@ -11,7 +11,7 @@ public class keys extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.p("access control bits ").inputText(bits,null,this,null);
 	}
-	public void ax_(final xwriter x,final String[]a){
+	public void x_(final xwriter x,final String s){
 		final session ses=req.get().session();
 		ses.bits(bits.tolong());
 		

@@ -95,7 +95,7 @@ public class xn extends a{
 		}
 		x.elend();
 	}
-	synchronized public void ax_l(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_l(xwriter x,String s)throws Throwable{
 		int i=0;
 		for(final vintage c:core){
 			final path path=req.get().session().path(getClass().getName());

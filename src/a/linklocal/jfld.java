@@ -40,7 +40,7 @@ public class jfld extends a{static final long serialVersionUID=1;
 		}else
 			x.p(s);
 	}
-	public void ax_(xwriter x,String[]a)throws Throwable{
+	public void x_(xwriter x,String q)throws Throwable{
 		final Field f=cls.getField(fieldnm);
 		final Class<?>type=f.getType();
 		if(type==String.class){
@@ -56,7 +56,7 @@ public class jfld extends a{static final long serialVersionUID=1;
 			final Set<String>set=(Set<String>)f.get(null);
 			set.clear();
 			final String[]ss=toString().trim().split(";");
-			for(String s:ss)
+			for(final String s:ss)
 				set.add(s.trim());
 		}
 		x.xu(id(),f.get(null).toString());

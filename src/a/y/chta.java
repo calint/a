@@ -41,12 +41,12 @@ public final class chta extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.pre().inputText(inp,"nbr line",this,"a").spc().ax(this,"b","⊚").ax(this,"c","⊙").nl().span(dsp);
 		x.script();
-		ax_a(x,null);
+		x_a(x,null);
 		x.xfocus(inp);
 		x.xinterval(this,"e",5000);
 		x.scriptEnd();
 	}
-	public void ax_a(final xwriter x,final String[]a)throws Throwable{
+	public void x_a(final xwriter x,final String s)throws Throwable{
 		final String inps=inp.toString();
 		if(!b.isempty(inps)){
 			new pk(inps.toString());
@@ -54,14 +54,14 @@ public final class chta extends a{
 		}
 		//ax_d(x,null);
 	}
-	public void ax_b(final xwriter x,final String[]a){
+	public void x_b(final xwriter x,final String s){
 		synchronized(q){q.clear();qt=0;}x.xfocus(inp);
 	}
-	public void ax_c(final xwriter x,final String[]a){
+	public void x_c(final xwriter x,final String q){
 		s=s==0?1:0;
-		ax_d(x,null);
+		x_d(x,null);
 	}
-	public void ax_d(final xwriter x,final String[]a){
+	public void x_d(final xwriter x,final String q){
 		final xwriter y=new xwriter(new osltgt(x.xub(dsp,true,false).outputstream()));
 //		final xwriter y=new xwriter(x.xub(dsp));
 		i(new i(){public void x(final pk p){
@@ -73,10 +73,10 @@ public final class chta extends a{
 		y.flush();
 		x.xube();
 	}
-	public void ax_e(final xwriter x,final String[]a){
+	public void x_e(final xwriter x,final String s){
 		if(qt!=0&&qt<=t)
 			return;
 		t=qt;
-		ax_d(x,null);
+		x_d(x,null);
 	}
 }
