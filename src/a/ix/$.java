@@ -59,10 +59,10 @@ final public class $ extends a{
 		y.spanh(ds);
 		y.script();
 		y.xfocus(qf);
-		ax_(y,null);
+		x_(y,null);
 		y.scriptEnd();
 	}
-	public void ax_(final xwriter x,final String[]p)throws IOException{
+	public void x_(final xwriter x,final String st)throws IOException{
 		final xwriter y=x.xub(ds,true,false);
 		final String qs=qf.toString();
 		final long t0=System.currentTimeMillis();
@@ -110,7 +110,7 @@ final public class $ extends a{
 		y.tr().nl().tableEnd();
 		x.xube();
 	}
-	public void ax_stsx(final xwriter x,final String[]a)throws Throwable{x.xu(st.set(""));}
+	public void x_stsx(final xwriter x,final String s)throws Throwable{x.xu(st.set(""));}
 	private long sizerec(final path p,final xsts sts,long size){
 		for(final String f:p.list()){
 			final path pp=p.get(f);
@@ -122,20 +122,20 @@ final public class $ extends a{
 		}
 		return size;
 	}
-	public void ax_size(final xwriter x,final String[]a)throws Throwable{
-		xsts s=new xsts(x,st,500);
+	synchronized public void x_size(final xwriter x,final String str)throws Throwable{
+		final xsts s=new xsts(x,st,500);
 		final path p=req.get().session().path(pathix);
 		final long sz=sizerec(p,s,0);
 		s.flush();
 		x.xu(st.set("index contains "+Long.toString(sz>>10)+" KB data"));
 	}
-	public void ax_viewix(final xwriter x,final String[]p){viewix=!viewix;x.xreload();}
+	synchronized public void x_viewix(final xwriter x,final String s){viewix=!viewix;x.xreload();}
 //	public void ax_ltr(final xwriter x,final String[]args)throws IOException{
 //		qs=args[2].substring(0,1);
 //		xd.ltr(qs);
 //		x.xreload();
 //	}
-	public void ax_cancelix(final xwriter x,final String[]a)throws Throwable{
+	public void x_cancelix(final xwriter x,final String s)throws Throwable{
 		if(ix==null){
 			x.xu(st.set("indexer not loaded"));
 			return;
@@ -152,7 +152,7 @@ final public class $ extends a{
 		x.xu(st.set("cancelled"));
 		x.xu(xd);
 	}
-	public void ax_reindex(final xwriter x,final String[]args)throws Throwable{
+	synchronized public void x_reindex(final xwriter x,final String s)throws Throwable{
 		final session ses=req.get().session();
 		final path homepth=ses.path("");
 		final path ixpth=ses.path(pathix);
@@ -164,7 +164,7 @@ final public class $ extends a{
 		x.xu(xd);
 //		x.xreload();
 	}
-	public void ax_ixdel(final xwriter x,final String[]args)throws Throwable{
+	synchronized public void x_ixdel(final xwriter x,final String str)throws Throwable{
 		final session ses=req.get().session();
 		final path ixpth=ses.path(pathix);
 		final xsts s=new xsts(x,st,500);

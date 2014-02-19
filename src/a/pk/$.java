@@ -30,7 +30,7 @@ public class $ extends a{
 			return;
 		x.rend(wta[i]).nl().nl();
 	}
-	public void ax_upd(xwriter x,String[] p) throws Throwable{
+	public void x_upd(xwriter x,String s) throws Throwable{
 		x.p("location.href=location.pathname+'?"+b.urlencode(q.toString())+"';");
 	}
 }
