@@ -1,18 +1,8 @@
 package a;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Locale;
-import b.a;
-import b.b;
-import b.path;
-import b.xwriter;
+import java.io.*;
+import java.text.*;
+import java.util.*;
+import b.*;
 public class diro extends a{
 	private static final long serialVersionUID=1;
 	public final static int BIT_ALLOW_QUERY=1;
@@ -116,19 +106,19 @@ public class diro extends a{
 			for(final String filenm:files){
 				final path p=path.get(filenm);
 				if(firstinlist==null)firstinlist=p;
-				final String name=p.name();
-				final String nameenc=b.urlencode(name);
+				final String fnm=p.name();
+//				final String nameenc=b.urlencode(name);
 				final boolean isdir=p.isdir();
 				x.tr();
 				x.td("icns");
 				if(isdir)
 					if((bits&BIT_ALLOW_DIR_ENTER)!=0)
-						x.ax(this,"e "+nameenc,icndir);
+						x.ax(this,"e "+fnm,icndir);
 					else
 						x.p(icndir);
 				else
 					if((bits&BIT_ALLOW_FILE_OPEN)!=0)
-						x.ax(this,"e "+nameenc,icnfile);
+						x.ax(this,"e "+fnm,icnfile);
 					else
 						x.p(icnfile);
 				
@@ -136,17 +126,17 @@ public class diro extends a{
 				//				x.p("<a href=\"javascript:ui.ax('").p(wid).p(" r ").p(nameEnc).p("')\">").p("ĸ").p("</a> ");
 				x.td("name");
 				if((bits&BIT_ALLOW_FILE_LINK)!=0&&p.isfile())
-					x.a(p.uri(),name);
+					x.a(p.uri(),fnm);
 				else
-					x.p(name);
+					x.p(fnm);
 				if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))
-					x.td("del").ax(this,"r "+nameenc,icndel);				
+					x.td("del").ax(this,"r "+fnm,icndel);				
 				if(p.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))
-					x.td("del").ax(this,"r "+nameenc,icndel);
+					x.td("del").ax(this,"r "+fnm,icndel);
 				if(hasbit(BIT_ALLOW_SELECT))
-					x.ax(this,"se "+nameenc,icnsel);
+					x.ax(this,"se "+fnm,icnsel);
 				if(hasbit(BIT_ALLOW_RENAME))
-					x.ax(this,"ren "+nameenc,icnren);
+					x.ax(this,"ren "+fnm,icnren);
 				
 				x.td("date").p(ttoa(p.lastmod()));
 				final long size=p.size();
@@ -177,13 +167,12 @@ public class diro extends a{
 		x.spanEnd();
 	}
 	private path firstinlist;
-	synchronized public void ax_sel(final xwriter x,final String[]a)throws Throwable{
-		if(firstinlist!=null)ax_e(x,new String[]{id(),"e",b.urlencode(firstinlist.name())});
+	synchronized public void x_sel(final xwriter x,final String s)throws Throwable{
+		if(firstinlist!=null)x_e(x,firstinlist.name());
 	}
-	synchronized public final void ax_e(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_e(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_ENTER))throw new Error("notallowed");
-		final String namedec=b.urldecode(a[2]);
-		path=path.get(namedec);
+		path=path.get(p);
 		if(path.isfile())
 			bd.from(path);
 		x.xu(this);
@@ -209,7 +198,7 @@ public class diro extends a{
 	final protected String ttoa(final long ms){return df.format(ms);}
 	final protected String btoa(final long n){return nf.format(n);}
 //	private String query;
-	synchronized public final void ax_(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_QUERY))throw new Error("notallowed");
 //		query=q.toString();
 		x.xuo(this);
@@ -217,7 +206,7 @@ public class diro extends a{
 //		x.p("var e=$('").p(q.id()).p("');e.setSelectionRange(e.value.length,e.value.length)").nl();
 		x.xfocus(q);
 	}
-	synchronized public final void ax_up(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_up(final xwriter x,final String y)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_UP))throw new Error("notallowed");
 		final path p=path.parent();
 		if(p==null)
@@ -226,7 +215,7 @@ public class diro extends a{
 		x.xu(this);
 		x.xfocus(q);
 	}
-	synchronized public final void ax_c(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_c(final xwriter x,final String s)throws Throwable{
 		if(!hasbit(BIT_ALLOW_FILE_CREATE))throw new Error("notallowed");
 		if(q.toString().length()==0){x.xalert("enter name");x.xfocus(q);return;}
 		path=path.get(q.toString());
@@ -236,38 +225,36 @@ public class diro extends a{
 		x.xu(this);
 		x.xfocus(bd);
 	}
-	synchronized public final void ax_d(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_d(final xwriter x,final String s)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_CREATE))throw new Error("notallowed");
 		if(q.toString().length()==0){x.xalert("enter name");x.xfocus(q);return;}
 		path.get(q.toString()).mkdirs();
 		x.xu(this);
 	}
-	synchronized public final void ax_r(final xwriter x,final String[]a)throws Throwable{
-		final path p=path.get(b.urldecode(a[2]));
+	synchronized public final void x_r(final xwriter x,final String s)throws Throwable{
+		final path p=path.get(s);
 		if(path.isfile()&&!hasbit(BIT_ALLOW_FILE_DELETE))throw new Error("notallowed");
 		if(path.isdir()&&!hasbit(BIT_ALLOW_DIR_DELETE))throw new Error("notallowed");//? onlydir
 		p.rm();
 		x.xu(this);
 		x.xfocus(q);
 	}
-	synchronized public void ax_s(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_s(final xwriter x,final String s)throws Throwable{
 		if(!hasbit(BIT_ALLOW_FILE_MODIFY))throw new Error("notallowed");
 		bd.to(path);
 	}
-	synchronized public void ax_sx(final xwriter x,final String[]a)throws Throwable{ax_s(x,a);ax_up(x,a);}
-	synchronized public void ax_se(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_sx(final xwriter x,final String s)throws Throwable{x_s(x,s);x_up(x,"");}
+	synchronized public void x_se(final xwriter x,final String s)throws Throwable{
 		if(!hasbit(BIT_ALLOW_SELECT))throw new Error("notallowed");
-		final path p=path.get(b.urldecode(a[2]));
+		final path p=path.get(s);
 		selection.add(p);
-		
 		if(x==null)return;
 		x.xuo(selection);
 	}
-	synchronized public void ax_ren(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_ren(final xwriter x,final String s)throws Throwable{
 		if(!hasbit(BIT_ALLOW_RENAME))throw new Error("notallowed");
-		final String nm=b.urldecode(a[2]);
-		if(!path.get(nm).rename(path.get(selection.rnm.toString()))){
-			x.xalert("could not rename '"+nm+"' to '"+selection.rnm+"'");
+		if(!path.get(s).rename(path.get(selection.rnm.toString()))){
+			x.xalert("could not rename '"+s+"' to '"+selection.rnm+"'");
 		}
 		x.xuo(this);
 	}
@@ -328,15 +315,14 @@ public class diro extends a{
 			x.nl().tableEnd();
 			x.elend();
 		}
-		public void ax_ts(final xwriter x,final String[]a)throws Throwable{
+		public void x_ts(final xwriter x,final String s)throws Throwable{
 			hidelist=!hidelist;
 			x.xuo(this);
 		}
-		synchronized public void ax_rm(final xwriter x,final String[]a)throws Throwable{
+		synchronized public void x_rm(final xwriter x,final String s)throws Throwable{
 //			if(!dr.hasbit(BIT_ALLOW_FILE_DELETE))throw new Error("notallowed");
-			final String nm=b.urldecode(a[2]);
 			for(final Iterator<path>i=ls.iterator();i.hasNext();){
-				if(i.next().toString().equals(nm)){
+				if(i.next().toString().equals(s)){
 					i.remove();
 					break;
 				}
@@ -345,7 +331,7 @@ public class diro extends a{
 			if(x==null)return;
 			x.xuo(this);
 		}
-		synchronized public void ax_m(final xwriter x,final String[]a)throws Throwable{
+		synchronized public void x_m(final xwriter x,final String s)throws Throwable{
 			if(!dr.hasbit(BIT_ALLOW_MOVE))throw new Error("notallowed");
 			for(final path p:ls){
 				if(!p.moveto(dr.path));//?
@@ -355,7 +341,7 @@ public class diro extends a{
 			if(x==null)return;
 			x.xuo(dr);
 		}
-		synchronized public void ax_cp(final xwriter x,final String[]a)throws Throwable{
+		synchronized public void x_cp(final xwriter x,final String s)throws Throwable{
 			if(!dr.hasbit(BIT_ALLOW_COPY))throw new Error("notallowed");
 			for(final path p:ls){
 				if(p.isdir())continue;//? recursivecopy

@@ -22,14 +22,13 @@ public class typealine extends a{
 		x.span(q).inputText(s,"line",this,"a").p(" ").axBgn(this,"a").span(b).axEnd();
 		x.focus(s);
 	}
-	public void ax_a(final xwriter x,final String[]p)throws Throwable{
+	public void x_a(final xwriter x,final String p)throws Throwable{
 		final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd---hh:mm:ss.SSS---");
 		final String line=s.toString();
 		req.get().session().path("log.txt").append(simpleDateFormat.format(new Date())+line,"\n");
 		upd();
 		s.clr();
-		if(x==null)
-			return;
+		if(x==null)return;
 		x.xtitle("typealine: "+line).xu(q).xu(s).xu(b).xfocus(s);
 	}
 	private void upd(){

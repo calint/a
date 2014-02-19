@@ -1,15 +1,8 @@
 package a;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Date;
-import a.x.jskeys;
-import b.a;
-import b.b;
-import b.path;
-import b.req;
-import b.xwriter;
+import java.io.*;
+import java.util.*;
+import a.x.*;
+import b.*;
 public class o extends a{
 	static final long serialVersionUID=1;
 	public a opts;
@@ -60,7 +53,7 @@ public class o extends a{
 		opts.set(y.toString());
 		return opls.length;
 	}
-	public void ax_a(final xwriter x,final String[]p)throws Throwable{
+	public void x_a(final xwriter x,final String s)throws Throwable{
 		final String val=toString();
 		if(!b.isempty(val)||dispallopts()){
 			refreshopts();
@@ -72,7 +65,7 @@ public class o extends a{
 			opts.clr();
 		x.xu(opts);
 	}
-	public void ax_c(final xwriter x,final String[]p)throws Throwable{
+	public void x_c(final xwriter x,final String s)throws Throwable{
 		final String val=toString();
 		final path newdir=dir.get(val);
 		dir.mkdirs();
@@ -86,7 +79,7 @@ public class o extends a{
 		sb.append("<a href=\"javascript:$x('").append(id()).append(" ").append(axpbfn).append("')\">").append(arehhtml).append("</a>");
 		return sb.toString();
 	}
-	public void ax_s(final xwriter x,final String[]p)throws Throwable{
+	public void x_s(final xwriter x,final String s)throws Throwable{
 		String nm=toString();
 		if("..".equals(nm)){
 			if(dir.equals(req.get().session().path())){
@@ -111,7 +104,7 @@ public class o extends a{
 		final path pth=dir.get(name);
 		if(create){
 			pth.append("new file","\n\n");
-			ax_e(x,null);
+			x_e(x,"");
 //			fc.read(pth);
 //			x.xupd(fc);
 //			x.xshow(fc);
@@ -129,14 +122,14 @@ public class o extends a{
 		}else{
 			x.xu(opts.clr());
 			if(!create)
-				ax_v(x,null);
+				x_v(x,"");
 		}
 		x.xu(f1.set(strax("d","⌫")));
 	}
 	private void updinfo(final xwriter x,final path pth)throws Throwable{
 		x.xu(st.set("   href: "+pth.uri()+"\n   size: "+pth.size()+" B"+"\nlastmod: "+new Date(pth.lastmod()).toString()));
 	}
-	public void ax_d(final xwriter x,final String[]p)throws Throwable{
+	public void x_d(final xwriter x,final String s)throws Throwable{
 		final String pth=toString();
 		final path ptho=b.isempty(pth)?dir:dir.get(pth);
 		if(ptho.equals(req.get().session().path(""))){
@@ -156,7 +149,7 @@ public class o extends a{
 		x.xu(opts);
 		x.xfocus(this);
 	}
-	public void ax_e(final xwriter x,final String[]p)throws Throwable{
+	public void x_e(final xwriter x,final String s)throws Throwable{
 		x.xhide(fc);
 		x.xshow(ed);
 		final path pth=dir.get(toString());
@@ -164,7 +157,7 @@ public class o extends a{
 		fc.clr();
 		x.xu(fc).xu(ed).xfocus(ed);		
 	}
-	public void ax_v(final xwriter x,final String[]p)throws Throwable{
+	public void x_v(final xwriter x,final String s)throws Throwable{
 		x.xshow(fc);
 		x.xhide(ed);
 		final path pth=dir.get(toString());
@@ -176,14 +169,14 @@ public class o extends a{
 		fc.from(pth);
 		x.xu(fc);		
 	}
-	public void ax_u(final xwriter x,final String[]p)throws Throwable{
+	public void x_u(final xwriter x,final String s)throws Throwable{
 		final path pth=dir.get(toString());
 		ed.to(pth);
 		updinfo(x,pth);
 //		refreshopts();
 //		x.xu(opts);
 	}
-	public void ax_up(final xwriter x,final String[]p)throws Throwable{
+	public void x_up(final xwriter x,final String s)throws Throwable{
 		if(dir.equals(req.get().session().path())){
 			x.xu(clr());
 			refreshopts();

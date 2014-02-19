@@ -1,12 +1,8 @@
 package a;
-import java.io.OutputStream;
-import java.util.Iterator;
-import a.x.cli;
-import b.a;
-import b.b;
-import b.osltgt;
-import b.req;
-import b.xwriter;
+import java.io.*;
+import java.util.*;
+import a.x.*;
+import b.*;
 public class hello extends a{
 	private static final long serialVersionUID=1;
 	private static String hr="\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n";
