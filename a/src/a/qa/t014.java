@@ -10,7 +10,7 @@ public class t014 extends a{
 		x.p("ĸoö: ");
 		x.inputText(s,null,this,"a").spc().ax(this,"a","post");
 	}
-	public void ax_a(final xwriter x,final String[]p) throws Throwable{
+	public void x_a(final xwriter x,final String q) throws Throwable{
 		req.get().session().path("test.txt").append(s.toString(),"\n");
 		x.xfocus(s);
 	}
