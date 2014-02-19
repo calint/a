@@ -13,7 +13,7 @@ public class httpbrowser extends a{static final long serialVersionUID=1;
 		x.inputText(url,null,this,"a").nl();
 		x.output(output);
 	}
-	public void ax_a(final xwriter x,final String[]p)throws Throwable{
+	public void x_a(final xwriter x,final String p)throws Throwable{
 		x.xalert(url.toString());
 		x.xu(output,url.toString());
 	}

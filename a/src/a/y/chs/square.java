@@ -26,5 +26,5 @@ public class square extends a{
 		x.aEnd();
 		x.tdEnd();
 	}
-	public void ax_clk(final xwriter x,final String[]p)throws Throwable{ev(x,this,null);}
+	public void x_clk(final xwriter x,final String s)throws Throwable{ev(x,this,null);}
 }

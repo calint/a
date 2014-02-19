@@ -30,5 +30,5 @@ public class $ extends a{static final long serialVersionUID=1;public void to(xwr
 				return a;
 		return super.chldq(id);
 	}
-	public void ax_clruche(xwriter x,String[]a){x.xalert("todo: clear uri cache");}
+	public void x_clruche(xwriter x,String s){x.xalert("todo: clear uri cache");}
 }

@@ -94,10 +94,10 @@ public class znnotinca extends a{
 		g.drawImage(bi,0,0,null);
 		ImageIO.write(bi,"png",os);
 	}
-	public void ax_c(final xwriter x,final String[]p)throws Throwable{
+	public void x_c(final xwriter x,final String s)throws Throwable{
 		x.xu(bin.set(c(src.toString())));
 	}
-	public void ax_r(final xwriter x,final String[]p)throws Throwable{
+	public void x_r(final xwriter x,final String s)throws Throwable{
 		x.xu(run.set(r(bin.toString())));
 	}
 	public static String c(final String src){

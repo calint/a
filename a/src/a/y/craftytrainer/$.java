@@ -49,7 +49,7 @@ public class $ extends a{
 		x.tage("figure");
 		x.nl().nl();
 	}
-	public void ax_(final xwriter x,final String[]a)throws Throwable{
+	public void x_(final xwriter x,final String s)throws Throwable{
 		final pgnscanner pgn=new pgnscanner(new Scanner(new ByteArrayInputStream(tobytes(in1.toString()))));
 		final Map<String,String>hdr=pgn.nextHeader();
 		hdr.clear();
