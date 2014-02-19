@@ -11,7 +11,7 @@ import b.xwriter;
 public class browser extends a{
 	private static final long serialVersionUID=1L;
 	private long itemno=1;
-	@Override public void to(xwriter x) throws Throwable{
+	public void to(xwriter x) throws Throwable{
 		session ses=req.get().session();
 		String basehref=ses.href();
 		path p=ses.path("rch/store.ix");
@@ -42,17 +42,17 @@ public class browser extends a{
 		}
 		br.close();
 	}
-	public void ax_prv(xwriter x,String[] p){
+	public void x_prv(xwriter x,String s){
 		if(itemno>1)
 			itemno--;
 		x.xreload();
 	}
-	public void ax_nxt(xwriter x,String[] p){
+	public void x_nxt(xwriter x,String s){
 		itemno++;
 		x.xreload();
 	}
-	public void ax_rm(xwriter x,String[] p) throws IOException{
-		path pth=req.get().session().path(p[2]);
+	public void x_rm(xwriter x,String s) throws IOException{
+		path pth=req.get().session().path(s);
 		pth.rm();
 		x.xreload();
 	}
