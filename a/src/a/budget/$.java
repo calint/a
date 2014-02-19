@@ -78,9 +78,9 @@ public class $ extends a{
 			}
 		}
 	}
-	public final void ax_clk(final xwriter x,final String[]p){
+	public final void x_clk(final xwriter x,final String s){
 //		final path pth=req.get().session().path(p[2]);
-		final path pth=b.path(p[2].replace('+',' '));//? isinpath?
+		final path pth=b.path(s);//? isinpath?
 		if(folds.get(pth)==Boolean.TRUE)
 			folds.remove(pth);
 		else
@@ -117,27 +117,26 @@ public class $ extends a{
 		if(sb.length()>0)sb.setLength(sb.length()-1);
 		dir.get("0").writestr(sb.toString());
 	}
-	public final void ax_recalc(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_recalc(final xwriter x,final String s)throws Throwable{
 //		final path p=req.get().session().path(fsroot);
 		final path p=b.path(fsroot);
 		recalc(p);
 		x.xreload();
 	}
-	public final void ax_foldall(final xwriter x,final String[]a)throws Throwable{
+	synchronized public final void x_foldall(final xwriter x,final String s)throws Throwable{
 		folds.clear();
 		x.xreload();
 	}
-	public final void ax_ed(final xwriter x,final String[]a)throws Throwable{
-		final String pathname=b.urldecode(a[2]);
+	synchronized public final void x_ed(final xwriter x,final String s)throws Throwable{
+		final String pathname=s;
 		x.xlocation("budget.ed?"+b.urlencode(pathname));
 	}
-	public final void ax_add(final xwriter x,final String[]a)throws Throwable{
-		final String pathname=b.urldecode(a[2]);
+	public final void x_add(final xwriter x,final String s)throws Throwable{
+		final String pathname=s;
 		x.xlocation("budget.ed?"+b.urlencode(pathname+"/new"));
 	}
-	public final void ax_rem(final xwriter x,final String[]a)throws Throwable{
-		final String pathname=b.urldecode(a[2]);
-		final path p=b.path(pathname);
+	public final void x_rem(final xwriter x,final String s)throws Throwable{
+		final path p=b.path(s);
 		if(!p.isin(b.path($.fsroot)))
 			throw new Error("not in path: "+p);
 		p.rm();
