@@ -93,13 +93,13 @@ final public class vintage extends a{
 		final PrintStream out=System.out;
 		final vintage x1=new vintage();
 		x1.pth=path.get1(a.length>1?a[1]:filenmromsrc);
-		x1.ax_l(null,null);
+		x1.x_l(null,null);
 		out.println(x1.sts);
-		x1.ax_c(null,null);
+		x1.x_c(null,null);
 		out.println(x1.sts);
-		x1.ax_r(null,null);
+		x1.x_r(null,null);
 		out.println(x1.sts);
-		x1.ax_u(null,null);
+		x1.x_u(null,null);
 		out.println(x1.sts);
 //		while(true){
 //			x1.ax_rf(null,null);
@@ -247,12 +247,12 @@ final public class vintage extends a{
 	void rendrom(xwriter x){
 		rom.to(x);
 	}
-	synchronized public void ax_i(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_i(xwriter x,String s)throws Throwable{
 		ir=rom.get(pcr);
 	}
 	boolean running;
 	@SuppressWarnings("static-access")
-	public void ax_r(xwriter x,String[]a)throws Throwable{
+	public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
 		if(x!=null)x.xu(sts.set("reseting")).flush();
 		zn=0;
@@ -275,17 +275,17 @@ final public class vintage extends a{
 		x.flush();
 		if((dispbits&1)==1&&mode==0){
 			x.xu(sts.set("refreshing display")).flush();
-			ram.ax_rfh(x,a);
+			ram.x_rfh(x,s);
 		}
 		x.xu(sts.set("reseted"));
 	}
-	public void ax_s(final xwriter x,final String[]a)throws Throwable{
+	public void x_s(final xwriter x,final String s)throws Throwable{
 		src.txt.to(pth);
 		sts.set("saved "+pth.name());
 		if(x==null)return;
 		x.xu(sts);
 	}
-	synchronized public void ax_l(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
 		if(pth!=null&&pth.exists()){
 			src.txt.from(pth);
 			sts.set("loaded "+pth.name());
@@ -299,7 +299,7 @@ final public class vintage extends a{
 		x.xu(sts);
 		x.xuo(rom);
 	}
-	public void ax_n(final xwriter x,final String[]a)throws Throwable{
+	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
 			running=false;
 			return;
@@ -315,9 +315,9 @@ final public class vintage extends a{
 		x.xuo(sys).xuo(regs).xuo(calls).xuo(loops);
 		xfocusline(x);
 	}
-	synchronized public void ax_g(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
 		while(true){
-			ax_n(x,a);
+			x_n(x,s);
 			if(x!=null)x.flush();
 			Thread.sleep(1000);
 		}
@@ -333,7 +333,7 @@ final public class vintage extends a{
 		src.xfocusline(x);
 	}
 	private long runms=1000;
-	synchronized public void ax_u(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
 		if(running)throw new Error("already running");
 		running=true;
 		if(x!=null)x.xu(sts.set("running "+runms+" ms")).flush();
@@ -361,11 +361,11 @@ final public class vintage extends a{
 			rom.xfocusline(x);
 			x.flush();
 			if((dispbits&1)==1&&mode==0){
-				ram.ax_rfh(x,a);
+				ram.x_rfh(x,s);
 			}
 		}
 	}
-	synchronized public void ax_b(xwriter x,String[]a)throws Throwable{//? doesnotstopafterconnectionclose
+	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
 		if(running)throw new Error("already running");
 		running=true;
 		if(x!=null)x.xu(sts.set("running to breakpoint")).flush();
@@ -395,10 +395,10 @@ final public class vintage extends a{
 			x.xu(calls);
 			x.xu(loops);
 			xfocusline(x);
-			ram.ax_rfh(x,a);
+			ram.x_rfh(x,s);
 		}
 	}
-	synchronized public void ax_f(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
 		if(running)throw new Error("already running");
 		if(x!=null)x.xu(sts.set("running frame")).flush();
 		running=true;
@@ -421,7 +421,7 @@ final public class vintage extends a{
 		xfocusline(x);
 		x.xu(sts).xu(sys).xu(regs).xu(calls).xu(loops);
 		if((dispbits&1)==1&&mode==0){
-			ram.ax_rfh(x,a);
+			ram.x_rfh(x,s);
 		}
 	}
 	
@@ -447,7 +447,7 @@ final public class vintage extends a{
 //		
 //		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
 	}
-	synchronized public void ax_c(final xwriter x,final String[]a)throws Throwable{
+	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
 		if(x!=null)x.xu(sts.set("compiling")).flush();
 		callmap.clear();
 		labels.clear();

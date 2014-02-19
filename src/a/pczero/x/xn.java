@@ -112,28 +112,28 @@ public class xn extends a{
 		if(x==null)return;
 		x.xu(sts);
 	}
-	synchronized public void ax_c(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_c(xwriter x,String s)throws Throwable{
 		for(final vintage e:core){
-			e.ax_c(null,null);
+			e.x_c(null,null);
 		}
 		sts.set("compiled");
 		if(x==null)return;
 		x.xu(sts);
 	}
-	public void ax_t(xwriter x,String[]a)throws Throwable{
+	public void x_t(xwriter x,String s)throws Throwable{
 		if(running){
 			running=false;
 			return;
 		}
 		for(final vintage c:core)
-			c.ax_n(x,null);
+			c.x_n(x,null);
 		sts.set("stepped");
 	}
-	synchronized public void ax_g(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_g(xwriter x,String s)throws Throwable{
 		if(running)return;running=true;
 		x.xu(sts.set("going"));
 		while(running){
-			ax_t(x,a);
+			x_t(x,s);
 			x.flush();
 			Thread.sleep(500);
 		}
@@ -141,7 +141,7 @@ public class xn extends a{
 	}
 	/**run*/
 	private boolean running;
-	synchronized public void ax_u(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_u(xwriter x,String s)throws Throwable{
 		running=true;
 		long t0=System.currentTimeMillis();
 		long minstr=0;for(final vintage c:core){minstr+=c.mtrinstr;c.sts.clr();}
@@ -168,20 +168,20 @@ public class xn extends a{
 			c.xfocusline(x);
 		}
 		snapshot();
-		ram.ax_rfh(x,a);
+		ram.x_rfh(x,s);
 	}
 
-	public void ax_r(xwriter x,String[]a)throws Throwable{
+	public void x_r(xwriter x,String s)throws Throwable{
 		for(final vintage e:core)
-			e.ax_r(null,null);
+			e.x_r(null,null);
 		if(x==null)return;
 		x.xuo(this);
 		sts.set("reseting");
 		x.flush();
-		ram.ax_rfh(x,null);
+		ram.x_rfh(x,null);
 		sts.set("reseted");
 	}
-	synchronized public void ax_s(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_s(xwriter x,String s)throws Throwable{
 		int i=0;
 		for(final vintage c:core){
 			final path p=req.get().session().path(getClass().getName()).get("c"+(i++)+".src");

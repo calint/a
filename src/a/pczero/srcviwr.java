@@ -60,8 +60,8 @@ final public class srcviwr extends a{
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
 	}
-	synchronized public void ax_brk(xwriter x,String[]a)throws Throwable{
-		final int lno=Integer.parseInt(a[2]);
+	synchronized public void x_brk(xwriter x,String s)throws Throwable{
+		final int lno=Integer.parseInt(s);
 		if(brkptsset.contains(lno)){
 			brkptsset.remove(lno);
 			brkpts.set(brkptsset.toString());
@@ -77,13 +77,13 @@ final public class srcviwr extends a{
 //		x.xu(brkpts);
 //		x.xuo(this);
 	}
-	synchronized public void ax_f1(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_f1(xwriter x,String s)throws Throwable{
 		if(edit)return;
 		edit=true;
 		x.xuo(this);
 		x.xfocus(txt);
 	}
-	synchronized public void ax_f2(xwriter x,String[]a)throws Throwable{
+	synchronized public void x_f2(xwriter x,String s)throws Throwable{
 		if(!edit)return;
 		edit=false;
 		x.xuo(this);

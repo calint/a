@@ -31,8 +31,8 @@ final public class $ extends a{
 		display.refresh();
 	}
 	protected a chldq(final String id){return lse.get(Integer.parseInt(id));}
-	public void ax_(final xwriter x,final String[]a)throws Throwable{
-		ix=Integer.parseInt(a[2]);
+	public void x_(final xwriter x,final String s)throws Throwable{
+		ix=Integer.parseInt(s);
 		x.xuo(this);
 	}
 	protected void ev(final xwriter x,final a from,final Object o)throws Throwable{
