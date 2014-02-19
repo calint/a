@@ -38,6 +38,7 @@ final public class log extends a{
 //		x.nl();
 		x.table().tr().td();
 		x.p("⠸  item").inputText(s,null,this,"s").nl();
+		x.focus(s);
 		x.p("⠷ total").inputText(t,null,this,"s").nl();
 //		x.p("   qty").inputText(q,null,this,"s").nl();
 		x.p("⡹  date").inputText(d,null,this,"s").nl();

@@ -17,7 +17,7 @@ public class square extends a{
 		if(highlight)
 			sb.append(" hilite");
 		x.td(sb.toString());
-		x.a("javascript:ui.ax('"+id()+" clk')");
+		x.a("javascript:$x('"+id()+" clk')");
 		if(piece!=null){
 			x.rend(piece);
 		}else{
@@ -26,5 +26,7 @@ public class square extends a{
 		x.aEnd();
 		x.tdEnd();
 	}
-	public void x_clk(final xwriter x,final String s)throws Throwable{ev(x,this,null);}
+	public void x_clk(final xwriter x,final String s)throws Throwable{
+		ev(x,this,null);
+	}
 }
