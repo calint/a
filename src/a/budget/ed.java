@@ -40,7 +40,7 @@ public class ed extends a{
 			x.script().xfocus(fnm).pl("$('"+fnm.id()+"').select();");
 		}
 	}
-	public void ax_a(final xwriter x,final String[]a) throws Throwable{
+	public void x_a(final xwriter x,final String s) throws Throwable{
 		final path p=b.path(b.urldecode(req.get().query()));
 		if(!p.isin(b.path($.fsroot)))
 			throw new Error("not in path: "+p);

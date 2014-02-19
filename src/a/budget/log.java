@@ -90,7 +90,7 @@ final public class log extends a{
 		x.tr("total").td().td("t").p(g.total).td().td();
 		x.tableEnd();
 	}
-	final public void ax_s(final xwriter x,final String[]p)throws Throwable{
+	final public void x_s(final xwriter x,final String st)throws Throwable{
 //		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
 		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+s,"\n");
 		rend_log(x.xub(l,true,false));x.xube();
@@ -98,8 +98,8 @@ final public class log extends a{
 //		x.xu(q.set("1"));
 		x.xfocus(s);
 	}
-	final public void ax_li(final xwriter x,final String[]p)throws Throwable{
-		f.set(p[2]);
+	synchronized final public void x_li(final xwriter x,final String s)throws Throwable{
+		f.set(s);
 		final Date d=new Date();
 		final Calendar cal=new GregorianCalendar();
 		cal.setTime(d);
@@ -107,7 +107,7 @@ final public class log extends a{
 		cal.set(Calendar.MINUTE,0);
 		cal.set(Calendar.SECOND,0);
 		cal.set(Calendar.MILLISECOND,0);
-		switch(Integer.parseInt(p[2])){
+		switch(Integer.parseInt(s)){
 		case 1://today
 			x.xu(ffr.set(tologdatestr(cal.getTime())));
 			cal.add(Calendar.DATE,1);
@@ -141,13 +141,13 @@ final public class log extends a{
 			x.xu(ffr.clr());
 			x.xu(fto.clr());
 			break;
-		default:throw new Error(p[2]);
+		default:throw new Error(s);
 		}
 		rend_filters(x.xub(fo,true,false));x.xube();
 		rend_log(x.xub(l,true,false));x.xube();
 	}
-	final public void ax_rm(final xwriter x,final String[]p)throws Throwable{
-		final int lineno=Integer.parseInt(p[2]);
+	final public void x_rm(final xwriter x,final String s)throws Throwable{
+		final int lineno=Integer.parseInt(s);
 //		x.xalert(lineno+"");
 		//? userandomaccess
 		final path path_log=path();
