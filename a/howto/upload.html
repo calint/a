@@ -39,7 +39,7 @@ function send(){
 		}
 		reader.onerror=function(e){alert('reader onerror');};
 		reader.onabort=function(e){console.log('File read cancelled');};
-		reader.readAsArrayBuffer(files[0]);
+		reader.readAsArrayBuffer(f);
 	}
 }
 function upload(path,blobOrFile){
