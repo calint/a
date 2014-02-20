@@ -1,15 +1,11 @@
 package a.y.craftytrainer;
 import static b.b.tobytes;
+
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 import b.a;
 import b.xwriter;
 public class $ extends a{
@@ -148,107 +144,5 @@ public class $ extends a{
 			x.xu(dsp," no blunders found at evaluation threshhold "+devthresh+" with search depth "+cft.srchdpth+" ply");
 			return;
 		}
-	}
-	
-	static class crafty{
-//		public static String crafty="/Users/calin/Documents/workspace4/crafty/crafty";
-		public static String crafty="crafty";
-		public int srchdpth=10;
-		private final Process p;
-		private final OutputStream os;
-		private final InputStream is;
-		private final Scanner sc;
-		public crafty(){try{
-			final ProcessBuilder pb=new ProcessBuilder(crafty);
-			pb.directory(new File("."));
-			pb.redirectErrorStream(true);
-			p=pb.start();
-			is=p.getInputStream();
-			os=p.getOutputStream();
-			os.write(("log off\nsd "+srchdpth+"\nanalyze\n").getBytes());
-			os.flush();
-			sc=new Scanner(is);
-			sc.findWithinHorizon("analyze\\.White\\(1\\): ",0);
-		}catch(final Throwable t){throw new Error(t);}}
-		public void reset()throws IOException{
-			os.write("reset 1\n".getBytes());
-			os.flush();
-			scantillnextinput();			
-		}
-		public String move(final String mv)throws Throwable{
-			os.write((mv+"\n").getBytes());
-			os.flush();
-			sc.findWithinHorizon("->",0);
-			final String ln=sc.nextLine();
-			scantillnextinput();
-			return ln;
-		}
-		public void back()throws Throwable{
-			os.write("\n".getBytes());
-			os.flush();
-			scantillnextinput();
-		}
-		public void diagram(final OutputStream out)throws Throwable{
-			final PrintWriter pw=new PrintWriter(out,true);
-			os.write("d\n".getBytes());
-			os.flush();
-			sc.nextLine();
-			sc.nextLine();
-			for(int i=0;i<8*2+2;i++){
-				final String s1=sc.nextLine();
-				pw.println(s1);
-			}
-			scantillnextinput();
-		}
-		private void scantillnextinput(){
-			sc.findWithinHorizon("analyze\\.(White|Black)\\(\\d+\\): ",0);
-		}
-	}
-	static class pgnscanner{
-		private Scanner sc;
-		public pgnscanner(final Scanner sc){this.sc=sc;}
-//		[Site "FICS freechess.org"]
-//		...
-//		[Result "1-0"]
-		public Map<String,String>readHeaders(){
-			final Map<String,String>mp=new LinkedHashMap<String,String>();
-			while(true){
-				final String s1=sc.findWithinHorizon("\\[.*\\]|^$",0);
-				if(s1==null||s1.length()==0)break;
-//				if(s1==null)break;
-//				final String ln=sc.nextLine();
-				final String s2=s1.trim();
-				final String s3=s2.substring(1,s1.length()-1);
-				final int ix=s1.indexOf(' ');
-				final String hdrnm=s3.substring(0,ix).trim();
-				final String s4=s3.substring(ix);
-				final String hdrvl=s4.substring(1,s4.length()-1).trim();
-				mp.put(hdrnm,hdrvl);
-//				System.out.printf("%s %s\n",hdrnm,hdrvl);
-//				if(hdrnm.equals(""))break;
-			}
-			return mp;
-		}
-		private boolean blkmv;
-		public String readNextMove(){
-//			1. e4 e5 2. Nf3 Nc6 
-//			final String s3=sc.findWithinHorizon("\\d+",0);
-			final String ptrneom="\\{(Black|White) (checkmated|resigns|forfeits on time)\\}";
-			if(!blkmv){
-				//\\{White resigns\\}|\\{Black resigns\\}
-				final String s1=sc.findWithinHorizon("(\\d+\\.\\s*)|"+ptrneom,0);
-				if(s1==null)return null;
-				if(s1.matches(ptrneom))return null;
-			}
-			final String s2=sc.findWithinHorizon("[\\w+\\-\\+]+|"+ptrneom,0);
-			if(s2.matches(ptrneom))return null;
-//			final String s3=sc.findWithinHorizon("(\\{\\[%emt \\d+\\.\\d+\\]\\} )|\\s+",0);
-//			final String s3=sc.findWithinHorizon("\\s+",0);
-//			final String s4=sc.findWithinHorizon("\\s*(\\{.*?}\\s*)|\\s*",0);
-			sc.findWithinHorizon("\\s*(\\{.*?}\\s*)|\\s*",0);
-			blkmv=!blkmv;
-			return s2;
-		}
-//		public String toString(){return null;}
 	}
 }
