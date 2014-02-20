@@ -37,8 +37,9 @@ public class $ extends a{
 		x.css(devthr,"border:1px solid green;text-align:right;width:2em");
 		x.styleEnd();
 		x.pre();
-		x.p("paste pgn below:").nl().inputTextArea(in1,"in1").nl().spc().inputFlt(devthr).ax(this,null,"•·scan");
-		x.output(sts).nl().nl();
+		x.p("paste pgn below then ").ax(this,null,"•·scan").p(" for blunders using threshold ").inputFlt(devthr).nl();
+		x.inputTextArea(in1,"in1").nl();
+		x.output(sts).nl();
 		x.output(grph);
 		x.tag("figure");
 		x.output(dsp).nl();
@@ -50,8 +51,8 @@ public class $ extends a{
 		x.nl().nl();
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
-		final pgnscanner pgn=new pgnscanner(new Scanner(new ByteArrayInputStream(tobytes(in1.toString()))));
-		final Map<String,String>hdr=pgn.nextHeader();
+		final pgnscanner pgn=new pgnscanner(new Scanner(in1.toString()));
+		final Map<String,String>hdr=pgn.readHeaders();
 		hdr.clear();
 		x.xu(sts,"");
 		x.xu(dsp,"");
@@ -67,7 +68,7 @@ public class $ extends a{
 		boolean found=false;
 		final float devthresh=devthr.toflt();
 		while(true){
-			final String move=pgn.nextMove();
+			final String move=pgn.readNextMove();
 			if(move==null)break;
 			ply++;
 			if(ply%2==1)
@@ -209,11 +210,11 @@ public class $ extends a{
 //		[Site "FICS freechess.org"]
 //		...
 //		[Result "1-0"]
-		public Map<String,String>nextHeader(){
+		public Map<String,String>readHeaders(){
 			final Map<String,String>mp=new LinkedHashMap<String,String>();
 			while(true){
-				final String s1=sc.findWithinHorizon("\\[.*?\\]|$",0);
-				if(s1.length()==0)break;
+				final String s1=sc.findWithinHorizon("\\[.*\\]|^$",0);
+				if(s1==null||s1.length()==0)break;
 //				if(s1==null)break;
 //				final String ln=sc.nextLine();
 				final String s2=s1.trim();
@@ -229,8 +230,9 @@ public class $ extends a{
 			return mp;
 		}
 		private boolean blkmv;
-		public String nextMove(){
-//			1. Nf3 {[%emt 0.0]} Nf6 {[%emt 0.0]} 2. ...
+		public String readNextMove(){
+//			1. e4 e5 2. Nf3 Nc6 
+//			final String s3=sc.findWithinHorizon("\\d+",0);
 			final String ptrneom="\\{(Black|White) (checkmated|resigns|forfeits on time)\\}";
 			if(!blkmv){
 				//\\{White resigns\\}|\\{Black resigns\\}
@@ -247,5 +249,6 @@ public class $ extends a{
 			blkmv=!blkmv;
 			return s2;
 		}
+//		public String toString(){return null;}
 	}
 }
