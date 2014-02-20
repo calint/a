@@ -1,0 +1,69 @@
+<!doctype html>
+<pre>
+<input type="file" id="files" name="files[]" multiple> <input type=button value=send onclick="send()">
+
+<output id="list"></output>
+
+
+<progress min="0" max="100" value="0" style="width:100%" />
+<script>
+function send(){
+	var files=document.getElementById("files").files;
+//	console.log(files);
+	var output=[];
+	for(var i=0,f;f=files[i];i++){
+		output.push('<li><strong>',escape(f.name),'</strong> (',f.type||'n/a',') - ',
+		f.size,' bytes, last modified: ',
+		f.lastModifiedDate?f.lastModifiedDate.toLocaleDateString():'n/a',
+		'</li>');
+		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+		
+		document.querySelector('progress').value=0;
+		var reader=new FileReader();
+		reader.onloadstart=function(e){console.log('reader onloadstart');};
+		reader.onprogress==function(e){
+			console.log('reader onprogress ');
+			if(!e.lengthComputable)return;
+			var pb=document.querySelector('progress');
+			pb.value=(e.loaded/e.total)*100;
+			pb.textContent=progressBar.value;
+		};
+		reader.onload=function(e){
+			console.log('reader onload');
+			var res=reader.result;
+			console.log('reader result:'+res.byteLength);
+			upload(escape(files[0].name),new Blob([res],{type:'application/octet-stream'}));
+		}
+		reader.onloadend=function(e){
+			console.log('reader onloadend');
+		}
+		reader.onerror=function(e){alert('reader onerror');};
+		reader.onabort=function(e){console.log('File read cancelled');};
+		reader.readAsArrayBuffer(files[0]);
+	}
+}
+function upload(path,blobOrFile){
+	var xhr=new XMLHttpRequest();
+	xhr.onreadystatechange=function(){
+		console.log('onreadychange '+xhr.readyState+' status: '+xhr.status)
+	};
+	xhr.upload.onprogress=function(e){
+		var pb=document.querySelector('progress');
+		console.log('onprogress '+xhr.status);
+		if(!e.lengthComputable)return;
+		pb.value=(e.loaded/e.total)*100;
+	};
+	xhr.onload=function(e){
+		console.log('onload '+xhr.status);
+		pb.value=1;
+	};
+	xhr.open('POST','/'+path,true);
+	xhr.setRequestHeader("Content-type","file");
+	xhr.onloadstart=function(e){console.log('onloadstart '+xhr.status);};
+	xhr.onabort=function(e){console.log('onabort');};
+	xhr.onerror=function(e){console.log('onerror');};
+	xhr.ontimeout=function(e){console.log('ontimeout');};
+	xhr.send(blobOrFile);
+}
+
+</script>
