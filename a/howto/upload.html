@@ -7,7 +7,7 @@ function send(){
 	document.getElementById('outp').innerHTML='';
 	var files=document.getElementById("files").files;
 	for(var i=0,f;f=files[i];i++){
-		document.getElementById('outp').innerHTML+=f.name+'  '+f.size+'\n<progress id=pb'+i+' min=0 max=100 value=0 style="width:100%"></progress>\n';
+		document.getElementById('outp').innerHTML+=f.name+'  '+f.size+'\n<progress id=pb'+i+' value=0 style=width:100%></progress>\n';
 		upload(f.name,f,'pb'+i);
 	}
 }
@@ -20,11 +20,11 @@ function upload(path,blobOrFile,progressbarId){
 	xhr.upload.onprogress=function(e){
 		if(!e.lengthComputable)return;
 		console.log('onprogress '+progressbarId+'   '+path+' '+xhr.status+'   '+(e.loaded/e.total)*100);
-		document.getElementById(progressbarId).value=(e.loaded/e.total)*100;
+		document.getElementById(progressbarId).value=e.loaded/e.total;
 	};
 	xhr.onload=function(e){
 		console.log('onload '+path+' '+xhr.status);
-		document.getElementById(progressbarId).value=100;
+		document.getElementById(progressbarId).value=1;
 	};
 	xhr.open('POST','/'+escape(path),true);
 	xhr.setRequestHeader("Content-type","file");
