@@ -1,32 +1,87 @@
-<!DOCTYPE html><meta charset="utf-8"><style>html{width:21em;border-radius:1em;border:1px dotted gray;font-size:1.5em;margin:.5em 0 0 2em;padding:0 0 0 1em}</style><pre>
+<!DOCTYPE html><meta charset="utf-8"><style>html{text-align:center;width:21em;border-radius:1em;border:1px dotted gray;font-size:1.5em;margin:.5em 0 0 2em;padding:0 0 0 1em}</style><pre>
 <!--<img id=image src="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9YGARc5KB0XV+IAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAF1JREFUGNO9zL0NglAAxPEfdLTs4BZM4DIO4C7OwQg2JoQ9LE1exdlYvBBeZ7jqch9//q1uH4TLzw4d6+ErXMMcXuHWxId3KOETnnXXV6MJpcq2MLaI97CER3N0vr4MkhoXe0rZigAAAABJRU5ErkJggg==
 "/>-->
 <img id=image src="" />
-
+<output id="recvsize" style="color:blue"></output>
+<!-- 
    <input id="inp" size=32 onchange="websocksend(this.value);this.value=''" autofocus style="box-shadow:0px 0px 10px 4px rgba(64,128,0,.5)"> <a onclick="{$.outp.value=$.sendsize.value=$.recvsize.value='';$.inp.focus()}">x</a> <output id="sendsize" style="color:green"></output> <output id="recvsize" style="color:blue"></output>
-
+ -->
 <output id="outp"></output>
-<script>$=document.all;p("websock "+document.cookie);
+<script>$=document.all;p(document.cookie);
+var frameno=0;
 var ws=new WebSocket("ws://"+location.host+"/pczero.io");
 ws.binaryType="arraybuffer";
 ws.onopen=function(e){p("open");}
 ws.onmessage=function(e){
-	$.recvsize.value=e.data.length;
-	p(">> "+e.data);
-	console.log(typeof e.data); // ArrayBuffer object if binary
-	var arrayBuffer=e.data;
-	alert(e.data);
-//	console.log(arrayBuffer);
-	var bytes=new Uint8Array(arrayBuffer);
-	var image=document.getElementById('image');
-	image.src='data:image/png;base64,'+encode(e.data);
-	return;
-	var image=document.getElementById('image');
-	image.src='data:image/png;base64,'+encode(bytes);
+	frameno++;
+	$.recvsize.value="frame: "+frameno+"  datalen: "+e.data.byteLength;
+	var b64=base64ArrayBuffer(e.data);
+	document.getElementById('image').src='data:image/png;base64,'+b64;
 };
 ws.onclose=function(e){alert("websocket closed");};
 ws.onerror=function(e){alert("websocket error");};
 function websocksend(s){$.sendsize.value=s.length;p("<< "+s);ws.send(s);}
 function p(txt){$.outp.value=txt+'\n'+$.outp.value;}
+
+
+// from https://gist.github.com/jonleighton/958841
+// Converts an ArrayBuffer directly to base64, without any intermediate 'convert to string then
+// use window.btoa' step. According to my tests, this appears to be a faster approach:
+// http://jsperf.com/encoding-xhr-image-data/5
+
+function base64ArrayBuffer(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+  
+  return base64
+}
+
+
+setInterval(function(){ws.send('');},100);
 </script>
