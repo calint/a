@@ -7,6 +7,7 @@ import b.websock;
 final public class o extends websock implements threadedsock{static final long serialVersionUID=1;
 	final protected void onopened()throws Throwable{
 		final vintage v=new vintage();
+		session().put(getClass().getName(),v);
 		System.out.println(v.sts);
 		v.x_l(null,null);
 		System.out.println(v.sts);
