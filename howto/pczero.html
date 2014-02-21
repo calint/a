@@ -1,0 +1,32 @@
+<!DOCTYPE html><meta charset="utf-8"><style>html{width:21em;border-radius:1em;border:1px dotted gray;font-size:1.5em;margin:.5em 0 0 2em;padding:0 0 0 1em}</style><pre>
+<!--<img id=image src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9YGARc5KB0XV+IAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAF1JREFUGNO9zL0NglAAxPEfdLTs4BZM4DIO4C7OwQg2JoQ9LE1exdlYvBBeZ7jqch9//q1uH4TLzw4d6+ErXMMcXuHWxId3KOETnnXXV6MJpcq2MLaI97CER3N0vr4MkhoXe0rZigAAAABJRU5ErkJggg==
+"/>-->
+<img id=image src="" />
+
+   <input id="inp" size=32 onchange="websocksend(this.value);this.value=''" autofocus style="box-shadow:0px 0px 10px 4px rgba(64,128,0,.5)"> <a onclick="{$.outp.value=$.sendsize.value=$.recvsize.value='';$.inp.focus()}">x</a> <output id="sendsize" style="color:green"></output> <output id="recvsize" style="color:blue"></output>
+
+<output id="outp"></output>
+<script>$=document.all;p("websock "+document.cookie);
+var ws=new WebSocket("ws://"+location.host+"/pczero.io");
+ws.binaryType="arraybuffer";
+ws.onopen=function(e){p("open");}
+ws.onmessage=function(e){
+	$.recvsize.value=e.data.length;
+	p(">> "+e.data);
+	console.log(typeof e.data); // ArrayBuffer object if binary
+	var arrayBuffer=e.data;
+	alert(e.data);
+//	console.log(arrayBuffer);
+	var bytes=new Uint8Array(arrayBuffer);
+	var image=document.getElementById('image');
+	image.src='data:image/png;base64,'+encode(e.data);
+	return;
+	var image=document.getElementById('image');
+	image.src='data:image/png;base64,'+encode(bytes);
+};
+ws.onclose=function(e){alert("websocket closed");};
+ws.onerror=function(e){alert("websocket error");};
+function websocksend(s){$.sendsize.value=s.length;p("<< "+s);ws.send(s);}
+function p(txt){$.outp.value=txt+'\n'+$.outp.value;}
+</script>
