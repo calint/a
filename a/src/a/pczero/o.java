@@ -6,27 +6,17 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
 import b.threadedsock;
 import b.websock;
-final public class io extends websock implements threadedsock{static final long serialVersionUID=1;
+final public class o extends websock implements threadedsock{static final long serialVersionUID=1;
 	final protected void onopened()throws Throwable{
-		enableclientinput();
 		while(true){
 			sendscreen();
-//			Thread.sleep(10000);
 		}
 	}
-	private int n;
-	final protected void onmessage(final ByteBuffer bb)throws Throwable{
-		System.out.println(bb.remaining()+"   "+bb.get());
-		n++;
-	}
-	final protected void onclosed()throws Throwable{}
 	private void sendscreen() throws AWTException, IOException, Throwable {
 		final long t0=System.currentTimeMillis();
 		final Rectangle dim=new Rectangle(256,128);
