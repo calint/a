@@ -1,6 +1,8 @@
 package a.pczero;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
 
 import a.x.jskeys;
 import b.a;
@@ -254,7 +258,8 @@ final public class vintage extends a{
 	@SuppressWarnings("static-access")
 	public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
-		if(x!=null)x.xu(sts.set("reseting")).flush();
+		sts.set("reseting");
+		if(x!=null)x.xu(sts).flush();
 		zn=0;
 		loadreg=-1;
 		setpcr(0);
@@ -267,8 +272,8 @@ final public class vintage extends a{
 		for(int i=0;i<rom.size;i++)
 			ram.set(i,rom.get(i));
 		ev(null,this);
-		if(x==null)return;
 		wait=notify=false;
+		if(x==null)return;
 		xfocusline(x);
 		x.xu(sys).xuo(regs).xuo(calls).xuo(loops);
 		x.xu(sts.set("refresh display"));
@@ -406,18 +411,18 @@ final public class vintage extends a{
 		final long t0=System.currentTimeMillis();
 		while(running){
 			step();
-			if(wasrerun)
+			if(wasrerun){
+				wasrerun=false;
 				break;
+			}
 		}
 		if(running){
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=mtrinstr-instr0;
 			sts.set("#"+mtrframes+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
 			running=false;
-			snapshot();
 		}
 		if(x==null)return;
-//		rom.focusline=pcr;
 		xfocusline(x);
 		x.xu(sts).xu(sys).xu(regs).xu(calls).xu(loops);
 		if((dispbits&1)==1&&mode==0){
@@ -426,23 +431,22 @@ final public class vintage extends a{
 	}
 	
 //	private int snapshotn;
-	void snapshot()throws IOException{
-//		final BufferedImage bi=new BufferedImage(ram.width,ram.height,BufferedImage.TYPE_INT_ARGB);
-//		int k=0;
-//		for(int i=0;i<ram.height;i++){
-//			for(int j=0;j<ram.width;j++){
-//				final short d=ram.get(k++);
-//				final int b=d&0xf;
-//				final int g=(d>>4)&0xf;
-//				final int r=(d>>8)&0xf;
-////				final int a=(d>>12)&0xf;
-//				final int a=0xa0;
-//				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
-//				bi.setRGB(j,i,argb);
-//			}
-//		}
-//		final path p=req.get().session().path(getClass().getName()).get("scr.png");
-//	    ImageIO.write(bi,"png",p.outputstream());
+	public void snapshot(final OutputStream os)throws IOException{
+		final BufferedImage bi=new BufferedImage(ram.width,ram.height,BufferedImage.TYPE_INT_ARGB);
+		int k=0;
+		for(int i=0;i<ram.height;i++){
+			for(int j=0;j<ram.width;j++){
+				final short d=ram.get(k++);
+				final int b= (d    &0xf)*0xf;
+				final int g=((d>>4)&0xf)*0xf;
+				final int r=((d>>8)&0xf)*0xf;
+//				final int a=(d>>12)&0xf;
+				final int a=0xff;
+				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
+				bi.setRGB(j,i,argb);
+			}
+		}
+		ImageIO.write(bi,"png",os);
 //		
 //		
 //		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
