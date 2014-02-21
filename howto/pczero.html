@@ -1,14 +1,14 @@
 <!DOCTYPE html><meta charset="utf-8"><style>html{text-align:center;width:21em;border-radius:1em;border:1px dotted gray;font-size:1.5em;margin:.5em 0 0 2em;padding:0 0 0 1em}</style><pre>
-<div tabindex=0 onkeydown="var ab=new Uint8Array([event.keyCode]);console.log(ab);ws.send(ab);return false;" style="border:1px solid red">
+<div tabindex=0 onkeydown="var ab=new Uint8Array([event.keyCode]);console.log(ab);wso.send(ab);return false;" style="border:1px solid red">
 	<img id=image src="" />
 	<output id="recvsize" style="color:blue"></output>
 	<output id="outp"></output>
 </div>
 <script>$=document.all;p(document.cookie);
 var frameno=0;
-var ws=new WebSocket("ws://"+location.host+"/pczero.io");
+var ws=new WebSocket("ws://"+location.host+"/pczero.o");
 ws.binaryType="arraybuffer";
-ws.onopen=function(e){p("open");}
+ws.onopen=function(e){p("open screen");}
 ws.onmessage=function(e){
 	frameno++;
 	$.recvsize.value="frame: "+frameno+"  datalen: "+e.data.byteLength;
@@ -18,6 +18,10 @@ ws.onmessage=function(e){
 };
 ws.onclose=function(e){alert("websocket closed");};
 ws.onerror=function(e){alert("websocket error");};
+
+var wso=new WebSocket("ws://"+location.host+"/pczero.i");
+wso.onopen=function(e){p("open keyboard");}
+
 function websocksend(s){$.sendsize.value=s.length;p("<< "+s);ws.send(s);}
 function p(txt){$.outp.value=txt+'\n'+$.outp.value;}
 
