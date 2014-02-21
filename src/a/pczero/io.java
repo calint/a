@@ -19,22 +19,40 @@ final public class io extends websock implements threadedsock{static final long 
 //			ws.endpoint_recv(bbs.slice());
 //		}
 		synchronized(socks){socks.add(this);}
+//		while(true){
+//			final long t0=System.currentTimeMillis();
+//			final Rectangle dim=new Rectangle(256,128);
+//			final BufferedImage bi=new Robot().createScreenCapture(dim);
+//			final ByteArrayOutputStream baos=new ByteArrayOutputStream();
+//			ImageIO.write(bi,"png",baos);
+//			final ByteBuffer bbpng=ByteBuffer.wrap(baos.toByteArray());
+//			final long t1=System.currentTimeMillis();
+//		//	System.out.println(session().id()+"   "+(t1-t0)+" ms   "+bbpng.limit());
+//			for(final websock ws:socks){
+//				//if(ws.isrecv()){System.out.println("busy");continue;}
+//				ws.endpoint_recv(bbpng,false);
+////				final ByteBuffer[]bba=new ByteBuffer[]{bb.slice()};
+////				ws.endpoint_recv(bba,false);
+//			}
+//			n++;
+//		}
 	}
 	private int n;
 	final protected void onmessage(final ByteBuffer bb)throws Throwable{
+		System.out.println(bb.remaining()+"   "+bb.get());
 		final long t0=System.currentTimeMillis();
-		final BufferedImage bi=new Robot().createScreenCapture(new Rectangle(256,128));
+		final Rectangle dim=new Rectangle(256,128);
+		final BufferedImage bi=new Robot().createScreenCapture(dim);
 		final ByteArrayOutputStream baos=new ByteArrayOutputStream();
 		ImageIO.write(bi,"png",baos);
 		final ByteBuffer bbpng=ByteBuffer.wrap(baos.toByteArray());
 		final long t1=System.currentTimeMillis();
-		System.out.println(t1-t0+"   "+bbpng.limit());
+	//	System.out.println(session().id()+"   "+(t1-t0)+" ms   "+bbpng.limit());
 		for(final websock ws:socks){
-			try{ws.endpoint_recv(bbpng,false);}catch(final Throwable t){
-				t.printStackTrace();
-			}
-//			final ByteBuffer[]bba=new ByteBuffer[]{bb.slice()};
-//			ws.endpoint_recv(bba,false);
+			//if(ws.isrecv()){System.out.println("busy");continue;}
+			ws.endpoint_recv(bbpng,false);
+//				final ByteBuffer[]bba=new ByteBuffer[]{bb.slice()};
+//				ws.endpoint_recv(bba,false);
 		}
 		n++;
 	}

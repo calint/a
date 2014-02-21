@@ -1,13 +1,9 @@
 <!DOCTYPE html><meta charset="utf-8"><style>html{text-align:center;width:21em;border-radius:1em;border:1px dotted gray;font-size:1.5em;margin:.5em 0 0 2em;padding:0 0 0 1em}</style><pre>
-<!--<img id=image src="data:image/png;base64,
-iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9YGARc5KB0XV+IAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAF1JREFUGNO9zL0NglAAxPEfdLTs4BZM4DIO4C7OwQg2JoQ9LE1exdlYvBBeZ7jqch9//q1uH4TLzw4d6+ErXMMcXuHWxId3KOETnnXXV6MJpcq2MLaI97CER3N0vr4MkhoXe0rZigAAAABJRU5ErkJggg==
-"/>-->
-<img id=image src="" />
-<output id="recvsize" style="color:blue"></output>
-<!-- 
-   <input id="inp" size=32 onchange="websocksend(this.value);this.value=''" autofocus style="box-shadow:0px 0px 10px 4px rgba(64,128,0,.5)"> <a onclick="{$.outp.value=$.sendsize.value=$.recvsize.value='';$.inp.focus()}">x</a> <output id="sendsize" style="color:green"></output> <output id="recvsize" style="color:blue"></output>
- -->
-<output id="outp"></output>
+<div tabindex=0 onkeydown="var ab=new Uint8Array([event.keyCode]);console.log(ab);ws.send(ab);return false;" style="border:1px solid red">
+	<img id=image src="" />
+	<output id="recvsize" style="color:blue"></output>
+	<output id="outp"></output>
+</div>
 <script>$=document.all;p(document.cookie);
 var frameno=0;
 var ws=new WebSocket("ws://"+location.host+"/pczero.io");
@@ -17,7 +13,8 @@ ws.onmessage=function(e){
 	frameno++;
 	$.recvsize.value="frame: "+frameno+"  datalen: "+e.data.byteLength;
 	var b64=base64ArrayBuffer(e.data);
-	document.getElementById('image').src='data:image/png;base64,'+b64;
+	var img=document.getElementById('image');
+	img.src='data:image/png;base64,'+b64;
 };
 ws.onclose=function(e){alert("websocket closed");};
 ws.onerror=function(e){alert("websocket error");};
@@ -83,5 +80,5 @@ function base64ArrayBuffer(arrayBuffer) {
 }
 
 
-setInterval(function(){ws.send('');},100);
+//setInterval(function(){ws.send('');},100);
 </script>
