@@ -19,6 +19,7 @@ final public class o extends websock implements threadedsock{static final long s
 			final ByteBuffer bbpng=ByteBuffer.wrap(baos.toByteArray());
 			final long t1=System.currentTimeMillis();
 			endpoint_recv(bbpng,false);
+			final long t2=System.currentTimeMillis();
 		}
 	}
 }
