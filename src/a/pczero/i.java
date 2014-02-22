@@ -1,5 +1,6 @@
 package a.pczero;
 import java.nio.*;
+
 import b.websock;
 final public class i extends websock{static final long serialVersionUID=1;
 	private int n;
@@ -13,5 +14,10 @@ final public class i extends websock{static final long serialVersionUID=1;
 		v.ram.set(0,b*b);
 //		System.out.println(bb.remaining()+"   "+bb.get());
 		n++;
+	}
+	protected void onclosed()throws Throwable{
+		final vintage v=(vintage)session().get(o.class.getName());
+		v.x_stop(null,null);
+		session().remove(getClass().getName());
 	}
 }
