@@ -11,8 +11,7 @@ final public class i extends websock{static final long serialVersionUID=1;
 			return;
 		}
 		final byte b=bb.get();
-		v.ram.set(0,b*b);
-//		System.out.println(bb.remaining()+"   "+bb.get());
+		v.ram.set(2,b*b);
 		n++;
 	}
 	protected void onclosed()throws Throwable{
