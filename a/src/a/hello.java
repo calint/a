@@ -33,5 +33,7 @@ public class hello extends a{
 		new cli("sh",s).p("sysctl -A").exit();
 		x.p(hr).nl();
 		new cli("sh",s).p("ps axjf").exit();
+		x.p(hr).nl();
+		new cli("sh",s).p("ps aux").exit();
 	}
  }
