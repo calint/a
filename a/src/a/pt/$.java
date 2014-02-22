@@ -16,4 +16,5 @@ public static class seat extends a{static final long serialVersionUID=1;public v
 public static class engine extends a{static final long serialVersionUID=1;public void to(final xwriter x)throws Throwable{x.pl(getClass().toString());}}
 public static class fuel extends a{static final long serialVersionUID=1;public void to(final xwriter x)throws Throwable{x.pl(getClass().toString());}}
 public static class fuelstation extends a{static final long serialVersionUID=1;public void to(final xwriter x)throws Throwable{x.pl(getClass().toString());}}
+public static class garage extends a{static final long serialVersionUID=1;public void to(final xwriter x)throws Throwable{x.pl(getClass().toString());}}
 }
