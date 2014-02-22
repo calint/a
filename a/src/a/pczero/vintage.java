@@ -256,6 +256,8 @@ final public class vintage extends a{
 	}
 	boolean running;
 	@SuppressWarnings("static-access")
+	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
+	public boolean stopped;
 	public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
 		sts.set("reseting");
@@ -273,6 +275,7 @@ final public class vintage extends a{
 			ram.set(i,rom.get(i));
 		ev(null,this);
 		wait=notify=false;
+		stopped=false;
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sys).xuo(regs).xuo(calls).xuo(loops);
