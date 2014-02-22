@@ -1,4 +1,4 @@
-package a.bureaucrat;
+package a.y.bureaucrat;
 
 import b.a;
 import b.xwriter;
