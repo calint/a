@@ -6,7 +6,7 @@
 	#sts{color:brown}
 </style>
 <pre>
-<img id=image src="" width=1024 height=512 tabindex=0 onkeydown="var ab=new Uint8Array([event.keyCode]);console.log(ab);wso.send(ab);return false;" />
+<script>document.write(document.cookie);</script>
 <a href="javascript:stop()" tabindex=1>off</a> <a href="javascript:start()" tabindex=2>on</a> <a href="javascript:compile()" tabindex=2>compile</a> <output id="outp"></output> <output id="recvsize"></output> <output id=sts></output>
 <textarea id=src spellcheck=false>
 p++ // frame
@@ -172,55 +172,135 @@ blits:
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
 </textarea> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 $=document.all;
 start();
+var ctx = new window.AudioContext();
+initsnd();
 
 function start(){
 	$.sts.value="on";
 	frameno=0;
-	ws=new WebSocket("ws://"+location.host+"/pczero.o");
+	ws=new WebSocket("ws://"+location.host+"/pczero.i");
 	ws.binaryType="arraybuffer";
-	ws.onopen=function(e){p(" screen");}
+	ws.onopen=function(e){p(" speakers");}
 	ws.onmessage=function(e){
 		frameno++;
 		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B";
-		var b64=base64ArrayBuffer(e.data);
-		var img=document.getElementById('image');
-		img.src='data:image/png;base64,'+b64;
+		console.log("data size in bytes: "+e.data.byteLength);
+		
+		var buffer=ctx.createBuffer(1,44100,44100);
+		var buf=buffer.getChannelData(0);
+		for(var i=0;i<buffer.length;++i) {
+			buf[i]=Math.sin(i/8);
+		}
+		var node=ctx.createBufferSource();
+		node.connect(ctx.destination);
+		node.buffer=buffer;
+		node.loop=false;
+		node.start(0);
+		return;
+		
+		
+		var blb=mkwav(e.data);
+		console.log("blob size in bytes: "+blb.size);
+		var fileReader=new FileReader();
+		fileReader.onload=function(){
+//			console.log(this.result.byteLength);
+//			$.aud.src='data:audio/wav;base64,'+base64ArrayBuffer(this.result);
+//			console.log($.aud.src);
+		};
+		fileReader.readAsArrayBuffer(blb);
 	};
 	ws.onerror=function(e){alert("websocket error");};
-	
-	wso=new WebSocket("ws://"+location.host+"/pczero.i");
-	wso.onopen=function(e){p(" keyb");}
-	
-	wsp=new WebSocket("ws://"+location.host+"/pczero.portb");
-	wsp.onopen=function(e){p(" portb");}
-	wsp.onmessage=function(e){
-		$.sts.value=e.data;
-	};
 }
 function stop(){
 	ws.close();
-	wso.close();
-	wsp.close();
 	$.outp.value="";
 	$.sts.value="off";
 }
 function compile(){
 	wsp.send($.src.value);
 }
-function websocksend(s){$.sendsize.value=s.length;p("<< "+s);ws.send(s);}
 function p(txt){$.outp.value+=txt;}
 
+function initsnd(){
+	var buffer=ctx.createBuffer(1,44100,44100);
+	var buf=buffer.getChannelData(0);
+	for(var i=0;i<buffer.length;++i) {
+		buf[i]=Math.sin(i/8);
+	}
+	var node=ctx.createBufferSource();
+	node.buffer=buffer;
+	node.loop=true;
+	node.connect(ctx.destination);
+	node.start(0);
+	return;
 
+	
+		
+	var d=Int16Array(44100);
+	for(var i=0;i<d.length;i++){
+		//d[i]=Math.random()*32768;
+		d[i]=Math.sin(i/16)*32768;
+	}
+	var blb=mkwav(d);
+//	console.log(blb.size);
+	var fileReader=new FileReader();
+	fileReader.onload=function(){
+		//console.log(this.result.byteLength);
+		ctx.decodeAudioData(this.result,function(buffer){
+			var src=ctx.createBufferSource();
+			src.buffer=buffer;
+			src.looping=true;
+			src.connect(ctx.destination);
+			src.start(0);
+		}, function(e) {
+			console.log(e);
+		});
+//		$.aud.src='data:audio/wav;base64,'+base64ArrayBuffer(this.result);
+//		console.log($.aud.src);
+	};
+	fileReader.readAsArrayBuffer(blb);
+}
 
-
-
-
-
-
-
+function mkwav(samples){
+	var header = new Uint8Array([
+		0x52,0x49,0x46,0x46, // "RIFF"
+		0, 0, 0, 0,          // put total size here
+		0x57,0x41,0x56,0x45, // "WAVE"
+		0x66,0x6d,0x74,0x20, // "fmt "
+		16,0,0,0,            // size of the following
+		1, 0,                // PCM format
+		1, 0,                // Mono: 1 channel
+		0x44,0xAC,0,0,       // 44,100 samples per second
+		0x88,0x58,0x01,0,    // byte rate: two bytes per sample
+		2, 0,                // aligned on every two bytes
+		16, 0,               // 16 bits per sample
+		0x64,0x61,0x74,0x61, // "data"
+		0, 0, 0, 0           // put number of samples here
+	]).buffer
+	var dv = new DataView(header);
+	dv.setInt32( 4,36+samples.byteLength,true);
+	dv.setInt32(40,samples.byteLength,true);
+	var blb=new Blob([header,samples],{type:"audio/x-wav"});
+	//console.log("blob size: "+blb.size);
+	return blb;
+}
 
 
 
@@ -295,4 +375,7 @@ function base64ArrayBuffer(arrayBuffer) {
   
   return base64
 }
+
+
+//setInterval(function(){ws.send('');},100);
 </script>

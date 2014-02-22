@@ -16,6 +16,7 @@ final public class i extends websock{static final long serialVersionUID=1;
 	}
 	protected void onclosed()throws Throwable{
 		final vintage v=(vintage)session().get(o.class.getName());
+		if(v==null)return;
 		v.x_stop(null,null);
 		session().remove(getClass().getName());
 	}
