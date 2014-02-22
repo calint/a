@@ -5,7 +5,7 @@ import b.threadedsock;
 import b.websock;
 final public class portb extends websock implements threadedsock{static final long serialVersionUID=1;
 	synchronized final protected void onmessage(final ByteBuffer bb)throws Throwable{
-		final vintage v=(vintage)session().get(o.class.getName());
+		final vintage v=(vintage)session().get(porta.class.getName());
 		if(v==null){
 			System.out.println("vintage not in session yet");
 			return;

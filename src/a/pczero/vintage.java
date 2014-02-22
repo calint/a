@@ -264,18 +264,17 @@ final public class vintage extends a{
 		if(x!=null)x.xu(sts).flush();
 		zn=0;
 		loadreg=-1;
+		rom.rst();
 		setpcr(0);
 		calls.rst();
 		loops.rst();
 		regs.rst();
 		ram.rst();
-		rom.rst();
 		mtrinstr=mtrframes=mtrldc=mtrstc=0;
 		for(int i=0;i<rom.size;i++)
 			ram.set(i,rom.get(i));
 		ev(null,this);
-		wait=notify=false;
-		stopped=false;
+		wait=notify=stopped=false;
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sys).xuo(regs).xuo(calls).xuo(loops);

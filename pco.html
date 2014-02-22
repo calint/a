@@ -1,0 +1,300 @@
+<!DOCTYPE html onload="console.log('load')"><meta charset="utf-8">
+<style>
+	html{margin:0;padding:0;text-align:center;width:100%;}
+	#src{padding-left:.5em;width:16em;height:512em;border:1px dotted blue}
+	#recvsize{color:green}
+	#sts{color:brown}
+</style>
+<pre>
+<img id=image src="" width=1024 height=512 tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return false;" onkeyup="keys=new Uint8Array([0,0]);return false;"/>
+<a href="javascript:stop()" tabindex=1>off</a> <a href="javascript:start()" tabindex=2>on</a> <a href="javascript:compile()" tabindex=2>compile</a> <output id="outp"></output> <output id="recvsize"></output> <output id=sts></output>
+<textarea id=src spellcheck=false>
+p++ // frame
+a=0300
+stc a p
+
+b=:blits
+b++ // skip len
+ldc b c // first
+c++ // inc
+b=:blits //
+b++ // skip len
+stc b c // store
+
+m=100 // dispwidth
+
+//call
+a=0400 // from
+c=70 // lines
+d=0f00 // argb
+d+=p
+clr
+
+//call
+a=400
+drwrects
+
+//call
+a=400
+drwblits
+
+//call
+a=400
+b=:txt // ref
+typewriter
+
+//call
+a=400
+drwdots
+
+..
+..
+clr:
+lp c
+  lp m
+    stc a d nxt
+    inc d nxt ret
+
+drwdots:
+f=:dots
+c=*f++
+lp c
+  g=*f++ // yyxx
+  h=*f++ // argb
+  g+=a
+  stc g h nxt ret
+
+..
+typewriter:
+c=4 // chwh
+j=f00 // argb
+f:=m // inca
+f-=c
+g=-400 // -c*m
+g+=c // +c
+i=*b++
+lp i
+  d=*b++
+  type nxt
+ret
+..
+type:
+lp c
+  lp c
+    d<<=1
+    ifn stc a j
+    ifp a++
+    ifz a++
+    j++ nxt
+  a+=f nxt   
+a+=g ret    
+..
+drwrects:
+b=:rects
+ldc b c // len
+lp c
+  a=*b++ // yyxx
+  d=*b++ // argb
+  e=*b++ // hi
+  f=*b++ // wi
+  g:=m // linewdth
+  g-=f // inca
+  lp e
+    lp f
+      stc a d nxt
+    a+=g nxt
+  nxt ret
+..
+drwblits:
+k=:blits
+ldc k j
+lp j
+  a=*k++ // to
+  b=*k++ // from
+  h=*k++ // height
+  i=*k++ // width
+  e:=m
+  e-=i
+  lp h
+    lp i
+      d=*b++
+      ifz a++ nxt
+      ifp stc a d nxt
+      ifn stc a d nxt
+    b+=e
+    a+=e nxt
+  nxt ret
+
+..
+txt:
+. 12 // len
+. 000f 00ff 0fff 0175 
+. 0767 0043
+. 0043 0252 0126 ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+
+dots:
+. 1
+//yyxx argb
+. 0100 f00 
+
+rects:
+. 5
+//yyxx argb hi   wi
+. 3830 0422 0010 0010
+. 040c 0fff 0008 0008
+. 0400 0eee 0008 0008
+. 1000 0ddd 0008 0008
+. 100c 0ccc 0008 0008
+
+blits:
+. 1
+//yyxx adr  wi   hi
+. 3830 0000 0020 0020
+. 2080 0000 0020 0020
+. 4080 0000 0020 0020
+. 6080 0000 0020 0020
+. 04a0 0000 0020 0020
+. 20a0 0000 0020 0020
+. 40a0 0000 0020 0020
+. 60a0 0000 0020 0020
+. 04c0 0000 0020 0020
+. 20c0 0000 0020 0020
+. 40c0 0000 0020 0020
+. 60c0 0000 0020 0020
+. 04e0 0000 0020 0020
+. 20e0 0000 0020 0020
+. 40e0 0000 0020 0020
+. 60e0 0000 0020 0020
+</textarea> 
+<script>
+$=document.all;
+var keys=new Uint8Array([0,0]);
+start();
+
+function start(){
+	$.sts.value="on";
+	frameno=0;
+	ws=new WebSocket("ws://"+location.host+"/pczero.porta");
+	ws.binaryType="arraybuffer";
+	ws.onopen=function(e){p(" screen");ws.send(keys);}
+	ws.onmessage=function(e){
+		frameno++;
+		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B";
+		var ua=new DataView(e.data);
+		var cmd=ua.getUint8(0);
+//		console.log("command: "+cmd);
+		if(cmd==0){
+//			console.log(frameno);
+			var b64=base64ArrayBuffer(e.data.slice(1));
+			var img=document.getElementById('image');
+			img.src='data:image/png;base64,'+b64;
+		}else if(cmd==49){
+//			console.log('text len: '+e.data.byteLength);
+			var str=String.fromCharCode.apply(null,new Uint8Array(e.data.slice(1)));
+//			console.log(str);
+			$.sts.value=str;
+			return;
+		}
+		ws.send(keys);
+	};
+	ws.onerror=function(e){alert("websocket error");};
+}
+function stop(){
+	ws.close();
+	$.outp.value="";
+	$.sts.value="off";
+}
+function compile(){
+	ws.send("1"+$.src.value);
+}
+function p(txt){$.outp.value+=txt;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// from https://gist.github.com/jonleighton/958841
+// Converts an ArrayBuffer directly to base64, without any intermediate 'convert to string then
+// use window.btoa' step. According to my tests, this appears to be a faster approach:
+// http://jsperf.com/encoding-xhr-image-data/5
+
+function base64ArrayBuffer(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+  
+  return base64
+}
+</script>
