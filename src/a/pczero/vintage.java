@@ -522,12 +522,22 @@ final public class vintage extends a{
 				final int i0=ln.indexOf('=');
 				if(i0==-1)throw new Error("line "+lnosrc+": expected the format *f++=a");
 				final String lft=ln.substring(0,i0);
-				if(!lft.endsWith("++"))throw new Error("line "+lnosrc+": expected the format *f++=a");
-				final String rega=lft.substring(1,lft.length()-"++".length());
+				final boolean inc;
+				if(!lft.endsWith("++")){
+					inc=false;
+				}else{
+					inc=true;
+				}
+				final String rega;
+				if(inc){
+					rega=lft.substring(1,lft.length()-"++".length());
+				}else{
+					rega=lft.substring(1);					
+				}
 				final String regd=ln.substring(i0+1);
 				final int rai=rifor(rega);
 				final int rdi=rifor(regd);
-				ir+=opstc;
+				ir+=inc?opstc:opst;
 				ir+=(rai<<8);
 				ir+=(rdi<<12);
 				romwrite(ir);
@@ -537,13 +547,14 @@ final public class vintage extends a{
 			if(i0!=-1){
 				final String dest=ln.substring(0,i0).trim();
 				String tokens=ln.substring(i0+"=*".length()).trim();
+				final boolean inc;
 				if(tokens.endsWith("++")){
 					tokens=tokens.substring(0,tokens.length()-"++".length()).trim();
-				}else
-					throw new Error("only d=*a++ supported");
+					inc=true;
+				}else inc=false;
 				final int rdi=rifor(dest);
 				final int rai=rifor(tokens);
-				ir+=opldc;
+				ir+=inc?opldc:opld;
 				ir+=(rai<<8);
 				ir+=(rdi<<12);
 				romwrite(ir);
