@@ -210,9 +210,9 @@ function start(){
 //		console.log("command: "+cmd);
 		if(cmd==0){
 //			console.log(frameno);
-			var b64=base64ArrayBuffer(dat);
 			//var blob=new Blob([dat],{type:'image/png'});
 			//img.src=blob;
+			var b64=base64ArrayBuffer(dat);
 			$.scr.src='data:image/png;base64,'+b64;
 		}else if(cmd==49){
 //			console.log('text len: '+e.data.byteLength);
