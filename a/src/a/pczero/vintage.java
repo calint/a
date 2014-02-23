@@ -268,7 +268,7 @@ final public class vintage extends a{
 		if(x!=null)x.xu(sts).flush();
 		zn=0;
 		loadreg=-1;
-		rom.rst();
+//		rom.rst();
 		setpcr(0);
 		calls.rst();
 		loops.rst();
@@ -459,6 +459,8 @@ final public class vintage extends a{
 	}
 	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
 		if(x!=null)x.xu(sts.set("compiling")).flush();
+		ram.rst();;
+		rom.rst();
 		callmap.clear();
 		labels.clear();
 		lino.clear();

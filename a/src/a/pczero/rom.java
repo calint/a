@@ -91,5 +91,6 @@ final public class rom extends a{
 //	}
 	public void rst(){
 		lstfocusline=-1;
+		for(int i=0;i<rom.length;i++)rom[i]=0;
 	}
 }
