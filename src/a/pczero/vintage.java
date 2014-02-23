@@ -70,8 +70,10 @@ final public class vintage extends a{
 		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
 		x.pl(":  skp : "+fld("..00",Integer.toHexString(opskp))+" : pc+=..               :");
 		x.pl(":  stc : "+fld("yx00",Integer.toHexString(opstc))+" : ram[x++]=y           :");
+		x.pl(":   st : "+fld("yx00",Integer.toHexString(opst))+" : ram[x]=y             :");
  		x.pl(":   lp : "+fld("x000",Integer.toHexString(oplp))+" : loop x               :");
 		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(opldc))+" : y=ram[x++]           :");
+		x.pl(":   ld : "+fld("yx00",Integer.toHexString(opld))+" : y=ram[x]             :");
 		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]>>=i             :");
 		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]<<=i             :");
 		x.pl(":  not : "+fld("x000",Integer.toHexString(opshf))+" : r[x]=~r[x]           :");
