@@ -87,4 +87,29 @@ lp c
 
 
 
+p++
+a=1000
+c=1800
+lp c
+  stc a p nxt
+a=3000
+p++
+lp c
+  stc a p nxt
+a=5000
+
+f=7fff // keyb
+ld f p
+
+lp c
+  stc a p nxt
+..
+
+
+
+
+
+
+
+
 
