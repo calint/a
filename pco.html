@@ -19,7 +19,7 @@ a=0300
 
 b=:blits // address of tag
 b++ // skip size
-c=*b // load
+c=*b // load blit[0].pos
 
 d=1 // step size
 k=7fff // keyb addr
@@ -160,7 +160,7 @@ rects:
 . 100c 0ccc 0008 0008
 
 blits:
-. 4
+. 10
 //yyxx adr  wi   hi
 . 3830 0000 0020 0020
 . 2080 0000 0020 0020
