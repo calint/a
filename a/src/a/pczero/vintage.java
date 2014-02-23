@@ -48,6 +48,8 @@ final public class vintage extends a{
 	private final static short opstc=0x40;
 	private final static short opsub=0x20;
 	private final static short opcall=0x10;
+	private final static short opst=0x0d8;//?
+	private final static short opld=0x0f8;//?
 	public static void prambleops(final xwriter x){
 //		x.pl("  op format znxrci              ");
 //		x.el("text-align:left;border:1px solid red;display:inline-table");
@@ -671,6 +673,18 @@ final public class vintage extends a{
 				ir+=opldc;
 				ir+=(rai<<8);
 				ir+=(rdi<<12);
+			}else if("st".equals(tkns[of])){
+				final int rai=rifor(tkns[++of]);
+				final int rdi=rifor(tkns[++of]);
+				ir+=opst;
+				ir+=(rai<<8);
+				ir+=(rdi<<12);
+			}else if("ld".equals(tkns[of])){
+				final int rai=rifor(tkns[++of]);
+				final int rdi=rifor(tkns[++of]);
+				ir+=opld;
+				ir+=(rai<<8);
+				ir+=(rdi<<12);
 			}else if("inc".equals(tkns[of])){
 				final int rdi=rifor(tkns[++of]);
 				ir+=opinc;
@@ -922,7 +936,7 @@ final public class vintage extends a{
 				final int a=regs.get(rai);
 				final int d=regs.get(rdi);
 				final int r=a-d;
-				zneval(r);				
+				zneval(r);
 				regs.setr(rai,(short)r);
 			}else if(op==2){//stc
 				final int d=regs.get(rdi);
@@ -986,10 +1000,19 @@ final public class vintage extends a{
 			}else if(op==3){// notify
 				final int imm4=(ir>>12);
 				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
-			}else if(op==4){// free 
+			}else if(op==4){// free  
 			}else if(op==5){// sub
-			}else if(op==6){// free
-			}else if(op==7){// free
+			}else if(op==6){// st
+				final int d=regs.get(rdi);
+				final int a=regs.get(rai);
+				ram.set(a,d);
+				mtrstc++;
+			}else if(op==7){// ld
+				final short a=regs.get(rai);
+				final short d=ram.get(a);
+				regs.setr(rdi,d);
+				zneval(d);
+				mtrldc++;
 			}else throw new Error();
 		}
 		if(!ispcrset)
