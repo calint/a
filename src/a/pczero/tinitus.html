@@ -1,32 +1,25 @@
-<!DOCTYPE html><meta charset="utf-8">
+<!DOCTYPE html onload="console.log('load')"><meta charset="utf-8">
 <style>
-	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
-	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
-	#src{background:#eee;font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
+	html{margin:0;padding:0;text-align:center;width:100%;}
+	#src{padding-left:.5em;width:16em;height:512em;border:1px dotted blue}
 	#recvsize{color:green}
 	#sts{color:brown}
-	a{text-decoration:none;color:blue}
-	t{font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 </style>
-<t><b><a href=/pczero.vintage>pczero</a></b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
-<img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"/>
- <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output>
- <a href="javascript:compile()">compile</a> <b>source</b>
+<pre>
+<script>document.write(document.cookie);</script>
+<a href="javascript:stop()" tabindex=1>off</a> <a href="javascript:start()" tabindex=2>on</a> <a href="javascript:compile()" tabindex=2>compile</a> <output id="outp"></output> <output id="recvsize"></output> <output id=sts></output>
 <textarea id=src spellcheck=false>
 p++ // frame
 a=0300
-*a=p
+stc a p
 
-b=:blits // address of tag
-b++ // skip size
-c=*b // load
-
-d=1 // step size
-k=7fff // keyb addr
-ld k e // load
-ifp c+=d // if d>0
-ifz c-=d // if d==0
-*b=c // store
+b=:blits
+b++ // skip len
+ldc b c // first
+c++ // inc
+b=:blits //
+b++ // skip len
+stc b c // store
 
 m=100 // dispwidth
 
@@ -69,7 +62,7 @@ lp c
   g=*f++ // yyxx
   h=*f++ // argb
   g+=a
-  *g++=h nxt ret
+  stc g h nxt ret
 
 ..
 typewriter:
@@ -89,7 +82,7 @@ type:
 lp c
   lp c
     d<<=1
-    ifn *a++=j
+    ifn stc a j
     ifp a++
     ifz a++
     j++ nxt
@@ -108,7 +101,7 @@ lp c
   g-=f // inca
   lp e
     lp f
-      *a++=d nxt
+      stc a d nxt
     a+=g nxt
   nxt ret
 ..
@@ -126,8 +119,8 @@ lp j
     lp i
       d=*b++
       ifz a++ nxt
-      ifp *a++=d nxt
-      ifn *a++=d nxt
+      ifp stc a d nxt
+      ifn stc a d nxt
     b+=e
     a+=e nxt
   nxt ret
@@ -160,7 +153,7 @@ rects:
 . 100c 0ccc 0008 0008
 
 blits:
-. 4
+. 1
 //yyxx adr  wi   hi
 . 3830 0000 0020 0020
 . 2080 0000 0020 0020
@@ -178,85 +171,136 @@ blits:
 . 20e0 0000 0020 0020
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
-
 </textarea> 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <script>
 $=document.all;
-var keys=new Uint8Array([0,0]);
-var ison=false;
-var frameno=0;
-
 start();
+var ctx = new window.AudioContext();
+initsnd();
 
 function start(){
-	if(ison){alert("already on");return;}
-	ison=true;
 	$.sts.value="on";
 	frameno=0;
-	ws=new WebSocket("ws://"+location.host+"/pczero.porta");
+	ws=new WebSocket("ws://"+location.host+"/pczero.i");
 	ws.binaryType="arraybuffer";
-	ws.onopen=function(e){p(" porta");ws.send(keys);}
+	ws.onopen=function(e){p(" speakers");}
 	ws.onmessage=function(e){
 		frameno++;
-		onframe();
-		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps";
-		var ua=new DataView(e.data);
-		var cmd=ua.getUint8(0);
-		var dat=e.data.slice(1);
-//		console.log("command: "+cmd);
-		if(cmd==0){
-//			console.log(frameno);
-			var b64=base64ArrayBuffer(dat);
-			//var blob=new Blob([dat],{type:'image/png'});
-			//img.src=blob;
-			$.scr.src='data:image/png;base64,'+b64;
-		}else if(cmd==49){
-//			console.log('text len: '+e.data.byteLength);
-			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
-//			console.log(str);
-			$.sts.value=str;
-			return;
+		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B";
+		console.log("data size in bytes: "+e.data.byteLength);
+		
+		var buffer=ctx.createBuffer(1,44100,44100);
+		var buf=buffer.getChannelData(0);
+		for(var i=0;i<buffer.length;++i) {
+			buf[i]=Math.sin(i/8);
 		}
-		ws.send(keys);
+		var node=ctx.createBufferSource();
+		node.connect(ctx.destination);
+		node.buffer=buffer;
+		node.loop=false;
+		node.start(0);
+		return;
+		
+		
+		var blb=mkwav(e.data);
+		console.log("blob size in bytes: "+blb.size);
+		var fileReader=new FileReader();
+		fileReader.onload=function(){
+//			console.log(this.result.byteLength);
+//			$.aud.src='data:audio/wav;base64,'+base64ArrayBuffer(this.result);
+//			console.log($.aud.src);
+		};
+		fileReader.readAsArrayBuffer(blb);
 	};
 	ws.onerror=function(e){alert("websocket error");};
-	$.scr.focus();
 }
 function stop(){
-	ison=false;
 	ws.close();
 	$.outp.value="";
 	$.sts.value="off";
-//	$.scr.focus();
 }
 function compile(){
-	ws.send("1"+$.src.value);
-	$.scr.focus();
+	wsp.send($.src.value);
 }
 function p(txt){$.outp.value+=txt;}
-function onframe(){
-	var t=new Date().getTime();
-	var dt=t-onframe.t0;
-//	console.log(dt+"   "+onframe.fps+"    "+onframe.f0+"   "+frameno);
-	if(dt>1000){
-		onframe.t0=t;
-		var df=frameno-onframe.f0;
-		onframe.f0=frameno;
-		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
+
+function initsnd(){
+	var buffer=ctx.createBuffer(1,44100,44100);
+	var buf=buffer.getChannelData(0);
+	for(var i=0;i<buffer.length;++i) {
+		buf[i]=Math.sin(i/8);
 	}
+	var node=ctx.createBufferSource();
+	node.buffer=buffer;
+	node.loop=true;
+	node.connect(ctx.destination);
+	node.start(0);
+	return;
+
+	
+		
+	var d=Int16Array(44100);
+	for(var i=0;i<d.length;i++){
+		//d[i]=Math.random()*32768;
+		d[i]=Math.sin(i/16)*32768;
+	}
+	var blb=mkwav(d);
+//	console.log(blb.size);
+	var fileReader=new FileReader();
+	fileReader.onload=function(){
+		//console.log(this.result.byteLength);
+		ctx.decodeAudioData(this.result,function(buffer){
+			var src=ctx.createBufferSource();
+			src.buffer=buffer;
+			src.looping=true;
+			src.connect(ctx.destination);
+			src.start(0);
+		}, function(e) {
+			console.log(e);
+		});
+//		$.aud.src='data:audio/wav;base64,'+base64ArrayBuffer(this.result);
+//		console.log($.aud.src);
+	};
+	fileReader.readAsArrayBuffer(blb);
 }
-onframe.t0=0;
-onframe.f0=0;
-onframe.fps=0;
 
-
-
-
-
-
+function mkwav(samples){
+	var header = new Uint8Array([
+		0x52,0x49,0x46,0x46, // "RIFF"
+		0, 0, 0, 0,          // put total size here
+		0x57,0x41,0x56,0x45, // "WAVE"
+		0x66,0x6d,0x74,0x20, // "fmt "
+		16,0,0,0,            // size of the following
+		1, 0,                // PCM format
+		1, 0,                // Mono: 1 channel
+		0x44,0xAC,0,0,       // 44,100 samples per second
+		0x88,0x58,0x01,0,    // byte rate: two bytes per sample
+		2, 0,                // aligned on every two bytes
+		16, 0,               // 16 bits per sample
+		0x64,0x61,0x74,0x61, // "data"
+		0, 0, 0, 0           // put number of samples here
+	]).buffer
+	var dv = new DataView(header);
+	dv.setInt32( 4,36+samples.byteLength,true);
+	dv.setInt32(40,samples.byteLength,true);
+	var blb=new Blob([header,samples],{type:"audio/x-wav"});
+	//console.log("blob size: "+blb.size);
+	return blb;
+}
 
 
 
@@ -331,4 +375,7 @@ function base64ArrayBuffer(arrayBuffer) {
   
   return base64
 }
+
+
+//setInterval(function(){ws.send('');},100);
 </script>

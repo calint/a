@@ -1,14 +1,13 @@
 <!DOCTYPE html><meta charset="utf-8">
 <style>
-	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
+	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
 	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
-	#src{background:#eee;font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
+	#src{font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed green;display:block;margin-left:auto;margin-right:auto}
 	#recvsize{color:green}
 	#sts{color:brown}
-	a{text-decoration:none;color:blue}
 	t{font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 </style>
-<t><b><a href=/pczero.vintage>pczero</a></b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
+<t><b>pczero</b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
 <img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"/>
  <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output>
  <a href="javascript:compile()">compile</a> <b>source</b>
@@ -209,9 +208,9 @@ function start(){
 //		console.log("command: "+cmd);
 		if(cmd==0){
 //			console.log(frameno);
-			var b64=base64ArrayBuffer(dat);
 			//var blob=new Blob([dat],{type:'image/png'});
 			//img.src=blob;
+			var b64=base64ArrayBuffer(dat);
 			$.scr.src='data:image/png;base64,'+b64;
 		}else if(cmd==49){
 //			console.log('text len: '+e.data.byteLength);
