@@ -15,7 +15,7 @@ a=0300
 
 b=:blits
 b++ // skip len
-c=*b++ // first
+c=*b++ // pos
 c++ // inc
 b=:blits //
 b++ // skip len
@@ -82,7 +82,7 @@ type:
 lp c
   lp c
     d<<=1
-    ifn stc a j
+    ifn *a++=j
     ifp a++
     ifz a++
     j++ nxt
