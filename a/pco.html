@@ -8,7 +8,8 @@
 </style>
 <pre>
 <img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return false;" onkeyup="keys=new Uint8Array([0,0]);return false;"/>
-<a href="javascript:stop()" tabindex=1>off</a> <a href="javascript:start()" tabindex=2>on</a> <a href="javascript:compile()" tabindex=2>compile</a> <output id="outp"></output> <output id="recvsize"></output> <output id=sts></output>
+ <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()" tabindex=1>off</a><a href="javascript:start()" tabindex=2>on</a> <output id="outp"></output>
+ <a href="javascript:compile()" tabindex=2>compile</a> <b>source</b>
 <textarea id=src spellcheck=false>
 p++ // frame
 a=0300
@@ -184,15 +185,18 @@ blits:
 <script>
 $=document.all;
 keys=new Uint8Array([0,0]);
-$.scr.focus();
+ison=false;
+
 start();
 
 function start(){
+	if(ison){alert("already on");return;}
+	ison=true;
 	$.sts.value="on";
 	frameno=0;
 	ws=new WebSocket("ws://"+location.host+"/pczero.porta");
 	ws.binaryType="arraybuffer";
-	ws.onopen=function(e){p(" screen");ws.send(keys);}
+	ws.onopen=function(e){p(" porta");ws.send(keys);}
 	ws.onmessage=function(e){
 		frameno++;
 		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B";
@@ -216,14 +220,18 @@ function start(){
 		ws.send(keys);
 	};
 	ws.onerror=function(e){alert("websocket error");};
+	$.scr.focus();
 }
 function stop(){
+	ison=false;
 	ws.close();
 	$.outp.value="";
 	$.sts.value="off";
+	$.scr.focus();
 }
 function compile(){
 	ws.send("1"+$.src.value);
+	$.scr.focus();
 }
 function p(txt){$.outp.value+=txt;}
 
