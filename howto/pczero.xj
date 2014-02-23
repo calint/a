@@ -1,0 +1,67 @@
+p++
+a=1000
+c=2000
+lp c
+  stc a p nxt
+..
+
+
+p++
+a=1000
+c=2000
+lp c
+  p++
+  stc a p nxt
+..
+
+
+
+p++
+a=1000
+c=1800
+lp c
+  stc a p nxt
+a=3000
+lp c
+  stc a p nxt
+..
+
+
+
+
+p++
+a=1000
+c=1800
+lp c
+  stc a p nxt
+a=3000
+lp c
+  stc a p nxt
+a=5000
+lp c
+  stc a p nxt
+..
+
+
+
+
+p++
+a=1000
+c=1800
+lp c
+  stc a p nxt
+a=3000
+p++
+lp c
+  stc a p nxt
+a=5000
+p++
+lp c
+  stc a p nxt
+..
+
+
+
+
+
+
