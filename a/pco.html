@@ -11,13 +11,13 @@
 <textarea id=src spellcheck=false>
 p++ // frame
 a=0300
-*a++=p
+*a=p
 
 b=:blits // address of tag
 b++ // skip size
-ld b c // load
+c=*b // load
 c++ // inc
-st b c // store
+*b=c // store
 
 m=100 // dispwidth
 
@@ -50,8 +50,8 @@ drwdots
 clr:
 lp c
   lp m
-    *a++=d nxt
-    d++ nxt ret
+    stc a d nxt
+    inc d nxt ret
 
 drwdots:
 f=:dots
@@ -169,6 +169,7 @@ blits:
 . 20e0 0000 0020 0020
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
+
 </textarea> 
 <script>
 $=document.all;
