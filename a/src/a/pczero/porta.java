@@ -27,7 +27,7 @@ final public class porta extends websock implements threadedsock{static final lo
 				v.x_c(null,null);
 			}catch(final Throwable t){
 				final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+b.b.stacktrace(t)));
-				endpoint_recv(bbe);
+				endpoint_recv(bbe,false);
 				return;
 			}
 			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+v.sts.toString()));
