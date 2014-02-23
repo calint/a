@@ -516,6 +516,21 @@ final public class vintage extends a{
 				romwrite(ir);
 				continue;				
 			}
+			if(ln.startsWith("*")){// *f++=a
+				final int i0=ln.indexOf('=');
+				if(i0==-1)throw new Error("line "+lnosrc+": expected the format *f++=a");
+				final String lft=ln.substring(0,i0);
+				if(!lft.endsWith("++"))throw new Error("line "+lnosrc+": expected the format *f++=a");
+				final String rega=lft.substring(1,lft.length()-"++".length());
+				final String regd=ln.substring(i0+1);
+				final int rai=rifor(rega);
+				final int rdi=rifor(regd);
+				ir+=opstc;
+				ir+=(rai<<8);
+				ir+=(rdi<<12);
+				romwrite(ir);
+				continue;
+			}
 			{final int i0=ln.indexOf("=*");
 			if(i0!=-1){
 				final String dest=ln.substring(0,i0).trim();

@@ -1,4 +1,4 @@
-<!DOCTYPE html onload="console.log('load')"><meta charset="utf-8">
+<!DOCTYPE html><meta charset="utf-8">
 <style>
 	html{margin:0;padding:0;text-align:center;width:100%;}
 	#src{padding-left:.5em;width:16em;height:512em;border:1px dotted blue}
@@ -11,15 +11,15 @@
 <textarea id=src spellcheck=false>
 p++ // frame
 a=0300
-stc a p
+*a++=p
 
 b=:blits
 b++ // skip len
-ldc b c // first
+c=*b++ // first
 c++ // inc
 b=:blits //
 b++ // skip len
-stc b c // store
+*b++=c // store
 
 m=100 // dispwidth
 
@@ -52,8 +52,8 @@ drwdots
 clr:
 lp c
   lp m
-    stc a d nxt
-    inc d nxt ret
+    *a++=d nxt
+    d++ nxt ret
 
 drwdots:
 f=:dots
@@ -62,7 +62,7 @@ lp c
   g=*f++ // yyxx
   h=*f++ // argb
   g+=a
-  stc g h nxt ret
+  *g++=h nxt ret
 
 ..
 typewriter:
@@ -101,7 +101,7 @@ lp c
   g-=f // inca
   lp e
     lp f
-      stc a d nxt
+      *a++=d nxt
     a+=g nxt
   nxt ret
 ..
@@ -119,8 +119,8 @@ lp j
     lp i
       d=*b++
       ifz a++ nxt
-      ifp stc a d nxt
-      ifn stc a d nxt
+      ifp *a++=d nxt
+      ifn *a++=d nxt
     b+=e
     a+=e nxt
   nxt ret
@@ -153,7 +153,7 @@ rects:
 . 100c 0ccc 0008 0008
 
 blits:
-. 1
+. 4
 //yyxx adr  wi   hi
 . 3830 0000 0020 0020
 . 2080 0000 0020 0020
