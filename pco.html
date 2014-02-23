@@ -13,13 +13,11 @@ p++ // frame
 a=0300
 *a++=p
 
-b=:blits
-b++ // skip len
-c=*b++ // pos
+b=:blits // address of tag
+b++ // skip size
+ld b c // load
 c++ // inc
-b=:blits //
-b++ // skip len
-*b++=c // store
+st b c // store
 
 m=100 // dispwidth
 
