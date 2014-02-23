@@ -1,12 +1,13 @@
 <!DOCTYPE html><meta charset="utf-8">
 <style>
 	html{margin:0;padding:0;text-align:center;width:100%;}
+	#scr{border:1px solid black;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5);}
 	#src{padding-left:.5em;width:16em;height:512em;border:1px dotted blue}
 	#recvsize{color:green}
 	#sts{color:brown}
 </style>
 <pre>
-<img id=image src="" width=1024 height=512 tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return false;" onkeyup="keys=new Uint8Array([0,0]);return false;"/>
+<img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return false;" onkeyup="keys=new Uint8Array([0,0]);return false;"/>
 <a href="javascript:stop()" tabindex=1>off</a> <a href="javascript:start()" tabindex=2>on</a> <a href="javascript:compile()" tabindex=2>compile</a> <output id="outp"></output> <output id="recvsize"></output> <output id=sts></output>
 <textarea id=src spellcheck=false>
 p++ // frame
@@ -16,7 +17,12 @@ a=0300
 b=:blits // address of tag
 b++ // skip size
 c=*b // load
-c++ // inc
+
+d=1 // step size
+k=7fff // keyb addr
+ld k e // load
+ifp c+=d // if d>0
+ifz c-=d // if d==0
 *b=c // store
 
 m=100 // dispwidth
@@ -171,9 +177,14 @@ blits:
 . 60e0 0000 0020 0020
 
 </textarea> 
+
+
+
+
 <script>
 $=document.all;
-var keys=new Uint8Array([0,0]);
+keys=new Uint8Array([0,0]);
+$.scr.focus();
 start();
 
 function start(){
@@ -192,10 +203,9 @@ function start(){
 		if(cmd==0){
 //			console.log(frameno);
 			var b64=base64ArrayBuffer(dat);
-			var img=document.getElementById('image');
 			//var blob=new Blob([dat],{type:'image/png'});
 			//img.src=blob;
-			img.src='data:image/png;base64,'+b64;
+			$.scr.src='data:image/png;base64,'+b64;
 		}else if(cmd==49){
 //			console.log('text len: '+e.data.byteLength);
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
