@@ -1,15 +1,16 @@
 <!DOCTYPE html><meta charset="utf-8">
 <style>
-	html{margin:0;padding:0;text-align:center;width:100%;}
-	#scr{border:1px solid black;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5);}
-	#src{padding-left:.5em;width:16em;height:512em;border:1px dotted blue}
+	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
+	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
+	#src{font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed green;display:block;margin-left:auto;margin-right:auto}
 	#recvsize{color:green}
 	#sts{color:brown}
+	t{font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 </style>
-<pre>
-<img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return false;" onkeyup="keys=new Uint8Array([0,0]);return false;"/>
- <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()" tabindex=1>off</a><a href="javascript:start()" tabindex=2>on</a> <output id="outp"></output>
- <a href="javascript:compile()" tabindex=2>compile</a> <b>source</b>
+<t><b>pczero</b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
+<img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"/>
+ <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output>
+ <a href="javascript:compile()">compile</a> <b>source</b>
 <textarea id=src spellcheck=false>
 p++ // frame
 a=0300
@@ -181,11 +182,11 @@ blits:
 
 
 
-
 <script>
 $=document.all;
-keys=new Uint8Array([0,0]);
-ison=false;
+var keys=new Uint8Array([0,0]);
+var ison=false;
+var frameno=0;
 
 start();
 
@@ -199,7 +200,8 @@ function start(){
 	ws.onopen=function(e){p(" porta");ws.send(keys);}
 	ws.onmessage=function(e){
 		frameno++;
-		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B";
+		onframe();
+		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps";
 		var ua=new DataView(e.data);
 		var cmd=ua.getUint8(0);
 		var dat=e.data.slice(1);
@@ -227,16 +229,27 @@ function stop(){
 	ws.close();
 	$.outp.value="";
 	$.sts.value="off";
-	$.scr.focus();
+//	$.scr.focus();
 }
 function compile(){
 	ws.send("1"+$.src.value);
 	$.scr.focus();
 }
 function p(txt){$.outp.value+=txt;}
-
-
-
+function onframe(){
+	var t=new Date().getTime();
+	var dt=t-onframe.t0;
+//	console.log(dt+"   "+onframe.fps+"    "+onframe.f0+"   "+frameno);
+	if(dt>1000){
+		onframe.t0=t;
+		var df=frameno-onframe.f0;
+		onframe.f0=frameno;
+		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
+	}
+}
+onframe.t0=0;
+onframe.f0=0;
+onframe.fps=0;
 
 
 
