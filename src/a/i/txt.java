@@ -25,7 +25,7 @@ public final class txt extends a implements cacheable{
 		final float font_size=Float.parseFloat(s[1]);
 		final int bgcolor=Integer.parseInt(s[2],16);
 		final int fgcolor=Integer.parseInt(s[3],16);
-		final String txt=s[4];
+		final String txt=b.urldecode(s[4]);
 		
 		final Font font=$.fontget(font_name,font_size);
 		final Rectangle2D r=strbounds(font,txt);
