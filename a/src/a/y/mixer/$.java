@@ -17,6 +17,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 	x.ax(this,"blip").spc();
 	x.ax(this,"blop").spc();
 	x.ax(this,"blah").spc();
+	x.ax(this,"creak").spc();
 //	x.style(s,"width:100%;height:200px;border:1px dotted green").inputTextArea(s);
 //	x.nl();
 //	x.pl("mixer");
@@ -151,6 +152,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.open(stream);
 		clip.start();
 		clip.drain();
+		clip.close();
 	}
 	synchronized public void x_blah(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
@@ -163,6 +165,37 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		new Thread(new Runnable(){public void run(){try{
 			$.this.x_blop(x,q);
 		}catch(final Throwable t){throw new Error(t);}}}).start();
+	}
+	public void x_creak(final xwriter x,final String q)throws Throwable{
+		x.xu(o,""+System.currentTimeMillis());
+		
+//		final float frameRate=44100f;// 44100 samples/s
+//		final float frameRate=100f;// phone quality
+		final float frameRate=500f;// phone quality
+		final int channels=2;
+		final double duration=.3;
+		final int sampleBytes=Short.SIZE/8;
+		final int frameBytes=sampleBytes*channels;
+		final AudioFormat format=new AudioFormat(Encoding.PCM_SIGNED,frameRate,Short.SIZE,channels,frameBytes,frameRate,true);
+		final int nFrames=(int)Math.ceil(frameRate*duration);
+		final int nSamples=nFrames*channels;
+		final int nBytes=nSamples*sampleBytes;
+		final ByteBuffer data=ByteBuffer.allocate(nBytes);
+		double freq=440.0;
+		for(int i=0;i<nFrames;++i){
+			final double value=Math.sin((double)i/(double)frameRate*freq*2*Math.PI)*(Short.MAX_VALUE);
+			freq+=1;
+			for(int c=0;c<channels;++c){
+				final int index=(i*channels+c)*sampleBytes;
+				data.putShort(index,(short)value);
+			}
+		}
+		final AudioInputStream stream=new AudioInputStream(new ByteArrayInputStream(data.array()),format,nFrames*2);
+		final Clip clip=AudioSystem.getClip();
+		clip.open(stream);
+		clip.start();
+		clip.drain();
+		clip.close();
 	}
 	public a s;{s.from(getClass().getResourceAsStream("default.mix"),"");}
 	public a o;
