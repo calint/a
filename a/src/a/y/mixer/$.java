@@ -62,7 +62,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.start();
 		clip.drain();
 	}
-	synchronized public void x_base(final xwriter x,final String q)throws Throwable{
+	public void x_base(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
 		
 //		final float frameRate=44100f;// 44100 samples/s
@@ -91,7 +91,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.start();
 		clip.drain();
 	}
-	synchronized public void x_blip(final xwriter x,final String q)throws Throwable{
+	public void x_blip(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
 		
 //		final float frameRate=44100f;// 44100 samples/s
@@ -120,7 +120,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.start();
 		clip.drain();
 	}
-	synchronized public void x_blop(final xwriter x,final String q)throws Throwable{
+	public void x_blop(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
 		
 //		final float frameRate=44100f;// 44100 samples/s
