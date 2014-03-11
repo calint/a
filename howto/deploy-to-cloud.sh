@@ -1,4 +1,4 @@
-for p in b a c d2 d3 auplo;do
+for p in b a c auplo;do
   cp -avr ../$p/* . 
 done
 # blitz.io key
