@@ -80,8 +80,10 @@ public class vehicle extends objm implements player{
 		b=keys[4];if(b!=0)do_climb(1.0/127*b,dt);
 		b=keys[5];if(b!=0)do_decent(1.0/127*b,dt);
 		b=keys[6];if(b!=0)do_pitch(1.0/127*b,dt);
-		b=keys[8];if(b!=0){ai_off=false;System.out.println("ai: off");}
-		b=keys[9];if(b!=0){ai_off=true;System.out.println("ai: on");}
+		b=keys[8];if(b!=0){
+			ai_off=false;System.out.println("ai: off");}
+		b=keys[9];if(b!=0){
+			ai_off=true;System.out.println("ai: on");}
 		if(!cfg.vhcl_trace)	return;
 		if(!tracer)return;
 		trace_t+=dt;
