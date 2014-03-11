@@ -16,6 +16,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 	x.ax(this,"base").spc();
 	x.ax(this,"blip").spc();
 	x.ax(this,"blop").spc();
+	x.ax(this,"blah").spc();
 //	x.style(s,"width:100%;height:200px;border:1px dotted green").inputTextArea(s);
 //	x.nl();
 //	x.pl("mixer");
@@ -148,7 +149,18 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.start();
 		clip.drain();
 	}
-	
+	synchronized public void x_blah(final xwriter x,final String q)throws Throwable{
+		x.xu(o,""+System.currentTimeMillis());
+		new Thread(new Runnable(){public void run(){try{
+			$.this.x_base(x,q);
+		}catch(final Throwable t){throw new Error(t);}}}).start();
+		new Thread(new Runnable(){public void run(){try{
+			$.this.x_blip(x,q);
+		}catch(final Throwable t){throw new Error(t);}}}).start();
+		new Thread(new Runnable(){public void run(){try{
+			$.this.x_blop(x,q);
+		}catch(final Throwable t){throw new Error(t);}}}).start();
+	}
 	public a s;{s.from(getClass().getResourceAsStream("default.mix"),"");}
 	public a o;
 }
