@@ -1,10 +1,17 @@
 package d3;
-import java.applet.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
+import java.applet.Applet;
+import java.awt.AWTEvent;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.text.NumberFormat;
 public final class applet extends Applet implements Runnable{private static final long serialVersionUID=1L;
 	static boolean debug=true;
 	public final static String version="1";
@@ -202,8 +209,9 @@ public final class applet extends Applet implements Runnable{private static fina
 		case '1':keys[7]=1;break;
 		case '2':keys[7]=2;break;
 		case '3':keys[7]=3;break;
-		case '[':keys[8]=1;keys[9]=0;break;
-		case ']':keys[9]=1;keys[8]=0;break;
+		case '9':keys[8]=1;keys[9]=0;break;
+		case '0':keys[9]=1;keys[8]=0;break;
+//		case 'x':((vehicle)(this.env.wld.player())).ai(null);break;
 		}
 	}
 	private void metrics_clear(){
