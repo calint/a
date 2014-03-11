@@ -32,37 +32,27 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 	synchronized public void x_(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
 		
-		float frameRate = 44100f; // 44100 samples/s
-		int channels = 2;
-		double duration = 1.0;
-		int sampleBytes = Short.SIZE / 8;
-		int frameBytes = sampleBytes * channels;
-		AudioFormat format =
-		    new AudioFormat(Encoding.PCM_SIGNED,
-		                    frameRate,
-		                    Short.SIZE,
-		                    channels,
-		                    frameBytes,
-		                    frameRate,
-		                    true);
-		int nFrames = (int) Math.ceil(frameRate * duration);
-		int nSamples = nFrames * channels;
-		int nBytes = nSamples * sampleBytes;
-		ByteBuffer data = ByteBuffer.allocate(nBytes);
-		double freq = 440.0;
-		// Generate all samples
-		for ( int i=0; i<nFrames; ++i )
-		{
-		  double value = Math.sin((double)i/(double)frameRate*freq*2*Math.PI)*(Short.MAX_VALUE);
-		  for (int c=0; c<channels; ++ c) {
-		      int index = (i*channels+c)*sampleBytes;
-		      data.putShort(index, (short) value);
-		  }
+		final float frameRate=44100f;// 44100 samples/s
+		final int channels=2;
+		final double duration=1;
+		final int sampleBytes=Short.SIZE/8;
+		final int frameBytes=sampleBytes*channels;
+		final AudioFormat format=new AudioFormat(Encoding.PCM_SIGNED,frameRate,Short.SIZE,channels,frameBytes,frameRate,true);
+		final int nFrames=(int)Math.ceil(frameRate*duration);
+		final int nSamples=nFrames*channels;
+		final int nBytes=nSamples*sampleBytes;
+		final ByteBuffer data=ByteBuffer.allocate(nBytes);
+		double freq=440.0;
+		for(int i=0;i<nFrames;++i){
+			final double value=Math.sin((double)i/(double)frameRate*freq*2*Math.PI)*(Short.MAX_VALUE);
+			freq+=0.1;
+			for(int c=0;c<channels;++c){
+				final int index=(i*channels+c)*sampleBytes;
+				data.putShort(index,(short)value);
+			}
 		}
-
-		AudioInputStream stream =
-		    new AudioInputStream(new ByteArrayInputStream(data.array()), format, nFrames*2);
-		Clip clip = AudioSystem.getClip();
+		final AudioInputStream stream=new AudioInputStream(new ByteArrayInputStream(data.array()),format,nFrames*2);
+		final Clip clip=AudioSystem.getClip();
 		clip.open(stream);
 		clip.start();
 		clip.drain();
