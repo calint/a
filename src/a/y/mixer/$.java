@@ -61,6 +61,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.open(stream);
 		clip.start();
 		clip.drain();
+		clip.close();
 	}
 	public void x_base(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
@@ -90,6 +91,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.open(stream);
 		clip.start();
 		clip.drain();
+		clip.close();
 	}
 	public void x_blip(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
@@ -119,6 +121,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 		clip.open(stream);
 		clip.start();
 		clip.drain();
+		clip.close();
 	}
 	public void x_blop(final xwriter x,final String q)throws Throwable{
 		x.xu(o,""+System.currentTimeMillis());
