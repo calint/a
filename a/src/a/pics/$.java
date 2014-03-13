@@ -10,7 +10,8 @@ public class $ extends a{static final long serialVersionUID=1;
 		final path p=r.session().path(r.query());
 		p.apply(new path.visitor(){public boolean visit(final path p){
 			final String s=p.uri();
-			if(!s.endsWith(".jpg")&&!s.endsWith(".png"))
+			final String sfx=s.toLowerCase();
+			if(!sfx.endsWith(".jpg")&&!sfx.endsWith(".png"))
 				return false;
 			x.tago("img").attr("src",s).tagoe();
 			return false;
