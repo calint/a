@@ -3,7 +3,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -44,6 +48,8 @@ public class anyx extends a{
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
 	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP|BIT_ALLOW_FILE_OPEN;
 //	protected int bits=BIT_ALL;
+	public @Retention(RetentionPolicy.RUNTIME)@interface ui_action{}
+	public @interface read{}
 	public static interface el{
 		public el get(final String name);
 		public String name();
@@ -64,6 +70,7 @@ public class anyx extends a{
 		public InputStream inputstream();
 		public static interface column_value{public void column_value(final xwriter x)throws Throwable;}
 		public static interface column_value_editor{public a column_value_editor()throws Throwable;}
+		public static interface actions{public List<a>actions();}
 	}
 	final public static class elpath implements el{
 		private el pt;
@@ -90,7 +97,7 @@ public class anyx extends a{
 		@Override public OutputStream outputstream(){try{return pth.outputstream();}catch(Throwable t){throw new Error(t);}}
 		@Override public InputStream inputstream(){{try{return pth.inputstream();}catch(Throwable t){throw new Error(t);}}}
 	}
-	final public static class elclass implements el{
+	final public static class elclass implements el,el.actions{
 		private el pt;
 		private Class<?>cls;
 		public elclass(final el parent,final Class<?>c){pt=parent;cls=c;}
@@ -130,6 +137,32 @@ public class anyx extends a{
 		@Override public boolean rm(){throw new UnsupportedOperationException();}
 		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
+		
+		// el.actions
+		@Override public List<a>actions(){
+			final List<a>ls=new ArrayList<a>();
+			for(final Method m:cls.getMethods()){
+				final int mo=m.getModifiers();
+				final Annotation a=m.getAnnotation(ui_action.class);
+				if(a==null)continue;
+//				x.ax(this,"",m.getName()).pl(" ::");
+				ls.add(new classmethodcaller(m));
+			}
+			return ls;
+		}
+		
+		public final static class classmethodcaller extends a{
+			final private Method m;
+			public classmethodcaller(final Method m){this.m=m;}
+			@Override public void to(xwriter x) throws Throwable{
+				x.ax(this,"",m.getName());
+			}
+			public void x_(xwriter x,String s)throws Throwable{
+				m.invoke(null,x,s);
+			}
+			
+			private static final long serialVersionUID=1;
+		}
 	}
 	final public static class elclassfield implements el,el.column_value,el.column_value_editor{
 		private el pt;
@@ -212,11 +245,11 @@ public class anyx extends a{
 			private static final long serialVersionUID = 1L;
 		}
 	}
-	final public static class els implements el{
+	final public static class elroot implements el{
 		private el pt;
 		private List<el>ls;
 		private String nm;
-		public els(final el parent,final String name){
+		public elroot(final el parent,final String name){
 			pt=parent;
 			this.nm=name;
 			ls=new ArrayList<el>();
@@ -258,12 +291,12 @@ public class anyx extends a{
 		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 		
-		final public els add(final el e){ls.add(e);return this;}
+		final public elroot add(final el e){ls.add(e);return this;}
 	}
 	
 //	protected el root=new elpath(null,b.path());
 	protected el root;{
-		final els l=new els(null,"el systems");
+		final elroot l=new elroot(null,"el systems");
 		root=l;
 		l.add(new elclass(root,anyx.class));
 		l.add(new elclass(root,b.class));
@@ -278,6 +311,7 @@ public class anyx extends a{
 	public final void root(final el e){this.root=e;}
 	public final void bits(final int bits){this.bits=bits;}
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
+	
 	synchronized final public void to(final xwriter x) throws Throwable{
 		x.tago("span").attr("id",id()).tagoe();
 		final List<String>files;
@@ -307,7 +341,19 @@ public class anyx extends a{
 		if(hasbit(BIT_ALLOW_QUERY))
 			x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
 		x.styleEnd();
-		
+
+		if(path instanceof el.actions){
+			actions=((el.actions)path).actions();
+			x.p("<div style=\"text-align:center\">");
+			int i=0;
+			for(final a e:actions){
+				e.nm(Integer.toString(i));
+				e.pt(this);
+				i++;
+				e.to(x);
+			}
+			x.divEnd();
+		}
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))
@@ -419,9 +465,11 @@ public class anyx extends a{
 		x.spanEnd();
 	}
 	private el firstinlist;
+	private List<a>actions;
 	@Override protected a chldq(String id){
 		for(final a e:element_editors)
 			if(e.nm().equals(id))return e;
+		try{return actions.get(Integer.parseInt(id));}catch(Throwable ignored){}
 		return super.chldq(id);
 	}
 	
@@ -512,11 +560,15 @@ public class anyx extends a{
 		x.xuo(this);
 	}
 
+	
+	/// testing
 	public static String string_prop;
 	public static int int_prop;
 	public static long long_prop;
 	public static float float_prop;
 	public static double double_prop;
 	public static boolean bool_prop;
-	
+	public static @ui_action void elui_test(final xwriter x,final String q)throws Throwable{
+		double_prop=Math.sin(int_prop*Math.PI/180);
+	}
 }
