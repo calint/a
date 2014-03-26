@@ -1,19 +1,12 @@
-package a.y;
-import java.io.File;
-import java.io.FilenameFilter;
+package a.any;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,10 +14,9 @@ import java.util.Locale;
 
 import b.a;
 import b.b;
-import b.path;
 import b.req;
 import b.xwriter;
-public class anyx extends a{
+public class list extends a{
 	private static final long serialVersionUID=1;
 	public final static int BIT_ALLOW_QUERY=1;
 	public final static int BIT_ALLOW_FILE_LINK=2;
@@ -72,233 +64,11 @@ public class anyx extends a{
 		public static interface column_value_editor{public a column_value_editor()throws Throwable;}
 		public static interface actions{public List<a>actions();}
 	}
-	final public static class elpath implements el{
-		private el pt;
-		private path pth;
-		public elpath(final el parent,final path p){pt=parent;pth=p;}
-		@Override public String name(){return pth.name();}
-		@Override public boolean isdir(){return pth.isdir();}
-		@Override public boolean isfile(){return pth.isfile();}
-		@Override public List<String>list(){return Arrays.<String>asList(pth.list());}
-		@Override public List<String>list(final String query){
-			return Arrays.<String>asList(pth.list(new FilenameFilter(){@Override public boolean accept(File dir,String name){
-					return name.startsWith(query);
-			}}));
-		}
-		@Override public el get(String name){return new elpath(this,pth.get(name));}
-		@Override public long size(){return pth.size();}
-		@Override public long lastmod(){return pth.lastmod();}
-		@Override public String uri(){return pth.uri();}
-		@Override public boolean exists(){return pth.exists();}
-		@Override public void append(String cs){try{pth.append(cs);}catch(Throwable t){throw new Error(t);}}
-		@Override public String fullpath(){return pth.fullpath();}
-		@Override public boolean rm(){return pth.rm();}
-		@Override public el parent(){return pt;}
-		@Override public OutputStream outputstream(){try{return pth.outputstream();}catch(Throwable t){throw new Error(t);}}
-		@Override public InputStream inputstream(){{try{return pth.inputstream();}catch(Throwable t){throw new Error(t);}}}
-	}
-	final public static class elclass implements el,el.actions{
-		private el pt;
-		private Class<?>cls;
-		public elclass(final el parent,final Class<?>c){pt=parent;cls=c;}
-		@Override public el parent(){return pt;}
-		@Override public String name(){return cls.getName().substring(cls.getName().indexOf(' ')+1);}
-		@Override public String fullpath(){return cls.getName();}
-		@Override public boolean isfile(){return false;}
-		@Override public boolean isdir(){return true;}
-		@Override public List<String>list(){
-			final ArrayList<String>ls=new ArrayList<String>();
-			for(final Field f:cls.getFields()){
-				final int m=f.getModifiers();
-				if(!Modifier.isStatic(m))continue;
-				if(Modifier.isFinal(m))continue;
-				ls.add(f.getName());
-			}
-			return ls;
-		}
-		@Override public List<String>list(final String query){
-			final ArrayList<String>ls=new ArrayList<String>();
-			for(final Field f:cls.getFields()){
-				final int m=f.getModifiers();
-				if(!Modifier.isStatic(m))continue;
-				if(Modifier.isFinal(m))continue;
-				final String nm=f.getName();
-				if(!nm.startsWith(query))continue;
-				ls.add(f.getName());
-			}
-			return ls;
-		}
-		@Override public el get(String name){try{return new elclassfield(this,cls.getDeclaredField(name));}catch(Throwable t){throw new Error(t);}}
-		@Override public long size(){return 0;}
-		@Override public long lastmod(){return 0;}
-		@Override public String uri(){return null;}
-		@Override public boolean exists(){return true;}
-		@Override public void append(String cs){throw new UnsupportedOperationException();}
-		@Override public boolean rm(){throw new UnsupportedOperationException();}
-		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
-		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
-		
-		// el.actions
-		@Override public List<a>actions(){
-			final List<a>ls=new ArrayList<a>();
-			for(final Method m:cls.getMethods()){
-				final int mo=m.getModifiers();
-				final Annotation a=m.getAnnotation(ui_action.class);
-				if(a==null)continue;
-//				x.ax(this,"",m.getName()).pl(" ::");
-				ls.add(new classmethodcaller(m));
-			}
-			return ls;
-		}
-		
-		public final static class classmethodcaller extends a{
-			final private Method m;
-			public classmethodcaller(final Method m){this.m=m;}
-			@Override public void to(xwriter x) throws Throwable{
-				x.ax(this,"",m.getName());
-			}
-			public void x_(xwriter x,String s)throws Throwable{
-				m.invoke(null,x,s);
-			}
-			
-			private static final long serialVersionUID=1;
-		}
-	}
-	final public static class elclassfield implements el,el.column_value,el.column_value_editor{
-		private el pt;
-		private Field fld;
-		public elclassfield(final el parent,final Field f){pt=parent;fld=f;}
-		@Override public el parent(){return pt;}
-		@Override public String name(){return fld.getName();}
-		@Override public String fullpath(){return fld.getDeclaringClass().getName()+"."+fld.getName();}
-		@Override public boolean isfile(){return false;}
-		@Override public boolean isdir(){return false;}
-		@Override public List<String>list(){return null;}
-		@Override public List<String>list(final String query){return null;}
-		@Override public el get(String name){return null;}
-		@Override public long size(){return 0;}
-		@Override public long lastmod(){return 0;}
-		@Override public String uri(){return null;}
-		@Override public boolean exists(){return true;}
-		@Override public void append(String cs){throw new UnsupportedOperationException();}
-		@Override public boolean rm(){throw new UnsupportedOperationException();}
-		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
-		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
-		
-		@Override public void column_value(xwriter x)throws Throwable{
-			final Object o=fld.get(null);
-			if(o==null)return;
-			x.p(o.toString());
-		}
-		@Override public a column_value_editor()throws Throwable{
-			return new a_class_field_editor(fld);
-		}
-		public static class a_class_field_editor extends a{
-			private Field f;
-			public a_class_field_editor(final Field f){this.f=f;}
-			@Override public void to(xwriter x)throws Throwable{
-				final Object o=f.get(null);
-				if(o==null)clr();
-				else set(o.toString());
-				x.inputText(this,null,this,"");
-//				x.p(this.toString());
-//				x.spc();
-//				x.ax(this);
-			}
-			public void x_(xwriter x,String a)throws Throwable{
-//				x.xalert(f.toString()+"="+this);
-				final Class<?>c=f.getType();
-				if(c.isAssignableFrom(int.class)){
-					f.set(null,Integer.parseInt(this.toString()));
-					x.xu(this,f.get(null).toString());
-					return;
-				}
-				if(c.isAssignableFrom(long.class)){
-					f.set(null,Long.parseLong(this.toString()));
-					x.xu(this,f.get(null).toString());
-					return;
-				}
-				if(c.isAssignableFrom(float.class)){
-					f.set(null,Float.parseFloat(this.toString()));
-					x.xu(this,f.get(null).toString());
-					return;
-				}
-				if(c.isAssignableFrom(double.class)){
-					f.set(null,Double.parseDouble(this.toString()));
-					x.xu(this,f.get(null).toString());
-					return;
-				}
-				if(c.isAssignableFrom(boolean.class)){
-					final String s=this.toString();
-					final Boolean b="y".equals(s)||"yes".equals(s)||"true".equals(s)||"t".equals(s)?Boolean.TRUE:Boolean.FALSE;
-					f.set(null,b);
-					set(b.toString());
-					x.xu(this,f.get(null).toString());
-					return;
-				}
-				{
-					f.set(null,toString());
-					x.xu(this,f.get(null).toString());
-				}
-//				throw new Error("unknown type "+c);
-			}
-			private static final long serialVersionUID = 1L;
-		}
-	}
-	final public static class elroot implements el{
-		private el pt;
-		private List<el>ls;
-		private String nm;
-		public elroot(final el parent,final String name){
-			pt=parent;
-			this.nm=name;
-			ls=new ArrayList<el>();
-		}
-		@Override public el get(String name){
-			for(final el e:ls){
-				final String nm=e.name();
-				if(nm.equals(name))return e;
-			}
-			return null;
-		}
-		@Override public String name(){return nm;}
-		@Override public boolean isdir(){return true;}
-		@Override public boolean isfile(){return false;}
-		@Override public List<String>list(){//? stream
-			final List<String>l=new ArrayList<String>();
-			for(final el e:ls){
-				l.add(e.name());
-			}
-			return l;
-		}
-		@Override public List<String>list(final String query){
-			final List<String>l=new ArrayList<String>();
-			for(final el e:ls){
-				final String nm=e.name();
-				if(!nm.startsWith(query))continue;
-				l.add(e.name());
-			}
-			return l;
-		}
-		@Override public long size(){return 0;}
-		@Override public long lastmod(){return 0;}
-		@Override public String uri(){return null;}
-		@Override public boolean exists(){return true;}
-		@Override public void append(String cs){throw new UnsupportedOperationException();}
-		@Override public String fullpath(){return nm;}
-		@Override public boolean rm(){throw new UnsupportedOperationException();}
-		@Override public el parent(){return pt;}
-		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
-		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
-		
-		final public elroot add(final el e){ls.add(e);return this;}
-	}
-	
-//	protected el root=new elpath(null,b.path());
+	//	protected el root=new elpath(null,b.path());
 	protected el root;{
 		final elroot l=new elroot(null,"el systems");
 		root=l;
-		l.add(new elclass(root,anyx.class));
+		l.add(new elclass(root,list.class));
 		l.add(new elclass(root,b.class));
 		l.add(new elclass(root,req.class));
 		l.add(new elpath(root,b.path()));
