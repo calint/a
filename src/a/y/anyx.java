@@ -2,6 +2,7 @@ package a.y;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+
 import b.*;
 public class anyx extends a{
 	private static final long serialVersionUID=1;
@@ -33,21 +34,45 @@ public class anyx extends a{
 		public boolean isdir();
 		public boolean isfile();
 		public String[]list();//? enumerator or foreach
-		public String[]list(final CharSequence query);
+		public String[]list(final String query);
 		public long size();
 		public long lastmod();
 		public String uri();
 		public boolean exists();
-		public void append(final CharSequence cs);
+		public void append(final String cs);
 		public String fullpath();
-		public void rm();
+		public boolean rm();
 		public el parent();
 //		public void to(final xwriter x);
 		public OutputStream outputstream();
 		public InputStream inputstream();
 	}
-//	protected path root=b.path();
-	protected el root;
+	public static class elpath implements el{
+		private el pt;
+		private path pth;
+		public elpath(final el parent,final path p){pt=parent;pth=p;}
+		@Override public el get(String name){return new elpath(this,pth.get(name));}
+		@Override public String name(){return pth.name();}
+		@Override public boolean isdir(){return pth.isdir();}
+		@Override public boolean isfile(){return pth.isfile();}
+		@Override public String[]list(){return pth.list();}
+		@Override public String[]list(final String query){
+			return pth.list(new FilenameFilter(){@Override public boolean accept(File dir,String name){
+					return name.startsWith(query);
+			}});
+		}
+		@Override public long size(){return pth.size();}
+		@Override public long lastmod(){return pth.lastmod();}
+		@Override public String uri(){return pth.uri();}
+		@Override public boolean exists(){return pth.exists();}
+		@Override public void append(String cs){try{pth.append(cs);}catch(Throwable t){throw new Error(t);}}
+		@Override public String fullpath(){return pth.fullpath();}
+		@Override public boolean rm(){return pth.rm();}
+		@Override public el parent(){return pt;}
+		@Override public OutputStream outputstream(){try{return pth.outputstream();}catch(Throwable t){throw new Error(t);}}
+		@Override public InputStream inputstream(){{try{return pth.inputstream();}catch(Throwable t){throw new Error(t);}}}
+	}
+	protected el root=new elpath(null,b.path());
 	protected el path=root;
 	protected boolean sort=true;
 	protected boolean sort_dirsfirst=true;
