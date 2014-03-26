@@ -41,6 +41,7 @@ public class list extends a{
 	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP|BIT_ALLOW_FILE_OPEN;
 //	protected int bits=BIT_ALL;
 	public @Retention(RetentionPolicy.RUNTIME)@interface ui_action{}
+//	public @interface ui_action{}
 	public @interface read{}
 	public static interface el{
 		public el get(final String name);
