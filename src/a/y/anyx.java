@@ -1,11 +1,25 @@
 package a.y;
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.text.*;
-import java.util.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
-import b.*;
+import b.a;
+import b.b;
+import b.path;
+import b.req;
+import b.xwriter;
 public class anyx extends a{
 	private static final long serialVersionUID=1;
 	public final static int BIT_ALLOW_QUERY=1;
@@ -48,6 +62,8 @@ public class anyx extends a{
 //		public void to(final xwriter x);
 		public OutputStream outputstream();
 		public InputStream inputstream();
+		public static interface column_value{public void column_value(final xwriter x)throws Throwable;}
+		public static interface column_value_editor{public a column_value_editor()throws Throwable;}
 	}
 	final public static class elpath implements el{
 		private el pt;
@@ -85,7 +101,7 @@ public class anyx extends a{
 		@Override public boolean isdir(){return true;}
 		@Override public List<String>list(){
 			final ArrayList<String>ls=new ArrayList<String>();
-			for(final Field f:cls.getDeclaredFields()){
+			for(final Field f:cls.getFields()){
 				final int m=f.getModifiers();
 				if(!Modifier.isStatic(m))continue;
 				if(Modifier.isFinal(m))continue;
@@ -95,7 +111,7 @@ public class anyx extends a{
 		}
 		@Override public List<String>list(final String query){
 			final ArrayList<String>ls=new ArrayList<String>();
-			for(final Field f:cls.getDeclaredFields()){
+			for(final Field f:cls.getFields()){
 				final int m=f.getModifiers();
 				if(!Modifier.isStatic(m))continue;
 				if(Modifier.isFinal(m))continue;
@@ -115,14 +131,14 @@ public class anyx extends a{
 		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	}
-	final public static class elclassfield implements el{
+	final public static class elclassfield implements el,el.column_value,el.column_value_editor{
 		private el pt;
 		private Field fld;
 		public elclassfield(final el parent,final Field f){pt=parent;fld=f;}
 		@Override public el parent(){return pt;}
 		@Override public String name(){return fld.getName();}
 		@Override public String fullpath(){return fld.getDeclaringClass().getName()+"."+fld.getName();}
-		@Override public boolean isfile(){return true;}
+		@Override public boolean isfile(){return false;}
 		@Override public boolean isdir(){return false;}
 		@Override public List<String>list(){return null;}
 		@Override public List<String>list(final String query){return null;}
@@ -135,6 +151,66 @@ public class anyx extends a{
 		@Override public boolean rm(){throw new UnsupportedOperationException();}
 		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
+		
+		@Override public void column_value(xwriter x)throws Throwable{
+			final Object o=fld.get(null);
+			if(o==null)return;
+			x.p(o.toString());
+		}
+		@Override public a column_value_editor()throws Throwable{
+			return new a_class_field_editor(fld);
+		}
+		public static class a_class_field_editor extends a{
+			private Field f;
+			public a_class_field_editor(final Field f){this.f=f;}
+			@Override public void to(xwriter x)throws Throwable{
+				final Object o=f.get(null);
+				if(o==null)clr();
+				else set(o.toString());
+				x.inputText(this,null,this,"");
+//				x.p(this.toString());
+//				x.spc();
+//				x.ax(this);
+			}
+			public void x_(xwriter x,String a)throws Throwable{
+//				x.xalert(f.toString()+"="+this);
+				final Class<?>c=f.getType();
+				if(c.isAssignableFrom(int.class)){
+					f.set(null,Integer.parseInt(this.toString()));
+					x.xu(this,f.get(null).toString());
+					return;
+				}
+				if(c.isAssignableFrom(long.class)){
+					f.set(null,Long.parseLong(this.toString()));
+					x.xu(this,f.get(null).toString());
+					return;
+				}
+				if(c.isAssignableFrom(float.class)){
+					f.set(null,Float.parseFloat(this.toString()));
+					x.xu(this,f.get(null).toString());
+					return;
+				}
+				if(c.isAssignableFrom(double.class)){
+					f.set(null,Double.parseDouble(this.toString()));
+					x.xu(this,f.get(null).toString());
+					return;
+				}
+				if(c.isAssignableFrom(boolean.class)){
+					final String s=this.toString();
+					final Boolean b="y".equals(s)||"yes".equals(s)||"true".equals(s)||"t".equals(s)?Boolean.TRUE:Boolean.FALSE;
+					f.set(null,b);
+					set(b.toString());
+					x.xu(this,f.get(null).toString());
+					return;
+				}
+				{
+					f.set(null,toString());
+					x.xu(this,f.get(null).toString());
+				}
+//				throw new Error("unknown type "+c);
+			}
+			private static final long serialVersionUID = 1L;
+		}
 	}
 	final public static class els implements el{
 		private el pt;
@@ -189,9 +265,13 @@ public class anyx extends a{
 	protected el root;{
 		final els l=new els(null,"el systems");
 		root=l;
-		l.add(new elclass(root,anyx.class)).add(new elpath(root,b.path()));
+		l.add(new elclass(root,anyx.class));
+		l.add(new elclass(root,b.class));
+		l.add(new elclass(root,req.class));
+		l.add(new elpath(root,b.path()));
 	}
 	protected el path=root;
+	private ArrayList<a>element_editors=new ArrayList<a>();
 	protected boolean sort=true;
 	protected boolean sort_dirsfirst=true;
 	public a bd;
@@ -203,6 +283,7 @@ public class anyx extends a{
 		final List<String>files;
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
+		element_editors.clear();
 		if(b.isempty(query))
 			files=path.list();
 		else
@@ -233,7 +314,7 @@ public class anyx extends a{
 			if(!path.equals(root))
 				x.ax(this,"up","••");
 		final boolean acttd=hasbit(BIT_ALLOW_FILE_CREATE)||hasbit(BIT_ALLOW_DIR_CREATE);
-		x.th(acttd?4:3);
+		x.th(acttd?5:4);
 		if(hasbit(BIT_DISP_PATH)){
 //			if(path.isin(root)){
 //			String pp=path.fullpath().substring(root.fullpath().length());
@@ -279,7 +360,7 @@ public class anyx extends a{
 					else
 						x.p(icndir);
 				else
-					if((bits&BIT_ALLOW_FILE_OPEN)!=0)
+					if((bits&BIT_ALLOW_FILE_OPEN)!=0&&p.isfile())
 						x.ax(this,"e "+fnm,icnfile);
 					else
 						x.p(icnfile);
@@ -287,8 +368,9 @@ public class anyx extends a{
 				//				x.p("<a href=\"javascript:ui.ax('").p(wid).p(" s ").p(nameEnc).p("')\">").p("↓").p("</a> ");
 				//				x.p("<a href=\"javascript:ui.ax('").p(wid).p(" r ").p(nameEnc).p("')\">").p("ĸ").p("</a> ");
 				x.td("name");
-				if((bits&BIT_ALLOW_FILE_LINK)!=0&&p.isfile())
-					x.a(p.uri(),fnm);
+				final String uri=p.uri();
+				if((bits&BIT_ALLOW_FILE_LINK)!=0&&p.isfile()&&uri!=null)
+					x.a(uri,fnm);
 				else
 					x.p(fnm);
 				if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))
@@ -299,15 +381,26 @@ public class anyx extends a{
 					x.ax(this,"se "+fnm,icnsel);
 				if(hasbit(BIT_ALLOW_RENAME))
 					x.ax(this,"ren "+fnm,icnren);
-				
-				x.td("date").p(ttoa(p.lastmod()));
+				x.td("value");
+				if(p instanceof el.column_value_editor){
+					final a e=((el.column_value_editor)p).column_value_editor();
+					e.nm(p.name().replace('_','X'));
+					e.pt(this);
+					element_editors.add(e);
+					e.to(x);
+				}else if(p instanceof el.column_value){
+					((el.column_value)p).column_value(x);
+				}
+				x.td("date");
+				final long lm=p.lastmod();
+				if(lm!=0)x.p(ttoa(lm));
 				final long size=p.size();
 				if(p.isfile())
 					total_bytes+=size;
 				x.td("size").p(isdir?"--":btoa(size));
 				x.nl();
 			}
-			x.tr().td().td().td();
+			x.tr().td().td().td().td();
 			if(acttd)x.td();
 			x.td("total size last").p(nf.format(total_bytes));
 			x.nl();
@@ -326,6 +419,13 @@ public class anyx extends a{
 		x.spanEnd();
 	}
 	private el firstinlist;
+	@Override protected a chldq(String id){
+		for(final a e:element_editors)
+			if(e.nm().equals(id))return e;
+		return super.chldq(id);
+	}
+	
+	
 	synchronized public void x_sel(final xwriter x,final String s)throws Throwable{
 		if(firstinlist!=null)x_e(x,firstinlist.name());
 	}
@@ -412,8 +512,11 @@ public class anyx extends a{
 		x.xuo(this);
 	}
 
-	public static String a_static_string;
-	public static int a_static_int;
-	public static boolean a_static_bool;
+	public static String string_prop;
+	public static int int_prop;
+	public static long long_prop;
+	public static float float_prop;
+	public static double double_prop;
+	public static boolean bool_prop;
 	
 }
