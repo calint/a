@@ -1,5 +1,7 @@
 package a.y;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.*;
 import java.util.*;
 
@@ -26,15 +28,15 @@ public class anyx extends a{
 	public a q;
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
-	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
+	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP|BIT_ALLOW_FILE_OPEN;
 //	protected int bits=BIT_ALL;
 	public static interface el{
 		public el get(final String name);
 		public String name();
 		public boolean isdir();
 		public boolean isfile();
-		public String[]list();//? enumerator or foreach
-		public String[]list(final String query);
+		public List<String>list();//? enumerator or foreach
+		public List<String>list(final String query);
 		public long size();
 		public long lastmod();
 		public String uri();
@@ -47,20 +49,20 @@ public class anyx extends a{
 		public OutputStream outputstream();
 		public InputStream inputstream();
 	}
-	public static class elpath implements el{
+	final public static class elpath implements el{
 		private el pt;
 		private path pth;
 		public elpath(final el parent,final path p){pt=parent;pth=p;}
-		@Override public el get(String name){return new elpath(this,pth.get(name));}
 		@Override public String name(){return pth.name();}
 		@Override public boolean isdir(){return pth.isdir();}
 		@Override public boolean isfile(){return pth.isfile();}
-		@Override public String[]list(){return pth.list();}
-		@Override public String[]list(final String query){
-			return pth.list(new FilenameFilter(){@Override public boolean accept(File dir,String name){
+		@Override public List<String>list(){return Arrays.<String>asList(pth.list());}
+		@Override public List<String>list(final String query){
+			return Arrays.<String>asList(pth.list(new FilenameFilter(){@Override public boolean accept(File dir,String name){
 					return name.startsWith(query);
-			}});
+			}}));
 		}
+		@Override public el get(String name){return new elpath(this,pth.get(name));}
 		@Override public long size(){return pth.size();}
 		@Override public long lastmod(){return pth.lastmod();}
 		@Override public String uri(){return pth.uri();}
@@ -72,7 +74,123 @@ public class anyx extends a{
 		@Override public OutputStream outputstream(){try{return pth.outputstream();}catch(Throwable t){throw new Error(t);}}
 		@Override public InputStream inputstream(){{try{return pth.inputstream();}catch(Throwable t){throw new Error(t);}}}
 	}
-	protected el root=new elpath(null,b.path());
+	final public static class elclass implements el{
+		private el pt;
+		private Class<?>cls;
+		public elclass(final el parent,final Class<?>c){pt=parent;cls=c;}
+		@Override public el parent(){return pt;}
+		@Override public String name(){return cls.getName().substring(cls.getName().indexOf(' ')+1);}
+		@Override public String fullpath(){return cls.getName();}
+		@Override public boolean isfile(){return false;}
+		@Override public boolean isdir(){return true;}
+		@Override public List<String>list(){
+			final ArrayList<String>ls=new ArrayList<String>();
+			for(final Field f:cls.getDeclaredFields()){
+				final int m=f.getModifiers();
+				if(!Modifier.isStatic(m))continue;
+				if(Modifier.isFinal(m))continue;
+				ls.add(f.getName());
+			}
+			return ls;
+		}
+		@Override public List<String>list(final String query){
+			final ArrayList<String>ls=new ArrayList<String>();
+			for(final Field f:cls.getDeclaredFields()){
+				final int m=f.getModifiers();
+				if(!Modifier.isStatic(m))continue;
+				if(Modifier.isFinal(m))continue;
+				final String nm=f.getName();
+				if(!nm.startsWith(query))continue;
+				ls.add(f.getName());
+			}
+			return ls;
+		}
+		@Override public el get(String name){try{return new elclassfield(this,cls.getDeclaredField(name));}catch(Throwable t){throw new Error(t);}}
+		@Override public long size(){return 0;}
+		@Override public long lastmod(){return 0;}
+		@Override public String uri(){return null;}
+		@Override public boolean exists(){return true;}
+		@Override public void append(String cs){throw new UnsupportedOperationException();}
+		@Override public boolean rm(){throw new UnsupportedOperationException();}
+		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
+		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
+	}
+	final public static class elclassfield implements el{
+		private el pt;
+		private Field fld;
+		public elclassfield(final el parent,final Field f){pt=parent;fld=f;}
+		@Override public el parent(){return pt;}
+		@Override public String name(){return fld.getName();}
+		@Override public String fullpath(){return fld.getDeclaringClass().getName()+"."+fld.getName();}
+		@Override public boolean isfile(){return true;}
+		@Override public boolean isdir(){return false;}
+		@Override public List<String>list(){return null;}
+		@Override public List<String>list(final String query){return null;}
+		@Override public el get(String name){return null;}
+		@Override public long size(){return 0;}
+		@Override public long lastmod(){return 0;}
+		@Override public String uri(){return null;}
+		@Override public boolean exists(){return true;}
+		@Override public void append(String cs){throw new UnsupportedOperationException();}
+		@Override public boolean rm(){throw new UnsupportedOperationException();}
+		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
+		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
+	}
+	final public static class els implements el{
+		private el pt;
+		private List<el>ls;
+		private String nm;
+		public els(final el parent,final String name){
+			pt=parent;
+			this.nm=name;
+			ls=new ArrayList<el>();
+		}
+		@Override public el get(String name){
+			for(final el e:ls){
+				final String nm=e.name();
+				if(nm.equals(name))return e;
+			}
+			return null;
+		}
+		@Override public String name(){return nm;}
+		@Override public boolean isdir(){return true;}
+		@Override public boolean isfile(){return false;}
+		@Override public List<String>list(){//? stream
+			final List<String>l=new ArrayList<String>();
+			for(final el e:ls){
+				l.add(e.name());
+			}
+			return l;
+		}
+		@Override public List<String>list(final String query){
+			final List<String>l=new ArrayList<String>();
+			for(final el e:ls){
+				final String nm=e.name();
+				if(!nm.startsWith(query))continue;
+				l.add(e.name());
+			}
+			return l;
+		}
+		@Override public long size(){return 0;}
+		@Override public long lastmod(){return 0;}
+		@Override public String uri(){return null;}
+		@Override public boolean exists(){return true;}
+		@Override public void append(String cs){throw new UnsupportedOperationException();}
+		@Override public String fullpath(){return nm;}
+		@Override public boolean rm(){throw new UnsupportedOperationException();}
+		@Override public el parent(){return pt;}
+		@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
+		@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
+		
+		final public els add(final el e){ls.add(e);return this;}
+	}
+	
+//	protected el root=new elpath(null,b.path());
+	protected el root;{
+		final els l=new els(null,"el systems");
+		root=l;
+		l.add(new elclass(root,anyx.class)).add(new elpath(root,b.path()));
+	}
 	protected el path=root;
 	protected boolean sort=true;
 	protected boolean sort_dirsfirst=true;
@@ -82,17 +200,17 @@ public class anyx extends a{
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	synchronized final public void to(final xwriter x) throws Throwable{
 		x.tago("span").attr("id",id()).tagoe();
-		final String[]files;
+		final List<String>files;
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
 		if(b.isempty(query))
 			files=path.list();
 		else
 			files=path.list(query);
-		if(sort)
-			sort(files);
-		if(sort_dirsfirst)
-			sort_dirsfirst(files);
+		if(files!=null){
+			if(sort)sort(files);
+			if(sort_dirsfirst)sort_dirsfirst(files);
+		}
 		x.style();
 		x.css("table.f","margin-left:auto;margin-right:auto");
 		x.css("table.f tr:first-child","border:0;border-bottom:1px solid green;border-top:1px solid #070");
@@ -118,8 +236,9 @@ public class anyx extends a{
 		x.th(acttd?4:3);
 		if(hasbit(BIT_DISP_PATH)){
 //			if(path.isin(root)){
-				String pp=path.fullpath().substring(root.fullpath().length());
-				x.span("float:left");
+//			String pp=path.fullpath().substring(root.fullpath().length());
+			String pp=path.name();
+			x.span("float:left");
 				x.p(pp);
 				x.spanEnd();
 //			}
@@ -146,7 +265,7 @@ public class anyx extends a{
 			x.nl();
 			long total_bytes=0;
 			firstinlist=null;
-			for(final String filenm:files){
+			if(files!=null)for(final String filenm:files){
 				final el p=path.get(filenm);
 				if(firstinlist==null)firstinlist=p;
 				final String fnm=p.name();
@@ -219,8 +338,8 @@ public class anyx extends a{
  		x.xfocus(path.isfile()?bd:q);		
 	}
 
-	private void sort_dirsfirst(final String[]files){
-		Arrays.sort(files,new Comparator<String>(){public int compare(final String a,final String b){try{
+	private void sort_dirsfirst(final List<String>files){
+		Collections.sort(files,new Comparator<String>(){public int compare(final String a,final String b){try{
 			final boolean da=path.get(a).isdir();
 			final boolean db=path.get(b).isdir();
 			if(da&&db)return 0;
@@ -230,8 +349,8 @@ public class anyx extends a{
 			return 0;
 		}catch(final Throwable t){throw new Error(t);}}});
 	}
-	private void sort(final String[]files){
-		Arrays.sort(files,new Comparator<String>(){public int compare(final String a,final String b){
+	private void sort(final List<String>files){
+		Collections.sort(files,new Comparator<String>(){public int compare(final String a,final String b){
 			return a.toString().toLowerCase(Locale.US).compareTo(b.toString().toLowerCase());
 		}});
 	}
@@ -293,4 +412,8 @@ public class anyx extends a{
 		x.xuo(this);
 	}
 
+	public static String a_static_string;
+	public static int a_static_int;
+	public static boolean a_static_bool;
+	
 }
