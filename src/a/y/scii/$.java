@@ -4,10 +4,11 @@ import b.a;
 import b.xwriter;
 public class $ extends a{
 	public a div;
-	public a medid;
+	public a medid;{medid.set(0);}
 	@Override public void to(final xwriter x)throws Throwable{
 //		x.pl("medusa ascii game").nl();
-		x.ax(this,"reset",":: reset").p("   how to: use wesd keys to move medusa").inputText(medid).nl().nl();
+		x.style(medid, "border:1px dotted green;width:3em");
+		x.ax(this,"reset",":: reset").p("   use wesd keys to move medusa ").inputText(medid).nl().nl();
 		
 //		x.style(".scr","border:1px solid black;");
 //		x.div("scr");
