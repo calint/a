@@ -11,9 +11,12 @@ final public class porta extends websock implements threadedsock{static final lo
 		plr=mds.alloc_sprite_for_new_player();
 		if(plr==null)throw new Exception("no free players available");
 	}
-	@Override protected void onclosed()throws Throwable{
+	@Override protected void onclosed()throws Throwable{// called twice firefox due to proper close then dropped connection
 		System.out.println("onclosed "+plr);
-		mds.on_player_closed_connection(plr);
+		if(plr!=null){
+			mds.on_player_closed_connection(plr);
+			plr=null;
+		}
 	}
 	private sprite plr;
 	synchronized protected void onmessage(final ByteBuffer bb) throws Throwable {
