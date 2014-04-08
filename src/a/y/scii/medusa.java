@@ -13,6 +13,21 @@ public class medusa implements Serializable{
 		scr.rst();
 		frame=0;
 		sprites.clear();
+		
+		final sprite_image spi=new sprite_image();
+		spi.load();
+		
+		final sprite sp=new sprite();
+		sp.sprite_image=spi;
+		sp.x=3;
+		sp.y=2;
+		sprites.add(sp);
+		
+		final sprite sp2=new sprite();
+		sp2.sprite_image=spi;
+		sp2.x=30;
+		sp2.y=8;
+		sprites.add(sp2);
 	}
 	public void update(){sprites.forEach(sprite::update);}
 

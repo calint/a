@@ -73,8 +73,13 @@ public class $ extends a{
 //		x.xreload();
 	}
 	static medusa mds=new medusa();
-	static Thread medusa_thread=new Thread(new Runnable(){@Override public void run(){
-	}},"medusa");
+//	static Thread medusa_thread=new Thread(new Runnable(){@Override public void run(){
+//		while(on){
+//			mds.update();
+//			mds.draw();
+//			try{Thread.sleep(1000);}catch(InterruptedException ignored){}
+//		}
+//	}public boolean on=true;},"medusa");static{mds.rst();medusa_thread.start();}
 	/**
 	 * 
 	 */
