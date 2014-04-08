@@ -9,13 +9,15 @@ public class sprite{
 	}
 	public void on_msg(final String s)throws Throwable{
 		if("a".equals(s)){
-			x--;
+			x--;y++;
 		}else if("d".equals(s)){
-			x++;
+			x++;y++;
 		}else if("w".equals(s)){
-			y--;
+			y--;x--;
 		}else if("s".equals(s)){
-			y++;
+			y++;x--;
+		}else if("e".equals(s)){
+			y--;x++;
 		}
 	}
 }

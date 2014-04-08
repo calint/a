@@ -4,9 +4,10 @@ import b.a;
 import b.xwriter;
 public class $ extends a{
 	public a div;
+	public a medid;
 	@Override public void to(final xwriter x)throws Throwable{
 //		x.pl("medusa ascii game").nl();
-		x.ax(this,"reset",":: reset").p("   how to: use wasd keys to move medusa").nl().nl();
+		x.ax(this,"reset",":: reset").p("   how to: use wesd keys to move medusa").inputText(medid).nl().nl();
 		
 //		x.style(".scr","border:1px solid black;");
 //		x.div("scr");
@@ -16,10 +17,9 @@ public class $ extends a{
 		x.pl("ui.keys['A']=\"$x('_ keyb a')\"");
 		x.pl("ui.keys['S']=\"$x('_ keyb s')\"");
 		x.pl("ui.keys['D']=\"$x('_ keyb d')\"");
+		x.pl("ui.keys['E']=\"$x('_ keyb e')\"");
 		x.pl("document.focus();");
 		x.scriptEnd();
-
-		step();
 		x.el(div);
 		mds.scr.screen_to_outputstream(x.outputstream());
 		x.elend();
@@ -51,14 +51,17 @@ public class $ extends a{
 		x.xreload();
 	}
 	public void x_keyb(xwriter x,String key)throws Throwable{
-		mds.sprites.get(0).on_msg(key);
+		final int player=medid.toint();
+		mds.sprites.get(player).on_msg(key);
 		step();
 		final xwriter xx=x.xub(div,true,true);
 		mds.scr.screen_to_outputstream(xx.outputstream());
 		x.xube();
 //		x.xreload();
 	}
-	 static medusa mds=new medusa();
+	static medusa mds=new medusa();
+	static Thread medusa_thread=new Thread(new Runnable(){@Override public void run(){
+	}},"medusa");
 	/**
 	 * 
 	 */
