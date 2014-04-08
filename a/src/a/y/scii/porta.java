@@ -48,7 +48,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		while(on){
 			mds.update();
 //			mds.draw();
-			System.out.println("free players "+mds.sprites_available_for_new_players.size());
+//			System.out.println("free players "+mds.sprites_available_for_new_players.size());
 			try{Thread.sleep(100);}catch(InterruptedException ignored){}
 		}
 	}public boolean on=true;},"medusa");static{mds.rst();medusa_thread.start();}
