@@ -1,6 +1,7 @@
 package a.sokio;
 import java.nio.*;
 import java.util.*;
+
 import b.*;
 import static b.b.*;
 final public class $ extends a implements sock,threadedsock{
@@ -40,6 +41,7 @@ final public class $ extends a implements sock,threadedsock{
 		return op.read;
 //		return read();
 	}
+	@Override public void onconnectionlost()throws Throwable{}
 	
 	private static enum state{cmd,line};
 	private state st=state.cmd;

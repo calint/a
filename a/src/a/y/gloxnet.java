@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import b.a;
 import b.sock;
 import b.sockio;
@@ -82,6 +83,11 @@ public class gloxnet extends a implements sock{
 		}
 		bbout.flip();
 		return op.read;
+	}
+	@Override
+	public void onconnectionlost() throws Throwable {
+		// TODO Auto-generated method stub
+		
 	}
 	private void notif(){state=1;sio.reqwrite();}
 }
