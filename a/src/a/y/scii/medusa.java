@@ -15,7 +15,12 @@ public class medusa implements Serializable{
 		sprites.clear();
 	}
 	public void update(){sprites.forEach(sprite::update);}
-	public void draw(final screen s){sprites.forEach((sprite sp)->sp.draw(s));}
+
+	public void draw(){draw(scr);}
+	public void draw(final screen s){
+		scr.clear('.');
+		sprites.forEach((sprite sp)->sp.draw(s));
+	}
 	
 	public final ArrayList<sprite>sprites=new ArrayList<>(128);
 	private static final long serialVersionUID=1L;
