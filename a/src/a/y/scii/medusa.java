@@ -16,7 +16,7 @@ public class medusa implements Serializable{
 		}
 		
 		int cursor;
-		public void screen_to_outputstream(final OutputStream os)throws IOException{
+		public void screen_to_outputstream(final OutputStream os){try{
 			int ix=0;
 			byte[]ba=bb.array();
 			final int w=wi;
@@ -25,7 +25,7 @@ public class medusa implements Serializable{
 				os.write(new byte[]{'\n'});
 				ix+=w;
 			}
-		}
+		}catch(IOException e){throw new Error(e);}}
 		public void cursor_place(final int row,final int col){
 			cursor=row*wi+col;
 		}
@@ -90,8 +90,8 @@ public class medusa implements Serializable{
 		public sprite_image sprite_image;
 		public float x,y;
 		public void update(){
-			x+=1;
-			y+=(float)Math.random();			
+//			x+=1;
+//			y+=(float)Math.random();			
 		}
 		public void draw(final screen s){
 			if(sprite_image==null)return;
