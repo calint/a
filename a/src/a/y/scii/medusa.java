@@ -18,7 +18,7 @@ public class medusa implements Serializable{
 		final image spi=new image();
 		spi.load();
 		
-		sprite sp=new sprite().image(spi).xy(0,2);
+		sprite sp=new sprite().image(spi).xy(29,2);
 		sprites.add(sp);
 		
 		sp=new sprite().image(spi).xy(30,8);
