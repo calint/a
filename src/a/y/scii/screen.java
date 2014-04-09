@@ -122,6 +122,8 @@ public class screen implements Serializable{
 			}
 			i+=2;
 		}
+		//? find traverse direction instead of scanline fix
+		
 //		System.out.println("top ix "+topy_ix);
 		int ix_lft,ix_rht;
 		ix_lft=ix_rht=topy_ix;
@@ -182,7 +184,6 @@ public class screen implements Serializable{
 				if(npx<0){
 					npx=-npx;//? temp
 					startx=x_rht;
-					//throw new Error();//? should be culled?
 				}else
 					startx=x_lft;
 				int p=pline+(int)startx;// start index
