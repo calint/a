@@ -113,7 +113,7 @@ public class screen implements Serializable{
 		float topx=xy[0];
 		float topy=xy[1];
 		int i=2;
-		while(i<vertex_count){
+		while(i<vertex_count*elems_per_vertex){
 			final float y=xy[i+1];
 			if(y<topy){
 				topy=y;
@@ -122,6 +122,7 @@ public class screen implements Serializable{
 			}
 			i+=2;
 		}
+//		System.out.println("top ix "+topy_ix);
 		int ix_lft,ix_rht;
 		ix_lft=ix_rht=topy_ix;
 		float y_lft,y_rht;
@@ -189,7 +190,7 @@ public class screen implements Serializable{
 			while(true){// render scan line
 				int npx=(int)(x_rht+(x_rht>x_lft?.5f:-.5f)-x_lft);// pixels to render (round right edge x)
 				final float startx;
-				System.out.println(scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+//				System.out.println(scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				if(npx<0){
 					npx=-npx;//? temp
 					startx=x_rht;
