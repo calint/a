@@ -48,11 +48,16 @@ public class medusa implements Serializable{
 	public void draw(final screen s){
 		scr.clear('.');
 		/// background layers
-		scr.render_dot(dot,0);
+		scr.render_dot(dot);
 		add2(dot,ddot);
 		scr.render_rect(new float[]{15,25},new float[]{4,3});
 		scr.render_rect(new float[]{21,24},new float[]{10,4});
 		scr.render_rect(new float[]{32,21},new float[]{10,7});
+		
+		
+		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
+		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
+		scr.render_convex_polygon(new float[]{60,5, 40,25, 75,25},3);
 		//
 		sprites.forEach((sprite sp)->sp.draw(s));
 	}

@@ -58,9 +58,9 @@ public class screen implements Serializable{
 	}
 
 	final byte default_char=(byte)'o';
-	public void render_dot(final float[]xy,final int offset){
-		final float x=xy[offset];
-		final float y=xy[offset+1];
+	public void render_dot(final float[]xy){
+		final float x=xy[0];
+		final float y=xy[0+1];
 		if(x<0)return;
 		if(x>wi)return;
 		if(y<0)return;
@@ -91,9 +91,97 @@ public class screen implements Serializable{
 			p=pr+=wi;//? stride
 		}
 	}
+//	public static class p2 implements Serializable{}
+	//      example:               xy{40,20, 20,20, 40,30} 
+	//		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
+	//		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
+	public void render_convex_polygon(final float[]xy,final int vertex_count){
+		final int elems_per_vertex=2;
+		// find top y
+		int topy_ix=0;
+		float topx=xy[0];
+		float topy=xy[1];
+		int i=2;
+		int k=vertex_count;
+		while(--k!=0){
+			final int y=(int)xy[i+1];
+			if(y<topy){
+				topy=y;
+				topx=xy[i];
+				topy_ix=i;
+			}
+		}
+		int ix_lft,ix_rht;
+		ix_lft=ix_rht=topy_ix;
+		float y_lft,y_rht;
+		y_lft=y_rht=topy;
+		float x_lft,x_rht;
+		x_rht=x_lft=topx;
+		boolean adv_lft,adv_rht;
+		adv_lft=adv_rht=true;
+		float dxdy_lft;
+		float dxdy_rht;
+		dxdy_lft=dxdy_rht=0;
+		float x_nxt_lft=topx;
+		float y_nxt_lft=topy;
+		float x_nxt_rht=topx;
+		float y_nxt_rht=topy;
+		float dy_rht=y_nxt_rht-topy;
+		float dy_lft=y_nxt_lft-topy;
+		float y=topy;
+		while(true){
+			if(adv_lft){
+				y=y_lft=y_nxt_lft;
+				if(ix_lft==(vertex_count-1)*elems_per_vertex)ix_lft=0;
+				else ix_lft+=elems_per_vertex;
+				x_nxt_lft=xy[ix_lft];
+				y_nxt_lft=xy[ix_lft+1];
+				dy_lft=y_nxt_lft-y_lft;
+				if(dy_lft!=0)dxdy_lft=(x_nxt_lft-x_lft)/dy_lft;
+				else dxdy_lft=0;
+			}
+			if(adv_rht){
+				y=y_rht=y_nxt_rht;
+//				x_rht=x_nxt_rht;
+				if(ix_rht==0)ix_rht=vertex_count*elems_per_vertex-elems_per_vertex;
+				else ix_rht-=elems_per_vertex;
+				x_nxt_rht=xy[ix_rht];
+				y_nxt_rht=xy[ix_rht+1];
+				dy_rht=y_nxt_rht-y_rht;
+				if(dy_rht!=0)dxdy_rht=(x_nxt_rht-x_rht)/dy_rht;
+				else dxdy_rht=0;
+			}			
+			
+			int scan_lines_until_next_turn=0;
+			if(y_nxt_lft>y_nxt_rht){
+				scan_lines_until_next_turn=(int)(y_nxt_rht-y);
+				adv_lft=false;
+				adv_rht=true;
+			}else{
+				scan_lines_until_next_turn=(int)(y_nxt_lft-y);			
+				adv_lft=true;
+				adv_rht=false;
+			}
+			if(scan_lines_until_next_turn==0){
+				x_lft=x_nxt_lft; // set x
+			}
+			final int y_scr=(int)y;
+			int pline=y_scr*wi;
+			final byte[]ba=bb.array();
+			do{// render scan line
+				int npx=(int)(x_rht-x_lft);// pixels to render
+				if(npx<0)throw new Error();//? should be culled?
+				int p=pline+(int)x_lft;// start index
+				while(npx--!=0){// pixels to render
+					ba[p++]=default_char;
+				}
+				pline+=wi;// next line
+				x_lft+=dxdy_lft;
+				x_rht+=dxdy_rht;
+			}while(scan_lines_until_next_turn--!=0);
+			if(ix_lft==ix_rht)
+				break;// render done
 
-	public void render_convex_polygon(final float[]xy){
-		
+		}
 	}
-
 }
