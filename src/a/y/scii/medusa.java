@@ -46,7 +46,7 @@ public class medusa implements Serializable{
 	static final void vertices_rotate_about_z_axis(final float[]dst,final/*readonly*/float[]src,final float angle_in_radians,final/*read*/float[]translation){
 		// |cos -sin||x|=|xcos-ysin|
 		// |sin  cos||y|=|xsin+ycos|
-		System.out.println(angle_in_radians*180/Math.PI);
+//		System.out.println(angle_in_radians*180/Math.PI);
 		final float c=(float)Math.cos(angle_in_radians);
 		final float s=(float)Math.sin(angle_in_radians);
 		final float tx=translation[0];
