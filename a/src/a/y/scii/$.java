@@ -44,19 +44,17 @@ public class $ extends a{
 	public void x_reset(xwriter x,String a){
 		mds.rst();
 		
-		final sprite_image spi=new sprite_image();
+		final image spi=new image();
 		spi.load();
 		
 		final sprite sp=new sprite();
-		sp.sprite_image=spi;
-		sp.x=3;
-		sp.y=2;
+		sp.image=spi;
+		sp.xy(3,2);
 		mds.sprites.add(sp);
 		
 		final sprite sp2=new sprite();
-		sp2.sprite_image=spi;
-		sp2.x=30;
-		sp2.y=8;
+		sp2.image=spi;
+		sp2.xy(30,8);
 		mds.sprites.add(sp2);
 		
 		step();

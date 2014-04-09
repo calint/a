@@ -24,9 +24,9 @@ public class screen implements Serializable{
 			ix+=w;
 		}
 	}catch(IOException e){throw new Error(e);}}
-	private int cursor_x,cursor_y;
+	private int cursor_x;//,cursor_y;
 	public void cursor_place(final int row,final int col){
-		cursor_x=col;cursor_y=row;
+		cursor_x=col;;//cursor_y=row;
 		cursor=row*wi+col;
 	}
 	public void print(final String cs){
@@ -55,6 +55,45 @@ public class screen implements Serializable{
 	public void rst(){
 		bb.clear();
 		bb.rewind();
+	}
+
+	final byte default_char=(byte)'o';
+	public void render_dot(final float[]xy,final int offset){
+		final float x=xy[offset];
+		final float y=xy[offset+1];
+		if(x<0)return;
+		if(x>wi)return;
+		if(y<0)return;
+		if(y>hi)return;
+		bb.array()[hi*(int)y+(int)x]=default_char;
+	}
+	public void render_rect(final float[]xy,final float[]wh){
+		final int x=(int)xy[0];
+		final int y=(int)xy[1];
+		final int w=(int)wh[0];
+		final int h=(int)wh[1];
+		//? clip and cull
+		if(x<0)return;
+		if(x>wi)return;
+		if(y<0)return;
+		if(y>hi)return;
+		//
+		final byte[]ba=bb.array();
+		final int limy=y+h;
+		final int limx=x+w;
+		int pr=y*wi+x;
+		int p=pr;
+		for(int r=y;r<limy;r++){
+			for(int c=x;c<limx;c++){
+				ba[p]=default_char;
+				p++;
+			}
+			p=pr+=wi;//? stride
+		}
+	}
+
+	public void render_convex_polygon(final float[]xy){
+		
 	}
 
 }
