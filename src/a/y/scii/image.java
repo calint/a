@@ -1,6 +1,8 @@
 package a.y.scii;
 
-public class sprite_image{
+import java.io.Serializable;
+
+public class image implements Serializable{
 	String[]scan_lines=new String[]{
 			" ____ ",
 			"|O  O|",
@@ -12,9 +14,11 @@ public class sprite_image{
 		hi=scan_lines.length;
 		wi=scan_lines[0].length();
 	}
-	public void draw_to_screen(final screen s,final int x,final int y){
+	public void draw_to_screen(final screen s,final/*readonly*/float[]xy){
 		final int h=s.hi;
 		final int w=s.wi;
+		final int x=(int)xy[0];
+		final int y=(int)xy[1];
 		if(x>w)return;
 		if(x+wi<0)return;
 		if(y>=h)return;
@@ -33,4 +37,7 @@ public class sprite_image{
 			s.print(ln,cut_left);
 		}
 	}
+	
+	private static final long serialVersionUID = 1L;
+
 }
