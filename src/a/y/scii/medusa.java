@@ -80,7 +80,7 @@ public class medusa implements Serializable{
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,2*(float)Math.PI/180*sprites.get(0).phys.pos[0],new float[]{20,20});
 		a+=da*dt;
 		scr.render_convex_polygon(vertices_xy,3);
-
+		scr.render_dots(vertices_xy,3,(byte)'X');
 		scr.render_dot(dot,(byte)'X');
 		//
 		sprites.forEach((sprite sp)->sp.draw(s));
