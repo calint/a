@@ -58,14 +58,14 @@ public class screen implements Serializable{
 	}
 
 	final byte default_char=(byte)'o';
-	public void render_dot(final float[]xy){
+	public void render_dot(final float[]xy,final byte data){
 		final float x=xy[0];
 		final float y=xy[0+1];
 		if(x<0)return;
 		if(x>wi)return;
 		if(y<0)return;
 		if(y>hi)return;
-		bb.array()[hi*(int)y+(int)x]=default_char;
+		bb.array()[wi*(int)y+(int)x]=data;
 	}
 	public void render_rect(final float[]xy,final float[]wh){
 		final int x=(int)xy[0];
@@ -104,7 +104,7 @@ public class screen implements Serializable{
 		int i=2;
 		int k=vertex_count;
 		while(--k!=0){
-			final int y=(int)xy[i+1];
+			final float y=xy[i+1];
 			if(y<topy){
 				topy=y;
 				topx=xy[i];
@@ -116,18 +116,18 @@ public class screen implements Serializable{
 		float y_lft,y_rht;
 		y_lft=y_rht=topy;
 		float x_lft,x_rht;
-		x_rht=x_lft=topx;
+		x_lft=x_rht=topx;
 		boolean adv_lft,adv_rht;
 		adv_lft=adv_rht=true;
 		float dxdy_lft;
 		float dxdy_rht;
 		dxdy_lft=dxdy_rht=0;
-		float x_nxt_lft=topx;
+		float x_nxt_lft=0;
 		float y_nxt_lft=topy;
-		float x_nxt_rht=topx;
+		float x_nxt_rht=0;
 		float y_nxt_rht=topy;
-		float dy_rht=y_nxt_rht-topy;
-		float dy_lft=y_nxt_lft-topy;
+		float dy_rht=0;
+		float dy_lft=0;
 		float y=topy;
 		while(true){
 			if(adv_lft){
@@ -150,7 +150,10 @@ public class screen implements Serializable{
 				dy_rht=y_nxt_rht-y_rht;
 				if(dy_rht!=0)dxdy_rht=(x_nxt_rht-x_rht)/dy_rht;
 				else dxdy_rht=0;
-			}			
+			}
+			if(adv_lft&&adv_rht){
+				y=y_lft>y_rht?y_rht:y_lft;
+			}
 			
 			int scan_lines_until_next_turn=0;
 			if(y_nxt_lft>y_nxt_rht){
@@ -168,17 +171,24 @@ public class screen implements Serializable{
 			final int y_scr=(int)y;
 			int pline=y_scr*wi;
 			final byte[]ba=bb.array();
-			do{// render scan line
+			while(true){// render scan line
 				int npx=(int)(x_rht-x_lft);// pixels to render
-				if(npx<0)throw new Error();//? should be culled?
-				int p=pline+(int)x_lft;// start index
-				while(npx--!=0){// pixels to render
-					ba[p++]=default_char;
-				}
-				pline+=wi;// next line
+				final float startx;
+				System.out.println(npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+				if(npx<0){
+					npx=-npx;//? temp
+					startx=x_rht;
+					//throw new Error();//? should be culled?
+				}else
+					startx=x_lft;
+				int p=pline+(int)startx;// start index
+				while(npx--!=0){ba[p++]=default_char;}
+				pline+=wi;	
+				if(scan_lines_until_next_turn==0)break;
+				scan_lines_until_next_turn--;
 				x_lft+=dxdy_lft;
 				x_rht+=dxdy_rht;
-			}while(scan_lines_until_next_turn--!=0);
+			}
 			if(ix_lft==ix_rht)
 				break;// render done
 
