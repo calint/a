@@ -75,7 +75,7 @@ public class screen implements Serializable{
 			if(x>wi)return;
 			if(y<0)return;
 			if(y>hi)return;
-			bb.array()[wi*(int)y+(int)x]=data;
+			bb.array()[wi*(int)y+(int)x]=(byte)(i+'0');
 		}
 	}
 	public void render_rect(final float[]xy,final float[]wh){
@@ -113,14 +113,14 @@ public class screen implements Serializable{
 		float topx=xy[0];
 		float topy=xy[1];
 		int i=2;
-		int k=vertex_count;
-		while(--k!=0){
+		while(i<vertex_count){
 			final float y=xy[i+1];
 			if(y<topy){
 				topy=y;
 				topx=xy[i];
 				topy_ix=i;
 			}
+			i+=2;
 		}
 		int ix_lft,ix_rht;
 		ix_lft=ix_rht=topy_ix;
@@ -163,9 +163,9 @@ public class screen implements Serializable{
 				if(dy_rht!=0)dxdy_rht=(x_nxt_rht-x_rht)/dy_rht;
 				else dxdy_rht=0;
 			}
-			if(adv_lft&&adv_rht){
+//			if(adv_lft&&adv_rht){
 //				y=y_lft>y_rht?y_rht:y_lft;
-			}
+//			}
 			
 			int scan_lines_until_next_turn=0;
 			if(y_nxt_lft>y_nxt_rht){
@@ -177,16 +177,19 @@ public class screen implements Serializable{
 				adv_lft=true;
 				adv_rht=false;
 			}
-			if(scan_lines_until_next_turn==0){
-				x_lft=x_nxt_lft; // set x
-			}
+//			if(scan_lines_until_next_turn==0){
+//				if(x_lft<x_rht)
+//					x_lft=x_nxt_lft; // set x
+//				else
+//					x_rht=x_nxt_rht;
+//			}
 			final int y_scr=(int)y;
 			int pline=y_scr*wi;
 			final byte[]ba=bb.array();
 			while(true){// render scan line
-				int npx=(int)(x_rht+.5f-x_lft);// pixels to render (round right edge x)
+				int npx=(int)(x_rht+(x_rht>x_lft?.5f:-.5f)-x_lft);// pixels to render (round right edge x)
 				final float startx;
-				System.out.println(npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+				System.out.println(scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				if(npx<0){
 					npx=-npx;//? temp
 					startx=x_rht;
