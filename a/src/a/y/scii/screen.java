@@ -184,7 +184,7 @@ public class screen implements Serializable{
 			int pline=y_scr*wi;
 			final byte[]ba=bb.array();
 			while(true){// render scan line
-				int npx=(int)(x_rht-x_lft+.5f);// pixels to render (round right edge x)
+				int npx=(int)(x_rht+.5f-x_lft);// pixels to render (round right edge x)
 				final float startx;
 				System.out.println(npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				if(npx<0){
