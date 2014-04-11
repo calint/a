@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import jdk.nashorn.internal.runtime.regexp.joni.ScanEnvironment;
-
 public class screen implements Serializable{
 	public int wi,hi;
 	ByteBuffer bb;
@@ -181,12 +179,12 @@ public class screen implements Serializable{
 				if(scan_lines_until_next_turn==0)break;
 				scan_lines_until_next_turn--;
 				int npx=(int)(x_rht-x_lft);
+				//				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				int p=pline+(int)x_lft;// start index
 				if(renderedges){
 					ba[p]=data;
 					ba[p+npx]=data;
 				}else{
-	//				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 					while(npx--!=0){ba[p++]=data;}
 				}
 				y+=1;

@@ -5,8 +5,7 @@ import java.util.Date;
 import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
-{
-	System.out.println("porta opened");}
+//{System.out.println("porta opened");}
 	final@Override protected void onopened()throws Throwable{
 		plr=mds.alloc_sprite_for_new_player();
 		if(plr==null)throw new Exception("no free players available");
