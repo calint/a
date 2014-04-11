@@ -177,12 +177,12 @@ public class screen implements Serializable{
 				adv_rht=false;
 			}
 			while(true){// render scan lines
-				if(scan_lines_until_next_turn<=0)break;
+				if(scan_lines_until_next_turn==0)break;
+				scan_lines_until_next_turn--;
 				int npx=(int)(x_rht-x_lft);
 //				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
-				scan_lines_until_next_turn--;
 				int p=pline+(int)x_lft;// start index
-				if(npx>0)while(npx--!=0){ba[p++]=data;}
+				while(npx--!=0){ba[p++]=data;}
 				y+=1;
 				pline+=wi;	
 				x_lft+=dxdy_lft;
