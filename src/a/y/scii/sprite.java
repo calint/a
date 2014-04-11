@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class sprite implements Serializable{
 	image image;
 //	public float x,y;
-	public void update(){
-		phys.update();
+	public void update(final float dt){
+		phys.update(dt);
 	}
 	public void draw(final screen s){
 		if(image==null)return;
@@ -34,8 +34,8 @@ public class sprite implements Serializable{
 	public static class physics implements Serializable{
 		final float[]pos=new float[]{0,0};
 		final float[]dpos=new float[]{0,0};
-		public void update(){
-			medusa.add2(pos,dpos,medusa.dt);
+		public void update(final float dt){
+			medusa.add2(pos,dpos,dt);
 		}
 		private static final long serialVersionUID = 1L;
 	}
