@@ -98,7 +98,7 @@ public class medusa implements Serializable{
 		final float da=(float)Math.PI*2/60;
 		a+=da*dt;
 //		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
-		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'o',false);
+		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'#',false);
 		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
 //		scr.render_dot(dot,(byte)'X');
 		
@@ -106,7 +106,7 @@ public class medusa implements Serializable{
 		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{33,7});
 		final float da_mins=(float)Math.PI*2/60/5;
 		a_mins+=da_mins*dt;
-//		scr.render_convex_polygon(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'O');
+		scr.render_convex_polygon(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'*',true);
 		scr.render_dots(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'X');
 //		scr.render_dot(dot,(byte)'X');
 		
