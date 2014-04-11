@@ -145,10 +145,11 @@ public class screen implements Serializable{
 		final int w=wi;
 		final int y_scr=(int)y;
 		int pline=y_scr*w;
+		final int last_elem_ix=vertex_count*elems_per_vertex-elems_per_vertex;
 		while(true){
 			if(adv_lft){
 				y_lft=y_nxt_lft;
-				if(ix_lft==(vertex_count-1)*elems_per_vertex)ix_lft=0;
+				if(ix_lft==last_elem_ix)ix_lft=0;
 				else ix_lft+=elems_per_vertex;					
 				x_nxt_lft=xy[ix_lft];
 				y_nxt_lft=xy[ix_lft+1];
@@ -158,7 +159,7 @@ public class screen implements Serializable{
 			}
 			if(adv_rht){
 				y_rht=y_nxt_rht;
-				if(ix_rht==0)ix_rht=vertex_count*elems_per_vertex-elems_per_vertex;
+				if(ix_rht==0)ix_rht=last_elem_ix;
 				else ix_rht-=elems_per_vertex;
 				x_nxt_rht=xy[ix_rht];
 				y_nxt_rht=xy[ix_rht+1];
@@ -166,7 +167,7 @@ public class screen implements Serializable{
 				if(dy_rht!=0)dxdy_rht=(x_nxt_rht-x_rht)/dy_rht;
 				else dxdy_rht=0;
 			}
-			int scan_lines_until_next_turn=0;
+			int scan_lines_until_next_turn;
 			if(y_nxt_lft>y_nxt_rht){
 				scan_lines_until_next_turn=(int)(y_nxt_rht-y);
 				adv_lft=false;
@@ -176,7 +177,7 @@ public class screen implements Serializable{
 				adv_lft=true;
 				adv_rht=false;
 			}
-			while(true){// render scan lines
+			while(true){
 				if(scan_lines_until_next_turn==0)break;
 				scan_lines_until_next_turn--;
 				int npx=(int)(x_rht-x_lft);
