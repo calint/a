@@ -106,7 +106,7 @@ public class screen implements Serializable{
 	//      example:               xy{40,20, 20,20, 40,30} 
 	//		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
 	//		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
-	public void render_convex_polygon(final float[]xy,final int vertex_count){
+	public void render_convex_polygon(final float[]xy,final int vertex_count,final byte data){
 		final int elems_per_vertex=2;
 		// find top y
 		int topy_ix=0;
@@ -131,11 +131,11 @@ public class screen implements Serializable{
 		y_lft=y_rht=topy;
 		float x_lft,x_rht;
 		x_lft=x_rht=topx;
-		boolean adv_lft,adv_rht;
-		adv_lft=adv_rht=true;
-		float dxdy_lft;
-		float dxdy_rht;
-		dxdy_lft=dxdy_rht=0;
+		boolean adv_lft=true,adv_rht=true;
+//		adv_lft=adv_rht=true;
+		float dxdy_lft=0;
+		float dxdy_rht=0;
+//		dxdy_lft=dxdy_rht=0;
 		float x_nxt_lft=0;
 		float y_nxt_lft=topy;
 		float x_nxt_rht=0;
@@ -143,6 +143,8 @@ public class screen implements Serializable{
 		float dy_rht=0;
 		float dy_lft=0;
 		float y=topy;
+		final byte[]ba=bb.array();
+		final int w=wi;
 		while(true){
 			if(adv_lft){
 				y=y_lft=y_nxt_lft;
@@ -175,10 +177,10 @@ public class screen implements Serializable{
 				adv_rht=false;
 			}
 			final int y_scr=(int)y;
-			int pline=y_scr*wi;
-			final byte[]ba=bb.array();
+			int pline=y_scr*w;
 			while(true){// render scan line
-				int npx=(int)(x_rht+(x_rht>x_lft?.5f:-.5f)-x_lft);// pixels to render (round right edge x)
+//				int npx=(int)(x_rht+(x_rht>x_lft?.5f:-.5f)-x_lft);// pixels to render (round right edge x)
+				int npx=(int)(x_rht+-x_lft);// pixels to render (round right edge x)
 				final float startx;
 //				System.out.println(scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				if(npx<0){
@@ -187,17 +189,22 @@ public class screen implements Serializable{
 				}else
 					startx=x_lft;
 				int p=pline+(int)startx;// start index
-				while(npx--!=0){ba[p++]=default_char;}
+				while(npx--!=0){ba[p++]=data;}
 				pline+=wi;	
 				if(scan_lines_until_next_turn==0)break;
 				scan_lines_until_next_turn--;
 				x_lft+=dxdy_lft;
 				x_rht+=dxdy_rht;
 			}
-			if(ix_lft==ix_rht)
-				break;
-			if(adv_lft){x_lft=x_nxt_lft;x_rht+=dxdy_rht;}
-			if(adv_rht){x_rht=x_nxt_rht;x_lft+=dxdy_lft;}
+			if(ix_lft==ix_rht)break;
+			if(adv_lft){
+				x_lft=x_nxt_lft;
+//				x_rht+=dxdy_rht;
+			}
+			if(adv_rht){
+				x_rht=x_nxt_rht;
+//				x_lft+=dxdy_lft;
+			}
 		}
 	}
 }

@@ -55,14 +55,32 @@ public class medusa implements Serializable{
 			final float x=src[i];
 			final float y=src[i+1];
 			final float x1=x*c-y*s+tx;
-			final float y1=x*s+y*c+ty;
-			dst[i]=x1*2;
+			final float y1=-(x*s+y*c)+ty;//? adjustment for y
+			dst[i]=x1*2; // adjustement for 80x40 square view
 			dst[i+1]=y1;
 		}
 	}
-	float a,da=(float)Math.PI/180*10;
 	private float[]dot=new float[]{40,20};
-	private float[]ddot=new float[]{.5f,.5f};
+//	private float[]ddot=new float[]{.5f,.5f};
+	public final static class p2{
+		public float x,y;/*also accessed as float[2]?*/
+	}
+	static/*gives*/float[]vertices_circle_xy(final int points,final/*readonly*/float[]scale_xy){
+		float a=0;
+		float da=(float)(Math.PI*2/points);
+		final float[]xy=new float[points*2];// 2 components/vertex
+		int ix=0;
+		for(int i=0;i<points;i++){
+			final float x=scale_xy[0]*(float)Math.cos(a);
+			final float y=scale_xy[1]*(float)Math.sin(a);
+			a+=da;
+			xy[ix++]=x;
+			xy[ix++]=y;
+		}
+		return xy;
+	}
+	float a;
+	float a_mins;
 	public void draw(final screen s){
 		scr.clear('.');
 		/// background layers
@@ -72,17 +90,23 @@ public class medusa implements Serializable{
 //		scr.render_rect(new float[]{32,21},new float[]{10,7});
 		
 		
-//		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
-//		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
-//		final float[]vertices_xy=new float[]{0,5, -10,-5, 20,-5};
-		
-		final float[]vertices_xy=new float[]{0,-10, -10,5, 10,5};
-//		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,2*(float)Math.PI/180*sprites.get(0).phys.pos[0],new float[]{20,20});
+		final float[]vertices_xy=vertices_circle_xy(12,new float[]{10,10});
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
+		final float da=(float)Math.PI*2/60;
 		a+=da*dt;
-		scr.render_convex_polygon(vertices_xy,3);
-		scr.render_dots(vertices_xy,3,(byte)'X');
-		scr.render_dot(dot,(byte)'X');
+//		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
+		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'o');
+		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
+//		scr.render_dot(dot,(byte)'X');
+		
+		final float[]vertices_minute_xy=vertices_circle_xy(12,new float[]{5,5});
+		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{33,7});
+		final float da_mins=(float)Math.PI*2/60/60;
+		a_mins+=da_mins*dt;
+		scr.render_convex_polygon(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'O');
+		scr.render_dots(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'X');
+//		scr.render_dot(dot,(byte)'X');
+		
 		//
 		sprites.forEach((sprite sp)->sp.draw(s));
 	}
