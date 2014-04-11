@@ -81,6 +81,8 @@ public class medusa implements Serializable{
 	}
 	float a;
 	float a_mins;
+	float dots=3;
+	float ddots=1;
 	public void draw(final screen s){
 		scr.clear('.');
 		/// background layers
@@ -89,12 +91,13 @@ public class medusa implements Serializable{
 //		scr.render_rect(new float[]{21,24},new float[]{10,4});
 //		scr.render_rect(new float[]{32,21},new float[]{10,7});
 		
-		
-		final float[]vertices_xy=vertices_circle_xy(100,new float[]{10,10});
+		final float[]vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
+		dots+=ddots*dt;
+		if(dots>60)dots=3;
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
 		final float da=(float)Math.PI*2/60;
 		a+=da*dt;
-		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
+//		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
 		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'o');
 		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
 //		scr.render_dot(dot,(byte)'X');
