@@ -108,7 +108,7 @@ public class screen implements Serializable{
 	//      example:               xy{40,20, 20,20, 40,30} // anti-clock wise 
 	//		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
 	//		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
-	public void render_convex_polygon(final float[]xy,final int vertex_count,final byte data){
+	public void render_convex_polygon(final float[]xy,final int vertex_count,final byte data,final boolean renderedges){
 		final int elems_per_vertex=2;
 		// find top y
 		int topy_ix=0;
@@ -181,9 +181,14 @@ public class screen implements Serializable{
 				if(scan_lines_until_next_turn==0)break;
 				scan_lines_until_next_turn--;
 				int npx=(int)(x_rht-x_lft);
-//				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				int p=pline+(int)x_lft;// start index
-				while(npx--!=0){ba[p++]=data;}
+				if(renderedges){
+					ba[p]=data;
+					ba[p+npx]=data;
+				}else{
+	//				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+					while(npx--!=0){ba[p++]=data;}
+				}
 				y+=1;
 				pline+=wi;	
 				x_lft+=dxdy_lft;
