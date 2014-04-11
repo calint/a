@@ -33,10 +33,40 @@ public class medusa implements Serializable{
 		sprites_available_for_new_players.clear();
 		sprites_available_for_new_players.addAll(sprites);		
 	}
-	public void update(){sprites.forEach(sprite::update);}
+	long last_dt_ms=System.currentTimeMillis();
+	float[]vertices_xy;
+	float[]vertices_minute_xy;
+	float a;
+	float a_mins;
+	float dots=3;
+	float ddots=.5f;
+	public void update(){
+		final long t_ms=System.currentTimeMillis();
+		long dt_try=(t_ms-last_dt_ms);
+		System.out.println(t_ms+"  "+dt_try);
+		if(dt_try<=0)dt_try=1;// set dt=1ms
+		last_dt_ms=t_ms;
+		final float dt=dt_try/1000.f;
+		sprites.forEach((sprite s)->s.update(dt));
+
+		vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
+		dots+=ddots*dt;
+		if(dots>30)dots=3;
+		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
+		final float da=(float)Math.PI*2/60;
+		a+=da*dt;
+//		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
+		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'#',false);
+		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
+//		scr.render_dot(dot,(byte)'X');
+		
+		vertices_minute_xy=vertices_circle_xy(12,new float[]{5,5});
+		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{33,7});
+		final float da_mins=(float)Math.PI*2/60/5;
+		a_mins+=da_mins*dt;
+}
 
 	public void draw(){draw(scr);}
-	final static float dt=1/10.f;
 	static void add2(final float[]dest_xy,final float[]xy){
 		dest_xy[0]+=xy[0];dest_xy[1]+=xy[1];//? simd
 	}
@@ -79,33 +109,11 @@ public class medusa implements Serializable{
 		}
 		return xy;
 	}
-	float a;
-	float a_mins;
-	float dots=3;
-	float ddots=.5f;
 	public void draw(final screen s){
 		scr.clear('.');
-		/// background layers
-//		add2(dot,ddot);
-//		scr.render_rect(new float[]{15,25},new float[]{4,3});
-//		scr.render_rect(new float[]{21,24},new float[]{10,4});
-//		scr.render_rect(new float[]{32,21},new float[]{10,7});
-		
-		final float[]vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
-		dots+=ddots*dt;
-		if(dots>30)dots=3;
-		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
-		final float da=(float)Math.PI*2/60;
-		a+=da*dt;
-//		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
 		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'#',false);
 		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
-//		scr.render_dot(dot,(byte)'X');
-		
-		final float[]vertices_minute_xy=vertices_circle_xy(12,new float[]{5,5});
-		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{33,7});
-		final float da_mins=(float)Math.PI*2/60/5;
-		a_mins+=da_mins*dt;
+//		scr.render_dot(dot,(byte)'X');		
 		scr.render_convex_polygon(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'*',true);
 		scr.render_dots(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'X');
 //		scr.render_dot(dot,(byte)'X');

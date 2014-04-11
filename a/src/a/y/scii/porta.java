@@ -29,7 +29,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),mds.scr.bb},true);
 		if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
 	}
-	public static long medusa_loop_sleep_ms=100;
+	public static long medusa_loop_sleep_ms=1000/60;
 	static medusa mds=new medusa();
 	static Thread medusa_thread=new Thread(new Runnable(){@Override public void run(){
 		while(medusa_thread_on){
@@ -43,6 +43,6 @@ final public class porta extends websock implements threadedsock{static final lo
 		}
 	}},"medusa");
 	static{
-		mds.rst();medusa_thread.start();}
+		mds.rst();mds.update();medusa_thread.start();}
 	static boolean medusa_thread_on=true;
 }
