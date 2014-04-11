@@ -90,7 +90,7 @@ public class medusa implements Serializable{
 //		scr.render_rect(new float[]{32,21},new float[]{10,7});
 		
 		
-		final float[]vertices_xy=vertices_circle_xy(12,new float[]{10,10});
+		final float[]vertices_xy=vertices_circle_xy(100,new float[]{10,10});
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
 		final float da=(float)Math.PI*2/60;
 		a+=da*dt;

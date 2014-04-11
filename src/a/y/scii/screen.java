@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
+import jdk.nashorn.internal.runtime.regexp.joni.ScanEnvironment;
+
 public class screen implements Serializable{
 	public int wi,hi;
 	ByteBuffer bb;
@@ -75,7 +77,7 @@ public class screen implements Serializable{
 			if(x>wi)return;
 			if(y<0)return;
 			if(y>hi)return;
-			bb.array()[wi*(int)y+(int)x]=(byte)(i+'0');
+			bb.array()[wi*(int)y+(int)x]=(byte)((i%10)+'0');
 		}
 	}
 	public void render_rect(final float[]xy,final float[]wh){
@@ -139,7 +141,7 @@ public class screen implements Serializable{
 //			traverse_reverse=nxt_x_lft>nxt_x_rht;
 //			System.out.println("render "+xy+"   traverse reverse "+traverse_reverse+"  "+nxt_x_lft+"  "+nxt_x_rht);
 //		}
-		System.out.println("top ix "+topy_ix);
+		System.out.println("top ix "+(topy_ix>>1));
 		int ix_lft,ix_rht;
 		ix_lft=ix_rht=topy_ix;
 		float y_lft,y_rht;
@@ -162,9 +164,12 @@ public class screen implements Serializable{
 		final int w=wi;
 //		final int y_scr=(int)y;
 //		int pline=y_scr*w;
+		final int y_scr=(int)y;
+		int pline=y_scr*w;//? pline renders some scanline twice due to rounding?
 		while(true){
 			if(adv_lft){
-				y=y_lft=y_nxt_lft;
+				y_lft=y_nxt_lft;
+//				x_lft=x_nxt_lft;
 //				if(traverse_reverse){
 //					if(ix_lft==0)ix_lft=vertex_count*elems_per_vertex-elems_per_vertex;
 //					else ix_lft-=elems_per_vertex;
@@ -179,7 +184,7 @@ public class screen implements Serializable{
 				else dxdy_lft=0;
 			}
 			if(adv_rht){
-				y=y_rht=y_nxt_rht;
+				y_rht=y_nxt_rht;
 //				if(traverse_reverse){
 //					if(ix_rht==(vertex_count-1)*elems_per_vertex)ix_rht=0;
 //					else ix_rht+=elems_per_vertex;					
@@ -203,37 +208,37 @@ public class screen implements Serializable{
 				adv_lft=true;
 				adv_rht=false;
 			}
-			final int y_scr=(int)y;
-			int pline=y_scr*w;
-			while(true){// render scan line
-//				int npx=(int)(x_rht+(x_rht>x_lft?.5f:-.5f)-x_lft);// pixels to render (round right edge x)
+			if(scan_lines_until_next_turn==0){
+				
+			}
+//			final int y_scr=(int)y;
+//			int pline=y_scr*w;//? pline renders some scanline twice due to rounding?
+//			if(scan_lines_until_next_turn>0)
+//			if(scan_lines_until_next_turn>0){
+			while(true){// render scan lines
+				if(scan_lines_until_next_turn<=0)break;
 				int npx=(int)(x_rht-x_lft);
-//				final float startx;
-				System.out.println(" y:"+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
-//				System.out.println(npx);
-//				if(npx<0){
-//					npx=-npx;//? temp
-//					startx=x_rht;
-//				}else
-//					startx=x_lft;
-//				int p=pline+(int)startx;// start index
-				int p=pline+(int)x_lft;// start index
-				while(npx--!=0){ba[p++]=data;}
-				pline+=wi;	
-				if(scan_lines_until_next_turn==0)break;
+				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
 				scan_lines_until_next_turn--;
+				int p=pline+(int)x_lft;// start index
+				if(npx>0)while(npx--!=0){ba[p++]=data;}
+				y+=1;
+				pline+=wi;	
 				x_lft+=dxdy_lft;
 				x_rht+=dxdy_rht;
 			}
 			if(ix_lft==ix_rht)break;
 			if(adv_lft){
 				x_lft=x_nxt_lft;
+//				y=y_nxt_lft;
 //				x_rht+=dxdy_rht;
 			}
 			if(adv_rht){
 				x_rht=x_nxt_rht;
+//				y=y_nxt_rht;
 //				x_lft+=dxdy_lft;
 			}
+//			}
 		}
 	}
 }
