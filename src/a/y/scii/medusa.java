@@ -82,7 +82,7 @@ public class medusa implements Serializable{
 	float a;
 	float a_mins;
 	float dots=3;
-	float ddots=1;
+	float ddots=.5f;
 	public void draw(final screen s){
 		scr.clear('.');
 		/// background layers
@@ -93,7 +93,7 @@ public class medusa implements Serializable{
 		
 		final float[]vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
 		dots+=ddots*dt;
-		if(dots>60)dots=3;
+		if(dots>30)dots=3;
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
 		final float da=(float)Math.PI*2/60;
 		a+=da*dt;
