@@ -63,7 +63,7 @@ public class $ extends a{
 	}
 	public void x_keyb(xwriter x,String key)throws Throwable{
 		final int player=medid.toint();
-		mds.sprites.get(player).on_msg(key);
+		mds.sprites.get(player).on_msg(key,1);
 		step();
 		final xwriter xx=x.xub(div,true,true);
 		mds.scr.screen_to_outputstream(xx.outputstream());

@@ -20,7 +20,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		if(cmd==0){//key
 			final byte key=bb.get();
 			String kc=""+Character.toLowerCase((char)key);
-			plr.on_msg(kc);
+			plr.on_msg(kc,mds.dt);
 		}else if(cmd=='2'){//reset
 			mds.rst();
 		}
