@@ -98,7 +98,7 @@ public class medusa implements Serializable{
 		final float da=(float)Math.PI*2/60;
 		a+=da*dt;
 //		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
-		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'o');
+		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'o',false);
 		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
 //		scr.render_dot(dot,(byte)'X');
 		
