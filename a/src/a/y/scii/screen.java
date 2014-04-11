@@ -141,7 +141,7 @@ public class screen implements Serializable{
 		float y=topy;
 		final byte[]ba=bb.array();
 		final int w=wi;
-		final int y_scr=(int)y;
+		int y_scr=(int)y;
 		int pline=y_scr*w;
 		final int last_elem_ix=vertex_count*elems_per_vertex-elems_per_vertex;
 		while(true){
@@ -176,10 +176,11 @@ public class screen implements Serializable{
 				adv_rht=false;
 			}
 			while(true){
-				if(scan_lines_until_next_turn==0)break;
-				scan_lines_until_next_turn--;
 				int npx=(int)(x_rht-x_lft);
-				//				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+				if(scan_lines_until_next_turn<=0)break;
+//				System.out.println(" y:"+pline+"  "+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+				scan_lines_until_next_turn--;
+				if(npx<0)break;
 				int p=pline+(int)x_lft;// start index
 				if(renderedges){
 					ba[p]=data;
@@ -193,8 +194,16 @@ public class screen implements Serializable{
 				x_rht+=dxdy_rht;
 			}
 			if(ix_lft==ix_rht)break;
-			if(adv_lft)x_lft=x_nxt_lft;
-			if(adv_rht)x_rht=x_nxt_rht;
+			if(adv_lft){
+				x_lft=x_nxt_lft;
+//				y=y_nxt_lft;
+//				pline=((int)y)*w;
+			}
+			if(adv_rht){
+				x_rht=x_nxt_rht;
+//				y=y_nxt_rht;
+//				pline=((int)y)*w;
+			}
 		}
 	}
 }

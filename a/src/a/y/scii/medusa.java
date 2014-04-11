@@ -40,16 +40,18 @@ public class medusa implements Serializable{
 	float a_mins;
 	float dots=3;
 	float ddots=.5f;
+	float dt;
 	public void update(){
 		final long t_ms=System.currentTimeMillis();
 		long dt_try=(t_ms-last_dt_ms);
-		System.out.println(t_ms+"  "+dt_try);
+//		System.out.println(t_ms+"  "+dt_try);
 		if(dt_try<=0)dt_try=1;// set dt=1ms
 		last_dt_ms=t_ms;
-		final float dt=dt_try/1000.f;
+		dt=dt_try/1000.f;
 		sprites.forEach((sprite s)->s.update(dt));
 
-		vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
+		vertices_xy=vertices_circle_xy(128,new float[]{15,10});
+//		vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
 		dots+=ddots*dt;
 		if(dots>30)dots=3;
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});

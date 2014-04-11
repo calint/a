@@ -12,22 +12,26 @@ public class sprite implements Serializable{
 		if(image==null)return;
 		image.draw_to_screen(s,phys.pos);
 	}
-	public void on_msg(final String s)throws Throwable{
-		if("a".equals(s)){
-			phys.pos[0]--;phys.pos[1]++;
-//			x--;y++;
-		}else if("d".equals(s)){
-			phys.pos[0]++;phys.pos[1]++;
-//			x++;y++;
-		}else if("w".equals(s)){
-			phys.pos[0]--;phys.pos[1]--;
-//			y--;x--;
-		}else if("s".equals(s)){
-			phys.pos[0]--;phys.pos[1]++;
-//			y++;x--;
-		}else if("e".equals(s)){
-			phys.pos[0]++;phys.pos[1]--;
-//			y--;x++;
+	float d=2;
+	float a=0;
+	public void on_msg(final String s,final float dt)throws Throwable{
+		final float add=d*dt;
+		if("a".equals(s)){phys.dpos[0]=-d;phys.dpos[1]=0;}
+		else if("d".equals(s)){phys.dpos[0]=d;phys.dpos[1]=0;}
+		else if("w".equals(s)){phys.dpos[1]=-d;phys.dpos[0]=0;}
+		else if("s".equals(s)){phys.dpos[1]=d;phys.dpos[0]=0;}
+		else if("e".equals(s)){
+			phys.pos[0]+=add;phys.pos[1]-=add;
+		}else if("q".equals(s)){
+			phys.pos[0]-=add;phys.pos[1]-=add;
+		}else if("z".equals(s)){
+			phys.pos[0]-=add;phys.pos[1]+=add;
+		}else if("x".equals(s)){
+			phys.pos[1]+=add;
+		}else if("c".equals(s)){
+			phys.pos[0]+=add;phys.pos[1]+=add;
+		}else if(" ".equals(s)){
+			phys.dpos[0]=phys.dpos[1]=0;
 		}
 	}
 	final physics phys=new physics();
