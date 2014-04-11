@@ -103,7 +103,7 @@ public class screen implements Serializable{
 		}
 	}
 //	public static class p2 implements Serializable{}
-	//      example:               xy{40,20, 20,20, 40,30} 
+	//      example:               xy{40,20, 20,20, 40,30} // anti-clock wise 
 	//		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
 	//		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
 	public void render_convex_polygon(final float[]xy,final int vertex_count,final byte data){
@@ -123,8 +123,23 @@ public class screen implements Serializable{
 			i+=2;
 		}
 		//? find traverse direction instead of scanline fix
-		
-//		System.out.println("top ix "+topy_ix);
+//		final boolean traverse_reverse=false;
+//		{
+//			final int nelems=vertex_count*elems_per_vertex;
+//
+//			int nxt_ix_lft=topy_ix+elems_per_vertex;
+//			if(nxt_ix_lft==nelems)nxt_ix_lft=0;
+//			
+//			int nxt_ix_rht=topy_ix-elems_per_vertex;
+//			if(nxt_ix_rht<0)nxt_ix_rht=nelems-elems_per_vertex;
+//		
+//			final float nxt_x_lft=xy[nxt_ix_lft];
+//			final float nxt_x_rht=xy[nxt_ix_rht];
+//			
+//			traverse_reverse=nxt_x_lft>nxt_x_rht;
+//			System.out.println("render "+xy+"   traverse reverse "+traverse_reverse+"  "+nxt_x_lft+"  "+nxt_x_rht);
+//		}
+		System.out.println("top ix "+topy_ix);
 		int ix_lft,ix_rht;
 		ix_lft=ix_rht=topy_ix;
 		float y_lft,y_rht;
@@ -145,11 +160,18 @@ public class screen implements Serializable{
 		float y=topy;
 		final byte[]ba=bb.array();
 		final int w=wi;
+//		final int y_scr=(int)y;
+//		int pline=y_scr*w;
 		while(true){
 			if(adv_lft){
 				y=y_lft=y_nxt_lft;
-				if(ix_lft==(vertex_count-1)*elems_per_vertex)ix_lft=0;
-				else ix_lft+=elems_per_vertex;
+//				if(traverse_reverse){
+//					if(ix_lft==0)ix_lft=vertex_count*elems_per_vertex-elems_per_vertex;
+//					else ix_lft-=elems_per_vertex;
+//				}else{
+					if(ix_lft==(vertex_count-1)*elems_per_vertex)ix_lft=0;
+					else ix_lft+=elems_per_vertex;					
+//				}
 				x_nxt_lft=xy[ix_lft];
 				y_nxt_lft=xy[ix_lft+1];
 				dy_lft=y_nxt_lft-y_lft;
@@ -158,8 +180,13 @@ public class screen implements Serializable{
 			}
 			if(adv_rht){
 				y=y_rht=y_nxt_rht;
-				if(ix_rht==0)ix_rht=vertex_count*elems_per_vertex-elems_per_vertex;
-				else ix_rht-=elems_per_vertex;
+//				if(traverse_reverse){
+//					if(ix_rht==(vertex_count-1)*elems_per_vertex)ix_rht=0;
+//					else ix_rht+=elems_per_vertex;					
+//				}else{
+					if(ix_rht==0)ix_rht=vertex_count*elems_per_vertex-elems_per_vertex;
+					else ix_rht-=elems_per_vertex;
+//				}
 				x_nxt_rht=xy[ix_rht];
 				y_nxt_rht=xy[ix_rht+1];
 				dy_rht=y_nxt_rht-y_rht;
@@ -180,15 +207,17 @@ public class screen implements Serializable{
 			int pline=y_scr*w;
 			while(true){// render scan line
 //				int npx=(int)(x_rht+(x_rht>x_lft?.5f:-.5f)-x_lft);// pixels to render (round right edge x)
-				int npx=(int)(x_rht+-x_lft);// pixels to render (round right edge x)
-				final float startx;
-//				System.out.println(scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
-				if(npx<0){
-					npx=-npx;//? temp
-					startx=x_rht;
-				}else
-					startx=x_lft;
-				int p=pline+(int)startx;// start index
+				int npx=(int)(x_rht-x_lft);
+//				final float startx;
+				System.out.println(" y:"+y+"  scanlines:"+scan_lines_until_next_turn+"  "+npx+"   "+x_lft+"   "+x_rht+"   "+dxdy_lft+"   "+dxdy_rht);
+//				System.out.println(npx);
+//				if(npx<0){
+//					npx=-npx;//? temp
+//					startx=x_rht;
+//				}else
+//					startx=x_lft;
+//				int p=pline+(int)startx;// start index
+				int p=pline+(int)x_lft;// start index
 				while(npx--!=0){ba[p++]=data;}
 				pline+=wi;	
 				if(scan_lines_until_next_turn==0)break;
