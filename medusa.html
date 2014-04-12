@@ -6,21 +6,18 @@
 	#sts{color:brown}
 	#banner{display:block;height:2em}
 	#hldr{margin-left:auto;margin-right:auto}
+	#msg{border:1px dotted green;background:yellow;font-family:inherit}
 </style>
 <t id=banner></t>
 <table id=hldr><tr><td>
 <div id=scr tabindex=0 onkeydown="keys[event.keyCode]=true;return true;" onkeyup="delete keys[event.keyCode];return true;"></div>
 <output id=sts></output>  <output id="recvsize"></output>  <output id="outp"></output>
 </td></tr></table>
-use wasd keys
+use wasd keys to move medusa. label <input id=msg type=text onkeydown="if(event.keyCode==13){send(this.value);this.value='';this.focus();}">
 
 <script>
 $=document.all;
 var keys={};
-//keys.toString(){return Object.keys(keys);}
-function keys_p(){
-	console.log(Object.keys(keys));
-}
 var ison=false;
 var frameno=0;
 
@@ -32,8 +29,7 @@ function start(){
 	$.sts.value="on";
 	frameno=0;
 	ws=new WebSocket("ws://"+location.host+"/medusa.porta");
-//	ws.binaryType="arraybuffer";
-	ws.onopen=function(e){p(" porta");ws.send(keys);}
+	ws.onopen=function(e){p(" porta");var s='0';for(var k in keys)s+=String.fromCharCode(k);ws.send(s);}
 	ws.onmessage=function(e){
 		frameno++;
 		onframe();
@@ -56,10 +52,7 @@ function start(){
 			$.sts.value=str;
 			return;
 		}
-		var s='0';
-		for(var k in keys){
-			s+=String.fromCharCode(k);
-		}
+		var s='0';for(var k in keys)s+=String.fromCharCode(k);
 //		console.log(s);
 		ws.send(s);
 		banner_update();
@@ -101,6 +94,11 @@ function compile(){
 }
 function reset(){
 	ws.send("2");
+	$.scr.focus();
+}
+function send(s){
+//	console.log(s);
+	ws.send("3"+s);
 	$.scr.focus();
 }
 function p(txt){$.outp.value+=txt;}

@@ -1,5 +1,10 @@
 package a.medusa;
 public class player extends glob{
+	@Override public void draw(final screen s){
+		super.draw(s);
+		if(label==null)return;
+		s.render_text(label,phys.pos);
+	}
 	@Override public void tick(final float dt){
 		super.tick(dt);
 		phys.dpos[0]=speed*(float)Math.cos(a);
@@ -8,17 +13,21 @@ public class player extends glob{
 	private static boolean has(final String s,final char ch){
 		return s.indexOf(ch)!=-1;
 	}
-	@Override public void on_msg(final String s,final medusa mds)throws Throwable{
-//		System.out.println(this+" "+s);
-		final float d=speed_default;
-		if(has(s,'W')){phys.dpos[1]=-d;}
-		if(has(s,'A')){phys.dpos[0]=-d;}
-		if(has(s,'S')){phys.dpos[1]=d;}
-		if(has(s,'D')){phys.dpos[0]=d;}
-//		System.out.println(phys.dpos[0]+"  "+phys.dpos[1]);
-		glo.normalize(phys.dpos,d);
-//		System.out.println(phys.dpos[0]+"  "+phys.dpos[1]);
-
+	@Override public void on_msg(final String msg,final medusa mds)throws Throwable{
+//		System.out.println(this+" "+msg);
+		final char type=msg.charAt(0);
+		if(type=='0'){
+			final String s=msg.substring(1);
+			final float d=speed_default;
+			if(has(s,'W')){phys.dpos[1]=-d;}
+			if(has(s,'A')){phys.dpos[0]=-d;}
+			if(has(s,'S')){phys.dpos[1]=d;}
+			if(has(s,'D')){phys.dpos[0]=d;}
+			glo.normalize(phys.dpos,d);
+		}else if(type=='3'){
+			label=msg.substring(1);
+			System.out.println(label);
+		}
 //		final float dt=mds.dt(1);
 //		final float add=d*dt;
 		
@@ -44,6 +53,7 @@ public class player extends glob{
 //			sp=0;
 //		}
 	}
+	private String label;
 	private float a;
 	private float speed;
 	private float speed_default=2;
