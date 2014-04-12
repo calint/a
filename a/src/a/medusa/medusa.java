@@ -12,7 +12,9 @@ final public class medusa implements Serializable{
 		players_free.clear();
 		players_free.addAll(players_all);		
 	}
+	public long frame;
 	final public void tick(final float dt){
+		frame++;
 		last_update_dt_s=dt;
 		players_all.forEach((glob g)->g.tick(dt));
 	}
