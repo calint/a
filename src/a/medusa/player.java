@@ -1,9 +1,9 @@
 package a.medusa;
 public class player extends glob{
-	public player image(final sprite i){image=i;return this;}
+	public player sprite(final sprite i){sprite=i;return this;}
 	public void draw(final screen s){
-		if(image==null)return;
-		image.draw_to_screen(s,phys.pos);
+		if(sprite==null)return;
+		sprite.draw_to_screen(s,phys.pos);
 	}
 	@Override public void update(final float dt){
 		super.update(dt);
@@ -43,6 +43,6 @@ public class player extends glob{
 	float a;
 	protected float sp;
 	float da=(float)(Math.PI*2/5);
-	private sprite image;
+	private sprite sprite;
 	private static final long serialVersionUID=1;
 }
