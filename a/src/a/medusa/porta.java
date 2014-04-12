@@ -26,8 +26,8 @@ final public class porta extends websock implements threadedsock{static final lo
 //		System.out.println(s);
 		plr.on_msg(s,m);
 		if(s.charAt(0)!='0')return;//only redraw when keys are sent
-		m.draw(scr);
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("1".getBytes()),ByteBuffer.wrap(hello)},true);
+		m.draw(scr);
 		scr.bb.rewind();
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),scr.bb},true);
 		if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
