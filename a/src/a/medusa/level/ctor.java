@@ -3,9 +3,9 @@ package a.medusa.level;
 import a.medusa.medusa;
 import a.medusa.player;
 import a.medusa.sprite;
-import a.medusa.medusa.medusa_plugin;
+import a.medusa.medusa.plugin;
 
-public class ctor implements medusa_plugin {
+public class ctor implements plugin {
 	@Override public void init(final medusa m)throws Throwable{
 		final sprite spi=new sprite();
 		spi.load();
