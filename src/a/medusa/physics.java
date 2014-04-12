@@ -7,7 +7,7 @@ public class physics implements Serializable{
 	final float[]dpos=new float[]{0,0};
 	float a;
 	float da;
-	public void update(final float dt){
+	public void tick(final float dt){
 		glo.add2(pos,dpos,dt);
 		a+=da*dt;
 	}
