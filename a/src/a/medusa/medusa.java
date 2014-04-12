@@ -5,42 +5,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class medusa implements Serializable{
-	public static interface medusa_ctor{
-		void init(final medusa m)throws Throwable;
-	}
-	public static String ctor_class_name="a.medusa.level.ctor";
-//	private int frame;
+	public static String plugin="a.medusa.level.ctor";
 	public void rst()throws Throwable{
 		players_all.clear();
-		final medusa_ctor ctor=(medusa_ctor)Class.forName(ctor_class_name).newInstance();
-		ctor.init(this);
-//		frame=0;
-		
-//		final sprite spi=new sprite();
-//		spi.load();
-//		
-//		player sp=new player();
-//		sp.glo(spi).xy(29,2);
-//		players_all.add(sp);
-//		
-//		sp=new player();
-//		sp.glo(spi).xy(30,8);
-//		players_all.add(sp);
-//		
-//		sp=new player();
-//		sp.glo(spi).xy(70,30);
-//		players_all.add(sp);
-//
-//		sp=new player();
-//		sp.glo(spi).xy(53,34);
-//		players_all.add(sp);
-//
-//		sp=new player();
-//		final glo_circle_xy circ=new glo_circle_xy();
-//		circ.load();
-//		sp.glo(circ).xy(20,20).da(10*dtor);
-//		players_all.add(sp);
-
+		Class.forName(plugin).asSubclass(medusa_plugin.class).newInstance().init(this);
 		players_free.clear();
 		players_free.addAll(players_all);		
 	}
@@ -57,12 +25,17 @@ public class medusa implements Serializable{
 	}
 	public player alloc_sprite_for_new_player(){if(players_free.isEmpty())return null;return players_free.removeFirst();}
 	public void on_player_closed_connection(final player s){players_free.add(s);}
-	public final ArrayList<player>players_all=new ArrayList<>(128);
+	private final ArrayList<player>players_all=new ArrayList<>(128);
+	final public medusa players_add(final player sp){players_all.add(sp);return this;}
+	final public player players_get(final int player){return players_all.get(player);}
 	public final LinkedList<player>players_free=new LinkedList<>();
-	public float last_update_dt_s;
+	final public boolean has_active_players(){return players_free.size()==players_all.size();}
+	private float last_update_dt_s;
+	final public float dt(final float s){return s*last_update_dt_s;}
 	
 	public static @interface readonly{}
 	public static @interface takes{}
 	public static @interface gives{}
+	public static interface medusa_plugin{void init(final medusa m)throws Throwable;}
 	private static final long serialVersionUID=1L;
 }

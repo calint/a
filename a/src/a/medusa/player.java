@@ -6,7 +6,7 @@ public class player extends glob{
 		phys.dpos[1]=sp*(float)Math.sin(a);
 	}
 	@Override public void on_msg(final String s,final medusa mds)throws Throwable{
-		final float dt=mds.last_update_dt_s;
+		final float dt=mds.dt(1);
 		final float add=d*dt;
 		if("a".equals(s)){phys.dpos[0]=-d;phys.dpos[1]=0;}
 		else if("d".equals(s)){phys.dpos[0]=d;phys.dpos[1]=0;}
@@ -35,8 +35,8 @@ public class player extends glob{
 		}
 	}
 	private float d=2;
-	float a;
-	protected float sp;
-	float da=(float)(Math.PI*2/5);
+	private float a;
+	private float sp;
+	private float da=(float)(Math.PI*2/5);
 	private static final long serialVersionUID=1;
 }

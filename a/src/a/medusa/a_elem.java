@@ -52,12 +52,12 @@ public class a_elem extends a{
 		final player sp=new player();
 		sp.glo(spi);
 		sp.xy(3,2);
-		mds.players_all.add(sp);
+		mds.players_add(sp);
 		
 		final player sp2=new player();
 		sp2.glo(spi);
 		sp2.xy(30,8);
-		mds.players_all.add(sp2);
+		mds.players_add(sp2);
 		
 		step();
 		
@@ -65,7 +65,7 @@ public class a_elem extends a{
 	}
 	public void x_keyb(xwriter x,String key)throws Throwable{
 		final int player=medid.toint();
-		mds.players_all.get(player).on_msg(key,mds);
+		mds.players_get(player).on_msg(key,mds);
 		step();
 		final xwriter xx=x.xub(div,true,true);
 		scr.screen_to_outputstream(xx.outputstream());

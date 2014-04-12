@@ -1,8 +1,9 @@
 package a.medusa;
 
+import a.medusa.medusa.readonly;
 
 public class sprite extends glo{
-	String[]scan_lines=new String[]{
+	private String[]scan_lines=new String[]{
 			" ____ ",
 			"|O  O|",
 			"|_  _|",
@@ -13,7 +14,7 @@ public class sprite extends glo{
 		hi=scan_lines.length;
 		wi=scan_lines[0].length();
 	}
-	@Override public void draw_to_screen(final screen s,final/*readonly*/float[]xy,final float angle){
+	@Override public void draw_to_screen(final screen s,final@readonly float[]xy,final float angle){
 		final int h=s.hi;
 		final int w=s.wi;
 		final int x=(int)xy[0];
@@ -28,8 +29,7 @@ public class sprite extends glo{
 			cut_left=-c;
 			c=0;
 		}
-//		System.out.println(x+"  "+y+"   "+cut_left);
-		for(String ln:scan_lines){
+		for(final String ln:scan_lines){
 			s.cursor_place(r++,c);
 			if(r<1)continue;
 			if(r>=h)break;
@@ -38,5 +38,4 @@ public class sprite extends glo{
 	}
 	
 	private static final long serialVersionUID = 1L;
-
 }

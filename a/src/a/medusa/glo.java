@@ -2,17 +2,21 @@ package a.medusa;
 
 import java.io.Serializable;
 
+import a.medusa.medusa.gives;
+import a.medusa.medusa.readonly;
+
 public class glo implements Serializable{
 	public void load(){}
-	public void draw_to_screen(final screen s,final/*readonly*/float[]xy,final float angle){}
-	
-	static void add2(final float[]dest_xy,final float[]xy){
+	public void draw_to_screen(final screen s,final@readonly float[]xy,final float angle){}
+
+	////////////////////////
+	public static void add2(final float[]dest_xy,final float[]xy){
 		dest_xy[0]+=xy[0];dest_xy[1]+=xy[1];//? simd
 	}
-	static void add2(final float[]dest_xy,final float[]xy,final float scale){
+	public static void add2(final float[]dest_xy,final@readonly float[]xy,final float scale){
 		dest_xy[0]+=scale*xy[0];dest_xy[1]+=scale*xy[1];//? simd
 	}
-	static@medusa.gives float[]vertices_circle_xy(final int points,final@medusa.readonly float[]scale_xy){
+	public static@gives float[]vertices_circle_xy(final int points,final@readonly float[]scale_xy){
 		float a=0;
 		float da=(float)(Math.PI*2/points);
 		final float[]xy=new float[points*2];// 2 components/vertex
@@ -26,7 +30,7 @@ public class glo implements Serializable{
 		}
 		return xy;
 	}
-	static final void vertices_rotate_about_z_axis(final float[]dst,final@medusa.readonly float[]src,final float angle_in_radians,final@medusa.readonly float[]translation){
+	public static void vertices_rotate_about_z_axis(final float[]dst,final@readonly float[]src,final float angle_in_radians,final@readonly float[]translation){
 			// |cos -sin||x|=|xcos-ysin|
 			// |sin  cos||y|=|xsin+ycos|
 	//		System.out.println(angle_in_radians*180/Math.PI);
