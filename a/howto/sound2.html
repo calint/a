@@ -16,16 +16,16 @@ var ax=0;
 var ay=0;
 
 $=document.all;
-var off=false;
+var mute=false;
 dac.onaudioprocess=function(e){
+	//console.log(Object.keys(e));
     var output=e.outputBuffer.getChannelData(0);
  //   console.log(dax);
  	$.frm.value++;
-    for(var i=0;i<bufferSize;i++) {
-    	if(off){
-    		output[i]=0;
-    		continue;
-    	}
+ 	$.bufsize.value=output.length;
+ 	$.pbt.value=e.playbackTime;
+    for(var i=0;i<output.length;i++) {
+    	if(mute){output[i]=0;continue;}
         output[i]=((Math.sin(ax)*2-1)+(Math.sin(ay)*2-1))/2;
     	ax+=dax;
     	ay+=day;
@@ -35,12 +35,13 @@ dac.onaudioprocess=function(e){
 }
 dac.connect(context.destination);
 
-function start(){off=false;}
-function stop(){off=true;}
+function start(){mute=false;}
+function stop(){mute=true;}
 function onmousemove(event){
 	dax=event.clientX/10000;day=event.clientY/10000;
 }
 </script>
 <pre><a href="javascript:stop()">stop</a> <a href="javascript:start()">start</a>
-frame [<output id=frm></output>] frequencies [<output id=frq1></output>] [<output id=frq2></output>]
+frame [<output id=frm></output>]  playbacktime [<output id=pbt></output>] buf [<output id=bufsize></output>] 
+frequencies [<output id=frq1></output>] [<output id=frq2></output>]
 
