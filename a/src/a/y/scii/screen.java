@@ -125,8 +125,8 @@ public class screen implements Serializable{
 //		System.out.println("top ix "+(topy_ix>>1));
 		int ix_lft,ix_rht;
 		ix_lft=ix_rht=topy_ix;
-		float y_lft,y_rht;
-		y_lft=y_rht=topy;
+//		float y_lft,y_rht;
+//		y_lft=y_rht=topy;
 		float x_lft,x_rht;
 		x_lft=x_rht=topx;
 		boolean adv_lft=true,adv_rht=true;
@@ -146,22 +146,24 @@ public class screen implements Serializable{
 		final int last_elem_ix=vertex_count*elems_per_vertex-elems_per_vertex;
 		while(true){
 			if(adv_lft){
-				y_lft=y_nxt_lft;
+//				y_lft=y_nxt_lft;
 				if(ix_lft==last_elem_ix)ix_lft=0;
 				else ix_lft+=elems_per_vertex;					
 				x_nxt_lft=xy[ix_lft];
 				y_nxt_lft=xy[ix_lft+1];
-				dy_lft=y_nxt_lft-y_lft;
+//				dy_lft=y_nxt_lft-y_lft;
+				dy_lft=y_nxt_lft-y;
 				if(dy_lft!=0)dxdy_lft=(x_nxt_lft-x_lft)/dy_lft;
 				else dxdy_lft=0;
 			}
 			if(adv_rht){
-				y_rht=y_nxt_rht;
+//				y_rht=y_nxt_rht;
 				if(ix_rht==0)ix_rht=last_elem_ix;
 				else ix_rht-=elems_per_vertex;
 				x_nxt_rht=xy[ix_rht];
 				y_nxt_rht=xy[ix_rht+1];
-				dy_rht=y_nxt_rht-y_rht;
+//				dy_rht=y_nxt_rht-y_rht;
+				dy_rht=y_nxt_rht-y;
 				if(dy_rht!=0)dxdy_rht=(x_nxt_rht-x_rht)/dy_rht;
 				else dxdy_rht=0;
 			}

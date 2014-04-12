@@ -48,14 +48,6 @@ public class sprite implements Serializable{
 		}
 	}
 	final physics phys=new physics();
-	public static class physics implements Serializable{
-		final float[]pos=new float[]{0,0};
-		final float[]dpos=new float[]{0,0};
-		public void update(final float dt){
-			medusa.add2(pos,dpos,dt);
-		}
-		private static final long serialVersionUID = 1L;
-	}
 	public sprite xy(final float x,final float y){
 		phys.pos[0]=x;phys.pos[1]=y;
 		return this;
