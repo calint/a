@@ -6,17 +6,16 @@ import b.req;
 import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
-//{System.out.println("porta opened");}
-	final@Override protected void onopened()throws Throwable{
+	synchronized final@Override protected void onopened()throws Throwable{
 		plr=mds.alloc_sprite_for_new_player();
 		if(plr==null)throw new Exception("no free players available");
 		scr=new screen(80,40);
 		System.out.println(" medusa: player connected  "+req.get().ip()+"  "+plr);
 		medusa_thread.interrupt();
 	}
-	private sprite plr;
+	private player plr;
 	private screen scr;
-	final@Override protected void onclosed()throws Throwable{
+	synchronized final@Override protected void onclosed()throws Throwable{
 		if(plr==null)return;//? protocol issues
 		mds.on_player_closed_connection(plr);
 		System.out.println(" medusa: player disconnected  "+req.get().ip()+"  "+plr);
@@ -28,7 +27,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		if(cmd==0){//key
 			final byte key=bb.get();
 			String kc=""+Character.toLowerCase((char)key);
-			plr.on_msg(kc,dt);//? y dt 
+			plr.on_msg(kc,mds);//? y dt 
 		}else if(cmd=='2'){//reset
 			mds.rst();
 		}
@@ -57,7 +56,7 @@ final public class porta extends websock implements threadedsock{static final lo
 				mds.update(dt);
 //				System.out.println("medusa dt "+dt);
 				if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
-				while(mds.sprites_available_for_new_players.size()==mds.sprites.size()){
+				while(mds.players_free.size()==mds.players_all.size()){
 					System.out.println(new Date()+": medusa: no players active, sleeping");
 					try{Thread.sleep(24*60*60*1000);}catch(InterruptedException ok){}
 					System.out.println(new Date()+": medusa: wakeup");

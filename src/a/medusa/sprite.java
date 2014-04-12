@@ -1,61 +1,42 @@
 package a.medusa;
 
-import java.io.Serializable;
 
-public class sprite implements Serializable{
-	image image;
-//	public float x,y;
-	public void update(final float dt){
-//		final float d=2;
-		phys.dpos[0]=sp*(float)Math.cos(a);
-		phys.dpos[1]=sp*(float)Math.sin(a);
-		phys.update(dt);
+public class sprite extends glo{
+	String[]scan_lines=new String[]{
+			" ____ ",
+			"|O  O|",
+			"|_  _|",
+			" /||\\ "
+		};
+	public int wi,hi;
+	@Override public void load(){
+		hi=scan_lines.length;
+		wi=scan_lines[0].length();
 	}
-	public void draw(final screen s){
-		if(image==null)return;
-		image.draw_to_screen(s,phys.pos);
-	}
-	float d=2;
-	float a;
-	float sp;
-	float da=(float)(Math.PI*2/5);
-	public void on_msg(final String s,final float dt)throws Throwable{
-		final float add=d*dt;
-		if("a".equals(s)){phys.dpos[0]=-d;phys.dpos[1]=0;}
-		else if("d".equals(s)){phys.dpos[0]=d;phys.dpos[1]=0;}
-		else if("w".equals(s)){phys.dpos[1]=-d;phys.dpos[0]=0;}
-		else if("s".equals(s)){phys.dpos[1]=d;phys.dpos[0]=0;}
-		else if("e".equals(s)){
-			phys.pos[0]+=add;phys.pos[1]-=add;
-		}else if("q".equals(s)){
-			phys.pos[0]-=add;phys.pos[1]-=add;
-		}else if("z".equals(s)){
-			phys.pos[0]-=add;phys.pos[1]+=add;
-		}else if("x".equals(s)){
-			phys.pos[1]+=add;
-		}else if("c".equals(s)){
-			phys.pos[0]+=add;phys.pos[1]+=add;
-		}else if(" ".equals(s)){
-			phys.dpos[0]=phys.dpos[1]=0;
-		}else if("o".equals(s)){
-			a-=da*dt;
-		}else if("p".equals(s)){
-			a+=da*dt;
-		}else if("i".equals(s)){
-			sp=2;
-		}else if("j".equals(s)){
-			sp=0;
+	@Override public void draw_to_screen(final screen s,final/*readonly*/float[]xy){
+		final int h=s.hi;
+		final int w=s.wi;
+		final int x=(int)xy[0];
+		final int y=(int)xy[1];
+		if(x>w)return;
+		if(x+wi<0)return;
+		if(y>=h)return;
+		if(y+hi<0)return;
+		int r=y,c=x;
+		int cut_left=0;
+		if(c<0){
+			cut_left=-c;
+			c=0;
+		}
+//		System.out.println(x+"  "+y+"   "+cut_left);
+		for(String ln:scan_lines){
+			s.cursor_place(r++,c);
+			if(r<1)continue;
+			if(r>=h)break;
+			s.print(ln,cut_left);
 		}
 	}
-	final physics phys=new physics();
-	public sprite xy(final float x,final float y){
-		phys.pos[0]=x;phys.pos[1]=y;
-		return this;
-	}
-	public sprite image(final image i){image=i;return this;}
-	
-	
-	
 	
 	private static final long serialVersionUID = 1L;
+
 }

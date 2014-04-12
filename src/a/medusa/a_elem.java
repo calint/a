@@ -46,18 +46,18 @@ public class a_elem extends a{
 	public void x_reset(xwriter x,String a){
 		mds.rst();
 		
-		final image spi=new image();
+		final sprite spi=new sprite();
 		spi.load();
 		
-		final sprite sp=new sprite();
-		sp.image=spi;
+		final player sp=new player();
+		sp.image(spi);
 		sp.xy(3,2);
-		mds.sprites.add(sp);
+		mds.players_all.add(sp);
 		
-		final sprite sp2=new sprite();
-		sp2.image=spi;
+		final player sp2=new player();
+		sp2.image(spi);
 		sp2.xy(30,8);
-		mds.sprites.add(sp2);
+		mds.players_all.add(sp2);
 		
 		step();
 		
@@ -65,7 +65,7 @@ public class a_elem extends a{
 	}
 	public void x_keyb(xwriter x,String key)throws Throwable{
 		final int player=medid.toint();
-		mds.sprites.get(player).on_msg(key,1);
+		mds.players_all.get(player).on_msg(key,mds);
 		step();
 		final xwriter xx=x.xub(div,true,true);
 		scr.screen_to_outputstream(xx.outputstream());

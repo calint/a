@@ -13,27 +13,27 @@ public class medusa implements Serializable{
 	public void rst(){
 //		scr.rst();
 		frame=0;
-		sprites.clear();
+		players_all.clear();
 		
-		final image spi=new image();
+		final sprite spi=new sprite();
 		spi.load();
 		
-		sprite sp=new sprite().image(spi).xy(29,2);
-		sprites.add(sp);
+		player sp=new player().image(spi);sp.xy(29,2);
+		players_all.add(sp);
 		
-		sp=new sprite().image(spi).xy(30,8);
-		sprites.add(sp);
+		sp=new player().image(spi);sp.xy(30,8);
+		players_all.add(sp);
 		
-		sp=new sprite().image(spi).xy(70,30);
-		sprites.add(sp);
+		sp=new player().image(spi);sp.xy(70,30);
+		players_all.add(sp);
 
-		sp=new sprite().image(spi).xy(53,34);
-		sprites.add(sp);
+		sp=new player().image(spi);sp.xy(53,34);
+		players_all.add(sp);
 
-		sprites_available_for_new_players.clear();
-		sprites_available_for_new_players.addAll(sprites);		
+		players_free.clear();
+		players_free.addAll(players_all);		
 	}
-	long last_dt_ms=System.currentTimeMillis();
+//	long last_dt_ms=System.currentTimeMillis();
 	float[]vertices_xy;
 	float[]vertices_minute_xy;
 	float a;
@@ -42,7 +42,8 @@ public class medusa implements Serializable{
 	float ddots=.5f;
 //	float dt;
 	public void update(final float dt){
-		sprites.forEach((sprite s)->s.update(dt));
+		last_update_dt_s=dt;
+		players_all.forEach((glob s)->s.update(dt));
 
 //		vertices_xy=vertices_circle_xy(128,new float[]{15,10});
 		vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
@@ -53,7 +54,7 @@ public class medusa implements Serializable{
 		a+=da*dt;
 //		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
 		
-		final sprite s=sprites.get(0);
+		final player s=players_all.get(0);
 		vertices_minute_xy=vertices_circle_xy(3,new float[]{s.sp>0?4:3,s.sp>0?4:3});
 		a_mins=-s.a;
 //		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{34,5});
@@ -116,16 +117,17 @@ public class medusa implements Serializable{
 //		s.render_dot(dot,(byte)'X');
 		
 		//
-		sprites.forEach((sprite sp)->sp.draw(s));
+		players_all.forEach((glob sp)->sp.draw(s));
 	}
-	public sprite alloc_sprite_for_new_player(){
-		if(sprites_available_for_new_players.isEmpty())return null;
-		return sprites_available_for_new_players.removeFirst();
+	public player alloc_sprite_for_new_player(){
+		if(players_free.isEmpty())return null;
+		return players_free.removeFirst();
 	}
-	public void on_player_closed_connection(sprite s){
-		sprites_available_for_new_players.add(s);
+	public void on_player_closed_connection(player s){
+		players_free.add(s);
 	}
-	public final ArrayList<sprite>sprites=new ArrayList<>(128);
-	public final LinkedList<sprite>sprites_available_for_new_players=new LinkedList<>();
+	public final ArrayList<player>players_all=new ArrayList<>(128);
+	public final LinkedList<player>players_free=new LinkedList<>();
+	public float last_update_dt_s;
 	private static final long serialVersionUID=1L;
 }
