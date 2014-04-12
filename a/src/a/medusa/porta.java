@@ -22,14 +22,10 @@ final public class porta extends websock implements threadedsock{static final lo
 		scr=null;
 	}
 	synchronized protected void onmessage(final ByteBuffer bb)throws Throwable{
-		final byte cmd=bb.get();
-		if(cmd=='0'){//key
-			final String keys=new String(bb.array(),bb.position(),bb.remaining());
-//			System.out.println(bb.remaining()+": "+keys);
-			plr.on_msg(keys,m);
-		}else if(cmd=='2'){//reset
-			m.reset();
-		}
+		final String s=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
+//		System.out.println(s);
+		plr.on_msg(s,m);
+		if(s.charAt(0)!='0')return;//only redraw when keys are sent
 		m.draw(scr);
 		scr.bb.rewind();
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),scr.bb},true);
