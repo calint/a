@@ -1,6 +1,5 @@
 package a.medusa;
 import java.nio.ByteBuffer;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,7 +9,7 @@ import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
 	synchronized final@Override protected void onopened()throws Throwable{
 		plr=m.alloc_player();
-		if(plr==null)throw new Exception("no free players available");
+		if(plr==null)throw new Exception("no free players available");//? add more players
 		scr=new screen(80,40);
 		System.out.println(" medusa: player connected  "+req.get().ip()+"  "+plr);
 		medusa_thread.interrupt();
@@ -28,9 +27,9 @@ final public class porta extends websock implements threadedsock{static final lo
 		final long timestamp_ms=System.currentTimeMillis();
 //		final String s=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
 //		System.out.println(s);
-		final boolean keys_package=bb.get(bb.position())=='0';
+		final boolean iskeys=bb.get(bb.position())=='0';
 		plr.on_msg(bb,m);
-		if(!keys_package)return;//only redraw when keys are sent
+		if(!iskeys)return;//only redraw when a keys frame is received
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.sss");
 		final String msg=sdf.format(new Date(timestamp_ms))+"  dt "+String.format("%.3f",dt)+"s  players "+m.players_active_count()+"  frame "+m.frame;
 		final byte[]ba_msg=msg.getBytes();
