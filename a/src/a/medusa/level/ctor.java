@@ -7,10 +7,18 @@ import a.medusa.medusa.plugin;
 
 public class ctor implements plugin {
 	@Override public void init(final medusa m)throws Throwable{
+		player sp;
+		final glo_circle_xy circ=new glo_circle_xy();
+		circ.load();
+		sp=new player();
+		sp.glo(circ).xy(20,20).da(medusa.dtor(10));
+		m.players_add(sp);
+
+		
 		final sprite spi=new sprite();
 		spi.load();
 		
-		player sp=new player();
+		sp=new player();
 		sp.glo(spi).xy(29,2);
 		m.players_add(sp);
 		
@@ -26,10 +34,5 @@ public class ctor implements plugin {
 		sp.glo(spi).xy(53,34);
 		m.players_add(sp);
 
-		final glo_circle_xy circ=new glo_circle_xy();
-		circ.load();
-		sp=new player();
-		sp.glo(circ).xy(20,20).da(medusa.dtor(10));
-		m.players_add(sp);
 	}
 }
