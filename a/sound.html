@@ -1,0 +1,20 @@
+<script>
+var context = new webkitAudioContext();
+console.log(context);
+var osc1=context.createOscillator();
+osc1.connect(context.destination);
+osc1.frequency.value=100;
+var osc2=context.createOscillator();
+osc2.frequency.value=osc1.frequency.value/2;
+osc2.connect(context.destination);
+
+function start(){
+	osc1.start(0);
+	osc2.start(0);
+}
+function stop(){
+	osc1.stop(0);
+	osc2.stop(0);	
+}
+</script>
+<a href="javascript:stop()">stop</a> <a href="javascript:start()">start</a>
