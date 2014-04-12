@@ -1,0 +1,34 @@
+<html onmousemove="dax=event.clientX/10000;day=event.clientY/10000;">
+<script>
+var context;
+try{
+	window.AudioContext=window.AudioContext||window.webkitAudioContext;
+	context=new AudioContext();
+}catch(e){
+	alert('Web Audio API is not supported in this browser');
+}
+//var context=new webkitAudioContext();
+var bufferSize=512;
+var dac=context.createScriptProcessor(bufferSize,1,1);
+var dax=.004;
+var day=.002;
+var ax=0;
+var ay=0;
+dac.onaudioprocess=function(e){
+    var output=e.outputBuffer.getChannelData(0);
+//    console.log(a);
+    for(var i=0;i<bufferSize;i++) {
+        output[i]=((Math.sin(ax)*2-1)+(Math.sin(ay)*2-1))/2;
+    	ax+=dax;
+    	ay+=day;
+    }
+}
+dac.connect(context.destination);
+
+function start(){}
+function stop(){dac.stop(0);}
+function onmousemove(event){
+	dax=event.clientX/10000;day=event.clientY/10000;
+}
+</script>
+<a href="javascript:stop()">stop</a> <a href="javascript:start()">start</a>
