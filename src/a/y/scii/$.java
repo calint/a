@@ -5,6 +5,7 @@ import b.xwriter;
 public class $ extends a{
 	public a div;
 	public a medid;{medid.set(0);}
+	private screen scr=new screen(80,40);
 	@Override public void to(final xwriter x)throws Throwable{
 		x.style("html","background:#f8f8f8");
 		name_to(x);
@@ -22,7 +23,7 @@ public class $ extends a{
 		x.pl("- - - - - -  - - - - -- - - - - - - - - - -- - - - -- - - - - - -- - - -- - --");
 		x.style(div,"display:block;margin:auto;border:1px dotted white;");
 		x.el(div);
-		mds.scr.screen_to_outputstream(x.outputstream());
+		scr.screen_to_outputstream(x.outputstream());
 		x.elend();
 		x.pl("- - - - - -  - - - - -- - - - - - - - - - -- - - - -- - - - - - -- - - -- - --");
 	}
@@ -38,8 +39,9 @@ public class $ extends a{
 		}
 	}
 	public void step(){
-		mds.update();
-		mds.draw();		
+		final float dt=1;
+		mds.update(dt);
+		mds.draw(scr);		
 	}
 	public void x_reset(xwriter x,String a){
 		mds.rst();
@@ -66,7 +68,7 @@ public class $ extends a{
 		mds.sprites.get(player).on_msg(key,1);
 		step();
 		final xwriter xx=x.xub(div,true,true);
-		mds.scr.screen_to_outputstream(xx.outputstream());
+		scr.screen_to_outputstream(xx.outputstream());
 		x.xube();
 //		x.xreload();
 	}

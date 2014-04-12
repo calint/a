@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class medusa implements Serializable{
-	public screen scr;
+//	public screen scr;
 	public int frame;
 	public medusa(){
-		scr=new screen(80,40);
+//		scr=new screen(80,40);
 	}
 	public void rst(){
-		scr.rst();
+//		scr.rst();
 		frame=0;
 		sprites.clear();
 		
@@ -40,40 +40,30 @@ public class medusa implements Serializable{
 	float a_mins;
 	float dots=3;
 	float ddots=.5f;
-	float dt;
-	public void update(){
-		final long t_ms=System.currentTimeMillis();
-		long dt_try=(t_ms-last_dt_ms);
-//		System.out.println(t_ms+"  "+dt_try);
-		if(dt_try<=0)dt_try=1;// set dt=1ms
-		last_dt_ms=t_ms;
-		dt=dt_try/1000.f;
+//	float dt;
+	public void update(final float dt){
 		sprites.forEach((sprite s)->s.update(dt));
 
-		vertices_xy=vertices_circle_xy(32,new float[]{15,10});
-//		vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
+//		vertices_xy=vertices_circle_xy(128,new float[]{15,10});
+		vertices_xy=vertices_circle_xy((int)dots,new float[]{15,10});
 		dots+=ddots*dt;
 		if(dots>30)dots=3;
 		vertices_rotate_about_z_axis(vertices_xy,vertices_xy,a,new float[]{20,20});
 		final float da=(float)Math.PI*2/60;
 		a+=da*dt;
 //		a=(float)(sprites.get(0).phys.pos[0]*Math.PI/180*4);
-		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'#',false);
-		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
-//		scr.render_dot(dot,(byte)'X');
 		
 		final sprite s=sprites.get(0);
 		vertices_minute_xy=vertices_circle_xy(3,new float[]{s.sp>0?4:3,s.sp>0?4:3});
 		a_mins=-s.a;
 //		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{34,5});
-		final sprite.physics p=s.phys;
+		final physics p=s.phys;
 //		System.out.println(p.pos[0]+"  "+p.pos[1]);
 		vertices_rotate_about_z_axis(vertices_minute_xy,vertices_minute_xy,a_mins,new float[]{p.pos[0]/2+1,p.pos[1]+2});
 		final float da_mins=(float)Math.PI*2/60/5;
 		a_mins+=da_mins*dt;
-}
-
-	public void draw(){draw(scr);}
+	}
+//	public void draw(){draw(scr);}
 	static void add2(final float[]dest_xy,final float[]xy){
 		dest_xy[0]+=xy[0];dest_xy[1]+=xy[1];//? simd
 	}
@@ -117,13 +107,13 @@ public class medusa implements Serializable{
 		return xy;
 	}
 	public void draw(final screen s){
-		scr.clear('.');
-		scr.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'#',false);
-		scr.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
-//		scr.render_dot(dot,(byte)'X');		
-//		scr.render_convex_polygon(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'*',true);
-		scr.render_dots(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'X');
-//		scr.render_dot(dot,(byte)'X');
+		s.clear('.');
+		s.render_convex_polygon(vertices_xy,vertices_xy.length>>1,(byte)'#',false);
+		s.render_dots(vertices_xy,vertices_xy.length>>1,(byte)'X');
+//		s.render_dot(dot,(byte)'X');		
+//		s.render_convex_polygon(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'*',true);
+		s.render_dots(vertices_minute_xy,vertices_minute_xy.length>>1,(byte)'X');
+//		s.render_dot(dot,(byte)'X');
 		
 		//
 		sprites.forEach((sprite sp)->sp.draw(s));

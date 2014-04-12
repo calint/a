@@ -1,10 +1,10 @@
-<!DOCTYPE html><meta charset="utf-8">
+<!DOCTYPE html><meta charset="utf-8"><title>medusa ascii game</title>
 <style>
 	html{white-space:pre;font-family:courier;font-size:12px;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
 	#scr{outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	#recvsize{color:green}
 	#sts{color:brown}
-	#banner{display:block;height:3em}
+	#banner{display:block;height:2em}
 	#hldr{margin-left:auto;margin-right:auto}
 </style>
 <t id=banner></t>
@@ -12,7 +12,7 @@
 <div id=scr tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"></div>
 <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <a href="javascript:reset()">reset</a> <output id="outp"></output>
 </td></tr></table>
-use keys wesd to move medusa
+use keys  jiop to move medusa
 
 <script>
 $=document.all;
@@ -37,7 +37,7 @@ function start(){
 //		var ua=new DataView(e.data);
 		var cmd=e.data.substring(0,1);
 		var dat=e.data.substring(1);
-		console.log("command: "+cmd);
+//		console.log("command: "+cmd);
 		if(cmd==0){
 			var p=0;
 			var s='';
@@ -62,7 +62,11 @@ function start(){
 	ws.onerror=function(e){alert("websocket error");};
 	$.scr.focus();
 }
+var last_time_banner_was_updated=new Date();
 function banner_update(){
+	var now=new Date();
+	if(now-last_time_banner_was_updated<5000)return;
+	last_time_banner_was_updated=now;
 	var s="medusa ascii game";
 	var size=s.length;
 	var htm='';
