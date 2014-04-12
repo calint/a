@@ -1,5 +1,6 @@
 package a.medusa;
 import java.nio.ByteBuffer;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -31,7 +32,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		plr.on_msg(bb,m);
 		if(!keys_package)return;//only redraw when keys are sent
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.sss");
-		final String msg=sdf.format(new Date(timestamp_ms))+"  players "+m.players_active_count();
+		final String msg=sdf.format(new Date(timestamp_ms))+"  dt "+String.format("%.3f",dt)+"s  players "+m.players_active_count()+"  frame "+m.frame;
 		final byte[]ba_msg=msg.getBytes();
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("1".getBytes()),ByteBuffer.wrap(ba_msg)},true);
 		m.draw(scr);
