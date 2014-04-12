@@ -12,7 +12,7 @@
 </style>
 <t id=banner></t><table id=hldr><tr><td>
 <div id=scr tabindex=0 onkeydown="keys[event.keyCode]=true;return true;" onkeyup="delete keys[event.keyCode];return true;"></div>
-<output id=sts></output> <output id="outp"></output> <output id="recvsize"></output>
+<output id=sts></output><output id="outp"></output>  <output id="recvsize"></output>
 
 <input id=msg placeholder="type here" type=text spellcheck="false" autocomplete="off" onkeyup="send(this.value);this.focus()">
 
@@ -42,7 +42,6 @@ function start(){
 	ws=new WebSocket("ws://"+location.host+"/medusa.porta");
 	ws.onopen=function(e){p(" porta");var s='0';for(var k in keys)s+=String.fromCharCode(k);ws.send(s);}
 	ws.onmessage=function(e){
-		frameno++;
 		var cmd=e.data.substring(0,1);
 		var dat=e.data.substring(1);
 //		console.log("cmd "+cmd);
@@ -57,7 +56,7 @@ function start(){
 				p+=80;
 			}
 			$.scr.innerHTML=s;
-			$.recvsize.value="frame: "+frameno+"  "+e.data.length+" B  "+onframe.fps+" fps";
+			$.recvsize.value="frame: "+onframe.frame+"  "+e.data.length+" B  "+onframe.fps+" fps";
 		}else if(cmd=='1'){
 //			console.log('text: '+e.data.length+'  '+e.data);
 			var str=e.data;
@@ -102,17 +101,19 @@ function stop(){
 }
 function p(txt){$.outp.value+=txt;}
 function onframe(){
+	onframe.frame++;
 	var t=new Date().getTime();
 	var dt=t-onframe.t0;
 //	console.log(dt+"   "+onframe.fps+"    "+onframe.f0+"   "+frameno);
 	if(dt>1000){
 		onframe.t0=t;
-		var df=frameno-onframe.f0;
-		onframe.f0=frameno;
+		var df=onframe.frame-onframe.f0;
+		onframe.f0=onframe.frame;
 		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
 	}
 }
 onframe.t0=0;
 onframe.f0=0;
 onframe.fps=0;
+onframe.frame=0;
 </script>
