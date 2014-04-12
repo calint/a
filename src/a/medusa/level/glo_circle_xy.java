@@ -1,4 +1,7 @@
-package a.medusa;
+package a.medusa.level;
+
+import a.medusa.glo;
+import a.medusa.screen;
 
 public class glo_circle_xy extends glo{
 	@Override public void load(){
