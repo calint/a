@@ -7,7 +7,7 @@ import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
 	synchronized final@Override protected void onopened()throws Throwable{
-		plr=m.alloc_sprite_for_new_player();
+		plr=m.alloc_player();
 		if(plr==null)throw new Exception("no free players available");
 		scr=new screen(80,40);
 		System.out.println(" medusa: player connected  "+req.get().ip()+"  "+plr);
@@ -16,20 +16,19 @@ final public class porta extends websock implements threadedsock{static final lo
 	private player plr;
 	private screen scr;
 	synchronized final@Override protected void onclosed()throws Throwable{
-		if(plr==null)return;//? protocol issues
-		m.on_player_closed_connection(plr);
-		System.out.println(" medusa: player disconnected  "+req.get().ip()+"  "+plr);
+		if(plr==null){b.b.log(new IllegalStateException());return;}//? protocol issues
+		m.on_closed_connection(plr);
 		plr=null;
 		scr=null;
 	}
-	synchronized protected void onmessage(final ByteBuffer bb) throws Throwable {
+	synchronized protected void onmessage(final ByteBuffer bb)throws Throwable{
 		final byte cmd=bb.get();
-		if(cmd==0){//key
-			final byte key=bb.get();
-			String kc=""+Character.toLowerCase((char)key);
-			plr.on_msg(kc,m);//? y dt 
+		if(cmd=='0'){//key
+			final String keys=new String(bb.array(),bb.position(),bb.remaining());
+//			System.out.println(bb.remaining()+": "+keys);
+			plr.on_msg(keys,m);
 		}else if(cmd=='2'){//reset
-			m.rst();
+			m.reset();
 		}
 		m.draw(scr);
 		scr.bb.rewind();
@@ -38,13 +37,12 @@ final public class porta extends websock implements threadedsock{static final lo
 	}
 	
 	
-	
-	
+	/////
 	/// medusa server
 	public static long medusa_loop_sleep_ms=100;
-	static medusa m=new medusa();
-	static float dt;
-	static Thread medusa_thread=new Thread("medusa"){
+	private static medusa m=new medusa();
+	private static float dt;
+	private static Thread medusa_thread=new Thread("medusa"){
 		@Override public void run(){
 			long last_dt_ms=System.currentTimeMillis();
 			while(medusa_thread_on){
@@ -53,7 +51,7 @@ final public class porta extends websock implements threadedsock{static final lo
 				if(dt_try<=0)dt_try=1;// set dt=1ms
 				last_dt_ms=t_ms;
 				dt=dt_try/1000.f;
-				m.update(dt);
+				m.tick(dt);
 //				System.out.println("medusa dt "+dt);
 				if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
 				while(m.has_active_players()){
@@ -65,8 +63,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		}
 	};
 	static{
-		try{m.rst();}catch(Throwable t){throw new Error(t);}
-//		mds.update(0);
+		try{m.reset();}catch(Throwable t){throw new Error(t);}
 		medusa_thread.start();
 	}
 	static boolean medusa_thread_on=true;

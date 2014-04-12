@@ -31,22 +31,29 @@ public class glo implements Serializable{
 		return xy;
 	}
 	public static void vertices_rotate_about_z_axis(final float[]dst,final@readonly float[]src,final float angle_in_radians,final@readonly float[]translation){
-			// |cos -sin||x|=|xcos-ysin|
-			// |sin  cos||y|=|xsin+ycos|
-	//		System.out.println(angle_in_radians*180/Math.PI);
-			final float c=(float)Math.cos(angle_in_radians);
-			final float s=(float)Math.sin(angle_in_radians);
-			final float tx=translation[0];
-			final float ty=translation[1];		
-			for(int i=0;i<src.length;i+=2){
-				final float x=src[i];
-				final float y=src[i+1];
-				final float x1=x*c-y*s+tx;
-				final float y1=-(x*s+y*c)+ty;//? adjustment for y
-				dst[i]=x1*2; // adjustement for 80x40 square view
-				dst[i+1]=y1;
-			}
+		// |cos -sin||x|=|xcos-ysin|
+		// |sin  cos||y|=|xsin+ycos|
+//		System.out.println(angle_in_radians*180/Math.PI);
+		final float c=(float)Math.cos(angle_in_radians);
+		final float s=(float)Math.sin(angle_in_radians);
+		final float tx=translation[0];
+		final float ty=translation[1];		
+		for(int i=0;i<src.length;i+=2){
+			final float x=src[i];
+			final float y=src[i+1];
+			final float x1=x*c-y*s+tx;
+			final float y1=-(x*s+y*c)+ty;//? adjustment for y
+			dst[i]=x1*2; // adjustement for 80x40 square view
+			dst[i+1]=y1;
 		}
+	}
+	public static void normalize(final float[]xy,final float length){
+		final float len=(float)Math.sqrt(xy[0]*xy[0]+xy[1]*xy[1]);
+		if(len==0)return;
+		final float leninv=length/len;
+		xy[0]*=leninv;xy[1]*=leninv;///simd
+	}
 
 	private static final long serialVersionUID = 1L;
+
 }
