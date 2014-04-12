@@ -1,10 +1,10 @@
 <!DOCTYPE html><meta charset="utf-8"><title>medusa ascii game</title>
 <style>
-	html{white-space:pre;font-family:courier;font-size:12px;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
+	html{line-height:1em;white-space:pre;font-family:courier;font-size:12px;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
 	#scr{outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	#recvsize{color:green}
 	#sts{color:brown}
-	#txt{color:brown}
+	#txt{color:blue}
 	#banner{display:block;height:2em}
 	#hldr{margin-left:auto;margin-right:auto}
 	#msg{border:1px dotted green;background:yellow;font-family:inherit;width:17em}
@@ -12,10 +12,11 @@
 <t id=banner></t>
 <table id=hldr><tr><td>
 <div id=scr tabindex=0 onkeydown="keys[event.keyCode]=true;return true;" onkeyup="delete keys[event.keyCode];return true;"></div>
-<output id=sts></output> <output id="outp"></output> <output id="recvsize"></output>  <output id=txt></output>
+<output id=sts></output> <output id="outp"></output> <output id="recvsize"></output>
 </td></tr></table>
-use wasd keys to move medusa. type <input id=msg type=text onkeydown="if(event.keyCode==13){send(this.value);this.focus();}">
-
+<output id=txt></output>
+type here <input id=msg type=text onkeydown="if(event.keyCode==13){send(this.value);this.focus();}">
+use wasd keys to move medusa
 <script>
 $=document.all;
 $.msg.value=document.cookie; 
@@ -36,7 +37,7 @@ function start(){
 		frameno++;
 		var cmd=e.data.substring(0,1);
 		var dat=e.data.substring(1);
-		console.log("cmd "+cmd);
+//		console.log("cmd "+cmd);
 		if(cmd=='0'){
 //			console.log("screen "+e.data.length);
 			onframe();
