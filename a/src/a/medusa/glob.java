@@ -9,7 +9,7 @@ public class glob implements Serializable{
 		glo.draw_to_screen(s,phys.pos,phys.a);
 	}
 	public void tick(final float dt){
-		phys.update(dt);
+		phys.tick(dt);
 	}
 	public void on_msg(final ByteBuffer bb,final medusa mds)throws Throwable{}
 	final public glob xy(final float x, final float y){phys.pos[0]=x;phys.pos[1]=y;return this;}
