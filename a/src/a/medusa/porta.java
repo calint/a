@@ -65,6 +65,9 @@ final public class porta extends websock implements threadedsock{static final lo
 		}
 	};
 	static{
-		mds.rst();mds.update(0);medusa_thread.start();}
+		try{mds.rst();}catch(Throwable t){throw new Error(t);}
+//		mds.update(0);
+		medusa_thread.start();
+	}
 	static boolean medusa_thread_on=true;
 }

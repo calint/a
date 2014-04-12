@@ -43,19 +43,19 @@ public class a_elem extends a{
 		mds.update(dt);
 		mds.draw(scr);		
 	}
-	public void x_reset(xwriter x,String a){
+	public void x_reset(xwriter x,String a)throws Throwable{
 		mds.rst();
 		
 		final sprite spi=new sprite();
 		spi.load();
 		
 		final player sp=new player();
-		sp.sprite(spi);
+		sp.glo(spi);
 		sp.xy(3,2);
 		mds.players_all.add(sp);
 		
 		final player sp2=new player();
-		sp2.sprite(spi);
+		sp2.glo(spi);
 		sp2.xy(30,8);
 		mds.players_all.add(sp2);
 		

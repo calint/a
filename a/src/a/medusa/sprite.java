@@ -13,7 +13,7 @@ public class sprite extends glo{
 		hi=scan_lines.length;
 		wi=scan_lines[0].length();
 	}
-	@Override public void draw_to_screen(final screen s,final/*readonly*/float[]xy){
+	@Override public void draw_to_screen(final screen s,final/*readonly*/float[]xy,final float angle){
 		final int h=s.hi;
 		final int w=s.wi;
 		final int x=(int)xy[0];

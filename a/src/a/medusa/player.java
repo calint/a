@@ -1,10 +1,5 @@
 package a.medusa;
 public class player extends glob{
-	public player sprite(final sprite i){sprite=i;return this;}
-	public void draw(final screen s){
-		if(sprite==null)return;
-		sprite.draw_to_screen(s,phys.pos);
-	}
 	@Override public void update(final float dt){
 		super.update(dt);
 		phys.dpos[0]=sp*(float)Math.cos(a);
@@ -43,6 +38,5 @@ public class player extends glob{
 	float a;
 	protected float sp;
 	float da=(float)(Math.PI*2/5);
-	private sprite sprite;
 	private static final long serialVersionUID=1;
 }
