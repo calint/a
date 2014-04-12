@@ -10,22 +10,24 @@
 	#msg{border:1px dotted green;background:yellow;font-family:inherit;width:17em}
 </style>
 <t id=banner></t>
+<output id=txt></output>
 <table id=hldr><tr><td>
 <div id=scr tabindex=0 onkeydown="keys[event.keyCode]=true;return true;" onkeyup="delete keys[event.keyCode];return true;"></div>
 <output id=sts></output> <output id="outp"></output> <output id="recvsize"></output>
 </td></tr></table>
-<output id=txt></output>
-type here <input id=msg type=text onkeydown="if(event.keyCode==13){send(this.value);this.focus();}">
+<input id=msg type=text spellcheck="false" autocomplete="off" onkeyup="send(this.value);this.focus()">
 use wasd keys to move medusa
 <script>
 $=document.all;
-$.msg.value=document.cookie; 
+//$.msg.value=document.cookie; 
+$.msg.value="type here";
 var keys={};
 var ison=false;
 var frameno=0;
 
 start();
 
+function send(s){ws.send("3"+s);$.scr.focus();}
 function start(){
 	if(ison){alert("already on");return;}
 	ison=true;
@@ -91,19 +93,6 @@ function stop(){
 	$.outp.value="";
 	$.sts.value="off";
 //	$.scr.focus();
-}
-function compile(){
-	ws.send("1"+$.src.value);
-	$.scr.focus();
-}
-function reset(){
-	ws.send("2");
-	$.scr.focus();
-}
-function send(s){
-//	console.log(s);
-	ws.send("3"+s);
-	$.scr.focus();
 }
 function p(txt){$.outp.value+=txt;}
 function onframe(){
