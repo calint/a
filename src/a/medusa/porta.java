@@ -17,8 +17,11 @@ final public class porta extends websock implements threadedsock{static final lo
 	private sprite plr;
 	private screen scr;
 	final@Override protected void onclosed()throws Throwable{
+		if(plr==null)return;//? protocol issues
 		mds.on_player_closed_connection(plr);
 		System.out.println(" medusa: player disconnected  "+req.get().ip()+"  "+plr);
+		plr=null;
+		scr=null;
 	}
 	synchronized protected void onmessage(final ByteBuffer bb) throws Throwable {
 		final byte cmd=bb.get();
@@ -34,6 +37,11 @@ final public class porta extends websock implements threadedsock{static final lo
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),scr.bb},true);
 		if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
 	}
+	
+	
+	
+	
+	/// medusa server
 	public static long medusa_loop_sleep_ms=100;
 	static medusa mds=new medusa();
 	static float dt;
