@@ -50,12 +50,12 @@ public class a_elem extends a{
 		spi.load();
 		
 		final player sp=new player();
-		sp.image(spi);
+		sp.sprite(spi);
 		sp.xy(3,2);
 		mds.players_all.add(sp);
 		
 		final player sp2=new player();
-		sp2.image(spi);
+		sp2.sprite(spi);
 		sp2.xy(30,8);
 		mds.players_all.add(sp2);
 		

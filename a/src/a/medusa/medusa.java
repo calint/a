@@ -18,16 +18,16 @@ public class medusa implements Serializable{
 		final sprite spi=new sprite();
 		spi.load();
 		
-		player sp=new player().image(spi);sp.xy(29,2);
+		player sp=new player().sprite(spi);sp.xy(29,2);
 		players_all.add(sp);
 		
-		sp=new player().image(spi);sp.xy(30,8);
+		sp=new player().sprite(spi);sp.xy(30,8);
 		players_all.add(sp);
 		
-		sp=new player().image(spi);sp.xy(70,30);
+		sp=new player().sprite(spi);sp.xy(70,30);
 		players_all.add(sp);
 
-		sp=new player().image(spi);sp.xy(53,34);
+		sp=new player().sprite(spi);sp.xy(53,34);
 		players_all.add(sp);
 
 		players_free.clear();
@@ -71,7 +71,7 @@ public class medusa implements Serializable{
 	static void add2(final float[]dest_xy,final float[]xy,final float scale){
 		dest_xy[0]+=scale*xy[0];dest_xy[1]+=scale*xy[1];//? simd
 	}
-	static final void vertices_rotate_about_z_axis(final float[]dst,final/*readonly*/float[]src,final float angle_in_radians,final/*read*/float[]translation){
+	static final void vertices_rotate_about_z_axis(final float[]dst,final@readonly float[]src,final float angle_in_radians,final@readonly float[]translation){
 		// |cos -sin||x|=|xcos-ysin|
 		// |sin  cos||y|=|xsin+ycos|
 //		System.out.println(angle_in_radians*180/Math.PI);
@@ -93,7 +93,7 @@ public class medusa implements Serializable{
 	public final static class p2{
 		public float x,y;/*also accessed as float[2]?*/
 	}
-	static/*gives*/float[]vertices_circle_xy(final int points,final/*readonly*/float[]scale_xy){
+	static@gives float[]vertices_circle_xy(final int points,final@readonly float[]scale_xy){
 		float a=0;
 		float da=(float)(Math.PI*2/points);
 		final float[]xy=new float[points*2];// 2 components/vertex
@@ -129,5 +129,9 @@ public class medusa implements Serializable{
 	public final ArrayList<player>players_all=new ArrayList<>(128);
 	public final LinkedList<player>players_free=new LinkedList<>();
 	public float last_update_dt_s;
+	
+	public static @interface readonly{}
+	public static @interface takes{}
+	public static @interface gives{}
 	private static final long serialVersionUID=1L;
 }
