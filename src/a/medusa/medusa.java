@@ -23,7 +23,7 @@ final public class medusa implements Serializable{
 	final public player alloc_player(){if(players_free.isEmpty())return null;return players_free.removeFirst();}
 	final void on_closed_connection(final player p){players_free.add(p);}
 	private final ArrayList<player>players_all=new ArrayList<>(128);
-	final public medusa players_add(final player p){players_all.add(p);return this;}
+	final public medusa players_add(final@takes player p){players_all.add(p);return this;}
 	final public player players_get(final int id){return players_all.get(id);}
 	private final LinkedList<player>players_free=new LinkedList<>();
 	final boolean has_active_players(){return players_free.size()==players_all.size();}
