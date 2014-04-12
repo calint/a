@@ -4,7 +4,7 @@ import b.b;
 import b.cacheable;
 import b.xwriter;
 // cacheable uri
-final public class t023 extends a implements cacheable{static final long serialVersionUID=1;
+final public class $ extends a implements cacheable{static final long serialVersionUID=1;
 	public String filetype(){return "html";}
 	public String contenttype(){return "text/html;charset=utf8";}
 	public String lastmod(){return null;}
