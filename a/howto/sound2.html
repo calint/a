@@ -1,5 +1,9 @@
 <html onmousemove="dax=event.clientX/10000;day=event.clientY/10000;">
+<pre><a href="javascript:stop()">stop</a> <a href="javascript:start()">start</a>
+frame [<output id=frm></output>] [<output id=sr></output>] playbacktime [<output id=pbt></output>] buf [<output id=bufsize></output>] 
+frequencies [<output id=frq1></output>] [<output id=frq2></output>] deg/s
 <script>
+$=document.all;
 var context;
 try{
 	window.AudioContext=window.AudioContext||window.webkitAudioContext;
@@ -8,14 +12,13 @@ try{
 	alert('Web Audio API is not supported in this browser');
 }
 //var context=new webkitAudioContext();
+$.sr.value=context.sampleRate;
 var bufferSize=256*2;
 var dac=context.createScriptProcessor(bufferSize,1,1);
 var dax=.004;
 var day=.002;
 var ax=0;
 var ay=0;
-
-$=document.all;
 var mute=false;
 dac.onaudioprocess=function(e){
 	//console.log(Object.keys(e));
@@ -29,8 +32,8 @@ dac.onaudioprocess=function(e){
         output[i]=((Math.sin(ax)*2-1)+(Math.sin(ay)*2-1))/2;
     	ax+=dax;
     	ay+=day;
-    	$.frq1.value=dax;
-    	$.frq2.value=day;
+    	$.frq1.value=dax*180/Math.PI;
+    	$.frq2.value=day*180/Math.PI;
     }
 }
 dac.connect(context.destination);
@@ -41,7 +44,4 @@ function onmousemove(event){
 	dax=event.clientX/10000;day=event.clientY/10000;
 }
 </script>
-<pre><a href="javascript:stop()">stop</a> <a href="javascript:start()">start</a>
-frame [<output id=frm></output>]  playbacktime [<output id=pbt></output>] buf [<output id=bufsize></output>] 
-frequencies [<output id=frq1></output>] [<output id=frq2></output>]
 

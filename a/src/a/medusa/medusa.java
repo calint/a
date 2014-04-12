@@ -14,13 +14,13 @@ final public class medusa implements Serializable{
 	}
 	public long frame;
 	final public void tick(final float dt){
-		frame++;
 		last_update_dt_s=dt;
-		players_all.forEach((glob g)->g.tick(dt));
+		frame++;
+		players_all.forEach(g->g.tick(dt));
 	}
 	final public void draw(final screen s){
 		s.clear('.');
-		players_all.forEach((glob g)->g.draw(s));
+		players_all.forEach(g->g.draw(s));
 	}
 	final public player alloc_player(){if(players_free.isEmpty())return null;return players_free.removeFirst();}
 	final void on_closed_connection(final player p){players_free.add(p);}

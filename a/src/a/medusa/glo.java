@@ -10,7 +10,7 @@ public class glo implements Serializable{
 	public void draw_to_screen(final screen s,final@readonly float[]xy,final float angle){}
 
 	////////////////////////
-	public static void add2(final float[]dest_xy,final float[]xy){
+	public static void add2(final float[]dest_xy,final@readonly float[]xy){
 		dest_xy[0]+=xy[0];dest_xy[1]+=xy[1];//? simd
 	}
 	public static void add2(final float[]dest_xy,final@readonly float[]xy,final float scale){
