@@ -1,8 +1,8 @@
 <!DOCTYPE html><meta charset="utf-8"><title>medusa ascii game</title>
 <style>
-	*{margin:0;padding:0;}
-	html{line-height:1em;white-space:pre;font-family:courier;font-size:11px;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
-	#scr{outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
+	*{margin:0;padding:0;font-family:inherit;font-size:inherit;line-height:1.2em}
+	html{white-space:pre;font-family:courier;font-size:11px;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
+	#scr{line-height:1em;outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	#recvsize{color:green}
 	#sts{color:brown}
 	#txt{color:brown}
@@ -10,11 +10,10 @@
 	#hldr{margin-left:auto;margin-right:auto;padding:0}
 	#msg{border:1px dotted green;background:yellow;font-family:inherit;width:17em}
 </style>
-<t id=banner></t>
-<table id=hldr><tr><td>
+<t id=banner></t><table id=hldr><tr><td>
 <div id=scr tabindex=0 onkeydown="keys[event.keyCode]=true;return true;" onkeyup="delete keys[event.keyCode];return true;"></div>
-<output id=sts></output> <output id="outp"></output> <output id="recvsize"></output>
-</td></tr></table>
+<output id=sts></output><output id="outp"></output>  <output id="recvsize"></output>
+
 <input id=msg placeholder="type here" type=text spellcheck="false" autocomplete="off" onkeyup="send(this.value);this.focus()">
 
 <output id=txt></output>
@@ -23,6 +22,7 @@ move medusa with wasd keys
 
 change medusa by reloading page
 
+</td></tr></table>
 <script>
 $=document.all;
 //$.msg.value=document.cookie; 
@@ -42,7 +42,6 @@ function start(){
 	ws=new WebSocket("ws://"+location.host+"/medusa.porta");
 	ws.onopen=function(e){p(" porta");var s='0';for(var k in keys)s+=String.fromCharCode(k);ws.send(s);}
 	ws.onmessage=function(e){
-		frameno++;
 		var cmd=e.data.substring(0,1);
 		var dat=e.data.substring(1);
 //		console.log("cmd "+cmd);
@@ -57,7 +56,7 @@ function start(){
 				p+=80;
 			}
 			$.scr.innerHTML=s;
-			$.recvsize.value="frame: "+frameno+"  "+e.data.length+" B  "+onframe.fps+" fps";
+			$.recvsize.value="frame: "+onframe.frame+"  "+e.data.length+" B  "+onframe.fps+" fps";
 		}else if(cmd=='1'){
 //			console.log('text: '+e.data.length+'  '+e.data);
 			var str=e.data;
@@ -102,17 +101,19 @@ function stop(){
 }
 function p(txt){$.outp.value+=txt;}
 function onframe(){
+	onframe.frame++;
 	var t=new Date().getTime();
 	var dt=t-onframe.t0;
 //	console.log(dt+"   "+onframe.fps+"    "+onframe.f0+"   "+frameno);
 	if(dt>1000){
 		onframe.t0=t;
-		var df=frameno-onframe.f0;
-		onframe.f0=frameno;
+		var df=onframe.frame-onframe.f0;
+		onframe.f0=onframe.frame;
 		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
 	}
 }
 onframe.t0=0;
 onframe.f0=0;
 onframe.fps=0;
+onframe.frame=0;
 </script>
