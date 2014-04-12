@@ -19,6 +19,7 @@ final public class porta extends websock implements threadedsock{static final lo
 	synchronized final@Override protected void onclosed()throws Throwable{
 		if(plr==null){b.b.log(new IllegalStateException());return;}//? protocol issues
 		m.on_closed_connection(plr);
+		System.out.println(" medusa: player disconnected  "+req.get().ip()+"  "+plr);
 		plr=null;
 		scr=null;
 	}

@@ -26,7 +26,7 @@ public class player extends glob{
 			glo.normalize(phys.dpos,d);
 		}else if(type=='3'){
 			label=msg.substring(1);
-			System.out.println(label);
+//			System.out.println(label);
 		}
 //		final float dt=mds.dt(1);
 //		final float add=d*dt;
