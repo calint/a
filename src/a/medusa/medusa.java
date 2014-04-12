@@ -37,4 +37,6 @@ final public class medusa implements Serializable{
 	public static @interface gives{}
 	public static interface plugin{void init(final medusa m)throws Throwable;}
 	private static final long serialVersionUID=1L;
+	final public int players_free_count(){return players_free.size();}
+	final public int players_active_count(){return players_all.size()-players_free.size();}
 }
