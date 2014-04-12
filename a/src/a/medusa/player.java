@@ -1,4 +1,7 @@
 package a.medusa;
+
+import java.nio.ByteBuffer;
+
 public class player extends glob{
 	@Override public void draw(final screen s){
 		super.draw(s);
@@ -13,8 +16,9 @@ public class player extends glob{
 	private static boolean has(final String s,final char ch){
 		return s.indexOf(ch)!=-1;
 	}
-	@Override public void on_msg(final String msg,final medusa mds)throws Throwable{
+	@Override public void on_msg(final ByteBuffer bb,final medusa mds)throws Throwable{
 //		System.out.println(this+" "+msg);
+		final String msg=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
 		final char type=msg.charAt(0);
 		if(type=='0'){
 			final String s=msg.substring(1);

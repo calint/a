@@ -25,10 +25,11 @@ final public class porta extends websock implements threadedsock{static final lo
 	}
 	synchronized protected void onmessage(final ByteBuffer bb)throws Throwable{
 		final long timestamp_ms=System.currentTimeMillis();
-		final String s=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
+//		final String s=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
 //		System.out.println(s);
-		plr.on_msg(s,m);
-		if(s.charAt(0)!='0')return;//only redraw when keys are sent
+		final boolean keys_package=bb.get(bb.position())=='0';
+		plr.on_msg(bb,m);
+		if(!keys_package)return;//only redraw when keys are sent
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.sss");
 		final String msg=sdf.format(new Date(timestamp_ms))+"  players "+m.players_active_count();
 		final byte[]ba_msg=msg.getBytes();
@@ -42,7 +43,6 @@ final public class porta extends websock implements threadedsock{static final lo
 	
 	/////
 	/// medusa server
-	public static byte[]hello="medusa".getBytes();
 	public static long medusa_loop_sleep_ms=100;
 	private static medusa m=new medusa();
 	private static float dt;

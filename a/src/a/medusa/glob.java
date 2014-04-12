@@ -1,6 +1,7 @@
 package a.medusa;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 public class glob implements Serializable{
 	public void draw(final screen s){
@@ -10,9 +11,7 @@ public class glob implements Serializable{
 	public void tick(final float dt){
 		phys.update(dt);
 	}
-	public void on_msg(final String s,final medusa mds)throws Throwable{
-//		System.out.println("message to "+this+": "+s);
-	}
+	public void on_msg(final ByteBuffer bb,final medusa mds)throws Throwable{}
 	final public glob xy(final float x, final float y){phys.pos[0]=x;phys.pos[1]=y;return this;}
 	final public glob glo(final glo g){glo=g;return this;}
 	final public glob da(float radians){phys.da=radians;return this;}

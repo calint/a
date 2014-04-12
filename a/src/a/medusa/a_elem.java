@@ -1,5 +1,7 @@
 package a.medusa;
 
+import java.nio.ByteBuffer;
+
 import b.a;
 import b.xwriter;
 public class a_elem extends a{
@@ -65,7 +67,7 @@ public class a_elem extends a{
 	}
 	public void x_keyb(xwriter x,String key)throws Throwable{
 		final int player=medid.toint();
-		mds.players_get(player).on_msg(key,mds);
+		mds.players_get(player).on_msg(ByteBuffer.wrap(key.getBytes()),mds);
 		step();
 		final xwriter xx=x.xub(div,true,true);
 		scr.screen_to_outputstream(xx.outputstream());
