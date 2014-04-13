@@ -2,7 +2,6 @@ package a.medusa.level;
 
 import a.medusa.medusa;
 import a.medusa.player;
-import a.medusa.sprite;
 import a.medusa.medusa.app;
 
 public class ctor implements app{

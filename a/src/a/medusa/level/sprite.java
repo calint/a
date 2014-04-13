@@ -1,5 +1,8 @@
-package a.medusa;
+package a.medusa.level;
 
+import a.medusa.glo;
+import a.medusa.medusa;
+import a.medusa.screen;
 import a.medusa.medusa.readonly;
 
 public class sprite implements glo{

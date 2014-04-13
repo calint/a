@@ -1,14 +1,19 @@
-package a.medusa;
+package a.medusa.ajax;
 
 import java.nio.ByteBuffer;
 
+import a.medusa.medusa;
+import a.medusa.player;
+import a.medusa.screen;
+import a.medusa.level.sprite;
 import b.a;
 import b.xwriter;
-public class a_elem extends a{
+public class $ extends a{
 	public a div;
 	public a medid;{medid.set(0);}
 	private screen scr=new screen(80,40);
 	@Override public void to(final xwriter x)throws Throwable{
+		x.title("medusa ascii game - ajax");
 		x.style("html","background:#f8f8f8");
 		name_to(x);
 		x.nl();
