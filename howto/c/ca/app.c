@@ -9,8 +9,11 @@ file_info(f,stdout);nl();
 file_to(f,stdout);nl();
 file_copy(f,"another",3);
 file_to(f,stdout);nl();
-const size_t size=file_size_in_bytes(f);
-pl("file size: %lu",size);
+
+typedef size_t size;
+const size s=file_size_in_bytes(f);
+pl("file size: %lu",s);
+
 file_to(f,stdout);
 
 __block char ch;
@@ -19,6 +22,7 @@ file_foreach_char_write(f,^(char*c){
     *c='x';
     putchar(ch++);
 });
+
 file_free(f);
 
 ///--- cap compiled done
