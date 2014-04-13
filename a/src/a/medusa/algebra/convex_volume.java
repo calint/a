@@ -13,7 +13,5 @@ public class convex_volume{
 	public boolean check_collision_with_volume(final@reads convex_volume v){
 		return false;
 	}
-	private final sphere bounding_sphere=new sphere(1);
-//	float bounding_radius2;
 	private ArrayList<plane>planes;
 }
