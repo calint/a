@@ -23,5 +23,5 @@ public class point{
 		x*=len_inv;y*=len_inv;z*=len_inv;//? simd
 		return this;
 	}
-	public static final@inline float sqrtf(final float f){return (float)Math.sqrt(f);}
+	public static final@inline float sqrtf(final float f){return(float)Math.sqrt(f);}
 }
