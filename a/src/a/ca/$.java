@@ -7,45 +7,34 @@ import b.a;
 import b.xwriter;
 
 public class $ extends a {
-	public a cap;
-	public a c;
-	public a sts;
+	public a cap;// cap source input
+	public a c;// c source compiled output
+	public a sts;// compiler status
+	public a out;// stdout at run
 	@Override public void to(xwriter x) throws Throwable {
 		x.title("cap c sandbox");
 		x.style("html","padding:1em 4em 0 4em");
-		x.style(cap,"border:1px dotted green;width:30em;height:128em;padding:0 1em 0 .5em");
-		x.style(c,"display:block;border:1px dotted blue;width:30em;height:128em;padding:0 1em 0 .5em");
+		x.style(cap,"background:#f8f8f8;border:1px dotted green;width:30em;height:128em;padding:0 1em 0 .5em");
+		x.style(c,"background:#e8e8e8;display:block;border:1px dotted grey;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
-		x.style("div.holder","border:1px solid grey;width:100em");
-		x.style("div.holder div.left","border:1px solid green;float:left;");
-		x.style("div.holder div.middle","border:1px solid black;float:left;");
-		x.style("div.holder div.right","border:1px solid brown;float:left;");
-		x.style("div.holder div.lineno","border:1px solid green;float:left;text-align:right;padding:0 .25em 0 .5em");
-		x.div("holder");
-			x.div("lineno");
-				for(int i=1;i<100;i++){
-					x.pl(""+i);
-				}
-			x.divEnd();
-			x.div("left");
-				x.inputTextArea(cap);
-				x.focus(cap);
-			x.divEnd();
-			x.div("middle");
-				x.p(" cap ").ax(this).p(" to c ");
-				x.el(sts).elend().nl();
-				x.p(" :: ").ax(this,"run");
-			x.divEnd();
-			x.div("lineno");
-				for(int i=1;i<100;i++){
-					x.pl(""+i);
-				}
-			x.divEnd();
-			x.div("right");		
-				x.inputTextArea(c);
-				//x.el(c).elend();
-			x.divEnd();
-			x.pl("<br style=clear:left; />");
+		x.style(out,"background:#e8e8e8;border:1px dotted grey;width:30em;height:128em;padding:0 1em 0 .5em");
+		x.style("div.la","width:1024em");
+		x.style("div.la div.c1","float:left;text-align:right;border:1px dotted grey;background:#f0f0f0;float:left;text-align:right;padding:0 .25em 0 .5em");
+		x.style("div.la div.c2","float:left");
+		x.style("div.la div.c3","float:left");
+		x.style("div.la div.c4","float:left;text-align:rightl;border:1px dotted grey;background:#f0f0f0;float:left;text-align:right;padding:0 .25em 0 .5em");
+		x.style("div.la div.c5","float:left");
+		x.style("div.la div.c6","float:left");
+		x.style("div.la div.c7","float:left");
+		x.div("la");
+			x.div("c1");for(int i=1;i<100;i++)x.pl(""+i);x.divEnd();
+			x.div("c2").inputTextArea(cap).focus(cap).divEnd();
+			x.div("c3").p(" cap ").ax(this).p(" to c ").el(sts).elend().divEnd();
+			x.div("c4");for(int i=1;i<100;i++)x.pl(""+i);x.divEnd();
+			x.div("c5").inputTextArea(c).divEnd();
+			x.div("c6").p(" :: ").ax(this,"cc","to asm ").divEnd();
+			x.div("c7").el(out).p("console output").elend().divEnd();
+			x.pl("<br style=clear:left />");
 		x.divEnd();
 	}
 	synchronized public void x_(xwriter y,String a){
