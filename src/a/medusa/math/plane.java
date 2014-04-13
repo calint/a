@@ -18,12 +18,12 @@ public class plane{
 		if(normalize_normal)normal.norm();
 		this.normal=normal;
 	}
-	float distance_to_point(final@reads point p){
+	final public float distance_to_point(final@reads point p){
 		final point v=new point(origo,p);
 		return normal.dot(v);
 	}
 	// 1: totally behind   2: totally infront   3: intersects
-	int check_collision_with_sphere(final@reads point p,final float radius){
+	final public int check_collision_with_sphere(final@reads point p,final float radius){
 		final float distance_to_sphere=distance_to_point(p);
 		if(distance_to_sphere>radius)return 2;//? maybe >=
 		if(distance_to_sphere<-radius)return 1;//? maybe 
