@@ -5,7 +5,7 @@ int cap_main(int argc,const char**arg){
 ///--- cap compiled
 
 file*f=file_new(ram,sizeof(ram));
-file_info(f,stdout);nl();
+file_info(f,out);nl();
 file_to(f,stdout);nl();
 file_copy(f,"another",3);
 file_to(f,stdout);nl();
@@ -13,9 +13,10 @@ file_to(f,stdout);nl();
 const size s=file_size_in_bytes(f);
 pl("file size: %lu",s);
 
-file_to(f,stdout);
 
-__block char ch;
+file_to(f,stdout);nl();
+
+__block char ch='x';
 file_foreach_char_write(f,^(char*c){
     putchar(*c);
     *c='x';

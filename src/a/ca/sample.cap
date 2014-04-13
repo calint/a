@@ -1,17 +1,20 @@
 // sample of cap code
 /// compiles to c
 f=file(ram,sizeof(ram));
-f.info(stdout);nl();
-f.to(stdout);nl();
+f.info(out);nl();
+f.to(out);nl();
 f.copy("another",3);
-f.to(stdout);nl();
+f.to(out);nl();
 
 const size s=f.size_in_bytes();
 pl("file size: %lu",s);
 
-f.to(stdout);
+//const t=f.size_in_bytes();
+//u=f.size_in_bytes()+f.size_in_bytes();
 
-__block char ch;
+f.to(stdout);nl();
+
+__block char ch='x';
 f.foreach_char_write(^(char*c){
     putchar(*c);
     *c='x';
