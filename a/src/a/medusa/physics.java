@@ -2,6 +2,8 @@ package a.medusa;
 
 import java.io.Serializable;
 
+import a.medusa.math.point;
+
 public class physics implements Serializable{
 //	final float[]position=new float[]{0,0};
 //	final float[]dposition_over_dt=new float[]{0,0};
@@ -10,7 +12,7 @@ public class physics implements Serializable{
 	float angle;
 	float dangle_over_dt;
 	public void tick(final float dt){
-		position.add(dposition_over_dt,dt);
+		position.inc(dposition_over_dt,dt);
 //		medusa.v2add(position,dposition_over_dt,dt);
 		angle+=dangle_over_dt*dt;
 	}

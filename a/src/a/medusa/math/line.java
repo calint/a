@@ -1,4 +1,4 @@
-package a.medusa;
+package a.medusa.math;
 
 import a.medusa.medusa.takes;
 

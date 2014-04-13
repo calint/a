@@ -3,6 +3,8 @@ package a.medusa;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
+import a.medusa.math.point;
+import a.medusa.math.volume;
 import a.medusa.medusa.copyatchange;
 import a.medusa.medusa.takes;
 
