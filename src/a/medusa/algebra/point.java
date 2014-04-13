@@ -1,5 +1,6 @@
 package a.medusa.algebra;
 
+import a.medusa.medusa.autoset;
 import a.medusa.medusa.inline;
 import a.medusa.medusa.reads;
 import a.medusa.medusa.self;
@@ -9,9 +10,9 @@ public class point implements vector{
 	public float x,y,z;
 	
 	public point(){}
-	public point(final float x,final float y,final float z){this.x=x;this.y=y;this.z=z;}
+	public @autoset point(final float x,final float y,final float z){this.x=x;this.y=y;this.z=z;}
 	public point(final@reads point origo,final@reads point p){
-		x=p.x-origo.x;y=p.y-origo.y;z=p.z-origo.z;//? 2 ram reads, 1 simd op, 1 ram write
+		x=p.x-origo.x;y=p.y-origo.y;z=p.z-origo.z;//? 2 reads pipes bits to 1 simd op then pipes bits to 1 write
 	}
 	public String toString(){return "|"+x+"  "+y+"  "+z+"|";}
 
@@ -21,7 +22,7 @@ public class point implements vector{
 	}
 	final public@self point norm(){return scale(1);}
 	final public@self point scale(final float size){
-		final float len=sqrtf(x*x+y*y+z*z);
+		final float len=sqrtf(x*x+y*y+z*z);//? hw const float size(const float*components,const int count)const
 		if(len==0)return this;
 		final float len_inv=size/len;
 		x*=len_inv;y*=len_inv;z*=len_inv;//? simd

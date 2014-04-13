@@ -1,5 +1,6 @@
 package a.medusa.algebra;
 
+import a.medusa.medusa.autoset;
 import a.medusa.medusa.reads;
 import a.medusa.medusa.takes;
 
@@ -13,10 +14,8 @@ public class plane{
 		normal=v1;
 		//v2.dispose();
 	}
-	public plane(final@takes point origo,final@takes point normal,final boolean normalize_normal){
-		this.origo=origo;
+	public@autoset plane(final@takes point origo,final@takes point normal,final boolean normalize_normal){this.origo=origo;this.normal=normal;
 		if(normalize_normal)normal.norm();
-		this.normal=normal;
 	}
 	final public float distance_to_point(final@reads point p){
 		final point v=new point(origo,p);
