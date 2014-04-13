@@ -3,8 +3,8 @@ package a.medusa.level;
 import a.any.list.read;
 import a.medusa.glo;
 import a.medusa.medusa;
-import a.medusa.point;
 import a.medusa.screen;
+import a.medusa.math.point;
 
 public class glo_circle_xy implements glo{
 	@Override public void load(){

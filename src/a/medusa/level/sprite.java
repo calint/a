@@ -1,8 +1,8 @@
 package a.medusa.level;
 
 import a.medusa.glo;
+import a.medusa.math.point;
 import a.medusa.medusa.reads;
-import a.medusa.point;
 import a.medusa.screen;
 
 public class sprite implements glo{
