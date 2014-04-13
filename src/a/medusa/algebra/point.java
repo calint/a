@@ -1,5 +1,6 @@
 package a.medusa.algebra;
 
+import b.xwriter;
 import a.medusa.medusa.autoset;
 import a.medusa.medusa.inline;
 import a.medusa.medusa.reads;
@@ -15,7 +16,8 @@ public class point implements vector{
 		x=p.x-origo.x;y=p.y-origo.y;z=p.z-origo.z;//? 2 reads pipes bits to 1 simd op then pipes bits to 1 write
 	}
 	public String toString(){return "|"+x+"  "+y+"  "+z+"|";}
-
+	public void to(final xwriter x){x.p("|").p(this.x).spc().p(y).spc().p(z).p("|");}
+	
 	final public point inc(final@reads point delta,final float scale){
 		x+=delta.x*scale;y+=delta.y*scale;z+=delta.z*scale;//? simd		
 		return this;
