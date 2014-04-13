@@ -123,11 +123,28 @@ public class $ extends a {
 						}
 					}
 				}
+				{//check if: ref=cls(args)
+					final int i1=ln.indexOf('=');
+					if(i1!=-1){
+						final String var=ln.substring(0,i1);
+						if(var.indexOf(' ')==-1&&!var.startsWith("*")){
+							final int i2=ln.indexOf('(',i1+1);
+							if(i2==-1)throw new Exception("line "+lineno+": expected i.e. "+var+"=foo(bar);");
+							final String type=ln.substring(i1+1,i2);
+							vars.put(var,type);
+							final String rest=ln.substring(i2);
+							x.p(type).p("*").p(var).p("=").p(type).p("_new").p(rest).nl();
+//							x.p(type).p("_new(").p(var).p(",").p(rest).nl();
+							continue;
+						}
+					}
+				}
 				x.pl(lnnotri);
 			}
 		}catch(Throwable t){
 //			y.xube();
 			y.xu(sts,t.getMessage());
+			y.xu(c.set(x.toString()));			
 			return;
 		}
 		x.pl("\n///--- cap compiled done\n");
@@ -135,12 +152,11 @@ public class $ extends a {
 		x.pl("}");
 		x.pl("");
 //		y.xube();
-		c.set(x.toString());
 		final path basedir=b.path("howto/c/ca");
 		final path csrc=basedir.get("app.c");
 		c.to(csrc);
 		y.xu(sts,"ok");
-		y.xu(c);
+		y.xu(c.set(x.toString()));			
 	}
 	public static String cc="clang";
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{

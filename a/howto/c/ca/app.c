@@ -4,7 +4,6 @@ int cap_main(int argc,const char**arg){
 
 ///--- cap compiled
 
-int a=2;
 file*f=file_new(ram,sizeof(ram));
 file_info(f,stdout);nl();
 file_to(f,stdout);nl();
