@@ -13,5 +13,5 @@ public class planes{
 	public boolean check_collision_with_planes(final@reads planes v){
 		return false;
 	}
-	private ArrayList<plane>planes;
+	final private ArrayList<plane>list=new ArrayList<>(6);//? a cube
 }
