@@ -43,6 +43,7 @@ final public class medusa extends glob implements Serializable{
 	public static @interface self{}// object returns self for chained method calls
 	public static @interface inline{}// forces vm to inline final method
 	public static @interface copyatchange{}// proxy wrapped, when calls to non @reads a clone is created
+	public static @interface autoset{}// compiler maps parameters to properties
 	public static interface app{void init(final medusa m)throws Throwable;}
 	private static final long serialVersionUID=1L;
 	final public int players_free_count(){return players_free.size();}
