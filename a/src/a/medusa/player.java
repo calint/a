@@ -2,12 +2,12 @@ package a.medusa;
 
 import java.nio.ByteBuffer;
 
-import a.medusa.algebra.volume;
+import a.medusa.algebra.convex_volume;
 
 public class player extends glob{
 	public player(){
 		physics=/*@give*/new physics();// or compiler error because physics "takes"
-		volume=/*@give*/new volume();
+		volume=/*@give*/new convex_volume();
 	}
 	@Override public void draw(final screen s,final medusa m){
 		super.draw(s,m);

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 import a.medusa.algebra.point;
-import a.medusa.algebra.volume;
+import a.medusa.algebra.convex_volume;
 import a.medusa.medusa.copyatchange;
 import a.medusa.medusa.takes;
 
@@ -33,7 +33,7 @@ public class glob implements Serializable{
 	
 	// components add by subclasses
 	protected@takes physics physics;
-	protected@takes volume volume;
+	protected@takes convex_volume volume;
 	protected@copyatchange glo glo;
 
 	private static final long serialVersionUID=1;
