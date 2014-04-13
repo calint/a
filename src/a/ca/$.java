@@ -68,12 +68,14 @@ public class $ extends a {
 					final String args=ln.substring(i2);
 					x.p(type).p("*").p(var).p("=").p(type).p("_new").p(args).nl();
 					vars.put(var,type);
+					continue;
 				}else if(ln.startsWith("rel ")){
 					final String var=ln.substring("rel ".length(),ln.length()-1);
 					final String type=vars.get(var);
 					if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
 					x.p(type).p("_free(").p(var).p(");").nl();
 //					vars.remove(var);//? put in freed list for better error message
+					continue;
 				}else if(ln.startsWith("call ")){
 					final int i1=ln.indexOf('.');
 					if(i1==-1)throw new Exception("line "+lineno+": expected i.e. call f.info(stdout)");
@@ -86,6 +88,7 @@ public class $ extends a {
 					final String fu=fa.substring(0,i2);
 					final String arg=fa.substring(i2+1);
 					x.p(type).p("_").p(fu).p("(").p(var).p(",").p(arg).nl();
+					continue;
 				}else if(ln.startsWith("set ")){
 					final int i1=ln.indexOf('=');
 					if(i1==-1)throw new Exception("line "+lineno+": found no '='  expected i.e. set const size_t s=d.size_in_bytes();");
@@ -102,12 +105,29 @@ public class $ extends a {
 					x.p(ccode).p("=").p(type).p("_").p(fu).p("(").p(var);
 					if(arg.length()>2){x.p(",");}
 					x.p(arg).nl();
-				}else{
-					x.pl(lnnotri);
+					continue;
 				}
+				{//check if: ref.func(args)
+					final int i1=ln.indexOf('.');
+					if(i1!=-1){
+						final String var=ln.substring(0,i1);
+						final String type=vars.get(var);
+						if(type!=null){
+							final String fa=ln.substring(i1+1);
+							final int i2=fa.indexOf('(');
+							if(i2==-1)throw new Exception("line "+lineno+": expected i.e. "+var+".foo(bar);");
+							final String fu=fa.substring(0,i2);
+							final String arg=fa.substring(i2+1);
+							x.p(type).p("_").p(fu).p("(").p(var).p(",").p(arg).nl();
+							continue;
+						}
+					}
+				}
+				x.pl(lnnotri);
 			}
 		}catch(Throwable t){
-			y.xube().xu(sts,t.getMessage());
+//			y.xube();
+			y.xu(sts,t.getMessage());
 			return;
 		}
 		x.pl("\n///--- cap compiled done\n");

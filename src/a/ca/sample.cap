@@ -1,11 +1,10 @@
 // sample of cap code
-/// compile to c
-
-let f=file(ram,sizeof(ram));
-call f.info(stdout);
-call f.to(stdout);
-call f.copy("another",3);
-call f.to(stdout);
+/// compiles to c
+f=file(ram,sizeof(ram));
+f.info(stdout);
+f.to(stdout);
+f.copy("another",3);
+f.to(stdout);
 set const size_t size=f.size_in_bytes();
 pl("file size: %lu",size);
 call f.to(stdout);
