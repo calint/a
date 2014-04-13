@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 public class glob implements Serializable{
-	public void draw(final screen s){
+	public void draw(final screen s,final medusa m){
 		if(glo==null)return;
 		glo.draw_to_screen(s,phys.pos,phys.a);
 	}
-	public void tick(final float dt){
+	public void tick(final float dt,final medusa m){
 		phys.tick(dt);
 	}
 	public void on_msg(final ByteBuffer bb,final medusa mds)throws Throwable{}

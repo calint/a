@@ -34,7 +34,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		final String msg=sdf.format(new Date(timestamp_ms))+"  dt "+String.format("%.3f",dt)+"s  players "+m.players_active_count()+"  frame "+m.frame;
 		final byte[]ba_msg=msg.getBytes();
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("1".getBytes()),ByteBuffer.wrap(ba_msg)},true);
-		m.draw(scr);
+		m.draw(scr,m);
 		scr.bb.rewind();
 		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),scr.bb},true);
 		if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
@@ -55,7 +55,7 @@ final public class porta extends websock implements threadedsock{static final lo
 				if(dt_try<=0)dt_try=1;// set dt=1ms
 				last_dt_ms=t_ms;
 				dt=dt_try/1000.f;
-				m.tick(dt);
+				m.tick(dt,m);
 //				System.out.println("medusa dt "+dt);
 				if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
 				while(m.has_active_players()){
