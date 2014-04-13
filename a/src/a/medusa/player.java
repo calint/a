@@ -6,12 +6,12 @@ public class player extends glob{
 	@Override public void draw(final screen s,final medusa m){
 		super.draw(s,m);
 		if(label==null)return;
-		s.render_text(label,physics.pos);
+		s.render_text(label,physics.position);
 	}
 	@Override public void tick(final float dt,final medusa m){
 		super.tick(dt,m);
-		physics.dpos[0]=speed*(float)Math.cos(a);
-		physics.dpos[1]=speed*(float)Math.sin(a);
+		physics.dposition_over_dt[0]=speed*(float)Math.cos(a);
+		physics.dposition_over_dt[1]=speed*(float)Math.sin(a);
 	}
 	private static boolean has(final String s,final char ch){
 		return s.indexOf(ch)!=-1;
@@ -23,11 +23,11 @@ public class player extends glob{
 		if(type=='0'){
 			final String s=msg.substring(1);
 			final float d=speed_default;
-			if(has(s,'W')){physics.dpos[1]=-d;}
-			if(has(s,'A')){physics.dpos[0]=-d;}
-			if(has(s,'S')){physics.dpos[1]=d;}
-			if(has(s,'D')){physics.dpos[0]=d;}
-			glo.normalize(physics.dpos,d);
+			if(has(s,'W')){physics.dposition_over_dt[1]=-d;}
+			if(has(s,'A')){physics.dposition_over_dt[0]=-d;}
+			if(has(s,'S')){physics.dposition_over_dt[1]=d;}
+			if(has(s,'D')){physics.dposition_over_dt[0]=d;}
+			glo.normalize(physics.dposition_over_dt,d);
 		}else if(type=='3'){
 			label=msg.substring(1);
 //			System.out.println(label);
