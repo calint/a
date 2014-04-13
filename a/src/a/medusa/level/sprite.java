@@ -3,7 +3,7 @@ package a.medusa.level;
 import a.medusa.glo;
 import a.medusa.medusa;
 import a.medusa.screen;
-import a.medusa.medusa.readonly;
+import a.medusa.medusa.reads;
 
 public class sprite implements glo{
 	private String[]scan_lines=new String[]{
@@ -17,7 +17,7 @@ public class sprite implements glo{
 		hi=scan_lines.length;
 		wi=scan_lines[0].length();
 	}
-	@Override public void draw(final screen s,final@readonly float[]xy,final float angle){
+	@Override public void draw(final screen s,final@reads float[]xy,final float angle){
 		final int h=s.hi;
 		final int w=s.wi;
 		final int x=(int)xy[0];

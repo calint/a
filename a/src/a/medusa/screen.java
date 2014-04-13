@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import a.medusa.medusa.readonly;
+import a.medusa.medusa.reads;
 
 public class screen implements Serializable{
 	public int wi,hi;
@@ -69,7 +69,7 @@ public class screen implements Serializable{
 		if(y>hi)return;
 		bb.array()[wi*(int)y+(int)x]=data;
 	}
-	public void render_dots(final@readonly float[]xy_array,final int count,final byte data){
+	public void render_dots(final@reads float[]xy_array,final int count,final byte data){
 		for(int i=0;i<count;i++){
 			final float x=xy_array[i*2  ];
 			final float y=xy_array[i*2+1];
@@ -80,7 +80,7 @@ public class screen implements Serializable{
 			bb.array()[wi*(int)y+(int)x]=(byte)((i%10)+'0');
 		}
 	}
-	public void render_rect(final@readonly float[]xy,final@readonly float[]wh){
+	public void render_rect(final@reads float[]xy,final@reads float[]wh){
 		final int x=(int)xy[0];
 		final int y=(int)xy[1];
 		final int w=(int)wh[0];
@@ -108,7 +108,7 @@ public class screen implements Serializable{
 	//      example:               xy{40,20, 20,20, 40,30} // anti-clock wise 
 	//		scr.render_convex_polygon(new float[]{40,20, 20,20, 40,30},3);
 	//		scr.render_convex_polygon(new float[]{40,5, 20,5, 40,15},3);
-	public void render_convex_polygon(final@readonly float[]xy,final int vertex_count,final byte data,final boolean renderedges){
+	public void render_convex_polygon(final@reads float[]xy,final int vertex_count,final byte data,final boolean renderedges){
 		final int elems_per_vertex=2;
 		// find top y
 		int topy_ix=0;
@@ -210,7 +210,7 @@ public class screen implements Serializable{
 			}
 		}
 	}
-	public void render_text(final String text,final@readonly float[]pos){
+	public void render_text(final String text,final@reads float[]pos){
 		final byte[]ba=text.getBytes();
 		bb.position((int)pos[1]*wi+(int)pos[0]);
 		final int rem=bb.remaining();

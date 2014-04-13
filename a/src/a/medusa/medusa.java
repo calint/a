@@ -12,7 +12,7 @@ final public class medusa extends glob implements Serializable{
 		players_free.clear();
 		players_free.addAll(players_all);		
 	}
-	@readonly long frame;
+	@reads long frame;
 	final@Override public void tick(final float dt,final medusa m){
 //		last_update_dt_s=dt;
 		frame++;
@@ -35,15 +35,18 @@ final public class medusa extends glob implements Serializable{
 	public static float dtor=(float)(Math.PI/180);
 	public static float dtor(final float degrees){return degrees*dtor;}
 	
-	public static @interface readonly{}
-	public static @interface takes{}
+	public static @interface reads{}// specifies, but does not enforce, read only access to object
+	public static @interface takes{}// specifies, but does not enforce, transfer of ownership, compiler generates error when @give is not matched by @take when refereing to method parameters and return
 	public static @interface gives{}
-	public static @interface conf{}
+	public static @interface conf{}// when class is loaded static field is initiated with conf supplied value
+	public static @interface newatinit{}// is created at init with default constructor
+	public static @interface self{}// object returns self for chained method calls
+	public static @interface inline{}// forces vm to inline final method
 	public static interface app{void init(final medusa m)throws Throwable;}
 	private static final long serialVersionUID=1L;
 	final public int players_free_count(){return players_free.size();}
 	final public int players_active_count(){return players_all.size()-players_free.size();}
-	public static@gives float[]make_vertices_circle_xy(final int points,final@readonly float[]scale_xy){
+	public static@gives float[]make_vertices_circle_xy(final int points,final@reads float[]scale_xy){
 		float a=0;
 		float da=(float)(Math.PI*2/points);
 		final float[]xy=new float[points*2];// 2 components/vertex
@@ -57,7 +60,7 @@ final public class medusa extends glob implements Serializable{
 		}
 		return xy;
 	}
-	public static void vertices_rotate_about_z_axis(final float[]dst,final@readonly float[]src,final float angle_in_radians,final@readonly float[]translation){
+	public static void vertices_rotate_about_z_axis(final float[]dst,final@reads float[]src,final float angle_in_radians,final@reads float[]translation){
 			// |cos -sin||x|=|xcos-ysin|
 			// |sin  cos||y|=|xsin+ycos|
 	//		System.out.println(angle_in_radians*180/Math.PI);
@@ -75,10 +78,10 @@ final public class medusa extends glob implements Serializable{
 			}
 		}
 	////////////////////////
-	public static void v2add(final float[]dest_xy,final@readonly float[]xy){
+	public static void v2add(final float[]dest_xy,final@reads float[]xy){
 		dest_xy[0]+=xy[0];dest_xy[1]+=xy[1];//? simd
 	}
-	public static void v2add(final float[]dest_xy,final@readonly float[]xy,final float scale){
+	public static void v2add(final float[]dest_xy,final@reads float[]xy,final float scale){
 		dest_xy[0]+=scale*xy[0];dest_xy[1]+=scale*xy[1];//? simd
 	}
 	public static void v2norm(final float[]xy,final float length){
