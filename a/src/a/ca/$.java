@@ -44,15 +44,7 @@ public class $ extends a {
 		x.pl("#include\"cap.h\"");
 		x.pl("int cap_main(int argc,const char**arg){");
 		x.pl("    while(argc--)puts(*arg++);");
-		x.pl("\n///--- cap compiled\n");
-		
-//		//file f=new file(rom,sizeof(rom)-1);
-//		//file f=file(rom,sizeof(rom)-1);
-//		//file f=(rom,sizeof(rom)-1);
-//		//file f(rom,sizeof(rom)-1);
-//		f=file(rom,sizeof(rom)-1);
-//		f.info(stdout);
-		
+		x.pl("\n///--- cap compiled\n");		
 		int lineno=0;
 		final HashMap<String,String>vars=new HashMap<>();
 		try(final Scanner sc=new Scanner(cap.toString())){
@@ -74,31 +66,31 @@ public class $ extends a {
 				}else if(ln.startsWith("rel ")){
 					final String var=ln.substring("rel ".length(),ln.length()-1);
 					final String type=vars.get(var);
-					if(type==null)throw new Exception("@"+lineno+": variable '"+var+"' is not declared yet");
+					if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
 					x.p(type).p("_free(").p(var).p(");").nl();
 				}else if(ln.startsWith("call ")){
 					final int i1=ln.indexOf('.');
-					if(i1==-1)throw new Exception("@"+lineno+": expected i.e. call f.info(stdout)");
+					if(i1==-1)throw new Exception("line "+lineno+": expected i.e. call f.info(stdout)");
 					final String var=ln.substring("call ".length(),i1);
 					final String type=vars.get(var);
-					if(type==null)throw new Exception("@"+lineno+": variable '"+var+"' is not declared yet");
+					if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
 					final String fa=ln.substring(i1+1);
 					final int i2=fa.indexOf('(');
-					if(i2==-1)throw new Exception("@"+lineno+": expected i.e. call "+var+".info(stdout)");
+					if(i2==-1)throw new Exception("line "+lineno+": expected i.e. call "+var+".info(stdout)");
 					final String fu=fa.substring(0,i2);
 					final String arg=fa.substring(i2+1);
 					x.p(type).p("_").p(fu).p("(").p(var).p(",").p(arg).nl();
 				}else if(ln.startsWith("set ")){
 					final int i1=ln.indexOf('=');
-					if(i1==-1)throw new Exception("@"+lineno+": found no '='  expected i.e. set const size_t s=d.size_in_bytes();");
+					if(i1==-1)throw new Exception("line "+lineno+": found no '='  expected i.e. set const size_t s=d.size_in_bytes();");
 					final String ccode=ln.substring("set ".length(),i1);
 					final int i2=ln.indexOf('.',i1);
-					if(i2==-1)throw new Exception("@"+lineno+": found no '.'  expected i.e. set const size_t s=d.size_in_bytes();");
+					if(i2==-1)throw new Exception("line "+lineno+": found no '.'  expected i.e. set const size_t s=d.size_in_bytes();");
 					final String var=ln.substring(i1+1,i2);
 					final String type=vars.get(var);
-					if(type==null)throw new Exception("@"+lineno+": variable '"+var+"' is not declared yet");
+					if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
 					final int i3=ln.indexOf('(',i2);
-					if(i3==-1)throw new Exception("@"+lineno+": expected i.e. set const size_t s=d.size_in_bytes();");
+					if(i3==-1)throw new Exception("line "+lineno+": expected i.e. set const size_t s=d.size_in_bytes();");
 					final String fu=ln.substring(i2+1,i3);
 					final String arg=ln.substring(i3+1).trim();
 					x.p(ccode).p("=").p(type).p("_").p(fu).p("(").p(var);
@@ -108,30 +100,11 @@ public class $ extends a {
 					x.pl(lnnotri);
 				}
 			}
-//			cap.to(x);
 		}catch(Throwable t){
 			y.xube().xu(sts,t.getMessage());
 			return;
 		}
 		x.pl("\n///--- cap compiled done\n");
-//
-//		    file*f=file_new(rom,sizeof(rom)-1);
-//		    pl("files %lu",file_count);
-//		    file_info(f,stdout);nl();
-//		    file_to(f,stdout);nl();
-//		    __block char chh='.';
-//		    file_foreach_char_write(f,^(char*ch){
-//		        putchar(*ch);
-//		        *ch='x';
-//		        putchar(chh++);
-//			});nl();
-//		    file_to(f,stdout);nl();
-//		    file_copy(f,"another",3);
-//		    file_to(f,stdout);nl();
-////		    vfunc(f,info, stdout);
-//		    file_recycle(f);
-//		    pl("files %lu",file_count);
-//
 		x.pl("    return 0;");
 		x.pl("}");
 		x.pl("");
