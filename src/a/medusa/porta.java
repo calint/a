@@ -8,7 +8,7 @@ import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
 	synchronized final@Override protected void onopened()throws Throwable{
-		plr=m.alloc_player();
+		plr=m.players_get_free_for_play();
 		if(plr==null)throw new Exception("no free players available");//? add more players
 		scr=new screen(80,40);
 		System.out.println(" medusa: player connected  "+req.get().ip()+"  "+plr);

@@ -3,9 +3,9 @@ package a.medusa.level;
 import a.medusa.medusa;
 import a.medusa.player;
 import a.medusa.sprite;
-import a.medusa.medusa.plugin;
+import a.medusa.medusa.app;
 
-public class ctor implements plugin{
+public class ctor implements app{
 	final static glo_circle_xy circ=new glo_circle_xy();
 	final static sprite spi=new sprite();
 	@Override public void init(final medusa m)throws Throwable{
