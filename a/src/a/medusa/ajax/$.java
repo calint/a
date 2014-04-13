@@ -22,20 +22,26 @@ public class $ extends a{
 		
 		
 		////// 
-		x.nl();
-		final point p0=new point(1,0,0);
-		p0.to(x);
-		final point n0=new point(1,0,0);
-		final plane pn0=new plane(p0,n0,false);
-		x.nl();pn0.to(x);
-		final plane pn1=pn0;
-		final plane pn2=pn0;
-		final plane pn3=pn0;
+//		x.nl();
+//		final point p0=new point(1,0,0);
+//		p0.to(x);
+//		final point n0=new point(1,0,0);
+//		final plane pn0=new plane(p0,n0,false);
+//		x.nl();pn0.to(x);
+//		final plane pn1=pn0;
+//		final plane pn2=pn0;
+//		final plane pn3=pn0;
+//		
+//		final planes pns=new planes().planes_add(pn0).planes_add(pn1).planes_add(pn2).planes_add(pn3);
+//		x.nl();pns.to(x);
 		
-		final planes pns=new planes().planes_add(pn0).planes_add(pn1).planes_add(pn2).planes_add(pn3);
-		x.nl();pns.to(x);
-		
-		
+//		final planes pns_sqr=new planes(
+//			new plane(new point( 1, 0,0),new point( 1, 0,0),false),//? right plane
+//			new plane(new point(-1, 0,0),new point(-1, 0,0),false),//? left plane
+//			new plane(new point( 0, 1,0),new point( 0, 1,0),false),//? top plane
+//			new plane(new point( 0,-1,0),new point( 0,-1,0),false)//? bottom plane
+//		);
+//		pns_sqr.to(x);
 		
 		//////
 		x.nl();
