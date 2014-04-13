@@ -6,17 +6,22 @@ import java.nio.ByteBuffer;
 public class glob implements Serializable{
 	public void draw(final screen s,final medusa m){
 		if(glo==null)return;
-		glo.draw_to_screen(s,phys.pos,phys.a);
+		glo.draw_to_screen(s,physics.pos,physics.a);
 	}
 	public void tick(final float dt,final medusa m){
-		phys.tick(dt);
+		physics.tick(dt);
 	}
 	public void on_msg(final ByteBuffer bb,final medusa mds)throws Throwable{}
-	final public glob xy(final float x, final float y){phys.pos[0]=x;phys.pos[1]=y;return this;}
+	final public glob xy(final float x, final float y){physics.pos[0]=x;physics.pos[1]=y;return this;}
 	final public glob glo(final glo g){glo=g;return this;}
-	final public glob da(float radians){phys.da=radians;return this;}
+	final public glob da(float radians){physics.da=radians;return this;}
 
-	final protected physics phys=new physics();
+	final protected physics physics=new physics();
+	final protected volume volume=new volume();
 	private glo glo;
+	
+	static boolean check_collision(final glob a,final glob b){
+		return false;
+	}
 	private static final long serialVersionUID=1;
 }
