@@ -5,7 +5,7 @@ import a.medusa.medusa.reads;
 import a.medusa.medusa.self;
 
 
-public class point implements algebra.vector{
+public class point implements vector{
 	public float x,y,z;
 	
 	public point(){}
