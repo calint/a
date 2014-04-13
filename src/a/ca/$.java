@@ -142,14 +142,14 @@ public class $ extends a {
 		y.xu(sts,"ok");
 		y.xu(c);
 	}
-	
+	public static String cc="clang";
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
 		final path basedir=b.path("howto/c/ca");
 		final xwriter y=x.xub(out,true,true);
 		try{final cli c=new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
 			y.pl(line);
 //			System.out.println(line);
-		}}).p("cd ").p(basedir.toString()).p("&&ls -la&&cat *.h *.c|gzip|wc&&clang -o main *.c&&./main").exit();}
+		}}).p("cd ").p(basedir.toString()).p("&&ls -la&&cat *.h *.c|gzip|wc&&").p(cc).p(" -o main -Wall *.c&&./main").exit();}
 		finally{x.xube();}
 		x.xfocus(out);
 	}
