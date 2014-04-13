@@ -3,28 +3,37 @@ import java.io.*;
 import java.nio.channels.*;
 import java.util.*;
 public final class client{
-	public client(final String host,final int port){this.host=host;this.port=port;count++;}
-	public void close()throws Throwable{if(conn !=null){
-		conn.close();
-		conn =null;}if(--count==0)on=false;}
+	public client(final String host,final int port){count++;this.host=host;this.port=port;}
+	public void close()throws Throwable{
+		if(conn!=null){
+			conn.close();
+			conn=null;
+		}
+		if(--count==0)
+			on=false;
+	}
 	public void get(final String uri,final conn.oncontent oncontent,final conn.ongetdone ongetdone)throws Throwable{
-		if(conn !=null){
-			conn.get(uri,null,oncontent,ongetdone);return;}
-		conn =new conn(this,host,port,()-> conn.get(uri,null,oncontent,ongetdone));
+		if(conn!=null){
+			conn.get(uri,null,oncontent,ongetdone);
+			return;
+		}
+		conn=new conn(this,host,port,()->conn.get(uri,null,oncontent,ongetdone));
 	}
 	public void cookie(final String cookie){this.cookie=cookie;}
 	public String cookie(){return cookie;}
 	public void websock(final String uri,final client.onwebsockconnect onwebsockconnect)throws Throwable{
-		conn =new conn(this,host,port,()->
+		conn=new conn(this,host,port,()->
+			// after connect	
 			conn.get(uri,new kvps().put("Upgrade","websocket").put("Connection","upgrade").put("Sec-WebSocket-Key","x3JJHMbDL1EzLkh9GBhXDw==").put("Sec-WebSocket-Version","13"),null,()->{
-				//. checkrepliedkey
-				conn.mode_websock();
+				// after get done
+				conn.mode_websock();//? checkrepliedkey
 				onwebsockconnect.onwebsockconnect();
 			})
 		);
 	}
 	public void recv(final String s,final conn.onwebsock onwebsockframe)throws Throwable{
-		conn.websock_sendframe(s,onwebsockframe);}
+		conn.websock_sendframe(s,onwebsockframe);
+	}
 	public client pl(final String s){c.out.println(s);return this;}
 	static Selector selector(){return sel;}
 
