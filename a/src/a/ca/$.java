@@ -13,8 +13,8 @@ public class $ extends a {
 	@Override public void to(xwriter x) throws Throwable {
 		x.title("cap c sandbox");
 		x.style("html","padding:1em 4em 0 4em");
-		x.style(cap,"border:1px dotted green;width:30em;height:128em;float:left;padding:0 1em 0 .5em");
-		x.style(c,"display:block;border:1px dotted blue;width:30em;float:right;padding:0 1em 0 .5em");
+		x.style(cap,"border:1px dotted green;width:30em;height:128em;padding:0 1em 0 .5em");
+		x.style(c,"display:block;border:1px dotted blue;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
 		x.style("div.holder","border:1px solid grey;width:100em");
 		x.style("div.holder div.left","border:1px solid green;float:left;");
@@ -29,17 +29,24 @@ public class $ extends a {
 			x.divEnd();
 			x.div("left");
 				x.inputTextArea(cap);
+				x.focus(cap);
 			x.divEnd();
 			x.div("middle");
 				x.p(" cap ").ax(this).p(" to c ");
 				x.el(sts).elend().nl();
+				x.p(" :: ").ax(this,"run");
+			x.divEnd();
+			x.div("lineno");
+				for(int i=1;i<100;i++){
+					x.pl(""+i);
+				}
 			x.divEnd();
 			x.div("right");		
-				x.el(c).elend();
+				x.inputTextArea(c);
+				//x.el(c).elend();
 			x.divEnd();
 			x.pl("<br style=clear:left; />");
 		x.divEnd();
-		x.nl().ax(this,":: run");
 	}
 	synchronized public void x_(xwriter y,String a){
 		y.xu(sts,"");
