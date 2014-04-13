@@ -5,7 +5,7 @@ import a.medusa.medusa.takes;
 
 public class plane{
 	public plane(final@takes point origo,final@reads point on_plane,final@reads point also_on_plane){
-		this.origo=origo;
+		this.origo=origo;//? dislocation of data, cache line performance?
 		final point v1=new point(origo,on_plane);
 		final point v2=new point(origo,also_on_plane);
 		v1.cross(v2);// v1 = v1 x v2
