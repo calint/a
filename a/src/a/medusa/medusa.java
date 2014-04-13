@@ -12,10 +12,10 @@ final public class medusa extends glob implements Serializable{
 		players_free.clear();
 		players_free.addAll(players_all);		
 	}
-	@reads long frame;
+	@reads int tick;
 	final@Override public void tick(final float dt,final medusa m){
 //		last_update_dt_s=dt;
-		frame++;
+		tick++;
 //		players_all.forEach(g->g.tick(dt));
 		players_all.parallelStream().forEach(g->g.tick(dt,m));
 	}
