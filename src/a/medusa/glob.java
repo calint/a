@@ -40,15 +40,15 @@ public class glob implements Serializable{
 	protected@copyatchange glo glo;
 	
 	protected lazy_matrix model_to_local_matrix;// local scale,rotation,translation matrix
-	protected lazy_matrix model_to_world_matrix;// cached model to world transform
-	protected lazy_matrix model_to_world_normals_matrix;// contains rotations
+	protected lazy_chain_matrix model_to_world_matrix;// cached model to world transform
+	protected lazy_chain_matrix model_to_world_normals_matrix;// contains rotations
 	final public point vector_axis_z(){return null;}
 	final public point vector_axis_y(){return null;}
 	final public point vector_axis_x(){return null;}
-	final @reads matrix matrix_model_to_world(final int tick){
+	final @reads matrix matrix_model_to_local(){
 		if(model_to_local_matrix==null)return null;
-		if(physics==null)return null;
-		return model_to_local_matrix.refresh_and_get(tick,scale,physics.angle,physics.position);
+		if(physics==null)return model_to_local_matrix.refresh_and_get(scale,point.origo,point.origo);
+		return model_to_local_matrix.refresh_and_get(scale,physics.angle,physics.position);
 	}
 	private final point scale=new point(1,1,1);
 	
