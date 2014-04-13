@@ -1,4 +1,4 @@
-package a.medusa.math;
+package a.medusa.algebra;
 
 public class sphere {
 	public sphere(final float radius){this.radius=radius;}

@@ -1,4 +1,4 @@
-package a.medusa.math;
+package a.medusa.algebra;
 
 import java.util.ArrayList;
 

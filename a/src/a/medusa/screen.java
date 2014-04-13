@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import a.medusa.math.point;
+import a.medusa.algebra.point;
 import a.medusa.medusa.reads;
 
 public class screen implements Serializable{
