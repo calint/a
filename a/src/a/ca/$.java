@@ -3,7 +3,11 @@ package a.ca;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import a.x.cli;
 import b.a;
+import b.b;
+import b.osnl;
+import b.path;
 import b.xwriter;
 
 public class $ extends a {
@@ -18,7 +22,7 @@ public class $ extends a {
 		x.style(cap,"background:#f8f8f8;border:1px dotted green;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(c,"background:#e8e8e8;display:block;border:1px dotted grey;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
-		x.style(out,"background:#e8e8e8;border:1px dotted grey;width:30em;height:128em;padding:0 1em 0 .5em");
+		x.style(out,"display:block;background:black;color:green;border:1px dotted grey;width:60em;height:128em;padding:0 1em 0 .5em");
 		x.style("div.la","width:1024em");
 		x.style("div.la div.c1","float:left;text-align:right;border:1px dotted grey;background:#f0f0f0;float:left;text-align:right;padding:0 .25em 0 .5em");
 		x.style("div.la div.c2","float:left");
@@ -33,14 +37,15 @@ public class $ extends a {
 			x.div("c3").p(" cap ").ax(this).p(" to c ").el(sts).elend().divEnd();
 			x.div("c4");for(int i=1;i<100;i++)x.pl(""+i);x.divEnd();
 			x.div("c5").inputTextArea(c).divEnd();
-			x.div("c6").p(" :: ").ax(this,"cc","to asm ").divEnd();
+			x.div("c6").p(" :: ").ax(this,"cc","run ").divEnd();
 			x.div("c7").el(out).p("console output").elend().divEnd();
 			x.pl("<br style=clear:left />");
 		x.divEnd();
 	}
-	synchronized public void x_(xwriter y,String a){
+	synchronized public void x_(xwriter y,String a)throws Throwable{
 		y.xu(sts,"");
-		final xwriter x=y.xub(c,true,true);
+//		final xwriter x=y.xub(c,true,true);
+		final xwriter x=new xwriter();
 		x.pl("#include\"cap.h\"");
 		x.pl("int cap_main(int argc,const char**arg){");
 		x.pl("    while(argc--)puts(*arg++);");
@@ -109,15 +114,25 @@ public class $ extends a {
 		x.pl("    return 0;");
 		x.pl("}");
 		x.pl("");
-		y.xube();
-		if(vars.isEmpty())
-			y.xu(sts,"ok");
-		else
-			y.xu(sts,"unfreed vars: "+vars);
-			
+//		y.xube();
+		c.set(x.toString());
+		final path basedir=b.path("howto/c/ca");
+		final path csrc=basedir.get("app.c");
+		c.to(csrc);
+		y.xu(sts,"ok");
+		y.xu(c);
 	}
 	
-	
+	synchronized public void x_cc(xwriter x,String a)throws Throwable{
+		final path basedir=b.path("howto/c/ca");
+		final xwriter y=x.xub(out,true,true);
+		try{final cli c=new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
+			y.pl(line);
+//			System.out.println(line);
+		}}).p("cd ").p(basedir.toString()).p("&&ls -la&&cat *.h *.c|gzip|wc&&clang -o main *.c&&./main").exit();}
+		finally{x.xube();}
+		x.xfocus(out);
+	}
 	
 	private static final long serialVersionUID = 1L;
 }
