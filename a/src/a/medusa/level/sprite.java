@@ -1,9 +1,9 @@
 package a.medusa.level;
 
 import a.medusa.glo;
-import a.medusa.medusa;
-import a.medusa.screen;
 import a.medusa.medusa.reads;
+import a.medusa.point;
+import a.medusa.screen;
 
 public class sprite implements glo{
 	private String[]scan_lines=new String[]{
@@ -17,11 +17,11 @@ public class sprite implements glo{
 		hi=scan_lines.length;
 		wi=scan_lines[0].length();
 	}
-	@Override public void draw(final screen s,final@reads float[]xy,final float angle){
+	@Override public void draw(final screen s,final@reads point p,final float angle){
 		final int h=s.hi;
 		final int w=s.wi;
-		final int x=(int)xy[0];
-		final int y=(int)xy[1];
+		final int x=(int)p.x;
+		final int y=(int)p.y;
 		if(x>w)return;
 		if(x+wi<0)return;
 		if(y>=h)return;

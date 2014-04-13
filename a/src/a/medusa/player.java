@@ -14,8 +14,8 @@ public class player extends glob{
 	}
 	@Override public void tick(final float dt,final medusa m){
 		super.tick(dt,m);
-		physics.dposition_over_dt[0]=speed*(float)Math.cos(a);
-		physics.dposition_over_dt[1]=speed*(float)Math.sin(a);
+		physics.dposition_over_dt.x=speed*(float)Math.cos(a);
+		physics.dposition_over_dt.y=speed*(float)Math.sin(a);
 	}
 	private static boolean has(final String s,final char ch){
 		return s.indexOf(ch)!=-1;
@@ -27,11 +27,11 @@ public class player extends glob{
 		if(type=='0'){
 			final String s=msg.substring(1);
 			final float d=speed_default;
-			if(has(s,'W')){physics.dposition_over_dt[1]=-d;}
-			if(has(s,'A')){physics.dposition_over_dt[0]=-d;}
-			if(has(s,'S')){physics.dposition_over_dt[1]=d;}
-			if(has(s,'D')){physics.dposition_over_dt[0]=d;}
-			medusa.v2norm(physics.dposition_over_dt,d);
+			if(has(s,'W')){physics.dposition_over_dt.y=-d;}
+			if(has(s,'A')){physics.dposition_over_dt.x=-d;}
+			if(has(s,'S')){physics.dposition_over_dt.y=d;}
+			if(has(s,'D')){physics.dposition_over_dt.x=d;}
+			physics.dposition_over_dt.scale(d);
 		}else if(type=='3'){
 			label=msg.substring(1);
 //			System.out.println(label);

@@ -210,9 +210,9 @@ public class screen implements Serializable{
 			}
 		}
 	}
-	public void render_text(final String text,final@reads float[]pos){
+	public void render_text(final String text,final@reads point pos){
 		final byte[]ba=text.getBytes();
-		bb.position((int)pos[1]*wi+(int)pos[0]);
+		bb.position((int)pos.y*wi+(int)pos.x);
 		final int rem=bb.remaining();
 		final int diff=rem-ba.length;
 		if(diff<0)bb.put(ba,0,ba.length+diff);
