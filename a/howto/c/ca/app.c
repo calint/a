@@ -6,10 +6,10 @@ int cap_main(int argc,const char**arg){
 
 int a=2;
 file*f=file_new(ram,sizeof(ram));
-file_info(f,stdout);
-file_to(f,stdout);
+file_info(f,stdout);nl();
+file_to(f,stdout);nl();
 file_copy(f,"another",3);
-file_to(f,stdout);
+file_to(f,stdout);nl();
 const size_t size=file_size_in_bytes(f);
 pl("file size: %lu",size);
 file_to(f,stdout);
