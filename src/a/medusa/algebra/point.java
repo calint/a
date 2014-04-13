@@ -15,7 +15,8 @@ public class point implements vector{
 	public point(final@reads point origo,final@reads point p){
 		x=p.x-origo.x;y=p.y-origo.y;z=p.z-origo.z;//? 2 reads pipes bits to 1 simd op then pipes bits to 1 write
 	}
-	public String toString(){return "|"+x+" "+y+" "+z+"|";}
+	@Override public String toString(){return "|"+x+" "+y+" "+z+"|";}
+	public boolean eq(final point p){return x==p.x&&y==p.y&&z==p.z;}//? simd
 	
 	final public point inc(final@reads point delta,final float scale){
 		x+=delta.x*scale;y+=delta.y*scale;z+=delta.z*scale;//? simd		

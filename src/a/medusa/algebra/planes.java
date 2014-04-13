@@ -60,4 +60,8 @@ public class planes{
 			new plane(new point( 0, 1,0),new point( 0, 1,0),false),//? top plane
 			new plane(new point( 0,-1,0),new point( 0,-1,0),false)//? bottom plane
 		);
+	
+	public static void transform(final planes src,final planes dst,final matrix transform_matrix,final matrix normals_matrix){
+		
+	}
 }
