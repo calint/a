@@ -11,13 +11,35 @@ public class $ extends a {
 	public a c;
 	public a sts;
 	@Override public void to(xwriter x) throws Throwable {
-		x.style("html","padding-left:4em;padding-top:1em");
-		x.style(cap,"border:1px dotted green;width:40em;height:20em");
-		x.style(sts,"border:1px dotted red");
-		x.style(c,"display:block;border:1px dotted blue;width:40em");
-		x.pl("cap source");
-		x.inputTextArea(cap).nl().ax(this).p(" compile to c ").el(sts).elend();
-		x.el(c).elend();
+		x.title("cap c sandbox");
+		x.style("html","padding:1em 4em 0 4em");
+		x.style(cap,"border:1px dotted green;width:30em;height:128em;float:left;padding:0 1em 0 .5em");
+		x.style(c,"display:block;border:1px dotted blue;width:30em;float:right;padding:0 1em 0 .5em");
+		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
+		x.style("div.holder","border:1px solid grey;width:100em");
+		x.style("div.holder div.left","border:1px solid green;float:left;");
+		x.style("div.holder div.middle","border:1px solid black;float:left;");
+		x.style("div.holder div.right","border:1px solid brown;float:left;");
+		x.style("div.holder div.lineno","border:1px solid green;float:left;text-align:right;padding:0 .25em 0 .5em");
+		x.div("holder");
+			x.div("lineno");
+				for(int i=1;i<100;i++){
+					x.pl(""+i);
+				}
+			x.divEnd();
+			x.div("left");
+				x.inputTextArea(cap);
+			x.divEnd();
+			x.div("middle");
+				x.p(" cap ").ax(this).p(" to c ");
+				x.el(sts).elend().nl();
+			x.divEnd();
+			x.div("right");		
+				x.el(c).elend();
+			x.divEnd();
+			x.pl("<br style=clear:left; />");
+		x.divEnd();
+		x.nl().ax(this,":: run");
 	}
 	synchronized public void x_(xwriter y,String a){
 		y.xu(sts,"");
@@ -71,15 +93,15 @@ public class $ extends a {
 					x.p(type).p("_").p(fu).p("(").p(var).p(",").p(arg).nl();
 				}else if(ln.startsWith("set ")){
 					final int i1=ln.indexOf('=');
-					if(i1==-1)throw new Exception("@"+lineno+": set const size_t s=d.size_in_bytes();");
+					if(i1==-1)throw new Exception("@"+lineno+": found no '='  expected i.e. set const size_t s=d.size_in_bytes();");
 					final String ccode=ln.substring("set ".length(),i1);
 					final int i2=ln.indexOf('.',i1);
-					if(i2==-1)throw new Exception("@"+lineno+": set const size_t s=d.size_in_bytes();");
+					if(i2==-1)throw new Exception("@"+lineno+": found no '.'  expected i.e. set const size_t s=d.size_in_bytes();");
 					final String var=ln.substring(i1+1,i2);
 					final String type=vars.get(var);
 					if(type==null)throw new Exception("@"+lineno+": variable '"+var+"' is not declared yet");
 					final int i3=ln.indexOf('(',i2);
-					if(i3==-1)throw new Exception("@"+lineno+": set const size_t s=d.size_in_bytes();");
+					if(i3==-1)throw new Exception("@"+lineno+": expected i.e. set const size_t s=d.size_in_bytes();");
 					final String fu=ln.substring(i2+1,i3);
 					final String arg=ln.substring(i3+1).trim();
 					x.p(ccode).p("=").p(type).p("_").p(fu).p("(").p(var);
@@ -117,6 +139,7 @@ public class $ extends a {
 		x.pl("}");
 		x.pl("");
 		y.xube();
+		y.xu(sts,"ok");
 	}
 	
 	
