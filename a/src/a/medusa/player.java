@@ -3,6 +3,7 @@ package a.medusa;
 import java.nio.ByteBuffer;
 
 import a.medusa.algebra.planes;
+import b.xwriter;
 
 public class player extends glob{
 	public player(){
@@ -69,4 +70,10 @@ public class player extends glob{
 	private float speed_default=2;
 	private float da=(float)(Math.PI*2/5);
 	private static final long serialVersionUID=1;
+	@Override public void to(final xwriter x){
+		x.p("player{");
+		super.to(x);
+		x.p("label:'").p(label/*,'\''*/).p("',a:").p(a);
+		x.p("}");
+	}
 }

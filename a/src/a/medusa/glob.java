@@ -3,6 +3,7 @@ package a.medusa;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
+import b.xwriter;
 import a.medusa.algebra.point;
 import a.medusa.algebra.planes;
 import a.medusa.medusa.copyatchange;
@@ -35,6 +36,13 @@ public class glob implements Serializable{
 	protected@takes physics physics;
 	protected@takes planes volume;
 	protected@copyatchange glo glo;
-
+	
+	public void to(final xwriter x){
+		x.p(getClass().getName()).p("{physics:");
+		if(physics!=null)physics.to(x);
+		x.p(",volume:");
+		if(volume!=null)volume.to(x);
+		x.p("}");
+	}
 	private static final long serialVersionUID=1;
 }
