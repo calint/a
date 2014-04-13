@@ -42,8 +42,8 @@ public class a_elem extends a{
 	}
 	public void step(){
 		final float dt=1;
-		mds.tick(dt);
-		mds.draw(scr);		
+		mds.tick(dt,mds);
+		mds.draw(scr,mds);		
 	}
 	public void x_reset(xwriter x,String a)throws Throwable{
 		mds.reset();

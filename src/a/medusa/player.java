@@ -3,13 +3,13 @@ package a.medusa;
 import java.nio.ByteBuffer;
 
 public class player extends glob{
-	@Override public void draw(final screen s){
-		super.draw(s);
+	@Override public void draw(final screen s,final medusa m){
+		super.draw(s,m);
 		if(label==null)return;
 		s.render_text(label,phys.pos);
 	}
-	@Override public void tick(final float dt){
-		super.tick(dt);
+	@Override public void tick(final float dt,final medusa m){
+		super.tick(dt,m);
 		phys.dpos[0]=speed*(float)Math.cos(a);
 		phys.dpos[1]=speed*(float)Math.sin(a);
 	}

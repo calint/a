@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-final public class medusa implements Serializable{
+final public class medusa extends glob implements Serializable{
 	public static String plugin="a.medusa.level.ctor";
 	final public void reset()throws Throwable{
 		players_all.clear();
@@ -13,15 +13,15 @@ final public class medusa implements Serializable{
 		players_free.addAll(players_all);		
 	}
 	public long frame;
-	final public void tick(final float dt){
+	final@Override public void tick(final float dt,final medusa m){
 		last_update_dt_s=dt;
 		frame++;
 //		players_all.forEach(g->g.tick(dt));
-		players_all.parallelStream().forEach(g->g.tick(dt));
+		players_all.parallelStream().forEach(g->g.tick(dt,m));
 	}
-	final public void draw(final screen s){
+	final@Override public void draw(final screen s,final medusa m){
 		s.clear('.');
-		players_all.forEach(g->g.draw(s));
+		players_all.forEach(g->g.draw(s,m));
 	}
 	final public player alloc_player(){if(players_free.isEmpty())return null;return players_free.removeFirst();}
 	final void on_closed_connection(final player p){players_free.add(p);}
