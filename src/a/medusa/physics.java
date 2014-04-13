@@ -2,7 +2,7 @@ package a.medusa;
 
 import java.io.Serializable;
 
-import a.medusa.math.point;
+import a.medusa.algebra.point;
 
 public class physics implements Serializable{
 	final point position=new point();

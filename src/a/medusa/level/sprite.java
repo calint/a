@@ -1,7 +1,7 @@
 package a.medusa.level;
 
 import a.medusa.glo;
-import a.medusa.math.point;
+import a.medusa.algebra.point;
 import a.medusa.medusa.reads;
 import a.medusa.screen;
 

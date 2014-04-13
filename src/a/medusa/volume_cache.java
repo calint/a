@@ -1,6 +1,6 @@
 package a.medusa;
 
-import a.medusa.math.volume;
+import a.medusa.algebra.volume;
 import a.medusa.medusa.reads;
 
 public class volume_cache extends volume{

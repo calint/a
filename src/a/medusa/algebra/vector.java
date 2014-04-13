@@ -1,3 +1,3 @@
-package a.medusa.math;
+package a.medusa.algebra;
 
 public interface vector{}

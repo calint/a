@@ -2,7 +2,7 @@ package a.medusa;
 
 import java.nio.ByteBuffer;
 
-import a.medusa.math.volume;
+import a.medusa.algebra.volume;
 
 public class player extends glob{
 	public player(){

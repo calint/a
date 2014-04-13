@@ -1,7 +1,7 @@
-package a.medusa.math;
+package a.medusa.algebra;
 
 import a.medusa.medusa.reads;
 
-final public class algebra{
+final public class problems{
 	public static float distance_from_plane_to_point(@reads plane pn,@reads point p){return pn.distance_to_point(p);}
 }
