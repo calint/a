@@ -6,8 +6,7 @@ f.to(stdout);nl();
 f.copy("another",3);
 f.to(stdout);nl();
 
-typedef size_t size;
-set const size s=f.size_in_bytes();
+const size s=f.size_in_bytes();
 pl("file size: %lu",s);
 
 f.to(stdout);

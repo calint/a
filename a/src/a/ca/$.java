@@ -129,12 +129,12 @@ public class $ extends a {
 								if(i2!=-1){
 									final String va=ln.substring(i1+1,i2);
 									assert_is_identifier(va);
-									final String type=vars.get(var);
+									final String type=vars.get(va);
 									if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
 									final int i3=ln.indexOf('(',i2+1);
 									if(i3==-1)throw new Exception("line "+lineno+": expected i.e. '"+ccode+"="+var+".size()' is not declared yet");
 									final String fu=ln.substring(i2+1,i3);
-									final String arg=ln.substring(i3);
+									final String arg=ln.substring(i3+1);
 									x.p(ccode).p("=").p(type).p("_").p(fu).p("(").p(va);
 									if(arg.length()>2){x.p(",");}
 									x.p(arg).nl();
