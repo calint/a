@@ -18,7 +18,7 @@ public class $ extends a {
 	{cap.from($.class.getResourceAsStream("sample.cap"),"// cap code");}
 	@Override public void to(xwriter x) throws Throwable {
 		x.title("cap c sandbox");
-		x.style("html","padding:1em 4em 0 4em");
+//		x.style("html","padding:0");
 		x.style(cap,"background:#f8f8f8;border:1px dotted green;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(c,"background:#e8e8e8;display:block;border:1px dotted grey;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
@@ -58,7 +58,7 @@ public class $ extends a {
 				final String lnnotri=sc.nextLine();
 				final String ln=lnnotri.trim();
 				if(ln.startsWith("//"))continue;
-				if(ln.startsWith("let ")){
+				if(ln.startsWith("let ")||ln.startsWith("var ")){
 					final int i1=ln.indexOf("=");
 					if(i1==-1)throw new Exception("@"+lineno+": expected i.e. let x=file(0,1)");
 					final String var=ln.substring("let ".length(),i1);
@@ -107,36 +107,60 @@ public class $ extends a {
 					x.p(arg).nl();
 					continue;
 				}
+				{//check if: ref=cls(args)
+					final int i1=ln.indexOf('=');
+					if(i1!=-1){//   ....=......
+						final String var=ln.substring(0,i1);
+						final boolean has_no_spaces=var.indexOf(' ')==-1;
+						final boolean is_pointer_op=var.startsWith("*");
+						if(!is_pointer_op){// i.e. *p+=2;
+							if(has_no_spaces){// i.e. p=file(1,5);
+								final int i2=ln.indexOf('(',i1+1);
+								if(i2==-1)throw new Exception("line "+lineno+": expected i.e. "+var+"=foo(bar);");
+								final String type=ln.substring(i1+1,i2);
+								vars.put(var,type);
+								final String rest=ln.substring(i2);
+								x.p(type).p("*").p(var).p("=").p(type).p("_new").p(rest).nl();
+	//							x.p(type).p("_new(").p(var).p(",").p(rest).nl();
+								continue;
+							}else{// i.e. int a=4;
+								final String ccode=var;
+								final int i2=ln.indexOf('.',i1+1);
+								if(i2!=-1){
+									final String va=ln.substring(i1+1,i2);
+									assert_is_identifier(va);
+									final String type=vars.get(var);
+									if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
+									final int i3=ln.indexOf('(',i2+1);
+									if(i3==-1)throw new Exception("line "+lineno+": expected i.e. '"+ccode+"="+var+".size()' is not declared yet");
+									final String fu=ln.substring(i2+1,i3);
+									final String arg=ln.substring(i3);
+									x.p(ccode).p("=").p(type).p("_").p(fu).p("(").p(va);
+									if(arg.length()>2){x.p(",");}
+									x.p(arg).nl();
+									continue;
+								}
+							}
+						}
+					}
+				}
 				{//check if: ref.func(args)
 					final int i1=ln.indexOf('.');
 					if(i1!=-1){
 						final String var=ln.substring(0,i1);
 						final String type=vars.get(var);
-						if(type!=null){
+						if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
+//							if(type!=null){
 							final String fa=ln.substring(i1+1);
 							final int i2=fa.indexOf('(');
 							if(i2==-1)throw new Exception("line "+lineno+": expected i.e. "+var+".foo(bar);");
 							final String fu=fa.substring(0,i2);
 							final String arg=fa.substring(i2+1);
-							x.p(type).p("_").p(fu).p("(").p(var).p(",").p(arg).nl();
+							x.p(type).p("_").p(fu).p("(").p(var);
+							if(!arg.startsWith(")"))x.p(",");
+							x.p(arg).nl();
 							continue;
-						}
-					}
-				}
-				{//check if: ref=cls(args)
-					final int i1=ln.indexOf('=');
-					if(i1!=-1){
-						final String var=ln.substring(0,i1);
-						if(var.indexOf(' ')==-1&&!var.startsWith("*")){
-							final int i2=ln.indexOf('(',i1+1);
-							if(i2==-1)throw new Exception("line "+lineno+": expected i.e. "+var+"=foo(bar);");
-							final String type=ln.substring(i1+1,i2);
-							vars.put(var,type);
-							final String rest=ln.substring(i2);
-							x.p(type).p("*").p(var).p("=").p(type).p("_new").p(rest).nl();
-//							x.p(type).p("_new(").p(var).p(",").p(rest).nl();
-							continue;
-						}
+//							}
 					}
 				}
 				x.pl(lnnotri);
@@ -158,6 +182,8 @@ public class $ extends a {
 		y.xu(sts,"ok");
 		y.xu(c.set(x.toString()));			
 	}
+	private void assert_is_identifier(String va){
+	}
 	public static String cc="clang";
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
 		final path basedir=b.path("howto/c/ca");
@@ -165,7 +191,7 @@ public class $ extends a {
 		try{final cli c=new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
 			y.pl(line);
 //			System.out.println(line);
-		}}).p("cd ").p(basedir.toString()).p("&&ls -la&&cat *.h *.c|gzip|wc&&").p(cc).p(" -o main -Wall *.c&&./main").exit();}
+		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat *.h *.c|gzip|wc&&").p(cc).p(" -o main -Wall *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
 		finally{x.xube();}
 		x.xfocus(out);
 	}
