@@ -5,6 +5,9 @@ import java.nio.ByteBuffer;
 import a.medusa.medusa;
 import a.medusa.player;
 import a.medusa.screen;
+import a.medusa.algebra.plane;
+import a.medusa.algebra.planes;
+import a.medusa.algebra.point;
 import a.medusa.level.sprite;
 import b.a;
 import b.xwriter;
@@ -16,6 +19,25 @@ public class $ extends a{
 		x.title("medusa ascii game - ajax");
 		x.style("html","background:#f8f8f8");
 		name_to(x);
+		
+		
+		////// 
+		x.nl();
+		final point p0=new point(1,0,0);
+		p0.to(x);
+		final point n0=new point(1,0,0);
+		final plane pn0=new plane(p0,n0,false);
+		x.nl();pn0.to(x);
+		final plane pn1=pn0;
+		final plane pn2=pn0;
+		final plane pn3=pn0;
+		
+		final planes pns=new planes().planes_add(pn0).planes_add(pn1).planes_add(pn2).planes_add(pn3);
+		x.nl();pns.to(x);
+		
+		
+		
+		//////
 		x.nl();
 		x.style(medid,"border:1px dotted green;width:1em;text-align:right;margin:3px;background:green;color:white");
 		x.p("   ").ax(this,"reset",":: reset").p("   use keys wesd to move medusa -> ").inputText(medid).nl().nl();

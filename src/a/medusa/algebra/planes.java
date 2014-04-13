@@ -2,6 +2,7 @@ package a.medusa.algebra;
 
 import java.util.ArrayList;
 
+import b.xwriter;
 import a.medusa.glob;
 import a.medusa.medusa.reads;
 import a.medusa.medusa.self;
@@ -20,4 +21,12 @@ public class planes{
 		return this;
 	}
 	final private ArrayList<plane>list=new ArrayList<>(6);
+	
+	
+	///textilize
+	public void to(final xwriter x){
+		x.p("pns{[");
+		list.forEach((p)->{p.to(x);});
+		x.p("]}");
+	}
 }
