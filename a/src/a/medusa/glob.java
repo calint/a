@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 public class glob implements Serializable{
 	public void draw(final screen s,final medusa m){
 		if(glo==null)return;
-		glo.draw_to_screen(s,physics.position,physics.angle);
+		glo.draw(s,physics.position,physics.angle);
 	}
 	public void tick(final float dt,final medusa m){
 		physics.tick(dt);

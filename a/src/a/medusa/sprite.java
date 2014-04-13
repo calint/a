@@ -2,7 +2,7 @@ package a.medusa;
 
 import a.medusa.medusa.readonly;
 
-public class sprite extends glo{
+public class sprite implements glo{
 	private String[]scan_lines=new String[]{
 			" ____ ",
 			"|O  O|",
@@ -14,7 +14,7 @@ public class sprite extends glo{
 		hi=scan_lines.length;
 		wi=scan_lines[0].length();
 	}
-	@Override public void draw_to_screen(final screen s,final@readonly float[]xy,final float angle){
+	@Override public void draw(final screen s,final@readonly float[]xy,final float angle){
 		final int h=s.hi;
 		final int w=s.wi;
 		final int x=(int)xy[0];

@@ -8,7 +8,7 @@ public class physics implements Serializable{
 	float angle;
 	float dangle_over_dt;
 	public void tick(final float dt){
-		glo.add2(position,dposition_over_dt,dt);
+		medusa.v2add(position,dposition_over_dt,dt);
 		angle+=dangle_over_dt*dt;
 	}
 	private static final long serialVersionUID = 1L;

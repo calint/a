@@ -27,7 +27,7 @@ public class player extends glob{
 			if(has(s,'A')){physics.dposition_over_dt[0]=-d;}
 			if(has(s,'S')){physics.dposition_over_dt[1]=d;}
 			if(has(s,'D')){physics.dposition_over_dt[0]=d;}
-			glo.normalize(physics.dposition_over_dt,d);
+			medusa.v2norm(physics.dposition_over_dt,d);
 		}else if(type=='3'){
 			label=msg.substring(1);
 //			System.out.println(label);
