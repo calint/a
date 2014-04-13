@@ -28,11 +28,4 @@ public class vector extends point{
 		
 		return this;
 	}
-	public@self vector norm(){
-		final float len=sqrtf(x*x+y*y+z*z);
-		final float len_inv=1/len;
-		x*=len_inv;y*=len_inv;z*=len_inv;//? simd
-		return this;
-	}
-	public static final@inline float sqrtf(final float f){return (float)Math.sqrt(f);}
 }
