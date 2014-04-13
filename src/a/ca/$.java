@@ -68,6 +68,7 @@ public class $ extends a {
 					final String type=vars.get(var);
 					if(type==null)throw new Exception("line "+lineno+": variable '"+var+"' is not declared yet");
 					x.p(type).p("_free(").p(var).p(");").nl();
+					vars.remove(var);//? put in freed list for better error message
 				}else if(ln.startsWith("call ")){
 					final int i1=ln.indexOf('.');
 					if(i1==-1)throw new Exception("line "+lineno+": expected i.e. call f.info(stdout)");
@@ -109,7 +110,11 @@ public class $ extends a {
 		x.pl("}");
 		x.pl("");
 		y.xube();
-		y.xu(sts,"ok");
+		if(vars.isEmpty())
+			y.xu(sts,"ok");
+		else
+			y.xu(sts,"unfreed vars: "+vars);
+			
 	}
 	
 	
