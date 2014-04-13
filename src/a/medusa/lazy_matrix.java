@@ -17,8 +17,13 @@ final public class lazy_matrix{
 		updated_at_tick=tick;
 		return m;
 	}
-
-	private int updated_at_tick;
+	//? link lazy_matrixes for object hierarchy
+	final@reads matrix refresh_and_get(final@reads lazy_matrix parent,final int tick,final@reads point scale,final@reads point angle,final@reads point position){
+		if(parent==null)return refresh_and_get(tick,scale,angle,position);
+		
+		return m;
+	}
+	private int updated_at_tick;//? rollover issues when used to compare update timestamp
 	final private matrix m=new matrix();
 	final private point scl=new point();
 	final private point agl=new point();
