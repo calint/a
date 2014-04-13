@@ -1,11 +1,13 @@
 package a.medusa.algebra;
 
+import java.io.Serializable;
+
 import b.xwriter;
 import a.medusa.medusa.autoset;
 import a.medusa.medusa.reads;
 import a.medusa.medusa.takes;
 
-public class plane{
+public class plane implements Serializable{
 	public plane(final@takes point origo,final@reads point on_plane,final@reads point also_on_plane){
 		this.point=origo;//? dislocation of data, cache line performance?
 		final point v1=new point(origo,on_plane);
@@ -40,4 +42,7 @@ public class plane{
 		//? reflection
 		x.p("pn{p");point.to(x);x.p("n");normal.to(x);x.p("}");
 	}
+	
+	
+	private static final long serialVersionUID=1;
 }

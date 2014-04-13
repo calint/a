@@ -1,4 +1,8 @@
 package a.medusa.algebra;
 
-public class matrix{
+import java.io.Serializable;
+
+public class matrix implements Serializable{
+	
+	private static final long serialVersionUID=1;
 }
