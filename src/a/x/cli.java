@@ -17,7 +17,11 @@ public final class cli implements Runnable{
 	public cli(final String cmd,final OutputStream os) throws IOException{
 		this.cmd=cmd;
 		this.os=os;
-		prc=Runtime.getRuntime().exec(cmd);
+		final ProcessBuilder pb=new ProcessBuilder(cmd);
+		pb.redirectErrorStream(true);
+//		prc=Runtime.getRuntime().exec(cmd);
+		prc=pb.start();
+		//? merge err and out
 		is=prc.getInputStream();
 		con=new PrintStream(prc.getOutputStream(),true);
 		thread.start();

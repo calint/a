@@ -21,7 +21,7 @@ file*file_new(void*address,const size_t size){// gives
 //    o.size_in_bytes=size;
 //    return o;
 //}
-void file_recycle(file*o){
+void file_free(file*o){
     file_count--;
     free(o);
 }
@@ -48,6 +48,9 @@ void file_foreach_char(const file*o,void(^callback)(char)){
 void file_copy(const file*o,const char*src,size_t count){
     if(count>o->size_in_bytes){d("!overflow %lu>%lu\n",count,o->size_in_bytes);exit(-1);}
     memcpy(o->address,src,count);
+}
+const size_t file_size_in_bytes(const file*f){
+    return f->size_in_bytes;
 }
 
 
