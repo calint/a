@@ -7,7 +7,7 @@ struct file{
 };
 size_t file_sizeof=sizeof(file);
 size_t file_count=0;
-file*file_new(void*address,const size_t size){// gives
+file*file_new(void*address,const size size){// gives
 	file_count++;
     file*o=(file*)malloc(sizeof(file));
     o->address=address;
@@ -45,11 +45,11 @@ void file_foreach_char(const file*o,void(^callback)(char)){
     while(c--)
         callback(*p++);
 }
-void file_copy(const file*o,const char*src,size_t count){
+void file_copy(const file*o,const char*src,size count){
     if(count>o->size_in_bytes){d("!overflow %lu>%lu\n",count,o->size_in_bytes);exit(-1);}
     memcpy(o->address,src,count);
 }
-const size_t file_size_in_bytes(const file*f){
+const size file_size_in_bytes(const file*f){
     return f->size_in_bytes;
 }
 
@@ -62,8 +62,8 @@ struct type{
     struct func*ls_func;int ls_func_size;
     struct field*ls_field;int ls_field_size;
 };
-size_t type_sizeof=sizeof(type);
-size_t type_count=0;
+size type_sizeof=sizeof(type);
+size type_count=0;
 
 
 

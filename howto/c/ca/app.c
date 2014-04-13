@@ -10,7 +10,6 @@ file_to(f,stdout);nl();
 file_copy(f,"another",3);
 file_to(f,stdout);nl();
 
-typedef size_t size;
 const size s=file_size_in_bytes(f);
 pl("file size: %lu",s);
 

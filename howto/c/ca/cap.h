@@ -5,20 +5,22 @@
 static char ram[]="hellos. bootsector.  32 bytes..";
 int cap_main(const int argc,const char**arg);
 
+typedef size_t size;
+
 /// types
-struct file;typedef struct file file;size_t file_count;size_t file_sizeof;
-struct type;typedef struct type type;size_t type_count;size_t type_sizeof;
+struct file;typedef struct file file;size file_count;size file_sizeof;
+struct type;typedef struct type type;size type_count;size type_sizeof;
 
 /// file
-file*file_new(void*,const size_t);//gives
+file*file_new(void*,const size);//gives
 //file file_mk(void*,const size_t);
 void file_free(file*);//takes
 void file_info(const file*,FILE*);
 void file_to(const file*,FILE*);
 void file_foreach_char_write(const file*,void(^)(char*));
 void file_foreach_char(const file*,void(^)(char));
-void file_copy(const file*,const char*,const size_t);
-const size_t file_size_in_bytes(const file*);
+void file_copy(const file*,const char*,const size);
+const size file_size_in_bytes(const file*);
 //#define vfunc(o,t,f, args...)t##_##f##(##o##,##args##)
 
 struct func;typedef struct func func;
