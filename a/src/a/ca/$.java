@@ -11,6 +11,7 @@ public class $ extends a {
 	public a c;// c source compiled output
 	public a sts;// compiler status
 	public a out;// stdout at run
+	{cap.from($.class.getResourceAsStream("sample.cap"),"// cap code");}
 	@Override public void to(xwriter x) throws Throwable {
 		x.title("cap c sandbox");
 		x.style("html","padding:1em 4em 0 4em");
