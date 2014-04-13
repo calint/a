@@ -16,7 +16,8 @@ final public class medusa implements Serializable{
 	final public void tick(final float dt){
 		last_update_dt_s=dt;
 		frame++;
-		players_all.forEach(g->g.tick(dt));
+//		players_all.forEach(g->g.tick(dt));
+		players_all.parallelStream().forEach(g->g.tick(dt));
 	}
 	final public void draw(final screen s){
 		s.clear('.');
