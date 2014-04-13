@@ -1,5 +1,7 @@
 package a.medusa.algebra;
 
+import java.io.Serializable;
+
 import a.medusa.medusa.autoset;
 import a.medusa.medusa.inline;
 import a.medusa.medusa.reads;
@@ -7,7 +9,7 @@ import a.medusa.medusa.self;
 import b.xwriter;
 
 
-public class point implements vector{
+public class point implements Serializable,vector{
 	public float x,y,z;
 	
 	public point(){}
@@ -60,4 +62,7 @@ public class point implements vector{
 	public void to(final xwriter x){x.p("|").p(this.x).p(" ").p(y).p(" ").p(z).p("|");}
 	public void copy(final point p){x=p.x;y=p.y;z=p.z;}
 	final static public@reads point origo=new point();
+	
+	
+	private static final long serialVersionUID=1;
 }

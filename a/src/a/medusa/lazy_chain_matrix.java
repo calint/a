@@ -1,10 +1,12 @@
 package a.medusa;
 
+import java.io.Serializable;
+
 import a.medusa.medusa.reads;
 import a.medusa.algebra.matrix;
 import a.medusa.algebra.point;
 
-final public class lazy_chain_matrix{
+final public class lazy_chain_matrix implements Serializable{
 	lazy_chain_matrix parent;
 	lazy_matrix local;
 	
@@ -24,4 +26,6 @@ final public class lazy_chain_matrix{
 	private int tick_refresh;//? rollover issues
 	private int parent_tick_refresh;
 	final private matrix m=new matrix();
+	
+	private static final long serialVersionUID=1;
 }

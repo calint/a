@@ -1,10 +1,12 @@
 package a.medusa;
 
+import java.io.Serializable;
+
 import a.medusa.medusa.reads;
 import a.medusa.algebra.matrix;
 import a.medusa.algebra.point;
 
-final public class lazy_matrix{
+final public class lazy_matrix implements Serializable{
 	final@reads matrix refresh_and_get(final@reads point scale,final@reads point angle,final@reads point position){
 		if(scale.eq(scl)&&agl.eq(angle)&&pos.eq(position))
 			return m;
@@ -23,4 +25,6 @@ final public class lazy_matrix{
 	final private point scl=new point();
 	final private point agl=new point();
 	final private point pos=new point();
+	
+	private static final long serialVersionUID=1;
 }

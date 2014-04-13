@@ -1,5 +1,6 @@
 package a.medusa.algebra;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,7 +10,7 @@ import a.medusa.medusa.self;
 import a.medusa.medusa.takes;
 import b.xwriter;
 
-public class planes{
+public class planes implements Serializable{
 	public planes(final@takes plane...pn){
 		for(final plane p:pn)
 			list.add(p);
@@ -64,4 +65,7 @@ public class planes{
 	public static void transform(final planes src,final planes dst,final matrix transform_matrix,final matrix normals_matrix){
 		
 	}
+	
+	
+	private static final long serialVersionUID=1;
 }
