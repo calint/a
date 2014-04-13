@@ -3,11 +3,13 @@ package a.medusa;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import b.xwriter;
-import a.medusa.algebra.point;
-import a.medusa.algebra.planes;
 import a.medusa.medusa.copyatchange;
+import a.medusa.medusa.reads;
 import a.medusa.medusa.takes;
+import a.medusa.algebra.matrix;
+import a.medusa.algebra.planes;
+import a.medusa.algebra.point;
+import b.xwriter;
 
 public class glob implements Serializable{
 	final public static point origo=new point();
@@ -36,6 +38,23 @@ public class glob implements Serializable{
 	protected@takes physics physics;
 	protected@takes planes volume;
 	protected@copyatchange glo glo;
+	
+	protected matrix model_to_local_matrix;// local scale,rotation,translation matrix
+	protected int model_to_local_matrix_last_update_tick;// last update tick
+	protected matrix model_to_world_matrix;// cached model to world transform
+	protected int model_to_world_matrix_last_update_tick;// last update tick
+	protected matrix model_to_world_normals_matrix;// contains rotations
+	protected int model_to_world_normals_matrix_last_update_tick;// last update tick
+	final public point vector_axis_z(){return null;}
+	final public point vector_axis_y(){return null;}
+	final public point vector_axis_x(){return null;}
+	final @reads matrix matrix_model_to_world(){
+		upd_matrix_model_to_world();
+		return model_to_local_matrix;
+	}
+	private void upd_matrix_model_to_world(){
+		
+	}
 	
 	public void to(final xwriter x){
 		x.p(getClass().getName()).p("{physics:");
