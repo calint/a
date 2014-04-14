@@ -1,5 +1,2 @@
-class string{
-}
-class sys{  
-}
+class file{file(   void*addr, size s)   {}}
 

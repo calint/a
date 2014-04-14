@@ -68,13 +68,13 @@ public class compiler{
 				final char ch=cbuf[o];o++;l--;
 //				con.write(ch);
 				switch(state){
-				case state_in_statement:
+				case state_in_global_statement:
 					if(ch==';'&&token.length()==0)
 						throw new Error("line "+lineno+": "+charno+": stray ';'");						
 					if(is_white_space(ch)){
-						if(token.length()==0)// white spaces infront of statement
+						if(token.length()==0)// white spaces before statement
 							break;
-						final String nm=token.toString();
+						final String nm=token.toString();// new token
 						token.setLength(0);
 						if("class".equals(nm)){// [class] ...
 							state_push(state_in_class_identifier);
@@ -84,7 +84,7 @@ public class compiler{
 					}
 					token.append(ch);
 					break;
-				case state_in_class_identifier:
+				case state_in_class_identifier:{
 					if(token.length()==0&&is_white_space(ch))
 						break;
 					if(Character.isJavaIdentifierPart(ch)){
@@ -102,6 +102,7 @@ public class compiler{
 					System.err.println("classes: "+classes);
 					namespace_push(nm);
 					state_push(state_after_class_identifier);
+					}
 				case state_after_class_identifier:// skip ws, look for {
 					if(is_white_space(ch))
 						break;
@@ -110,19 +111,77 @@ public class compiler{
 						break;
 					}
 					throw new Error("line "+lineno+":"+charno+" expected '{' after class name but found '"+ch+"'");
-				case state_in_class_block:
+				case state_in_class_block:{// leads to: (constructor|function|field)
 					if(token.length()==0&&is_white_space(ch))
 						break;
-					if(!is_char_block_close(ch)){
-						token.append(ch);
+					if(ch=='('){// ctor|func
+						final String nm=token.toString();
+						if(nm.equals(namespc.name)){
+							System.out.println("found constructor "+nm);
+						}else{
+							System.out.println("found function "+nm);							
+						}
+						token.setLength(0);// ignore class block content
+						namespace_push(nm);
+						state_push(state_in_class_block_function_arguments);
 						break;
 					}
-					token.setLength(0);// ignore class block content
-					state_pop();// state_in_class_identifier
-					state_pop();// state_in_class
-					state_pop();// state_in_statement;
-					namespace_pop();
+					if(is_white_space(ch)){
+						final String nm=token.toString();
+						if(nm.equals(namespc.name)){
+							System.out.println("found constructor "+nm);
+						}else{
+							System.out.println("found function "+nm);							
+						}
+						token.setLength(0);// ignore class block content
+						namespace_push(nm);
+						state_push(state_find_class_block_function_arguments);
+						break;						
+					}
+					if(is_char_block_close(ch)){
+//						token.append(ch);
+						token.setLength(0);// ignore class block content
+						state_pop_until_state(state_in_global_statement);
+						namespace_pop();
+						break;
+					}
+					token.append(ch);
 					break;
+				}
+				case state_find_class_block_function_arguments:{// i.e. class file{func•  •(){}}
+					if(is_white_space(ch))
+						break;
+					if(ch=='(')
+						state_push(state_in_class_block_function_arguments);
+					break;
+				}
+				case state_in_class_block_function_arguments:{// class file{func(•size s•){}}
+					if(ch==')'){
+						state_push(state_find_class_block_function_block);
+						break;
+					}
+					break;
+				}
+				case state_find_class_block_function_block:{// class file{func(size s) •{}•
+					if(is_white_space(ch)&&token.length()==0)
+						continue;
+					if(ch=='{'){
+						state_push(state_in_class_block_function_block);
+						break;
+					}
+					token.append(ch);
+					break;
+				}
+				case state_in_class_block_function_block:{// class file{func(size s){•int a=2;a+=2;•}
+					if(is_white_space(ch)&&token.length()==0)
+						continue;
+					if(ch=='}'){
+						state_pop_until_state(state_in_class_block);// find block
+						break;
+					}
+					token.append(ch);
+					break;
+				}
 				default:throw new Error("unknown state "+state);
 				}
 				charno++;
@@ -132,28 +191,6 @@ public class compiler{
 				}
 			}
 		}
-//		private void ontoken(String nm){
-////			con.println("token: "+nm);
-//			switch(state){
-//			case state_in_statement:
-//				if("class".equals(nm)){// [class] ...
-//					state_push(state_in_class_identifier);
-//					break;
-//				}
-//				throw new Error("line "+lineno+": "+charno+": expected [class] declaration.");
-//			case state_in_class_identifier:
-//				if(!is_valid_class_identifier(nm))
-//					throw new Error("line "+lineno+": class identifier invalid ["+nm+"]");
-//				// entering class code block, new namespace
-//				System.err.println("class "+nm);
-//				namespace_push(nm);
-//				state_push(state_in_class_block);
-//				break;
-//			case state_in_class_block:
-//				break;
-//			default:throw new Error("unknown state "+state);
-//			}
-//		}
 		private void state_push(int newstate){
 			state_stack.push(state);
 			state=newstate;
@@ -162,6 +199,12 @@ public class compiler{
 		private void state_pop(){
 			state=state_stack.pop();
 			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
+		}
+		private void state_pop_until_state(final int s){
+			while(true){
+				state=state_stack.pop();
+				if(state==s)break;
+			}
 		}
 		public void namespace_push(String name){
 			final namespace ns=new namespace();
@@ -200,10 +243,14 @@ public class compiler{
 		namespace namespc;
 		
 		int state;
-		public static final int state_in_statement=0;
+		public static final int state_in_global_statement=0;
 		public static final int state_in_class_identifier=1;
 		public static final int state_after_class_identifier=2;
 		public static final int state_in_class_block=3;
+		public static final int state_find_class_block_function_arguments=4;
+		public static final int state_in_class_block_function_arguments=5;
+		public static final int state_find_class_block_function_block=6;
+		public static final int state_in_class_block_function_block=7;
 			
 		private LinkedList<Integer>state_stack=new LinkedList<>();
 		private ArrayList<type_class>classes=new ArrayList<>();
