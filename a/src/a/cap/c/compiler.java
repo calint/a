@@ -98,7 +98,7 @@ public class compiler{
 						throw new Error("line "+lineno+": class identifier invalid '"+nm+"'");
 					// entering class code block, new namespace
 					System.err.println("class "+nm);
-					classes.add(new type_class(nm));
+					classes.push(new type_class(nm));
 					System.err.println("classes: "+classes);
 					namespace_push(nm);
 					state_push(state_after_class_identifier);
@@ -111,30 +111,30 @@ public class compiler{
 						break;
 					}
 					throw new Error("line "+lineno+":"+charno+" expected '{' after class name but found '"+ch+"'");
-				case state_in_class_block:{// leads to: (constructor|function|field)
+				case state_in_class_block:{// leads to: returntype
 					if(token.length()==0&&is_white_space(ch))
 						break;
-					if(ch=='('){// ctor|func
-						final String nm=token.toString();
-						if(nm.equals(namespc.name)){
-							System.out.println("found constructor "+nm);
+					if(ch=='('){// returntype read
+						final String type=token.toString();
+						if(type.equals(namespc.name)){
+							System.out.println("found constructor "+type);
 						}else{
-							System.out.println("found function "+nm);							
+							System.out.println("found function returning "+type);							
 						}
 						token.setLength(0);// ignore class block content
-						namespace_push(nm);
+						namespace_push(type);
 						state_push(state_in_class_block_function_arguments);
 						break;
 					}
 					if(is_white_space(ch)){
-						final String nm=token.toString();
-						if(nm.equals(namespc.name)){
-							System.out.println("found constructor "+nm);
+						final String type=token.toString();
+						if(type.equals(namespc.name)){
+							System.out.println("found constructor "+type);
 						}else{
-							System.out.println("found function "+nm);							
+							System.out.println("found function returning "+type);							
 						}
 						token.setLength(0);// ignore class block content
-						namespace_push(nm);
+						namespace_push(type);
 						state_push(state_find_class_block_function_arguments);
 						break;						
 					}
@@ -253,7 +253,7 @@ public class compiler{
 		public static final int state_in_class_block_function_block=7;
 			
 		private LinkedList<Integer>state_stack=new LinkedList<>();
-		private ArrayList<type_class>classes=new ArrayList<>();
+		private LinkedList<type_class>classes=new LinkedList<>();
 	}
 }
 final class namespace{
