@@ -23,7 +23,7 @@ public class compiler{
 		ccw.enter_path("main.cpp");
 		b.b.cp(mainreader,ccw,null);
 		ccw.exit_path();
-		ccw.namespace_pop();
+//		ccw.namespace_pop();
 		ccw.flush();
 		
 		for(type_class c:ccw.classes){
@@ -118,25 +118,27 @@ public class compiler{
 						final String type=token.toString();
 						if(type.equals(namespc.name)){
 							System.out.println("found constructor "+type);
-						}else{
-							System.out.println("found function returning "+type);							
+							state_push(state_in_class_block_function_arguments);
+							token.setLength(0);// ignore class block content
+							namespace_push(type);
+							break;
 						}
-						token.setLength(0);// ignore class block content
-						namespace_push(type);
-						state_push(state_in_class_block_function_arguments);
-						break;
+						throw new Error("line "+lineno+": "+charno+": function without return type is considered constructor. '"+type+"' is declared like construct but class name is '"+classes.peek()+"'.");
 					}
 					if(is_white_space(ch)){
 						final String type=token.toString();
 						if(type.equals(namespc.name)){
 							System.out.println("found constructor "+type);
+							token.setLength(0);// ignore class block content
+							namespace_push(type);
+							state_push(state_find_class_block_function_arguments);
+							break;						
 						}else{
-							System.out.println("found function returning "+type);							
+							System.out.println("found function returning "+type);
+							state_push(state_in_class_block_function_name);
+							token.setLength(0);// ignore class block content
+							break;
 						}
-						token.setLength(0);// ignore class block content
-						namespace_push(type);
-						state_push(state_find_class_block_function_arguments);
-						break;						
 					}
 					if(is_char_block_close(ch)){
 //						token.append(ch);
@@ -158,8 +160,11 @@ public class compiler{
 				case state_in_class_block_function_arguments:{// class file{func(•size s•){}}
 					if(ch==')'){
 						state_push(state_find_class_block_function_block);
+						System.out.println("function args: "+token);
+						token.setLength(0);
 						break;
 					}
+					token.append(ch);
 					break;
 				}
 				case state_find_class_block_function_block:{// class file{func(size s) •{}•
@@ -177,10 +182,29 @@ public class compiler{
 						continue;
 					if(ch=='}'){
 						state_pop_until_state(state_in_class_block);// find block
+						namespace_pop();
 						break;
 					}
 					token.append(ch);
 					break;
+				}
+				case state_in_class_block_function_name:{// class file{int •foo•(size s){int a=2;a+=2;}
+					if(Character.isJavaIdentifierPart(ch)){
+						token.append(ch);
+						break;
+					}
+					final String funcnm=token.toString();
+					System.out.println("function name "+funcnm);
+					token.setLength(0);
+					if(is_white_space(ch)){
+						state_push(state_find_class_block_function_arguments);
+						break;
+					}
+					if(ch=='('){
+						state_push(state_in_class_block_function_arguments);
+						break;
+					}
+					throw new Error("line "+lineno+": "+charno+": function name '"+funcnm+"' in class '"+classes.peek()+"' is not valid.");
 				}
 				default:throw new Error("unknown state "+state);
 				}
@@ -247,10 +271,11 @@ public class compiler{
 		public static final int state_in_class_identifier=1;
 		public static final int state_after_class_identifier=2;
 		public static final int state_in_class_block=3;
-		public static final int state_find_class_block_function_arguments=4;
-		public static final int state_in_class_block_function_arguments=5;
-		public static final int state_find_class_block_function_block=6;
-		public static final int state_in_class_block_function_block=7;
+		public static final int state_in_class_block_function_name=4;
+		public static final int state_find_class_block_function_arguments=5;
+		public static final int state_in_class_block_function_arguments=6;
+		public static final int state_find_class_block_function_block=7;
+		public static final int state_in_class_block_function_block=8;
 			
 		private LinkedList<Integer>state_stack=new LinkedList<>();
 		private LinkedList<type_class>classes=new LinkedList<>();
