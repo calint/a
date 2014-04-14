@@ -40,6 +40,8 @@ public class compiler{
 				con.write(ch);
 				switch(state){
 				case state_in_statement:
+					if(ch==';'&&token.length()==0)
+						throw new Error("line "+lineno+": "+charno+": stray ';'");						
 					if(is_white_space(ch)){
 						if(token.length()==0)// white spaces infront of statement
 							break;
@@ -49,7 +51,7 @@ public class compiler{
 							state_push(state_in_class_identifier);
 							break;
 						}
-						throw new Error("line "+lineno+": "+charno+": expected [class] declaration.");
+						throw new Error("line "+lineno+": "+charno+": expected 'class' declaration. found '"+nm+"'");
 					}
 					token.append(ch);
 					break;
@@ -64,9 +66,11 @@ public class compiler{
 					token.setLength(0);
 
 					if(!is_valid_class_identifier(nm))
-						throw new Error("line "+lineno+": class identifier invalid ["+nm+"]");
+						throw new Error("line "+lineno+": class identifier invalid '"+nm+"'");
 					// entering class code block, new namespace
 					System.err.println("class "+nm);
+					classes.add(new type_class(nm));
+					System.err.println("classes: "+classes);
 					namespace_push(nm);
 					state_push(state_after_class_identifier);
 				case state_after_class_identifier:// skip ws, look for {
@@ -76,7 +80,7 @@ public class compiler{
 						state_push(state_in_class_block);
 						break;
 					}
-					throw new Error("line "+lineno+":"+charno+" expected {   found '"+ch+"' after class name");
+					throw new Error("line "+lineno+":"+charno+" expected '{' after class name but found '"+ch+"'");
 				case state_in_class_block:
 					if(token.length()==0&&is_white_space(ch))
 						break;
@@ -129,7 +133,7 @@ public class compiler{
 			state=state_stack.pop();
 			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 		}
-		private void namespace_pop(){current_namespace=namespace_stack.pop();}
+		private void namespace_pop(){namespc=namespace_stack.pop();}
 		private boolean is_char_block_open(char ch){return ch=='{';}
 		private boolean is_char_block_close(char ch){return ch=='}';}
 		private boolean is_valid_class_identifier(String nm){return true;}
@@ -156,13 +160,11 @@ public class compiler{
 //		}
 		private void namespace_push_and_activate(namespace ns){
 			namespace_stack.push(ns);
-			current_namespace=ns;
+			namespc=ns;
 		}
 		
 		final LinkedList<namespace>namespace_stack=new LinkedList<>();
-		namespace current_namespace;
-		//  
-		//  /*s0*/class/*s1*/file/*s2*/{}/*s3*/;/*s0*/
+		namespace namespc;
 		
 		int state;
 		public static final int state_in_statement=0;
@@ -171,6 +173,7 @@ public class compiler{
 		public static final int state_in_class_block=3;
 			
 		private LinkedList<Integer>state_stack=new LinkedList<>();
+		private ArrayList<type_class>classes=new ArrayList<>();
 	}
 }
 final class namespace{
@@ -180,4 +183,10 @@ final class namespace{
 	ArrayList<String>fields=new ArrayList<>();
 	
 	@Override public String toString(){return name+"{}";}
+}
+
+final class type_class{
+	String name;
+	public type_class(String name){this.name=name;}//autoset
+	@Override public String toString(){return name;}
 }
