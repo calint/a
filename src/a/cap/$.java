@@ -190,7 +190,7 @@ public class $ extends a {
 	}
 	public static String cc="clang";
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
-		final path basedir=b.path("howto/c/ca");
+		final path basedir=b.path("howto/c/cap");
 		final path csrc=basedir.get("app.c");
 		c.to(csrc);
 		final xwriter y=x.xub(out,true,true);
