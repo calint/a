@@ -1,4 +1,4 @@
-package a.cap.c;
+package a.cap;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -6,8 +6,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 
-import a.cap.c.toc.struct;
-import a.cap.c.toc.struct.slot;
+import a.cap.toc.struct;
+import a.cap.toc.struct.slot;
 
 final public class cap{
 	public static void main(final String[]args)throws Throwable{new cap(args);}
@@ -38,33 +38,21 @@ final public class cap{
 		p.print("struct "+cnm+"{");
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
-			p.println("\n\t"+i.typeandname+";");
+			p.println("\n\t"+i.tn+";");
 		}
 		p.println("};");
 		p.println(cnm+"*"+cnm+"_new(){return("+cnm+"*)malloc(sizeof("+cnm+"));}");
 		p.println("void "+cnm+"_free("+cnm+"*o){free(o);}");		
 		for(slot i:c.slots){
 			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
-			final int i1=i.typeandname.lastIndexOf('*');
-			final int i2=i.typeandname.lastIndexOf(' ');
-			// const int*func()    const int func()
-			final String name;
-			final String type;
-			if(i1==-1&&i2==-1){// constructor
-				if(!i.typeandname.equals(c.name))throw new Error("expected constructor but found '"+i.typeandname+"'");
+			if(i.isctor){
+				if(!i.tn.equals(c.name))throw new Error("expected constructor but found '"+i.tn+"'");
 				p.println(c.name+"*"+c.name+"_new("+i.args+"){}");
 				continue;
 			}
-			if(i1>i2){
-				name=i.typeandname.substring(i1+1);
-				type=i.typeandname.substring(0,i1+1);
-			}else{
-				name=i.typeandname.substring(i2+1);
-				type=i.typeandname.substring(0,i2);
-			}
-			p.print(type);
-			if(!type.endsWith("*"))p.print(" ");
-			p.print(c.name+"_"+name+"("+c.name+"*o");
+			p.print(i.type);
+			if(!i.type.endsWith("*"))p.print(" ");
+			p.print(c.name+"_"+i.name+"("+c.name+"*o");
 			if(i.args.length()>0)p.print(",");
 			p.println(i.args+"){}");
 		}
@@ -76,26 +64,14 @@ final public class cap{
 		p.println("void "+name+"_free("+name+"*);");
 		for(slot i:c.slots){
 			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
-			final int i1=i.typeandname.lastIndexOf('*');
-			final int i2=i.typeandname.lastIndexOf(' ');
-			// const int*funcName
-			final String funcname;
-			final String returntype;
-			if(i1==-1&&i2==-1){
-				// constructor
+			if(i.isctor){
+				if(!i.tn.equals(c.name))throw new Error("expected constructor for '"+c.name+"' but found '"+i.tn+"'");
 				p.println(c.name+"*"+c.name+"_new("+i.args+");");
 				continue;
 			}
-			if(i1>i2){
-				funcname=i.typeandname.substring(i1+1);
-				returntype=i.typeandname.substring(0,i1+1);
-			}else{
-				funcname=i.typeandname.substring(i2+1);
-				returntype=i.typeandname.substring(0,i2);
-			}
-			p.print(returntype);
-			if(!returntype.endsWith("*"))p.print(" ");
-			p.print(c.name+"_"+funcname+"("+c.name+"*");
+			p.print(i.type);
+			if(!i.type.endsWith("*"))p.print(" ");
+			p.print(c.name+"_"+i.name+"("+c.name+"*");
 			if(i.args.length()>0)p.print(",");
 			p.println(i.args+");");
 		}

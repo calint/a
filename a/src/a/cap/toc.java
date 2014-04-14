@@ -1,4 +1,4 @@
-package a.cap.c;
+package a.cap;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -125,11 +125,32 @@ final class toc extends Writer{
 		public struct(String name){this.name=name;}//autoset
 		@Override public String toString(){return name+"{"+slots+"}";}
 		final static class slot{
-			String typeandname;
+			String tn;
+			String name;
+			String type;
 			String args="";
 			boolean isfunc;
-			public slot(String type_and_name,boolean func){typeandname=type_and_name;isfunc=func;}
-			@Override public String toString(){return typeandname+(isfunc?("("+args+")"):"");}
+			boolean isctor;
+			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;set_type_and_name();}
+			@Override public String toString(){return tn+(isfunc?("("+args+")"):"");}
+			private void set_type_and_name(){
+				final int i1=tn.lastIndexOf('*');
+				final int i2=tn.lastIndexOf(' ');
+				//  get func name from i.e. const int*func() and  const int func()
+				if(i1==-1&&i2==-1){
+					isctor=true;
+					name="";
+					type=tn;
+					return;
+				}
+				if(i1>i2){
+					name=tn.substring(i1+1);
+					type=tn.substring(0,i1+1);
+				}else{
+					name=tn.substring(i2+1);
+					type=tn.substring(0,i2);
+				}
+			}
 		}
 	}
 	
