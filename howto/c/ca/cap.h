@@ -7,8 +7,8 @@ int cap_main(const int argc,const char**arg);
 #define out stdout
 typedef size_t size;
 /// types
-struct file;typedef struct file file;size file_count;size file_sizeof;
-struct type;typedef struct type type;size type_count;size type_sizeof;
+typedef struct file file;size file_count;size file_sizeof;
+typedef struct type type;size type_count;size type_sizeof;
 
 /// file
 file*file_new(void*,const size);//gives
