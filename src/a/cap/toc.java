@@ -131,25 +131,15 @@ final class toc extends Writer{
 			String args="";
 			boolean isfunc;
 			boolean isctor;
-			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;set_type_and_name();}
+			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;split_tn();}
 			@Override public String toString(){return tn+(isfunc?("("+args+")"):"");}
-			private void set_type_and_name(){
+			private void split_tn(){
+				//  get func name from i.e. 'const int*func'   'const int func'
 				final int i1=tn.lastIndexOf('*');
 				final int i2=tn.lastIndexOf(' ');
-				//  get func name from i.e. const int*func() and  const int func()
-				if(i1==-1&&i2==-1){
-					isctor=true;
-					name="";
-					type=tn;
-					return;
-				}
-				if(i1>i2){
-					name=tn.substring(i1+1);
-					type=tn.substring(0,i1+1);
-				}else{
-					name=tn.substring(i2+1);
-					type=tn.substring(0,i2);
-				}
+				if(i1==-1&&i2==-1){isctor=true;name="";type=tn;return;}
+				if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
+				else{name=tn.substring(i2+1);type=tn.substring(0,i2);}
 			}
 		}
 	}
