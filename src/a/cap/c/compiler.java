@@ -16,15 +16,13 @@ public class compiler{
 	public compiler(final String[]args)throws Throwable{
 		final InputStream main=getClass().getResourceAsStream("main.cap");
 		final Reader mainreader=new InputStreamReader(main);
-		final writer_c ccw=new writer_c();
+		final compiler_to_c ccw=new compiler_to_c();
 		final Writer con=new OutputStreamWriter(System.out);
 		ccw.con=new PrintWriter(con);
 		
-//		ccw.namespace_push("cap");
-		ccw.enter_path("main.cpp");
+		ccw.enter_path("cap");
 		b.b.cp(mainreader,ccw,null);
 		ccw.exit_path();
-//		ccw.namespace_pop();
 		ccw.flush();
 		
 		ccw.con.println("///----------------------------");
@@ -43,37 +41,28 @@ public class compiler{
 		ccw.con.flush();
 	}
 	private void source_c(clazz c,PrintWriter p)throws Throwable{
-		final String nm=c.name;
+		final String cnm=c.name;
 //		p.println("typedef struct "+nm+" "+nm+";");
-		p.print("struct "+nm+"{");
+		p.print("struct "+cnm+"{");
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
 			p.println("\n\t"+i.typeandname+";");
 		}
 		p.println("};");
 
-		p.println(nm+"*"+nm+"_new(){");
-//		    file*o=(file*)malloc(sizeof(file));
-			p.println("\t"+nm+"*o=("+nm+"*)malloc(sizeof("+nm+"));");
-//		    return o;
-			p.println("\treturn o;");
-		p.println("}");
-//		void file_free(file*);//takes
-		p.println("void "+nm+"_free("+nm+"*o){");
-		p.println("\tfree(o);");
-		p.println("}");		
+		p.println(cnm+"*"+cnm+"_new(){return("+cnm+"*)malloc(sizeof("+cnm+"));}");
+		p.println("void "+cnm+"_free("+cnm+"*o){free(o);}");		
 		for(slot i:c.slots){
 			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
 			final int i1=i.typeandname.lastIndexOf('*');
 			final int i2=i.typeandname.lastIndexOf(' ');
-			// const int*funcName
+			// const int*func()    const int func()
 			final String name;
 			final String type;
-			if(i1==-1&&i2==-1){
-				// constructor
+			if(i1==-1&&i2==-1){// constructor
+				if(!i.typeandname.equals(c.name))throw new Exception("expected constructor but found '"+i.typeandname+"'");
 				p.println(c.name+"*"+c.name+"_new("+i.args+"){}");
 				continue;
-//				throw new Error("confusing type and name "+i.typeandname+". expected to contain at least a ' ' or a '*'");
 			}
 			if(i1>i2){
 				name=i.typeandname.substring(i1+1);
@@ -103,7 +92,7 @@ public class compiler{
 			final String returntype;
 			if(i1==-1&&i2==-1){
 				// constructor
-				p.print(c.name+"*"+c.name+"_new("+i.args+");");
+				p.println(c.name+"*"+c.name+"_new("+i.args+");");
 				continue;
 			}
 			if(i1>i2){
@@ -120,7 +109,7 @@ public class compiler{
 			p.println(i.args+");");
 		}
 	}
-	static class writer_c extends Writer{
+	static class compiler_to_c extends Writer{
 		PrintWriter con;
 		String path;
 		int lineno=1,charno=1;
@@ -133,68 +122,54 @@ public class compiler{
 				final char ch=cbuf[o];o++;l--;
 //				con.write(ch);
 				switch(state){
-				case state_in_global_statement:
-					if(ch==';'&&token.length()==0)throw new Error("line "+lineno+": "+charno+": stray ';'");						
-					if(is_white_space(ch)){
-						if(token.length()==0)break;// skip beginning white spaces
-						final String tkn=token.toString();// new token
-						token.setLength(0);
-						if("class".equals(tkn)){
-							state_push(state_in_class_ident);
-							break;
-						}
-						throw new Error("line "+lineno+": "+charno+": expected keyword 'class' but found '"+tkn+"'");
-					}
-					token.append(ch);
-					break;
+//				case state_in_global:
+//					if(ch==';'&&token.length()==0)throw new Error("line "+lineno+": "+charno+": stray ';'");						
+//					if(is_char_block_open(ch)){
+//						if(token.length()==0)break;// skip leading white spaces
+//						final String tkn=token.toString();// new token
+//						token.setLength(0);
+//						if("class".equals(tkn)){state_push(state_in_class_ident);break;}
+//						throw new Error("line "+lineno+": "+charno+": expected keyword 'class' but found '"+tkn+"'");						
+//					}
+//					if(!is_white_space(ch)){token.append(ch);break;}
+//					if(token.length()==0)break;// skip leading white spaces
+//					final String tkn=token.toString();// new token
+//					token.setLength(0);
+//					if("class".equals(tkn)){state_push(state_in_class_ident);break;}
+//					throw new Error("line "+lineno+": "+charno+": expected keyword 'class' but found '"+tkn+"'");
 				case state_in_class_ident:{
 					if(token.length()==0&&is_white_space(ch))break;// trims leading white space
-					if(ch!='{'){// look for opening class block
-						token.append(ch);
-						break;						
-					}
-					final String clsnm=clean_whitespaces(token.toString());					
+					if(ch!='{'){token.append(ch);break;}// look for opening class block
+					final String clsident=clean_whitespaces(token.toString());					
 					token.setLength(0);
-
-					if(!is_valid_class_identifier(clsnm))throw new Error("line "+lineno+": invalid class name '"+clsnm+"'");
-					classes.push(new clazz(clsnm));
-					namespace_push(clsnm);
+					if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'");
+					classes.push(new clazz(clsident));
+					namespace_push(clsident);
 					state_push(state_in_class_block);
 					break;
-					}
-//				case state_after_class_name:// skip ws, look for {
-//					if(is_white_space(ch))
-//						break;
-//					if(is_char_block_open(ch)){
-//						state_push(state_in_class_block);
-//						break;
-//					}
-//					throw new Error("line "+lineno+":"+charno+" expected '{' after class name but found '"+ch+"'");
+				}
 				case state_in_class_block:{// find type
 					if(token.length()==0&&is_white_space(ch))break;// trim leading white space
-					if(ch=='('){// found type+name function i.e. const 'int foo('
+					if(is_char_arguments_open(ch)){// found type+name function i.e. const 'int foo('
 						final String ident=clean_whitespaces(token.toString());
 						token.setLength(0);// ignore class block content
 						namespace_push(ident);
 						classes.peek().slots.push(new clazz.slot(ident,true));
-						System.out.println(classes);
-						System.err.println("found function '"+ident+"'");
+						// if constructor format but not a constructor
+						if(ident.indexOf('*')==-1&&ident.indexOf(' ')==-1&&!ident.equals(classes.peek().name))throw new Error("line "+lineno+":"+charno+": in class '"+classes.peek().name+"' item '"+ident+"' is declared like a constructor but does not have the class name.");
 						state_push(state_class_block_in_function_arguments);
 						break;
 					}
-					if(ch==';'){// found type+name field i.e. int a;
+					if(is_char_statement_close(ch)){// found type+name field i.e. int a;
 						final String ident=clean_whitespaces(token.toString());
 						token.setLength(0);// ignore class block content
-						namespace_push(ident);
 						classes.peek().slots.push(new clazz.slot(ident,false));
-						System.out.println(classes);
-						System.err.println("found field '"+ident+"'");
 						state_push(state_in_class_block);
 						break;
 					}
 					if(is_char_block_close(ch)){// close class block
 						token.setLength(0);// ignore class block content
-						state_pop_until_state(state_in_global_statement);
+						state_pop_until_state(state_in_class_ident);
 						namespace_pop();
 						break;
 					}
@@ -213,77 +188,42 @@ public class compiler{
 					token.append(ch);
 					break;
 				}
-				case state_class_block_find_start_of_function_block:{// class file{func(size s) •{}•
-					if(is_white_space(ch)&&token.length()==0)
-						continue;
-					if(ch=='{'){
-						state_push(state_class_block_in_function_block);
-//						namespace_push(namespace_stack.peek().name);
-						break;
-					}
+				case state_class_block_find_start_of_function_block:{// class file{func(size s) •{}
+					if(is_white_space(ch)&&token.length()==0)continue;//trim lead space
+					if(is_char_block_open(ch)){state_push(state_class_block_in_function_block);break;}//found
 					token.append(ch);
 					break;
 				}
 				case state_class_block_in_function_block:{// class file{func(size s){•int a=2;a+=2;•}
-					if(is_white_space(ch)&&token.length()==0)
-						continue;
-					if(ch=='}'){
-						state_pop_until_state(state_in_class_block);// find block
-						namespace_pop();
-						break;
-					}
+					if(is_white_space(ch)&&token.length()==0)continue;
+					if(is_char_block_close(ch)){state_pop_until_state(state_in_class_block);namespace_pop();break;}
 //					token.append(ch);
 					break;
 				}
-//				case state_class_block_in_function_name:{// class file{int •foo•(size s){int a=2;a+=2;}
-//					if(Character.isJavaIdentifierPart(ch)){
-//						token.append(ch);
-//						break;
-//					}
-//					final String funcnm=token.toString();
-//					System.out.println("function name "+funcnm);
-//					token.setLength(0);
-//					if(is_white_space(ch)){
-//						state_push(state_class_block_find_function_arguments);
-//						break;
-//					}
-//					if(ch=='('){
-//						state_push(state_class_block_in_function_arguments);
-//						break;
-//					}
-//					throw new Error("line "+lineno+": "+charno+": function name '"+funcnm+"' in class '"+classes.peek()+"' is not valid.");
-//				}
 				default:throw new Error("unknown state "+state);
 				}
-				charno++;
-				if(ch=='\n'){
-					lineno++;
-					charno=1;
-				}
+				charno++;if(ch=='\n'){lineno++;charno=1;}
 			}
 		}
-		private static String clean_whitespaces(String s){
-			return s.trim().replaceAll("\\s+"," ").replaceAll(" \\*","\\*").replaceAll("\\* ","\\*");
-		}
+		private static boolean is_char_arguments_open(char ch){return ch=='(';}
+		private static boolean is_char_statement_close(char ch){return ch==';';}
+		private static String clean_whitespaces(String s){return s.trim().replaceAll("\\s+"," ").replaceAll(" \\*","\\*").replaceAll("\\* ","\\*");}
 		private void state_push(int newstate){
 			state_stack.push(state);
 			state=newstate;
 			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 		}
-		private void state_pop(){
-			state=state_stack.pop();
-			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
-		}
+//		private void state_pop(){
+//			state=state_stack.pop();
+//			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
+//		}
 		private void state_pop_until_state(final int s){
-			while(true){
-				state=state_stack.pop();
-				if(state==s)break;
-			}
+			while(s!=(state=state_stack.pop()));
 		}
-		public void namespace_push(String name){
+		private void namespace_push(String name){
 			final namespace ns=new namespace();
 			ns.name=name;
-			namespace_push_and_activate(ns);
+			namespace_stack.push(ns);
 			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 		}
 		private void namespace_pop(){
@@ -294,39 +234,24 @@ public class compiler{
 		private boolean is_char_block_close(char ch){return ch=='}';}
 		private boolean is_valid_class_identifier(String nm){return true;}
 		private boolean is_white_space(char ch){return Character.isWhitespace(ch);}
-		void exit_path(){
-			namespace_pop();
-		}
-		@Override public void flush()throws IOException{
-			con.flush();
-		}
-		@Override public void close()throws IOException{
-			con.close();
-		}
+		void exit_path(){namespace_pop();}
+		@Override public void flush()throws IOException{con.flush();}
+		@Override public void close()throws IOException{con.close();}
 //		public void namespace_leave(){
 //			final namespace ns=namespace_stack.pop();
 //			current_namespace=ns;
 //			con.println("namespace stack:"+namespace_stack);
 //		}
-		private void namespace_push_and_activate(namespace ns){
-			namespace_stack.push(ns);
-//			namespc=ns;
-		}
 		
 		final LinkedList<namespace>namespace_stack=new LinkedList<>();
-//		namespace namespc;
 		
-		int state;
-		public static final int state_in_global_statement=0;
-		public static final int state_in_class_ident=1;
-//		public static final int state_after_class_name=2;
-		public static final int state_in_class_block=3;
-//		public static final int state_class_block_in_function_name=4;
-		public static final int state_class_block_in_item_sign=4;
-//		public static final int state_class_block_find_function_arguments=5;
-		public static final int state_class_block_in_function_arguments=6;
-		public static final int state_class_block_find_start_of_function_block=7;
-		public static final int state_class_block_in_function_block=8;
+		private int state;
+//		private static final int state_in_global=0;
+		private static final int state_in_class_ident=0;
+		private static final int state_in_class_block=1;
+		private static final int state_class_block_in_function_arguments=2;
+		private static final int state_class_block_find_start_of_function_block=3;
+		private  static final int state_class_block_in_function_block=4;
 			
 		private LinkedList<Integer>state_stack=new LinkedList<>();
 		private LinkedList<clazz>classes=new LinkedList<>();
