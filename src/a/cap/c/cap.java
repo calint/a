@@ -95,7 +95,7 @@ final public class cap{
 			}
 			p.print(returntype);
 			if(!returntype.endsWith("*"))p.print(" ");
-			p.print(c.name+"_"+funcname+"("+c.name+"*o");
+			p.print(c.name+"_"+funcname+"("+c.name+"*");
 			if(i.args.length()>0)p.print(",");
 			p.println(i.args+");");
 		}
