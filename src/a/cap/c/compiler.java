@@ -36,7 +36,27 @@ public class compiler{
 	private void csrc_gen_class(clazz c,PrintWriter p)throws Throwable{
 		final String nm=c.name;
 //		struct file;typedef struct file file;size file_count;size file_sizeof;
-		p.println("struct "+nm+";typedef struct "+nm+" "+nm+";");
+//		p.println("struct "+nm+";typedef struct "+nm+" "+nm+";");
+		p.println("typedef struct "+nm+" "+nm+";");
+		p.println("struct "+nm+"{");
+		for(slot i:c.slots){
+			if(i.isfunc)continue;
+//			final int i1=i.typeandname.lastIndexOf('*');
+//			final int i2=i.typeandname.lastIndexOf(' ');
+//			// const int*funcName
+//			final String name;
+//			final String type;
+//			if(i1>i2){
+//				name=i.typeandname.substring(i1+1);
+//				type=i.typeandname.substring(0,i1);
+//			}else{
+//				name=i.typeandname.substring(i2+1);
+//				type=i.typeandname.substring(0,i2);
+//			}
+			p.println("\t"+i.typeandname+";");
+		}
+		p.println("};");
+		
 //		file*file_new(void*,const size);//gives
 		p.println(nm+"*"+nm+"_new(){");
 //		    file*o=(file*)malloc(sizeof(file));
@@ -49,6 +69,7 @@ public class compiler{
 		p.println("\tfree(o);");
 		p.println("}");		
 		for(slot i:c.slots){
+			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
 			final int i1=i.typeandname.lastIndexOf('*');
 			final int i2=i.typeandname.lastIndexOf(' ');
 			// const int*funcName
@@ -94,12 +115,6 @@ public class compiler{
 			p.println("){");
 			p.println("}");
 		}
-//		void file_info(const file*,FILE*);
-//		void file_to(const file*,FILE*);
-//		void file_foreach_char_write(const file*,void(^)(char*));
-//		void file_foreach_char(const file*,void(^)(char));
-//		void file_copy(const file*,const char*,const size);
-//		const size file_size_in_bytes(const file*);
 	}
 	static class writer_c extends Writer{
 		PrintWriter con;
@@ -155,26 +170,27 @@ public class compiler{
 				case state_in_class_block:{// find type
 					if(token.length()==0&&is_white_space(ch))
 						break;
-					if(ch=='('){// found type+name
+					if(ch=='('){// found type+name function i.e. const 'int foo('
 						final String ident=clean_whitespaces(token.toString());
 						token.setLength(0);// ignore class block content
 						namespace_push(ident);
-						classes.peek().slots.push(new clazz.slot(ident));
+						classes.peek().slots.push(new clazz.slot(ident,true));
 						System.out.println(classes);
-						System.err.println("found item '"+ident+"'");
+						System.err.println("found function '"+ident+"'");
 						state_push(state_class_block_in_function_arguments);
 						break;
-//						if(ident.equals(namespace_stack.peek().name)){
-////							System.out.println("  is ctor");
-//						}
-//						classes.peek().slots.add(new clazz.slot(ident));	
-//						state_push(state_class_block_in_function_arguments);
-//						namespace_push(ident);
-//						token.setLength(0);// ignore class block content
-//						break;
 					}
-					if(is_char_block_close(ch)){
-//						token.append(ch);
+					if(ch==';'){// found type+name field i.e. int a;
+						final String ident=clean_whitespaces(token.toString());
+						token.setLength(0);// ignore class block content
+						namespace_push(ident);
+						classes.peek().slots.push(new clazz.slot(ident,false));
+						System.out.println(classes);
+						System.err.println("found field '"+ident+"'");
+						state_push(state_in_class_block);
+						break;
+					}
+					if(is_char_block_close(ch)){// close class block
 						token.setLength(0);// ignore class block content
 						state_pop_until_state(state_in_global_statement);
 						namespace_pop();
@@ -333,7 +349,10 @@ final class clazz{
 	final static class slot{
 		String typeandname;
 		String args="";
-		public slot(String type_and_name){typeandname=type_and_name;}
-		@Override public String toString(){return typeandname+"("+args+")";}
+		boolean isfunc;
+		public slot(String type_and_name,boolean func){typeandname=type_and_name;isfunc=func;}
+		@Override public String toString(){
+			return typeandname+(isfunc?("("+args+")"):"");
+		}
 	}
 }

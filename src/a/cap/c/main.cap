@@ -1,10 +1,4 @@
-class file{
-	file(int n){
-		
-	}
-	file(void*addr,const size s){}
-	const int func(int b,const string*b){}
-	void tick(const float dt){}
-	bool draw(screen s){}
+class bla{	
+	int counter;
+	const char*bla;
 }
-
