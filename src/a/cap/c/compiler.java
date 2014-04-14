@@ -88,6 +88,7 @@ public class compiler{
 						token.append(ch);
 						break;
 					}
+					token.setLength(0);// ignore class block content
 					state_pop();// state_in_class_identifier
 					state_pop();// state_in_class
 					state_pop();// state_in_statement;
@@ -133,7 +134,16 @@ public class compiler{
 			state=state_stack.pop();
 			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 		}
-		private void namespace_pop(){namespc=namespace_stack.pop();}
+		public void namespace_push(String name){
+			final namespace ns=new namespace();
+			ns.name=name;
+			namespace_push_and_activate(ns);
+			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
+		}
+		private void namespace_pop(){
+			namespc=namespace_stack.pop();
+			System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
+		}
 		private boolean is_char_block_open(char ch){return ch=='{';}
 		private boolean is_char_block_close(char ch){return ch=='}';}
 		private boolean is_valid_class_identifier(String nm){return true;}
@@ -146,12 +156,6 @@ public class compiler{
 		}
 		@Override public void close()throws IOException{
 			con.close();
-		}
-		public void namespace_push(String name){
-			final namespace ns=new namespace();
-			ns.name=name;
-			namespace_push_and_activate(ns);
-//			con.println("namespace stack:"+namespace_stack);
 		}
 //		public void namespace_leave(){
 //			final namespace ns=namespace_stack.pop();
