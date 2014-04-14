@@ -5,22 +5,24 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.Writer;
 
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
 
 final public class cap{
-	public static void main(final String[]args)throws Throwable{new cap(args);}
-	public cap(final String[]args)throws Throwable{
-		final InputStream main=getClass().getResourceAsStream("main.cap");
+	public static void main(final String[]args)throws Throwable{
+		final cap c=new cap();
+		final InputStream main=cap.class.getResourceAsStream("main.cap");
 		final Reader in=new InputStreamReader(main);
+		c.compile(in,null,null);
+	}
+	public void compile(Reader in,Writer hcode,Writer ccode)throws Throwable{
 		final toc cc=new toc();
-		cc.out=new PrintWriter(new OutputStreamWriter(System.out));
-		
 		cc.namespace_enter("cap");
 		b.b.cp(in,cc,null);
-		cc.namespace_pop();
-		
+		cc.namespace_pop();		
+		cc.out=new PrintWriter(new OutputStreamWriter(System.out));
 		cc.out.println("///----------------------------");
 		cc.out.println("/// generated h file");
 		cc.out.println("///----------------------------");
