@@ -2,6 +2,7 @@ class bla{
 	prw int counter;
 	pr const char*bla;
 	qr const char*get_string();
+	bla(@s int counter){}
 }
 class p{int public;}
 class r{int read;}
@@ -11,3 +12,4 @@ class v{int virtual_func;}
 class q{int read_only_func;}
 class g{int gives_ownership_of_returned_object;}
 class t{int takes_ownership_of_object;}
+@s sets parameter in object field with same name

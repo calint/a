@@ -1,4 +1,8 @@
-class bla{
+bla{
 	int a;
-	const char*get_string();
+	bla(int b){}
+	void tick(){}
+	void update(const float dt){}
 }
+
+
