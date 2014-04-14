@@ -3,8 +3,7 @@ class file{
 	}
 	file(file f){
 	}
-	int func(){
-		return 0;
+	int func(int b){
 	}
 }
 
