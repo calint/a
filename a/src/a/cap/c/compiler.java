@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -16,11 +17,17 @@ public class compiler{
 		final writer_c ccw=new writer_c();
 		final Writer con=new OutputStreamWriter(System.out);
 		ccw.con=con;
+		ccw.enter_path("main.cpp");
 		b.b.cp(mainreader,ccw,null);
 		ccw.flush();
 	}
 	static class writer_c extends Writer{
 		Writer con;
+		String path;
+		int lineno;
+		void enter_path(String p){
+			new PrintWriter(this).println("   enter path: "+p);
+		}
 		@Override public void write(char[]cbuf,int off,int len)throws IOException{
 			con.write(cbuf,off,len);
 		}
