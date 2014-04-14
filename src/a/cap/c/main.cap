@@ -1,4 +1,4 @@
-class bla{	
-	int counter;
-	const char*bla;
+class bla{
+	int a;
+	const char*get_string();
 }

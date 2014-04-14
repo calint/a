@@ -27,37 +27,30 @@ public class compiler{
 //		ccw.namespace_pop();
 		ccw.flush();
 		
+		ccw.con.println("///----------------------------");
+		ccw.con.println("/// generate h file");
+		ccw.con.println("///----------------------------");
 		for(clazz c:ccw.classes){
-			System.out.println("generate c: "+c);
-			csrc_gen_class(c,ccw.con);
+			source_h(c,ccw.con);
+		}
+		ccw.con.println("///----------------------------");
+		ccw.con.println("/// generate c file");
+		ccw.con.println("///----------------------------");
+		for(clazz c:ccw.classes){
+			source_c(c,ccw.con);
 		}
 		ccw.con.flush();
 	}
-	private void csrc_gen_class(clazz c,PrintWriter p)throws Throwable{
+	private void source_c(clazz c,PrintWriter p)throws Throwable{
 		final String nm=c.name;
-//		struct file;typedef struct file file;size file_count;size file_sizeof;
-//		p.println("struct "+nm+";typedef struct "+nm+" "+nm+";");
-		p.println("typedef struct "+nm+" "+nm+";");
-		p.println("struct "+nm+"{");
+//		p.println("typedef struct "+nm+" "+nm+";");
+		p.print("struct "+nm+"{");
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
-//			final int i1=i.typeandname.lastIndexOf('*');
-//			final int i2=i.typeandname.lastIndexOf(' ');
-//			// const int*funcName
-//			final String name;
-//			final String type;
-//			if(i1>i2){
-//				name=i.typeandname.substring(i1+1);
-//				type=i.typeandname.substring(0,i1);
-//			}else{
-//				name=i.typeandname.substring(i2+1);
-//				type=i.typeandname.substring(0,i2);
-//			}
-			p.println("\t"+i.typeandname+";");
+			p.println("\n\t"+i.typeandname+";");
 		}
 		p.println("};");
-		
-//		file*file_new(void*,const size);//gives
+
 		p.println(nm+"*"+nm+"_new(){");
 //		    file*o=(file*)malloc(sizeof(file));
 			p.println("\t"+nm+"*o=("+nm+"*)malloc(sizeof("+nm+"));");
@@ -77,43 +70,53 @@ public class compiler{
 			final String type;
 			if(i1==-1&&i2==-1){
 				// constructor
-				p.print(c.name);
-				p.print("*");
-				p.print(c.name);
-				p.print("_new");
-				p.print("(");
-				p.print(c.name);
-				p.print("*o");
-				if(i.args.length()>0){
-					p.print(",");
-				}
-				p.print(i.args);
-				p.println("){");
-				p.println("}");
+				p.println(c.name+"*"+c.name+"_new("+i.args+"){}");
 				continue;
 //				throw new Error("confusing type and name "+i.typeandname+". expected to contain at least a ' ' or a '*'");
 			}
 			if(i1>i2){
 				name=i.typeandname.substring(i1+1);
-				type=i.typeandname.substring(0,i1);
+				type=i.typeandname.substring(0,i1+1);
 			}else{
 				name=i.typeandname.substring(i2+1);
 				type=i.typeandname.substring(0,i2);
 			}
 			p.print(type);
-			p.print(" ");
-			p.print(c.name);
-			p.print("_");
-			p.print(name);
-			p.print("(");
-			p.print(c.name);
-			p.print("*o");
-			if(i.args.length()>0){
-				p.print(",");
+			if(!type.endsWith("*"))p.print(" ");
+			p.print(c.name+"_"+name+"("+c.name+"*o");
+			if(i.args.length()>0)p.print(",");
+			p.println(i.args+"){}");
+		}
+	}
+	private void source_h(clazz c,PrintWriter p)throws Throwable{
+		final String name=c.name;
+		p.println("\ntypedef struct "+name+" "+name+";");
+		p.println(name+"*"+name+"_new();");
+		p.println("void "+name+"_free("+name+"*);");
+		for(slot i:c.slots){
+			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
+			final int i1=i.typeandname.lastIndexOf('*');
+			final int i2=i.typeandname.lastIndexOf(' ');
+			// const int*funcName
+			final String funcname;
+			final String returntype;
+			if(i1==-1&&i2==-1){
+				// constructor
+				p.print(c.name+"*"+c.name+"_new("+i.args+");");
+				continue;
 			}
-			p.print(i.args);
-			p.println("){");
-			p.println("}");
+			if(i1>i2){
+				funcname=i.typeandname.substring(i1+1);
+				returntype=i.typeandname.substring(0,i1+1);
+			}else{
+				funcname=i.typeandname.substring(i2+1);
+				returntype=i.typeandname.substring(0,i2);
+			}
+			p.print(returntype);
+			if(!returntype.endsWith("*"))p.print(" ");
+			p.print(c.name+"_"+funcname+"("+c.name+"*o");
+			if(i.args.length()>0)p.print(",");
+			p.println(i.args+");");
 		}
 	}
 	static class writer_c extends Writer{
@@ -136,40 +139,38 @@ public class compiler{
 						final String tkn=token.toString();// new token
 						token.setLength(0);
 						if("class".equals(tkn)){
-							state_push(state_in_class_name);
+							state_push(state_in_class_ident);
 							break;
 						}
 						throw new Error("line "+lineno+": "+charno+": expected keyword 'class' but found '"+tkn+"'");
 					}
 					token.append(ch);
 					break;
-				case state_in_class_name:{
-					if(token.length()==0&&is_white_space(ch))
-						break;
-					if(Character.isJavaIdentifierPart(ch)){
+				case state_in_class_ident:{
+					if(token.length()==0&&is_white_space(ch))break;// trims leading white space
+					if(ch!='{'){// look for opening class block
 						token.append(ch);
 						break;						
 					}
-					final String clsnm=token.toString();					
+					final String clsnm=clean_whitespaces(token.toString());					
 					token.setLength(0);
 
-					if(!is_valid_class_identifier(clsnm))
-						throw new Error("line "+lineno+": invalid class name '"+clsnm+"'");
+					if(!is_valid_class_identifier(clsnm))throw new Error("line "+lineno+": invalid class name '"+clsnm+"'");
 					classes.push(new clazz(clsnm));
 					namespace_push(clsnm);
-					state_push(state_after_class_name);
+					state_push(state_in_class_block);
+					break;
 					}
-				case state_after_class_name:// skip ws, look for {
-					if(is_white_space(ch))
-						break;
-					if(is_char_block_open(ch)){
-						state_push(state_in_class_block);
-						break;
-					}
-					throw new Error("line "+lineno+":"+charno+" expected '{' after class name but found '"+ch+"'");
+//				case state_after_class_name:// skip ws, look for {
+//					if(is_white_space(ch))
+//						break;
+//					if(is_char_block_open(ch)){
+//						state_push(state_in_class_block);
+//						break;
+//					}
+//					throw new Error("line "+lineno+":"+charno+" expected '{' after class name but found '"+ch+"'");
 				case state_in_class_block:{// find type
-					if(token.length()==0&&is_white_space(ch))
-						break;
+					if(token.length()==0&&is_white_space(ch))break;// trim leading white space
 					if(ch=='('){// found type+name function i.e. const 'int foo('
 						final String ident=clean_whitespaces(token.toString());
 						token.setLength(0);// ignore class block content
@@ -261,7 +262,7 @@ public class compiler{
 			}
 		}
 		private static String clean_whitespaces(String s){
-			return s.replaceAll("\\s+"," ").replaceAll(" \\*","\\*");
+			return s.trim().replaceAll("\\s+"," ").replaceAll(" \\*","\\*").replaceAll("\\* ","\\*");
 		}
 		private void state_push(int newstate){
 			state_stack.push(state);
@@ -316,8 +317,8 @@ public class compiler{
 		
 		int state;
 		public static final int state_in_global_statement=0;
-		public static final int state_in_class_name=1;
-		public static final int state_after_class_name=2;
+		public static final int state_in_class_ident=1;
+//		public static final int state_after_class_name=2;
 		public static final int state_in_class_block=3;
 //		public static final int state_class_block_in_function_name=4;
 		public static final int state_class_block_in_item_sign=4;
