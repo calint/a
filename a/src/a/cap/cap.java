@@ -22,11 +22,11 @@ final public class cap{
 		cc.namespace_pop();
 		
 		cc.out.println("///----------------------------");
-		cc.out.println("/// generate h file");
+		cc.out.println("/// generated h file");
 		cc.out.println("///----------------------------");
 		cc.classes().forEach((c)->source_h(c,cc.out));
 		cc.out.println("///----------------------------");
-		cc.out.println("/// generate c file");
+		cc.out.println("/// generated c file");
 		cc.out.println("///----------------------------");
 		cc.classes().forEach((c)->source_c(c,cc.out));
 		//. generate reflection struct
