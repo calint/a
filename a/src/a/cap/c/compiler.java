@@ -39,6 +39,7 @@ public class compiler{
 		for(clazz c:ccw.classes){
 			source_c(c,ccw.con);
 		}
+		//. generate reflection struct
 		ccw.con.flush();
 	}
 	private void source_c(clazz c,PrintWriter p)throws Throwable{
