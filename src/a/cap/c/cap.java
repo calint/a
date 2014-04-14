@@ -5,9 +5,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.util.LinkedList;
 
-import a.cap.c.cap.clazz.slot;
+import a.cap.c.toc.struct;
+import a.cap.c.toc.struct.slot;
 
 final public class cap{
 	public static void main(final String[]args)throws Throwable{new cap(args);}
@@ -32,7 +32,7 @@ final public class cap{
 		//. generate reflection struct
 		cc.out.flush();
 	}
-	private void source_c(clazz c,PrintWriter p){
+	private void source_c(struct c,PrintWriter p){
 		final String cnm=c.name;
 //		p.println("typedef struct "+nm+" "+nm+";");
 		p.print("struct "+cnm+"{");
@@ -69,7 +69,7 @@ final public class cap{
 			p.println(i.args+"){}");
 		}
 	}
-	private void source_h(clazz c,PrintWriter p){
+	private void source_h(struct c,PrintWriter p){
 		final String name=c.name;
 		p.println("\ntypedef struct "+name+" "+name+";");
 		p.println(name+"*"+name+"_new();");
@@ -98,29 +98,6 @@ final public class cap{
 			p.print(c.name+"_"+funcname+"("+c.name+"*o");
 			if(i.args.length()>0)p.print(",");
 			p.println(i.args+");");
-		}
-	}
-	final static class namespace{
-		private String name;
-		public namespace(String nm){name=nm;}
-		@Override public String toString(){return name;}
-	}
-
-	final static class clazz{
-		String name;
-		LinkedList<slot>slots=new LinkedList<>();
-		
-		public clazz(String name){this.name=name;}//autoset
-		@Override public String toString(){return name+"{"+slots+"}";}
-
-		final static class slot{
-			String typeandname;
-			String args="";
-			boolean isfunc;
-			public slot(String type_and_name,boolean func){typeandname=type_and_name;isfunc=func;}
-			@Override public String toString(){
-				return typeandname+(isfunc?("("+args+")"):"");
-			}
 		}
 	}
 }
