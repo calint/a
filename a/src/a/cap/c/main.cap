@@ -1,9 +1,10 @@
 class file{
-	file(void*addr, size s){
+	file(int n){
+		
 	}
-	file(file f){
-	}
-	int func(int b){
-	}
+	file(void*addr,const size s){}
+	const int func(int b,const string*b){}
+	void tick(const float dt){}
+	bool draw(screen s){}
 }
 
