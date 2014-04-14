@@ -1,2 +1,10 @@
-class file{file(   void*addr, size s)   {}}
+class file{
+	file(void*addr, size s){
+	}
+	file(file f){
+	}
+	int func(){
+		return 0;
+	}
+}
 
