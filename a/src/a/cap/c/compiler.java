@@ -25,6 +25,35 @@ public class compiler{
 		ccw.exit_path();
 		ccw.namespace_pop();
 		ccw.flush();
+		
+		for(type_class c:ccw.classes){
+			System.out.println("generate c: "+c);
+			csrc_gen_class(c,ccw.con);
+		}
+		ccw.con.flush();
+	}
+	private void csrc_gen_class(type_class c,PrintWriter p)throws Throwable{
+		final String nm=c.name;
+//		struct file;typedef struct file file;size file_count;size file_sizeof;
+		p.println("struct "+nm+";typedef struct "+nm+" "+nm+";");
+//		file*file_new(void*,const size);//gives
+		p.println(nm+"*"+nm+"_new(){");
+//		    file*o=(file*)malloc(sizeof(file));
+			p.println("\t"+nm+"*o=("+nm+"*)malloc(sizeof("+nm+"));");
+//		    return o;
+			p.println("\treturn o;");
+		p.println("}");
+//		void file_free(file*);//takes
+		p.println("void "+nm+"_free("+nm+"*o){");
+		p.println("\tfree(o);");
+		p.println("}");		
+		
+//		void file_info(const file*,FILE*);
+//		void file_to(const file*,FILE*);
+//		void file_foreach_char_write(const file*,void(^)(char*));
+//		void file_foreach_char(const file*,void(^)(char));
+//		void file_copy(const file*,const char*,const size);
+//		const size file_size_in_bytes(const file*);
 	}
 	static class writer_c extends Writer{
 		PrintWriter con;
@@ -37,7 +66,7 @@ public class compiler{
 			while(true){
 				if(l==0)break;
 				final char ch=cbuf[o];o++;l--;
-				con.write(ch);
+//				con.write(ch);
 				switch(state){
 				case state_in_statement:
 					if(ch==';'&&token.length()==0)
