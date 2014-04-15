@@ -272,7 +272,10 @@ final class toc extends Writer{
 			sb.setLength(sb.length()-1);
 			return sb.toString();
 		}
-		final static class let extends stmt{public let(type t,var v,stmt s){super(t+" "+v+"="+s);}};
+		final static class let extends stmt{
+			public let(type t,var v){super(t+" "+v);}
+			public let(type t,var v,stmt s){super(t+" "+v+"="+s);}
+		};
 		final static class set extends stmt{public set(var v,stmt s){super(v+"="+s);}};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
 		final static class var extends stmt{public var(String name){super(name);}};
@@ -325,11 +328,14 @@ final class toc extends Writer{
 		final static class incpre extends stmt{public incpre(var v){super("++"+v);}}
 		final static class dec extends stmt{public dec(var v){super(v+"--");}}
 		final static class decpre extends stmt{public decpre(var v){super("--"+v);}}
+		final static class fcall extends call{public fcall(var o,String funcname,stmt...args){super(o+"."+funcname,args);}}
 	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
 		final type integer=new integer();
 		final var a=new var("a");
+		final var f=new var("f");
+		final var d=new var("d");
 		final stmt brk=new brk();
 		final stmt cont=new cont();
 		final value i3=new num(3);
@@ -338,9 +344,11 @@ final class toc extends Writer{
 		final value i8=new num(8);
 		final value i5=new num(5);
 		final value s1=new str("a=%d");
+		final type file=new type("file");
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
+		stms.add(new let(file,f));
 		stms.add(new loop(new block(
 				new incn(a,i3),
 				new decn(a,i1),
@@ -354,6 +362,7 @@ final class toc extends Writer{
 		)));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
+		stms.add(new lang.fcall(f,"to",d));
 //		stms.add(new loop(
 //				new set(a,new add(a,i1))
 //		));
