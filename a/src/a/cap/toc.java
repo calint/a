@@ -240,7 +240,7 @@ final class toc extends Writer{
 		return sb.toString();
 	}
 	final static class let extends statement{public let(type t,String name,statement s){super(t+" "+name+"="+s);}};
-	final static class set extends statement{public set(String name,statement s){super(name+"="+s);}};
+	final static class set extends statement{public set(var v,statement s){super(v+"="+s);}};
 	static class value extends statement{public value(String stmt){super(stmt);}};
 	final static class var extends statement{public var(String name){super(name);}};
 	static class operator extends statement{public operator(String name,statement lh,statement rh){super(lh+name+rh);}};
@@ -250,32 +250,37 @@ final class toc extends Writer{
 	final static class loop extends statement{
 		statement[]stmts;
 		public loop(statement...stmts){
-			super("loop{"+args_to_string(stmts)+"}");
+			super("loop{"+statements_to_string(stmts)+"}");
 			this.stmts=stmts;
 		}
-		private static String args_to_string(statement...a){
-			if(a.length==0)return"";
-			final StringBuilder sb=new StringBuilder();
-			for(statement s:a){
-				sb.append(s.toString()).append(",");
-			}
-			sb.setLength(sb.length()-1);
-			return sb.toString();
-		}
 	};
+	private static String statements_to_string(statement...a){
+		if(a.length==0)return"";
+		final StringBuilder sb=new StringBuilder();
+		for(statement s:a){
+			sb.append(s.toString());
+			sb.append(";");
+		}
+		sb.setLength(sb.length()-1);
+		return sb.toString();
+	}
 	final static class num extends value{public num(int i){super(Integer.toString(i));}};
 	static class type extends statement{public type(String name){super(name);}};
 	final static class _int extends type{public _int(){super("int");}};
 	final static class _float extends type{public _float(){super("float");}};
+	final static class printf extends call{public printf(statement...s){super("printf",s);}};
 
 
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
 		statements.add(new let(new _int(),"a",new num(3)));
-		statements.add(new set("a",new num(4)));
-		statements.add(new loop(new set("a",new add(new var("a"),new num(1)))));
-		statements.add(new set("a",new add(new var("a"),new num(5))));
-		statements.add(new call("printf",new str("a=%d"),new var("a")));
+		statements.add(new set(new var("a"),new num(4)));
+		statements.add(new loop(
+				new set(new var("a"),new add(new var("a"),new num(1))),
+				new printf(new str("%d"),new var("a"))
+		));
+		statements.add(new set(new var("a"),new add(new var("a"),new num(5))));
+		statements.add(new printf(new str("a=%d"),new var("a")));
 		statements.add(new ret(new var("a")));
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
 		for(statement s:statements){
