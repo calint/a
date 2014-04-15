@@ -248,6 +248,7 @@ final class toc extends Writer{
 	final static class lang{
 		static class stmt{
 			String code;
+			type t;
 			stmt(String code){this.code=code;}
 			stmt(Reader r)throws Throwable{}
 			public String toString(){return code;}
