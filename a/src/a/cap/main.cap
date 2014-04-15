@@ -2,7 +2,7 @@ foo{
   tk=1;
   float i;
   to(stream){
-    pls(s,"%p{%d %f}",o,o->tk,o->i);
+    pls(s,"%p{%d %2.2f}",o,o->tk,o->i);
   }
 }
 
@@ -33,6 +33,8 @@ cap{run(){
         foos[i].i=i;
         foo_tk_(&foos[i],i);
     }
-    for(int i=0;i<8;i++)
+    for(int i=0;i<8;i++){
         foo_to(&foos[i],out);
+        nl();
+    }
 }}
