@@ -283,7 +283,7 @@ final class toc extends Writer{
 		final static class set extends stmt{
 			public set(var lh,stmt rh){
 				super(lh+"="+rh);
-				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"=to"+lh.type()+"("+rh.code+")");
+				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+rh.code+")");
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
@@ -298,7 +298,7 @@ final class toc extends Writer{
 			public add(stmt lh,stmt rh){
 				super("+",lh,rh);
 				if(!lh.type().equals(rh.type())){
-					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"=to"+lh.type()+"("+code+")");
+					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+code+")");
 				}
 				t=lh.type();
 			}
@@ -398,7 +398,7 @@ final class toc extends Writer{
 					new iff(new eq(a,i8),new block(brk))
 		)));
 		stms.add(new set(a,new add(a,i5)));
-		stms.add(new set(a,new add(a,e)));
+//		stms.add(new set(a,new add(a,e)));//error
 		stms.add(new printf(s1,a));
 		stms.add(new fcall(f,"to",d));
 		stms.add(
