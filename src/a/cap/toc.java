@@ -357,19 +357,16 @@ final class toc extends Writer{
 					new dec(a),
 					new decpre(a),
 					new printf(s1,a),
-					new iff(new eq(a,i8),new block(brk)),
-					new ife(new eq(a,i8),new block(brk),
-					new ife(new eq(a,i8),new block(brk),
-					new block(cont)
-					))
-		)));
+					new iff(new eq(a,i8),new block(brk)),new block(cont))
+		));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
 		stms.add(new lang.fcall(f,"to",d));
 		stms.add(
-				new lang.ife(new eq(a,i8),new block(new decpre(a)),
-				new lang.ife(new eq(a,i8),new block(brk),new block(cont))
-				));
+				new ife(new eq(a,i8),new block(new decpre(a)),
+				new ife(new eq(a,i8),new block(brk),
+				new block(cont)
+				)));
 		stms.add(new ret(a));
 		stms.add(new loop(new block(
 				new set(a,new add(a,i1))
