@@ -23,7 +23,6 @@ import a.cap.toc.lang.iff;
 import a.cap.toc.lang.inc;
 import a.cap.toc.lang.incn;
 import a.cap.toc.lang.incpre;
-import a.cap.toc.lang.integer;
 import a.cap.toc.lang.let;
 import a.cap.toc.lang.loop;
 import a.cap.toc.lang.num;
@@ -250,26 +249,21 @@ final class toc extends Writer{
 		static class stmt{
 			String code;
 			public String toString(){return code;}
-			stmt(String code){
-				this.code=code;
-			}
-			void to(final PrintWriter pw){
-				pw.print(code);
-			}
+			stmt(String code){this.code=code;}
+			void to(final PrintWriter pw){pw.print(code);}
 			String end_delim(){return";";}
-			void read(Reader r)throws Throwable{
-				// find let/set/loop/call/ret/const
-				
-			}
+			void read(Reader r)throws Throwable{}
 			@Override public boolean equals(Object obj){return obj.toString().equals(code);}
+			static stmt parse(Reader r)throws Throwable{
+				// find let/set/loop/call/ret/const
+				return null;
+			}
 		};
 		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
 		private static String args_to_string(stmt...a){
 			if(a.length==0)return"";
 			final StringBuilder sb=new StringBuilder();
-			for(stmt s:a){
-				sb.append(s.toString()).append(",");
-			}
+			for(stmt s:a)sb.append(s.toString()).append(",");
 			sb.setLength(sb.length()-1);
 			return sb.toString();
 		}
