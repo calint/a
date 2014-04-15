@@ -261,6 +261,7 @@ final class toc extends Writer{
 				// find let/set/loop/call/ret/const
 				
 			}
+			@Override public boolean equals(Object obj){return obj.toString().equals(code);}
 		};
 		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
 		private static String args_to_string(stmt...a){
