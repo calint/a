@@ -1,6 +1,8 @@
 package a.cap;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.LinkedList;
+import java.util.List;
 final class vm{
 		static class stmt{
 			String code;
@@ -16,8 +18,11 @@ final class vm{
 			type type(){return null;}
 			
 			static block read_block(Reader r)throws Throwable{
-				// find let/set/loop/call/ret/const
-				return null;
+				// expect let/set/loop/call/ret/const until end of stream
+				LinkedList<stmt>stms=new LinkedList<>();
+				
+				
+				return new block(stms);
 			}
 		};
 		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
@@ -77,8 +82,21 @@ final class vm{
 			}
 			return sb.toString();
 		}
+		private static String statements_to_string(List<stmt>a){
+			if(a.size()==0)return"";
+			final StringBuilder sb=new StringBuilder();
+			for(stmt s:a){
+				sb.append(s.toString());
+				sb.append(s.end_delim());
+			}
+			return sb.toString();
+		}
 		private static String block_to_string(stmt...a){
 			if(a.length==1)return statements_to_string(a);
+			return"{"+statements_to_string(a)+"}";
+		}
+		private static String block_to_string(List<stmt>a){
+			if(a.size()==1)return statements_to_string(a);
 			return"{"+statements_to_string(a)+"}";
 		}
 		final static class inti extends value{
@@ -114,6 +132,9 @@ final class vm{
 		final static class cont extends stmt{public cont(){super("continue");}};
 		final static class block extends stmt{
 			block(stmt...ss){
+				super(block_to_string(ss));
+			}
+			block(List<stmt>ss){
 				super(block_to_string(ss));
 			}
 			block(Reader r){
