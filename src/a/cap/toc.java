@@ -9,31 +9,31 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import a.cap.lang.add;
-import a.cap.lang.block;
-import a.cap.lang.brk;
-import a.cap.lang.cont;
-import a.cap.lang.dec;
-import a.cap.lang.decn;
-import a.cap.lang.decpre;
-import a.cap.lang.eq;
-import a.cap.lang.fcall;
-import a.cap.lang.ife;
-import a.cap.lang.iff;
-import a.cap.lang.inc;
-import a.cap.lang.incn;
-import a.cap.lang.incpre;
-import a.cap.lang.inti;
-import a.cap.lang.let;
-import a.cap.lang.loop;
-import a.cap.lang.printf;
-import a.cap.lang.ret;
-import a.cap.lang.set;
-import a.cap.lang.stmt;
-import a.cap.lang.str;
-import a.cap.lang.type;
-import a.cap.lang.value;
-import a.cap.lang.var;
+import a.cap.vm.add;
+import a.cap.vm.block;
+import a.cap.vm.brk;
+import a.cap.vm.cont;
+import a.cap.vm.dec;
+import a.cap.vm.decn;
+import a.cap.vm.decpre;
+import a.cap.vm.eq;
+import a.cap.vm.fcall;
+import a.cap.vm.ife;
+import a.cap.vm.iff;
+import a.cap.vm.inc;
+import a.cap.vm.incn;
+import a.cap.vm.incpre;
+import a.cap.vm.inti;
+import a.cap.vm.let;
+import a.cap.vm.loop;
+import a.cap.vm.printf;
+import a.cap.vm.ret;
+import a.cap.vm.set;
+import a.cap.vm.stmt;
+import a.cap.vm.str;
+import a.cap.vm.type;
+import a.cap.vm.value;
+import a.cap.vm.var;
 
 final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
@@ -270,7 +270,7 @@ final class toc extends Writer{
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
 		stms.add(new set(b,a));
-		stms.add(new let(file,f));
+//		stms.add(new let(file,f));// error uninitialized
 //		stms.add(new set(a,e));// error
 		stms.add(new loop(new block(
 					new incn(a,i3),
