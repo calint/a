@@ -246,11 +246,11 @@ final class toc extends Writer{
 	static class operator extends statement{public operator(String name,statement lh,statement rh){super(lh+name+rh);}};
 	final static class add extends operator{public add(statement lh,statement rh){super("+",lh,rh);}}
 	final static class str extends value{public str(String v){super("\""+v+"\"");}};
-	final static class ret extends call{public ret(statement s){super("return",s);}};
+	final static class ret extends statement{public ret(statement s){super("return "+s);}};
 	final static class loop extends statement{
 		statement[]stmts;
 		public loop(statement...stmts){
-			super("loop{"+statements_to_string(stmts)+"}");
+			super("while(true){"+statements_to_string(stmts)+"}");
 			this.stmts=stmts;
 		}
 	};
@@ -269,6 +269,14 @@ final class toc extends Writer{
 	final static class _int extends type{public _int(){super("int");}};
 	final static class _float extends type{public _float(){super("float");}};
 	final static class printf extends call{public printf(statement...s){super("printf",s);}};
+	final static class if_ extends statement{
+		public if_(statement s,statement...ss){
+			super("if("+s+"){"+statements_to_string(ss)+"}");
+		}
+	};
+	final static class eq extends operator{public eq(statement lh,statement rh){super("==",lh,rh);}}
+	final static class brk extends statement{public brk(){super("break");}};
+
 
 
 	final static ArrayList<statement>statements=new ArrayList<>();
@@ -277,7 +285,8 @@ final class toc extends Writer{
 		statements.add(new set(new var("a"),new num(4)));
 		statements.add(new loop(
 				new set(new var("a"),new add(new var("a"),new num(1))),
-				new printf(new str("%d"),new var("a"))
+				new printf(new str("%d"),new var("a")),
+				new if_(new eq(new var("a"),new num(8)),new brk())
 		));
 		statements.add(new set(new var("a"),new add(new var("a"),new num(5))));
 		statements.add(new printf(new str("a=%d"),new var("a")));
