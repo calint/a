@@ -282,20 +282,31 @@ final class toc extends Writer{
 
 
 
-	final static ArrayList<statement>statements=new ArrayList<>();
+	final static ArrayList<statement>stms=new ArrayList<>();
 	public static void main(String[] args){
-		statements.add(new let(new _int(),new var("a"),new num(3)));
-		statements.add(new set(new var("a"),new num(4)));
-		statements.add(new loop(
-				new set(new var("a"),new add(new var("a"),new num(1))),
-				new printf(new str("%d"),new var("a")),
-				new if_(new eq(new var("a"),new num(8)),new brk())
+		final type _i=new _int();
+		final var a=new var("a");
+		final statement brk=new brk();
+		final value i3=new num(3);
+		final value i4=new num(4);
+		final value i1=new num(1);
+		final value i8=new num(8);
+		final value i5=new num(5);
+		final value s1=new str("a=%d");
+		
+		stms.add(new let(_i,a,i3));
+		stms.add(new set(a,i4));
+		stms.add(new loop(
+				new set(a,new add(a,i1)),
+				new printf(new str("%d"),a),
+				new if_(new eq(a,i8),brk)
 		));
-		statements.add(new set(new var("a"),new add(new var("a"),new num(5))));
-		statements.add(new printf(new str("a=%d"),new var("a")));
-		statements.add(new ret(new var("a")));
+		stms.add(new set(a,new add(a,i5)));
+		stms.add(new printf(s1,a));
+		stms.add(new ret(a));
+		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
-		for(statement s:statements){
+		for(statement s:stms){
 			s.to(pw);
 			pw.println(s.end_delim());
 		}
