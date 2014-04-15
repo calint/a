@@ -14,6 +14,7 @@ import a.cap.toc.struct.slot;
 import b.osnl;
 
 final public class cap{
+	public String indent="   ";
 	public static void main(final String[]args)throws Throwable{
 		final cap c=new cap();
 		final InputStream main=cap.class.getResourceAsStream("main.cap");
@@ -59,7 +60,7 @@ final public class cap{
 		Collections.reverse(funcs);
 		
 		for(struct.slot i:attrs){
-			p.print("\n\t"+i.type);
+			p.print("\n"+indent()+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.print(i.name+";");
 		}
@@ -120,4 +121,5 @@ final public class cap{
 //			p.println(i.args+");");
 //		}
 //	}
+	private String indent(){return indent;}
 }

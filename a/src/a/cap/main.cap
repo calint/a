@@ -1,15 +1,14 @@
 foo{
-	tk=1;
-	float i;
-	to(stream){
-		pl("%p{%d %f}",o,o->tk,o->i);
-	}
+  tk=1;
+  float i;
+  to(stream){
+    pl("%p{%d %f}",o,o->tk,o->i);
+  }
 }
 
-
 cap{run(){
-	pl("hello world");
-	char ram[]="hellos. bootsector.  32 bytes..";
+    pl("hello world");
+    char ram[]="hellos. bootsector.  32 bytes..";
     pi("cap compiled");
     pl("sizeof(%s)=%lu B","int",sizeof(int));
     pl("sizeof(%s)=%lu B","float",sizeof(float));
