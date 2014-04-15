@@ -64,7 +64,9 @@ final class vm{
 		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
 		final static class loop extends stmt{
 			public loop(block b){super("while(true)"+b);}
+			public loop(Reader r){super("while(true)"+new block(r));}
 			@Override String end_delim(){return "";}
+			
 		};
 		private static String statements_to_string(stmt...a){
 			if(a.length==0)return"";
@@ -73,7 +75,6 @@ final class vm{
 				sb.append(s.toString());
 				sb.append(s.end_delim());
 			}
-	//		sb.setLength(sb.length()-1);
 			return sb.toString();
 		}
 		private static String block_to_string(stmt...a){
@@ -91,19 +92,19 @@ final class vm{
 		final static class floating extends type{public floating(){super("float");}};
 		final static class printf extends call{public printf(stmt...s){super("printf",s);}};
 		final static class iff extends stmt{
-			public iff(stmt s,stmt b){
-				super("if("+s+")"+b);
+			public iff(stmt condition,stmt if_true){
+				super("if("+condition+")"+if_true);
 			}
 			@Override String end_delim(){return "";}
 		};
 		final static class ife extends stmt{
-			public ife(stmt s,stmt b,stmt els){
-				super("if("+s+")"+b+"else "+els);
+			public ife(stmt condition,stmt if_true,stmt els){
+				super("if("+condition+")"+if_true+"else "+els);
 			}
 			@Override String end_delim(){return "";}
 		};
 		final static class ifi extends stmt{
-			public ifi(stmt s,stmt ifn,stmt ifp,stmt ifz){
+			public ifi(stmt diff,stmt ifn,stmt ifp,stmt ifz){
 				super("/todo");
 			}
 			@Override String end_delim(){return "";}
@@ -111,7 +112,18 @@ final class vm{
 		final static class eq extends op{public eq(stmt lh,stmt rh){super("==",lh,rh);}}
 		final static class brk extends stmt{public brk(){super("break");}};
 		final static class cont extends stmt{public cont(){super("continue");}};
-		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
+		final static class block extends stmt{
+			block(stmt...ss){
+				super(block_to_string(ss));
+			}
+			block(Reader r){
+				super(parse_to_string(r));
+			}
+			private static String parse_to_string(Reader r){
+				new Throwable().printStackTrace();
+				return null;
+			}
+		}
 		final static class incn extends op{
 			public incn(var v,stmt rh){super("+=",v,rh);}
 		}
