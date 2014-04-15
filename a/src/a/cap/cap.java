@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import a.cap.toc.struct;
@@ -44,7 +45,9 @@ final public class cap{
 		cc.classes().forEach((c)->source_c(c,cc.out));
 		//. generate reflection struct
 		cc.out.println("/// main.cap done");
+		b.b.cp(cap.class.getResourceAsStream("footer.cap"),cc.out);
 		cc.out.flush();
+//		System.out.println(cc.state_to_string());
 	}
 	private void source_c(struct c,PrintWriter p){
 //		System.err.println(c.slots.size());
@@ -52,10 +55,12 @@ final public class cap{
 		p.println("typedef struct "+cnm+" "+cnm+";");
 		p.print("static struct "+cnm+"{");
 		final LinkedList<struct.slot>attrs=new LinkedList<>();
-		for(slot i:c.slots){
-			if(i.isfunc)continue;
-			attrs.add(i);
-		}
+		final LinkedList<struct.slot>funcs=new LinkedList<>();
+		for(slot i:c.slots)
+			if(i.isfunc)funcs.add(i);else attrs.add(i);
+		Collections.reverse(attrs);
+		Collections.reverse(funcs);
+		
 		for(struct.slot i:attrs){
 			p.print("\n\t"+i.type);
 			if(!i.ispointer)p.print(" ");
@@ -68,23 +73,18 @@ final public class cap{
 		}
 		p.println("};");
 		p.println("typedef struct "+cnm+" "+cnm+";");
-		for(slot i:c.slots){
-			if(i.isfunc)continue;
-			// getter
+		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
+		// getter/setter
+		for(slot i:attrs){
 			p.print("static inline "+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.print(cnm+"_"+i.name+"(const "+cnm+"*o");
-//			if(i.args.length()!=0)p.print(","+i.args);
 			p.println("){return o->"+i.name+";}");
-//			static inline void foo_tk_(foo*o,const int tk){o->tk=tk;}// synthesized
-			// setter
 			p.print("static inline void "+cnm+"_"+i.name+"_("+cnm+"*o,"+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.println("v){o->"+i.name+"=v;}");
 		}
-		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
-		for(slot i:c.slots){
-			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
+		for(slot i:funcs){
 			if(i.isctor){
 				if(!i.tn.equals(c.name))throw new Error("expected constructor but found '"+i.tn+"'");
 				p.println(c.name+" "+c.name+"_mk("+i.args+"){}");
@@ -95,10 +95,12 @@ final public class cap{
 			p.print(c.name+"_"+i.name+"("+c.name+"*o");
 			if(i.args.length()>0)p.print(",");
 			//? class arguments, argument
-			if(i.args.indexOf(' ')==-1){// one word argument i.e. foo{to(stream)}
-				p.print(i.args+" "+i.args.charAt(0));
-			}else
-				p.print(i.args);
+			if(i.args.length()>0){
+				if(i.args.indexOf(' ')==-1){// one word argument i.e. foo{to(stream)}
+					p.print(i.args+" "+i.args.charAt(0));
+				}else
+					p.print(i.args);
+			}
 			p.println("){"+i.body+"}");
 		}
 	}

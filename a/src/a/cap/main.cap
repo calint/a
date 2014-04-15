@@ -5,3 +5,35 @@ foo{
 		pl("%p{%d %f}",o,o->tk,o->i);
 	}
 }
+
+
+cap{run(){
+	pl("hello world");
+	char ram[]="hellos. bootsector.  32 bytes..";
+    pi("cap compiled");
+    pl("sizeof(%s)=%lu B","int",sizeof(int));
+    pl("sizeof(%s)=%lu B","float",sizeof(float));
+    pl("sizeof(%s)=%lu B","long",sizeof(long));
+    pl("sizeof(%s)=%lu B","ram",sizeof(ram));
+    pl("%p",foo_mk);
+    pl("%p",foo_tk);
+    ram[0]=1;
+    foo f=foo_default;
+    const int tk=foo_tk(&f);
+    pl("%d",tk);
+    pl("%d",foo_tk(&f));
+    
+    foo_tk_(&f,3);
+    foo_to(&f,out);
+    const foo f2=foo_mk();
+    pl("%d",foo_tk(&f2));
+    
+    foo foos[8];
+    for(int i=0;i<8;i++){
+        foos[i]=foo_mk();
+        foos[i].i=i;
+        foo_tk_(&foos[i],i);
+    }
+    for(int i=0;i<8;i++)
+        foo_to(&foos[i],out);
+}}

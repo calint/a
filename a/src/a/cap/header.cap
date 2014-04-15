@@ -7,3 +7,4 @@
 #define out stdout
 typedef size_t size;
 typedef FILE* stream;
+#define null NULL
