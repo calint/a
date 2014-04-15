@@ -363,14 +363,14 @@ final class toc extends Writer{
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
 		stms.add(new lang.fcall(f,"to",d));
-//		stms.add(new loop(
-//				new set(a,new add(a,i1))
-//		));
 		stms.add(
 				new lang.ife(new eq(a,i8),new block(new decpre(a)),
 				new lang.ife(new eq(a,i8),new block(brk),new block(cont))
 				));
 		stms.add(new ret(a));
+		stms.add(new loop(new block(
+				new set(a,new add(a,i1))
+		)));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
 		for(stmt s:stms){
