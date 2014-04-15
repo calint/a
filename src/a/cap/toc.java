@@ -248,11 +248,12 @@ final class toc extends Writer{
 		}
 	};
 	final static class let extends statement{
-		String type,name;
+		String name;
 		statement stmt;
-		public let(String type,String name,statement initstmt){
-			super(type+" "+name+"="+initstmt);
-			this.type=type;this.name=name;this.stmt=initstmt;
+		type t;
+		public let(type t,String name,statement initstmt){
+			super(t+" "+name+"="+initstmt);
+			this.t=t;this.name=name;this.stmt=initstmt;
 		}
 	};
 	final static class set extends statement{
@@ -327,11 +328,18 @@ final class toc extends Writer{
 			this.i=i;
 		}
 	};
+	final static class type extends statement{
+		String name;
+		public type(String name){
+			super(name);
+			this.name=name;
+		}
+	};
 
 
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
-		statements.add(new let("int","a",new num(3)));
+		statements.add(new let(new type("int"),"a",new num(3)));
 		statements.add(new set("a",new num(4)));
 		statements.add(new loop(new set("a",new add(new var("a"),new num(1)))));
 		statements.add(new set("a",new add(new var("a"),new num(5))));
