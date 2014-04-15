@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.LinkedList;
 
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
@@ -49,20 +50,29 @@ final public class cap{
 		final String cnm=c.name;
 		p.println("typedef struct "+cnm+" "+cnm+";");
 		p.print("static struct "+cnm+"{");
+		final LinkedList<struct.slot>attrs=new LinkedList<>();
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
+			attrs.add(i);
+		}
+		for(struct.slot i:attrs){
 			p.print("\n\t"+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.print(i.name+";");
 		}
-		p.println("\n}"+cnm+"_default={"+("")+"};");
+		p.print("\n}"+cnm+"_default={");
+		for(struct.slot i:attrs){
+			p.print("."+i.name+"="+i.args+",");
+//			p.print(",");
+		}
+		p.println("};");
 		p.println("typedef struct "+cnm+" "+cnm+";");
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
 			p.print("static inline "+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.print(cnm+"_"+i.name+"(const "+cnm+"*o");
-			if(i.args.length()!=0)p.print(","+i.args);
+//			if(i.args.length()!=0)p.print(","+i.args);
 			p.println("){return o->"+i.name+";}");
 		}
 		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
