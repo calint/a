@@ -3,6 +3,7 @@ package a.cap;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -92,6 +93,10 @@ final class toc extends Writer{
 			case state_function_block:{// class file{func(size s){•int a=2;a+=2;•}
 				token.append(ch);
 				if(is_white_space(ch)&&token.length()==0)continue;
+				if(is_char_block_open(ch)){
+					state_push(state_in_code_block);
+					break;
+				}
 				if(is_char_block_close(ch)){
 					token.setLength(token.length()-1);
 					classes.peek().slots.peek().body=token.toString();
@@ -112,10 +117,23 @@ final class toc extends Writer{
 				}
 				break;
 			}
+			case state_in_code_block:{// while(true){•pl("hello world")};
+				token.append(ch);
+				if(is_char_block_open(ch)){
+					state_push(state_in_code_block);
+					break;
+				}
+				if(is_char_block_close(ch)){
+					state_pop();
+					break;
+				}
+				break;
+			}
 			default:throw new Error("unknown state "+state);
 			}
 			charno++;if(ch=='\n'){lineno++;charno=1;}
 		}
+		Collections.reverse(classes);
 	}
 	private boolean is_char_string_close(char ch) {return ch=='\"';}
 	private boolean is_char_string_open(char ch){return ch=='\"';}
@@ -148,6 +166,7 @@ final class toc extends Writer{
 	private static final int state_function_block=4;
 	private static final int state_struct_member_default_value=5;
 	private static final int state_in_string=6;
+	private static final int state_in_code_block=7;
 	
 	private static boolean is_char_block_open(char ch){return ch=='{';}
 	private static boolean is_char_arguments_open(char ch){return ch=='(';}
@@ -197,6 +216,7 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
+	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
 	
 	// notes
 //	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
