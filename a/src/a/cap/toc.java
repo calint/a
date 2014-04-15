@@ -3,6 +3,7 @@ package a.cap;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -229,6 +230,10 @@ final class toc extends Writer{
 			pw.print(code);
 		}
 		String end_delim(){return";";}
+		void read(Reader r)throws Throwable{
+			// find let/set/loop/call/ret/const
+			
+		}
 	};
 	static class call extends statement{public call(String funcname,statement...args){super(funcname+"("+args_to_string(args)+")");}};
 	private static String args_to_string(statement...a){
@@ -250,8 +255,8 @@ final class toc extends Writer{
 	final static class ret extends statement{public ret(statement s){super("return "+s);}};
 	final static class loop extends statement{
 		statement[]stmts;
-		public loop(statement...stmts){
-			super("while(true)"+block_to_string(stmts));
+		public loop(block b){
+			super("while(true)"+b);
 			this.stmts=stmts;
 		}
 		@Override String end_delim(){return "";}
@@ -276,15 +281,14 @@ final class toc extends Writer{
 	final static class floating extends type{public floating(){super("float");}};
 	final static class printf extends call{public printf(statement...s){super("printf",s);}};
 	final static class iff extends statement{
-		public iff(statement s,statement...ss){
-			super("if("+s+")"+block_to_string(ss));
+		public iff(statement s,block b){
+			super("if("+s+")"+b);
 		}
 		@Override String end_delim(){return "";}
 	};
 	final static class eq extends operator{public eq(statement lh,statement rh){super("==",lh,rh);}}
 	final static class brk extends statement{public brk(){super("break");}};
-
-
+	final static class block extends statement{block(statement...ss){super(block_to_string(ss));}}
 
 	final static ArrayList<statement>stms=new ArrayList<>();
 	public static void main(String[] args){
@@ -300,11 +304,11 @@ final class toc extends Writer{
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
-		stms.add(new loop(
+		stms.add(new loop(new block(
 				new set(a,new add(a,i1)),
 				new printf(s1,a),
-				new iff(new eq(a,i8),brk)
-		));
+				new iff(new eq(a,i8),new block(brk))
+		)));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
 //		stms.add(new loop(
