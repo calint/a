@@ -350,15 +350,15 @@ final class toc extends Writer{
 		stms.add(new set(a,i4));
 		stms.add(new let(file,f));
 		stms.add(new loop(new block(
-				new incn(a,i3),
-				new decn(a,i1),
-				new inc(a),
-				new incpre(a),
-				new dec(a),
-				new decpre(a),
-				new printf(s1,a),
-				new iff(new eq(a,i8),new block(brk)),
-				new ife(new eq(a,i8),new block(brk),new block(cont))
+					new incn(a,i3),
+					new decn(a,i1),
+					new inc(a),
+					new incpre(a),
+					new dec(a),
+					new decpre(a),
+					new printf(s1,a),
+					new iff(new eq(a,i8),new block(brk)),
+					new ife(new eq(a,i8),new block(brk),new block(cont))
 		)));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
