@@ -3,42 +3,41 @@ package a.cap;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import a.cap.toc.lang.add;
-import a.cap.toc.lang.block;
-import a.cap.toc.lang.brk;
-import a.cap.toc.lang.cont;
-import a.cap.toc.lang.dec;
-import a.cap.toc.lang.decn;
-import a.cap.toc.lang.decpre;
-import a.cap.toc.lang.eq;
-import a.cap.toc.lang.fcall;
-import a.cap.toc.lang.ife;
-import a.cap.toc.lang.iff;
-import a.cap.toc.lang.inc;
-import a.cap.toc.lang.incn;
-import a.cap.toc.lang.incpre;
-import a.cap.toc.lang.inti;
-import a.cap.toc.lang.let;
-import a.cap.toc.lang.loop;
-import a.cap.toc.lang.printf;
-import a.cap.toc.lang.ret;
-import a.cap.toc.lang.set;
-import a.cap.toc.lang.stmt;
-import a.cap.toc.lang.str;
-import a.cap.toc.lang.type;
-import a.cap.toc.lang.value;
-import a.cap.toc.lang.var;
+import a.cap.lang.add;
+import a.cap.lang.block;
+import a.cap.lang.brk;
+import a.cap.lang.cont;
+import a.cap.lang.dec;
+import a.cap.lang.decn;
+import a.cap.lang.decpre;
+import a.cap.lang.eq;
+import a.cap.lang.fcall;
+import a.cap.lang.ife;
+import a.cap.lang.iff;
+import a.cap.lang.inc;
+import a.cap.lang.incn;
+import a.cap.lang.incpre;
+import a.cap.lang.inti;
+import a.cap.lang.let;
+import a.cap.lang.loop;
+import a.cap.lang.printf;
+import a.cap.lang.ret;
+import a.cap.lang.set;
+import a.cap.lang.stmt;
+import a.cap.lang.str;
+import a.cap.lang.type;
+import a.cap.lang.value;
+import a.cap.lang.var;
 
 final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
-	@Override public void write(char[]cbuf,final int off,final int len)throws IOException{
+	final @Override public void write(final char[]cbuf,final int off,final int len)throws IOException{
 		int o=off,l=len;
 		while(true){
 			if(l==0)break;
@@ -170,10 +169,10 @@ final class toc extends Writer{
 	private boolean is_char_statement_assigment(char ch){return ch=='=';}
 //	@Override public void flush()throws IOException{out.flush();}
 //	@Override public void close()throws IOException{out.close();}
-	@Override public void flush()throws IOException{}
-	@Override public void close()throws IOException{}
-	void namespace_pop(){namespace_stack.pop();}
-	void namespace_enter(String name){namespace_stack.push(new namespace(name));}
+	final @Override public void flush()throws IOException{}
+	final @Override public void close()throws IOException{}
+	final void namespace_pop(){namespace_stack.pop();}
+	final void namespace_enter(String name){namespace_stack.push(new namespace(name));}
 
 	private static String clean_whitespaces(String s){return s.trim().replaceAll("\\s+"," ").replaceAll(" \\*","\\*").replaceAll("\\* ","\\*");}
 	private void state_push(int newstate){state_stack.push(state);state=newstate;}
@@ -248,122 +247,6 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
-	final static class lang{
-		static class stmt{
-			String code;
-			stmt(String code){this.code=code;}
-			stmt(Reader r)throws Throwable{}
-			public String toString(){return code;}
-			void to(final PrintWriter pw){pw.print(code);}
-			String end_delim(){return";";}
-			@Override public boolean equals(Object obj){
-				if(obj==null)return false;
-				return obj.toString().equals(code);
-			}
-			type type(){return null;}
-			
-			static stmt read_code_block(Reader r)throws Throwable{
-				// find let/set/loop/call/ret/const
-				return null;
-			}
-		};
-		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
-		private static String args_to_string(stmt...a){
-			if(a.length==0)return"";
-			final StringBuilder sb=new StringBuilder();
-			for(stmt s:a)sb.append(s.toString()).append(",");
-			sb.setLength(sb.length()-1);
-			return sb.toString();
-		}
-		final static class let extends stmt{
-			public let(type t,var v){super(t+" "+v);}
-			public let(type t,var v,stmt s){
-				super(t+" "+v+"="+s);
-//				if(!s.t.equals(v.t))throw new Error();
-			}
-		};
-		final static class set extends stmt{
-			public set(var lh,stmt rh){
-				super(lh+"="+rh);
-				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+rh.code+")");
-			}
-		};
-		static class value extends stmt{public value(String stmt){super(stmt);}};
-		final static class var extends stmt{
-			private type t;
-			public var(String name){super(name);}
-			public var(type t,String name){super(name);this.t=t;}
-			@Override type type(){return t;}
-		};
-		static class op extends stmt{public op(String name,stmt lh,stmt rh){super(lh+name+rh);}};
-		final static class add extends op{
-			public add(stmt lh,stmt rh){
-				super("+",lh,rh);
-				if(!lh.type().equals(rh.type())){
-					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+code+")");
-				}
-				t=lh.type();
-			}
-			@Override type type(){return t;}
-			private type t;
-		}
-		final static class str extends value{public str(String v){super("\""+v+"\"");}};
-		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
-		final static class loop extends stmt{
-			public loop(block b){super("while(true)"+b);}
-			@Override String end_delim(){return "";}
-		};
-		private static String statements_to_string(stmt...a){
-			if(a.length==0)return"";
-			final StringBuilder sb=new StringBuilder();
-			for(stmt s:a){
-				sb.append(s.toString());
-				sb.append(s.end_delim());
-			}
-	//		sb.setLength(sb.length()-1);
-			return sb.toString();
-		}
-		private static String block_to_string(stmt...a){
-			if(a.length==1)return statements_to_string(a);
-			return"{"+statements_to_string(a)+"}";
-		}
-		final static class inti extends value{
-			public inti(int i){
-				super(Integer.toString(i));
-			}
-			@Override type type(){return new type("int");}
-		};
-		static class type extends stmt{public type(String name){super(name);}};
-		final static class integer extends type{public integer(){super("int");}};
-		final static class floating extends type{public floating(){super("float");}};
-		final static class printf extends call{public printf(stmt...s){super("printf",s);}};
-		final static class iff extends stmt{
-			public iff(stmt s,block b){
-				super("if("+s+")"+b);
-			}
-			@Override String end_delim(){return "";}
-		};
-		final static class ife extends stmt{
-			public ife(stmt s,block b,stmt els){
-				super("if("+s+")"+b+"else "+els);
-			}
-			@Override String end_delim(){return "";}
-		};
-		final static class eq extends op{public eq(stmt lh,stmt rh){super("==",lh,rh);}}
-		final static class brk extends stmt{public brk(){super("break");}};
-		final static class cont extends stmt{public cont(){super("continue");}};
-		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
-		final static class incn extends op{
-			public incn(var v,stmt rh){super("+=",v,rh);}
-		}
-		final static class decn extends op{public decn(var v,stmt rh){super("-=",v,rh);}}
-		final static class inc extends stmt{public inc(var v){super(v+"++");}}
-		final static class incpre extends stmt{public incpre(var v){super("++"+v);}}
-		final static class dec extends stmt{public dec(var v){super(v+"--");}}
-		final static class decpre extends stmt{public decpre(var v){super("--"+v);}}
-		final static class fcall extends call{public fcall(var o,String funcname,stmt...args){super(o+"."+funcname,args);}}
-//		final static class t_null extends type{public t_null(){super("null");}};
-	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
 		final type integer=new type("int");
@@ -386,6 +269,7 @@ final class toc extends Writer{
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
+		stms.add(new set(b,a));
 		stms.add(new let(file,f));
 //		stms.add(new set(a,e));// error
 		stms.add(new loop(new block(
