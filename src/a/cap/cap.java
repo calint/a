@@ -26,25 +26,25 @@ final public class cap{
 		cc.namespace_enter("cap");
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
-		cc.out=new PrintWriter(ccode);
-		b.b.cp(cap.class.getResourceAsStream("header.cap"),cc.out);
-		cc.classes().forEach((c)->source_c(c,cc.out));
+		final PrintWriter out=new PrintWriter(ccode);
+		b.b.cp(cap.class.getResourceAsStream("header.cap"),out);
+		cc.classes().forEach((c)->source_c(c,out));
 		//. generate reflection struct
-		cc.out.println("/// main.cap done");
-		b.b.cp(cap.class.getResourceAsStream("footer.cap"),cc.out);
+		out.println("/// main.cap done");
+		b.b.cp(cap.class.getResourceAsStream("footer.cap"),out);
 
 		final InputStream main=cap.class.getResourceAsStream("main.cap");
 		final class inc{int i;}
 		final inc i=new inc();
-		cc.out.println("/// main.cap");
+		out.println("/// main.cap");
 		final osnl nl=new osnl(){@Override public void onnewline(String line)throws Throwable{
 			i.i++;
-			cc.out.println("/// "+i.i+" : "+line);
+			out.println("/// "+i.i+" : "+line);
 		}};
 		b.b.cp(main,nl);
 		nl.write(new byte[]{'\n'});
-		cc.out.println("///");
-		cc.out.flush();
+		out.println("///");
+		out.flush();
 //		System.out.println(cc.state_to_string());
 	}
 	private void source_c(struct c,PrintWriter p){

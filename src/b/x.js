@@ -1,5 +1,5 @@
 ui={}
-ui.is_dbg=true;
+//ui.is_dbg=true;
 ui.axconwait=false;
 $d=function(v){
 	if(!ui.is_dbg)return;

@@ -168,8 +168,10 @@ final class toc extends Writer{
 	private boolean is_char_string_close(char ch) {return ch=='\"';}
 	private boolean is_char_string_open(char ch){return ch=='\"';}
 	private boolean is_char_statement_assigment(char ch){return ch=='=';}
-	@Override public void flush()throws IOException{out.flush();}
-	@Override public void close()throws IOException{out.close();}
+//	@Override public void flush()throws IOException{out.flush();}
+//	@Override public void close()throws IOException{out.close();}
+	@Override public void flush()throws IOException{}
+	@Override public void close()throws IOException{}
 	void namespace_pop(){namespace_stack.pop();}
 	void namespace_enter(String name){namespace_stack.push(new namespace(name));}
 
@@ -179,7 +181,7 @@ final class toc extends Writer{
 	private void state_pop(){state=state_stack.pop();}
 	
 	
-	PrintWriter out;
+//	PrintWriter out;
 	private int lineno=1,charno=1;
 	private StringBuilder token=new StringBuilder(32);
 
