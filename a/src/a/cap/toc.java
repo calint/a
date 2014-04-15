@@ -22,6 +22,7 @@ import a.cap.toc.lang.num;
 import a.cap.toc.lang.printf;
 import a.cap.toc.lang.ret;
 import a.cap.toc.lang.set;
+import a.cap.toc.lang.stmt;
 import a.cap.toc.lang.str;
 import a.cap.toc.lang.type;
 import a.cap.toc.lang.value;
@@ -237,32 +238,32 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
-	static class stmt{
-		String code;
-		public String toString(){return code;}
-		stmt(String code){
-			this.code=code;
-		}
-		void to(final PrintWriter pw){
-			pw.print(code);
-		}
-		String end_delim(){return";";}
-		void read(Reader r)throws Throwable{
-			// find let/set/loop/call/ret/const
-			
-		}
-	};
-	static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
-	private static String args_to_string(stmt...a){
-		if(a.length==0)return"";
-		final StringBuilder sb=new StringBuilder();
-		for(stmt s:a){
-			sb.append(s.toString()).append(",");
-		}
-		sb.setLength(sb.length()-1);
-		return sb.toString();
-	}
 	final static class lang{
+		static class stmt{
+			String code;
+			public String toString(){return code;}
+			stmt(String code){
+				this.code=code;
+			}
+			void to(final PrintWriter pw){
+				pw.print(code);
+			}
+			String end_delim(){return";";}
+			void read(Reader r)throws Throwable{
+				// find let/set/loop/call/ret/const
+				
+			}
+		};
+		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
+		private static String args_to_string(stmt...a){
+			if(a.length==0)return"";
+			final StringBuilder sb=new StringBuilder();
+			for(stmt s:a){
+				sb.append(s.toString()).append(",");
+			}
+			sb.setLength(sb.length()-1);
+			return sb.toString();
+		}
 		final static class let extends stmt{public let(type t,var v,stmt s){super(t+" "+v+"="+s);}};
 		final static class set extends stmt{public set(var v,stmt s){super(v+"="+s);}};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
@@ -272,11 +273,7 @@ final class toc extends Writer{
 		final static class str extends value{public str(String v){super("\""+v+"\"");}};
 		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
 		final static class loop extends stmt{
-			stmt[]stmts;
-			public loop(block b){
-				super("while(true)"+b);
-				this.stmts=stmts;
-			}
+			public loop(block b){super("while(true)"+b);}
 			@Override String end_delim(){return "";}
 		};
 		private static String statements_to_string(stmt...a){
