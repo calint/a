@@ -2,7 +2,7 @@ foo{
   tk=1;
   float i;
   to(stream){
-    pl("%p{%d %f}",o,o->tk,o->i);
+    pls(s,"%p{%d %f}",o,o->tk,o->i);
   }
 }
 
