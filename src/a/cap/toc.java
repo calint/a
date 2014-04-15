@@ -234,8 +234,9 @@ final class toc extends Writer{
 		}
 	};
 	final static class variable_declaration extends program_statement{
-		String type,name,stmt;
-		public variable_declaration(String type,String name,String initstmt){
+		String type,name;
+		program_statement stmt;
+		public variable_declaration(String type,String name,program_statement initstmt){
 			super(type+" "+name+"="+initstmt);
 			this.type=type;this.name=name;this.stmt=initstmt;
 		}
@@ -256,7 +257,7 @@ final class toc extends Writer{
 	};
 	final static ArrayList<program_statement>statements=new ArrayList<>();
 	public static void main(String[] args){
-		statements.add(new variable_declaration("int","a","2"));
+		statements.add(new variable_declaration("int","a",new constant("3")));
 		statements.add(new assignment("a","4"));
 		statements.add(new function_call("return","a"));
 		System.out.println(statements);
