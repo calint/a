@@ -227,10 +227,12 @@ final class toc extends Writer{
 		void to(final PrintWriter pw){pw.print(code);}
 	};
 	final static class function_call extends statement{
-		String funcname,arguments;
+		String funcname;
+		statement[]args;
 		public function_call(String funcname,statement...args){
 			super(funcname+"("+args_to_string(args)+")");
 			this.funcname=funcname;
+			this.args=args;
 		}
 		private static String args_to_string(statement...a){
 			final StringBuilder sb=new StringBuilder();
