@@ -218,47 +218,48 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
-	static class program_statement{
+	static class statement{
 		String code;
 		public String toString(){return code;}
-		program_statement(String code){
+		statement(String code){
 			this.code=code;
 		}
 		void to(final PrintWriter pw){pw.print(code);}
 	};
-	final static class function_call extends program_statement{
+	final static class function_call extends statement{
 		String funcname,arguments;
 		public function_call(String funcname,String arguments){
 			super(funcname+"("+arguments+")");
 			this.funcname=funcname;this.arguments=arguments;
 		}
 	};
-	final static class variable_declaration extends program_statement{
+	final static class variable_declaration extends statement{
 		String type,name;
-		program_statement stmt;
-		public variable_declaration(String type,String name,program_statement initstmt){
+		statement stmt;
+		public variable_declaration(String type,String name,statement initstmt){
 			super(type+" "+name+"="+initstmt);
 			this.type=type;this.name=name;this.stmt=initstmt;
 		}
 	};
-	final static class assignment extends program_statement{
-		String name,stmt;
-		public assignment(String name,String stmt){
+	final static class assignment extends statement{
+		String name;
+		statement stmt;
+		public assignment(String name,statement stmt){
 			super(name+"="+stmt);
 			this.name=name;this.stmt=stmt;
 		}
 	};
-	final static class constant extends program_statement{
+	final static class constant extends statement{
 		String stmt;
 		public constant(String stmt){
 			super(stmt);
 			this.stmt=stmt;
 		}
 	};
-	final static ArrayList<program_statement>statements=new ArrayList<>();
+	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
 		statements.add(new variable_declaration("int","a",new constant("3")));
-		statements.add(new assignment("a","4"));
+		statements.add(new assignment("a",new constant("4")));
 		statements.add(new function_call("return","a"));
 		System.out.println(statements);
 	}
