@@ -10,6 +10,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import a.cap.toc.lang.add;
+import a.cap.toc.lang.block;
+import a.cap.toc.lang.brk;
+import a.cap.toc.lang.eq;
+import a.cap.toc.lang.iff;
+import a.cap.toc.lang.integer;
+import a.cap.toc.lang.let;
+import a.cap.toc.lang.loop;
+import a.cap.toc.lang.num;
+import a.cap.toc.lang.printf;
+import a.cap.toc.lang.ret;
+import a.cap.toc.lang.set;
+import a.cap.toc.lang.str;
+import a.cap.toc.lang.type;
+import a.cap.toc.lang.value;
+import a.cap.toc.lang.var;
+
 final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
 	@Override public void write(char[]cbuf,final int off,final int len)throws IOException{
@@ -220,10 +237,10 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
-	static class statement{
+	static class stmt{
 		String code;
 		public String toString(){return code;}
-		statement(String code){
+		stmt(String code){
 			this.code=code;
 		}
 		void to(final PrintWriter pw){
@@ -235,66 +252,67 @@ final class toc extends Writer{
 			
 		}
 	};
-	static class call extends statement{public call(String funcname,statement...args){super(funcname+"("+args_to_string(args)+")");}};
-	private static String args_to_string(statement...a){
+	static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
+	private static String args_to_string(stmt...a){
 		if(a.length==0)return"";
 		final StringBuilder sb=new StringBuilder();
-		for(statement s:a){
+		for(stmt s:a){
 			sb.append(s.toString()).append(",");
 		}
 		sb.setLength(sb.length()-1);
 		return sb.toString();
 	}
-	final static class let extends statement{public let(type t,var v,statement s){super(t+" "+v+"="+s);}};
-	final static class set extends statement{public set(var v,statement s){super(v+"="+s);}};
-	static class value extends statement{public value(String stmt){super(stmt);}};
-	final static class var extends statement{public var(String name){super(name);}};
-	static class operator extends statement{public operator(String name,statement lh,statement rh){super(lh+name+rh);}};
-	final static class add extends operator{public add(statement lh,statement rh){super("+",lh,rh);}}
-	final static class str extends value{public str(String v){super("\""+v+"\"");}};
-	final static class ret extends statement{public ret(statement s){super("return "+s);}};
-	final static class loop extends statement{
-		statement[]stmts;
-		public loop(block b){
-			super("while(true)"+b);
-			this.stmts=stmts;
+	final static class lang{
+		final static class let extends stmt{public let(type t,var v,stmt s){super(t+" "+v+"="+s);}};
+		final static class set extends stmt{public set(var v,stmt s){super(v+"="+s);}};
+		static class value extends stmt{public value(String stmt){super(stmt);}};
+		final static class var extends stmt{public var(String name){super(name);}};
+		static class op extends stmt{public op(String name,stmt lh,stmt rh){super(lh+name+rh);}};
+		final static class add extends op{public add(stmt lh,stmt rh){super("+",lh,rh);}}
+		final static class str extends value{public str(String v){super("\""+v+"\"");}};
+		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
+		final static class loop extends stmt{
+			stmt[]stmts;
+			public loop(block b){
+				super("while(true)"+b);
+				this.stmts=stmts;
+			}
+			@Override String end_delim(){return "";}
+		};
+		private static String statements_to_string(stmt...a){
+			if(a.length==0)return"";
+			final StringBuilder sb=new StringBuilder();
+			for(stmt s:a){
+				sb.append(s.toString());
+				sb.append(s.end_delim());
+			}
+	//		sb.setLength(sb.length()-1);
+			return sb.toString();
 		}
-		@Override String end_delim(){return "";}
-	};
-	private static String statements_to_string(statement...a){
-		if(a.length==0)return"";
-		final StringBuilder sb=new StringBuilder();
-		for(statement s:a){
-			sb.append(s.toString());
-			sb.append(s.end_delim());
+		private static String block_to_string(stmt...a){
+			if(a.length==1)return statements_to_string(a);
+			return"{"+statements_to_string(a)+"}";
 		}
-//		sb.setLength(sb.length()-1);
-		return sb.toString();
+		final static class num extends value{public num(int i){super(Integer.toString(i));}};
+		static class type extends stmt{public type(String name){super(name);}};
+		final static class integer extends type{public integer(){super("int");}};
+		final static class floating extends type{public floating(){super("float");}};
+		final static class printf extends call{public printf(stmt...s){super("printf",s);}};
+		final static class iff extends stmt{
+			public iff(stmt s,block b){
+				super("if("+s+")"+b);
+			}
+			@Override String end_delim(){return "";}
+		};
+		final static class eq extends op{public eq(stmt lh,stmt rh){super("==",lh,rh);}}
+		final static class brk extends stmt{public brk(){super("break");}};
+		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
 	}
-	private static String block_to_string(statement...a){
-		if(a.length==1)return statements_to_string(a);
-		return"{"+statements_to_string(a)+"}";
-	}
-	final static class num extends value{public num(int i){super(Integer.toString(i));}};
-	static class type extends statement{public type(String name){super(name);}};
-	final static class integer extends type{public integer(){super("int");}};
-	final static class floating extends type{public floating(){super("float");}};
-	final static class printf extends call{public printf(statement...s){super("printf",s);}};
-	final static class iff extends statement{
-		public iff(statement s,block b){
-			super("if("+s+")"+b);
-		}
-		@Override String end_delim(){return "";}
-	};
-	final static class eq extends operator{public eq(statement lh,statement rh){super("==",lh,rh);}}
-	final static class brk extends statement{public brk(){super("break");}};
-	final static class block extends statement{block(statement...ss){super(block_to_string(ss));}}
-
-	final static ArrayList<statement>stms=new ArrayList<>();
+	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
 		final type integer=new integer();
 		final var a=new var("a");
-		final statement brk=new brk();
+		final stmt brk=new brk();
 		final value i3=new num(3);
 		final value i4=new num(4);
 		final value i1=new num(1);
@@ -317,7 +335,7 @@ final class toc extends Writer{
 		stms.add(new ret(a));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
-		for(statement s:stms){
+		for(stmt s:stms){
 			s.to(pw);
 			pw.println(s.end_delim());
 		}
