@@ -18,19 +18,20 @@ final public class cap{
 		final cap c=new cap();
 		final InputStream main=cap.class.getResourceAsStream("main.cap");
 		final Reader in=new InputStreamReader(main);
-		c.compile(in,null,null);
+		c.compile(in,new OutputStreamWriter(System.out));
 	}
-	public void compile(Reader in,Writer hcode,Writer ccode)throws Throwable{
+	public void compile(Reader in,Writer ccode)throws Throwable{
 		final toc cc=new toc();
 		cc.namespace_enter("cap");
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
-		cc.out=new PrintWriter(new OutputStreamWriter(System.out));
+		cc.out=new PrintWriter(ccode);
 		b.b.cp(cap.class.getResourceAsStream("header.cap"),cc.out);
-//		cc.out.println("///----------------------------");
-//		cc.out.println("/// generated h file");
-//		cc.out.println("///----------------------------");
-//		cc.classes().forEach((c)->source_h(c,cc.out));
+		cc.classes().forEach((c)->source_c(c,cc.out));
+		//. generate reflection struct
+		cc.out.println("/// main.cap done");
+		b.b.cp(cap.class.getResourceAsStream("footer.cap"),cc.out);
+
 		final InputStream main=cap.class.getResourceAsStream("main.cap");
 		final class inc{int i;}
 		final inc i=new inc();
@@ -42,10 +43,6 @@ final public class cap{
 		b.b.cp(main,nl);
 		nl.write(new byte[]{'\n'});
 		cc.out.println("///");
-		cc.classes().forEach((c)->source_c(c,cc.out));
-		//. generate reflection struct
-		cc.out.println("/// main.cap done");
-		b.b.cp(cap.class.getResourceAsStream("footer.cap"),cc.out);
 		cc.out.flush();
 //		System.out.println(cc.state_to_string());
 	}
@@ -72,7 +69,7 @@ final public class cap{
 //			p.print(",");
 		}
 		p.println("};");
-		p.println("typedef struct "+cnm+" "+cnm+";");
+//		p.println("typedef struct "+cnm+" "+cnm+";");
 		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
 		// getter/setter
 		for(slot i:attrs){
