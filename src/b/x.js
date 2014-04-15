@@ -16,6 +16,7 @@ $d=function(v){
 			return;
 		}
 		ui._dbgw=w;
+		//w.document.writeln('<script>window.title="debug window. turn off in file a/src/b/x.js"');
 		w.document.writeln('<pre>');
 		window.focus();
 	}

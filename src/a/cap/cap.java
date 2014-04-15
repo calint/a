@@ -50,8 +50,6 @@ final public class cap{
 	private void source_c(struct c,PrintWriter p){
 //		System.err.println(c.slots.size());
 		final String cnm=c.name;
-		p.println("typedef struct "+cnm+" "+cnm+";");
-		p.print("static struct "+cnm+"{");
 		final LinkedList<struct.slot>attrs=new LinkedList<>();
 		final LinkedList<struct.slot>funcs=new LinkedList<>();
 		for(slot i:c.slots)
@@ -59,12 +57,15 @@ final public class cap{
 		Collections.reverse(attrs);
 		Collections.reverse(funcs);
 		
+		p.print("typedef struct "+cnm+" "+cnm+";");
+		p.print("static struct "+cnm+"{");
 		for(struct.slot i:attrs){
 			p.print("\n"+indent()+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.print(i.name+";");
 		}
-		p.print("\n}"+cnm+"_default={");
+		if(!attrs.isEmpty())p.print("\n");
+		p.print("}"+cnm+"_default={");
 		for(struct.slot i:attrs){
 			p.print(i.args+",");
 //			p.print(",");
