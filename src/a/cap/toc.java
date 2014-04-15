@@ -3,11 +3,13 @@ package a.cap;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 final class toc extends Writer{
+	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
 	@Override public void write(char[]cbuf,final int off,final int len)throws IOException{
 		int o=off,l=len;
 		while(true){
@@ -216,8 +218,36 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
-	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
-	
+	static class program_statement{
+		String code;
+		public String toString(){return code;}
+		program_statement(String code){
+			this.code=code;
+		}
+		void to(final PrintWriter pw){pw.print(code);}
+	};
+	final static class function_call extends program_statement{
+		public function_call(){
+			super("return(a);");
+		}
+	};
+	final static class variable_declaration extends program_statement{
+		public variable_declaration(){
+			super("int a=1;");
+		}
+	};
+	final static class assignment extends program_statement{
+		public assignment(){
+			super("a=2;");
+		}
+	};
+	final static ArrayList<program_statement>statements=new ArrayList<>();
+	public static void main(String[] args){
+		statements.add(new variable_declaration());
+		statements.add(new assignment());
+		statements.add(new function_call());
+		System.out.println(statements);
+	}
 	// notes
 //	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 
