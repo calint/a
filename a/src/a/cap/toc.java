@@ -228,6 +228,7 @@ final class toc extends Writer{
 		void to(final PrintWriter pw){
 			pw.print(code);
 		}
+		String end_delim(){return";";}
 	};
 	static class call extends statement{public call(String funcname,statement...args){super(funcname+"("+args_to_string(args)+")");}};
 	private static String args_to_string(statement...a){
@@ -253,15 +254,16 @@ final class toc extends Writer{
 			super("while(true){"+statements_to_string(stmts)+"}");
 			this.stmts=stmts;
 		}
+		@Override String end_delim(){return "";}
 	};
 	private static String statements_to_string(statement...a){
 		if(a.length==0)return"";
 		final StringBuilder sb=new StringBuilder();
 		for(statement s:a){
 			sb.append(s.toString());
-			sb.append(";");
+			sb.append(s.end_delim());
 		}
-		sb.setLength(sb.length()-1);
+//		sb.setLength(sb.length()-1);
 		return sb.toString();
 	}
 	final static class num extends value{public num(int i){super(Integer.toString(i));}};
@@ -273,6 +275,7 @@ final class toc extends Writer{
 		public if_(statement s,statement...ss){
 			super("if("+s+"){"+statements_to_string(ss)+"}");
 		}
+		@Override String end_delim(){return "";}
 	};
 	final static class eq extends operator{public eq(statement lh,statement rh){super("==",lh,rh);}}
 	final static class brk extends statement{public brk(){super("break");}};
@@ -294,7 +297,7 @@ final class toc extends Writer{
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
 		for(statement s:statements){
 			s.to(pw);
-			pw.println();
+			pw.println(s.end_delim());
 		}
 		pw.close();
 //		System.out.println(statements);
