@@ -41,13 +41,32 @@ final class toc extends Writer{
 					final String ident=clean_whitespaces(token.toString());
 					token.setLength(0);// ignore class block content
 					classes.peek().slots.push(new struct.slot(ident,false));
-					state_push(state_class_block);
+//					state_back_to(state_class_block);
+					break;
+				}
+				if(is_char_statement_assigment(ch)){// found type+name field i.e. int a•=0;
+					final String ident=clean_whitespaces(token.toString());
+					token.setLength(0);// ignore class block content
+					classes.peek().slots.push(new struct.slot(ident,false));
+					state_push(state_struct_member_default_value);
 					break;
 				}
 				if(is_char_block_close(ch)){// close class block
 					token.setLength(0);// ignore class block content
-					state_pop_until_state(state_class_ident);
+					state_back_to(state_class_ident);
 					namespace_pop();
+					break;
+				}
+				token.append(ch);
+				break;
+			}
+			case state_struct_member_default_value:{// int a=•0•;
+				if(is_white_space(ch)&&token.length()==0)continue;//trim lead space
+				if(is_char_statement_close(ch)){// int a=0•;
+					final String def=token.toString().trim();
+					token.setLength(0);
+					classes.peek().slots.peek().args=def;			
+					state_back_to(state_class_block);
 					break;
 				}
 				token.append(ch);
@@ -77,8 +96,19 @@ final class toc extends Writer{
 					token.setLength(token.length()-1);
 					classes.peek().slots.peek().body=token.toString();
 					token.setLength(0);
-					state_pop_until_state(state_class_block);
+					state_back_to(state_class_block);
 					namespace_pop();
+					break;
+				}
+				if(is_char_string_open(ch)){
+					state_push(state_in_string);
+				}
+				break;
+			}
+			case state_in_string:{// string a="•hello world•";
+				token.append(ch);
+				if(is_char_string_close(ch)){
+					state_pop();
 				}
 				break;
 			}
@@ -87,6 +117,9 @@ final class toc extends Writer{
 			charno++;if(ch=='\n'){lineno++;charno=1;}
 		}
 	}
+	private boolean is_char_string_close(char ch) {return ch=='\"';}
+	private boolean is_char_string_open(char ch){return ch=='\"';}
+	private boolean is_char_statement_assigment(char ch){return ch=='=';}
 	@Override public void flush()throws IOException{out.flush();}
 	@Override public void close()throws IOException{out.close();}
 	void namespace_pop(){namespace_stack.pop();}
@@ -94,7 +127,8 @@ final class toc extends Writer{
 
 	private static String clean_whitespaces(String s){return s.trim().replaceAll("\\s+"," ").replaceAll(" \\*","\\*").replaceAll("\\* ","\\*");}
 	private void state_push(int newstate){state_stack.push(state);state=newstate;}
-	private void state_pop_until_state(final int s){while(s!=(state=state_stack.pop()));}
+	private void state_back_to(final int s){while(s!=(state=state_stack.pop()));}
+	private void state_pop(){state=state_stack.pop();}
 	
 	
 	PrintWriter out;
@@ -112,6 +146,8 @@ final class toc extends Writer{
 	private static final int state_function_arguments=2;
 	private static final int state_find_function_block=3;
 	private static final int state_function_block=4;
+	private static final int state_struct_member_default_value=5;
+	private static final int state_in_string=6;
 	
 	private static boolean is_char_block_open(char ch){return ch=='{';}
 	private static boolean is_char_arguments_open(char ch){return ch=='(';}
@@ -154,6 +190,9 @@ final class toc extends Writer{
 				}else if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
 				else{name=tn.substring(i2+1);type=tn.substring(0,i2);}
 				ispointer=type.endsWith("*");
+				if(!isfunc&&args.length()==0){// set default value
+					args="0";
+				}
 			}
 //			final public boolean is_pointer(){return ispointer;}
 		}

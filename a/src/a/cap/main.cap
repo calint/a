@@ -1,7 +1,7 @@
 foo{
-	tk;
+	tk=1;
 	float i;
 	to(stream){
-		pl("this %p",o);
+		pl("%p{%d %f}",o,o->tk,o->i);
 	}
 }
