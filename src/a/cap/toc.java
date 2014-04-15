@@ -251,7 +251,7 @@ final class toc extends Writer{
 	final static class loop extends statement{
 		statement[]stmts;
 		public loop(statement...stmts){
-			super("while(true){"+statements_to_string(stmts)+"}");
+			super("while(true)"+block_to_string(stmts));
 			this.stmts=stmts;
 		}
 		@Override String end_delim(){return "";}
@@ -266,14 +266,18 @@ final class toc extends Writer{
 //		sb.setLength(sb.length()-1);
 		return sb.toString();
 	}
+	private static String block_to_string(statement...a){
+		if(a.length==1)return statements_to_string(a);
+		return"{"+statements_to_string(a)+"}";
+	}
 	final static class num extends value{public num(int i){super(Integer.toString(i));}};
 	static class type extends statement{public type(String name){super(name);}};
-	final static class _int extends type{public _int(){super("int");}};
-	final static class _float extends type{public _float(){super("float");}};
+	final static class integer extends type{public integer(){super("int");}};
+	final static class floating extends type{public floating(){super("float");}};
 	final static class printf extends call{public printf(statement...s){super("printf",s);}};
-	final static class if_ extends statement{
-		public if_(statement s,statement...ss){
-			super("if("+s+"){"+statements_to_string(ss)+"}");
+	final static class iff extends statement{
+		public iff(statement s,statement...ss){
+			super("if("+s+")"+block_to_string(ss));
 		}
 		@Override String end_delim(){return "";}
 	};
@@ -284,7 +288,7 @@ final class toc extends Writer{
 
 	final static ArrayList<statement>stms=new ArrayList<>();
 	public static void main(String[] args){
-		final type _i=new _int();
+		final type integer=new integer();
 		final var a=new var("a");
 		final statement brk=new brk();
 		final value i3=new num(3);
@@ -294,15 +298,18 @@ final class toc extends Writer{
 		final value i5=new num(5);
 		final value s1=new str("a=%d");
 		
-		stms.add(new let(_i,a,i3));
+		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
 		stms.add(new loop(
 				new set(a,new add(a,i1)),
 				new printf(new str("%d"),a),
-				new if_(new eq(a,i8),brk)
+				new iff(new eq(a,i8),brk)
 		));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
+//		stms.add(new loop(
+//				new set(a,new add(a,i1))
+//		));
 		stms.add(new ret(a));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
