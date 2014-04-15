@@ -65,7 +65,7 @@ public class diro extends a{
 		if(hasbit(BIT_ALLOW_QUERY))
 			x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
 		x.styleEnd();
-		x.style(selection,"display:table;margin-left:auto;margin-right:auto;background:#fefefe;border:1px dotted grey;text-align:center");
+		x.style(selection,"display:table;margin-left:auto;margin-right:auto;background:#fefefe;text-align:center");
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))
