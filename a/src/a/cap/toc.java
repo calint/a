@@ -272,7 +272,10 @@ final class toc extends Writer{
 			public let(type t,var v){super(t+" "+v);}
 			public let(type t,var v,stmt s){super(t+" "+v+"="+s);}
 		};
-		final static class set extends stmt{public set(var v,stmt s){super(v+"="+s);}};
+		final static class set extends stmt{
+			public set(var v,stmt s){
+				super(v+"="+s);}
+			};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
 		final static class var extends stmt{
 			type t;
@@ -333,9 +336,11 @@ final class toc extends Writer{
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
 		final type integer=new type("int");
+		final type floating=new type("float");
 		final type file=new type("file");
 		
 		final var a=new var(integer,"a");
+		final var b=new var(floating,"b");
 		final var f=new var(file,"f");
 		final var d=new var(file,"d");
 		final stmt brk=new brk();
@@ -349,6 +354,7 @@ final class toc extends Writer{
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
+		stms.add(new set(a,b));// type conversion error
 		stms.add(new let(file,f));
 		stms.add(new loop(new block(
 					new incn(a,i3),
