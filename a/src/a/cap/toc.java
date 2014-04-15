@@ -278,7 +278,11 @@ final class toc extends Writer{
 		};
 		final static class set extends stmt{public set(var v,stmt s){super(v+"="+s);}};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
-		final static class var extends stmt{public var(String name){super(name);}};
+		final static class var extends stmt{
+			type t;
+			public var(String name){super(name);}
+			public var(type t,String name){super(name);this.t=t;}
+		};
 		static class op extends stmt{public op(String name,stmt lh,stmt rh){super(lh+name+rh);}};
 		final static class add extends op{public add(stmt lh,stmt rh){super("+",lh,rh);}}
 		final static class str extends value{public str(String v){super("\""+v+"\"");}};
@@ -313,7 +317,7 @@ final class toc extends Writer{
 			@Override String end_delim(){return "";}
 		};
 		final static class ife extends stmt{
-			public ife(stmt s,block b,block els){
+			public ife(stmt s,block b,stmt els){
 				super("if("+s+")"+b+"else "+els);
 			}
 			@Override String end_delim(){return "";}
@@ -332,10 +336,12 @@ final class toc extends Writer{
 	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
-		final type integer=new integer();
-		final var a=new var("a");
-		final var f=new var("f");
-		final var d=new var("d");
+		final type integer=new type("int");
+		final type file=new type("file");
+		
+		final var a=new var(integer,"a");
+		final var f=new var(file,"f");
+		final var d=new var(file,"d");
 		final stmt brk=new brk();
 		final stmt cont=new cont();
 		final value i3=new num(3);
@@ -344,7 +350,6 @@ final class toc extends Writer{
 		final value i8=new num(8);
 		final value i5=new num(5);
 		final value s1=new str("a=%d");
-		final type file=new type("file");
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
@@ -366,6 +371,10 @@ final class toc extends Writer{
 //		stms.add(new loop(
 //				new set(a,new add(a,i1))
 //		));
+		stms.add(
+				new lang.ife(new eq(a,i8),new block(new decpre(a)),
+				new lang.ife(new eq(a,i8),new block(brk),new block(cont))
+				));
 		stms.add(new ret(a));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
