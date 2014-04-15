@@ -16,6 +16,7 @@ cap{run(){
     pl("sizeof(%s)=%lu B","ram",sizeof(ram));
     pl("%p",foo_mk);
     pl("%p",foo_tk);
+    const char*about="comment";
     ram[0]=1;
     foo f=foo_default;
     const int tk=foo_tk(&f);
