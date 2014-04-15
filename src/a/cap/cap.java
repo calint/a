@@ -29,10 +29,12 @@ final public class cap{
 //		cc.out.println("///----------------------------");
 //		cc.classes().forEach((c)->source_h(c,cc.out));
 		final InputStream main=cap.class.getResourceAsStream("main.cap");
-		int lineno=1;
+		final class inc{int i;}
+		final inc i=new inc();
 		cc.out.println("/// main.cap");
 		final osnl nl=new osnl(){@Override public void onnewline(String line)throws Throwable{
-			cc.out.println("/// "+lineno+" : "+line);
+			i.i++;
+			cc.out.println("/// "+i.i+" : "+line);
 		}};
 		b.b.cp(main,nl);
 		nl.write(new byte[]{'\n'});
