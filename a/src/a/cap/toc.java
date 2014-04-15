@@ -243,8 +243,15 @@ final class toc extends Writer{
 	final static class assignment extends program_statement{
 		String name,stmt;
 		public assignment(String name,String stmt){
-			super(name+"="+stmt+";");
+			super(name+"="+stmt);
 			this.name=name;this.stmt=stmt;
+		}
+	};
+	final static class constant extends program_statement{
+		String stmt;
+		public constant(String stmt){
+			super(stmt);
+			this.stmt=stmt;
 		}
 	};
 	final static ArrayList<program_statement>statements=new ArrayList<>();
