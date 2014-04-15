@@ -229,10 +229,10 @@ final class toc extends Writer{
 			pw.print(code);
 		}
 	};
-	static class function_call extends statement{
+	static class call extends statement{
 		String funcname;
 		statement[]args;
-		public function_call(String funcname,statement...args){
+		public call(String funcname,statement...args){
 			super(funcname+"("+args_to_string(args)+")");
 			this.funcname=funcname;
 			this.args=args;
@@ -247,32 +247,32 @@ final class toc extends Writer{
 			return sb.toString();
 		}
 	};
-	final static class variable_declaration extends statement{
+	final static class let extends statement{
 		String type,name;
 		statement stmt;
-		public variable_declaration(String type,String name,statement initstmt){
+		public let(String type,String name,statement initstmt){
 			super(type+" "+name+"="+initstmt);
 			this.type=type;this.name=name;this.stmt=initstmt;
 		}
 	};
-	final static class assignment extends statement{
+	final static class set extends statement{
 		String name;
 		statement stmt;
-		public assignment(String name,statement stmt){
+		public set(String name,statement stmt){
 			super(name+"="+stmt);
 			this.name=name;this.stmt=stmt;
 		}
 	};
-	static class constant extends statement{
+	static class value extends statement{
 		String stmt;
-		public constant(String stmt){
+		public value(String stmt){
 			super(stmt);
 			this.stmt=stmt;
 		}
 	};
-	final static class variable extends statement{
+	final static class var extends statement{
 		String name;
-		public variable(String name){
+		public var(String name){
 			super(name);
 			this.name=name;
 		}
@@ -285,21 +285,21 @@ final class toc extends Writer{
 			this.name=name;this.lh=lh;this.rh=rh;
 		}
 	};
-	final static class operator_add extends operator{
-		public operator_add(statement lh,statement rh){
+	final static class add extends operator{
+		public add(statement lh,statement rh){
 			super("+",lh,rh);
 		}
 	}
-	final static class constant_string extends constant{
+	final static class str extends value{
 		String stmt;
-		public constant_string(String stmt){
+		public str(String stmt){
 			super("\""+stmt+"\"");
 			this.stmt=stmt;
 		}
 	};
-	final static class function_return extends function_call{
+	final static class ret extends call{
 		statement return_stmt;
-		public function_return(statement stmt){
+		public ret(statement stmt){
 			super("return",stmt);
 			this.return_stmt=stmt;
 		}
@@ -320,16 +320,23 @@ final class toc extends Writer{
 			return sb.toString();
 		}
 	};
+	final static class num extends value{
+		int i;
+		public num(int i){
+			super(Integer.toString(i));
+			this.i=i;
+		}
+	};
 
 
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
-		statements.add(new variable_declaration("int","a",new constant("3")));
-		statements.add(new assignment("a",new constant("4")));
-		statements.add(new loop(new assignment("a",new operator_add(new variable("a"),new constant("1")))));
-		statements.add(new assignment("a",new operator_add(new variable("a"),new constant("5"))));
-		statements.add(new function_call("printf",new constant_string("a=%d"),new variable("a")));
-		statements.add(new function_return(new variable("a")));
+		statements.add(new let("int","a",new num(3)));
+		statements.add(new set("a",new num(4)));
+		statements.add(new loop(new set("a",new add(new var("a"),new num(1)))));
+		statements.add(new set("a",new add(new var("a"),new num(5))));
+		statements.add(new call("printf",new str("a=%d"),new var("a")));
+		statements.add(new ret(new var("a")));
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
 		for(statement s:statements){
 			s.to(pw);
