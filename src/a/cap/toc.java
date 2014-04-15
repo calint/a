@@ -228,9 +228,17 @@ final class toc extends Writer{
 	};
 	final static class function_call extends statement{
 		String funcname,arguments;
-		public function_call(String funcname,String arguments){
-			super(funcname+"("+arguments+")");
-			this.funcname=funcname;this.arguments=arguments;
+		public function_call(String funcname,statement...args){
+			super(funcname+"("+args_to_string(args)+")");
+			this.funcname=funcname;
+		}
+		private static String args_to_string(statement...a){
+			final StringBuilder sb=new StringBuilder();
+			for(statement s:a){
+				sb.append(s.toString()).append(",");
+			}
+			sb.setLength(sb.length()-1);
+			return sb.toString();
 		}
 	};
 	final static class variable_declaration extends statement{
@@ -256,11 +264,18 @@ final class toc extends Writer{
 			this.stmt=stmt;
 		}
 	};
+	final static class variable extends statement{
+		String name;
+		public variable(String name){
+			super(name);
+			this.name=name;
+		}
+	};
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
 		statements.add(new variable_declaration("int","a",new constant("3")));
 		statements.add(new assignment("a",new constant("4")));
-		statements.add(new function_call("return","a"));
+		statements.add(new function_call("return",new variable("a")));
 		System.out.println(statements);
 	}
 	// notes
