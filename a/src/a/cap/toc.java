@@ -302,7 +302,7 @@ final class toc extends Writer{
 		stms.add(new set(a,i4));
 		stms.add(new loop(
 				new set(a,new add(a,i1)),
-				new printf(new str("%d"),a),
+				new printf(s1,a),
 				new iff(new eq(a,i8),brk)
 		));
 		stms.add(new set(a,new add(a,i5)));
