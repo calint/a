@@ -128,7 +128,7 @@ final class toc extends Writer{
 			String tn;
 			String name;
 			String type;
-			String args="";
+			String args="";//when field this is default value
 			boolean isfunc;
 			boolean isctor;
 			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;split_tn();}

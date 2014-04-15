@@ -7,6 +7,10 @@ bla{
 
 doc{
 function annotation 'g' stack pointer isnt moved after the call giving stack allocated memory in ownership of caller
-stackpointer isnt moved back after function call
-cd means synthesize default constructor and destructor
+block annotation 'cd' means synthesize default constructor and destructor
+}
+
+
+foo{
+	int tk=10;
 }
