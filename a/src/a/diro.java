@@ -65,7 +65,7 @@ public class diro extends a{
 		if(hasbit(BIT_ALLOW_QUERY))
 			x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
 		x.styleEnd();
-		x.style(selection,"display:table;padding:.5em;margin-left:auto;margin-right:auto;background:#fefefe;text-align:center;box-shadow:0 0 .5em rgba(0,0,0,.5);");
+		x.style(selection,"display:table;padding-top:.5em;padding-bottom:.5em;margin-left:auto;margin-right:auto;background:#fefefe;text-align:center;box-shadow:0 0 .5em rgba(0,0,0,.5);");
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))
@@ -294,6 +294,8 @@ public class diro extends a{
 			final String icndir="⧉";
 //			final String icndel="x";
 			long total_bytes=0;
+			final int root_path_len=req.get().session().path().fullpath().length();
+			System.out.println(root_path_len);
 			for(final path pth:ls){
 //				final String name=pth.name();
 				final boolean isdir=pth.isdir();
@@ -307,7 +309,7 @@ public class diro extends a{
 				x.a(pth.uri(),pth.name());
 
 				x.td("path");
-				x.a(pth.uri(),pth.toString());
+				x.a(pth.uri(),pth.fullpath().substring(root_path_len));
 				
 				x.td("date").p(dr.ttoa(pth.lastmod()));
 				
