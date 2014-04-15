@@ -15,7 +15,7 @@ final class vm{
 			}
 			type type(){return null;}
 			
-			static stmt read_code_block(Reader r)throws Throwable{
+			static block read_block(Reader r)throws Throwable{
 				// find let/set/loop/call/ret/const
 				return null;
 			}
