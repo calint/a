@@ -227,27 +227,31 @@ final class toc extends Writer{
 		void to(final PrintWriter pw){pw.print(code);}
 	};
 	final static class function_call extends program_statement{
-		public function_call(){
-			super("return(a);");
+		String funcname,arguments;
+		public function_call(String funcname,String arguments){
+			super(funcname+"("+arguments+")");
+			this.funcname=funcname;this.arguments=arguments;
 		}
 	};
 	final static class variable_declaration extends program_statement{
 		String type,name,stmt;
 		public variable_declaration(String type,String name,String initstmt){
-			super(type+" "+name+"="+initstmt+";");
+			super(type+" "+name+"="+initstmt);
 			this.type=type;this.name=name;this.stmt=initstmt;
 		}
 	};
 	final static class assignment extends program_statement{
-		public assignment(){
-			super("a=2;");
+		String name,stmt;
+		public assignment(String name,String stmt){
+			super(name+"="+stmt+";");
+			this.name=name;this.stmt=stmt;
 		}
 	};
 	final static ArrayList<program_statement>statements=new ArrayList<>();
 	public static void main(String[] args){
 		statements.add(new variable_declaration("int","a","2"));
-		statements.add(new assignment());
-		statements.add(new function_call());
+		statements.add(new assignment("a","4"));
+		statements.add(new function_call("return","a"));
 		System.out.println(statements);
 	}
 	// notes
