@@ -31,8 +31,9 @@ final class toc extends Writer{
 					token.setLength(0);// ignore class block content
 					namespace_enter(ident);
 					classes.peek().slots.push(new struct.slot(ident,true));
-					// if constructor format but not a constructor
-					if(ident.indexOf('*')==-1&&ident.indexOf(' ')==-1&&!ident.equals(classes.peek().name))throw new Error("line "+lineno+":"+charno+": in class '"+classes.peek().name+"' item '"+ident+"' is declared like a constructor but does not have the class name.");
+//					// if constructor format but not a constructor
+//					if(ident.indexOf('*')==-1&&ident.indexOf(' ')==-1&&!ident.equals(classes.peek().name))throw new Error("line "+lineno+":"+charno+": in class '"+classes.peek().name+"' item '"+ident+"' is declared like a constructor but does not have the class name.");
+					// assume it returns void or itself for chained calls					
 					state_push(state_function_arguments);
 					break;
 				}
@@ -70,8 +71,15 @@ final class toc extends Writer{
 				break;
 			}
 			case state_function_block:{// class file{func(size s){•int a=2;a+=2;•}
+				token.append(ch);
 				if(is_white_space(ch)&&token.length()==0)continue;
-				if(is_char_block_close(ch)){state_pop_until_state(state_class_block);namespace_pop();break;}
+				if(is_char_block_close(ch)){
+					token.setLength(token.length()-1);
+					classes.peek().slots.peek().body=token.toString();
+					token.setLength(0);
+					state_pop_until_state(state_class_block);
+					namespace_pop();
+				}
 				break;
 			}
 			default:throw new Error("unknown state "+state);
@@ -129,18 +137,25 @@ final class toc extends Writer{
 			String name;
 			String type;
 			String args="";//when field this is default value
+			String body="";
 			boolean isfunc;
 			boolean isctor;
-			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;split_tn();}
+			boolean ispointer;
+			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;decode_tn();}
 			@Override public String toString(){return tn+(isfunc?("("+args+")"):"");}
-			private void split_tn(){
+			private void decode_tn(){
 				//  get func name from i.e. 'const int*func'   'const int func'
 				final int i1=tn.lastIndexOf('*');
 				final int i2=tn.lastIndexOf(' ');
-				if(i1==-1&&i2==-1){isctor=true;name="";type=tn;return;}
-				if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
+//				if(i1==-1&&i2==-1){isctor=true;name="";type=tn;return;}
+				if(i1==-1&&i2==-1){
+					if(isfunc){name=tn;type="void";}
+					else{name=tn;type="int";}
+				}else if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
 				else{name=tn.substring(i2+1);type=tn.substring(0,i2);}
+				ispointer=type.endsWith("*");
 			}
+//			final public boolean is_pointer(){return ispointer;}
 		}
 	}
 	

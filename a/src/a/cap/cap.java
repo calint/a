@@ -9,6 +9,7 @@ import java.io.Writer;
 
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
+import b.osnl;
 
 final public class cap{
 	public static void main(final String[]args)throws Throwable{
@@ -23,59 +24,82 @@ final public class cap{
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		cc.out=new PrintWriter(new OutputStreamWriter(System.out));
-		cc.out.println("///----------------------------");
-		cc.out.println("/// generated h file");
-		cc.out.println("///----------------------------");
-		cc.classes().forEach((c)->source_h(c,cc.out));
-		cc.out.println("///----------------------------");
-		cc.out.println("/// generated c file");
-		cc.out.println("///----------------------------");
+//		cc.out.println("///----------------------------");
+//		cc.out.println("/// generated h file");
+//		cc.out.println("///----------------------------");
+//		cc.classes().forEach((c)->source_h(c,cc.out));
+		final InputStream main=cap.class.getResourceAsStream("main.cap");
+		int lineno=1;
+		cc.out.println("/// main.cap");
+		final osnl nl=new osnl(){@Override public void onnewline(String line)throws Throwable{
+			cc.out.println("/// "+lineno+" : "+line);
+		}};
+		b.b.cp(main,nl);
+		nl.write(new byte[]{'\n'});
+		cc.out.println("///");
 		cc.classes().forEach((c)->source_c(c,cc.out));
 		//. generate reflection struct
+		cc.out.println("/// main.cap done");
 		cc.out.flush();
 	}
 	private void source_c(struct c,PrintWriter p){
+//		System.err.println(c.slots.size());
 		final String cnm=c.name;
-//		p.println("typedef struct "+nm+" "+nm+";");
-		p.print("struct "+cnm+"{");
+		p.println("typedef struct "+cnm+" "+cnm+";");
+		p.print("static struct "+cnm+"{");
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
-			p.println("\n\t"+i.tn+";");
+			p.print("\n\t"+i.type);
+			if(!i.ispointer)p.print(" ");
+			p.print(i.name+";");
 		}
-		p.println("};");
-		p.println(cnm+"*"+cnm+"_new(){return("+cnm+"*)malloc(sizeof("+cnm+"));}");
-		p.println("void "+cnm+"_free("+cnm+"*o){free(o);}");		
+		p.println("\n}"+cnm+"_default={"+("")+"};");
+		p.println("typedef struct "+cnm+" "+cnm+";");
+		for(slot i:c.slots){
+			if(i.isfunc)continue;
+			p.print("static inline "+i.type);
+			if(!i.ispointer)p.print(" ");
+			p.print(cnm+"_"+i.name+"(const "+cnm+"*o");
+			if(i.args.length()!=0)p.print(","+i.args);
+			p.println("){return o->"+i.name+";}");
+		}
+		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
 		for(slot i:c.slots){
 			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
 			if(i.isctor){
 				if(!i.tn.equals(c.name))throw new Error("expected constructor but found '"+i.tn+"'");
-				p.println(c.name+"*"+c.name+"_new("+i.args+"){}");
+				p.println(c.name+" "+c.name+"_mk("+i.args+"){}");
 				continue;
 			}
-			p.print(i.type);
+			p.print("static inline "+i.type);
 			if(!i.type.endsWith("*"))p.print(" ");
 			p.print(c.name+"_"+i.name+"("+c.name+"*o");
 			if(i.args.length()>0)p.print(",");
-			p.println(i.args+"){}");
+			//? class arguments, argument
+			if(i.args.indexOf(' ')==-1){// one word argument i.e. foo{to(stream)}
+				p.print(i.args+" "+i.args.charAt(0));
+			}else
+				p.print(i.args);
+			p.println("){"+i.body+"}");
 		}
 	}
-	private void source_h(struct c,PrintWriter p){
-		final String name=c.name;
-		p.println("\ntypedef struct "+name+" "+name+";");
-		p.println(name+"*"+name+"_new();");
-		p.println("void "+name+"_free("+name+"*);");
-		for(slot i:c.slots){
-			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
-			if(i.isctor){
-				if(!i.tn.equals(c.name))throw new Error("expected constructor for '"+c.name+"' but found '"+i.tn+"'");
-				p.println(c.name+"*"+c.name+"_new("+i.args+");");
-				continue;
-			}
-			p.print(i.type);
-			if(!i.type.endsWith("*"))p.print(" ");
-			p.print(c.name+"_"+i.name+"("+c.name+"*");
-			if(i.args.length()>0)p.print(",");
-			p.println(i.args+");");
-		}
-	}
+//	private void source_h(struct c,PrintWriter p){
+//		final String name=c.name;
+//		p.println("\ntypedef struct "+name+" "+name+";");
+//		p.println(name+"*"+name+"_new();");
+//		p.println("void "+name+"_free("+name+"*);");
+//		for(slot i:c.slots){
+//			if(!i.isfunc)continue;// const char*file_name_get() set(const char*name);
+//			if(i.isctor){
+//				if(!i.tn.equals(c.name))throw new Error("expected constructor for '"+c.name+"' but found '"+i.tn+"'");
+//				p.println(c.name+"*"+c.name+"_new("+i.args+");");
+//				continue;
+//			}
+//			p.print(i.type);
+//			if(!i.type.endsWith("*"))p.print(" ");
+//			p.print(c.name+"_"+i.name+"("+c.name+"*");
+//			if(i.args.length()>0)p.print(",");
+//			p.println(i.args+");");
+//		}
+//	}
 }
