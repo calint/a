@@ -14,10 +14,15 @@ import a.cap.toc.lang.add;
 import a.cap.toc.lang.block;
 import a.cap.toc.lang.brk;
 import a.cap.toc.lang.cont;
+import a.cap.toc.lang.dec;
+import a.cap.toc.lang.decn;
+import a.cap.toc.lang.decpre;
 import a.cap.toc.lang.eq;
 import a.cap.toc.lang.ife;
 import a.cap.toc.lang.iff;
+import a.cap.toc.lang.inc;
 import a.cap.toc.lang.incn;
+import a.cap.toc.lang.incpre;
 import a.cap.toc.lang.integer;
 import a.cap.toc.lang.let;
 import a.cap.toc.lang.loop;
@@ -315,6 +320,11 @@ final class toc extends Writer{
 		final static class cont extends stmt{public cont(){super("continue");}};
 		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
 		final static class incn extends op{public incn(var v,stmt rh){super("+=",v,rh);}}
+		final static class decn extends op{public decn(var v,stmt rh){super("-=",v,rh);}}
+		final static class inc extends stmt{public inc(var v){super(v+"++");}}
+		final static class incpre extends stmt{public incpre(var v){super("++"+v);}}
+		final static class dec extends stmt{public dec(var v){super(v+"--");}}
+		final static class decpre extends stmt{public decpre(var v){super("--"+v);}}
 	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
@@ -333,6 +343,11 @@ final class toc extends Writer{
 		stms.add(new set(a,i4));
 		stms.add(new loop(new block(
 				new incn(a,i3),
+				new decn(a,i1),
+				new inc(a),
+				new incpre(a),
+				new dec(a),
+				new decpre(a),
 				new printf(s1,a),
 				new iff(new eq(a,i8),new block(brk)),
 				new ife(new eq(a,i8),new block(brk),new block(cont))
