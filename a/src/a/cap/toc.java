@@ -248,13 +248,13 @@ final class toc extends Writer{
 	final static class lang{
 		static class stmt{
 			String code;
-			public String toString(){return code;}
 			stmt(String code){this.code=code;}
+			stmt(Reader r)throws Throwable{}
+			public String toString(){return code;}
 			void to(final PrintWriter pw){pw.print(code);}
 			String end_delim(){return";";}
-			void read(Reader r)throws Throwable{}
 			@Override public boolean equals(Object obj){return obj.toString().equals(code);}
-			static stmt parse(Reader r)throws Throwable{
+			static stmt read_code_block(Reader r)throws Throwable{
 				// find let/set/loop/call/ret/const
 				return null;
 			}
