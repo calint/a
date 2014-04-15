@@ -13,7 +13,9 @@ import java.util.List;
 import a.cap.toc.lang.add;
 import a.cap.toc.lang.block;
 import a.cap.toc.lang.brk;
+import a.cap.toc.lang.cont;
 import a.cap.toc.lang.eq;
+import a.cap.toc.lang.ife;
 import a.cap.toc.lang.iff;
 import a.cap.toc.lang.integer;
 import a.cap.toc.lang.let;
@@ -301,8 +303,15 @@ final class toc extends Writer{
 			}
 			@Override String end_delim(){return "";}
 		};
+		final static class ife extends stmt{
+			public ife(stmt s,block b,block els){
+				super("if("+s+")"+b+"else "+els);
+			}
+			@Override String end_delim(){return "";}
+		};
 		final static class eq extends op{public eq(stmt lh,stmt rh){super("==",lh,rh);}}
 		final static class brk extends stmt{public brk(){super("break");}};
+		final static class cont extends stmt{public cont(){super("continue");}};
 		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
 	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
@@ -310,6 +319,7 @@ final class toc extends Writer{
 		final type integer=new integer();
 		final var a=new var("a");
 		final stmt brk=new brk();
+		final stmt cont=new cont();
 		final value i3=new num(3);
 		final value i4=new num(4);
 		final value i1=new num(1);
@@ -322,7 +332,8 @@ final class toc extends Writer{
 		stms.add(new loop(new block(
 				new set(a,new add(a,i1)),
 				new printf(s1,a),
-				new iff(new eq(a,i8),new block(brk))
+				new iff(new eq(a,i8),new block(brk)),
+				new ife(new eq(a,i8),new block(brk),new block(cont))
 		)));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
