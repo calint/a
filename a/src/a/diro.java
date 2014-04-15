@@ -277,13 +277,13 @@ public class diro extends a{
 		public void to(final xwriter x) throws Throwable{
 			x.el(this);
 			x.style(rnm,"padding:.2em;border-bottom:1px dotted green;border-left:1px dotted greenl;width:12em;text-align:center");
-			x.inputText(rnm).br();
-			x.tag("select").tag("option").p("selection").tage("select");
 			x.ax(this,"ts",hidelist?" show":" hide");
 			if(hidelist){
 				x.elend();
 				return;
 			}
+			x.inputText(rnm).br();
+			x.tag("select").tag("option").p("selection").tage("select");
 			x.table("f").nl();
 			final int cols=5;
 			x.nl().tr().th(cols);
