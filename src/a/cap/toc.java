@@ -270,7 +270,10 @@ final class toc extends Writer{
 		}
 		final static class let extends stmt{
 			public let(type t,var v){super(t+" "+v);}
-			public let(type t,var v,stmt s){super(t+" "+v+"="+s);}
+			public let(type t,var v,stmt s){
+				super(t+" "+v+"="+s);
+//				if(!s.t.equals(v.t))throw new Error();
+			}
 		};
 		final static class set extends stmt{
 			public set(var v,stmt s){
