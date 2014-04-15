@@ -281,9 +281,9 @@ final class toc extends Writer{
 			}
 		};
 		final static class set extends stmt{
-			public set(var v,stmt s){
-				super(v+"="+s);
-				if(!v.t.equals(s.type()))throw new Error("not same type: "+code+"  "+v.code+" is "+v.t+"  and  "+s.code+"  is  "+s.type());
+			public set(var lh,stmt rh){
+				super(lh+"="+rh);
+				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"=to"+lh.type()+"("+rh.code+")");
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
@@ -298,7 +298,7 @@ final class toc extends Writer{
 			public add(stmt lh,stmt rh){
 				super("+",lh,rh);
 				if(!lh.type().equals(rh.type())){
-					throw new Error(lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+". cannot assign without cast. try to"+lh.type()+"("+rh.code+")");
+					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   when "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"=to"+lh.type()+"("+rh.code+")");
 				}
 				t=lh.type();
 			}
@@ -369,9 +369,10 @@ final class toc extends Writer{
 		final type file=new type("file");
 		
 		final var a=new var(integer,"a");
-		final var b=new var(floating,"b");
+		final var b=new var(integer,"b");//change type for type missmatch error
 		final var f=new var(file,"f");
 		final var d=new var(file,"d");
+		final var e=new var(floating,"e");
 		final stmt brk=new brk();
 		final stmt cont=new cont();
 		final value i3=new inti(3);
@@ -385,6 +386,7 @@ final class toc extends Writer{
 		stms.add(new set(a,i4));
 //		stms.add(new set(a,b));// type conversion error
 		stms.add(new let(file,f));
+		stms.add(new set(a,e));
 		stms.add(new loop(new block(
 					new incn(a,i3),
 					new decn(a,i1),
@@ -397,6 +399,7 @@ final class toc extends Writer{
 					new iff(new eq(a,i8),new block(brk))
 		)));
 		stms.add(new set(a,new add(a,i5)));
+		stms.add(new set(a,new add(a,b)));
 		stms.add(new printf(s1,a));
 		stms.add(new fcall(f,"to",d));
 		stms.add(
