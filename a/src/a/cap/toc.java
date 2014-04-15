@@ -274,8 +274,10 @@ final class toc extends Writer{
 		};
 		final static class set extends stmt{
 			public set(var v,stmt s){
-				super(v+"="+s);}
-			};
+				super(v+"="+s);
+//				if(!s.t.equals(v.t))throw new Error();
+			}
+		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
 		final static class var extends stmt{
 			type t;
