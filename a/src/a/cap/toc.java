@@ -248,13 +248,17 @@ final class toc extends Writer{
 	final static class lang{
 		static class stmt{
 			String code;
-			type t;
 			stmt(String code){this.code=code;}
 			stmt(Reader r)throws Throwable{}
 			public String toString(){return code;}
 			void to(final PrintWriter pw){pw.print(code);}
 			String end_delim(){return";";}
-			@Override public boolean equals(Object obj){return obj.toString().equals(code);}
+			@Override public boolean equals(Object obj){
+				if(obj==null)return false;
+				return obj.toString().equals(code);
+			}
+			type type(){return null;}
+			
 			static stmt read_code_block(Reader r)throws Throwable{
 				// find let/set/loop/call/ret/const
 				return null;
@@ -278,14 +282,15 @@ final class toc extends Writer{
 		final static class set extends stmt{
 			public set(var v,stmt s){
 				super(v+"="+s);
-//				if(!s.t.equals(v.t))throw new Error();
+				if(!v.t.equals(s.type()))throw new Error("not same type: "+code+"  "+v.code+" is "+v.t+"  and  "+s.code+"  is  "+s.type());
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
 		final static class var extends stmt{
-			type t;
+			private type t;
 			public var(String name){super(name);}
 			public var(type t,String name){super(name);this.t=t;}
+			@Override type type(){return t;}
 		};
 		static class op extends stmt{public op(String name,stmt lh,stmt rh){super(lh+name+rh);}};
 		final static class add extends op{public add(stmt lh,stmt rh){super("+",lh,rh);}}
@@ -309,7 +314,12 @@ final class toc extends Writer{
 			if(a.length==1)return statements_to_string(a);
 			return"{"+statements_to_string(a)+"}";
 		}
-		final static class num extends value{public num(int i){super(Integer.toString(i));}};
+		final static class num extends value{
+			public num(int i){
+				super(Integer.toString(i));
+			}
+			@Override type type(){return new type("int");}
+		};
 		static class type extends stmt{public type(String name){super(name);}};
 		final static class integer extends type{public integer(){super("int");}};
 		final static class floating extends type{public floating(){super("float");}};
@@ -330,13 +340,16 @@ final class toc extends Writer{
 		final static class brk extends stmt{public brk(){super("break");}};
 		final static class cont extends stmt{public cont(){super("continue");}};
 		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
-		final static class incn extends op{public incn(var v,stmt rh){super("+=",v,rh);}}
+		final static class incn extends op{
+			public incn(var v,stmt rh){super("+=",v,rh);}
+		}
 		final static class decn extends op{public decn(var v,stmt rh){super("-=",v,rh);}}
 		final static class inc extends stmt{public inc(var v){super(v+"++");}}
 		final static class incpre extends stmt{public incpre(var v){super("++"+v);}}
 		final static class dec extends stmt{public dec(var v){super(v+"--");}}
 		final static class decpre extends stmt{public decpre(var v){super("--"+v);}}
 		final static class fcall extends call{public fcall(var o,String funcname,stmt...args){super(o+"."+funcname,args);}}
+//		final static class t_null extends type{public t_null(){super("null");}};
 	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
@@ -359,7 +372,7 @@ final class toc extends Writer{
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
-		stms.add(new set(a,b));// type conversion error
+//		stms.add(new set(a,b));// type conversion error
 		stms.add(new let(file,f));
 		stms.add(new loop(new block(
 					new incn(a,i3),
