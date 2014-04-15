@@ -298,7 +298,7 @@ final class toc extends Writer{
 			public add(stmt lh,stmt rh){
 				super("+",lh,rh);
 				if(!lh.type().equals(rh.type())){
-					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   when "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"=to"+lh.type()+"("+rh.code+")");
+					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"=to"+lh.type()+"("+code+")");
 				}
 				t=lh.type();
 			}
@@ -384,9 +384,8 @@ final class toc extends Writer{
 		
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
-//		stms.add(new set(a,b));// type conversion error
 		stms.add(new let(file,f));
-		stms.add(new set(a,e));
+//		stms.add(new set(a,e));// error
 		stms.add(new loop(new block(
 					new incn(a,i3),
 					new decn(a,i1),
@@ -399,7 +398,7 @@ final class toc extends Writer{
 					new iff(new eq(a,i8),new block(brk))
 		)));
 		stms.add(new set(a,new add(a,i5)));
-		stms.add(new set(a,new add(a,b)));
+		stms.add(new set(a,new add(a,e)));
 		stms.add(new printf(s1,a));
 		stms.add(new fcall(f,"to",d));
 		stms.add(
