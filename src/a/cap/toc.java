@@ -17,6 +17,7 @@ import a.cap.toc.lang.cont;
 import a.cap.toc.lang.eq;
 import a.cap.toc.lang.ife;
 import a.cap.toc.lang.iff;
+import a.cap.toc.lang.incn;
 import a.cap.toc.lang.integer;
 import a.cap.toc.lang.let;
 import a.cap.toc.lang.loop;
@@ -313,6 +314,7 @@ final class toc extends Writer{
 		final static class brk extends stmt{public brk(){super("break");}};
 		final static class cont extends stmt{public cont(){super("continue");}};
 		final static class block extends stmt{block(stmt...ss){super(block_to_string(ss));}}
+		final static class incn extends op{public incn(var v,stmt rh){super("+=",v,rh);}}
 	}
 	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
@@ -330,7 +332,7 @@ final class toc extends Writer{
 		stms.add(new let(integer,a,i3));
 		stms.add(new set(a,i4));
 		stms.add(new loop(new block(
-				new set(a,new add(a,i1)),
+				new incn(a,i3),
 				new printf(s1,a),
 				new iff(new eq(a,i8),new block(brk)),
 				new ife(new eq(a,i8),new block(brk),new block(cont))
