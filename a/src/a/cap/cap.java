@@ -66,7 +66,7 @@ final public class cap{
 		}
 		p.print("\n}"+cnm+"_default={");
 		for(struct.slot i:attrs){
-			p.print("."+i.name+"="+i.args+",");
+			p.print(i.args+",");
 //			p.print(",");
 		}
 		p.println("};");
