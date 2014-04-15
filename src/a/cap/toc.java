@@ -18,14 +18,15 @@ import a.cap.toc.lang.dec;
 import a.cap.toc.lang.decn;
 import a.cap.toc.lang.decpre;
 import a.cap.toc.lang.eq;
+import a.cap.toc.lang.fcall;
 import a.cap.toc.lang.ife;
 import a.cap.toc.lang.iff;
 import a.cap.toc.lang.inc;
 import a.cap.toc.lang.incn;
 import a.cap.toc.lang.incpre;
+import a.cap.toc.lang.inti;
 import a.cap.toc.lang.let;
 import a.cap.toc.lang.loop;
-import a.cap.toc.lang.num;
 import a.cap.toc.lang.printf;
 import a.cap.toc.lang.ret;
 import a.cap.toc.lang.set;
@@ -293,7 +294,17 @@ final class toc extends Writer{
 			@Override type type(){return t;}
 		};
 		static class op extends stmt{public op(String name,stmt lh,stmt rh){super(lh+name+rh);}};
-		final static class add extends op{public add(stmt lh,stmt rh){super("+",lh,rh);}}
+		final static class add extends op{
+			public add(stmt lh,stmt rh){
+				super("+",lh,rh);
+				if(!lh.type().equals(rh.type())){
+					throw new Error(lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+". cannot assign without cast. try to"+lh.type()+"("+rh.code+")");
+				}
+				t=lh.type();
+			}
+			@Override type type(){return t;}
+			private type t;
+		}
 		final static class str extends value{public str(String v){super("\""+v+"\"");}};
 		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
 		final static class loop extends stmt{
@@ -314,8 +325,8 @@ final class toc extends Writer{
 			if(a.length==1)return statements_to_string(a);
 			return"{"+statements_to_string(a)+"}";
 		}
-		final static class num extends value{
-			public num(int i){
+		final static class inti extends value{
+			public inti(int i){
 				super(Integer.toString(i));
 			}
 			@Override type type(){return new type("int");}
@@ -363,11 +374,11 @@ final class toc extends Writer{
 		final var d=new var(file,"d");
 		final stmt brk=new brk();
 		final stmt cont=new cont();
-		final value i3=new num(3);
-		final value i4=new num(4);
-		final value i1=new num(1);
-		final value i8=new num(8);
-		final value i5=new num(5);
+		final value i3=new inti(3);
+		final value i4=new inti(4);
+		final value i1=new inti(1);
+		final value i8=new inti(8);
+		final value i5=new inti(5);
 		final value s1=new str("a=%d");
 		
 		stms.add(new let(integer,a,i3));
@@ -387,7 +398,7 @@ final class toc extends Writer{
 		)));
 		stms.add(new set(a,new add(a,i5)));
 		stms.add(new printf(s1,a));
-		stms.add(new lang.fcall(f,"to",d));
+		stms.add(new fcall(f,"to",d));
 		stms.add(
 				new ife(new eq(a,i8),new block(new decpre(a)),
 				new ife(new eq(a,i8),new block(brk),
