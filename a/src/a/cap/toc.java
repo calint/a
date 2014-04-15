@@ -229,82 +229,24 @@ final class toc extends Writer{
 			pw.print(code);
 		}
 	};
-	static class call extends statement{
-		String funcname;
-		statement[]args;
-		public call(String funcname,statement...args){
-			super(funcname+"("+args_to_string(args)+")");
-			this.funcname=funcname;
-			this.args=args;
+	static class call extends statement{public call(String funcname,statement...args){super(funcname+"("+args_to_string(args)+")");}};
+	private static String args_to_string(statement...a){
+		if(a.length==0)return"";
+		final StringBuilder sb=new StringBuilder();
+		for(statement s:a){
+			sb.append(s.toString()).append(",");
 		}
-		private static String args_to_string(statement...a){
-			if(a.length==0)return"";
-			final StringBuilder sb=new StringBuilder();
-			for(statement s:a){
-				sb.append(s.toString()).append(",");
-			}
-			sb.setLength(sb.length()-1);
-			return sb.toString();
-		}
-	};
-	final static class let extends statement{
-		String name;
-		statement stmt;
-		type t;
-		public let(type t,String name,statement initstmt){
-			super(t+" "+name+"="+initstmt);
-			this.t=t;this.name=name;this.stmt=initstmt;
-		}
-	};
-	final static class set extends statement{
-		String name;
-		statement stmt;
-		public set(String name,statement stmt){
-			super(name+"="+stmt);
-			this.name=name;this.stmt=stmt;
-		}
-	};
-	static class value extends statement{
-		String stmt;
-		public value(String stmt){
-			super(stmt);
-			this.stmt=stmt;
-		}
-	};
-	final static class var extends statement{
-		String name;
-		public var(String name){
-			super(name);
-			this.name=name;
-		}
-	};
-	static class operator extends statement{
-		String name;
-		statement lh,rh;
-		public operator(String name,statement lh,statement rh){
-			super(lh+name+rh);
-			this.name=name;this.lh=lh;this.rh=rh;
-		}
-	};
-	final static class add extends operator{
-		public add(statement lh,statement rh){
-			super("+",lh,rh);
-		}
+		sb.setLength(sb.length()-1);
+		return sb.toString();
 	}
-	final static class str extends value{
-		String stmt;
-		public str(String stmt){
-			super("\""+stmt+"\"");
-			this.stmt=stmt;
-		}
-	};
-	final static class ret extends call{
-		statement return_stmt;
-		public ret(statement stmt){
-			super("return",stmt);
-			this.return_stmt=stmt;
-		}
-	};
+	final static class let extends statement{public let(type t,String name,statement s){super(t+" "+name+"="+s);}};
+	final static class set extends statement{public set(String name,statement s){super(name+"="+s);}};
+	static class value extends statement{public value(String stmt){super(stmt);}};
+	final static class var extends statement{public var(String name){super(name);}};
+	static class operator extends statement{public operator(String name,statement lh,statement rh){super(lh+name+rh);}};
+	final static class add extends operator{public add(statement lh,statement rh){super("+",lh,rh);}}
+	final static class str extends value{public str(String v){super("\""+v+"\"");}};
+	final static class ret extends call{public ret(statement s){super("return",s);}};
 	final static class loop extends statement{
 		statement[]stmts;
 		public loop(statement...stmts){
@@ -321,25 +263,15 @@ final class toc extends Writer{
 			return sb.toString();
 		}
 	};
-	final static class num extends value{
-		int i;
-		public num(int i){
-			super(Integer.toString(i));
-			this.i=i;
-		}
-	};
-	final static class type extends statement{
-		String name;
-		public type(String name){
-			super(name);
-			this.name=name;
-		}
-	};
+	final static class num extends value{public num(int i){super(Integer.toString(i));}};
+	static class type extends statement{public type(String name){super(name);}};
+	final static class _int extends type{public _int(){super("int");}};
+	final static class _float extends type{public _float(){super("float");}};
 
 
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
-		statements.add(new let(new type("int"),"a",new num(3)));
+		statements.add(new let(new _int(),"a",new num(3)));
 		statements.add(new set("a",new num(4)));
 		statements.add(new loop(new set("a",new add(new var("a"),new num(1)))));
 		statements.add(new set("a",new add(new var("a"),new num(5))));
