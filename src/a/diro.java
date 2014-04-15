@@ -65,7 +65,7 @@ public class diro extends a{
 		if(hasbit(BIT_ALLOW_QUERY))
 			x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
 		x.styleEnd();
-		x.style(selection,"display:table;margin-left:auto;margin-right:auto;background:#fefefe;text-align:center;box-shadow:0 0 .5em rgba(0,0,0,.5);");
+		x.style(selection,"display:table;padding:.5em;margin-left:auto;margin-right:auto;background:#fefefe;text-align:center;box-shadow:0 0 .5em rgba(0,0,0,.5);");
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))
@@ -276,7 +276,8 @@ public class diro extends a{
 		public a rnm;
 		public void to(final xwriter x) throws Throwable{
 			x.el(this);
-			x.inputText(rnm,"border:1px solid green",null,null,null,null).nl();
+			x.style(rnm,"padding:.2em;border-bottom:1px dotted green;border-left:1px dotted greenl;width:12em;text-align:center");
+			x.inputText(rnm).br();
 			x.tag("select").tag("option").p("selection").tage("select");
 			x.ax(this,"ts",hidelist?" show":" hide");
 			if(hidelist){
