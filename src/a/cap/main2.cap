@@ -1,0 +1,16 @@
+bla{
+	int a;
+	bla(int b){}
+	g void tick(){}
+	void update(const float dt){}
+}
+
+doc{
+function annotation 'g' stack pointer isnt moved after the call giving stack allocated memory in ownership of caller
+block annotation 'cd' means synthesize default constructor and destructor
+}
+
+
+foo{
+	int tk=10;
+}
