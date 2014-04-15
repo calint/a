@@ -25,6 +25,7 @@ final public class cap{
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		cc.out=new PrintWriter(new OutputStreamWriter(System.out));
+		b.b.cp(cap.class.getResourceAsStream("header.cap"),cc.out);
 //		cc.out.println("///----------------------------");
 //		cc.out.println("/// generated h file");
 //		cc.out.println("///----------------------------");
@@ -69,11 +70,17 @@ final public class cap{
 		p.println("typedef struct "+cnm+" "+cnm+";");
 		for(slot i:c.slots){
 			if(i.isfunc)continue;
+			// getter
 			p.print("static inline "+i.type);
 			if(!i.ispointer)p.print(" ");
 			p.print(cnm+"_"+i.name+"(const "+cnm+"*o");
 //			if(i.args.length()!=0)p.print(","+i.args);
 			p.println("){return o->"+i.name+";}");
+//			static inline void foo_tk_(foo*o,const int tk){o->tk=tk;}// synthesized
+			// setter
+			p.print("static inline void "+cnm+"_"+i.name+"_("+cnm+"*o,"+i.type);
+			if(!i.ispointer)p.print(" ");
+			p.println("v){o->"+i.name+"=v;}");
 		}
 		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
 		for(slot i:c.slots){

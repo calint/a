@@ -279,4 +279,7 @@ final public class b{
 		if(s==null||s.length()==0)return def;
 		return s;
 	}
+	public static void cp(final InputStream in,final Writer out)throws Throwable{
+		cp(new InputStreamReader(in,strenc),out,null);
+	}
 }
