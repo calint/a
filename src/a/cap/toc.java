@@ -273,10 +273,24 @@ final class toc extends Writer{
 			this.name=name;
 		}
 	};
+	static class operator extends statement{
+		String name;
+		statement lh,rh;
+		public operator(String name,statement lh,statement rh){
+			super(lh+name+rh);
+			this.name=name;this.lh=lh;this.rh=rh;
+		}
+	};
+	final static class operator_add extends operator{
+		public operator_add(statement lh,statement rh){
+			super("+",lh,rh);
+		}
+	}
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
 		statements.add(new variable_declaration("int","a",new constant("3")));
 		statements.add(new assignment("a",new constant("4")));
+		statements.add(new assignment("a",new operator_add(new variable("a"),new constant("5"))));
 		statements.add(new function_call("return",new variable("a")));
 		System.out.println(statements);
 	}
