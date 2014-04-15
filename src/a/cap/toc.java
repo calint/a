@@ -239,7 +239,7 @@ final class toc extends Writer{
 		sb.setLength(sb.length()-1);
 		return sb.toString();
 	}
-	final static class let extends statement{public let(type t,String name,statement s){super(t+" "+name+"="+s);}};
+	final static class let extends statement{public let(type t,var v,statement s){super(t+" "+v+"="+s);}};
 	final static class set extends statement{public set(var v,statement s){super(v+"="+s);}};
 	static class value extends statement{public value(String stmt){super(stmt);}};
 	final static class var extends statement{public var(String name){super(name);}};
@@ -273,7 +273,7 @@ final class toc extends Writer{
 
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
-		statements.add(new let(new _int(),"a",new num(3)));
+		statements.add(new let(new _int(),new var("a"),new num(3)));
 		statements.add(new set(new var("a"),new num(4)));
 		statements.add(new loop(
 				new set(new var("a"),new add(new var("a"),new num(1))),
