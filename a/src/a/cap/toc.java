@@ -1,6 +1,7 @@
 package a.cap;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -224,9 +225,11 @@ final class toc extends Writer{
 		statement(String code){
 			this.code=code;
 		}
-		void to(final PrintWriter pw){pw.print(code);}
+		void to(final PrintWriter pw){
+			pw.print(code);
+		}
 	};
-	final static class function_call extends statement{
+	static class function_call extends statement{
 		String funcname;
 		statement[]args;
 		public function_call(String funcname,statement...args){
@@ -235,6 +238,7 @@ final class toc extends Writer{
 			this.args=args;
 		}
 		private static String args_to_string(statement...a){
+			if(a.length==0)return"";
 			final StringBuilder sb=new StringBuilder();
 			for(statement s:a){
 				sb.append(s.toString()).append(",");
@@ -259,7 +263,7 @@ final class toc extends Writer{
 			this.name=name;this.stmt=stmt;
 		}
 	};
-	final static class constant extends statement{
+	static class constant extends statement{
 		String stmt;
 		public constant(String stmt){
 			super(stmt);
@@ -286,13 +290,53 @@ final class toc extends Writer{
 			super("+",lh,rh);
 		}
 	}
+	final static class constant_string extends constant{
+		String stmt;
+		public constant_string(String stmt){
+			super("\""+stmt+"\"");
+			this.stmt=stmt;
+		}
+	};
+	final static class function_return extends function_call{
+		statement return_stmt;
+		public function_return(statement stmt){
+			super("return",stmt);
+			this.return_stmt=stmt;
+		}
+	};
+	final static class loop extends statement{
+		statement[]stmts;
+		public loop(statement...stmts){
+			super("loop{"+args_to_string(stmts)+"}");
+			this.stmts=stmts;
+		}
+		private static String args_to_string(statement...a){
+			if(a.length==0)return"";
+			final StringBuilder sb=new StringBuilder();
+			for(statement s:a){
+				sb.append(s.toString()).append(",");
+			}
+			sb.setLength(sb.length()-1);
+			return sb.toString();
+		}
+	};
+
+
 	final static ArrayList<statement>statements=new ArrayList<>();
 	public static void main(String[] args){
 		statements.add(new variable_declaration("int","a",new constant("3")));
 		statements.add(new assignment("a",new constant("4")));
+		statements.add(new loop(new assignment("a",new operator_add(new variable("a"),new constant("1")))));
 		statements.add(new assignment("a",new operator_add(new variable("a"),new constant("5"))));
-		statements.add(new function_call("return",new variable("a")));
-		System.out.println(statements);
+		statements.add(new function_call("printf",new constant_string("a=%d"),new variable("a")));
+		statements.add(new function_return(new variable("a")));
+		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
+		for(statement s:statements){
+			s.to(pw);
+			pw.println();
+		}
+		pw.close();
+//		System.out.println(statements);
 	}
 	// notes
 //	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
