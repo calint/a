@@ -277,14 +277,15 @@ public class diro extends a{
 		public void to(final xwriter x) throws Throwable{
 			x.el(this);
 			x.inputText(rnm,"border:1px solid green",null,null,null,null).nl();
-			x.tag("select").tag("option").p("selected paths").tage("select");
+			x.tag("select").tag("option").p("selection").tage("select");
 			x.ax(this,"ts",hidelist?" show":" hide");
 			if(hidelist){
 				x.elend();
 				return;
 			}
 			x.table("f").nl();
-			x.nl().tr().th(4);
+			final int cols=5;
+			x.nl().tr().th(cols);
 			if(dr.hasbit(BIT_ALLOW_MOVE))x.ax(this,"m"," move");
 			if(dr.hasbit(BIT_ALLOW_COPY))x.ax(this,"cp"," copy");
 
@@ -302,6 +303,9 @@ public class diro extends a{
 				x.p(isdir?icndir:icnfile);
 				
 				x.td("name");
+				x.a(pth.uri(),pth.name());
+
+				x.td("path");
 				x.a(pth.uri(),pth.toString());
 				
 				x.td("date").p(dr.ttoa(pth.lastmod()));
@@ -310,7 +314,8 @@ public class diro extends a{
 				if(pth.isfile())total_bytes+=size;
 				x.td("size").p(isdir?"--":dr.btoa(size));
 			}
-			x.tr().td().td().td();
+			x.tr();
+			for(int i=0;i<cols-1;i++)x.td();
 			x.td("total size last").p(dr.nf.format(total_bytes));
 			x.nl().tableEnd();
 			x.elend();
