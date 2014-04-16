@@ -11,6 +11,7 @@ import java.util.LinkedList;
 
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
+import a.cap.vm.block;
 import b.osnl;
 
 final public class cap{
@@ -100,7 +101,12 @@ final public class cap{
 				}else
 					p.print(i.args);
 			}
-			p.println("){"+i.func_source+"}");
+			p.print(")");
+			final boolean isblk=i.stm instanceof block;
+			if(!isblk)p.print("{");
+			p.print(i.stm);
+			if(!isblk)p.print("}");
+			p.println();
 		}
 	}
 //	private void source_h(struct c,PrintWriter p){
