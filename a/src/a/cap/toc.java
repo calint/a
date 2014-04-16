@@ -54,9 +54,8 @@ final class toc extends Writer{
 			switch(state){
 			case state_class_ident:{
 				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
-				if(ch!='{'){token.append(ch);break;}// look for opening class block
-				final String clsident=clean_whitespaces(token.toString());					
-				token.setLength(0);
+				if(!is_char_block_open(ch)){token_add(ch);break;}// look for opening class block
+				final String clsident=token_take_clean();
 				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'");
 				classes.push(new struct(clsident));
 				namespace_enter(clsident);
@@ -66,107 +65,94 @@ final class toc extends Writer{
 			case state_class_block:{// find type
 				if(is_token_empty()&&is_white_space(ch))break;// trim leading white space
 				if(is_char_arguments_open(ch)){// found type+name function i.e. const int foo•(
-					final String ident=clean_whitespaces(token.toString());
-					token.setLength(0);// ignore class block content
+					final String ident=token_take_clean();
 					namespace_enter(ident);
 					classes.peek().slots.push(new struct.slot(ident,true));
-//					// if constructor format but not a constructor
-//					if(ident.indexOf('*')==-1&&ident.indexOf(' ')==-1&&!ident.equals(classes.peek().name))throw new Error("line "+lineno+":"+charno+": in class '"+classes.peek().name+"' item '"+ident+"' is declared like a constructor but does not have the class name.");
 					// assume it returns void or itself for chained calls					
 					state_push(state_function_arguments);
 					break;
 				}
 				if(is_char_statement_close(ch)){// found type+name field i.e. int a•;
-					final String ident=clean_whitespaces(token.toString());
-					token.setLength(0);// ignore class block content
+					final String ident=token_take_clean();
 					classes.peek().slots.push(new struct.slot(ident,false));
-//					state_back_to(state_class_block);
 					break;
 				}
 				if(is_char_statement_assigment(ch)){// found type+name field i.e. int a•=0;
-					final String ident=clean_whitespaces(token.toString());
-					token.setLength(0);// ignore class block content
+					final String ident=token_take_clean();
 					classes.peek().slots.push(new struct.slot(ident,false));
 					state_push(state_struct_member_default_value);
 					break;
 				}
 				if(is_char_block_close(ch)){// close class block
-					token.setLength(0);// ignore class block content
+					token_clear();// ignore class block content
 					state_back_to(state_class_ident);
 					namespace_pop();
 					break;
 				}
-				token.append(ch);
+				token_add(ch);
 				break;
 			}
 			case state_struct_member_default_value:{// int a=•0•;
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_statement_close(ch)){// int a=0•;
-					final String def=token.toString().trim();
-					token.setLength(0);
+					final String def=token_take_trimmed();
 					classes.peek().slots.peek().args=def;			
 					state_back_to(state_class_block);
 					break;
 				}
-				token.append(ch);
+				token_add(ch);
 				break;
 			}
 			case state_function_arguments:{// class file{func(•size s,int i•){}}
 				if(is_char_arguments_close(ch)){
 					state_push(state_find_function_block);
-					final String funcargs=clean_whitespaces(token.toString());
+					final String funcargs=token_take_clean();
 					classes.peek().slots.peek().args=funcargs;
-					token.setLength(0);
 					break;
 				}
-				token.append(ch);
+				token_add(ch);
 				break;
 			}
 			case state_find_function_block:{// class file{func(size s) •{}
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_block_open(ch)){state_push(state_function_block);break;}//found
-				token.append(ch);
+				token_add(ch);
 				break;
 			}
 			case state_function_block:{// class file{func(size s){•int a=2;a+=2;•}
-				token.append(ch);
+				token_add(ch);
 				if(is_white_space(ch)&&is_token_empty())continue;
 				if(is_char_block_open(ch)){
 					state_push(state_in_code_block);
 					break;
 				}
 				if(is_char_block_close(ch)){
-					token.setLength(token.length()-1);
 					final struct.slot sl=classes.peek().slots.peek();
-					sl.source=token.toString();
+					token_dec_len_by_1();//? remove the }
+					sl.source=token_take();
 					try{
 						final Reader r=new StringReader(sl.source);
-//						final namespace ns=namespace_stack.peek();// hierarchy of visible variables
 						sl.stm=block.parse_function_source(r,namespace_stack);
 					}catch(Throwable t){
 						t.printStackTrace();
 						throw new Error(t);
 					}
-					//? build stmt tree
-					token.setLength(0);
 					state_back_to(state_class_block);
 					namespace_pop();
 					break;
 				}
-				if(is_char_string_open(ch)){
+				if(is_char_string_open(ch))
 					state_push(state_in_string);
-				}
 				break;
 			}
 			case state_in_string:{// string a="•hello world•";
-				token.append(ch);
-				if(is_char_string_close(ch)){
+				token_add(ch);
+				if(is_char_string_close(ch))
 					state_pop();
-				}
 				break;
 			}
 			case state_in_code_block:{// while(true){•pl("hello world")};
-				token.append(ch);
+				token_add(ch);
 				if(is_char_block_open(ch)){
 					state_push(state_in_code_block);
 					break;
@@ -178,9 +164,9 @@ final class toc extends Writer{
 				break;
 			}
 			case state_in_line_comment:{//• comment
-				token.append(ch);
+				token_add(ch);
 				if(is_char_is_newline(ch)){
-					token.setLength(0);
+					token_clear();
 					state_pop();
 					break;
 				}
@@ -191,9 +177,31 @@ final class toc extends Writer{
 		}
 		Collections.reverse(classes);
 	}
-	private boolean is_token_empty() {
-		return token.length()==0;
+	private void token_add(final char ch) {
+		token.append(ch);
 	}
+	private String token_take() {
+		final String s=token.toString();
+		token_clear();
+		return s;
+	}
+	private void token_dec_len_by_1() {
+		token.setLength(token.length()-1);
+	}
+	private String token_take_trimmed() {
+		final String def=token_take().trim();
+		token_clear();
+		return def;
+	}
+	private void token_clear() {
+		token.setLength(0);
+	}
+	private String token_take_clean(){
+		final String t=clean_whitespaces(token_take());
+		token_clear();
+		return t;
+	}
+	private boolean is_token_empty(){return token.length()==0;}
 	final @Override public void flush()throws IOException{}
 	final @Override public void close()throws IOException{}
 	final void namespace_pop(){namespace_stack.pop();}
