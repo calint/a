@@ -22,57 +22,47 @@ final class vm{
 			type type(){return null;}
 			
 			static stmt parse_function_source(Reader r,LinkedList<namespace>ns)throws Throwable{
-				// expect let/set/loop/call/ret/const until end of stream
 				LinkedList<stmt>stms=new LinkedList<>();
-//				int ch=0;
-//				final StringBuilder sb=new StringBuilder(128);
 				while(true){
 					final stmt s=parse_statement(r);
-					if(s!=null){
-						stms.add(s);
-						continue;
-					}
-					break;
-//					
-//					ch=r.read();
-//					if(ch==-1)break;
-//					if(sb.length()==0&&Character.isWhitespace(ch))continue;
-//					
-//					if(ch=='('){// call
-//						final String funcname=sb.toString();
-//						stms.add(new call(funcname,parse_statement(r)));
-//						continue;
-//					}
-//					if(ch=='='){// let or set
-//						continue;
-//					}
-//					
-//					sb.append((char)ch);
-//					System.out.print((char)ch);
+					if(s==null)break;//eos
+					stms.add(s);
+//					final int i=r.read();
+//					if(i!=';')throw new Error("@ yyyy:xxx  expected end of statement ';' but got '"+(char)i+"' (0x"+Integer.toHexString(i)+")");
 				}
-				System.out.println();
 				return new block(stms);
 			}
 			static stmt parse_statement(Reader r)throws Throwable{
+				// expect call/let/set/const/loop/ret
 				int ch=0;
 				final StringBuilder sb=new StringBuilder(128);
 				while(true){
 					ch=r.read();
 					if(ch==-1)break;
 					if(sb.length()==0&&Character.isWhitespace(ch))continue;
-					
 					if(ch=='('){// call
 						final String funcname=sb.toString();
 						return new call(funcname,parse_function_arguments(r));
-//						continue;
 					}
 					if(ch=='='){// let or set
-						continue;
+						final String s=sb.toString();
+						int i=s.lastIndexOf(' '); // int a=•1;
+						if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
+						if(i==-1){// set
+							final var v=new var(s);//? get from namespace
+							return new set(v,parse_statement(r));
+						}else{// let
+							final String type=s.substring(0,i);
+							final type t=new type(type);//? get from reflection
+							final String name=s.substring(i+1);
+							final var v=new var(t,name);//? put in namespace
+							return new let(t,v,parse_statement(r));
+						}
 					}
-					
+					if(ch==';')break;
 					sb.append((char)ch);
-//					System.out.print((char)ch);
 				}
+				if(sb.length()==0)return null;//eos
 				final String s=sb.toString();
 				if(s.startsWith("\"")&&s.endsWith("\"")){// string
 					final String t=s.substring(1,s.length()-1);
@@ -156,7 +146,7 @@ final class vm{
 		final static class set extends stmt{
 			public set(var lh,stmt rh){
 				super(lh+"="+rh);
-				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+rh.code+")");
+//				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+rh.code+")");
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};

@@ -133,6 +133,7 @@ final class toc extends Writer{
 					try{
 						final Reader r=new StringReader(sl.func_source);
 						sl.stm=block.parse_function_source(r,namespace_stack);
+						System.err.println(sl.stm);
 					}catch(Throwable t){
 						t.printStackTrace();
 						throw new Error(t);
@@ -151,7 +152,7 @@ final class toc extends Writer{
 					state_pop();
 				break;
 			}
-			case state_in_code_block:{// while(true){•pl("hello world")};
+			case state_in_code_block:{// while(true){•pl("hello world");•}
 				token_add(ch);
 				if(is_char_block_open(ch)){
 					state_push(state_in_code_block);
