@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -229,7 +230,7 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
-	static stmt parse_statement(Reader r)throws Throwable{
+	static stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
 		// expect call/let/set/const/fcall   loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -244,10 +245,12 @@ final class toc extends Writer{
 				if(i!=-1){// i.e.   f.to(out);
 					final String var=funcname.substring(0,i);
 					final String func=funcname.substring(i+1);
-					final var v=new var(var);//? get from namespace to get declared type
-					return new fcall(v,func,parse_statement(r));
+					final namespace ns=nms.peek();
+					final var v_ns=ns.vars.get(var);
+					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet");
+					return new fcall(v_ns,func,parse_statement(r,nms));
 				}
-				return new call(funcname,stmt.parse_function_arguments(r));
+				return new call(funcname,stmt.parse_function_arguments(r,nms));
 			}
 			if(ch==')') // when parsing statements in function arguments
 				break;
@@ -257,13 +260,14 @@ final class toc extends Writer{
 				if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
 				if(i==-1){// set
 					final var v=new var(s);//? get from namespace
-					return new set(v,parse_statement(r));
+					return new set(v,parse_statement(r,nms));
 				}else{// let
 					final String type=s.substring(0,i);
 					final type t=new type(type);//? get from reflection
 					final String name=s.substring(i+1);
 					final var v=new var(t,name);//? put in namespace
-					return new let(t,v,parse_statement(r));
+					nms.peek().vars.put(name, v);
+					return new let(t,v,parse_statement(r,nms));
 				}
 			}
 			if(ch==';')break;
@@ -306,6 +310,7 @@ final class toc extends Writer{
 	
 	final static class namespace{
 		private String name;
+		HashMap<String,var>vars=new HashMap<>();
 		public namespace(String nm){name=nm;}
 		@Override public String toString(){return name;}
 	}
