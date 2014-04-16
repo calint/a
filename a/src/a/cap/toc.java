@@ -290,7 +290,7 @@ final class toc extends Writer{
 				new fcall(f,"to",d),
 				new ife(new eq(a,i8),new decpre(a),
 				new ife(new eq(a,i8),brk,
-				new block(cont)
+				cont
 				)),
 				new ret(a),
 				new loop(new set(a,new add(a,i1))
