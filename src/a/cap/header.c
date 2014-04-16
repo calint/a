@@ -6,6 +6,7 @@
 #define pi(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define pls(stream,format,args...)fprintf(stream,format,##args)
 #define out stdout
-typedef size_t size;
-typedef FILE* stream;
 #define null NULL
+typedef size_t size;
+typedef FILE*stream;
+typedef const char*str;

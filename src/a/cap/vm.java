@@ -17,6 +17,7 @@ final class vm{
 			String end_delim(){return";";}
 			@Override public boolean equals(Object obj){
 				if(obj==null)return false;
+//				if(!(obj instanceof type))return false;
 				return obj.toString().equals(code);
 			}
 			type type(){return null;}
@@ -115,13 +116,14 @@ final class vm{
 //			public let(type t,var v){super(t+" "+v);}
 			public let(type t,var v,stmt s){
 				super(t+" "+v+"="+s);
-//				if(!s.t.equals(v.t))throw new Error();
+				if(!v.t.equals(s.type()))throw new Error(" at yyyy:xx  tried '"+code+"'  but  '"+v+"' is '"+t+"' and '"+s+"' is '"+s.type()+"'     try '"+t+" "+v+"="+t+"("+s+")'");
 			}
 		};
 		final static class set extends stmt{
 			public set(var lh,stmt rh){
 				super(lh+"="+rh);
-//				if(!lh.t.equals(rh.type()))throw new Error("at yyyy:xxx tried "+code+"  but  "+lh.code+" is "+lh.t+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+rh.code+")");
+				if(!lh.t.equals(rh.type()))
+					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh.code+"' is '"+lh.t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+lh.type()+"("+rh.code+")'");
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
@@ -136,14 +138,21 @@ final class vm{
 			public add(stmt lh,stmt rh){
 				super("+",lh,rh);
 				if(!lh.type().equals(rh.type())){
-					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try: "+lh.code+"="+lh.type()+"("+code+")");
+					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try '"+lh.code+"="+lh.type()+"("+code+")'");
 				}
 				t=lh.type();
 			}
 			@Override type type(){return t;}
 			private type t;
 		}
-		final static class str extends value{public str(String v){super("\""+v+"\"");}};
+		final static class str extends value{
+			public str(String v){
+				super("\""+v+"\"");
+			}
+			
+			@Override type type(){return t;}
+			final static type t=new type("str");
+		};
 		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
 		final static class loop extends stmt{
 			public loop(stmt b){super("while(true)"+b+b.end_delim());}
@@ -181,7 +190,9 @@ final class vm{
 			public inti(int i){
 				super(Integer.toString(i));
 			}
-			@Override type type(){return new type("int");}
+			@Override type type(){return t;}
+			
+			final static type t=new type("int");
 		};
 		static class type extends stmt{public type(String name){super(name);}};
 		final static class integer extends type{public integer(){super("int");}};
@@ -237,5 +248,16 @@ final class vm{
 				super(o.t+"_"+funcname,o,args);
 			}
 		}
+		final static class floati extends value{
+			public floati(float f){
+				super(Float.toString(f)+"f");
+			}
+			@Override type type(){
+				return t;
+			}
+			
+			final static type t=new type("float");
+		};
+
 //		final static class t_null extends type{public t_null(){super("null");}};
 	}

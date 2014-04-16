@@ -21,6 +21,7 @@ import a.cap.vm.decn;
 import a.cap.vm.decpre;
 import a.cap.vm.eq;
 import a.cap.vm.fcall;
+import a.cap.vm.floati;
 import a.cap.vm.ife;
 import a.cap.vm.iff;
 import a.cap.vm.inc;
@@ -58,7 +59,7 @@ final class toc extends Writer{
 				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
 				if(!is_char_block_open(ch)){token_add(ch);break;}// look for opening class block
 				final String clsident=token_take_clean();
-				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'");
+				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'\n  in: "+namespace_stack);
 				classes.push(new struct(clsident));
 				namespace_enter(clsident);
 				state_push(state_in_class_block);
@@ -247,7 +248,7 @@ final class toc extends Writer{
 					final String func=funcname.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(var);
-					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet");
+					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet\n  in: "+nms);
 					return new fcall(v_ns,func,parse_statement(r,nms));
 				}
 				return new call(funcname,stmt.parse_function_arguments(r,nms));
@@ -259,14 +260,21 @@ final class toc extends Writer{
 				int i=s.lastIndexOf(' '); // int a=•1;
 				if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
 				if(i==-1){// set
-					final var v=new var(s);//? get from namespace
-					return new set(v,parse_statement(r,nms));
+					final namespace ns=nms.peek();
+					final var v_ns=ns.vars.get(s);
+					if(v_ns==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
+					return new set(v_ns,parse_statement(r,nms));
 				}else{// let
 					final String type=s.substring(0,i);
 					final type t=new type(type);//? get from reflection
 					final String name=s.substring(i+1);
-					final var v=new var(t,name);//? put in namespace
-					nms.peek().vars.put(name, v);
+
+					final namespace ns=nms.peek();
+					final var v_ns=ns.vars.get(name);
+					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already declared\n  in: "+nms);
+					
+					final var v=new var(t,name);//? add line number for easier error message
+					ns.vars.put(name,v);
 					return new let(t,v,parse_statement(r,nms));
 				}
 			}
@@ -280,8 +288,17 @@ final class toc extends Writer{
 			return new str(t);
 		}
 		// const number or variable
+		if(s.endsWith("f")&&Character.isDigit(s.charAt(0))){// shorthand for float 0f
+			final float f=Float.parseFloat(s);
+			return new floati(f);
+		}
 		try{return new inti(Integer.parseInt(s));}
-		catch(Throwable ok){return new var(s);}
+		catch(Throwable ok){
+			final namespace ns=nms.peek();
+			final var v=ns.vars.get(s);
+			if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+ns);
+			return v;
+		}
 	}
 
 
