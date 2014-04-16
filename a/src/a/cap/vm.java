@@ -2,6 +2,8 @@ package a.cap;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.List;
+
+import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
 final class vm{
 		static class stmt{
 			String code;
@@ -36,7 +38,7 @@ final class vm{
 			if(a.length==0)return"";
 			final StringBuilder sb=new StringBuilder();
 			sb.append("&").append(o.toString()).append(",");
-			for(stmt s:a)sb.append(s.toString()).append(",");
+			for(stmt s:a)if(s!=null)sb.append(s.toString()).append(",");
 			sb.setLength(sb.length()-1);
 			return sb.toString();
 		}
@@ -55,12 +57,23 @@ final class vm{
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
-		final static class var extends stmt{
+		static class var extends stmt{
 			private type t;
-			public var(String name){super(name);}
+			private boolean sm;
 			public var(type t,String name){super(name);this.t=t;}
-			@Override type type(){return t;}
+			public var(boolean struct_member,type slot_type,String slot_name){
+				super(slot_name);
+				this.t=slot_type;
+				this.sm=struct_member;
+			}
+			final @Override public String toString(){
+				return (sm?"o->":"")+code;
+			}
+			final @Override type type(){return t;}
 		};
+//		final static class struct_member extends var{
+//			public struct_member(type t,String name){super(t,"o->"+name);}
+//		};
 		static class op extends stmt{public op(String name,stmt lh,stmt rh){super(lh+name+rh);}};
 		final static class add extends op{
 			public add(stmt lh,stmt rh){
@@ -185,6 +198,14 @@ final class vm{
 			}
 			
 			final static type t=new type("float");
+		};
+		final static class ctor extends value{
+			public ctor(type t){
+				super(t.code+"_default");
+				this.t=t;
+			}
+			@Override type type(){return t;}
+			private type t;
 		};
 
 //		final static class t_null extends type{public t_null(){super("null");}};

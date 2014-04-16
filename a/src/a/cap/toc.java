@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import a.cap.vm.block;
 import a.cap.vm.brk;
 import a.cap.vm.call;
 import a.cap.vm.cont;
+import a.cap.vm.ctor;
 import a.cap.vm.dec;
 import a.cap.vm.decn;
 import a.cap.vm.decpre;
@@ -42,8 +44,9 @@ import a.cap.vm.var;
 
 final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
+	final private LinkedList<type>types=new LinkedList<>();
 	final @Override public void write(final char[]cbuf,final int off,final int len)throws IOException{
-		int o=off,l=len;
+ 		int o=off,l=len;
 		char lastchar=0;
 		while(true){
 			if(l==0)break;
@@ -63,6 +66,9 @@ final class toc extends Writer{
 				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'\n  in: "+namespace_stack);
 				classes.push(new struct(clsident));
 				namespace_enter(clsident);
+				final type t=new type(clsident);
+				types.add(t);
+				namespace_add_var(new var(t,"o"));
 				state_push(state_in_class_block);
 				break;
 			}
@@ -70,20 +76,29 @@ final class toc extends Writer{
 				if(is_token_empty()&&is_white_space(ch))break;// trim leading white space
 				if(is_char_arguments_open(ch)){// found type+name function i.e. const int foo•(
 					final String ident=token_take_clean();
-					namespace_enter(ident);
-					classes.peek().slots.push(new struct.slot(ident,true));
+					final struct.slot slt=new struct.slot(ident,true);
+					final type t=new type(slt.type);//? lookup in declared types
+					namespace_add_var(new var(t,slt.name));
+					classes.peek().slots.push(slt);
 					// assume it returns void or self for chained calls					
+					namespace_enter(ident);
 					state_push(state_in_function_arguments);
 					break;
 				}
 				if(is_char_statement_close(ch)){// found type+name field i.e. int a•;
 					final String ident=token_take_clean();
-					classes.peek().slots.push(new struct.slot(ident,false));
+					final struct.slot slt=new struct.slot(ident,false);
+					final type t=new type(slt.type);//? lookup in declared types
+					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member					
+					classes.peek().slots.push(slt);
 					break;
 				}
 				if(is_char_statement_assigment(ch)){// found type+name field=... i.e. int a•=0;
 					final String ident=token_take_clean();
-					classes.peek().slots.push(new struct.slot(ident,false));
+					final struct.slot slt=new struct.slot(ident,false);
+					final type t=new type(slt.type);//? lookup in declared types
+					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member										
+					classes.peek().slots.push(slt);
 					state_push(state_in_struct_member_default_value);
 					break;
 				}
@@ -182,6 +197,7 @@ final class toc extends Writer{
 		}
 		Collections.reverse(classes);
 	}
+	private void namespace_add_var(var v){namespace_stack.peek().vars.put(v.code,v);}
 	private void token_add(final char ch) {
 		token.append(ch);
 	}
@@ -359,18 +375,43 @@ final class toc extends Writer{
 			final String t=s.substring(1,s.length()-1);
 			return new str(t);
 		}
-		// const number or variable
-		if(s.endsWith("f")&&Character.isDigit(s.charAt(0))){// shorthand for float 0f
-			final float f=Float.parseFloat(s);
-			return new floati(f);
-		}
-		try{return new inti(Integer.parseInt(s));}
-		catch(Throwable ok){
+		//
+		final int ixspc=s.lastIndexOf(' ');
+		if(ixspc!=-1){//   i.e. file f;
+			final String name=s.substring(ixspc+1);
+			final String type=s.substring(0,ixspc);
+			final type t=new type(type);//? lookup in namespace
 			final namespace ns=nms.peek();
-			final var v=ns.vars.get(s);
-			if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+ns);
-			return v;
+			final var v=ns.vars.get(name);
+			if(v!=null)throw new Error("@yyyy:xxx  '"+name+"' already declared in '"+ns+"' as '"+v.type()+"'");
+			final var nv=new var(t,name);
+			ns.vars.put(nv.code,nv);
+			return new let(t,nv,new ctor(t));
 		}
+		// const number or variable
+		final boolean first_char_is_digit=Character.isDigit(s.charAt(0));
+		if(first_char_is_digit){
+			if(s.endsWith("f")){//? shorthand for float 1f .3f 1.f 0
+				final float f=Float.parseFloat(s);
+				return new floati(f);
+			}
+			return new inti(Integer.parseInt(s));
+		}
+		// check if built in variables
+//		if("out".equals(s))return new var(new type("stream"),"out");//? get final static
+//		if("o".equals(s))return new var(null,"o");//? infer type of o
+		final var v=find_var_in_namespace_stack(s,nms);
+		if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+nms);
+		return v;
+	}
+	private static var find_var_in_namespace_stack(final String name,final LinkedList<namespace>ls){
+		final Iterator<namespace>i=ls.iterator();
+		while(i.hasNext()){
+			final namespace ns=i.next();
+			final var v=ns.vars.get(name);
+			if(v!=null)return v;
+		}
+		return null;
 	}
 
 
