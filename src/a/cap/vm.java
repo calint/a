@@ -48,11 +48,18 @@ final class vm{
 				if(!v.t.equals(s.type()))throw new Error(" at yyyy:xx  tried '"+code+"'  but  '"+v+"' is '"+t+"' and '"+s+"' is '"+s.type()+"'     try '"+t+" "+v+"="+t+"("+s+")'");
 			}
 		};
-		final static class set extends stmt{
+		static class set extends stmt{
 			public set(var lh,stmt rh){
 				super(lh+"="+rh);
 				if(!lh.t.equals(rh.type()))
 					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh.code+"' is '"+lh.t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+lh.type()+"("+rh.code+")'");
+			}
+		};
+		final static class set_struct_member extends stmt{
+			public set_struct_member(var lh,String struct_member_name,stmt rh){
+				super(lh+"."+struct_member_name+"="+rh);
+//				if(!lh.t.equals(rh.type()))
+//					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh.code+"' is '"+lh.t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+lh.type()+"("+rh.code+")'");
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
