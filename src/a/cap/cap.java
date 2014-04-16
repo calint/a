@@ -12,6 +12,9 @@ import java.util.LinkedList;
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
 import a.cap.vm.block;
+import a.cap.vm.floati;
+import a.cap.vm.inti;
+import a.cap.vm.str;
 import a.cap.vm.type;
 import a.cap.vm.var;
 import b.osnl;
@@ -27,7 +30,11 @@ final public class cap{
 	public void compile(Reader in,Writer ccode)throws Throwable{
 		final toc cc=new toc();
 		cc.namespace_push("cap");
-		final type t=new type("stream");//? add to globa types
+		cc.types_add(new type("stream"));
+		cc.types_add(inti.t);
+		cc.types_add(floati.t);
+		cc.types_add(str.t);
+		final type t=cc.find_type_by_name_or_break("stream");
 		cc.namespace_add_var(new var(t,"out"));
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
