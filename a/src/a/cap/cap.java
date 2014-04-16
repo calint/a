@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
 import a.cap.vm.block;
+import a.cap.vm.type;
+import a.cap.vm.var;
 import b.osnl;
 
 final public class cap{
@@ -24,7 +26,9 @@ final public class cap{
 	}
 	public void compile(Reader in,Writer ccode)throws Throwable{
 		final toc cc=new toc();
-		cc.namespace_enter("cap");
+		cc.namespace_push("cap");
+		final type t=new type("stream");//? add to globa types
+		cc.namespace_add_var(new var(t,"out"));
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		final PrintWriter out=new PrintWriter(ccode);
@@ -68,7 +72,7 @@ final public class cap{
 		if(!attrs.isEmpty())p.print("\n");
 		p.print("}"+cnm+"_default={");
 		for(struct.slot i:attrs){
-			p.print(i.args+",");
+			p.print(i.struct_member_default_value+",");
 //			p.print(",");
 		}
 		p.println("};");
@@ -87,20 +91,24 @@ final public class cap{
 		for(slot i:funcs){
 			if(i.isctor){
 				if(!i.tn.equals(c.name))throw new Error("expected constructor but found '"+i.tn+"'");
-				p.println(c.name+" "+c.name+"_mk("+i.args+"){}");
+				p.println(c.name+" "+c.name+"_mk("+i.args_to_string()+"){}");
 				continue;
 			}
 			p.print("static inline "+i.type);
 			if(!i.type.endsWith("*"))p.print(" ");
 			p.print(c.name+"_"+i.name+"("+c.name+"*o");
-			if(i.args.length()>0)p.print(",");
-			//? class arguments, argument
-			if(i.args.length()>0){
-				if(i.args.indexOf(' ')==-1){// one word argument i.e. foo{to(stream)}
-					p.print(i.args+" "+i.args.charAt(0));
-				}else
-					p.print(i.args);
+			final String args=i.args_to_string();
+			if(args.length()>0){
+				p.print(",");
+				p.print(args);
 			}
+//			//? class arguments, argument
+//			if(args.length()>0){
+//				if(args.indexOf(' ')==-1){// one word argument i.e. foo{to(stream)}
+//					p.print(args+" "+args.charAt(0));
+//				}else
+//					p.print(args);
+//			}
 			p.print(")");
 			final boolean isblk=i.stm instanceof block;
 			if(!isblk)p.print("{");

@@ -7,7 +7,7 @@ file{
 }
 c{run(){
   file f;
-  f.to();
+  f.to(out);
   pl("hello world");
   int i=1;
   i=2;
