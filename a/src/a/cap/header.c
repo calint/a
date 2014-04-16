@@ -7,6 +7,6 @@
 #define pls(stream,format,args...)fprintf(stream,format,##args)
 #define out stdout
 #define null NULL
-typedef size_t size;
-typedef FILE*stream;
-typedef const char*str;
+typedef size_t      size;
+typedef FILE*       stream;
+typedef const char* str;
