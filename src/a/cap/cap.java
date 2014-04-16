@@ -35,7 +35,7 @@ final public class cap{
 		b.b.cp(cap.class.getResourceAsStream("header.c"),out);
 		cc.classes().forEach((c)->source_c(c,out));
 		//. generate reflection struct
-		out.println("/// main.cap done");
+//		out.println("/// main.cap done");
 		b.b.cp(cap.class.getResourceAsStream("footer.c"),out);
 
 		final InputStream main=cap.class.getResourceAsStream("main.cap");

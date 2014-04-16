@@ -1,4 +1,1 @@
-int main(int argc,char*argv[]){
-    c_run(null);
-    return 0;
-}
+int main(int argc,char*argv[]){c_run(null);return 0;}
