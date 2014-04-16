@@ -298,6 +298,18 @@ final class toc extends Writer{
 	final private LinkedList<Integer>state_stack=new LinkedList<>();
 	final private LinkedList<struct>structs=new LinkedList<>();
 	final public List<struct>classes(){return structs;}
+	type find_struct_member_or_break(String struct_name,String member_name){
+		for(struct s:structs){
+			if(s.name.equals(struct_name)){
+				for(struct.slot sl:s.slots){
+					if(sl.name.equals(member_name))
+						return find_type_by_name_or_break(sl.type);
+				}
+				throw new Error("struct member '"+member_name+"' in '"+struct_name+"' not found in "+s.slots);
+			}
+		}
+		throw new Error("struct '"+struct_name+"' not found in declared structs: "+structs);
+	}
 
 	private LinkedList<type>types=new LinkedList<>();
 	void types_add(type t){types.add(t);}
@@ -448,7 +460,7 @@ final class toc extends Writer{
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
 						final stmt st=parse_statement(r,nms);
-						return new set_struct_member(v,struct_member_name,st);
+						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
 				}else{// let
