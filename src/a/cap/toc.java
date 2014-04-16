@@ -56,7 +56,7 @@ final class toc extends Writer{
 			lastchar=ch;
 			charno++;if(ch=='\n'){lineno++;charno=1;}
 			switch(state){
-			case state_in_class_ident:{
+			case state_in_class_name:{
 				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
 				if(!is_char_block_open(ch)){token_add(ch);break;}// look for opening class block
 				final String clsident=token_take_clean();
@@ -89,7 +89,7 @@ final class toc extends Writer{
 				}
 				if(is_char_block_close(ch)){// close class block
 					token_clear();// ignore class block content
-					state_back_to(state_in_class_ident);
+					state_back_to(state_in_class_name);
 					namespace_pop();
 					break;
 				}
@@ -375,7 +375,7 @@ final class toc extends Writer{
 
 
 	private int state;
-	private static final int state_in_class_ident=0;
+	private static final int state_in_class_name=0;
 	private static final int state_in_class_block=1;
 	private static final int state_in_function_arguments=2;
 	private static final int state_find_function_block=3;
