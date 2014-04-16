@@ -2,13 +2,18 @@ file{
   addr=1;
   float size=2;
   to(stream){
-    pls(s,"%p{%d %f}",o,addr,size);
+    pls(s,"%p{%d %.2f}",o,addr,size);
   }
 }
+user{str name="";}
 c{run(){
+  user u;
+  pl("user[%p]{%s}",u,u.name);
+  u.name="joe";
+  pl("user[%p]{%s}",u,u.name);
   file f;
   pl("default addr %d    %d",f.addr,f.addr());
-  f.addr_(200f);
+  f.addr_(123);
   f.to(out);pls(out,"%s","\n");
   f.addr=300;
   f.to(out);pls(out,"%s","\n");
