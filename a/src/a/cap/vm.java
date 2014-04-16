@@ -21,10 +21,10 @@ final class vm{
 			}
 			type type(){return null;}
 			
-			static stmt parse_function_source(Reader r,LinkedList<namespace>ns)throws Throwable{
+			static stmt parse_function_source(Reader r,LinkedList<namespace>nms)throws Throwable{
 				LinkedList<stmt>stms=new LinkedList<>();
 				while(true){
-					final stmt s=toc.parse_statement(r);
+					final stmt s=toc.parse_statement(r,nms);
 					if(s==null)break;//eos
 					stms.add(s);
 //					final int i=r.read();
@@ -32,7 +32,7 @@ final class vm{
 				}
 				return new block(stms);
 			}
-			static stmt[]parse_function_arguments(Reader r)throws Throwable{
+			static stmt[]parse_function_arguments(Reader r,LinkedList<namespace>nms)throws Throwable{
 				ArrayList<stmt>args=new ArrayList<>();
 				int ch=0,prvch=0;
 				final StringBuilder sb=new StringBuilder(128);
@@ -62,7 +62,7 @@ final class vm{
 						// found next argument
 						final String code=sb.toString();
 						final Reader rc=new StringReader(code);
-						final stmt arg=toc.parse_statement(rc);
+						final stmt arg=toc.parse_statement(rc,nms);
 						args.add(arg);
 //						System.out.println(arg);
 						sb.setLength(0);
@@ -73,7 +73,7 @@ final class vm{
 //						System.out.println(sb);
 						final String code=sb.toString();
 						final Reader rc=new StringReader(code);
-						final stmt arg=toc.parse_statement(rc);
+						final stmt arg=toc.parse_statement(rc,nms);
 						args.add(arg);
 						sb.setLength(0);
 						break;
