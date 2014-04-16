@@ -7,6 +7,8 @@ file{
 }
 c{run(){
   file f;
+  f.addr_(200);
+  f.addr=200;
   f.to(out);
   pl("hello world");
   int i=1;
