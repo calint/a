@@ -44,7 +44,7 @@ import a.cap.vm.var;
 
 final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
-	final private LinkedList<type>types=new LinkedList<>();
+//	final private LinkedList<type>types=new LinkedList<>();
 	final @Override public void write(final char[]cbuf,final int off,final int len)throws IOException{
  		int o=off,l=len;
 		char lastchar=0;
@@ -64,10 +64,12 @@ final class toc extends Writer{
 				if(!is_char_block_open(ch)){token_add(ch);break;}// look for opening class block
 				final String clsident=token_take_clean();
 				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'\n  in: "+namespace_stack);
-				classes.push(new struct(clsident));
+				structs.push(new struct(clsident));
 				namespace_push(clsident);
+				if(types_contains(clsident))throw new Error(clsident+" already declared at line xxx");
 				final type t=new type(clsident);
-				types.add(t);
+				types_add(t);
+//				types.add(t);
 				namespace_add_var(new var(t,"o"));
 				state_push(state_in_class_block);
 				break;
@@ -79,7 +81,7 @@ final class toc extends Writer{
 					final struct.slot slt=new struct.slot(ident,true);
 //					final type t=new type(slt.type);//? lookup in declared types
 //					namespace_add_var(new var(t,slt.name));
-					classes.peek().slots.push(slt);
+					structs.peek().slots.push(slt);
 					// assume it returns void or self for chained calls					
 					namespace_push(ident);
 					state_push(state_in_function_arg);
@@ -88,17 +90,19 @@ final class toc extends Writer{
 				if(is_char_statement_close(ch)){// found type+name field i.e. int a•;
 					final String ident=token_take_clean();
 					final struct.slot slt=new struct.slot(ident,false);
-					final type t=new type(slt.type);//? lookup in declared types
+//					final type t=new type(slt.type);//? lookup in declared types
+					final type t=find_type_by_name_or_break(slt.type);
 					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member					
-					classes.peek().slots.push(slt);
+					structs.peek().slots.push(slt);
 					break;
 				}
 				if(is_char_statement_assigment(ch)){// found type+name field=... i.e. int a•=0;
 					final String ident=token_take_clean();
 					final struct.slot slt=new struct.slot(ident,false);
-					final type t=new type(slt.type);//? lookup in declared types
+//					final type t=new type(slt.type);//? lookup in declared types
+					final type t=find_type_by_name_or_break(slt.type);
 					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member										
-					classes.peek().slots.push(slt);
+					structs.peek().slots.push(slt);
 					state_push(state_in_struct_member_default_value);
 					break;
 				}
@@ -118,16 +122,18 @@ final class toc extends Writer{
 						final int i=s.indexOf(' ');
 						if(i==-1){//  i.e.  file{to(stream){}}
 							final String snm=suggest_argument_name(s,namespace_stack);
-							final type t=new type(s);//? lookup in reflection
+//							final type t=new type(s);//? lookup in reflection
+							final type t=find_type_by_name_or_break(s);
 							final var v=new var(t,snm);
-							classes.peek().slots.peek().argsvar.add(v);
+							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
 						}else{//  i.e.  file{to(stream st){}}
 							final String typenm=s.substring(0,i);
 							final String name=s.substring(i+1);
-							final type t=new type(typenm);//? lookup in reflection
+//							final type t=new type(typenm);//? lookup in reflection
+							final type t=find_type_by_name_or_break(typenm);
 							final var v=new var(t,name);
-							classes.peek().slots.peek().argsvar.add(v);
+							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
 						}
 					}
@@ -145,7 +151,7 @@ final class toc extends Writer{
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_statement_close(ch)){// int a=0•;
 					final String def=token_take_trimmed();
-					classes.peek().slots.peek().struct_member_default_value=def;			
+					structs.peek().slots.peek().struct_member_default_value=def;			
 					state_back_to(state_in_class_block);
 					break;
 				}
@@ -176,12 +182,12 @@ final class toc extends Writer{
 					break;
 				}
 				if(is_char_block_close(ch)){
-					final struct.slot sl=classes.peek().slots.peek();
+					final struct.slot sl=structs.peek().slots.peek();
 					token_dec_len_by_1();//? remove the }
 					sl.func_source=token_take();
 					try{
 						final Reader r=new StringReader(sl.func_source);
-						sl.stm=toc.parse_function_source(r,namespace_stack);
+						sl.stm=parse_function_source(r,namespace_stack);
 //						System.err.println(sl.stm);
 					}catch(Throwable t){
 //						t.printStackTrace();
@@ -225,9 +231,24 @@ final class toc extends Writer{
 			default:throw new Error("unknown state "+state);
 			}
 		}
-		Collections.reverse(classes);
+		Collections.reverse(structs);
 	}
-	private static boolean is_char_blank(char ch){return Character.isWhitespace(ch);}
+	
+	private boolean types_contains(String name){
+		for(type t:types){
+			if(t.name().equals(name))
+				return true;
+		}
+		return false;
+	}
+	//	type find_declared_type_by_name(String name){
+//		for(struct s:structs){
+//			if(name.equals(s.name))
+//				return new type(s.name);//? use singleton
+//		}
+//		return null;
+//	}
+//	private static boolean is_char_blank(char ch){return Character.isWhitespace(ch);}
 	private static String suggest_argument_name(String s,LinkedList<namespace>nms){
 		return s.charAt(0)+"";
 	}
@@ -274,8 +295,27 @@ final class toc extends Writer{
 
 	final private LinkedList<namespace>namespace_stack=new LinkedList<>();
 	final private LinkedList<Integer>state_stack=new LinkedList<>();
-	final private LinkedList<struct>classes=new LinkedList<>();
-	final public List<struct>classes(){return classes;}
+	final private LinkedList<struct>structs=new LinkedList<>();
+	final public List<struct>classes(){return structs;}
+
+	private LinkedList<type>types=new LinkedList<>();
+	void types_add(type t){types.add(t);}
+	type find_type_by_name_or_break(String name){
+		for(type t:types){
+			if(name.equals(t.code))
+				return t;
+		}
+		throw new Error("type '"+name+"' not found in "+types);
+	}
+	type find_type_by_name_or_make_new(String name){
+		for(type t:types){
+			if(name.equals(t.code))
+				return t;
+		}
+		final type t=new type(name);
+		types.add(t);
+		return t;
+	}
 
 	
 	// fcall  i.e.   foo f={1,2};f.to(out);    
@@ -283,7 +323,7 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
-	static stmt parse_function_source(Reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt parse_function_source(Reader r,LinkedList<namespace>nms)throws Throwable{
 		LinkedList<stmt>stms=new LinkedList<>();
 		while(true){
 			final stmt s=parse_statement(r,nms);
@@ -294,7 +334,7 @@ final class toc extends Writer{
 		}
 		return new block(stms);
 	}
-	static stmt[]parse_function_arguments(Reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt[]parse_function_arguments(Reader r,LinkedList<namespace>nms)throws Throwable{
 		ArrayList<stmt>args=new ArrayList<>();
 		int ch=0,prvch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -349,7 +389,7 @@ final class toc extends Writer{
 			aargs[i++]=s;
 		return aargs;
 	}
-	static stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
 		// expect call/let/set/const/fcall   loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -369,7 +409,7 @@ final class toc extends Writer{
 					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet\n  in: "+nms);
 					return new fcall(v_ns,func,parse_statement(r,nms));
 				}
-				return new call(funcname,toc.parse_function_arguments(r,nms));
+				return new call(funcname,parse_function_arguments(r,nms));
 			}
 			if(ch==')') // when parsing statements in function arguments
 				break;
@@ -384,7 +424,10 @@ final class toc extends Writer{
 					return new set(v_ns,parse_statement(r,nms));
 				}else{// let
 					final String type=s.substring(0,i);
-					final type t=new type(type);//? get from reflection
+//					final type t=new type(type);//? get from reflection
+					final type t=find_type_by_name_or_make_new(type);
+//					
+//					final type t=new type(type);//? get from reflection
 					final String name=s.substring(i+1);
 
 					final namespace ns=nms.peek();
@@ -415,7 +458,8 @@ final class toc extends Writer{
 		if(ixspc!=-1){//   i.e. file f;
 			final String name=s.substring(ixspc+1);
 			final String type=s.substring(0,ixspc);
-			final type t=new type(type);//? lookup in namespace
+			final type t=find_type_by_name_or_break(type);
+//			final type t=new type(type);//? lookup in namespace
 			final namespace ns=nms.peek();
 			final var v=ns.vars.get(name);
 			if(v!=null)throw new Error("@yyyy:xxx  '"+name+"' already declared in '"+ns+"' as '"+v.type()+"'");

@@ -2,8 +2,6 @@ package a.cap;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.List;
-
-import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
 final class vm{
 		static class stmt{
 			String code;
@@ -135,9 +133,14 @@ final class vm{
 			
 			final static type t=new type("int");
 		};
-		static class type extends stmt{public type(String name){super(name);}};
-		final static class integer extends type{public integer(){super("int");}};
-		final static class floating extends type{public floating(){super("float");}};
+		static class type extends stmt{
+			public type(String name){
+				super(name);
+			}
+			final String name(){return code;}
+		};
+//		final static class integer extends type{public integer(){super("int");}};
+//		final static class floating extends type{public floating(){super("float");}};
 		final static class printf extends call{public printf(stmt...s){super("printf",s);}};
 		final static class iff extends stmt{
 			public iff(stmt condition,stmt if_true){
