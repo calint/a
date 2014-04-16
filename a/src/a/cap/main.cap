@@ -7,9 +7,10 @@ file{
 }
 c{run(){
   file f;
+  pl("default addr %d",f.addr);
   f.addr_(200);
-  pl("%d",f.addr());
-  pl("%d",f.addr);
+  f.addr=300;
+  pl("set addr %d",f.addr());
   f.to(out);
   pl("hello world");
   int i=1;
