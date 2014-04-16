@@ -305,7 +305,7 @@ final class toc extends Writer{
 			if(name.equals(t.code))
 				return t;
 		}
-		throw new Error("type '"+name+"' not found in "+types);
+		throw new Error("type '"+name+"' not found in declared types "+types);
 	}
 	type find_type_by_name_or_make_new(String name){
 		for(type t:types){
@@ -406,7 +406,7 @@ final class toc extends Writer{
 					final String func=funcname.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(var);
-					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet\n  in: "+nms);
+					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet\n  in: "+namespaces_and_declared_types(nms));
 					return new fcall(v_ns,func,parse_statement(r,nms));
 				}
 				return new call(funcname,parse_function_arguments(r,nms));
@@ -486,7 +486,14 @@ final class toc extends Writer{
 	private static String namespaces_and_declared_types(LinkedList<namespace>nms){
 		final StringBuilder sb=new StringBuilder(256);
 		for(namespace ns:nms){
-			sb.append(ns.name+ns.vars).append("\n");
+			sb.append(ns.name).append("{");
+			if(!ns.vars.isEmpty()){
+				for(var v:ns.vars.values()){
+					sb.append(v.type()).append(" ").append(v.code).append(',');
+				}
+				sb.setLength(sb.length()-1);
+			}
+			sb.append("} ");
 		}
 		return sb.toString();
 	}
