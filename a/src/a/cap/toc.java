@@ -39,6 +39,7 @@ import a.cap.vm.set;
 import a.cap.vm.set_struct_member;
 import a.cap.vm.stmt;
 import a.cap.vm.str;
+import a.cap.vm.struct_member;
 import a.cap.vm.type;
 import a.cap.vm.value;
 import a.cap.vm.var;
@@ -298,7 +299,7 @@ final class toc extends Writer{
 	final private LinkedList<Integer>state_stack=new LinkedList<>();
 	final private LinkedList<struct>structs=new LinkedList<>();
 	final public List<struct>classes(){return structs;}
-	type find_struct_member_or_break(String struct_name,String member_name){
+	type find_struct_member_type_or_break(String struct_name,String member_name){
 		for(struct s:structs){
 			if(s.name.equals(struct_name)){
 				for(struct.slot sl:s.slots){
@@ -469,7 +470,7 @@ final class toc extends Writer{
 					final String name=s.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(name);//? look in namespaces stack
-					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already declared\n  in: "+nms);
+					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already declared\n  in: "+namespaces_and_declared_types_to_string(nms));
 					final var v=new var(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
 					return new let(t,v,parse_statement(r,nms));
@@ -526,7 +527,9 @@ final class toc extends Writer{
 		final var v=find_var_in_namespace_stack(varnm,nms);
 		if(v==null)throw new Error();
 		final String struc_member=s.substring(i+1);
-		return new stmt(v+"."+struc_member);
+		final type t=find_struct_member_type_or_break(v.type().name(),struc_member);
+		
+		return new struct_member(v,struc_member,this);
 	}
 	private static String namespaces_and_declared_types_to_string(LinkedList<namespace>nms){
 		final StringBuilder sb=new StringBuilder(256);

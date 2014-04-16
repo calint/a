@@ -58,12 +58,20 @@ final class vm{
 		final static class set_struct_member extends stmt{
 			public set_struct_member(var lh,String struct_member_name,stmt rh,toc tc){
 				super(lh+"."+struct_member_name+"="+rh);
-				final type t=tc.find_struct_member_or_break(lh.type().toString(),struct_member_name);
+				final type t=tc.find_struct_member_type_or_break(lh.type().toString(),struct_member_name);
 				if(!t.equals(rh.type()))
 					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh+"."+struct_member_name+"' is '"+t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+t+"("+rh.code+")'");
 			}
 		};
 		static class value extends stmt{public value(String stmt){super(stmt);}};
+		final static class struct_member extends value{
+			private type t;
+			public struct_member(var v,String struct_member_name,toc tc){
+				super(v+"."+struct_member_name);
+				t=tc.find_struct_member_type_or_break(v.type().name(),struct_member_name);
+			}
+			@Override type type(){return t;}
+		};
 		static class var extends stmt{
 			private type t;
 			private boolean sm;
