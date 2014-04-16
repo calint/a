@@ -137,9 +137,9 @@ final class toc extends Writer{
 					try{
 						final Reader r=new StringReader(sl.func_source);
 						sl.stm=toc.parse_function_source(r,namespace_stack);
-						System.err.println(sl.stm);
+//						System.err.println(sl.stm);
 					}catch(Throwable t){
-						t.printStackTrace();
+//						t.printStackTrace();
 						throw new Error(t);
 					}
 					state_back_to(state_in_class_block);
