@@ -8,6 +8,8 @@ file{
 c{run(){
   file f;
   f.addr_(200);
+  pl("%d",f.addr());
+  pl("%d",f.addr);
   f.addr=200;
   f.to(out);
   pl("hello world");
