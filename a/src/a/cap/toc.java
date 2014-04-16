@@ -280,7 +280,7 @@ final class toc extends Writer{
 					new dec(a),
 					new decpre(a),
 					new printf(s1,a),
-					new ife(new eq(a,i8),new block(brk),new block(cont)),
+					new ife(new eq(a,i8),brk,cont),
 					new iff(new eq(a,i8),new block(new set(a,i5),brk))
 		)));
 		stms.add(new set(a,new add(a,i5)));
