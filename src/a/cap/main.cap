@@ -1,8 +1,9 @@
 c{run(){
+    pl("hello world");
     int a=1;
     a=2;
     float f=2.3f;
     float f2=3.3f;
-    str s="hello world";
-    pl("hello world  %f   %f   %s",f,f2,s);
+    str s="hellos";
+    pl("%f   %f   %s",f,f2,s);
 }}

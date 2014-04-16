@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -135,7 +136,7 @@ final class toc extends Writer{
 					sl.func_source=token_take();
 					try{
 						final Reader r=new StringReader(sl.func_source);
-						sl.stm=block.parse_function_source(r,namespace_stack);
+						sl.stm=toc.parse_function_source(r,namespace_stack);
 						System.err.println(sl.stm);
 					}catch(Throwable t){
 						t.printStackTrace();
@@ -231,6 +232,72 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
+	static stmt parse_function_source(Reader r,LinkedList<namespace>nms)throws Throwable{
+		LinkedList<stmt>stms=new LinkedList<>();
+		while(true){
+			final stmt s=parse_statement(r,nms);
+			if(s==null)break;//eos
+			stms.add(s);
+//					final int i=r.read();
+//					if(i!=';')throw new Error("@ yyyy:xxx  expected end of statement ';' but got '"+(char)i+"' (0x"+Integer.toHexString(i)+")");
+		}
+		return new block(stms);
+	}
+	static stmt[]parse_function_arguments(Reader r,LinkedList<namespace>nms)throws Throwable{
+		ArrayList<stmt>args=new ArrayList<>();
+		int ch=0,prvch=0;
+		final StringBuilder sb=new StringBuilder(128);
+		boolean in_string=false;
+		while(true){
+			prvch=ch;
+			ch=r.read();
+			if(ch==-1)break;
+			if(ch=='"'){
+				if(in_string){
+					if(prvch=='\\'){// escaped  i.e.   "%s  \•" quote \"   "
+						
+					}else{
+						in_string=false;
+						sb.append((char)ch);
+						continue;
+					}
+				}else{
+					in_string=true;
+				}
+			}
+			if(in_string){
+				sb.append((char)ch);
+				continue;
+			}
+			if(ch==','){
+				// found next argument
+				final String code=sb.toString();
+				final Reader rc=new StringReader(code);
+				final stmt arg=parse_statement(rc,nms);
+				args.add(arg);
+//						System.out.println(arg);
+				sb.setLength(0);
+				continue;
+			}
+			if(ch==')'){
+				// found end of arguments
+//						System.out.println(sb);
+				final String code=sb.toString();
+				final Reader rc=new StringReader(code);
+				final stmt arg=parse_statement(rc,nms);
+				args.add(arg);
+				sb.setLength(0);
+				break;
+			}
+			sb.append((char)ch);
+//					if(sb.length()==0&&Character.isWhitespace(ch))continue;
+		}
+		final stmt[]aargs=new stmt[args.size()];
+		int i=0;
+		for(stmt s:args)
+			aargs[i++]=s;
+		return aargs;
+	}
 	static stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
 		// expect call/let/set/const/fcall   loop/ret
 		int ch=0;
@@ -251,7 +318,7 @@ final class toc extends Writer{
 					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet\n  in: "+nms);
 					return new fcall(v_ns,func,parse_statement(r,nms));
 				}
-				return new call(funcname,stmt.parse_function_arguments(r,nms));
+				return new call(funcname,toc.parse_function_arguments(r,nms));
 			}
 			if(ch==')') // when parsing statements in function arguments
 				break;
@@ -278,7 +345,12 @@ final class toc extends Writer{
 					return new let(t,v,parse_statement(r,nms));
 				}
 			}
-			if(ch==';')break;
+			if(ch==';'){
+				if(sb.length()==0){//  stray ';'   i.e   pl("hello");;
+					continue;
+				}
+				break;
+			}
 			sb.append((char)ch);
 		}
 		if(sb.length()==0)return null;//eos
