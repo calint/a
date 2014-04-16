@@ -1,4 +1,4 @@
 int main(int argc,char*argv[]){
-    cap_run(null);
+    c_run(null);
     return 0;
 }
