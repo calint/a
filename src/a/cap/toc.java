@@ -435,23 +435,28 @@ final class toc extends Writer{
 				int i=s.lastIndexOf(' '); // int a=•1;
 				if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
 				if(i==-1){// set
-					final namespace ns=nms.peek();
-					final var v_ns=ns.vars.get(s);
-					if(v_ns==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
-					return new set(v_ns,parse_statement(r,nms));
+					final int i1=s.lastIndexOf('.');
+					if(i1==-1){// a=2;
+						final namespace ns=nms.peek();
+						final var v_ns=ns.vars.get(s);
+						if(v_ns==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
+						return new set(v_ns,parse_statement(r,nms));
+					}else{// f.a=2;
+						final String varnm=s.substring(0,i1);
+						final String struct_member_name=s.substring(i1+1);
+						final var v=find_var_in_namespace_stack(varnm,nms);
+						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
+						final stmt st=parse_statement(r,nms);
+						return new stmt(v.code+"."+struct_member_name+"="+st);
+					}
 				}else{// let
 					final String type=s.substring(0,i);
-//					final type t=new type(type);//? get from reflection
 					final type t=find_type_by_name_or_make_new(type);
-//					
-//					final type t=new type(type);//? get from reflection
 					final String name=s.substring(i+1);
-
 					final namespace ns=nms.peek();
-					final var v_ns=ns.vars.get(name);
+					final var v_ns=ns.vars.get(name);//? look in namespaces stack
 					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already declared\n  in: "+nms);
-					
-					final var v=new var(t,name);//? add line number for easier error message
+					final var v=new var(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
 					return new let(t,v,parse_statement(r,nms));
 				}
