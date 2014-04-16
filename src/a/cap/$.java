@@ -53,11 +53,17 @@ public class $ extends a {
 		final Writer out=csrc.writer(false);
 		out.write("// "+new Date()+"\n");
 		final cap cc=new cap();
-		cc.compile(in,out);
-		out.close();
-		c.from(csrc);
-		y.xu(sts,"ok");
-		y.xu(c);
+		try{
+			cc.compile(in,out);
+			y.xu(sts,"ok");
+		}catch(Throwable t){
+			y.xu(sts,t.toString());
+			throw t;
+		}finally{
+			out.close();
+			c.from(csrc);
+			y.xu(c);
+		}
 	}
 	public static String cc="gcc";
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{

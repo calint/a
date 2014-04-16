@@ -374,10 +374,10 @@ final class toc extends Writer{
 				// found end of arguments
 //						System.out.println(sb);
 				final String code=sb.toString();
+				sb.setLength(0);
 				final Reader rc=new StringReader(code);
 				final stmt arg=parse_statement(rc,nms);
 				args.add(arg);
-				sb.setLength(0);
 				break;
 			}
 			sb.append((char)ch);
@@ -395,6 +395,7 @@ final class toc extends Writer{
 		final StringBuilder sb=new StringBuilder(128);
 		while(true){
 			ch=r.read();
+			if(ch==')')continue;//? buggy
 			if(ch==-1)break;
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(ch=='('){// call
@@ -406,14 +407,26 @@ final class toc extends Writer{
 					final String func=funcname.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(var);
-					if(v_ns==null)throw new Error("'"+var+"' not  in "+namespaces_and_declared_types(nms));
+					if(v_ns==null)throw new Error("'"+var+"' not  in "+namespaces_and_declared_types_to_string(nms));
 					final stmt s=parse_statement(r,nms);
+					final stmt ret;
 					if(s!=null)
-						return new fcall(v_ns,func,s);
+						ret=new fcall(v_ns,func,s);
 					else
-						return new fcall(v_ns,func);						
+						ret=new fcall(v_ns,func);
+					if(ret instanceof value){
+						// bar(a,15)•
+					}else{
+						// bar(a,foo(a,b)•)
+//						final int ch1=r.read();
+//						if(ch1!=')')
+//							throw new Error(" expected ')' but found '"+(char)ch1+"'");
+						
+					}
+					return ret;
 				}
-				return new call(funcname,parse_function_arguments(r,nms));
+				final stmt[]args=parse_function_arguments(r,nms);
+				return new call(funcname,args);
 			}
 			if(ch==')') // when parsing statements in function arguments
 				break;
@@ -451,7 +464,11 @@ final class toc extends Writer{
 			}
 			sb.append((char)ch);
 		}
-		if(sb.length()==0)return null;//eos
+		if(sb.length()==0){
+			if(ch==-1)
+				return null;
+			throw new Error();
+		}
 		final String s=sb.toString();
 		if(s.startsWith("\"")&&s.endsWith("\"")){// string
 			final String t=s.substring(1,s.length()-1);
@@ -480,14 +497,19 @@ final class toc extends Writer{
 			}
 			return new inti(Integer.parseInt(s));
 		}
-		// check if built in variables
-//		if("out".equals(s))return new var(new type("stream"),"out");//? get final static
-//		if("o".equals(s))return new var(null,"o");//? infer type of o
-		final var v=find_var_in_namespace_stack(s,nms);
-		if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+namespaces_and_declared_types(nms));
-		return v;
+		final int i=s.lastIndexOf('.');
+		if(i==-1){// does not refer to struct member
+			final var v=find_var_in_namespace_stack(s,nms);
+			if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+namespaces_and_declared_types_to_string(nms));
+			return v;
+		}
+		final String varnm=s.substring(0,i);
+		final var v=find_var_in_namespace_stack(varnm,nms);
+		if(v==null)throw new Error();
+		final String struc_member=s.substring(i+1);
+		return new stmt(v+"."+struc_member);
 	}
-	private static String namespaces_and_declared_types(LinkedList<namespace>nms){
+	private static String namespaces_and_declared_types_to_string(LinkedList<namespace>nms){
 		final StringBuilder sb=new StringBuilder(256);
 		for(namespace ns:nms){
 			sb.append(ns.name).append("{");
