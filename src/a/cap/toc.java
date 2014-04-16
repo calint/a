@@ -247,8 +247,8 @@ final class toc extends Writer{
 //			final public boolean is_pointer(){return ispointer;}
 		}
 	}
-	final static ArrayList<stmt>stms=new ArrayList<>();
 	public static void main(String[] args){
+		//final ArrayList<stmt>stms=new ArrayList<>();
 		final type integer=new type("int");
 		final type floating=new type("float");
 		final type file=new type("file");
@@ -267,12 +267,16 @@ final class toc extends Writer{
 		final value i5=new inti(5);
 		final value s1=new str("a=%d");
 		
-		stms.add(new let(integer,a,i3));
-		stms.add(new set(a,i4));
-		stms.add(new set(b,a));
+		final stmt prog=new block(
+				new set(a,i4),
+				new ife(new eq(a,i8),brk,cont),
+				new iff(new eq(a,i8),new block(new set(a,i5),brk)),
+				new let(integer,a,i3),
+				new set(a,i4),
+				new set(b,a),
 //		stms.add(new let(file,f));// error uninitialized
 //		stms.add(new set(a,e));// error
-		stms.add(new loop(new block(
+				new loop(new block(
 					new incn(a,i3),
 					new decn(a,i1),
 					new inc(a),
@@ -282,26 +286,30 @@ final class toc extends Writer{
 					new printf(s1,a),
 					new ife(new eq(a,i8),brk,cont),
 					new iff(new eq(a,i8),new block(new set(a,i5),brk))
-		)));
-		stms.add(new set(a,new add(a,i5)));
+				)),
+				new set(a,new add(a,i5)),
 //		stms.add(new set(a,new add(a,e)));//error
-		stms.add(new printf(s1,a));
-		stms.add(new fcall(f,"to",d));
-		stms.add(
+				new printf(s1,a),
+				new fcall(f,"to",d),
 				new ife(new eq(a,i8),new block(new decpre(a)),
 				new ife(new eq(a,i8),new block(brk),
 				new block(cont)
-				)));
-		stms.add(new ret(a));
-		stms.add(new loop(new block(
-				new set(a,new add(a,i1))
+				)),
+				new ret(a),
+				new loop(new block(new set(a,new add(a,i1))
 		)));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
-		for(stmt s:stms){
-			s.to(pw);
-			pw.println(s.end_delim());
-		}
+//		for(stmt s:stms){
+//			s.to(pw);
+//			pw.println(s.end_delim());
+//		}
+//		
+//		final stmt prog=new block(
+//				new let(integer,a,i3),
+//				new set(a,i4)
+//			);
+		pw.println(prog);
 		pw.close();
 //		System.out.println(statements);
 	}
