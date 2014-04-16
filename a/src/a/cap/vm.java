@@ -117,7 +117,7 @@ final class vm{
 		};
 		final static class ife extends stmt{
 			public ife(stmt condition,stmt if_true,stmt els){
-				super("if("+condition+")"+if_true+"else "+els);
+				super("if("+condition+")"+if_true+if_true.end_delim()+"else "+els+els.end_delim());
 			}
 			@Override String end_delim(){return "";}
 		};
