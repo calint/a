@@ -1,4 +1,4 @@
-cap{run(){
+c{run(){
     int a=1;
     a=2;
     float f=2.3f;
