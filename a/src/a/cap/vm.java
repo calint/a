@@ -1,6 +1,7 @@
 package a.cap;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,13 +24,98 @@ final class vm{
 				// expect let/set/loop/call/ret/const until end of stream
 				LinkedList<stmt>stms=new LinkedList<>();
 				int ch=0;
+				final StringBuilder sb=new StringBuilder(128);
 				while(true){
-					ch=r.read();
-					if(ch==-1)break;
-					System.out.print((char)ch);
+					final stmt s=parse_statement(r);
+					if(s!=null){
+						stms.add(s);
+						continue;
+					}
+					break;
+//					
+//					ch=r.read();
+//					if(ch==-1)break;
+//					if(sb.length()==0&&Character.isWhitespace(ch))continue;
+//					
+//					if(ch=='('){// call
+//						final String funcname=sb.toString();
+//						stms.add(new call(funcname,parse_statement(r)));
+//						continue;
+//					}
+//					if(ch=='='){// let or set
+//						continue;
+//					}
+//					
+//					sb.append((char)ch);
+//					System.out.print((char)ch);
 				}
 				System.out.println();
 				return new block(stms);
+			}
+			static stmt parse_statement(Reader r)throws Throwable{
+				int ch=0;
+				final StringBuilder sb=new StringBuilder(128);
+				while(true){
+					ch=r.read();
+					if(ch==-1)break;
+					if(sb.length()==0&&Character.isWhitespace(ch))continue;
+					
+					if(ch=='('){// call
+						final String funcname=sb.toString();
+						return new call(funcname,parse_function_arguments(r));
+//						continue;
+					}
+					if(ch=='='){// let or set
+						continue;
+					}
+					
+					sb.append((char)ch);
+					System.out.print((char)ch);
+				}
+				return null;
+			}
+			static stmt[]parse_function_arguments(Reader r)throws Throwable{
+				ArrayList<stmt>args=new ArrayList<>();
+				int ch=0,prvch=0;
+				final StringBuilder sb=new StringBuilder(128);
+				boolean in_string=false;
+				while(true){
+					prvch=ch;
+					ch=r.read();
+					if(ch==-1)break;
+					if(ch=='"'){
+						if(in_string){
+							if(prvch=='\\'){// escaped  i.e.   "%s  \•" quote \"   "
+								
+							}else{
+								in_string=false;
+								sb.append((char)ch);
+								continue;
+							}
+						}else{
+							in_string=true;
+						}
+					}
+					if(in_string){
+						sb.append((char)ch);
+						continue;
+					}
+					if(ch==','){
+						// found next argument
+						System.out.println(sb);
+						sb.setLength(0);
+						continue;
+					}
+					if(ch==')'){
+						// found end of arguments
+						System.out.println(sb);
+						sb.setLength(0);
+						break;
+					}
+					sb.append((char)ch);
+//					if(sb.length()==0&&Character.isWhitespace(ch))continue;
+				}
+				return new stmt[0];// no args
 			}
 		};
 		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
