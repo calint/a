@@ -1,4 +1,8 @@
+file{addr=1;size=2;}
 c{run(){
+    file f;
+    file f{0xa0000,1024*64}
+    file f{addr=0xa0000;size=1024*64}
     pl("hello world");
     int i=1;
     i=2;
