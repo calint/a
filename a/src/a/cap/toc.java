@@ -13,6 +13,7 @@ import java.util.List;
 import a.cap.vm.add;
 import a.cap.vm.block;
 import a.cap.vm.brk;
+import a.cap.vm.call;
 import a.cap.vm.cont;
 import a.cap.vm.dec;
 import a.cap.vm.decn;
@@ -222,6 +223,64 @@ final class toc extends Writer{
 	final private LinkedList<struct>classes=new LinkedList<>();
 	final public List<struct>classes(){return classes;}
 
+	
+	// fcall  i.e.   foo f={1,2};f.to(out);    
+	// alt syntaxes:
+	//  foo f={1,2}.to(out);
+	//  foo{1,2}.to(out);
+
+	static stmt parse_statement(Reader r)throws Throwable{
+		// expect call/let/set/const/fcall   loop/ret
+		int ch=0;
+		final StringBuilder sb=new StringBuilder(128);
+		while(true){
+			ch=r.read();
+			if(ch==-1)break;
+			if(sb.length()==0&&Character.isWhitespace(ch))continue;
+			if(ch=='('){// call
+				final String funcname=sb.toString();
+				sb.setLength(0);
+				final int i=funcname.indexOf('.');
+				if(i!=-1){// i.e.   f.to(out);
+					final String var=funcname.substring(0,i);
+					final String func=funcname.substring(i+1);
+					final var v=new var(var);//? get from namespace to get declared type
+					return new fcall(v,func,parse_statement(r));
+				}
+				return new call(funcname,stmt.parse_function_arguments(r));
+			}
+			if(ch==')') // when parsing statements in function arguments
+				break;
+			if(ch=='='){// let or set
+				final String s=sb.toString();
+				int i=s.lastIndexOf(' '); // int a=•1;
+				if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
+				if(i==-1){// set
+					final var v=new var(s);//? get from namespace
+					return new set(v,parse_statement(r));
+				}else{// let
+					final String type=s.substring(0,i);
+					final type t=new type(type);//? get from reflection
+					final String name=s.substring(i+1);
+					final var v=new var(t,name);//? put in namespace
+					return new let(t,v,parse_statement(r));
+				}
+			}
+			if(ch==';')break;
+			sb.append((char)ch);
+		}
+		if(sb.length()==0)return null;//eos
+		final String s=sb.toString();
+		if(s.startsWith("\"")&&s.endsWith("\"")){// string
+			final String t=s.substring(1,s.length()-1);
+			return new str(t);
+		}
+		// const number or variable
+		try{return new inti(Integer.parseInt(s));}
+		catch(Throwable ok){return new var(s);}
+	}
+
+
 	private int state;
 	private static final int state_in_class_ident=0;
 	private static final int state_in_class_block=1;
@@ -256,9 +315,9 @@ final class toc extends Writer{
 		public struct(String name){this.name=name;}//autoset
 		@Override public String toString(){return name+"{"+slots+"}";}
 		final static class slot{
-			String tn;// string from source  i.e. 'int i' 'string s'
-			String name;// decoded from tn  i.e.  'i'     's'
-			String type;//                        'int'   'string'
+			String tn="";// string from source  i.e. 'int i' 'string s'
+			String name="";// decoded from tn  i.e.  'i'     's'
+			String type="";//                        'int'   'string'
 			String args="";//when field this is default value
 			String func_source="";//function source
 			stmt stm;
