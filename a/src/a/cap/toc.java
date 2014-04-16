@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,9 +38,17 @@ final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
 	final @Override public void write(final char[]cbuf,final int off,final int len)throws IOException{
 		int o=off,l=len;
+		char lastchar=0;
 		while(true){
 			if(l==0)break;
 			final char ch=cbuf[o];o++;l--;
+			if(state!=state_in_line_comment){
+				if(lastchar=='/'&&ch=='/'){
+					state_push(state_in_line_comment);
+				}
+			}
+			lastchar=ch;
+			charno++;if(ch=='\n'){lineno++;charno=1;}
 			switch(state){
 			case state_class_ident:{
 				if(token.length()==0&&is_white_space(ch))break;// trims leading white space
@@ -158,12 +165,20 @@ final class toc extends Writer{
 				}
 				break;
 			}
+			case state_in_line_comment:{//• comment
+				token.append(ch);
+				if(is_char_is_newline(ch)){
+					state_pop();
+					break;
+				}
+				break;
+			}
 			default:throw new Error("unknown state "+state);
 			}
-			charno++;if(ch=='\n'){lineno++;charno=1;}
 		}
 		Collections.reverse(classes);
 	}
+	private boolean is_char_is_newline(char ch){return ch=='\n';}
 	private boolean is_char_string_close(char ch) {return ch=='\"';}
 	private boolean is_char_string_open(char ch){return ch=='\"';}
 	private boolean is_char_statement_assigment(char ch){return ch=='=';}
@@ -181,7 +196,7 @@ final class toc extends Writer{
 	
 	
 //	PrintWriter out;
-	private int lineno=1,charno=1;
+	private int lineno=1,charno=0;
 	private StringBuilder token=new StringBuilder(32);
 
 	final private LinkedList<namespace>namespace_stack=new LinkedList<>();
@@ -198,6 +213,7 @@ final class toc extends Writer{
 	private static final int state_struct_member_default_value=5;
 	private static final int state_in_string=6;
 	private static final int state_in_code_block=7;
+	private static final int state_in_line_comment=8;
 	
 	private static boolean is_char_block_open(char ch){return ch=='{';}
 	private static boolean is_char_arguments_open(char ch){return ch=='(';}
