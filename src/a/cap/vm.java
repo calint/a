@@ -68,7 +68,7 @@ final class vm{
 		final static class str extends value{public str(String v){super("\""+v+"\"");}};
 		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
 		final static class loop extends stmt{
-			public loop(block b){super("while(true)"+b);}
+			public loop(stmt b){super("while(true)"+b);}
 			public loop(Reader r){super("while(true)"+new block(r));}
 			@Override String end_delim(){return "";}
 			
