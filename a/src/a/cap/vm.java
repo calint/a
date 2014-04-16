@@ -1,12 +1,7 @@
 package a.cap;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import a.cap.toc.namespace;
 final class vm{
 		static class stmt{
 			String code;
@@ -21,73 +16,6 @@ final class vm{
 				return obj.toString().equals(code);
 			}
 			type type(){return null;}
-			
-			static stmt parse_function_source(Reader r,LinkedList<namespace>nms)throws Throwable{
-				LinkedList<stmt>stms=new LinkedList<>();
-				while(true){
-					final stmt s=toc.parse_statement(r,nms);
-					if(s==null)break;//eos
-					stms.add(s);
-//					final int i=r.read();
-//					if(i!=';')throw new Error("@ yyyy:xxx  expected end of statement ';' but got '"+(char)i+"' (0x"+Integer.toHexString(i)+")");
-				}
-				return new block(stms);
-			}
-			static stmt[]parse_function_arguments(Reader r,LinkedList<namespace>nms)throws Throwable{
-				ArrayList<stmt>args=new ArrayList<>();
-				int ch=0,prvch=0;
-				final StringBuilder sb=new StringBuilder(128);
-				boolean in_string=false;
-				while(true){
-					prvch=ch;
-					ch=r.read();
-					if(ch==-1)break;
-					if(ch=='"'){
-						if(in_string){
-							if(prvch=='\\'){// escaped  i.e.   "%s  \•" quote \"   "
-								
-							}else{
-								in_string=false;
-								sb.append((char)ch);
-								continue;
-							}
-						}else{
-							in_string=true;
-						}
-					}
-					if(in_string){
-						sb.append((char)ch);
-						continue;
-					}
-					if(ch==','){
-						// found next argument
-						final String code=sb.toString();
-						final Reader rc=new StringReader(code);
-						final stmt arg=toc.parse_statement(rc,nms);
-						args.add(arg);
-//						System.out.println(arg);
-						sb.setLength(0);
-						continue;
-					}
-					if(ch==')'){
-						// found end of arguments
-//						System.out.println(sb);
-						final String code=sb.toString();
-						final Reader rc=new StringReader(code);
-						final stmt arg=toc.parse_statement(rc,nms);
-						args.add(arg);
-						sb.setLength(0);
-						break;
-					}
-					sb.append((char)ch);
-//					if(sb.length()==0&&Character.isWhitespace(ch))continue;
-				}
-				final stmt[]aargs=new stmt[args.size()];
-				int i=0;
-				for(stmt s:args)
-					aargs[i++]=s;
-				return aargs;
-			}
 		};
 		static class call extends stmt{
 			public call(String funcname,stmt...args){
