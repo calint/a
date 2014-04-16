@@ -24,53 +24,13 @@ final class vm{
 			static stmt parse_function_source(Reader r,LinkedList<namespace>ns)throws Throwable{
 				LinkedList<stmt>stms=new LinkedList<>();
 				while(true){
-					final stmt s=parse_statement(r);
+					final stmt s=toc.parse_statement(r);
 					if(s==null)break;//eos
 					stms.add(s);
 //					final int i=r.read();
 //					if(i!=';')throw new Error("@ yyyy:xxx  expected end of statement ';' but got '"+(char)i+"' (0x"+Integer.toHexString(i)+")");
 				}
 				return new block(stms);
-			}
-			static stmt parse_statement(Reader r)throws Throwable{
-				// expect call/let/set/const/loop/ret
-				int ch=0;
-				final StringBuilder sb=new StringBuilder(128);
-				while(true){
-					ch=r.read();
-					if(ch==-1)break;
-					if(sb.length()==0&&Character.isWhitespace(ch))continue;
-					if(ch=='('){// call
-						final String funcname=sb.toString();
-						return new call(funcname,parse_function_arguments(r));
-					}
-					if(ch=='='){// let or set
-						final String s=sb.toString();
-						int i=s.lastIndexOf(' '); // int a=•1;
-						if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
-						if(i==-1){// set
-							final var v=new var(s);//? get from namespace
-							return new set(v,parse_statement(r));
-						}else{// let
-							final String type=s.substring(0,i);
-							final type t=new type(type);//? get from reflection
-							final String name=s.substring(i+1);
-							final var v=new var(t,name);//? put in namespace
-							return new let(t,v,parse_statement(r));
-						}
-					}
-					if(ch==';')break;
-					sb.append((char)ch);
-				}
-				if(sb.length()==0)return null;//eos
-				final String s=sb.toString();
-				if(s.startsWith("\"")&&s.endsWith("\"")){// string
-					final String t=s.substring(1,s.length()-1);
-					return new str(t);
-				}
-				// const number or variable
-				try{return new inti(Integer.parseInt(s));}
-				catch(Throwable ok){return new var(s);}
 			}
 			static stmt[]parse_function_arguments(Reader r)throws Throwable{
 				ArrayList<stmt>args=new ArrayList<>();
@@ -102,7 +62,7 @@ final class vm{
 						// found next argument
 						final String code=sb.toString();
 						final Reader rc=new StringReader(code);
-						final stmt arg=parse_statement(rc);
+						final stmt arg=toc.parse_statement(rc);
 						args.add(arg);
 //						System.out.println(arg);
 						sb.setLength(0);
@@ -113,7 +73,7 @@ final class vm{
 //						System.out.println(sb);
 						final String code=sb.toString();
 						final Reader rc=new StringReader(code);
-						final stmt arg=parse_statement(rc);
+						final stmt arg=toc.parse_statement(rc);
 						args.add(arg);
 						sb.setLength(0);
 						break;
@@ -128,10 +88,25 @@ final class vm{
 				return aargs;
 			}
 		};
-		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
+		static class call extends stmt{
+			public call(String funcname,stmt...args){
+				super(funcname+"("+args_to_string(args)+")");
+			}
+			public call(String funcname,var o,stmt...args){//fcall
+				super(funcname+"("+args_to_string(o,args)+")");
+			}
+		};
 		private static String args_to_string(stmt...a){
 			if(a.length==0)return"";
 			final StringBuilder sb=new StringBuilder();
+			for(stmt s:a)sb.append(s.toString()).append(",");
+			sb.setLength(sb.length()-1);
+			return sb.toString();
+		}
+		private static String args_to_string(var o,stmt...a){// call to function with object context
+			if(a.length==0)return"";
+			final StringBuilder sb=new StringBuilder();
+			sb.append("&").append(o.toString()).append(",");
 			for(stmt s:a)sb.append(s.toString()).append(",");
 			sb.setLength(sb.length()-1);
 			return sb.toString();
@@ -257,6 +232,10 @@ final class vm{
 		final static class incpre extends stmt{public incpre(var v){super("++"+v);}}
 		final static class dec extends stmt{public dec(var v){super(v+"--");}}
 		final static class decpre extends stmt{public decpre(var v){super("--"+v);}}
-		final static class fcall extends call{public fcall(var o,String funcname,stmt...args){super(o+"."+funcname,args);}}
+		final static class fcall extends call{
+			public fcall(var o,String funcname,stmt...args){
+				super(o.t+"_"+funcname,o,args);
+			}
+		}
 //		final static class t_null extends type{public t_null(){super("null");}};
 	}
