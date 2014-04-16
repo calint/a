@@ -268,6 +268,10 @@ final class toc extends Writer{
 		final value s1=new str("a=%d");
 		
 		final stmt prog=new block(
+				new ife(new eq(a,i8),new block(new decpre(a)),
+				new ife(new eq(a,i8),brk,
+				cont
+				)),
 				new set(a,i4),
 				new ife(new eq(a,i8),brk,cont),
 				new iff(new eq(a,i8),new block(new set(a,i5),brk)),
@@ -292,12 +296,12 @@ final class toc extends Writer{
 				new printf(s1,a),
 				new fcall(f,"to",d),
 				new ife(new eq(a,i8),new block(new decpre(a)),
-				new ife(new eq(a,i8),new block(brk),
+				new ife(new eq(a,i8),brk,
 				new block(cont)
 				)),
 				new ret(a),
-				new loop(new block(new set(a,new add(a,i1))
-		)));
+				new loop(new set(a,new add(a,i1))
+		));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
 		pw.println(prog);
