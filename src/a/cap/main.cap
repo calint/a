@@ -6,13 +6,13 @@ file{
   }
 }
 c{run(){
-    file f;
+  file f;
   f.to();
-    pl("hello world");
-    int i=1;
-    i=2;
-    float f1=2.3f;
-    float f2=3.3f;
-    str s="hellos";
-    pl("%s    %f   %f",s,f1,f2);
+  pl("hello world");
+  int i=1;
+  i=2;
+  float f1=2.3f;
+  float f2=3.3f;
+  str s="hellos";
+  pl("%s    %f   %f",s,f1,f2);
 }}
