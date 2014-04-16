@@ -22,8 +22,13 @@ final class vm{
 			static stmt parse_function_source(Reader r,LinkedList<namespace>ns)throws Throwable{
 				// expect let/set/loop/call/ret/const until end of stream
 				LinkedList<stmt>stms=new LinkedList<>();
-				
-				
+				int ch=0;
+				while(true){
+					ch=r.read();
+					if(ch==-1)break;
+					System.out.print((char)ch);
+				}
+				System.out.println();
 				return new block(stms);
 			}
 		};

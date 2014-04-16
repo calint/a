@@ -68,7 +68,7 @@ final class toc extends Writer{
 					final String ident=token_take_clean();
 					namespace_enter(ident);
 					classes.peek().slots.push(new struct.slot(ident,true));
-					// assume it returns void or itself for chained calls					
+					// assume it returns void or self for chained calls					
 					state_push(state_function_arguments);
 					break;
 				}
@@ -77,7 +77,7 @@ final class toc extends Writer{
 					classes.peek().slots.push(new struct.slot(ident,false));
 					break;
 				}
-				if(is_char_statement_assigment(ch)){// found type+name field i.e. int a•=0;
+				if(is_char_statement_assigment(ch)){// found type+name field=... i.e. int a•=0;
 					final String ident=token_take_clean();
 					classes.peek().slots.push(new struct.slot(ident,false));
 					state_push(state_struct_member_default_value);
