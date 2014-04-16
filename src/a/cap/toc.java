@@ -65,7 +65,7 @@ final class toc extends Writer{
 				final String clsident=token_take_clean();
 				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'\n  in: "+namespace_stack);
 				classes.push(new struct(clsident));
-				namespace_enter(clsident);
+				namespace_push(clsident);
 				final type t=new type(clsident);
 				types.add(t);
 				namespace_add_var(new var(t,"o"));
@@ -77,12 +77,12 @@ final class toc extends Writer{
 				if(is_char_arguments_open(ch)){// found type+name function i.e. const int foo•(
 					final String ident=token_take_clean();
 					final struct.slot slt=new struct.slot(ident,true);
-					final type t=new type(slt.type);//? lookup in declared types
-					namespace_add_var(new var(t,slt.name));
+//					final type t=new type(slt.type);//? lookup in declared types
+//					namespace_add_var(new var(t,slt.name));
 					classes.peek().slots.push(slt);
 					// assume it returns void or self for chained calls					
-					namespace_enter(ident);
-					state_push(state_in_function_arguments);
+					namespace_push(ident);
+					state_push(state_in_function_arg);
 					break;
 				}
 				if(is_char_statement_close(ch)){// found type+name field i.e. int a•;
@@ -111,27 +111,57 @@ final class toc extends Writer{
 				token_add(ch);
 				break;
 			}
+			case state_in_function_arg:{// class file{func(•size•,•int i•){}}
+				if(is_char_arguments_separator(ch)||is_char_arguments_close(ch)){
+					final String s=token_take_clean();
+					if(s.length()>0){
+						final int i=s.indexOf(' ');
+						if(i==-1){//  i.e.  file{to(stream){}}
+							final String snm=suggest_argument_name(s,namespace_stack);
+							final type t=new type(s);//? lookup in reflection
+							final var v=new var(t,snm);
+							classes.peek().slots.peek().argsvar.add(v);
+							namespace_add_var(v);
+						}else{//  i.e.  file{to(stream st){}}
+							final String typenm=s.substring(0,i);
+							final String name=s.substring(i+1);
+							final type t=new type(typenm);//? lookup in reflection
+							final var v=new var(t,name);
+							classes.peek().slots.peek().argsvar.add(v);
+							namespace_add_var(v);
+						}
+					}
+					if(is_char_arguments_close(ch)){
+						state_push(state_find_function_block);
+						final String funcargs=token_take_clean();
+//						classes.peek().slots.peek().args=funcargs;
+						break;
+					}
+				}
+				token_add(ch);
+				break;
+			}
 			case state_in_struct_member_default_value:{// int a=•0•;
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_statement_close(ch)){// int a=0•;
 					final String def=token_take_trimmed();
-					classes.peek().slots.peek().args=def;			
+					classes.peek().slots.peek().struct_member_default_value=def;			
 					state_back_to(state_in_class_block);
 					break;
 				}
 				token_add(ch);
 				break;
 			}
-			case state_in_function_arguments:{// class file{func(•size s,int i•){}}
-				if(is_char_arguments_close(ch)){
-					state_push(state_find_function_block);
-					final String funcargs=token_take_clean();
-					classes.peek().slots.peek().args=funcargs;
-					break;
-				}
-				token_add(ch);
-				break;
-			}
+//			case state_in_function_arguments:{// class file{func(•size s,int i•){}}
+//				if(is_char_arguments_close(ch)){
+//					state_push(state_find_function_block);
+//					final String funcargs=token_take_clean();
+//					classes.peek().slots.peek().args=funcargs;
+//					break;
+//				}
+//				token_add(ch);
+//				break;
+//			}
 			case state_find_function_block:{// class file{func(size s) •{}
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_block_open(ch)){state_push(state_in_function_block);break;}//found
@@ -197,7 +227,12 @@ final class toc extends Writer{
 		}
 		Collections.reverse(classes);
 	}
-	private void namespace_add_var(var v){namespace_stack.peek().vars.put(v.code,v);}
+	private static boolean is_char_blank(char ch){return Character.isWhitespace(ch);}
+	private static String suggest_argument_name(String s,LinkedList<namespace>nms){
+		return s.charAt(0)+"";
+	}
+	private static boolean is_char_arguments_separator(char ch){return ch==',';}
+	void namespace_add_var(var v){namespace_stack.peek().vars.put(v.code,v);}
 	private void token_add(final char ch) {
 		token.append(ch);
 	}
@@ -226,7 +261,7 @@ final class toc extends Writer{
 	final @Override public void flush()throws IOException{}
 	final @Override public void close()throws IOException{}
 	final void namespace_pop(){namespace_stack.pop();}
-	final void namespace_enter(String name){namespace_stack.push(new namespace(name));}
+	final void namespace_push(String name){namespace_stack.push(new namespace(name));}
 
 	private static String clean_whitespaces(String s){return s.trim().replaceAll("\\s+"," ").replaceAll(" \\*","\\*").replaceAll("\\* ","\\*");}
 	private void state_push(int newstate){state_stack.push(state);state=newstate;}
@@ -401,8 +436,15 @@ final class toc extends Writer{
 //		if("out".equals(s))return new var(new type("stream"),"out");//? get final static
 //		if("o".equals(s))return new var(null,"o");//? infer type of o
 		final var v=find_var_in_namespace_stack(s,nms);
-		if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+nms);
+		if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+namespaces_and_declared_types(nms));
 		return v;
+	}
+	private static String namespaces_and_declared_types(LinkedList<namespace>nms){
+		final StringBuilder sb=new StringBuilder(256);
+		for(namespace ns:nms){
+			sb.append(ns.name+ns.vars).append("\n");
+		}
+		return sb.toString();
 	}
 	private static var find_var_in_namespace_stack(final String name,final LinkedList<namespace>ls){
 		final Iterator<namespace>i=ls.iterator();
@@ -418,13 +460,15 @@ final class toc extends Writer{
 	private int state;
 	private static final int state_in_class_name=0;
 	private static final int state_in_class_block=1;
-	private static final int state_in_function_arguments=2;
-	private static final int state_find_function_block=3;
-	private static final int state_in_function_block=4;
-	private static final int state_in_struct_member_default_value=5;
-	private static final int state_in_string=6;
-	private static final int state_in_code_block=7;
-	private static final int state_in_line_comment=8;
+//	private static final int state_in_function_arguments=2;
+	private static final int state_in_function_arg=2;
+	private static final int state_in_function_arg_name=3;
+	private static final int state_find_function_block=4;
+	private static final int state_in_function_block=5;
+	private static final int state_in_struct_member_default_value=6;
+	private static final int state_in_string=7;
+	private static final int state_in_code_block=8;
+	private static final int state_in_line_comment=9;
 	
 	private static boolean is_char_block_open(char ch){return ch=='{';}
 	private static boolean is_char_arguments_open(char ch){return ch=='(';}
@@ -453,14 +497,34 @@ final class toc extends Writer{
 			String tn="";// string from source  i.e. 'int i' 'string s'
 			String name="";// decoded from tn  i.e.  'i'     's'
 			String type="";//                        'int'   'string'
-			String args="";//when field this is default value
+//			String args="";//when field this is default value
+			String struct_member_default_value="";
 			String func_source="";//function source
 			stmt stm;
 			boolean isfunc;
 			boolean isctor;
 			boolean ispointer;
+			final LinkedList<var>argsvar=new LinkedList<>();
 			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;decode_tn();}
-			@Override public String toString(){return tn+(isfunc?("("+args+")"):"");}
+			@Override public String toString(){
+				final StringBuilder sb=new StringBuilder();
+				sb.append(type).append(" ").append(name);
+				if(isfunc){
+					sb.append("(");
+					sb.append(args_to_string());
+					sb.append(")");
+				}
+				return sb.toString();
+			}
+			String args_to_string(){
+				final StringBuilder sb=new StringBuilder();
+				for(var v:argsvar){
+					sb.append(v.type()).append(" ").append(v.code).append(",");
+				}
+				final int len=sb.length();
+				if(len>0)sb.setLength(len-1);
+				return sb.toString();
+			}
 			private void decode_tn(){
 				//  get func name from i.e. 'const int*func'   'const int func'
 				final int i1=tn.lastIndexOf('*');
@@ -472,8 +536,8 @@ final class toc extends Writer{
 				}else if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
 				else{name=tn.substring(i2+1);type=tn.substring(0,i2);}
 				ispointer=type.endsWith("*");
-				if(!isfunc&&args.length()==0){// set default value
-					args="0";
+				if(!isfunc&&struct_member_default_value.length()==0){// set default value
+					struct_member_default_value="0";
 				}
 			}
 //			final public boolean is_pointer(){return ispointer;}
