@@ -464,8 +464,8 @@ final class toc extends Writer{
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
-				}else{// let
-					final String type=s.substring(0,i);
+				}else{// let    int i=2;
+					final String type=s.substring(0,i).trim();
 					final type t=find_type_by_name_or_make_new(type);
 					final String name=s.substring(i+1);
 					final namespace ns=nms.peek();
@@ -489,7 +489,7 @@ final class toc extends Writer{
 				return null;
 			throw new Error();
 		}
-		final String s=sb.toString();
+		final String s=sb.toString().trim();
 		if(s.startsWith("\"")&&s.endsWith("\"")){// string
 			final String t=s.substring(1,s.length()-1);
 			return new str(t);
@@ -497,8 +497,8 @@ final class toc extends Writer{
 		//
 		final int ixspc=s.lastIndexOf(' ');
 		if(ixspc!=-1){//   i.e. file f;
-			final String name=s.substring(ixspc+1);
-			final String type=s.substring(0,ixspc);
+			final String name=s.substring(ixspc+1).trim();
+			final String type=s.substring(0,ixspc).trim();
 			final type t=find_type_by_name_or_break(type);
 //			final type t=new type(type);//? lookup in namespace
 			final namespace ns=nms.peek();
