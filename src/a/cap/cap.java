@@ -100,7 +100,7 @@ final public class cap{
 				}else
 					p.print(i.args);
 			}
-			p.println("){"+i.body+"}");
+			p.println("){"+i.source+"}");
 		}
 	}
 //	private void source_h(struct c,PrintWriter p){

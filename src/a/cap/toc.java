@@ -3,6 +3,8 @@ package a.cap;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -51,7 +53,7 @@ final class toc extends Writer{
 			charno++;if(ch=='\n'){lineno++;charno=1;}
 			switch(state){
 			case state_class_ident:{
-				if(token.length()==0&&is_white_space(ch))break;// trims leading white space
+				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
 				if(ch!='{'){token.append(ch);break;}// look for opening class block
 				final String clsident=clean_whitespaces(token.toString());					
 				token.setLength(0);
@@ -62,7 +64,7 @@ final class toc extends Writer{
 				break;
 			}
 			case state_class_block:{// find type
-				if(token.length()==0&&is_white_space(ch))break;// trim leading white space
+				if(is_token_empty()&&is_white_space(ch))break;// trim leading white space
 				if(is_char_arguments_open(ch)){// found type+name function i.e. const int foo•(
 					final String ident=clean_whitespaces(token.toString());
 					token.setLength(0);// ignore class block content
@@ -98,7 +100,7 @@ final class toc extends Writer{
 				break;
 			}
 			case state_struct_member_default_value:{// int a=•0•;
-				if(is_white_space(ch)&&token.length()==0)continue;//trim lead space
+				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_statement_close(ch)){// int a=0•;
 					final String def=token.toString().trim();
 					token.setLength(0);
@@ -121,21 +123,31 @@ final class toc extends Writer{
 				break;
 			}
 			case state_find_function_block:{// class file{func(size s) •{}
-				if(is_white_space(ch)&&token.length()==0)continue;//trim lead space
+				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_block_open(ch)){state_push(state_function_block);break;}//found
 				token.append(ch);
 				break;
 			}
 			case state_function_block:{// class file{func(size s){•int a=2;a+=2;•}
 				token.append(ch);
-				if(is_white_space(ch)&&token.length()==0)continue;
+				if(is_white_space(ch)&&is_token_empty())continue;
 				if(is_char_block_open(ch)){
 					state_push(state_in_code_block);
 					break;
 				}
 				if(is_char_block_close(ch)){
 					token.setLength(token.length()-1);
-					classes.peek().slots.peek().body=token.toString();
+					final struct.slot sl=classes.peek().slots.peek();
+					sl.source=token.toString();
+					try{
+						final Reader r=new StringReader(sl.source);
+//						final namespace ns=namespace_stack.peek();// hierarchy of visible variables
+						sl.stm=block.parse_function_source(r,namespace_stack);
+					}catch(Throwable t){
+						t.printStackTrace();
+						throw new Error(t);
+					}
+					//? build stmt tree
 					token.setLength(0);
 					state_back_to(state_class_block);
 					namespace_pop();
@@ -168,6 +180,7 @@ final class toc extends Writer{
 			case state_in_line_comment:{//• comment
 				token.append(ch);
 				if(is_char_is_newline(ch)){
+					token.setLength(0);
 					state_pop();
 					break;
 				}
@@ -177,6 +190,9 @@ final class toc extends Writer{
 			}
 		}
 		Collections.reverse(classes);
+	}
+	private boolean is_token_empty() {
+		return token.length()==0;
 	}
 	final @Override public void flush()throws IOException{}
 	final @Override public void close()throws IOException{}
@@ -235,7 +251,8 @@ final class toc extends Writer{
 			String name;
 			String type;
 			String args="";//when field this is default value
-			String body="";
+			String source="";
+			stmt stm;
 			boolean isfunc;
 			boolean isctor;
 			boolean ispointer;
