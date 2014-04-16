@@ -406,8 +406,12 @@ final class toc extends Writer{
 					final String func=funcname.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(var);
-					if(v_ns==null)throw new Error(" at yyyy:xx  '"+var+"' not declared yet\n  in: "+namespaces_and_declared_types(nms));
-					return new fcall(v_ns,func,parse_statement(r,nms));
+					if(v_ns==null)throw new Error("'"+var+"' not  in "+namespaces_and_declared_types(nms));
+					final stmt s=parse_statement(r,nms);
+					if(s!=null)
+						return new fcall(v_ns,func,s);
+					else
+						return new fcall(v_ns,func);						
 				}
 				return new call(funcname,parse_function_arguments(r,nms));
 			}
