@@ -36,6 +36,7 @@ import a.cap.vm.loop;
 import a.cap.vm.printf;
 import a.cap.vm.ret;
 import a.cap.vm.set;
+import a.cap.vm.set_struct_member;
 import a.cap.vm.stmt;
 import a.cap.vm.str;
 import a.cap.vm.type;
@@ -447,7 +448,8 @@ final class toc extends Writer{
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
 						final stmt st=parse_statement(r,nms);
-						return new stmt(v.code+"."+struct_member_name+"="+st);
+						return new set_struct_member(v,struct_member_name,st);
+//						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
 				}else{// let
 					final String type=s.substring(0,i);
