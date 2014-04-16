@@ -22,7 +22,7 @@ public class $ extends a {
 		x.title("cap c sandbox");
 //		x.style("html","padding:0");
 		x.style(cap,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#f8f8f8;width:30em;height:128em;padding:0 1em 0 .5em");
-		x.style(c,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#e8e8e8;width:30em;height:128em;padding:0 1em 0 .5em");
+		x.style(c,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#e8e8e8;width:256em;height:128em;padding:0 1em 0 .5em");
 		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
 		x.style(out,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:block;background:black;color:green;border:1px dotted grey;width:40em;height:128em;padding:0 1em 0 .5em");
 		x.style("div.la","width:1024em");
@@ -37,12 +37,12 @@ public class $ extends a {
 		x.div("la");
 			x.div("c1");for(int i=1;i<100;i++)x.pl(""+i);x.divEnd();
 			x.div("c2").inputTextArea(cap).focus(cap).divEnd();
-			x.div("c3").spc().ax(this).p(" to c ").el(sts).elend().divEnd();
+			x.div("c3").spc().ax(this).nl().el(sts).elend().divEnd();
+			x.div("c7").el(out).p("console output").elend().divEnd();
+			x.div("c6").ax(this,"cc","••").divEnd();
+//			x.div("c8").p(" :: ").ax(this,"cr","etc ").divEnd();
 			x.div("c4");for(int i=1;i<100;i++)x.pl(""+i);x.divEnd();
 			x.div("c5").inputTextArea(c).divEnd();
-			x.div("c6").p(" :: ").ax(this,"cc","run ").divEnd();
-			x.div("c7").el(out).p("console output").elend().divEnd();
-			x.div("c8").p(" :: ").ax(this,"cr","etc ").divEnd();
 			x.pl("<br style=clear:left />");
 		x.divEnd();
 	}
@@ -55,14 +55,17 @@ public class $ extends a {
 		final cap cc=new cap();
 		try{
 			cc.compile(in,out);
-			y.xu(sts,"ok");
-		}catch(Throwable t){
-			y.xu(sts,t.toString());
-			throw t;
-		}finally{
+			y.xu(sts,new Date()+" ok");
 			out.close();
 			c.from(csrc);
 			y.xu(c);
+			x_cc(y,null);
+		}catch(Throwable t){
+			y.xu(sts,new Date()+b.b.stacktraceline(t.getCause()));
+			out.close();
+			c.from(csrc);
+			y.xu(c);
+//			throw t;
 		}
 	}
 	public static String cc="gcc";
