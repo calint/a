@@ -1,6 +1,7 @@
 package a.cap;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +24,8 @@ final class vm{
 			static stmt parse_function_source(Reader r,LinkedList<namespace>ns)throws Throwable{
 				// expect let/set/loop/call/ret/const until end of stream
 				LinkedList<stmt>stms=new LinkedList<>();
-				int ch=0;
-				final StringBuilder sb=new StringBuilder(128);
+//				int ch=0;
+//				final StringBuilder sb=new StringBuilder(128);
 				while(true){
 					final stmt s=parse_statement(r);
 					if(s!=null){
@@ -70,9 +71,16 @@ final class vm{
 					}
 					
 					sb.append((char)ch);
-					System.out.print((char)ch);
+//					System.out.print((char)ch);
 				}
-				return null;
+				final String s=sb.toString();
+				if(s.startsWith("\"")&&s.endsWith("\"")){// string
+					final String t=s.substring(1,s.length()-1);
+					return new str(t);
+				}
+				// const number or variable
+				try{return new inti(Integer.parseInt(s));}
+				catch(Throwable ok){return new var(s);}
 			}
 			static stmt[]parse_function_arguments(Reader r)throws Throwable{
 				ArrayList<stmt>args=new ArrayList<>();
@@ -102,20 +110,32 @@ final class vm{
 					}
 					if(ch==','){
 						// found next argument
-						System.out.println(sb);
+						final String code=sb.toString();
+						final Reader rc=new StringReader(code);
+						final stmt arg=parse_statement(rc);
+						args.add(arg);
+//						System.out.println(arg);
 						sb.setLength(0);
 						continue;
 					}
 					if(ch==')'){
 						// found end of arguments
-						System.out.println(sb);
+//						System.out.println(sb);
+						final String code=sb.toString();
+						final Reader rc=new StringReader(code);
+						final stmt arg=parse_statement(rc);
+						args.add(arg);
 						sb.setLength(0);
 						break;
 					}
 					sb.append((char)ch);
 //					if(sb.length()==0&&Character.isWhitespace(ch))continue;
 				}
-				return new stmt[0];// no args
+				final stmt[]aargs=new stmt[args.size()];
+				int i=0;
+				for(stmt s:args)
+					aargs[i++]=s;
+				return aargs;
 			}
 		};
 		static class call extends stmt{public call(String funcname,stmt...args){super(funcname+"("+args_to_string(args)+")");}};
