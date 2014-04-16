@@ -129,9 +129,9 @@ final class toc extends Writer{
 				if(is_char_block_close(ch)){
 					final struct.slot sl=classes.peek().slots.peek();
 					token_dec_len_by_1();//? remove the }
-					sl.source=token_take();
+					sl.func_source=token_take();
 					try{
-						final Reader r=new StringReader(sl.source);
+						final Reader r=new StringReader(sl.func_source);
 						sl.stm=block.parse_function_source(r,namespace_stack);
 					}catch(Throwable t){
 						t.printStackTrace();
@@ -255,11 +255,11 @@ final class toc extends Writer{
 		public struct(String name){this.name=name;}//autoset
 		@Override public String toString(){return name+"{"+slots+"}";}
 		final static class slot{
-			String tn;
-			String name;
-			String type;
+			String tn;// string from source  i.e. 'int i' 'string s'
+			String name;// decoded from tn  i.e.  'i'     's'
+			String type;//                        'int'   'string'
 			String args="";//when field this is default value
-			String source="";
+			String func_source="";//function source
 			stmt stm;
 			boolean isfunc;
 			boolean isctor;
