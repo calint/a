@@ -9,8 +9,7 @@ c{run(){
   file f;
   f.addr_(200);
   pl("%d",f.addr());
-  pl("%d",f.addr());
-  f.addr=200;
+  pl("%d",f.addr);
   f.to(out);
   pl("hello world");
   int i=1;
