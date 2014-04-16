@@ -3,6 +3,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
+
+import a.cap.toc.namespace;
 final class vm{
 		static class stmt{
 			String code;
@@ -17,7 +19,7 @@ final class vm{
 			}
 			type type(){return null;}
 			
-			static block read_block(Reader r)throws Throwable{
+			static stmt parse_function_source(Reader r,LinkedList<namespace>ns)throws Throwable{
 				// expect let/set/loop/call/ret/const until end of stream
 				LinkedList<stmt>stms=new LinkedList<>();
 				
