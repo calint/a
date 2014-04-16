@@ -33,9 +33,10 @@ final class vm{
 			return sb.toString();
 		}
 		private static String args_to_string(var o,stmt...a){// call to function with object context
-			if(a.length==0)return"";
 			final StringBuilder sb=new StringBuilder();
-			sb.append("&").append(o.toString()).append(",");
+			sb.append("&").append(o.toString());
+			if(a.length==0)return sb.toString();
+			sb.append(",");
 			for(stmt s:a)if(s!=null)sb.append(s.toString()).append(",");
 			sb.setLength(sb.length()-1);
 			return sb.toString();
