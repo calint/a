@@ -8,7 +8,7 @@ file{
 c{run(){
   file f;
   pl("default addr %d    %d",f.addr,f.addr());
-  f.addr_(200);
+  f.addr_(200f);
   f.to(out);pls(out,"%s","\n");
   f.addr=300;
   f.to(out);pls(out,"%s","\n");
