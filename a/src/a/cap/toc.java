@@ -268,13 +268,6 @@ final class toc extends Writer{
 		final value s1=new str("a=%d");
 		
 		final stmt prog=new block(
-				new ife(new eq(a,i8),new block(new decpre(a)),
-				new ife(new eq(a,i8),brk,
-				cont
-				)),
-				new set(a,i4),
-				new ife(new eq(a,i8),brk,cont),
-				new iff(new eq(a,i8),new block(new set(a,i5),brk)),
 				new let(integer,a,i3),
 				new set(a,i4),
 				new set(b,a),
@@ -295,7 +288,7 @@ final class toc extends Writer{
 //				new set(a,new add(a,e)),//error
 				new printf(s1,a),
 				new fcall(f,"to",d),
-				new ife(new eq(a,i8),new block(new decpre(a)),
+				new ife(new eq(a,i8),new decpre(a),
 				new ife(new eq(a,i8),brk,
 				new block(cont)
 				)),
