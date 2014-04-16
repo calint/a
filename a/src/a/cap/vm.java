@@ -195,11 +195,11 @@ final class vm{
 			return sb.toString();
 		}
 		private static String block_to_string(stmt...a){
-			if(a.length==1)return statements_to_string(a);
+//			if(a.length==1)return statements_to_string(a);
 			return"{"+statements_to_string(a)+"}";
 		}
 		private static String block_to_string(List<stmt>a){
-			if(a.size()==1)return statements_to_string(a);
+//			if(a.size()==1)return statements_to_string(a);
 			return"{"+statements_to_string(a)+"}";
 		}
 		final static class inti extends value{
