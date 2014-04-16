@@ -274,8 +274,8 @@ final class toc extends Writer{
 				new let(integer,a,i3),
 				new set(a,i4),
 				new set(b,a),
-//		stms.add(new let(file,f));// error uninitialized
-//		stms.add(new set(a,e));// error
+//				new let(file,f),// error uninitialized
+//				new set(a,e),// error
 				new loop(new block(
 					new incn(a,i3),
 					new decn(a,i1),
@@ -288,7 +288,7 @@ final class toc extends Writer{
 					new iff(new eq(a,i8),new block(new set(a,i5),brk))
 				)),
 				new set(a,new add(a,i5)),
-//		stms.add(new set(a,new add(a,e)));//error
+//				new set(a,new add(a,e)),//error
 				new printf(s1,a),
 				new fcall(f,"to",d),
 				new ife(new eq(a,i8),new block(new decpre(a)),
@@ -300,18 +300,8 @@ final class toc extends Writer{
 		)));
 		
 		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
-//		for(stmt s:stms){
-//			s.to(pw);
-//			pw.println(s.end_delim());
-//		}
-//		
-//		final stmt prog=new block(
-//				new let(integer,a,i3),
-//				new set(a,i4)
-//			);
 		pw.println(prog);
 		pw.close();
-//		System.out.println(statements);
 	}
 	// notes
 //	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
