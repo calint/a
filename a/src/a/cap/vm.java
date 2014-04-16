@@ -68,7 +68,7 @@ final class vm{
 		final static class str extends value{public str(String v){super("\""+v+"\"");}};
 		final static class ret extends stmt{public ret(stmt s){super("return "+s);}};
 		final static class loop extends stmt{
-			public loop(stmt b){super("while(true)"+b);}
+			public loop(stmt b){super("while(true)"+b+b.end_delim());}
 			public loop(Reader r){super("while(true)"+new block(r));}
 			@Override String end_delim(){return "";}
 			
@@ -111,7 +111,7 @@ final class vm{
 		final static class printf extends call{public printf(stmt...s){super("printf",s);}};
 		final static class iff extends stmt{
 			public iff(stmt condition,stmt if_true){
-				super("if("+condition+")"+if_true);
+				super("if("+condition+")"+if_true+if_true.end_delim());
 			}
 			@Override String end_delim(){return "";}
 		};
@@ -144,6 +144,7 @@ final class vm{
 				new Throwable().printStackTrace();
 				return null;
 			}
+			String end_delim(){return"";}
 		}
 		final static class incn extends op{
 			public incn(var v,stmt rh){super("+=",v,rh);}
