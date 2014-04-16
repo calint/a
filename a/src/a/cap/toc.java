@@ -178,12 +178,6 @@ final class toc extends Writer{
 		}
 		Collections.reverse(classes);
 	}
-	private boolean is_char_is_newline(char ch){return ch=='\n';}
-	private boolean is_char_string_close(char ch) {return ch=='\"';}
-	private boolean is_char_string_open(char ch){return ch=='\"';}
-	private boolean is_char_statement_assigment(char ch){return ch=='=';}
-//	@Override public void flush()throws IOException{out.flush();}
-//	@Override public void close()throws IOException{out.close();}
 	final @Override public void flush()throws IOException{}
 	final @Override public void close()throws IOException{}
 	final void namespace_pop(){namespace_stack.pop();}
@@ -195,7 +189,6 @@ final class toc extends Writer{
 	private void state_pop(){state=state_stack.pop();}
 	
 	
-//	PrintWriter out;
 	private int lineno=1,charno=0;
 	private StringBuilder token=new StringBuilder(32);
 
@@ -222,7 +215,10 @@ final class toc extends Writer{
 	private static boolean is_char_statement_close(char ch){return ch==';';}
 	private static boolean is_white_space(char ch){return Character.isWhitespace(ch);}
 	private static boolean is_valid_class_identifier(String nm){return true;}
-	
+	private static boolean is_char_is_newline(char ch){return ch=='\n';}
+	private static boolean is_char_string_close(char ch) {return ch=='\"';}
+	private static boolean is_char_string_open(char ch){return ch=='\"';}
+	private static boolean is_char_statement_assigment(char ch){return ch=='=';}
 	
 	final static class namespace{
 		private String name;
