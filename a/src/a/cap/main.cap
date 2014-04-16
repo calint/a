@@ -1,17 +1,8 @@
-foo{
-  tk=1; // default type is integer
-  float i; // default value is 0
-  to(stream){ // default return is void/self, parameter name induced to 's'
-    pl("{%d %.2f}",o->tk,o->i);
-    int a=1;
-    float f=2.3;
-    a=f;
-  }
-}
-
 cap{run(){
-  foo f={1,2};
-  f.to(out);
-
-    pl("hello world");
+    int a=1;
+    a=2;
+    float f=2.3f;
+    float f2=3.3f;
+    str s="hello world";
+    pl("hello world  %f   %f   %s",f,f2,s);
 }}
