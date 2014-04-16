@@ -52,24 +52,24 @@ final class toc extends Writer{
 			lastchar=ch;
 			charno++;if(ch=='\n'){lineno++;charno=1;}
 			switch(state){
-			case state_class_ident:{
+			case state_in_class_ident:{
 				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
 				if(!is_char_block_open(ch)){token_add(ch);break;}// look for opening class block
 				final String clsident=token_take_clean();
 				if(!is_valid_class_identifier(clsident))throw new Error("line "+lineno+": "+charno+": invalid class name '"+clsident+"'");
 				classes.push(new struct(clsident));
 				namespace_enter(clsident);
-				state_push(state_class_block);
+				state_push(state_in_class_block);
 				break;
 			}
-			case state_class_block:{// find type
+			case state_in_class_block:{// find type
 				if(is_token_empty()&&is_white_space(ch))break;// trim leading white space
 				if(is_char_arguments_open(ch)){// found type+name function i.e. const int foo•(
 					final String ident=token_take_clean();
 					namespace_enter(ident);
 					classes.peek().slots.push(new struct.slot(ident,true));
 					// assume it returns void or self for chained calls					
-					state_push(state_function_arguments);
+					state_push(state_in_function_arguments);
 					break;
 				}
 				if(is_char_statement_close(ch)){// found type+name field i.e. int a•;
@@ -80,30 +80,30 @@ final class toc extends Writer{
 				if(is_char_statement_assigment(ch)){// found type+name field=... i.e. int a•=0;
 					final String ident=token_take_clean();
 					classes.peek().slots.push(new struct.slot(ident,false));
-					state_push(state_struct_member_default_value);
+					state_push(state_in_struct_member_default_value);
 					break;
 				}
 				if(is_char_block_close(ch)){// close class block
 					token_clear();// ignore class block content
-					state_back_to(state_class_ident);
+					state_back_to(state_in_class_ident);
 					namespace_pop();
 					break;
 				}
 				token_add(ch);
 				break;
 			}
-			case state_struct_member_default_value:{// int a=•0•;
+			case state_in_struct_member_default_value:{// int a=•0•;
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_statement_close(ch)){// int a=0•;
 					final String def=token_take_trimmed();
 					classes.peek().slots.peek().args=def;			
-					state_back_to(state_class_block);
+					state_back_to(state_in_class_block);
 					break;
 				}
 				token_add(ch);
 				break;
 			}
-			case state_function_arguments:{// class file{func(•size s,int i•){}}
+			case state_in_function_arguments:{// class file{func(•size s,int i•){}}
 				if(is_char_arguments_close(ch)){
 					state_push(state_find_function_block);
 					final String funcargs=token_take_clean();
@@ -115,11 +115,11 @@ final class toc extends Writer{
 			}
 			case state_find_function_block:{// class file{func(size s) •{}
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
-				if(is_char_block_open(ch)){state_push(state_function_block);break;}//found
+				if(is_char_block_open(ch)){state_push(state_in_function_block);break;}//found
 				token_add(ch);
 				break;
 			}
-			case state_function_block:{// class file{func(size s){•int a=2;a+=2;•}
+			case state_in_function_block:{// class file{func(size s){•int a=2;a+=2;•}
 				token_add(ch);
 				if(is_white_space(ch)&&is_token_empty())continue;
 				if(is_char_block_open(ch)){
@@ -137,7 +137,7 @@ final class toc extends Writer{
 						t.printStackTrace();
 						throw new Error(t);
 					}
-					state_back_to(state_class_block);
+					state_back_to(state_in_class_block);
 					namespace_pop();
 					break;
 				}
@@ -222,12 +222,12 @@ final class toc extends Writer{
 	final public List<struct>classes(){return classes;}
 
 	private int state;
-	private static final int state_class_ident=0;
-	private static final int state_class_block=1;
-	private static final int state_function_arguments=2;
+	private static final int state_in_class_ident=0;
+	private static final int state_in_class_block=1;
+	private static final int state_in_function_arguments=2;
 	private static final int state_find_function_block=3;
-	private static final int state_function_block=4;
-	private static final int state_struct_member_default_value=5;
+	private static final int state_in_function_block=4;
+	private static final int state_in_struct_member_default_value=5;
 	private static final int state_in_string=6;
 	private static final int state_in_code_block=7;
 	private static final int state_in_line_comment=8;
