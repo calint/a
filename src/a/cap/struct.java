@@ -16,7 +16,8 @@ final public class struct{
 			throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
 		}
 		@Override public String toString(){return name+"{"+slots+"}";}
-		final static class slot{
+		final String name(){return name;}
+		final public static class slot{
 			String tn="";// string from source  i.e. 'int i' 'string s'
 			String name="";// decoded from tn  i.e.  'i'     's'
 			String type="";//                        'int'   'string'
@@ -40,7 +41,7 @@ final public class struct{
 				}
 				return sb.toString();
 			}
-			String args_to_string(){
+			final public String args_to_string(){
 				final StringBuilder sb=new StringBuilder();
 				for(var v:argsvar){
 					sb.append(v.type()).append(" ").append(v.code).append(",");
