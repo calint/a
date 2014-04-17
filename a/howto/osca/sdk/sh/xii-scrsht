@@ -1,0 +1,3 @@
+#!/bin/sh
+scrot 'scr--%Y-%m-%d---%H-%M-%S.jpg' -e 'mkdir -p ~/img/&&mv $f ~/img/&&feh ~/img/$f'&
+
