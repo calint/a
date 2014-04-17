@@ -9,14 +9,14 @@ final public class struct{
 		String name;
 		LinkedList<struct.slot>slots=new LinkedList<>();
 		public struct(String name){this.name=name;}//autoset
-		public struct.slot find_function_or_break(String funcnm){
+		final public struct.slot find_function_or_break(String funcnm){
 			for(struct.slot s:slots)
 				if(s.name.equals(funcnm))
 					return s;
 			throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
 		}
-		@Override public String toString(){return name+"{"+slots+"}";}
-		final String name(){return name;}
+		final @Override public String toString(){return name+"{"+slots+"}";}
+		final public String name(){return name;}
 		final public static class slot{
 			String tn="";// string from source  i.e. 'int i' 'string s'
 			String name="";// decoded from tn  i.e.  'i'     's'
@@ -30,8 +30,9 @@ final public class struct{
 			boolean ispointer;
 			final LinkedList<var>argsvar=new LinkedList<>();
 			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;decode_tn();}
-			public int argument_count(){return argsvar.size();}
-			@Override public String toString(){
+			final public int argument_count(){return argsvar.size();}
+			final public String name(){return name;}
+			final @Override public String toString(){
 				final StringBuilder sb=new StringBuilder();
 				sb.append(type).append(" ").append(name);
 				if(isfunc){
