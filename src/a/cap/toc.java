@@ -434,16 +434,24 @@ final class toc extends Writer{
 		while(true){
 			ch=r.read();
 			if(ch==-1)break;
-			if(delims.indexOf(ch)!=-1){if(sb.length()==0)return null;else;break;}
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
+			if(delims.indexOf(ch)!=-1){if(sb.length()==0)return null;else;break;}
 			if(ch=='\"')return new str(r);
-			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^')return parse_operator((char)ch,r,nms,delims);
+			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^'){
+				final String lhs=sb.toString();
+				sb.setLength(0);
+				final stmt lh=parse_statement(new source_reader(new StringReader(lhs),r.line_number,r.character_number_in_line),nms,"");
+				return parse_operator((char)ch,lh,r,nms,delims);
+			}
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
+				if(funcname.length()==0){// i.e. (i+3)
+					return parse_statement(r,nms,")");
+				}
 				final int i=funcname.indexOf('.');
 				if(i!=-1){// i.e.   f.to(out);
 					final String varnm=funcname.substring(0,i);
@@ -574,9 +582,9 @@ final class toc extends Writer{
 		find_struct_member_type_or_break(v.type().name(),struc_member);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
-	private stmt parse_operator(char op,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
+	private stmt parse_operator(final char op,final stmt lh,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
 		if(op=='+'){
-			return new vm.add(parse_statement(r,nms,delims),parse_statement(r,nms,delims));
+			return new vm.add(lh,parse_statement(r,nms,delims));
 		}
 		throw new Error("unknown operator '"+op+"'");
 	}

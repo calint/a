@@ -1,13 +1,5 @@
-file{
-  to(){
-    pl("file");
-  }
-}
-
 c{run(){
-  file f;
-  f.to();
-  int i;
-  i=+i;3;
+  int i=2;
+  i=i+3;
   pl("hello world %d",i);
 }}
