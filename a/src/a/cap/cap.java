@@ -86,6 +86,16 @@ final public class cap{
 //			p.print(",");
 		}
 		p.println("};");
+		p.print("const char*"+cnm+"__field[]={");
+		for(struct.slot i:attrs){
+			p.print("\""+i.name+"\",");
+		}
+		p.println("};");
+		p.print("const char*"+cnm+"__func[]={");
+		for(struct.slot i:funcs){
+			p.print("\""+i.name+"\",");
+		}
+		p.println("};");
 //		p.println("typedef struct "+cnm+" "+cnm+";");
 		p.println("static inline "+cnm+" "+cnm+"_mk(){return "+cnm+"_default;}///keep stack pointer");
 		// getter/setter

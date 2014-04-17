@@ -15,5 +15,4 @@ typedef const char* str;
 #define str_default ""
 #define true 1
 #define false 0
-
-
+//- -- - -- - - - - - -  ---  -- - - - - - - - - - -   - - - - - - - - - - - - -
