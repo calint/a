@@ -627,16 +627,16 @@ final class toc extends Writer{
 	private static final int state_in_string=7;
 	private static final int state_in_line_comment=8;
 	
-	static boolean is_char_block_open(char ch){return ch=='{';}
-	static boolean is_char_arguments_open(char ch){return ch=='(';}
-	static boolean is_char_arguments_close(char ch){return ch==')';}
-	static boolean is_char_block_close(char ch){return ch=='}';}
-	static boolean is_char_statement_close(char ch){return ch==';';}
-	static boolean is_white_space(char ch){return Character.isWhitespace(ch);}
-	static boolean is_char_is_newline(char ch){return ch=='\n';}
-	static boolean is_char_string_close(char ch) {return ch=='\"';}
-	static boolean is_char_string_open(char ch){return ch=='\"';}
-	static boolean is_char_statement_assigment(char ch){return ch=='=';}
+	private static boolean is_char_block_open(char ch){return ch=='{';}
+	private static boolean is_char_arguments_open(char ch){return ch=='(';}
+	private static boolean is_char_arguments_close(char ch){return ch==')';}
+	private static boolean is_char_block_close(char ch){return ch=='}';}
+	private static boolean is_char_statement_close(char ch){return ch==';';}
+	private static boolean is_white_space(char ch){return Character.isWhitespace(ch);}
+	private static boolean is_char_is_newline(char ch){return ch=='\n';}
+	private static boolean is_char_string_close(char ch) {return ch=='\"';}
+	private static boolean is_char_string_open(char ch){return ch=='\"';}
+	private static boolean is_char_statement_assigment(char ch){return ch=='=';}
 
 	static boolean is_valid_class_identifier(String nm){return true;}
 
