@@ -416,7 +416,7 @@ final class toc extends Writer{
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
-//			if(ch==')')continue;//? buggy
+			if(ch==')')continue;//? buggy the reader sometimes reads the "end of statement token" but not always. pushback reader
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
