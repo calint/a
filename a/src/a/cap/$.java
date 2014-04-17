@@ -1,7 +1,9 @@
 package a.cap;
 
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 
@@ -23,7 +25,7 @@ public class $ extends a {
 //		x.style("html","padding:0");
 		x.style(cap,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#f8f8f8;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(c,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#e8e8e8;width:256em;height:128em;padding:0 1em 0 .5em");
-		x.style(sts,"border:1px solid black;padding:.5em;background:yellow");
+		x.style(sts,"display:block;border:1px solid black;padding:.5em;background:yellow");
 		x.style(out,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:block;background:black;color:green;border:1px dotted grey;width:40em;height:128em;padding:0 1em 0 .5em");
 		x.style("div.la","width:1024em");
 		x.style("div.la div.c1","float:left;color:grey;text-align:right;background:#f0f0f0;float:left;text-align:right;padding:0 .5em 0 1em");
@@ -61,13 +63,39 @@ public class $ extends a {
 			y.xu(c);
 			x_cc(y,null);
 		}catch(Throwable t){
-			y.xu(sts,new Date()+b.b.stacktraceline(t.getCause()));
+			Throwable t1=t,t2;
+			while(true){
+				t2=t1.getCause();
+				if(t2==null)break;
+				t1=t2;
+			}
+			y.xu(sts,new Date()+"\n"+error_line(t));
 			out.close();
 			c.from(csrc);
 			y.xu(c);
 //			throw t;
 		}
 	}
+	private static String stacktrace(final Throwable e){
+		final StringWriter sw=new StringWriter();
+		final PrintWriter out=new PrintWriter(sw);
+		e.printStackTrace(out);
+		out.close();
+		return sw.toString();
+	}
+	private static String stacktraceline(final Throwable e){
+		return stacktrace(e).replace('\n',' ').replace('\r',' ').replaceAll("\\s+"," ").replaceAll(" at "," @ ");
+	}
+	public static String error_line(Throwable t){
+		Throwable t1=t,t2;
+		while(true){
+			t2=t1.getCause();
+			if(t2==null)break;
+			t1=t2;
+		}
+		return t1.getMessage();
+	}
+	
 	public static String cc="gcc";
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
 		final path basedir=req.get().session().path("a/cap");
