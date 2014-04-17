@@ -165,87 +165,56 @@ final class vm{
 			return"{"+statements_to_string(a)+"}";
 		}
 		final static class inti extends value{
-			public inti(int i){
-				super(Integer.toString(i));
-			}
+			public inti(int i){super(Integer.toString(i));}
 			@Override type type(){return t;}
-			
 			final static type t=new type("int");
 		};
 		static class type extends stmt{
-			public type(String name){
-				super(name);
-			}
+			public type(String name){super(name);}
 			final String name(){return code;}
 		};
 //		final static class integer extends type{public integer(){super("int");}};
 //		final static class floating extends type{public floating(){super("float");}};
 		final static class printf extends call{public printf(stmt...s){super("printf",s);}};
 		final static class iff extends stmt{
-			public iff(stmt condition,stmt if_true){
-				super("if("+condition+")"+if_true+if_true.end_delim());
-			}
+			public iff(stmt condition,stmt if_true){super("if("+condition+")"+if_true+if_true.end_delim());}
 			@Override String end_delim(){return "";}
 		};
 		final static class ife extends stmt{
-			public ife(stmt condition,stmt if_true,stmt els){
-				super("if("+condition+")"+if_true+if_true.end_delim()+"else "+els+els.end_delim());
-			}
+			public ife(stmt condition,stmt if_true,stmt els){super("if("+condition+")"+if_true+if_true.end_delim()+"else "+els+els.end_delim());}
 			@Override String end_delim(){return "";}
 		};
 		final static class ifi extends stmt{
-			public ifi(stmt diff,stmt ifn,stmt ifp,stmt ifz){
-				super("/todo");
-			}
+			public ifi(stmt diff,stmt ifn,stmt ifp,stmt ifz){super("/todo");}
 			@Override String end_delim(){return "";}
 		};
 		final static class eq extends op{public eq(stmt lh,stmt rh){super("==",lh,rh);}}
 		final static class brk extends stmt{public brk(){super("break");}};
 		final static class cont extends stmt{public cont(){super("continue");}};
 		final static class block extends stmt{
-			block(stmt...ss){
-				super(block_to_string(ss));
-			}
-			block(List<stmt>ss){
-				super(block_to_string(ss));
-			}
-			block(Reader r){
-				super(parse_to_string(r));
-			}
+			block(stmt...ss){super(block_to_string(ss));}
+			block(List<stmt>ss){super(block_to_string(ss));}
+			block(Reader r){super(parse_to_string(r));}
 			private static String parse_to_string(Reader r){
 				new Throwable().printStackTrace();
 				return null;
 			}
 			String end_delim(){return"";}
 		}
-		final static class incn extends op{
-			public incn(var v,stmt rh){super("+=",v,rh);}
-		}
+		final static class incn extends op{public incn(var v,stmt rh){super("+=",v,rh);}}
 		final static class decn extends op{public decn(stmt v,stmt rh){super("-=",v,rh);}}
 		final static class inc extends stmt{public inc(stmt v){super(v+"++");}}
 		final static class incpre extends stmt{public incpre(stmt v){super("++"+v);}}
 		final static class dec extends stmt{public dec(stmt v){super(v+"--");}}
 		final static class decpre extends stmt{public decpre(stmt v){super("--"+v);}}
-		final static class fcall extends call{
-			public fcall(var o,String funcname,stmt...args){
-				super(o.t+"_"+funcname,o,args);
-			}
-		}
+		final static class fcall extends call{public fcall(var o,String funcname,stmt...args){super(o.t+"_"+funcname,o,args);}}
 		final static class floati extends value{
-			public floati(float f){
-				super(Float.toString(f)+"f");
-			}
-			@Override type type(){
-				return t;
-			}
-			
+			public floati(float f){super(Float.toString(f)+"f");}
+			@Override type type(){return t;}
 			final static type t=new type("float");
 		};
 		final static class ctor extends value{
-			public ctor(type t){
-				super(t.code+"_default");
-				this.t=t;
-			}
+			public ctor(type t){super(t.code+"_default");this.t=t;}
 			@Override type type(){return t;}
 			private type t;
 		}
