@@ -352,7 +352,7 @@ final class toc extends Writer{
 	stmt parse_function_source(source_reader r,LinkedList<namespace>nms)throws Throwable{
 		LinkedList<stmt>stms=new LinkedList<>();
 		while(true){
-			final stmt s=read_statement(r,nms);
+			final stmt s=parse_statement(r,nms);
 			if(s==null)break;//eos
 			stms.add(s);
 //					final int i=r.read();
@@ -390,7 +390,7 @@ final class toc extends Writer{
 				// found next argument
 				final String code=sb.toString();
 				final source_reader rc=new source_reader(new StringReader(code));
-				final stmt arg=read_statement(rc,nms);
+				final stmt arg=parse_statement(rc,nms);
 				args.add(arg);
 //						System.out.println(arg);
 				sb.setLength(0);
@@ -402,7 +402,7 @@ final class toc extends Writer{
 				final String code=sb.toString();
 				sb.setLength(0);
 				final source_reader rc=new source_reader(new StringReader(code));
-				final stmt arg=read_statement(rc,nms);
+				final stmt arg=parse_statement(rc,nms);
 				args.add(arg);
 				break;
 			}
@@ -415,7 +415,7 @@ final class toc extends Writer{
 			aargs[i++]=s;
 		return aargs;
 	}
-	stmt read_statement(source_reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt parse_statement(source_reader r,LinkedList<namespace>nms)throws Throwable{
 		// expect call/let/set/const/fcall/str/   int/float/loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -468,13 +468,13 @@ final class toc extends Writer{
 						final namespace ns=nms.peek();
 						final var v=ns.vars.get(s);
 						if(v==null)throw new Error(r.hrs_location()+" variable '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
-						return new set(v,read_statement(r,nms));
+						return new set(v,parse_statement(r,nms));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final String struct_member_name=s.substring(i1+1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not in "+nms);
-						final stmt st=read_statement(r,nms);
+						final stmt st=parse_statement(r,nms);
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
@@ -489,7 +489,7 @@ final class toc extends Writer{
 					if(shadow!=null)throw new Error(r.hrs_location()+" variable '"+name+"' shadows '"+shadow.type()+"'");
 					final var v=new var(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
-					final stmt st=read_statement(r,nms);
+					final stmt st=parse_statement(r,nms);
 					if(!v.type().equals(st.type()))throw new Error(r.hrs_location()+"    '"+v+"' is '"+t+"' and '"+st+"' is '"+st.type()+"'\n   try '"+t+" "+v+"="+(v.type()==floati.t?(st+"f"):(t+"("+st+")"))+"'");
 					return new let(t,v,st);
 				}
@@ -569,7 +569,7 @@ final class toc extends Writer{
 	}
 	private stmt read_operator(char op,source_reader r,LinkedList<namespace>nms)throws Throwable{
 		if(op=='+'){
-			return new vm.add(read_statement(r,nms),read_statement(r,nms));
+			return new vm.add(parse_statement(r,nms),parse_statement(r,nms));
 		}
 		throw new Error("unknown operator '"+op+"'");
 	}
