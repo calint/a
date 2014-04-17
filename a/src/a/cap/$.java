@@ -83,9 +83,9 @@ public class $ extends a {
 		out.close();
 		return sw.toString();
 	}
-	private static String stacktraceline(final Throwable e){
-		return stacktrace(e).replace('\n',' ').replace('\r',' ').replaceAll("\\s+"," ").replaceAll(" at "," @ ");
-	}
+//	private static String stacktraceline(final Throwable e){
+//		return stacktrace(e).replace('\n',' ').replace('\r',' ').replaceAll("\\s+"," ").replaceAll(" at "," @ ");
+//	}
 	public static String error_line(Throwable t){
 		Throwable t1=t,t2;
 		while(true){
@@ -104,7 +104,7 @@ public class $ extends a {
 		final path csrc=basedir.get("main.c");
 		c.to(csrc);
 		final xwriter y=x.xub(out,true,true);
-		try{final cli c=new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
+		try{new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
 			y.pl(line);
 //			System.out.println(line);
 		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat "+csrc.name()+"|gzip|wc&&").p(cc).p(" -o main -Wfatal-errors *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
