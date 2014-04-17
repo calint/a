@@ -9,9 +9,7 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import a.cap.toc.source_reader;
-import a.cap.toc.struct;
-import a.cap.toc.struct.slot;
+import a.cap.struct.slot;
 import a.cap.vm.block;
 import a.cap.vm.floati;
 import a.cap.vm.inti;
