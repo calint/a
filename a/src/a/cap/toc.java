@@ -440,6 +440,7 @@ final class toc extends Writer{
 					return ret;
 				}
 				final stmt[]args=parse_function_arguments(r,nms);
+				//? check args and declaration
 				return new call(funcname,args);
 			}
 			if(ch==')') // when parsing statements in function arguments
