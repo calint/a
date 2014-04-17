@@ -91,7 +91,9 @@ final class toc extends Writer{
 					final String ident=token_take_clean();
 					final struct.slot slt=new struct.slot(ident,false);
 //					final type t=new type(slt.type);//? lookup in declared types
-					final type t=find_type_by_name_or_break(slt.type);
+					final type t=find_type_by_name(slt.type,false);
+					if(t==null)
+						throw new Error("@("+lineno+":"+charno+")  '"+slt.type+"' not defined\n  defined types:\n    "+types);
 					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member					
 					structs.peek().slots.push(slt);
 					break;
@@ -337,13 +339,15 @@ final class toc extends Writer{
 	}
 	private LinkedList<type>types=new LinkedList<>();
 	void types_add(type t){types.add(t);}
-	type find_type_by_name_or_break(String name){
+	type find_type_by_name(String name,boolean break_if_not_found){
 		for(type t:types){
 			if(name.equals(t.code))
 				return t;
 		}
-		throw new Error("type '"+name+"' not found in declared types "+types);
+		if(break_if_not_found)throw new Error("type '"+name+"' not found in declared types "+types);
+		return null;
 	}
+	type find_type_by_name_or_break(String name){return find_type_by_name(name,true);}
 	type find_type_by_name_or_make_new(String name){
 		for(type t:types){
 			if(name.equals(t.code))
@@ -509,7 +513,7 @@ final class toc extends Writer{
 						if(t==null)
 							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
 						if(!t.equals(st.type()))
-							throw new Error(r.hrs_location()+"  '"+v+"."+struct_member_name+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"="+t+"("+st.code+")'");
+							throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+struct_member_name+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"="+t+"("+st.code+")'");
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
@@ -550,7 +554,9 @@ final class toc extends Writer{
 		if(ixspc!=-1){//   i.e. file f;
 			final String name=s.substring(ixspc+1).trim();
 			final String type=s.substring(0,ixspc).trim();
-			final type t=find_type_by_name_or_break(type);
+			final type t=find_type_by_name(type,false);
+			if(t==null)
+				throw new Error(r.hrs_location()+"  type '"+type+"' not declared\n  declared types: "+types);
 			final var v=find_var_in_namespace_stack(name, nms);
 			if(v!=null)throw new Error(r.hrs_location()+" '"+name+"' already declared '"+v.type()+"' in '"+namespaces_and_declared_types_to_string(nms));
 			final var nv=new var(t,name);
@@ -589,7 +595,7 @@ final class toc extends Writer{
 		final int i=vnm.lastIndexOf('.');
 		if(i==-1){// does not refer to struct member
 			final var v=find_var_in_namespace_stack(vnm,nms);
-			if(v==null)throw new Error(" at yyyy:xxx   variable '"+vnm+"' not in stack "+namespaces_and_declared_types_to_string(nms));
+			if(v==null)throw new Error(r.hrs_location()+"   variable '"+vnm+"' not in stack:\n"+namespaces_and_declared_types_to_string(nms));
 			return wrap_variable_with_inc_dec(v,preinc,postinc,predec,postdec);
 		}
 		// refers to struct member
@@ -619,7 +625,7 @@ final class toc extends Writer{
 	}
 	private static String namespaces_and_declared_types_to_string(LinkedList<namespace>nms){
 		final StringBuilder sb=new StringBuilder(256);
-		StringBuilder indent=new StringBuilder(" ");
+		StringBuilder indent=new StringBuilder("  ");
 		for(namespace ns:nms){
 			sb.append(indent).append(ns.name).append("{");
 			if(!ns.vars.isEmpty()){
@@ -631,6 +637,7 @@ final class toc extends Writer{
 			sb.append("}\n");
 			indent.append("  ");
 		}
+//		sb.append(indent).append(System.getProperty("os.name"));
 		return sb.toString();
 	}
 	private static var find_var_in_namespace_stack(final String name,final LinkedList<namespace>ls){

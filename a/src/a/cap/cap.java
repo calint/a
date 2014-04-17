@@ -20,16 +20,16 @@ import b.osnl;
 
 final public class cap{
 	public String indent="   ";
-	public static void main(final String[]args)throws Throwable{
-		final cap c=new cap();
-		final InputStream is=cap.class.getResourceAsStream("main.cap");
-		final source_reader in=new source_reader(new InputStreamReader(is,b.b.strenc));
-		try{
-			c.compile(in,new OutputStreamWriter(System.out));
-		}catch(Throwable t){
-			throw new Error("@["+in.line_number+":"+in.character_number_in_line+"] "+t.getMessage());
-		}
-	}
+//	public static void main(final String[]args)throws Throwable{
+//		final cap c=new cap();
+//		final InputStream is=cap.class.getResourceAsStream("main.cap");
+//		final source_reader in=new source_reader(new InputStreamReader(is,b.b.strenc));
+//		try{
+//			c.compile(in,new OutputStreamWriter(System.out));
+//		}catch(Throwable t){
+//			throw new Error(source_reader.hr_location_string_from_line_and_col(in.line_number,in.character_number_in_line)+"  "+t.getMessage());
+//		}
+//	}
 	public void compile(Reader in,Writer ccode)throws Throwable{
 		final toc cc=new toc();
 		cc.namespace_push("cap");
