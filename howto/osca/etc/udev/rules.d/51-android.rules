@@ -1,0 +1,2 @@
+# sonyericsson xperia pro
+SUBSYSTEM=="usb", ATTR{idVendor}=="0fce", MODE="0666"

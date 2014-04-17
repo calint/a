@@ -1,0 +1,12 @@
+#!/bin/sh
+cd /etc/skel&&chown -R root.root .
+rm -rf /root/
+cp -rp /etc/skel/ /root
+chown -R root.root /root
+rm -rf /home/htp/
+cp -rp /etc/skel/ /home/htp
+chown -R htp.users /home/htp
+chown root /sdk/bin/xii.wifi.connect
+chmod u+s /sdk/bin/xii.wifi.connect
+chown root /sdk/bin/mounte
+chmod u+s /sdk/bin/mounte
