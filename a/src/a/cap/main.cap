@@ -1,8 +1,5 @@
 c{run(){
-  int i=1;
-  i++;
-  ++i;
-  i+=2;
-  pl("i=%d",i++);
-  pl("hello world");
+  int i;
+  i=+i;3;
+  pl("hello world %d",i);
 }}

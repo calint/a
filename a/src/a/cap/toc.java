@@ -411,8 +411,8 @@ final class toc extends Writer{
 			ch=r.read();
 			if(ch==-1)break;
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
-			if(ch=='\"')
-				return new str(r);
+			if(ch=='\"')return new str(r);
+			if(ch=='+')return read_operator((char)ch,r,nms);
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
@@ -548,6 +548,12 @@ final class toc extends Writer{
 		final String struc_member=vnm.substring(i+1);
 		final type t=find_struct_member_type_or_break(v.type().name(),struc_member);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
+	}
+	private stmt read_operator(char op,Reader r,LinkedList<namespace>nms)throws Throwable{
+		if(op=='+'){
+			return new vm.add(parse_statement(r,nms),parse_statement(r,nms));
+		}
+		throw new Error("unknown operator '"+op+"'");
 	}
 	private static void check_validity_of_decinc(boolean postinc,boolean postdec,boolean preinc, boolean predec) {
 		// TODO Auto-generated method stub
