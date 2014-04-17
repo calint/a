@@ -1,6 +1,8 @@
 c{run(){
-  int i=3;
-  while(true){
-    pl("hello world")
-  }
+  int i=1;
+  i++;
+  ++i;
+  i+=2;
+  pl("i=%d",i++);
+  pl("hello world");
 }}
