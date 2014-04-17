@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import a.cap.toc.source_reader;
 import a.cap.toc.struct;
 import a.cap.toc.struct.slot;
 import a.cap.vm.block;
@@ -23,9 +24,13 @@ final public class cap{
 	public String indent="   ";
 	public static void main(final String[]args)throws Throwable{
 		final cap c=new cap();
-		final InputStream main=cap.class.getResourceAsStream("main.cap");
-		final Reader in=new InputStreamReader(main);
-		c.compile(in,new OutputStreamWriter(System.out));
+		final InputStream is=cap.class.getResourceAsStream("main.cap");
+		final source_reader in=new source_reader(new InputStreamReader(is,b.b.strenc));
+		try{
+			c.compile(in,new OutputStreamWriter(System.out));
+		}catch(Throwable t){
+			throw new Error("@["+in.line_number+":"+in.character_number_in_line+"] "+t.getMessage());
+		}
 	}
 	public void compile(Reader in,Writer ccode)throws Throwable{
 		final toc cc=new toc();
