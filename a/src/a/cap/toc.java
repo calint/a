@@ -96,6 +96,20 @@ final class toc extends Writer{
 					structs.peek().slots.push(slt);
 					break;
 				}
+				if(is_char_block_close(ch)){// close class block
+					final String ident=token_take_clean();
+						if(ident.length()>0){
+						final struct.slot slt=new struct.slot(ident,false);
+	//					final type t=new type(slt.type);//? lookup in declared types
+						final type t=find_type_by_name_or_break(slt.type);
+						namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member					
+						structs.peek().slots.push(slt);
+					}
+					token_clear();// ignore class block content
+					state_back_to(state_1_in_class_name);
+					namespace_pop();
+					break;
+				}
 				if(is_char_statement_assigment(ch)){// found type+name field=... i.e. int a•=0;
 					final String ident=token_take_clean();
 					final struct.slot slt=new struct.slot(ident,false);
@@ -104,12 +118,6 @@ final class toc extends Writer{
 					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member										
 					structs.peek().slots.push(slt);
 					state_push(state_struct_member_default_value);
-					break;
-				}
-				if(is_char_block_close(ch)){// close class block
-					token_clear();// ignore class block content
-					state_back_to(state_1_in_class_name);
-					namespace_pop();
 					break;
 				}
 				token_add(ch);
