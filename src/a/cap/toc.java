@@ -424,19 +424,11 @@ final class toc extends Writer{
 					if(v_ns==null)throw new Error("'"+var+"' not  in "+namespaces_and_declared_types_to_string(nms));
 					final stmt s=parse_statement(r,nms);
 					final stmt ret;
+					//? check args and declaration
 					if(s!=null)
 						ret=new fcall(v_ns,func,s);
 					else
 						ret=new fcall(v_ns,func);
-					if(ret instanceof value){
-						// bar(a,15)•
-					}else{
-						// bar(a,foo(a,b)•)
-//						final int ch1=r.read();
-//						if(ch1!=')')
-//							throw new Error(" expected ')' but found '"+(char)ch1+"'");
-						
-					}
 					return ret;
 				}
 				final stmt[]args=parse_function_arguments(r,nms);
@@ -454,13 +446,13 @@ final class toc extends Writer{
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
 						final var v_ns=ns.vars.get(s);
-						if(v_ns==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
+						if(v_ns==null)throw new Error(" at yyyy:xx  '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
 						return new set(v_ns,parse_statement(r,nms));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final String struct_member_name=s.substring(i1+1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
-						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not declared yet\n  in: "+nms);
+						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not in "+nms);
 						final stmt st=parse_statement(r,nms);
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
@@ -471,7 +463,7 @@ final class toc extends Writer{
 					final String name=s.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(name);//? look in namespaces stack
-					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already declared\n  in: "+namespaces_and_declared_types_to_string(nms));
+					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already in "+namespaces_and_declared_types_to_string(nms));
 					final var v=new var(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
 					return new let(t,v,parse_statement(r,nms));
@@ -502,11 +494,11 @@ final class toc extends Writer{
 			final String type=s.substring(0,ixspc).trim();
 			final type t=find_type_by_name_or_break(type);
 //			final type t=new type(type);//? lookup in namespace
-			final namespace ns=nms.peek();
-			final var v=ns.vars.get(name);
-			if(v!=null)throw new Error("@yyyy:xxx  '"+name+"' already declared in '"+ns+"' as '"+v.type()+"'");
+//			final namespace ns=nms.peek();
+			final var v=find_var_in_namespace_stack(name, nms);
+			if(v!=null)throw new Error("@yyyy:xxx  '"+name+"' already '"+v.type()+"' in '"+namespaces_and_declared_types_to_string(nms));
 			final var nv=new var(t,name);
-			ns.vars.put(nv.code,nv);
+			namespace_add_var(nv);
 			return new let(t,nv,new ctor(t));
 		}
 		// const number or variable
@@ -521,7 +513,7 @@ final class toc extends Writer{
 		final int i=s.lastIndexOf('.');
 		if(i==-1){// does not refer to struct member
 			final var v=find_var_in_namespace_stack(s,nms);
-			if(v==null)throw new Error(" at yyyy:xxx  variable not declared '"+s+"'  in  "+namespaces_and_declared_types_to_string(nms));
+			if(v==null)throw new Error(" at yyyy:xxx   '"+s+"' not in  "+namespaces_and_declared_types_to_string(nms));
 			return v;
 		}
 		final String varnm=s.substring(0,i);
@@ -560,15 +552,13 @@ final class toc extends Writer{
 	private int state;
 	private static final int state_in_class_name=0;
 	private static final int state_in_class_block=1;
-//	private static final int state_in_function_arguments=2;
 	private static final int state_in_function_arg=2;
-	private static final int state_in_function_arg_name=3;
-	private static final int state_find_function_block=4;
-	private static final int state_in_function_block=5;
-	private static final int state_in_struct_member_default_value=6;
-	private static final int state_in_string=7;
-	private static final int state_in_code_block=8;
-	private static final int state_in_line_comment=9;
+	private static final int state_find_function_block=3;
+	private static final int state_in_function_block=4;
+	private static final int state_in_struct_member_default_value=5;
+	private static final int state_in_string=6;
+	private static final int state_in_code_block=7;
+	private static final int state_in_line_comment=8;
 	
 	private static boolean is_char_block_open(char ch){return ch=='{';}
 	private static boolean is_char_arguments_open(char ch){return ch=='(';}
