@@ -37,15 +37,20 @@ final public class cap{
 		cc.types_add(inti.t);
 		cc.types_add(floati.t);
 		cc.types_add(str.t);
+		cc.namespace_add_var(new var(str.t,"meta[0]"));
 		final type t=cc.find_type_by_name_or_break("stream");
 		cc.namespace_add_var(new var(t,"out"));
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		final PrintWriter out=new PrintWriter(ccode);
 		b.b.cp(cap.class.getResourceAsStream("header.c"),out);
+		// generate reflection struct
+		out.println("const char*meta[]={");
+		cc.classes().forEach((c)->{
+			out.println("   \""+c+"\",");
+		});
+		out.println("};");
 		cc.classes().forEach((c)->source_c(c,out));
-		//. generate reflection struct
-//		out.println("/// main.cap done");
 		b.b.cp(cap.class.getResourceAsStream("footer.c"),out);
 
 		final InputStream main=cap.class.getResourceAsStream("main.cap");

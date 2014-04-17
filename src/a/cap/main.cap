@@ -1,5 +1,12 @@
+file{
+  addr;
+  size;
+  to(){}
+}
+
 c{run(){
   int i=2;
   i=i+3;
   pl("hello world %d",i);
+  pl("%s",meta[0]);
 }}
