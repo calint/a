@@ -404,18 +404,19 @@ final class toc extends Writer{
 		return aargs;
 	}
 	stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
-		// expect call/let/set/const/fcall   loop/ret
+		// expect call/let/set/const/fcall/str/   int/float/loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
 		while(true){
 			ch=r.read();
 			if(ch==-1)break;
-			if(ch=='\"')return new str(r);
+			if(sb.length()==0&&Character.isWhitespace(ch))continue;
+			if(ch=='\"')
+				return new str(r);
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
 			if(ch==')')continue;//? buggy
-			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
