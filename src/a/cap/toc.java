@@ -3,12 +3,10 @@ package a.cap;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -442,8 +440,6 @@ final class toc extends Writer{
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
-//			if(ch==')')
-//				break;//? buggy the reader sometimes reads the "end of statement token" but not always. pushback reader
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
@@ -470,8 +466,6 @@ final class toc extends Writer{
 				//? check args and declaration
 				return new call(funcname,args);
 			}
-//			if(ch==')') // when parsing statements in function arguments
-//				break;
 			if(ch=='='){// let or set
 				final String s=sb.toString();
 				int i=s.lastIndexOf(' '); // int a=•1;
@@ -644,74 +638,6 @@ final class toc extends Writer{
 	private static boolean is_char_string_open(char ch){return ch=='\"';}
 	private static boolean is_char_statement_assigment(char ch){return ch=='=';}
 	
-	final static class namespace{
-		private String name;
-		HashMap<String,var>vars=new HashMap<>();
-		public namespace(String nm){name=nm;}
-		@Override public String toString(){return name;}
-	}
-	final static class struct{
-		String name;
-		LinkedList<slot>slots=new LinkedList<>();
-		public struct(String name){this.name=name;}//autoset
-		public slot find_function_or_break(String funcnm){
-			for(slot s:slots)
-				if(s.name.equals(funcnm))
-					return s;
-			throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
-		}
-		@Override public String toString(){return name+"{"+slots+"}";}
-		final static class slot{
-			String tn="";// string from source  i.e. 'int i' 'string s'
-			String name="";// decoded from tn  i.e.  'i'     's'
-			String type="";//                        'int'   'string'
-//			String args="";//when field this is default value
-			String struct_member_default_value="";
-			String func_source="";//function source
-			stmt stm;
-			boolean isfunc;
-			boolean isctor;
-			boolean ispointer;
-			final LinkedList<var>argsvar=new LinkedList<>();
-			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;decode_tn();}
-			public int argument_count(){return argsvar.size();}
-			@Override public String toString(){
-				final StringBuilder sb=new StringBuilder();
-				sb.append(type).append(" ").append(name);
-				if(isfunc){
-					sb.append("(");
-					sb.append(args_to_string());
-					sb.append(")");
-				}
-				return sb.toString();
-			}
-			String args_to_string(){
-				final StringBuilder sb=new StringBuilder();
-				for(var v:argsvar){
-					sb.append(v.type()).append(" ").append(v.code).append(",");
-				}
-				final int len=sb.length();
-				if(len>0)sb.setLength(len-1);
-				return sb.toString();
-			}
-			private void decode_tn(){
-				//  get func name from i.e. 'const int*func'   'const int func'
-				final int i1=tn.lastIndexOf('*');
-				final int i2=tn.lastIndexOf(' ');
-//				if(i1==-1&&i2==-1){isctor=true;name="";type=tn;return;}
-				if(i1==-1&&i2==-1){
-					if(isfunc){name=tn;type="void";}
-					else{name=tn;type="int";}
-				}else if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
-				else{name=tn.substring(i2+1);type=tn.substring(0,i2);}
-				ispointer=type.endsWith("*");
-				if(!isfunc&&struct_member_default_value.length()==0){// set default value
-					struct_member_default_value="0";
-				}
-			}
-//			final public boolean is_pointer(){return ispointer;}
-		}
-	}
 	public static void main(String[] args){
 		//final ArrayList<stmt>stms=new ArrayList<>();
 		final type integer=new type("int");
@@ -767,40 +693,4 @@ final class toc extends Writer{
 	}
 	// notes
 //	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
-
-	final public static class source_reader extends Reader{
-		public source_reader(final Reader source){
-			this.source=source;
-		}
-		public source_reader(final Reader source,final int lineno,final int charno){
-			this.source=source;
-			this.line_number=lineno;
-			this.character_number_in_line=charno;
-		}
-		@Override public String toString(){
-			return "@("+line_number+":"+character_number_in_line+")";
-		}
-		public String hrs_location(){
-			return "@("+line_number+":"+character_number_in_line+")";
-		}
-		@Override public int read()throws IOException{
-			final int ch=source.read();
-			character_number_in_line++;
-			if(ch==newline){line_number++;character_number_in_line=0;}
-			return ch;
-		}
-		@Override public int read(final char[]cbuf,int off,int len)throws IOException{
-			final int i=source.read(cbuf,off,len);
-			while(len-->0){
-				final int ch=cbuf[off++];
-				character_number_in_line++;
-				if(ch==newline){line_number++;character_number_in_line=0;}
-			}
-			return i;
-		}
-		@Override public void close()throws IOException{throw new Error("not supported");}
-		private Reader source;
-		private final static int newline='\n';
-		public int line_number=1,character_number_in_line;
-	}
 }
