@@ -43,27 +43,44 @@ final public class cap{
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		final PrintWriter out=new PrintWriter(ccode);
-		b.b.cp(cap.class.getResourceAsStream("header.c"),out);
-		// generate reflection struct
-		out.println("const char*meta[]={");
-		cc.classes().forEach((c)->{
-			out.println("   \""+c+"\",");
-		});
-		out.println("};");
+		b.b.cp(cap.class.getResourceAsStream("header"),out);
+//		// generate reflection struct
+//		out.println("const char*meta[]={");
+//		cc.classes().forEach((c)->{
+//			out.println("   \""+c+"\",");
+//		});
+//		out.println("};");
 		cc.classes().forEach((c)->source_c(c,out));
-		b.b.cp(cap.class.getResourceAsStream("footer.c"),out);
+		// generate reflection struct
+//		out.println("const char*vm[]={");
+//		cc.classes().forEach((c)->{
+//			out.print(c.name);
+//			out.print("{");
+//			for(struct.slot s:c.slots){
+//				if(s.isctor)continue;
+//				if(s.isfunc)continue;
+//				out.print(s.type.toString());
+//				out.print(" ");
+//				out.print(s.name);
+//				out.println("}");
+//			}
+//			out.println("}");
+//		});
+//		out.println("};");
+		// include footer		
+		b.b.cp(cap.class.getResourceAsStream("footer"),out);
 
-		final InputStream main=cap.class.getResourceAsStream("main.cap");
-		final class inc{int i;}
-		final inc i=new inc();
-		out.println("/// main.cap");
-		final osnl nl=new osnl(){@Override public void onnewline(String line)throws Throwable{
-			i.i++;
-			out.println("/// "+i.i+" : "+line);
-		}};
-		b.b.cp(main,nl);
-		nl.write(new byte[]{'\n'});
-		out.println("///");
+//		final InputStream main=cap.class.getResourceAsStream("main.cap");
+//		final class inc{int i;}
+//		final inc i=new inc();
+//		out.println("/// main.cap");
+//		final osnl nl=new osnl(){@Override public void onnewline(String line)throws Throwable{
+//			i.i++;
+//			out.println("/// "+i.i+" : "+line);
+//		}};
+//		b.b.cp(main,nl);
+//		nl.write(new byte[]{'\n'});
+//		out.println("///");
 		out.flush();
 //		System.out.println(cc.state_to_string());
 	}
