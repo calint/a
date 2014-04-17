@@ -23,7 +23,7 @@ public class $ extends a {
 //		x.style("html","padding:0");
 		x.style(cap,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#f8f8f8;width:30em;height:128em;padding:0 1em 0 .5em");
 		x.style(c,"box-shadow:0 0 .5em rgba(0,0,0,.5);background:#e8e8e8;width:256em;height:128em;padding:0 1em 0 .5em");
-		x.style(sts,"border:1px dotted red;padding:.5em;background:yellow");
+		x.style(sts,"border:1px solid black;padding:.5em;background:yellow");
 		x.style(out,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:block;background:black;color:green;border:1px dotted grey;width:40em;height:128em;padding:0 1em 0 .5em");
 		x.style("div.la","width:1024em");
 		x.style("div.la div.c1","float:left;color:grey;text-align:right;background:#f0f0f0;float:left;text-align:right;padding:0 .5em 0 1em");
