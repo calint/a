@@ -96,7 +96,7 @@ final class vm{
 			public add(stmt lh,stmt rh){
 				super("+",lh,rh);
 				if(!lh.type().equals(rh.type())){
-					throw new Error("at yyyy:xxx tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try '"+lh.code+"="+lh.type()+"("+code+")'");
+					throw new Error("tried "+lh+"+"+rh+"   but   "+lh.code+" is "+lh.type()+"  and  "+rh.code+" is "+rh.type()+"   try '"+lh.code+"="+lh.type()+"("+code+")'");
 				}
 				t=lh.type();
 			}

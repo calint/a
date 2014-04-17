@@ -571,7 +571,7 @@ final class toc extends Writer{
 		final var v=find_var_in_namespace_stack(varnm,nms);
 		if(v==null)throw new Error();
 		final String struc_member=vnm.substring(i+1);
-		final type t=find_struct_member_type_or_break(v.type().name(),struc_member);
+		find_struct_member_type_or_break(v.type().name(),struc_member);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
 	private stmt parse_operator(char op,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
@@ -627,29 +627,30 @@ final class toc extends Writer{
 	private static final int state_in_string=7;
 	private static final int state_in_line_comment=8;
 	
-	private static boolean is_char_block_open(char ch){return ch=='{';}
-	private static boolean is_char_arguments_open(char ch){return ch=='(';}
-	private static boolean is_char_arguments_close(char ch){return ch==')';}
-	private static boolean is_char_block_close(char ch){return ch=='}';}
-	private static boolean is_char_statement_close(char ch){return ch==';';}
-	private static boolean is_white_space(char ch){return Character.isWhitespace(ch);}
-	private static boolean is_valid_class_identifier(String nm){return true;}
-	private static boolean is_char_is_newline(char ch){return ch=='\n';}
-	private static boolean is_char_string_close(char ch) {return ch=='\"';}
-	private static boolean is_char_string_open(char ch){return ch=='\"';}
-	private static boolean is_char_statement_assigment(char ch){return ch=='=';}
-	
+	static boolean is_char_block_open(char ch){return ch=='{';}
+	static boolean is_char_arguments_open(char ch){return ch=='(';}
+	static boolean is_char_arguments_close(char ch){return ch==')';}
+	static boolean is_char_block_close(char ch){return ch=='}';}
+	static boolean is_char_statement_close(char ch){return ch==';';}
+	static boolean is_white_space(char ch){return Character.isWhitespace(ch);}
+	static boolean is_char_is_newline(char ch){return ch=='\n';}
+	static boolean is_char_string_close(char ch) {return ch=='\"';}
+	static boolean is_char_string_open(char ch){return ch=='\"';}
+	static boolean is_char_statement_assigment(char ch){return ch=='=';}
+
+	static boolean is_valid_class_identifier(String nm){return true;}
+
 	public static void main(String[] args){
 		//final ArrayList<stmt>stms=new ArrayList<>();
 		final type integer=new type("int");
-		final type floating=new type("float");
+//		final type floating=new type("float");
 		final type file=new type("file");
 		
 		final var a=new var(integer,"a");
 		final var b=new var(integer,"b");//change type for type missmatch error
 		final var f=new var(file,"f");
 		final var d=new var(file,"d");
-		final var e=new var(floating,"e");
+//		final var e=new var(floating,"e");
 		final stmt brk=new brk();
 		final stmt cont=new cont();
 		final value i3=new inti(3);
