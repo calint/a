@@ -7,6 +7,8 @@ file{
 }
 user{str name="";}
 c{run(){
+  pl("<pre>x<sub>1</sub>+=dx<sub>1</sub>");
+  pl("d<sup>2</sup>=x<sup>2</sup>+y<sup>2</sup>");
   user u;
   pl("user[%p]{%s}",u,u.name);
   u.name="joe";
