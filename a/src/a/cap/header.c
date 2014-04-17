@@ -13,4 +13,7 @@ typedef const char* str;
 #define int_default 0
 #define float_default 0f
 #define str_default ""
+#define true 1
+#define false 0
+
 
