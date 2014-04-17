@@ -1,8 +1,6 @@
 package a.cap;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -11,35 +9,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import a.cap.vm.add;
 import a.cap.vm.block;
-import a.cap.vm.brk;
 import a.cap.vm.call;
-import a.cap.vm.cont;
 import a.cap.vm.ctor;
-import a.cap.vm.dec;
-import a.cap.vm.decn;
-import a.cap.vm.decpre;
-import a.cap.vm.eq;
 import a.cap.vm.fcall;
 import a.cap.vm.floati;
-import a.cap.vm.ife;
-import a.cap.vm.iff;
-import a.cap.vm.inc;
-import a.cap.vm.incn;
-import a.cap.vm.incpre;
 import a.cap.vm.inti;
 import a.cap.vm.let;
-import a.cap.vm.loop;
-import a.cap.vm.printf;
-import a.cap.vm.ret;
 import a.cap.vm.set;
 import a.cap.vm.set_struct_member;
 import a.cap.vm.stmt;
 import a.cap.vm.str;
 import a.cap.vm.struct_member;
 import a.cap.vm.type;
-import a.cap.vm.value;
 import a.cap.vm.var;
 
 final class toc extends Writer{
@@ -650,7 +632,6 @@ final class toc extends Writer{
 		return null;
 	}
 
-
 	private int state;
 	private static final int state_1_in_class_name=0;
 	private static final int state_2_in_class_block=1;
@@ -674,60 +655,4 @@ final class toc extends Writer{
 	private static boolean is_char_statement_assigment(char ch){return ch=='=';}
 
 	static boolean is_valid_class_identifier(String nm){return true;}
-
-	public static void main(String[] args){
-		//final ArrayList<stmt>stms=new ArrayList<>();
-		final type integer=new type("int");
-//		final type floating=new type("float");
-		final type file=new type("file");
-		
-		final var a=new var(integer,"a");
-		final var b=new var(integer,"b");//change type for type missmatch error
-		final var f=new var(file,"f");
-		final var d=new var(file,"d");
-//		final var e=new var(floating,"e");
-		final stmt brk=new brk();
-		final stmt cont=new cont();
-		final value i3=new inti(3);
-		final value i4=new inti(4);
-		final value i1=new inti(1);
-		final value i8=new inti(8);
-		final value i5=new inti(5);
-		final value s1=new str("a=%d");
-		
-		final stmt prog=new block(
-				new let(integer,a,i3),
-				new set(a,i4),
-				new set(b,a),
-//				new let(file,f),// error uninitialized
-//				new set(a,e),// error
-				new loop(new block(
-					new incn(a,i3),
-					new decn(a,i1),
-					new inc(a),
-					new incpre(a),
-					new dec(a),
-					new decpre(a),
-					new printf(s1,a),
-					new ife(new eq(a,i8),brk,cont),
-					new iff(new eq(a,i8),new block(new set(a,i5),brk))
-				)),
-				new set(a,new add(a,i5)),
-//				new set(a,new add(a,e)),//error
-				new printf(s1,a),
-				new fcall(f,"to",d),
-				new ife(new eq(a,i8),new decpre(a),
-				new ife(new eq(a,i8),brk,
-				cont
-				)),
-				new ret(a),
-				new loop(new set(a,new add(a,i1))
-		));
-		
-		final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
-		pw.println(prog);
-		pw.close();
-	}
-	// notes
-//	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 }

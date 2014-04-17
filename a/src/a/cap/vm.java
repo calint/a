@@ -1,4 +1,5 @@
 package a.cap;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.List;
@@ -247,7 +248,62 @@ final class vm{
 			}
 			@Override type type(){return t;}
 			private type t;
-		};
+		}
+		public static void main(String[] args){
+				//final ArrayList<stmt>stms=new ArrayList<>();
+				final type integer=new type("int");
+		//		final type floating=new type("float");
+				final type file=new type("file");
+				
+				final var a=new var(integer,"a");
+				final var b=new var(integer,"b");//change type for type missmatch error
+				final var f=new var(file,"f");
+				final var d=new var(file,"d");
+		//		final var e=new var(floating,"e");
+				final stmt brk=new brk();
+				final stmt cont=new cont();
+				final value i3=new inti(3);
+				final value i4=new inti(4);
+				final value i1=new inti(1);
+				final value i8=new inti(8);
+				final value i5=new inti(5);
+				final value s1=new str("a=%d");
+				
+				final stmt prog=new block(
+						new let(integer,a,i3),
+						new set(a,i4),
+						new set(b,a),
+		//				new let(file,f),// error uninitialized
+		//				new set(a,e),// error
+						new loop(new block(
+							new incn(a,i3),
+							new decn(a,i1),
+							new inc(a),
+							new incpre(a),
+							new dec(a),
+							new decpre(a),
+							new printf(s1,a),
+							new ife(new eq(a,i8),brk,cont),
+							new iff(new eq(a,i8),new block(new set(a,i5),brk))
+						)),
+						new set(a,new add(a,i5)),
+		//				new set(a,new add(a,e)),//error
+						new printf(s1,a),
+						new fcall(f,"to",d),
+						new ife(new eq(a,i8),new decpre(a),
+						new ife(new eq(a,i8),brk,
+						cont
+						)),
+						new ret(a),
+						new loop(new set(a,new add(a,i1))
+				));
+				
+				final PrintWriter pw=new PrintWriter(new OutputStreamWriter(System.out));
+				pw.println(prog);
+				pw.close();
+			}
+			// notes
+		//	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);;
 
 //		final static class t_null extends type{public t_null(){super("null");}};
 	}
