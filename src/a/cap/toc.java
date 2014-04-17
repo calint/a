@@ -405,12 +405,31 @@ final class toc extends Writer{
 	}
 	stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
 		// expect call/let/set/const/fcall   loop/ret
-		int ch=0;
+		int ch=0,chp;
 		final StringBuilder sb=new StringBuilder(128);
+		boolean instring=false;
 		while(true){
+			chp=ch;
 			ch=r.read();
-			if(ch==')')continue;//? buggy
 			if(ch==-1)break;
+			if(ch=='\"'){
+				if(instring){
+					if(chp!='\\'){
+						instring=false;
+						final String s=token_take();
+						final str v=new str(s);
+						return v;
+					}	
+				}else{
+					instring=true;
+					continue;
+				}
+			}
+			if(instring){
+				token_add((char)ch);
+				continue;
+			}
+			if(ch==')')continue;//? buggy
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(ch=='('){// call
 				final String funcname=sb.toString();
