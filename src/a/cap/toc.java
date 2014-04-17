@@ -59,7 +59,7 @@ final class toc extends Writer{
 			lastchar=ch;
 			charno++;if(ch=='\n'){lineno++;charno=0;}
 			switch(state){
-			case state_in_class_name:{
+			case state_1_in_class_name:{
 				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
 				if(!is_char_block_open(ch)){token_add(ch);break;}// look for opening class block
 				final String clsident=token_take_clean();
@@ -71,10 +71,10 @@ final class toc extends Writer{
 				types_add(t);
 //				types.add(t);
 				namespace_add_var(new var(t,"o"));
-				state_push(state_in_class_block);
+				state_push(state_2_in_class_block);
 				break;
 			}
-			case state_in_class_block:{// find type
+			case state_2_in_class_block:{// find type
 				if(is_token_empty()&&is_white_space(ch))break;// trim leading white space
 				if(is_char_arguments_open(ch)){// found type+name function i.e. const int foo•(
 					final String ident=token_take_clean();
@@ -84,7 +84,7 @@ final class toc extends Writer{
 					structs.peek().slots.push(slt);
 					// assume it returns void or self for chained calls					
 					namespace_push(ident);
-					state_push(state_in_function_arg);
+					state_push(state_3_in_function_arg);
 					break;
 				}
 				if(is_char_statement_close(ch)){// found type+name field i.e. int a•;
@@ -103,19 +103,19 @@ final class toc extends Writer{
 					final type t=find_type_by_name_or_break(slt.type);
 					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member										
 					structs.peek().slots.push(slt);
-					state_push(state_in_struct_member_default_value);
+					state_push(state_struct_member_default_value);
 					break;
 				}
 				if(is_char_block_close(ch)){// close class block
 					token_clear();// ignore class block content
-					state_back_to(state_in_class_name);
+					state_back_to(state_1_in_class_name);
 					namespace_pop();
 					break;
 				}
 				token_add(ch);
 				break;
 			}
-			case state_in_function_arg:{// class file{func(•size•,•int i•){}}
+			case state_3_in_function_arg:{// class file{func(•size•,•int i•){}}
 				if(is_char_arguments_separator(ch)||is_char_arguments_close(ch)){
 					final String s=token_take_clean();
 					if(s.length()>0){
@@ -138,7 +138,7 @@ final class toc extends Writer{
 						}
 					}
 					if(is_char_arguments_close(ch)){
-						state_push(state_find_function_block);
+						state_push(state_4_find_function_block);
 //						final String funcargs=token_take_clean();
 //						classes.peek().slots.peek().args=funcargs;
 						break;
@@ -157,15 +157,15 @@ final class toc extends Writer{
 //				token_add(ch);
 //				break;
 //			}
-			case state_find_function_block:{// class file{func(size s) •{}
+			case state_4_find_function_block:{// class file{func(size s) •{}
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(!is_char_block_open(ch)){token_add(ch);break;}
 				// found
-				state_push(state_in_function_block);
+				state_push(state_5_in_function_block);
 				lineno_func=lineno;charno_func=charno;
 				break;
 			}
-			case state_in_function_block:{// class file{func(size s){•int a=2;a+=2;•}
+			case state_5_in_function_block:{// class file{func(size s){•int a=2;a+=2;•}
 				token_add(ch);
 				if(is_white_space(ch)&&is_token_empty())continue;
 				if(is_char_block_open(ch)){
@@ -173,19 +173,19 @@ final class toc extends Writer{
 					break;
 				}
 				if(is_char_block_close(ch)){// end of function block
-					if(state==state_in_function_block){
+					if(state==state_5_in_function_block){
 						final struct.slot sl=structs.peek().slots.peek();
 						token_dec_len_by_1();//? remove the }
 						sl.func_source=token_take();
 						try{
 							final source_reader r=new source_reader(new StringReader(sl.func_source),lineno_func,charno_func);
-							sl.stm=parse_function_source(r,namespace_stack,"}");
+							sl.stm=parse_function(r,namespace_stack,"}");
 //							System.err.println(sl.stm);
 						}catch(Throwable t){
 //							t.printStackTrace();
 							throw new Error(t);
 						}
-						state_back_to(state_in_class_block);
+						state_back_to(state_2_in_class_block);
 						namespace_pop();
 						break;
 					}
@@ -208,12 +208,12 @@ final class toc extends Writer{
 				}
 				break;
 			}
-			case state_in_struct_member_default_value:{// int a=•0•;
+			case state_struct_member_default_value:{// int a=•0•;
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(is_char_statement_close(ch)){// int a=0•;
 					final String def=token_take_trimmed();
 					structs.peek().slots.peek().struct_member_default_value=def;			
-					state_back_to(state_in_class_block);
+					state_back_to(state_2_in_class_block);
 					break;
 				}
 				token_add(ch);
@@ -347,13 +347,14 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
-	stmt parse_function_source(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
+	stmt parse_function(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
 		final LinkedList<stmt>stms=new LinkedList<>();
 		while(true){
 			final stmt s=parse_statement(r,nms,delims);
 			if(s==null)break;//eos
 			stms.add(s);
 		}
+//		if(stms.size()==1)return stms.peek();
 		return new block(stms);
 	}
 	stmt[]parse_function_arguments(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
@@ -616,14 +617,14 @@ final class toc extends Writer{
 
 
 	private int state;
-	private static final int state_in_class_name=0;
-	private static final int state_in_class_block=1;
-	private static final int state_in_function_arg=2;
-	private static final int state_find_function_block=3;
-	private static final int state_in_function_block=4;
-	private static final int state_in_struct_member_default_value=5;
-	private static final int state_in_string=6;
-	private static final int state_in_code_block=7;
+	private static final int state_1_in_class_name=0;
+	private static final int state_2_in_class_block=1;
+	private static final int state_3_in_function_arg=2;
+	private static final int state_4_find_function_block=3;
+	private static final int state_5_in_function_block=4;
+	private static final int state_in_code_block=5;
+	private static final int state_struct_member_default_value=6;
+	private static final int state_in_string=7;
 	private static final int state_in_line_comment=8;
 	
 	private static boolean is_char_block_open(char ch){return ch=='{';}
