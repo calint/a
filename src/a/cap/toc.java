@@ -410,9 +410,9 @@ final class toc extends Writer{
 		while(true){
 			ch=r.read();
 			if(ch==-1)break;
-			if(ch=='\"'){
-				final str v=new str(r);
-				return v;
+			if(ch=='\"')return new str(r);
+			if(Character.isDigit(ch)){
+				// return (value v=read_number(r))
 			}
 			if(ch==')')continue;//? buggy
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
