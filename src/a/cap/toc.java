@@ -412,11 +412,11 @@ final class toc extends Writer{
 			if(ch==-1)break;
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(ch=='\"')return new str(r);
-			if(ch=='+')return read_operator((char)ch,r,nms);
+			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^')return read_operator((char)ch,r,nms);
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
-			if(ch==')')continue;//? buggy
+//			if(ch==')')continue;//? buggy
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
