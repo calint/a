@@ -1,1 +1,6 @@
-c{run(){pl("hello world")}}
+c{run(){
+  int i=3;
+  while(true){
+    pl("hello world")
+  }
+}}

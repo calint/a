@@ -450,9 +450,9 @@ final class toc extends Writer{
 					final int i1=s.lastIndexOf('.');
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
-						final var v_ns=ns.vars.get(s);
-						if(v_ns==null)throw new Error(" at yyyy:xx  '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
-						return new set(v_ns,parse_statement(r,nms));
+						final var v=ns.vars.get(s);
+						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
+						return new set(v,parse_statement(r,nms));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final String struct_member_name=s.substring(i1+1);
@@ -515,19 +515,50 @@ final class toc extends Writer{
 			}
 			return new inti(Integer.parseInt(s));
 		}
-		final int i=s.lastIndexOf('.');
-		if(i==-1){// does not refer to struct member
-			final var v=find_var_in_namespace_stack(s,nms);
-			if(v==null)throw new Error(" at yyyy:xxx   '"+s+"' not in  "+namespaces_and_declared_types_to_string(nms));
-			return v;
+		String vnm=s;
+		boolean preinc=false,postinc=false,predec=false,postdec=false;
+		if(vnm.startsWith("++")){
+			preinc=true;
+			vnm=vnm.substring("++".length());
 		}
-		final String varnm=s.substring(0,i);
+		if(vnm.startsWith("--")){
+			predec=true;
+			vnm=vnm.substring("--".length());
+		}
+		if(vnm.endsWith("++")){
+			postinc=true;
+			vnm=vnm.substring(0,vnm.length()-"++".length());
+		}
+		if(vnm.endsWith("--")){
+			postdec=true;
+			vnm=vnm.substring(0,vnm.length()-"--".length());
+		}
+		check_validity_of_decinc(postinc,postdec,preinc,predec);
+		
+		final int i=vnm.lastIndexOf('.');
+		if(i==-1){// does not refer to struct member
+			final var v=find_var_in_namespace_stack(vnm,nms);
+			if(v==null)throw new Error(" at yyyy:xxx   variable '"+vnm+"' not in stack "+namespaces_and_declared_types_to_string(nms));
+			return wrap_variable_with_inc_dec(v,preinc,postinc,predec,postdec);
+		}
+		// refers to struct member
+		final String varnm=vnm.substring(0,i);
 		final var v=find_var_in_namespace_stack(varnm,nms);
 		if(v==null)throw new Error();
-		final String struc_member=s.substring(i+1);
+		final String struc_member=vnm.substring(i+1);
 		final type t=find_struct_member_type_or_break(v.type().name(),struc_member);
-		
-		return new struct_member(v,struc_member,this);
+		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
+	}
+	private static void check_validity_of_decinc(boolean postinc,boolean postdec,boolean preinc, boolean predec) {
+		// TODO Auto-generated method stub
+	}
+	private static stmt wrap_variable_with_inc_dec(final stmt v,final boolean preinc,final boolean postinc,final boolean predec,final boolean postdec){
+		stmt s=v;
+		if(postinc)s=new vm.inc(s);
+		if(preinc)s=new vm.incpre(s);
+		if(predec)s=new vm.decpre(s);
+		if(postdec)s=new vm.dec(s);
+		return s;
 	}
 	private static String namespaces_and_declared_types_to_string(LinkedList<namespace>nms){
 		final StringBuilder sb=new StringBuilder(256);

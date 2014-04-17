@@ -27,6 +27,7 @@ final class vm{
 		};
 		private static String args_to_string(stmt...a){
 			if(a.length==0)return"";
+			if(a.length==1&&a[0]==null)return"";
 			final StringBuilder sb=new StringBuilder();
 			for(stmt s:a)sb.append(s.toString()).append(",");
 			sb.setLength(sb.length()-1);
@@ -218,11 +219,11 @@ final class vm{
 		final static class incn extends op{
 			public incn(var v,stmt rh){super("+=",v,rh);}
 		}
-		final static class decn extends op{public decn(var v,stmt rh){super("-=",v,rh);}}
-		final static class inc extends stmt{public inc(var v){super(v+"++");}}
-		final static class incpre extends stmt{public incpre(var v){super("++"+v);}}
-		final static class dec extends stmt{public dec(var v){super(v+"--");}}
-		final static class decpre extends stmt{public decpre(var v){super("--"+v);}}
+		final static class decn extends op{public decn(stmt v,stmt rh){super("-=",v,rh);}}
+		final static class inc extends stmt{public inc(stmt v){super(v+"++");}}
+		final static class incpre extends stmt{public incpre(stmt v){super("++"+v);}}
+		final static class dec extends stmt{public dec(stmt v){super(v+"--");}}
+		final static class decpre extends stmt{public decpre(stmt v){super("--"+v);}}
 		final static class fcall extends call{
 			public fcall(var o,String funcname,stmt...args){
 				super(o.t+"_"+funcname,o,args);

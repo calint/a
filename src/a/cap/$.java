@@ -93,7 +93,9 @@ public class $ extends a {
 			if(t2==null)break;
 			t1=t2;
 		}
-		return t1.getMessage();
+		final String msg=t1.getMessage();
+		final String m=msg==null?stacktrace(t1):msg;
+		return m;
 	}
 	
 	public static String cc="gcc";
