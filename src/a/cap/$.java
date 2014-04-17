@@ -69,7 +69,7 @@ public class $ extends a {
 				if(t2==null)break;
 				t1=t2;
 			}
-			y.xu(sts,new Date()+"\n"+error_line(t));
+			y.xu(sts,new Date()+"\n"+error_line(t)+"\n\n\n stacktrace:\n"+stacktrace(t));
 			out.close();
 			c.from(csrc);
 			y.xu(c);
