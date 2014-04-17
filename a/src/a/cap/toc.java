@@ -141,21 +141,10 @@ final class toc extends Writer{
 					}
 					if(is_char_arguments_close(ch)){
 						state_push(state_find_function_block);
-						final String funcargs=token_take_clean();
+//						final String funcargs=token_take_clean();
 //						classes.peek().slots.peek().args=funcargs;
 						break;
 					}
-				}
-				token_add(ch);
-				break;
-			}
-			case state_in_struct_member_default_value:{// int a=•0•;
-				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
-				if(is_char_statement_close(ch)){// int a=0•;
-					final String def=token_take_trimmed();
-					structs.peek().slots.peek().struct_member_default_value=def;			
-					state_back_to(state_in_class_block);
-					break;
 				}
 				token_add(ch);
 				break;
@@ -192,7 +181,7 @@ final class toc extends Writer{
 						sl.func_source=token_take();
 						try{
 							final source_reader r=new source_reader(new StringReader(sl.func_source),lineno_func,charno_func);
-							sl.stm=parse_function_source(r,namespace_stack);
+							sl.stm=parse_function_source(r,namespace_stack,"}");
 //							System.err.println(sl.stm);
 						}catch(Throwable t){
 //							t.printStackTrace();
@@ -209,12 +198,6 @@ final class toc extends Writer{
 					state_push(state_in_string);
 				break;
 			}
-			case state_in_string:{// string a="•hello world•";
-				token_add(ch);
-				if(is_char_string_close(ch))
-					state_pop();
-				break;
-			}
 			case state_in_code_block:{// while(true){•pl("hello world");•}
 				token_add(ch);
 				if(is_char_block_open(ch)){
@@ -225,6 +208,23 @@ final class toc extends Writer{
 					state_pop();
 					break;
 				}
+				break;
+			}
+			case state_in_struct_member_default_value:{// int a=•0•;
+				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
+				if(is_char_statement_close(ch)){// int a=0•;
+					final String def=token_take_trimmed();
+					structs.peek().slots.peek().struct_member_default_value=def;			
+					state_back_to(state_in_class_block);
+					break;
+				}
+				token_add(ch);
+				break;
+			}
+			case state_in_string:{// string a="•hello world•";
+				token_add(ch);
+				if(is_char_string_close(ch))
+					state_pop();
 				break;
 			}
 			case state_in_line_comment:{//• comment
@@ -349,87 +349,101 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
-	stmt parse_function_source(source_reader r,LinkedList<namespace>nms)throws Throwable{
-		LinkedList<stmt>stms=new LinkedList<>();
+	stmt parse_function_source(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
+		final LinkedList<stmt>stms=new LinkedList<>();
 		while(true){
-			final stmt s=parse_statement(r,nms);
+			final stmt s=parse_statement(r,nms,delims);
 			if(s==null)break;//eos
 			stms.add(s);
-//					final int i=r.read();
-//					if(i!=';')throw new Error("@ yyyy:xxx  expected end of statement ';' but got '"+(char)i+"' (0x"+Integer.toHexString(i)+")");
 		}
 		return new block(stms);
 	}
-	stmt[]parse_function_arguments(source_reader r,LinkedList<namespace>nms)throws Throwable{
-		ArrayList<stmt>args=new ArrayList<>();
-		int ch=0,prvch=0;
-		final StringBuilder sb=new StringBuilder(128);
-		boolean in_string=false;
+	stmt[]parse_function_arguments(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
+		final ArrayList<stmt>args=new ArrayList<>();
 		while(true){
-			prvch=ch;
-			ch=r.read();
-			if(ch==-1)break;
-			if(ch=='"'){
-				if(in_string){
-					if(prvch=='\\'){// escaped  i.e.   "%s  \•" quote \"   "
-						
-					}else{
-						in_string=false;
-						sb.append((char)ch);
-						continue;
-					}
-				}else{
-					in_string=true;
-				}
-			}
-			if(in_string){
-				sb.append((char)ch);
-				continue;
-			}
-			if(ch==','){
-				// found next argument
-				final String code=sb.toString();
-				final source_reader rc=new source_reader(new StringReader(code));
-				final stmt arg=parse_statement(rc,nms);
-				args.add(arg);
-//						System.out.println(arg);
-				sb.setLength(0);
-				continue;
-			}
-			if(ch==')'){
-				// found end of arguments
-//						System.out.println(sb);
-				final String code=sb.toString();
-				sb.setLength(0);
-				final source_reader rc=new source_reader(new StringReader(code));
-				final stmt arg=parse_statement(rc,nms);
-				args.add(arg);
-				break;
-			}
-			sb.append((char)ch);
-//					if(sb.length()==0&&Character.isWhitespace(ch))continue;
+			final stmt st=parse_statement(r,nms,",)");
+			if(st==null)break;
+			args.add(st);
+			final int c=r.read();
+			if(c==',')continue;
+			break;
 		}
 		final stmt[]aargs=new stmt[args.size()];
 		int i=0;
 		for(stmt s:args)
 			aargs[i++]=s;
 		return aargs;
+
+//			
+//		int ch=0,prvch=0;
+//		final StringBuilder sb=new StringBuilder(128);
+//		boolean in_string=false;
+//		while(true){
+//			prvch=ch;
+//			ch=r.read();
+//			if(ch==-1)break;
+//			if(ch=='"'){
+//				if(in_string){
+//					if(prvch=='\\'){// escaped  i.e.   "%s  \•" quote \"   "
+//						
+//					}else{
+//						in_string=false;
+//						sb.append((char)ch);
+//						continue;
+//					}
+//				}else{
+//					in_string=true;
+//				}
+//			}
+//			if(in_string){
+//				sb.append((char)ch);
+//				continue;
+//			}
+//			if(ch==','){
+//				// found next argument
+//				final String code=sb.toString();
+//				final source_reader rc=new source_reader(new StringReader(code));
+//				final stmt arg=parse_statement(rc,nms,delims);
+//				args.add(arg);
+////						System.out.println(arg);
+//				sb.setLength(0);
+//				continue;
+//			}
+//			if(ch==')'){
+//				// found end of arguments
+////						System.out.println(sb);
+//				final String code=sb.toString();
+//				sb.setLength(0);
+//				final source_reader rc=new source_reader(new StringReader(code));
+//				final stmt arg=parse_statement(rc,nms,delims);
+//				args.add(arg);
+//				break;
+//			}
+//			sb.append((char)ch);
+////					if(sb.length()==0&&Character.isWhitespace(ch))continue;
+//		}
+//		final stmt[]aargs=new stmt[args.size()];
+//		int i=0;
+//		for(stmt s:args)
+//			aargs[i++]=s;
+//		return aargs;
 	}
-	stmt parse_statement(source_reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt parse_statement(source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
 		// expect call/let/set/const/fcall/str/   int/float/loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
 		while(true){
 			ch=r.read();
 			if(ch==-1)break;
+			if(delims.indexOf(ch)!=-1){if(sb.length()==0)return null;else;break;}
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(ch=='\"')return new str(r);
-			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^')return read_operator((char)ch,r,nms);
+			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^')return parse_operator((char)ch,r,nms,delims);
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
-			if(ch==')')
-				break;//? buggy the reader sometimes reads the "end of statement token" but not always. pushback reader
+//			if(ch==')')
+//				break;//? buggy the reader sometimes reads the "end of statement token" but not always. pushback reader
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
@@ -440,7 +454,7 @@ final class toc extends Writer{
 					final namespace ns=nms.peek();
 					final var v=ns.vars.get(varnm);
 					if(v==null)throw new Error("'"+varnm+"' not  in "+namespaces_and_declared_types_to_string(nms));
-					final stmt[]args=parse_function_arguments(r,nms);
+					final stmt[]args=parse_function_arguments(r,nms,")");
 					final int nargs=args.length==1&&args[0]==null?0:args.length;
 					// check number of arguments
 					final type t=v.type();
@@ -452,12 +466,12 @@ final class toc extends Writer{
 					final stmt ret=new fcall(v,funcnm,args);
 					return ret;
 				}
-				final stmt[]args=parse_function_arguments(r,nms);
+				final stmt[]args=parse_function_arguments(r,nms,")");
 				//? check args and declaration
 				return new call(funcname,args);
 			}
-			if(ch==')') // when parsing statements in function arguments
-				break;
+//			if(ch==')') // when parsing statements in function arguments
+//				break;
 			if(ch=='='){// let or set
 				final String s=sb.toString();
 				int i=s.lastIndexOf(' '); // int a=•1;
@@ -468,13 +482,13 @@ final class toc extends Writer{
 						final namespace ns=nms.peek();
 						final var v=ns.vars.get(s);
 						if(v==null)throw new Error(r.hrs_location()+" variable '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
-						return new set(v,parse_statement(r,nms));
+						return new set(v,parse_statement(r,nms,delims));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final String struct_member_name=s.substring(i1+1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not in "+nms);
-						final stmt st=parse_statement(r,nms);
+						final stmt st=parse_statement(r,nms,delims);
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
@@ -489,7 +503,7 @@ final class toc extends Writer{
 					if(shadow!=null)throw new Error(r.hrs_location()+" variable '"+name+"' shadows '"+shadow.type()+"'");
 					final var v=new var(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
-					final stmt st=parse_statement(r,nms);
+					final stmt st=parse_statement(r,nms,delims);
 					if(!v.type().equals(st.type()))throw new Error(r.hrs_location()+"    '"+v+"' is '"+t+"' and '"+st+"' is '"+st.type()+"'\n   try '"+t+" "+v+"="+(v.type()==floati.t?(st+"f"):(t+"("+st+")"))+"'");
 					return new let(t,v,st);
 				}
@@ -502,10 +516,8 @@ final class toc extends Writer{
 			}
 			sb.append((char)ch);
 		}
-		if(sb.length()==0){
-			if(ch==-1)
-				return null;
-			throw new Error();
+		if(sb.length()==0){// end of stream
+			return null;
 		}
 		final String s=sb.toString().trim();
 		if(s.startsWith("\"")&&s.endsWith("\"")){// string
@@ -567,9 +579,9 @@ final class toc extends Writer{
 		final type t=find_struct_member_type_or_break(v.type().name(),struc_member);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
-	private stmt read_operator(char op,source_reader r,LinkedList<namespace>nms)throws Throwable{
+	private stmt parse_operator(char op,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
 		if(op=='+'){
-			return new vm.add(parse_statement(r,nms),parse_statement(r,nms));
+			return new vm.add(parse_statement(r,nms,delims),parse_statement(r,nms,delims));
 		}
 		throw new Error("unknown operator '"+op+"'");
 	}
