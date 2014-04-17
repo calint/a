@@ -106,6 +106,25 @@ final class vm{
 				super("\""+v+"\"");
 			}
 			
+			public str(Reader r)throws Throwable{
+				super(read_string(r));
+			}
+			private static String read_string(Reader r)throws Throwable{
+				int ch=0,chp;
+				final StringBuilder sb=new StringBuilder(128);
+				while(true){
+					chp=ch;
+					ch=r.read();
+					if(ch==-1)break;
+					if(ch=='\"'&&chp!='\\'){
+						final String s=sb.toString();
+						return s;
+					}	
+					sb.append((char)ch);
+				}
+				throw new Error("did not find end of string in '"+sb+"'");
+			}
+
 			@Override type type(){return t;}
 			final static type t=new type("str");
 		};
