@@ -25,7 +25,7 @@ final class vm{
 				super(funcname+"("+args_to_string(o,args)+")");
 			}
 		};
-		private static String args_to_string(stmt...a){
+		static String args_to_string(stmt...a){
 			if(a.length==0)return"";
 			if(a.length==1&&a[0]==null)return"";
 			final StringBuilder sb=new StringBuilder();
@@ -37,8 +37,9 @@ final class vm{
 			final StringBuilder sb=new StringBuilder();
 			sb.append("&").append(o.toString());
 			if(a.length==0)return sb.toString();
+			if(a.length==1&&a[0]==null)return sb.toString();
 			sb.append(",");
-			for(stmt s:a)if(s!=null)sb.append(s.toString()).append(",");
+			for(stmt s:a)sb.append(s.toString()).append(",");
 			sb.setLength(sb.length()-1);
 			return sb.toString();
 		}
@@ -46,7 +47,7 @@ final class vm{
 //			public let(type t,var v){super(t+" "+v);}
 			public let(type t,var v,stmt s){
 				super(t+" "+v+"="+s);
-				if(!v.t.equals(s.type()))throw new Error(" at yyyy:xx  tried '"+code+"'  but  '"+v+"' is '"+t+"' and '"+s+"' is '"+s.type()+"'     try '"+t+" "+v+"="+t+"("+s+")'");
+//				if(!v.t.equals(s.type()))throw new Error(" at yyyy:xx  tried '"+code+"'  but  '"+v+"' is '"+t+"' and '"+s+"' is '"+s.type()+"'     try '"+t+" "+v+"="+t+"("+s+")'");
 			}
 		};
 		static class set extends stmt{

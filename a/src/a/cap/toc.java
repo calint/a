@@ -59,7 +59,7 @@ final class toc extends Writer{
 				}
 			}
 			lastchar=ch;
-			charno++;if(ch=='\n'){lineno++;charno=1;}
+			charno++;if(ch=='\n'){lineno++;charno=0;}
 			switch(state){
 			case state_in_class_name:{
 				if(is_token_empty()&&is_white_space(ch))break;// trims leading white space
@@ -172,8 +172,10 @@ final class toc extends Writer{
 //			}
 			case state_find_function_block:{// class file{func(size s) •{}
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
-				if(is_char_block_open(ch)){state_push(state_in_function_block);break;}//found
-				token_add(ch);
+				if(!is_char_block_open(ch)){token_add(ch);break;}
+				// found
+				state_push(state_in_function_block);
+				lineno_func=lineno;charno_func=charno;
 				break;
 			}
 			case state_in_function_block:{// class file{func(size s){•int a=2;a+=2;•}
@@ -183,20 +185,24 @@ final class toc extends Writer{
 					state_push(state_in_code_block);
 					break;
 				}
-				if(is_char_block_close(ch)){
-					final struct.slot sl=structs.peek().slots.peek();
-					token_dec_len_by_1();//? remove the }
-					sl.func_source=token_take();
-					try{
-						final Reader r=new StringReader(sl.func_source);
-						sl.stm=parse_function_source(r,namespace_stack);
-//						System.err.println(sl.stm);
-					}catch(Throwable t){
-//						t.printStackTrace();
-						throw new Error(t);
+				if(is_char_block_close(ch)){// end of function block
+					if(state==state_in_function_block){
+						final struct.slot sl=structs.peek().slots.peek();
+						token_dec_len_by_1();//? remove the }
+						sl.func_source=token_take();
+						try{
+							final source_reader r=new source_reader(new StringReader(sl.func_source),lineno_func,charno_func);
+							sl.stm=parse_function_source(r,namespace_stack);
+//							System.err.println(sl.stm);
+						}catch(Throwable t){
+//							t.printStackTrace();
+							throw new Error(t);
+						}
+						state_back_to(state_in_class_block);
+						namespace_pop();
+						break;
 					}
-					state_back_to(state_in_class_block);
-					namespace_pop();
+					state_pop();
 					break;
 				}
 				if(is_char_string_open(ch))
@@ -293,6 +299,7 @@ final class toc extends Writer{
 	
 	
 	private int lineno=1,charno=0;
+	private int lineno_func,charno_func;// used to mark where a function body starts for error location messaging
 	private StringBuilder token=new StringBuilder(32);
 
 	final private LinkedList<namespace>namespace_stack=new LinkedList<>();
@@ -311,7 +318,12 @@ final class toc extends Writer{
 		}
 		throw new Error("struct '"+struct_name+"' not found in declared structs: "+structs);
 	}
-
+	struct find_struct_or_break(final type t){
+		for(struct s:structs)
+			if(s.name.equals(t.name()))
+				return s;
+		throw new Error("struct '"+t.name()+"' not found in declared structs: "+structs);
+	}
 	private LinkedList<type>types=new LinkedList<>();
 	void types_add(type t){types.add(t);}
 	type find_type_by_name_or_break(String name){
@@ -337,10 +349,10 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
-	stmt parse_function_source(Reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt parse_function_source(source_reader r,LinkedList<namespace>nms)throws Throwable{
 		LinkedList<stmt>stms=new LinkedList<>();
 		while(true){
-			final stmt s=parse_statement(r,nms);
+			final stmt s=read_statement(r,nms);
 			if(s==null)break;//eos
 			stms.add(s);
 //					final int i=r.read();
@@ -348,7 +360,7 @@ final class toc extends Writer{
 		}
 		return new block(stms);
 	}
-	stmt[]parse_function_arguments(Reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt[]parse_function_arguments(source_reader r,LinkedList<namespace>nms)throws Throwable{
 		ArrayList<stmt>args=new ArrayList<>();
 		int ch=0,prvch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -377,8 +389,8 @@ final class toc extends Writer{
 			if(ch==','){
 				// found next argument
 				final String code=sb.toString();
-				final Reader rc=new StringReader(code);
-				final stmt arg=parse_statement(rc,nms);
+				final source_reader rc=new source_reader(new StringReader(code));
+				final stmt arg=read_statement(rc,nms);
 				args.add(arg);
 //						System.out.println(arg);
 				sb.setLength(0);
@@ -389,8 +401,8 @@ final class toc extends Writer{
 //						System.out.println(sb);
 				final String code=sb.toString();
 				sb.setLength(0);
-				final Reader rc=new StringReader(code);
-				final stmt arg=parse_statement(rc,nms);
+				final source_reader rc=new source_reader(new StringReader(code));
+				final stmt arg=read_statement(rc,nms);
 				args.add(arg);
 				break;
 			}
@@ -403,7 +415,7 @@ final class toc extends Writer{
 			aargs[i++]=s;
 		return aargs;
 	}
-	stmt parse_statement(Reader r,LinkedList<namespace>nms)throws Throwable{
+	stmt read_statement(source_reader r,LinkedList<namespace>nms)throws Throwable{
 		// expect call/let/set/const/fcall/str/   int/float/loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -416,24 +428,28 @@ final class toc extends Writer{
 			if(Character.isDigit(ch)){
 				// return (value v=read_number(r))
 			}
-			if(ch==')')continue;//? buggy the reader sometimes reads the "end of statement token" but not always. pushback reader
+			if(ch==')')
+				break;//? buggy the reader sometimes reads the "end of statement token" but not always. pushback reader
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
 				final int i=funcname.indexOf('.');
 				if(i!=-1){// i.e.   f.to(out);
-					final String var=funcname.substring(0,i);
-					final String func=funcname.substring(i+1);
+					final String varnm=funcname.substring(0,i);
+					final String funcnm=funcname.substring(i+1);
 					final namespace ns=nms.peek();
-					final var v_ns=ns.vars.get(var);
-					if(v_ns==null)throw new Error("'"+var+"' not  in "+namespaces_and_declared_types_to_string(nms));
-					final stmt s=parse_statement(r,nms);
-					final stmt ret;
-					//? check args and declaration
-					if(s!=null)
-						ret=new fcall(v_ns,func,s);
-					else
-						ret=new fcall(v_ns,func);
+					final var v=ns.vars.get(varnm);
+					if(v==null)throw new Error("'"+varnm+"' not  in "+namespaces_and_declared_types_to_string(nms));
+					final stmt[]args=parse_function_arguments(r,nms);
+					final int nargs=args.length==1&&args[0]==null?0:args.length;
+					// check number of arguments
+					final type t=v.type();
+					final struct s=find_struct_or_break(t);
+					final struct.slot func=s.find_function_or_break(funcnm);
+					final int func_nargs=func.argument_count();
+					if(nargs!=func_nargs)
+						throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but is  provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
+					final stmt ret=new fcall(v,funcnm,args);
 					return ret;
 				}
 				final stmt[]args=parse_function_arguments(r,nms);
@@ -451,14 +467,14 @@ final class toc extends Writer{
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
 						final var v=ns.vars.get(s);
-						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
-						return new set(v,parse_statement(r,nms));
+						if(v==null)throw new Error(r.hrs_location()+" variable '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
+						return new set(v,read_statement(r,nms));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final String struct_member_name=s.substring(i1+1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
-						if(v==null)throw new Error(" at yyyy:xx  '"+s+"' not in "+nms);
-						final stmt st=parse_statement(r,nms);
+						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not in "+nms);
+						final stmt st=read_statement(r,nms);
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
@@ -468,10 +484,14 @@ final class toc extends Writer{
 					final String name=s.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v_ns=ns.vars.get(name);//? look in namespaces stack
-					if(v_ns!=null)throw new Error(" at yyyy:xx  '"+s+"' already in "+namespaces_and_declared_types_to_string(nms));
+					if(v_ns!=null)throw new Error(r.hrs_location()+" variable '"+s+"' already in "+ns);
+					final var shadow=find_var_in_namespace_stack(name,nms);
+					if(shadow!=null)throw new Error(r.hrs_location()+" variable '"+name+"' shadows '"+shadow.type()+"'");
 					final var v=new var(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
-					return new let(t,v,parse_statement(r,nms));
+					final stmt st=read_statement(r,nms);
+					if(!v.type().equals(st.type()))throw new Error(r.hrs_location()+"    '"+v+"' is '"+t+"' and '"+st+"' is '"+st.type()+"'\n   try '"+t+" "+v+"="+(v.type()==floati.t?(st+"f"):(t+"("+st+")"))+"'");
+					return new let(t,v,st);
 				}
 			}
 			if(ch==';'){
@@ -498,10 +518,8 @@ final class toc extends Writer{
 			final String name=s.substring(ixspc+1).trim();
 			final String type=s.substring(0,ixspc).trim();
 			final type t=find_type_by_name_or_break(type);
-//			final type t=new type(type);//? lookup in namespace
-//			final namespace ns=nms.peek();
 			final var v=find_var_in_namespace_stack(name, nms);
-			if(v!=null)throw new Error("@yyyy:xxx  '"+name+"' already '"+v.type()+"' in '"+namespaces_and_declared_types_to_string(nms));
+			if(v!=null)throw new Error(r.hrs_location()+" '"+name+"' already declared '"+v.type()+"' in '"+namespaces_and_declared_types_to_string(nms));
 			final var nv=new var(t,name);
 			namespace_add_var(nv);
 			return new let(t,nv,new ctor(t));
@@ -549,9 +567,9 @@ final class toc extends Writer{
 		final type t=find_struct_member_type_or_break(v.type().name(),struc_member);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
-	private stmt read_operator(char op,Reader r,LinkedList<namespace>nms)throws Throwable{
+	private stmt read_operator(char op,source_reader r,LinkedList<namespace>nms)throws Throwable{
 		if(op=='+'){
-			return new vm.add(parse_statement(r,nms),parse_statement(r,nms));
+			return new vm.add(read_statement(r,nms),read_statement(r,nms));
 		}
 		throw new Error("unknown operator '"+op+"'");
 	}
@@ -624,6 +642,12 @@ final class toc extends Writer{
 		String name;
 		LinkedList<slot>slots=new LinkedList<>();
 		public struct(String name){this.name=name;}//autoset
+		public slot find_function_or_break(String funcnm){
+			for(slot s:slots)
+				if(s.name.equals(funcnm))
+					return s;
+			throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
+		}
 		@Override public String toString(){return name+"{"+slots+"}";}
 		final static class slot{
 			String tn="";// string from source  i.e. 'int i' 'string s'
@@ -638,6 +662,7 @@ final class toc extends Writer{
 			boolean ispointer;
 			final LinkedList<var>argsvar=new LinkedList<>();
 			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;decode_tn();}
+			public int argument_count(){return argsvar.size();}
 			@Override public String toString(){
 				final StringBuilder sb=new StringBuilder();
 				sb.append(type).append(" ").append(name);
@@ -731,4 +756,39 @@ final class toc extends Writer{
 	// notes
 //	System.err.println("line "+lineno+" state "+state+"  stk:"+state_stack+"   "+namespace_stack);
 
+	final public static class source_reader extends Reader{
+		public source_reader(final Reader source){
+			this.source=source;
+		}
+		public source_reader(final Reader source,final int lineno,final int charno){
+			this.source=source;
+			this.line_number=lineno;
+			this.character_number_in_line=charno;
+		}
+		@Override public String toString(){
+			return "@("+line_number+":"+character_number_in_line+")";
+		}
+		public String hrs_location(){
+			return "@("+line_number+":"+character_number_in_line+")";
+		}
+		@Override public int read()throws IOException{
+			final int ch=source.read();
+			character_number_in_line++;
+			if(ch==newline){line_number++;character_number_in_line=0;}
+			return ch;
+		}
+		@Override public int read(final char[]cbuf,int off,int len)throws IOException{
+			final int i=source.read(cbuf,off,len);
+			while(len-->0){
+				final int ch=cbuf[off++];
+				character_number_in_line++;
+				if(ch==newline){line_number++;character_number_in_line=0;}
+			}
+			return i;
+		}
+		@Override public void close()throws IOException{throw new Error("not supported");}
+		private Reader source;
+		private final static int newline='\n';
+		public int line_number=1,character_number_in_line;
+	}
 }
