@@ -304,18 +304,23 @@ final class toc extends Writer{
 	final private LinkedList<Integer>state_stack=new LinkedList<>();
 	final private LinkedList<struct>structs=new LinkedList<>();
 	final public List<struct>classes(){return structs;}
-	type find_struct_member_type_or_break(String struct_name,String member_name){
+	type find_struct_member_type(String struct_name,String member_name,boolean throw_excetion_if_not_found){
 		for(struct s:structs){
 			if(s.name.equals(struct_name)){
 				for(struct.slot sl:s.slots){
 					if(sl.name.equals(member_name))
 						return find_type_by_name_or_break(sl.type);
 				}
-				throw new Error("struct member '"+member_name+"' in '"+struct_name+"' not found in "+s.slots);
+				if(throw_excetion_if_not_found)throw new Error("struct member '"+member_name+"' in '"+struct_name+"' not found in "+s.slots);
+				return null;
 			}
 		}
-		throw new Error("struct '"+struct_name+"' not found in declared structs: "+structs);
+		if(throw_excetion_if_not_found)throw new Error("struct '"+struct_name+"' not found in declared structs: "+structs);
+		return null;
 	}
+//	type find_struct_member_type_or_break(String struct_name,String member_name){
+//		
+//	}
 	struct find_struct_or_break(final type t){
 		for(struct s:structs)
 			if(s.name.equals(t.name()))
@@ -458,7 +463,7 @@ final class toc extends Writer{
 					final String funcnm=funcname.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v=ns.vars.get(varnm);
-					if(v==null)throw new Error("'"+varnm+"' not  in "+namespaces_and_declared_types_to_string(nms));
+					if(v==null)throw new Error("'"+varnm+"' not  in:\n"+namespaces_and_declared_types_to_string(nms));
 					final stmt[]args=parse_function_arguments(r,nms,")");
 					final int nargs=args.length==1&&args[0]==null?0:args.length;
 					// check number of arguments
@@ -484,14 +489,19 @@ final class toc extends Writer{
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
 						final var v=ns.vars.get(s);
-						if(v==null)throw new Error(r.hrs_location()+" variable '"+s+"' not in "+namespaces_and_declared_types_to_string(nms));
+						if(v==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						return new set(v,parse_statement(r,nms,delims));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final String struct_member_name=s.substring(i1+1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
-						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not in "+nms);
+						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						final stmt st=parse_statement(r,nms,delims);
+						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
+						if(t==null)
+							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
+						if(!t.equals(st.type()))
+							throw new Error(r.hrs_location()+"  '"+v+"."+struct_member_name+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"="+t+"("+st.code+")'");
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
@@ -579,7 +589,7 @@ final class toc extends Writer{
 		final var v=find_var_in_namespace_stack(varnm,nms);
 		if(v==null)throw new Error();
 		final String struc_member=vnm.substring(i+1);
-		find_struct_member_type_or_break(v.type().name(),struc_member);
+//		find_struct_member_type_or_break(v.type().name(),struc_member,true);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
 	private stmt parse_operator(final char op,final stmt lh,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
@@ -601,15 +611,17 @@ final class toc extends Writer{
 	}
 	private static String namespaces_and_declared_types_to_string(LinkedList<namespace>nms){
 		final StringBuilder sb=new StringBuilder(256);
+		StringBuilder indent=new StringBuilder(" ");
 		for(namespace ns:nms){
-			sb.append(ns.name).append("{");
+			sb.append(indent).append(ns.name).append("{");
 			if(!ns.vars.isEmpty()){
 				for(var v:ns.vars.values()){
 					sb.append(v.type()).append(" ").append(v.code).append(',');
 				}
 				sb.setLength(sb.length()-1);
 			}
-			sb.append("} ");
+			sb.append("}\n");
+			indent.append("  ");
 		}
 		return sb.toString();
 	}
