@@ -6,7 +6,7 @@ final class vm{
 		static class stmt{
 			String code;
 			stmt(String code){this.code=code;}
-			stmt(Reader r)throws Throwable{}
+//			stmt(Reader r)throws Throwable{}
 			public String toString(){return code;}
 			void to(final PrintWriter pw){pw.print(code);}
 			String end_delim(){return";";}
