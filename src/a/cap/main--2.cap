@@ -1,8 +1,6 @@
-addr{i}
-nbytes{i}
 file{
-  addr addr;
-  nbytes nbytes;
+  addr;
+  size;
   to(){}
 }
 
@@ -10,5 +8,5 @@ c{run(){
   int i=2;
   i=i+3;
   pl("hello world %d",i);
-  pl("%s","ehllo");
+  pl("%s",meta[0]);
 }}

@@ -51,6 +51,7 @@ public class $ extends a {
 	synchronized public void x_(xwriter y,String a)throws Throwable{
 		final path basedir=req.get().session().path("a/cap");
 		final path csrc=basedir.get("main.c");
+		cap.to(basedir.get("main.cap"));
 		final Reader in=new StringReader(cap.toString());
 		final Writer out=csrc.writer(false);
 		out.write("// "+new Date()+"\n");
@@ -107,7 +108,7 @@ public class $ extends a {
 		try{new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
 			y.pl(line);
 //			System.out.println(line);
-		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat "+csrc.name()+"|gzip|wc&&").p(cc).p(" -o main -Wfatal-errors *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
+		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat main|gzip|wc&&").p(cc).p(" -o main -Wfatal-errors *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
 		finally{x.xube();}
 		x.xfocus(out);
 	}
