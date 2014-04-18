@@ -1,7 +1,10 @@
 ui={}
-//ui.is_dbg=true;
+ui.is_dbg=true;
 ui.axconwait=false;
 $d=function(v){
+	console.log(v);
+	return;
+
 	if(!ui.is_dbg)return;
 	var w=ui._dbgw;
 	if(!w||w.closed){

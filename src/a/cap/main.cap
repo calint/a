@@ -34,6 +34,5 @@ c{run(){
   f.name="/usr/file";
 
   f.address.to(out);
-
   f.to(out);
 }}
