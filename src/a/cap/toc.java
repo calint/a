@@ -445,28 +445,45 @@ final class toc extends Writer{
 					return parse_statement(r,nms,")");
 				}
 				final int i=funcname.indexOf('.');
-				if(i!=-1){// i.e.   f.to(out);
+				if(i!=-1){// i.e.   f.to(out);   ?make with statements   read_statement(r,".(")
 					final String varnm=funcname.substring(0,i);
-					final String funcnm=funcname.substring(i+1);
+					String funcnm=funcname.substring(i+1);
 					final namespace ns=nms.peek();
 					final var v=ns.vars.get(varnm);
 					if(v==null)throw new Error("'"+varnm+"' not  in:\n"+namespaces_and_declared_types_to_string(nms));
 					final stmt[]args=parse_function_arguments(r,nms,")");
 					final int nargs=args.length==1&&args[0]==null?0:args.length;
 					// check number of arguments
-					final type t=v.type();
-					final struct s=find_struct_or_break(t);
-					final struct.slot func=s.find_function_or_break(funcnm);
+					type t=v.type();
+					struct s=find_struct_or_break(t);
+					int func_dot_ix=funcnm.indexOf('.');
+					final StringBuilder pointer_to_refered_member=new StringBuilder();
+					pointer_to_refered_member.append(v.code);
+					boolean dots_in_funcname=false;
+					while(func_dot_ix!=-1){ //   	f.address.to(out);  
+						dots_in_funcname=true;
+						final String member=funcnm.substring(0,func_dot_ix);
+						funcnm=funcnm.substring(func_dot_ix+1);
+						t=find_struct_member_type(s.name,member,true);
+						if(t==null)throw new Error(r.hrs_location());
+						s=find_struct_or_break(t);
+						pointer_to_refered_member.append(".").append(member);
+						func_dot_ix=funcnm.indexOf('.');
+					}
+					final struct.slot func=s.find_function(funcnm,false);
+					if(func==null)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' not found\n  struct "+s.name+":"+s.slots);
 					final int func_nargs=func.argument_count();
-					if(nargs!=func_nargs)
-						throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
+					if(nargs!=func_nargs)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
 					// check arguments with declaration
 					int arg_i=0;
 					for(var va:func.argsvar){
 						if(args[arg_i++].type().equals(va.type()))continue;
 						throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
 					}
-					final stmt ret=new fcall(v,funcnm,args);
+//					final String stmtstr=dots_in_funcname?pointer_to_refered_member.toString():("("+pointer_to_refered_member+")");
+					final String stmtstr=pointer_to_refered_member.toString();
+					final stmt member_accessor=new stmt(stmtstr);
+					final stmt ret=new fcall(member_accessor,s,funcnm,args);
 					return ret;
 				}
 				final stmt[]args=parse_function_arguments(r,nms,")");
