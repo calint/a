@@ -107,7 +107,8 @@ final public class cap{
 //			    {"size","address",offsetof(file,address),sizeof(address)},
 //			    {"size","nbytes",offsetof(file,nbytes),sizeof(nbytes)},
 //			};
-		p.println("static const field "+cnm+"__field[]={");
+		p.print("static const field "+cnm+"__field[]={");
+		if(!attrs.isEmpty())p.println();
 		for(struct.slot i:attrs){
 //		    {"size","address",offsetof(file,address),sizeof(address)},
 			p.println("  {\""+i.type+"\",\""+i.name+"\",offsetof("+cnm+","+i.name+"),sizeof("+i.type+")},");
@@ -154,8 +155,9 @@ final public class cap{
 			p.println();
 		}
 		p.print("static const function "+cnm+"__func[]={");
+		if(!funcs.isEmpty())p.println();
 		for(struct.slot i:funcs){
-			p.print("{\""+i.type+"\",\""+i.name+"\",\""+i.args_declaration_to_string()+"\","+cnm+"_"+i.name+"},");
+			p.println("  {\""+i.type+"\",\""+i.name+"\",\""+i.args_declaration_to_string()+"\","+cnm+"_"+i.name+"},");
 		}
 		p.println("};");
 	}
