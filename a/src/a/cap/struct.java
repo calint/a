@@ -9,11 +9,13 @@ final public class struct{
 		String name;
 		LinkedList<struct.slot>slots=new LinkedList<>();
 		public struct(String name){this.name=name;}//autoset
-		final public struct.slot find_function_or_break(String funcnm){
+		final public struct.slot find_function_or_break(String funcnm){return find_function(funcnm,true);}
+		final public struct.slot find_function(String funcnm,boolean break_if_not_found){
 			for(struct.slot s:slots)
 				if(s.name.equals(funcnm))
 					return s;
-			throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
+			if(break_if_not_found)throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
+			return null;
 		}
 		final @Override public String toString(){return name+"{"+slots+"}";}
 		final public String name(){return name;}

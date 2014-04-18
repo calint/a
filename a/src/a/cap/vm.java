@@ -22,7 +22,7 @@ final class vm{
 			public call(String funcname,stmt...args){
 				super(funcname+"("+args_to_string(args)+")");
 			}
-			public call(String funcname,var o,stmt...args){//fcall
+			public call(String funcname,stmt o,stmt...args){//fcall
 				super(funcname+"("+args_to_string(o,args)+")");
 			}
 		};
@@ -34,7 +34,7 @@ final class vm{
 			sb.setLength(sb.length()-1);
 			return sb.toString();
 		}
-		private static String args_to_string(var o,stmt...a){// call to function with object context
+		private static String args_to_string(stmt o,stmt...a){// call to function with object context
 			final StringBuilder sb=new StringBuilder();
 			sb.append("&").append(o.toString());
 			if(a.length==0)return sb.toString();
@@ -208,7 +208,13 @@ final class vm{
 		final static class incpre extends stmt{public incpre(stmt v){super("++"+v);}}
 		final static class dec extends stmt{public dec(stmt v){super(v+"--");}}
 		final static class decpre extends stmt{public decpre(stmt v){super("--"+v);}}
-		final static class fcall extends call{public fcall(var o,String funcname,stmt...args){super(o.t+"_"+funcname,o,args);}}
+		final static class fcall extends call{
+			public fcall(var o,String funcname,stmt...args){super(o.t+"_"+funcname,o,args);}
+			public fcall(var o,struct s,String funcname,stmt...args){super(s.name+"_"+funcname,o,args);}
+			public fcall(stmt st,struct s,String funcname,stmt...args){
+				super(s.name+"_"+funcname,st,args);
+			}
+		}
 		final static class floati extends value{
 			public floati(float f){super(Float.toString(f)+"f");}
 			@Override type type(){return t;}
