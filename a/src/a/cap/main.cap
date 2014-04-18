@@ -13,6 +13,9 @@ c{run(){
   pl("%s","ehllo");
   
   file f;
-  f.address.i=0xa0000;
+  f.address=0xa0000;
+  f.to(out);
+  f.address.i=0xa0001;
+  f.size_in_bytes=0x10000;
   f.to(out);
 }}
