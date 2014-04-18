@@ -483,23 +483,43 @@ final class toc extends Writer{
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 
-						String smn=s.substring(i1+1);
-						String struct_member_name=smn;
-//						while(true){//   f.address.i=2;      'address.i'
-//							final int i2=smn.indexOf('.');
-//							if(i2==-1)break;
-//							System.out.println(smn);
-//							struct_member_name+=smn.substring(0,i2);
-//							System.out.println(smn);
-//							//TODO
-//						}
 						final stmt st=parse_statement(r,nms,delims);
+						String smn=s.substring(i1+1);
+						String member_accessor="";
+						type t=v.type();
+						while(true){//   f.address.i=2;      'address.i'
+							final int i2=smn.indexOf('.');
+							final String membername=i2==-1?smn:smn.substring(0,i2);
+							smn=smn.substring(i2+1);
+							type tm=find_struct_member_type(t.name(),membername,false);
+							if(tm==null)
+								throw new Error(r.hrs_location()+"  '"+smn+"' not found in struct '"+t.name()+"'");
+							member_accessor+=membername+".";
+							t=tm;
+							if(i2==-1)break;
+						}
+						if(member_accessor.length()==0)
+							member_accessor=smn;
+						else
+							member_accessor=member_accessor.substring(0,member_accessor.length()-1);
 //						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
 //						if(t==null)
 //							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
-//						if(!t.equals(st.type()))
-//							throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+struct_member_name+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"="+t+"("+st.code+")'");
-						return new set_struct_member(v,struct_member_name,st,this);
+						if(!t.equals(st.type())){
+							boolean ok=false;
+							// if type refered to contains a single field, shorthand
+							final struct ts=find_struct_or_break(t);
+							if(ts.slots.size()==1){// one field struct
+								final struct.slot ss=ts.slots.peek();
+								final type statement_return_type=st.type();
+								if(ss.type.equals(statement_return_type.name())){// compatible
+									member_accessor+="."+ts.slots.peek().name;
+									ok=true;
+								}
+							}
+							if(!ok)throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+member_accessor+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"."+member_accessor+"="+t+"("+st.code+")'");
+						}
+						return new set_struct_member(v,member_accessor,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
 				}else{// let    int i=2;
