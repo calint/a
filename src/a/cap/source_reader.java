@@ -1,14 +1,15 @@
 package a.cap;
 
 import java.io.IOException;
+import java.io.PushbackReader;
 import java.io.Reader;
 
 final public class source_reader extends Reader{
 	public source_reader(final Reader source){
-		this.source=source;
+		this.source=new PushbackReader(source,1);
 	}
 	public source_reader(final Reader source,final int lineno,final int charno){
-		this.source=source;
+		this.source=new PushbackReader(source,1);
 		this.line_number=lineno;
 		this.character_number_in_line=charno;
 	}
@@ -37,7 +38,16 @@ final public class source_reader extends Reader{
 		return i;
 	}
 	@Override public void close()throws IOException{throw new Error("not supported");}
-	private Reader source;
+	final public void unread(int c)throws IOException{
+		source.unread(c);
+		character_number_in_line--;
+		if(character_number_in_line<0){
+			line_number--;
+			character_number_in_line=0;
+			if(line_number==0)throw new Error();
+		}
+	}
+	private PushbackReader source;
 	private final static int newline='\n';
 	public int line_number=1,character_number_in_line;
 }

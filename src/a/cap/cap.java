@@ -33,7 +33,7 @@ final public class cap{
 		cc.types_add(inti.t);
 		cc.types_add(floati.t);
 		cc.types_add(str.t);
-		cc.namespace_add_var(new var(str.t,"meta[0]"));
+//		cc.namespace_add_var(new var(str.t,"meta[0]"));
 		final type t=cc.find_type_by_name_or_break("stream");
 		cc.namespace_add_var(new var(t,"out"));
 		b.b.cp(in,cc,null);
