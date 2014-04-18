@@ -472,7 +472,7 @@ final class toc extends Writer{
 				int i=s.lastIndexOf(' '); // int a=•1;
 				if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
 				if(i==-1){// set
-					final int i1=s.lastIndexOf('.');
+					final int i1=s.indexOf('.');
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
 						final var v=ns.vars.get(s);
@@ -480,15 +480,25 @@ final class toc extends Writer{
 						return new set(v,parse_statement(r,nms,delims));
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
-						final String struct_member_name=s.substring(i1+1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
+
+						String smn=s.substring(i1+1);
+						String struct_member_name=smn;
+//						while(true){//   f.address.i=2;      'address.i'
+//							final int i2=smn.indexOf('.');
+//							if(i2==-1)break;
+//							System.out.println(smn);
+//							struct_member_name+=smn.substring(0,i2);
+//							System.out.println(smn);
+//							//TODO
+//						}
 						final stmt st=parse_statement(r,nms,delims);
 						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
-						if(t==null)
-							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
-						if(!t.equals(st.type()))
-							throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+struct_member_name+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"="+t+"("+st.code+")'");
+//						if(t==null)
+//							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
+//						if(!t.equals(st.type()))
+//							throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+struct_member_name+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"="+t+"("+st.code+")'");
 						return new set_struct_member(v,struct_member_name,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
@@ -537,6 +547,11 @@ final class toc extends Writer{
 			final var nv=new var(t,name);
 			namespace_add_var(nv);
 			return new let(t,nv,new ctor(t));
+		}
+		if(s.startsWith("0x")){
+			final String hex=s.substring("0x".length());
+			final int hexi=Integer.parseInt(hex,16);
+			return new inti(hexi);
 		}
 		// const number or variable
 		final boolean first_char_is_digit=Character.isDigit(s.charAt(0));

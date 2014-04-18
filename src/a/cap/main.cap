@@ -3,7 +3,7 @@ size_in_bytes{int}
 file{
   address;
   size_in_bytes;
-  to(stream){pl("file %p{%d %d}",o,address,size_in_bytes)}
+  to(stream){pl("file %p{%d %d}",o,address.i,size_in_bytes.i)}
 }
 
 c{run(){
