@@ -475,9 +475,11 @@ final class toc extends Writer{
 					final int i1=s.indexOf('.');
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
-						final var v=ns.vars.get(s);
-						if(v==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
-						return new set(v,parse_statement(r,nms,delims));
+						final var lh=ns.vars.get(s);
+						if(lh==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
+						final stmt rh=parse_statement(r,nms,delims);
+						if(!lh.type().equals(rh.type()))throw new Error(r.hrs_location()+"  '"+lh.code+"' is '"+lh.type()+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh+"="+lh.type()+"("+rh.code+")'");
+						return new set(lh,rh);
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
@@ -492,8 +494,7 @@ final class toc extends Writer{
 							final String membername=i2==-1?smn:smn.substring(0,i2);
 							smn=smn.substring(i2+1);
 							type tm=find_struct_member_type(t.name(),membername,false);
-							if(tm==null)
-								throw new Error(r.hrs_location()+"  '"+smn+"' not found in struct '"+t.name()+"'");
+							if(tm==null)throw new Error(r.hrs_location()+"  '"+smn+"' not found in struct '"+t.name()+"'");
 							member_accessor+=membername+".";
 							t=tm;
 							if(i2==-1)break;
