@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import a.x.cli;
@@ -97,7 +96,7 @@ public class $ extends a {
 		final xwriter nx=new xwriter();//new line numbers
 		for(int j=1;j<200;j++){
 			if(j!=lineno){nx.p(j).nl();continue;}
-			nx.p("<span style='background:brown;color:white;weight:bold'>").p(j).pl("</span>");
+			nx.p("<span style='background:brown;color:white;font-weight:bold'>").p(j).pl("</span>");
 		}
 		x.xu(ln,nx.toString());
 	}

@@ -1,8 +1,5 @@
 package a.cap;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
@@ -16,7 +13,6 @@ import a.cap.vm.inti;
 import a.cap.vm.str;
 import a.cap.vm.type;
 import a.cap.vm.var;
-import b.osnl;
 
 final public class cap{
 	public String indent="   ";
@@ -44,15 +40,14 @@ final public class cap{
 		cc.namespace_pop();		
 		final PrintWriter out=new PrintWriter(ccode);
 		b.b.cp(cap.class.getResourceAsStream("header"),out);
-//		// generate reflection struct
-//		out.println("const char*meta[]={");
-//		cc.classes().forEach((c)->{
-//			out.println("   \""+c+"\",");
-//		});
-//		out.println("};");
 		cc.classes().forEach((c)->source_c(c,out));
-		// generate reflection struct
-//		out.println("const char*vm[]={");
+//		// generate reflection struct
+//		const struct struc structs[]={
+//		    {"file",sizeof(file__fields)/sizeof(field),file__fields,sizeof(file__funcs)/sizeof(function),file__funcs}
+//		};
+		out.println("const struct struc structs[]={");
+		cc.classes().forEach((c)->{out.println("  {\""+c.name+"\",sizeof("+c.name+"__field)/sizeof(field),"+c.name+"__field,sizeof("+c.name+"__func)/sizeof(function),"+c.name+"__func},");});		
+		out.println("};");
 //		cc.classes().forEach((c)->{
 //			out.print(c.name);
 //			out.print("{");
@@ -108,14 +103,14 @@ final public class cap{
 //			p.print(",");
 		}
 		p.println("};");
-		p.print("const char*"+cnm+"__field[]={");
+//		const field file__fields[]={
+//			    {"size","address",offsetof(file,address),sizeof(address)},
+//			    {"size","nbytes",offsetof(file,nbytes),sizeof(nbytes)},
+//			};
+		p.println("const field "+cnm+"__field[]={");
 		for(struct.slot i:attrs){
-			p.print("\""+i.name+"\",");
-		}
-		p.println("};");
-		p.print("const char*"+cnm+"__func[]={");
-		for(struct.slot i:funcs){
-			p.print("\""+i.name+"\",");
+//		    {"size","address",offsetof(file,address),sizeof(address)},
+			p.println("  {\""+i.type+"\",\""+i.name+"\",offsetof("+cnm+","+i.name+"),sizeof("+i.type+")},");
 		}
 		p.println("};");
 //		p.println("typedef struct "+cnm+" "+cnm+";");
@@ -158,6 +153,11 @@ final public class cap{
 			if(!isblk)p.print("}");
 			p.println();
 		}
+		p.print("const function "+cnm+"__func[]={");
+		for(struct.slot i:funcs){
+			p.print("{\""+i.type+"\",\""+i.name+"\",\""+i.args_declaration_to_string()+"\","+cnm+"_"+i.name+"},");
+		}
+		p.println("};");
 	}
 //	private void source_h(struct c,PrintWriter p){
 //		final String name=c.name;
