@@ -1,4 +1,7 @@
-address{int}
+address{
+  int;
+  to(stream){pls(s,"address: %d",i);}
+}
 size_in_bytes{int}
 name{str i}
 file{
@@ -6,7 +9,7 @@ file{
   size_in_bytes;
   name;
   to(stream){
-    pl("file '%s' @ %p{%d %d}",name.i,o,address.i,size_in_bytes.i);
+    pls(s,"file '%s' @ %p{%d %d}",name.i,o,address.i,size_in_bytes.i);
   }
 }
 
@@ -29,5 +32,8 @@ c{run(){
   f.address.i=0xa0001;
   f.size_in_bytes=0x10000;
   f.name="/usr/file";
+
+  f.address.to(out);
+
   f.to(out);
 }}
