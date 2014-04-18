@@ -81,7 +81,7 @@ public class $ extends a {
 					final String[]rc=rcs.split(":");
 					final int lineno=Integer.parseInt(rc[0]);
 					upd_linenumbers(y,lineno);
-					System.out.println("rcx "+rc[0]+"   "+rc[1]);
+//					System.out.println("rcx "+rc[0]+"   "+rc[1]);
 				}
 			}
 //			final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
