@@ -66,10 +66,21 @@ final public class struct{
 				final int i2=tn.lastIndexOf(' ');
 //				if(i1==-1&&i2==-1){isctor=true;name="";type=tn;return;}
 				if(i1==-1&&i2==-1){
-					if(isfunc){name=tn;type="void";}
-					else{name=tn;type="int";}
-				}else if(i1>i2){name=tn.substring(i1+1);type=tn.substring(0,i1+1);}
-				else{name=tn.substring(i2+1);type=tn.substring(0,i2);}
+					if(isfunc){
+						name=tn;type="void";
+					}else{
+						name=type=tn;
+						if(name.equals("int"))name="i";
+//						if(name.equals("float"))name="data";
+					}
+				}else if(i1>i2){
+					name=tn.substring(i1+1);
+					type=tn.substring(0,i1+1);
+				}
+				else{
+					name=tn.substring(i2+1);
+					type=tn.substring(0,i2);
+				}
 				ispointer=type.endsWith("*");
 				if(!isfunc&&struct_member_default_value.length()==0){// set default value
 					struct_member_default_value="0";

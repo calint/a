@@ -1,9 +1,9 @@
-addr{i}
-nbytes{i}
+address{int}
+size_in_bytes{int}
 file{
-  addr addr;
-  nbytes nbytes;
-  to(){}
+  address;
+  size_in_bytes;
+  to(stream){pl("file %p{%d %d}",o,address,size_in_bytes)}
 }
 
 c{run(){
@@ -11,4 +11,7 @@ c{run(){
   i=i+3;
   pl("hello world %d",i);
   pl("%s","ehllo");
+  
+  file f;
+  f.to(out);
 }}

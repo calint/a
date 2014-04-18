@@ -113,10 +113,10 @@ final class toc extends Writer{
 					if(s.length()>0){
 						final int i=s.indexOf(' ');
 						if(i==-1){//  i.e.  file{to(stream){}}
-							final String snm=suggest_argument_name(s,namespace_stack);
 							final type t=find_type_by_name(s,false);
 							if(t==null)
 								throw new Error(source_reader.hr_location_string_from_line_and_col(lineno,charno)+" '"+s+"' not declared\n  declared types "+types);
+							final String snm=suggest_argument_name(t,namespace_stack);
 							final var v=new var(t,snm);
 							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
@@ -233,8 +233,8 @@ final class toc extends Writer{
 //		return null;
 //	}
 //	private static boolean is_char_blank(char ch){return Character.isWhitespace(ch);}
-	private static String suggest_argument_name(String s,LinkedList<namespace>nms){
-		return s.charAt(0)+"";
+	private static String suggest_argument_name(type t,LinkedList<namespace>nms){
+		return t.name().charAt(0)+"";
 	}
 	private static boolean is_char_arguments_separator(char ch){return ch==',';}
 	void namespace_add_var(var v){namespace_stack.peek().vars.put(v.code,v);}
@@ -350,7 +350,9 @@ final class toc extends Writer{
 			args.add(st);
 			final int c=r.read();
 			if(c==',')continue;
-			break;
+			if(c==')')break;
+			throw new Error(r.hrs_location()+"  expected ',' or ')' but found '"+(char)c+"'");
+//			break;
 		}
 		final stmt[]aargs=new stmt[args.size()];
 		int i=0;
@@ -420,7 +422,12 @@ final class toc extends Writer{
 			ch=r.read();
 			if(ch==-1)break;
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
-			if(delims.indexOf(ch)!=-1){if(sb.length()==0)return null;else;break;}
+			if(delims.indexOf(ch)!=-1){
+				r.unread((char)ch);
+				if(sb.length()==0)
+					return null;
+				break;
+			}
 			if(ch=='\"')return new str(r);
 			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^'){
 				final String lhs=sb.toString();
@@ -598,7 +605,10 @@ final class toc extends Writer{
 			sb.append(indent).append(ns.name).append("{");
 			if(!ns.vars.isEmpty()){
 				for(var v:ns.vars.values()){
-					sb.append(v.type()).append(" ").append(v.code).append(',');
+					sb.append(v.type());
+					if(!v.type().name().equals(v.code))
+						sb.append(" ").append(v.code);
+					sb.append(',');
 				}
 				sb.setLength(sb.length()-1);
 			}
