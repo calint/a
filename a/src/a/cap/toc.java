@@ -517,11 +517,17 @@ final class toc extends Writer{
 							boolean ok=false;
 							// if type refered to contains a single field, shorthand
 							final struct ts=find_struct_or_break(t);
-							if(ts.slots.size()==1){// one field struct
-								final struct.slot ss=ts.slots.peek();
+							// get fields
+							final LinkedList<struct.slot>ls=new LinkedList<>();
+							for(struct.slot ss:ts.slots){
+								if(ss.isfunc||ss.isctor)continue;
+								ls.add(ss);
+							}
+							if(ls.size()==1){// one field struct
+								final struct.slot ss=ls.peek();
 								final type statement_return_type=st.type();
 								if(ss.type.equals(statement_return_type.name())){// compatible
-									member_accessor+="."+ts.slots.peek().name;
+									member_accessor+="."+ss.name;
 									ok=true;
 								}else{
 									error_addon="\n  type '"+ts.name+"' is a one field structure with field '"+ss.type+" "+ss.name+"' but the right hand of the assignment, '"+st+"', is '"+st.type()+"'";
