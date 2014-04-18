@@ -54,8 +54,8 @@ final class vm{
 		static class set extends stmt{
 			public set(var lh,stmt rh){
 				super(lh+"="+rh);
-				if(!lh.t.equals(rh.type()))
-					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh.code+"' is '"+lh.t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+lh.type()+"("+rh.code+")'");
+//				if(!lh.t.equals(rh.type()))
+//					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh.code+"' is '"+lh.t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+lh.type()+"("+rh.code+")'");
 			}
 		};
 		final static class set_struct_member extends stmt{
