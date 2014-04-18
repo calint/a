@@ -494,7 +494,7 @@ final class toc extends Writer{
 //							//TODO
 //						}
 						final stmt st=parse_statement(r,nms,delims);
-						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
+//						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
 //						if(t==null)
 //							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
 //						if(!t.equals(st.type()))
