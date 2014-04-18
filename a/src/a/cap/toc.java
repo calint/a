@@ -116,7 +116,7 @@ final class toc extends Writer{
 							final String snm=suggest_argument_name(s,namespace_stack);
 							final type t=find_type_by_name(s,false);
 							if(t==null)
-								throw new Error(source_reader.hr_location_string_from_line_and_col(lineno,charno)+" '"+s+"' not declared\n declared types "+types);
+								throw new Error(source_reader.hr_location_string_from_line_and_col(lineno,charno)+" '"+s+"' not declared\n  declared types "+types);
 							final var v=new var(t,snm);
 							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
