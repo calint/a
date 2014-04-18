@@ -51,6 +51,15 @@ final public class struct{
 				if(len>0)sb.setLength(len-1);
 				return sb.toString();
 			}
+			final public String args_declaration_to_string(){
+				final StringBuilder sb=new StringBuilder();
+				for(var v:argsvar){
+					sb.append(v.type()).append(",");
+				}
+				final int len=sb.length();
+				if(len>0)sb.setLength(len-1);
+				return sb.toString();
+			}
 			private void decode_tn(){
 				//  get func name from i.e. 'const int*func'   'const int func'
 				final int i1=tn.lastIndexOf('*');

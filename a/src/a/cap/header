@@ -15,4 +15,25 @@ typedef const char* str;
 #define str_default ""
 #define true 1
 #define false 0
+//typedef struct slot{}slot;
+typedef struct field{
+    const char*type;
+    const char*name;
+    size offset;
+    size size;
+}field;
+typedef struct function{
+    const char*type;
+    const char*name;
+    const char*args;
+    void(*func)();
+}function;
+typedef struct struc{
+    const char*name;
+    size nfields;
+    const field*fields;
+    size nfuncs;
+    const function*funcs;
+}struc;
+#define offsetof(st, m) ((size_t)(&((st *)0)->m))
 //- -- - -- - - - - - -  ---  -- - - - - - - - - - -   - - - - - - - - - - - - -

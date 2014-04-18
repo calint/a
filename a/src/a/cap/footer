@@ -1,2 +1,20 @@
 // - - -- -  -- - - - - -  --  --- -- - - - - - -- - - - - - - - - -- - - - - --
-int main(int argc,char*argv[]){c_run(null);return 0;}
+int main(int argc,char*argv[]){
+
+    pl("reflection");
+    size nstructs=sizeof(structs)/sizeof(structs[0]);
+    pl("structs %lu",nstructs);
+    for(size i=0;i<nstructs;i++){
+        pl("struct %s %lu %lu",structs[i].name,structs[i].nfields,structs[i].nfuncs);
+        for(size j=0;j<structs[i].nfields;j++){
+            pl("    %s %s %lu:%lu",structs[i].fields[j].type,structs[i].fields[j].name,structs[i].fields[j].offset,structs[i].fields[j].size);
+        }
+        for(size j=0;j<structs[i].nfuncs;j++){
+            pl("    %s %s(%s) %p",structs[i].funcs[j].type,structs[i].funcs[j].name,structs[i].funcs[j].args,structs[i].funcs[j].func);
+        }
+    }
+ 
+	c_run(null);
+	return 0;
+}
+
