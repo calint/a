@@ -459,7 +459,13 @@ final class toc extends Writer{
 					final struct.slot func=s.find_function_or_break(funcnm);
 					final int func_nargs=func.argument_count();
 					if(nargs!=func_nargs)
-						throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but is  provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
+						throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
+					// check arguments with declaration
+					int arg_i=0;
+					for(var va:func.argsvar){
+						if(args[arg_i++].type().equals(va.type()))continue;
+						throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
+					}
 					final stmt ret=new fcall(v,funcnm,args);
 					return ret;
 				}

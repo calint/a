@@ -41,27 +41,9 @@ final public class cap{
 		final PrintWriter out=new PrintWriter(ccode);
 		b.b.cp(cap.class.getResourceAsStream("header"),out);
 		cc.classes().forEach((c)->source_c(c,out));
-//		// generate reflection struct
-//		const struct struc structs[]={
-//		    {"file",sizeof(file__fields)/sizeof(field),file__fields,sizeof(file__funcs)/sizeof(function),file__funcs}
-//		};
 		out.println("static const struct struc structs[]={");
 		cc.classes().forEach((c)->{out.println("  {\""+c.name+"\",sizeof("+c.name+"__field)/sizeof(field),"+c.name+"__field,sizeof("+c.name+"__func)/sizeof(function),"+c.name+"__func},");});		
 		out.println("};");
-//		cc.classes().forEach((c)->{
-//			out.print(c.name);
-//			out.print("{");
-//			for(struct.slot s:c.slots){
-//				if(s.isctor)continue;
-//				if(s.isfunc)continue;
-//				out.print(s.type.toString());
-//				out.print(" ");
-//				out.print(s.name);
-//				out.println("}");
-//			}
-//			out.println("}");
-//		});
-//		out.println("};");
 		// include footer		
 		b.b.cp(cap.class.getResourceAsStream("footer"),out);
 
