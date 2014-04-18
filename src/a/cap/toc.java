@@ -505,6 +505,7 @@ final class toc extends Writer{
 //						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
 //						if(t==null)
 //							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
+						String error_addon="";
 						if(!t.equals(st.type())){
 							boolean ok=false;
 							// if type refered to contains a single field, shorthand
@@ -515,9 +516,11 @@ final class toc extends Writer{
 								if(ss.type.equals(statement_return_type.name())){// compatible
 									member_accessor+="."+ts.slots.peek().name;
 									ok=true;
+								}else{
+									error_addon="\n  type '"+ts.name+"' is a one field structure with field '"+ss.type+" "+ss.name+"' but the right hand of the assignment, '"+st+"', is '"+st.type()+"'";
 								}
 							}
-							if(!ok)throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+member_accessor+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"."+member_accessor+"="+t+"("+st.code+")'");
+							if(!ok)throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+member_accessor+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"."+member_accessor+"="+t+"("+st.code+")'"+error_addon);
 						}
 						return new set_struct_member(v,member_accessor,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
@@ -571,7 +574,7 @@ final class toc extends Writer{
 		if(s.startsWith("0x")){
 			final String hex=s.substring("0x".length());
 			final int hexi=Integer.parseInt(hex,16);
-			return new inti(hexi);
+			return new inti(hexi,true);
 		}
 		// const number or variable
 		final boolean first_char_is_digit=Character.isDigit(s.charAt(0));

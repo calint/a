@@ -166,6 +166,7 @@ final class vm{
 		}
 		final static class inti extends value{
 			public inti(int i){super(Integer.toString(i));}
+			public inti(int i,boolean hex){super("0x"+Integer.toString(i,16));}
 			@Override type type(){return t;}
 			final static type t=new type("int");
 		};
