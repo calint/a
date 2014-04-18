@@ -45,7 +45,7 @@ final public class cap{
 //		const struct struc structs[]={
 //		    {"file",sizeof(file__fields)/sizeof(field),file__fields,sizeof(file__funcs)/sizeof(function),file__funcs}
 //		};
-		out.println("const struct struc structs[]={");
+		out.println("static const struct struc structs[]={");
 		cc.classes().forEach((c)->{out.println("  {\""+c.name+"\",sizeof("+c.name+"__field)/sizeof(field),"+c.name+"__field,sizeof("+c.name+"__func)/sizeof(function),"+c.name+"__func},");});		
 		out.println("};");
 //		cc.classes().forEach((c)->{
@@ -107,7 +107,7 @@ final public class cap{
 //			    {"size","address",offsetof(file,address),sizeof(address)},
 //			    {"size","nbytes",offsetof(file,nbytes),sizeof(nbytes)},
 //			};
-		p.println("const field "+cnm+"__field[]={");
+		p.println("static const field "+cnm+"__field[]={");
 		for(struct.slot i:attrs){
 //		    {"size","address",offsetof(file,address),sizeof(address)},
 			p.println("  {\""+i.type+"\",\""+i.name+"\",offsetof("+cnm+","+i.name+"),sizeof("+i.type+")},");
@@ -153,7 +153,7 @@ final public class cap{
 			if(!isblk)p.print("}");
 			p.println();
 		}
-		p.print("const function "+cnm+"__func[]={");
+		p.print("static const function "+cnm+"__func[]={");
 		for(struct.slot i:funcs){
 			p.print("{\""+i.type+"\",\""+i.name+"\",\""+i.args_declaration_to_string()+"\","+cnm+"_"+i.name+"},");
 		}

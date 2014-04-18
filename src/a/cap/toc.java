@@ -114,41 +114,27 @@ final class toc extends Writer{
 						final int i=s.indexOf(' ');
 						if(i==-1){//  i.e.  file{to(stream){}}
 							final String snm=suggest_argument_name(s,namespace_stack);
-//							final type t=new type(s);//? lookup in reflection
-							final type t=find_type_by_name_or_break(s);
+							final type t=find_type_by_name(s,false);
+							if(t==null)
+								throw new Error(source_reader.hr_location_string_from_line_and_col(lineno,charno)+" '"+s+"' not declared\n declared types "+types);
 							final var v=new var(t,snm);
 							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
 						}else{//  i.e.  file{to(stream st){}}
 							final String typenm=s.substring(0,i);
 							final String name=s.substring(i+1);
-//							final type t=new type(typenm);//? lookup in reflection
 							final type t=find_type_by_name_or_break(typenm);
 							final var v=new var(t,name);
 							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
 						}
 					}
-					if(is_char_arguments_close(ch)){
-						state_push(state_4_find_function_block);
-//						final String funcargs=token_take_clean();
-//						classes.peek().slots.peek().args=funcargs;
-						break;
-					}
+					if(is_char_arguments_close(ch))state_push(state_4_find_function_block);
+					break;
 				}
 				token_add(ch);
 				break;
 			}
-//			case state_in_function_arguments:{// class file{func(•size s,int i•){}}
-//				if(is_char_arguments_close(ch)){
-//					state_push(state_find_function_block);
-//					final String funcargs=token_take_clean();
-//					classes.peek().slots.peek().args=funcargs;
-//					break;
-//				}
-//				token_add(ch);
-//				break;
-//			}
 			case state_4_find_function_block:{// class file{func(size s) •{}
 				if(is_white_space(ch)&&is_token_empty())continue;//trim lead space
 				if(!is_char_block_open(ch)){token_add(ch);break;}
