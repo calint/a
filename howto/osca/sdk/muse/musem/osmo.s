@@ -1,11 +1,14 @@
 ; snippet library osmo32
 ;
+; compiled with nasm-2.11.02 on osx
+;
 ; tested on:
-;   qemu linux : ok
-;      qemu win: ok
-;       eeepc4g: ok
-;         6720s: ok
-;          vaio: ok
+;  qemu 0.9.1 osx: ok
+;     qemu linux : ok
+;        qemu win: ok
+;         eeepc4g: ok
+;           6720s: ok
+;            vaio: ok
 txt:
 mem:
 .idta	equ 0h
