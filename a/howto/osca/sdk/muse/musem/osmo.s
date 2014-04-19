@@ -17,14 +17,15 @@ mem:
 .vgaa   equ 0a0000h
 .vgal   equ 320*200-1
 
+bits 16
 org 7c00h
-k0:
+_k0:
 .setup_init:
 	cli
-	mov sp,k0
+	mov sp,_k0
 ;	xor ax,ax
 ;	mov ds,ax
-	mov [k0.dr],dx
+	mov [_k0.dr],dx
 .setup_screen:
 	mov ax,13h		; bios:vga 320x200x8b
 ;	mov ax,4f02h	
@@ -199,7 +200,7 @@ bits 32
 ;	jz	.setup_pe		 ; nothing
 ;	mov word[es:10],0x0f0f
 
-	call k1
+	call _k1
 ;...............................
 ;  data
 ;...............................
@@ -250,12 +251,12 @@ kikbd:
 	push ax
 	in ax,60h
 	mov word[es:310],ax
-	mov word[k0.sc],ax
+	mov word[_k0.sc],ax
 ;	mov word[k1.data.dcolr],ax
 ;	mov word[k1.data.dchp],ax
 	cmp ax,3920h
 	jne .11
-		mov dword[k1.data.dchp],0
+		mov dword[_k1.data.dchp],0
 	.11:
 	mov al,0x20		;ack intrp
 	out 0x20,al     ;mstr pic
@@ -267,9 +268,9 @@ align 16
 kitmr:
 	cli
 	push eax
-	mov eax,dword[k0.tc]
+	mov eax,dword[_k0.tc]
 	inc eax
-	mov dword[k0.tc],eax
+	mov dword[_k0.tc],eax
 	mov dword[es:316],eax
 
 	push ebx
@@ -747,7 +748,7 @@ bmp.type_byte_hex:; ebx:byte edx:font
 ;times 0200h-($-sector3) db 0
 
 align 16
-k1:                              ; 8200h
+_k1:                              ; 8200h
 pci.index_p equ 0cf8h
 pci.data_p  equ 0cfch
 ;	mov dword[0xa0030],0x09090909
@@ -795,7 +796,7 @@ pci.data_p  equ 0cfch
 ;	jmp $
     sti
 .loop:
-	mov edx,[k0.tc]
+	mov edx,[_k0.tc]
 	and edx,111b
 	shl edx,2
 	add edx,.data.bg
@@ -829,14 +830,14 @@ pci.data_p  equ 0cfch
 	mov bx,fnt.t
 	mov di,bmp.wi*11+11
     mov dword[bmp.xof],11
-	mov esi,[k1.data.chp]
-	mov edx,[k1.data.dchp]
-    add [k1.data.chp],edx
+	mov esi,[_k1.data.chp]
+	mov edx,[_k1.data.dchp]
+    add [_k1.data.chp],edx
 ;    mov eax,esi
 	mov cx,17
 	.1    call bmp.drw_ascii
 	      call bmp.drw_nl
-	      add eax,[k1.data.dcolr]
+	      add eax,[_k1.data.dcolr]
           inc esi
     loop .1
     
@@ -844,7 +845,7 @@ pci.data_p  equ 0cfch
 ;    inc dword[pet]
 ;    inc dword[pdt]
 ;    inc dword[0a000h]
-	inc dword[k0.fc]
+	inc dword[_k0.fc]
 	hlt
 ;	jmp $
 	call .loop                   ; stack train bug	
@@ -853,7 +854,7 @@ pci.data_p  equ 0cfch
 ;txt:
 align 4
 ne2000 db "ne2000 compatible ethernet",0
-k1.data:
+_k1.data:
 .bg	dd 0x11000000
 	dd 0x00110000
 	dd 0x00001100
@@ -925,7 +926,7 @@ k4.drw:; redraw windows
 ;...............................
 	times 0400h-($-sector3) db 2
 ;...............................
-k2:                             ; 8400h
+_k2:                             ; 8400h
 ;...............................
 ;...............................
 win.drw2:; esi:win bl:col
@@ -1137,9 +1138,9 @@ db "                hilo store incas flgzn wbr ",0
 db 0,0
 db "osmo. view my machine",0,0
 db 0,0,0,0,0,0,0,0,0,0,0,0
-times 0800h-($-k2) db 3	
+times 0800h-($-_k2) db 3
 ;...............................; 8c00h
-k4:
+_k4:
 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 db "u c a 32b risc     256m instructions   4g data   128 registers -",0
 db "    0          8       16       24       32                    -",0
@@ -1210,8 +1211,8 @@ db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 db "                                 ",0
 db "figure 1. instruction set",0
 db 0,0,0
-times 1000h-($-k4) db 1
-k8:
+times 1000h-($-_k4) db 1
+_k8:
 db "              0    4  6  8    12   16      24      32",0
 db " pc   000:0000:zncr:li:nl:niah:sfia:.......d.......a:",0
 db "  rom         :                                     :",0
@@ -1303,7 +1304,7 @@ db ":..:..:....:....:....:01d                                      :",0
 db ":..:..:....:....:....:01e                                      :",0
 db ":..:..:....:....:....:01f                                      :",0
 db "osmo. view another k",0,0
-times 2000h-($-k8) db 1
+times 2000h-($-_k8) db 1
 k16:
 db 0,0,0,0,0,0,0,"                                                        "
 db "figure 2. memory map",0,0
