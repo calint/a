@@ -53,9 +53,10 @@ public class $ extends a {
 	synchronized public void x_(xwriter y,String a)throws Throwable{
 		final path basedir=req.get().session().path("a/cap");
 		final path csrc=basedir.get("main.c");
+		b.cp($.class.getResourceAsStream("pc.c"),csrc.outputstream());
 		cap.to(basedir.get("main.cap"));
 		final Reader in=new StringReader(cap.toString());
-		final Writer out=csrc.writer(false);
+		final Writer out=csrc.writer(true);
 		out.write("// "+new Date()+"\n");
 		final cap cc=new cap();
 		try{
@@ -137,9 +138,9 @@ public class $ extends a {
 			}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&");
 			c.p(cc);
 			if(build_pco_boot_img){
-				b.cp(cap.class.getResourceAsStream("pc.c"),basedir.get("pc.c").outputstream());
-				b.cp(cap.class.getResourceAsStream("pc.h"),basedir.get("pc.h").outputstream());
-				c.p(" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast pc.c main.c");
+//				b.cp(cap.class.getResourceAsStream("pc.c"),basedir.get("pc.c").outputstream());
+//				b.cp(cap.class.getResourceAsStream("pc.h"),basedir.get("pc.h").outputstream());
+				c.p(" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast main.c");
 			}else{
 				c.p(" -o main -std=c1x -Wfatal-errors main.c");
 			}

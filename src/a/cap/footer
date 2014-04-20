@@ -29,13 +29,13 @@ asm("  addl $2,0xa0150");
 asm("  hlt");
 asm("  jmp tsk4");
 
-void tsk5(){
+static void tsk5(){
 	while(1){
         osca_pass();
 		*(int*)0xa0154+=3;
 	}
 }
-void tsk6(){
+static void tsk6(){
 	static char*p=(char*)0xa0400;
 	static char*nl=(char*)0xa0400;
 	static char key_prev=0;
@@ -61,7 +61,7 @@ void tsk6(){
 	}
 }
 
-void tsk7(){
+static void tsk7(){
 	while(1){
         osca_pass();
         int*p=(int*)0xa1800;
@@ -71,14 +71,14 @@ void tsk7(){
 	}
 }
 
-void tsk8(){
+static void tsk8(){
 	while(1){
         osca_pass();
 		*(long int*)0xa0480=osca_t;
 	}
 }
 
-void tsk9(){
+static void tsk9(){
 	while(1){
         osca_pass();
         int n;
@@ -87,14 +87,14 @@ void tsk9(){
 	}
 }
 
-void tsk10(){
+static void tsk10(){
     while(true){
         c_run(null);
         osca_pass();
     }
 }
 
-void osca_keyb_ev(){
+static void osca_keyb_ev(){
 	static char*p=(char*)0xa4000;
 	*p++=(char)osca_key;
 }
