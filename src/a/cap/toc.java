@@ -510,59 +510,9 @@ final class toc extends Writer{
 								acstr.append(".").append(parent.name);
 								if(t.equals(rh.type())){ok=true;break;}
 							}
-							// check for compatability
 							if(!ok)throw new Error(r.hrs_location()+" incompatible types\n  '"+v+"."+ac.accessor_statement+"' is a '"+ac.struct.name+"' and '"+rh+"' is a '"+rh.type()+"'");
 						}
 						return new set_struct_member(v,acstr.toString(),rh,this);
-//
-//						
-//						
-//						final stmt st=parse_statement(r,nms,delims);
-//						String smn=s.substring(i1+1);
-//						String member_accessor="";
-//						type t=v.type();
-//						while(true){//   f.address.i=2;      'address.i'
-//							final int i2=smn.indexOf('.');
-//							final String membername=i2==-1?smn:smn.substring(0,i2);
-//							smn=smn.substring(i2+1);
-//							type tm=find_struct_member_type(t.name(),membername,false);
-//							if(tm==null)throw new Error(r.hrs_location()+"  '"+smn+"' not found in struct '"+t.name()+"'");
-//							member_accessor+=membername+".";
-//							t=tm;
-//							if(i2==-1)break;
-//						}
-//						if(member_accessor.length()==0)
-//							member_accessor=smn;
-//						else
-//							member_accessor=member_accessor.substring(0,member_accessor.length()-1);
-////						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
-////						if(t==null)
-////							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
-//						String error_addon="";
-//						if(!t.equals(st.type())){
-//							boolean ok=false;
-//							// if type refered to contains a single field, shorthand
-//							final struct ts=find_struct_or_break(t);
-//							// get fields
-//							final LinkedList<struct.slot>ls=new LinkedList<>();
-//							for(struct.slot ss:ts.slots){
-//								if(ss.isfunc||ss.isctor)continue;
-//								ls.add(ss);
-//							}
-//							if(ls.size()==1){// one field struct
-//								final struct.slot ss=ls.peek();
-//								final type statement_return_type=st.type();
-//								if(ss.type.equals(statement_return_type.name())){// compatible
-//									member_accessor+="."+ss.name;
-//									ok=true;
-//								}else{
-//									error_addon="\n  type '"+ts.name+"' is a one field structure with field '"+ss.type+" "+ss.name+"' but the right hand of the assignment, '"+st+"', is '"+st.type()+"'";
-//								}
-//							}
-//							if(!ok)throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+member_accessor+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"."+member_accessor+"="+t+"("+st.code+")'"+error_addon);
-//						}
-//						return new set_struct_member(v,member_accessor,st,this);
-//						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
 				}else{// let    int i=2;
 					final String type=s.substring(0,i).trim();
@@ -662,7 +612,7 @@ final class toc extends Writer{
 		// refers to struct member
 		final String varnm=vnm.substring(0,i);
 		final var v=find_var_in_namespace_stack(varnm,nms);
-		if(v==null)throw new Error();
+		if(v==null)throw new Error(r.hrs_location()+"  variable '"+varnm+"' not found\n  "+namespaces_and_declared_types_to_string(nms));
 		final String struc_member=vnm.substring(i+1);
 //		find_struct_member_type_or_break(v.type().name(),struc_member,true);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);

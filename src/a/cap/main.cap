@@ -1,5 +1,4 @@
-address{
-  int;
+address{int;
   to(stream){pls(s,"address: %d\n",i);}
 }
 size_in_bytes{int}
@@ -16,6 +15,8 @@ file{
 
 c{run(){
   file f;
+  file f2;
+  f.address=f2.address;
   f.address.to(out);
   f.to(out);
   f.address=0xa0000;
