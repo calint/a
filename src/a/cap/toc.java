@@ -510,7 +510,10 @@ final class toc extends Writer{
 						final var lh=ns.vars.get(s);
 						if(lh==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						final stmt rh=parse_statement(r,nms,delims);
-						if(!lh.type().equals(rh.type()))throw new Error(r.hrs_location()+"  '"+lh.code+"' is '"+lh.type()+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh+"="+lh.type()+"("+rh.code+")'");
+						if(!lh.type().equals(rh.type())){
+							//? compatible
+							throw new Error(r.hrs_location()+"  '"+lh.code+"' is '"+lh.type()+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh+"="+lh.type()+"("+rh.code+")'");
+						}
 						return new set(lh,rh);
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
