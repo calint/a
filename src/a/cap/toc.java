@@ -157,7 +157,14 @@ final class toc extends Writer{
 						sl.func_source=token_take();
 						try{
 							final source_reader r=new source_reader(new StringReader(sl.func_source),lineno_func,charno_func);
-							sl.stm=parse_function(r,namespace_stack,"}");
+//							final int peek=r.read();
+//							if(peek==-1)throw new Error(r.hrs_location()+" unexpected en of line.\n  expected '{' or a statment");
+//							if(is_char_block_open((char)peek)){
+								sl.stm=parse_block(r,namespace_stack,"}");
+//							}else{
+//								r.unread(peek);
+//								sl.stm=parse_statement(r,namespace_stack,";");
+//							}
 //							System.err.println(sl.stm);
 						}catch(Throwable t){
 //							t.printStackTrace();
@@ -332,7 +339,7 @@ final class toc extends Writer{
 	//  foo f={1,2}.to(out);
 	//  foo{1,2}.to(out);
 
-	stmt parse_function(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
+	stmt parse_block(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
 		final LinkedList<stmt>stms=new LinkedList<>();
 		while(true){
 			final stmt s=parse_statement(r,nms,delims);
@@ -414,7 +421,15 @@ final class toc extends Writer{
 //			aargs[i++]=s;
 //		return aargs;
 	}
+	private final static class accessor{
+//		String member_name;
+		struct struct;
+		stmt accessor_statement;
+	}
 	stmt parse_statement(source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
+		return parse_statement(r,nms,delims,false,null);
+	}
+	stmt parse_statement(source_reader r,LinkedList<namespace>nms,final String delims,final boolean consume_delimiter,final stmt previous_statement_in_accessor)throws Throwable{
 		// expect call/let/set/const/fcall/str/   int/float/loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
@@ -423,7 +438,7 @@ final class toc extends Writer{
 			if(ch==-1)break;
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(delims.indexOf(ch)!=-1){
-				r.unread((char)ch);
+				if(!consume_delimiter)r.unread((char)ch);
 				if(sb.length()==0)
 					return null;
 				break;
@@ -441,10 +456,36 @@ final class toc extends Writer{
 			if(ch=='('){// call
 				final String funcname=sb.toString();
 				sb.setLength(0);
-				if(funcname.length()==0){// i.e. (i+3)
+				if(funcname.length()==0){// i.e. ^(int i)(i+3){}
 					return parse_statement(r,nms,")");
 				}
-				final int i=funcname.indexOf('.');
+				final int i=funcname.lastIndexOf('.');
+				if(i!=-1){// i.e.   f.to(out)
+					final String funcnm=funcname.substring(i+1);
+					final String accessor=funcname.substring(0,i);
+					final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
+	//				final stmt stm
+					final accessor ac=parse_function_accessor_statement(sr,namespace_stack);
+					
+					final stmt[]args=parse_function_arguments(r,nms,")");
+					final int nargs=args.length==1&&args[0]==null?0:args.length;
+					
+					final struct s=ac.struct;
+					final struct.slot func=s.find_function(funcnm,false);
+					if(func==null)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' not found\n  struct "+s.name+":"+s.slots);
+					final int func_nargs=func.argument_count();
+					if(nargs!=func_nargs)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
+					// check arguments with declaration
+					int arg_i=0;
+					for(var va:func.argsvar){
+						if(args[arg_i++].type().equals(va.type()))continue;
+						throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
+					}
+					final stmt ret=new fcall(ac.accessor_statement,ac.struct,funcnm,args);
+					return ret;
+				}
+//				if(stm==null)break;
+				
 				if(i!=-1){// i.e.   f.to(out);   ?make with statements   read_statement(r,".(")
 					final String varnm=funcname.substring(0,i);
 					String funcnm=funcname.substring(i+1);
@@ -637,9 +678,18 @@ final class toc extends Writer{
 		
 		final int i=vnm.lastIndexOf('.');
 		if(i==-1){// does not refer to struct member
-			final var v=find_var_in_namespace_stack(vnm,nms);
-			if(v==null)throw new Error(r.hrs_location()+"   variable '"+vnm+"' not in stack:\n"+namespaces_and_declared_types_to_string(nms));
-			return wrap_variable_with_inc_dec(v,preinc,postinc,predec,postdec);
+			if(previous_statement_in_accessor==null){//find variable
+				final var v=find_var_in_namespace_stack(vnm,nms);
+				if(v==null)throw new Error(r.hrs_location()+"   variable '"+vnm+"' not in stack:\n"+namespaces_and_declared_types_to_string(nms));
+				return wrap_variable_with_inc_dec(v,preinc,postinc,predec,postdec);
+			}else{// coninues accessor chain   i.e.   f.•address.to(out)     f being prv stmt
+				final type t=previous_statement_in_accessor.type();
+				final struct st=find_struct_or_break(t);
+				final type mt=find_struct_member_type(st.name,vnm,false);
+				if(mt==null)throw new Error(r.hrs_location()+" member '"+vnm+"' not found in struct '"+st.name+"'");
+//				if(!mt.equals(t))throw new Error(r.hrs_location()+" "+mt+"!="+t);
+				return wrap_variable_with_inc_dec(new stmt(mt,vnm),preinc,postinc,predec,postdec);
+			}
 		}
 		// refers to struct member
 		final String varnm=vnm.substring(0,i);
@@ -654,6 +704,35 @@ final class toc extends Writer{
 			return new vm.add(lh,parse_statement(r,nms,delims));
 		}
 		throw new Error("unknown operator '"+op+"'");
+	}
+	private accessor parse_function_accessor_statement(source_reader r,LinkedList<namespace>nms)throws Throwable{
+		// r  "f.to"  or "func"
+		LinkedList<stmt>ls=new LinkedList<>();
+		stmt stmprv=null;
+		while(true){
+			stmt stm=parse_statement(r,nms,".",true,stmprv);
+			if(stm==null)break;
+			stmprv=stm;
+//			final int peek=r.read();
+//			if(peek==-1)break;
+			ls.add(stm);
+		}
+//		// validate types
+//		struct struc=null;
+//		for(stmt stm:accessor_chain){
+//			final type stm_type=stm.type();
+//			struc=find_struct_or_break(stm_type);
+//		}
+		final accessor a=new accessor();
+//		a.member_name=ls.peekLast().code;
+		final StringBuilder sb=new StringBuilder();
+		for(stmt s:ls)
+			sb.append(s).append('.');
+		sb.setLength(sb.length()-1);
+		final type t=ls.peekLast().type();
+		a.accessor_statement=new stmt(t,sb.toString());
+		a.struct=find_struct_or_break(stmprv.type());
+		return a;
 	}
 	private static void check_validity_of_decinc(boolean postinc,boolean postdec,boolean preinc, boolean predec) {
 		// TODO Auto-generated method stub
