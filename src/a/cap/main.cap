@@ -17,7 +17,7 @@ file{
 }
 width{int}height{int}
 width_in_pixels{width}
-height_in_pixels{width}
+height_in_pixels{height}
 
 bmp{file; width_in_pixels;height_in_pixels;
   to(stream){
@@ -40,4 +40,3 @@ c{run(){
   f.address=0xa0000;
   f.address.i=0xa0002;
 }}
-
