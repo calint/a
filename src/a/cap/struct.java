@@ -7,7 +7,9 @@ import a.cap.vm.var;
 
 final public class struct{
 		String name;
-		LinkedList<struct.slot>slots=new LinkedList<>();
+		final LinkedList<struct.slot>slots=new LinkedList<>();
+//		final LinkedList<struct.slot>attrs=new LinkedList<>();
+//		final LinkedList<struct.slot>funcs=new LinkedList<>();
 		public struct(String name){this.name=name;}//autoset
 		final public struct.slot find_function_or_break(String funcnm){return find_function(funcnm,true);}
 		final public struct.slot find_function(String funcnm,boolean break_if_not_found){
@@ -89,5 +91,9 @@ final public class struct{
 				}
 			}
 //			final public boolean is_pointer(){return ispointer;}
+		}
+		final public slot inherits_from(){
+			final slot s=slots.peekLast();
+			return s;
 		}
 	}

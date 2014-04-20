@@ -306,11 +306,13 @@ final class toc extends Writer{
 //	type find_struct_member_type_or_break(String struct_name,String member_name){
 //		
 //	}
-	struct find_struct_or_break(final type t){
+	struct find_struct_or_break(final type t){return find_struct(t,true);}
+	struct find_struct(final type t,final boolean break_if_not_found){
 		for(struct s:structs)
 			if(s.name.equals(t.name()))
 				return s;
-		throw new Error("struct '"+t.name()+"' not found in declared structs: "+structs);
+		if(break_if_not_found)throw new Error("struct '"+t.name()+"' not found in declared structs: "+structs);
+		return null;
 	}
 	private LinkedList<type>types=new LinkedList<>();
 	void types_add(type t){types.add(t);}
@@ -464,70 +466,14 @@ final class toc extends Writer{
 					final String funcnm=funcname.substring(i+1);
 					final String accessor=funcname.substring(0,i);
 					final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
-	//				final stmt stm
-					final accessor ac=parse_function_accessor_statement(sr,namespace_stack);
-					
+					final accessor ac=parse_accessor(sr,namespace_stack,null);
 					final stmt[]args=parse_function_arguments(r,nms,")");
-					final int nargs=args.length==1&&args[0]==null?0:args.length;
-					
-					final struct s=ac.struct;
-					final struct.slot func=s.find_function(funcnm,false);
-					if(func==null)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' not found\n  struct "+s.name+":"+s.slots);
-					final int func_nargs=func.argument_count();
-					if(nargs!=func_nargs)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
-					// check arguments with declaration
-					int arg_i=0;
-					for(var va:func.argsvar){
-						if(args[arg_i++].type().equals(va.type()))continue;
-						throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
-					}
+					validate_function_arguments(r,funcnm,ac.struct,args);
 					final stmt ret=new fcall(ac.accessor_statement,ac.struct,funcnm,args);
 					return ret;
 				}
-//				if(stm==null)break;
-				
-				if(i!=-1){// i.e.   f.to(out);   ?make with statements   read_statement(r,".(")
-					final String varnm=funcname.substring(0,i);
-					String funcnm=funcname.substring(i+1);
-					final namespace ns=nms.peek();
-					final var v=ns.vars.get(varnm);
-					if(v==null)throw new Error("'"+varnm+"' not  in:\n"+namespaces_and_declared_types_to_string(nms));
-					final stmt[]args=parse_function_arguments(r,nms,")");
-					final int nargs=args.length==1&&args[0]==null?0:args.length;
-					// check number of arguments
-					type t=v.type();
-					struct s=find_struct_or_break(t);
-					int func_dot_ix=funcnm.indexOf('.');
-					final StringBuilder pointer_to_refered_member=new StringBuilder();
-					pointer_to_refered_member.append(v.code);
-					boolean dots_in_funcname=false;
-					while(func_dot_ix!=-1){ //   	f.address.to(out);  
-						dots_in_funcname=true;
-						final String member=funcnm.substring(0,func_dot_ix);
-						funcnm=funcnm.substring(func_dot_ix+1);
-						t=find_struct_member_type(s.name,member,true);
-						if(t==null)throw new Error(r.hrs_location());
-						s=find_struct_or_break(t);
-						pointer_to_refered_member.append(".").append(member);
-						func_dot_ix=funcnm.indexOf('.');
-					}
-					final struct.slot func=s.find_function(funcnm,false);
-					if(func==null)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' not found\n  struct "+s.name+":"+s.slots);
-					final int func_nargs=func.argument_count();
-					if(nargs!=func_nargs)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
-					// check arguments with declaration
-					int arg_i=0;
-					for(var va:func.argsvar){
-						if(args[arg_i++].type().equals(va.type()))continue;
-						throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
-					}
-//					final String stmtstr=dots_in_funcname?pointer_to_refered_member.toString():("("+pointer_to_refered_member+")");
-					final String stmtstr=pointer_to_refered_member.toString();
-					final stmt member_accessor=new stmt(stmtstr);
-					final stmt ret=new fcall(member_accessor,s,funcnm,args);
-					return ret;
-				}
 				final stmt[]args=parse_function_arguments(r,nms,")");
+//				validate_function_arguments(r,funcname,ac.struct,args);
 				//? check args and declaration
 				return new call(funcname,args);
 			}
@@ -548,52 +494,74 @@ final class toc extends Writer{
 						final String varnm=s.substring(0,i1);
 						final var v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
-
-						final stmt st=parse_statement(r,nms,delims);
-						String smn=s.substring(i1+1);
-						String member_accessor="";
-						type t=v.type();
-						while(true){//   f.address.i=2;      'address.i'
-							final int i2=smn.indexOf('.');
-							final String membername=i2==-1?smn:smn.substring(0,i2);
-							smn=smn.substring(i2+1);
-							type tm=find_struct_member_type(t.name(),membername,false);
-							if(tm==null)throw new Error(r.hrs_location()+"  '"+smn+"' not found in struct '"+t.name()+"'");
-							member_accessor+=membername+".";
-							t=tm;
-							if(i2==-1)break;
-						}
-						if(member_accessor.length()==0)
-							member_accessor=smn;
-						else
-							member_accessor=member_accessor.substring(0,member_accessor.length()-1);
-//						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
-//						if(t==null)
-//							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
-						String error_addon="";
-						if(!t.equals(st.type())){
+						final String accessor=s.substring(i1+1);
+						final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
+						final accessor ac=parse_accessor(sr,namespace_stack,v);
+						final StringBuilder acstr=new StringBuilder(ac.accessor_statement.toString());
+						final stmt rh=parse_statement(r,nms,delims);
+						if(!rh.type().equals(ac.accessor_statement.type())){
+							type t=ac.accessor_statement.type();
 							boolean ok=false;
-							// if type refered to contains a single field, shorthand
-							final struct ts=find_struct_or_break(t);
-							// get fields
-							final LinkedList<struct.slot>ls=new LinkedList<>();
-							for(struct.slot ss:ts.slots){
-								if(ss.isfunc||ss.isctor)continue;
-								ls.add(ss);
+							while(true){
+								final struct st=find_struct_or_break(t);
+								final struct.slot parent=st.inherits_from();
+								if(parent==null)throw new Error();
+								t=find_type_by_name_or_break(parent.type);
+								acstr.append(".").append(parent.name);
+								if(t.equals(rh.type())){ok=true;break;}
 							}
-							if(ls.size()==1){// one field struct
-								final struct.slot ss=ls.peek();
-								final type statement_return_type=st.type();
-								if(ss.type.equals(statement_return_type.name())){// compatible
-									member_accessor+="."+ss.name;
-									ok=true;
-								}else{
-									error_addon="\n  type '"+ts.name+"' is a one field structure with field '"+ss.type+" "+ss.name+"' but the right hand of the assignment, '"+st+"', is '"+st.type()+"'";
-								}
-							}
-							if(!ok)throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+member_accessor+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"."+member_accessor+"="+t+"("+st.code+")'"+error_addon);
+							// check for compatability
+							if(!ok)throw new Error(r.hrs_location()+" incompatible types\n  '"+v+"."+ac.accessor_statement+"' is a '"+ac.struct.name+"' and '"+rh+"' is a '"+rh.type()+"'");
 						}
-						return new set_struct_member(v,member_accessor,st,this);
+						return new set_struct_member(v,acstr.toString(),rh,this);
+//
+//						
+//						
+//						final stmt st=parse_statement(r,nms,delims);
+//						String smn=s.substring(i1+1);
+//						String member_accessor="";
+//						type t=v.type();
+//						while(true){//   f.address.i=2;      'address.i'
+//							final int i2=smn.indexOf('.');
+//							final String membername=i2==-1?smn:smn.substring(0,i2);
+//							smn=smn.substring(i2+1);
+//							type tm=find_struct_member_type(t.name(),membername,false);
+//							if(tm==null)throw new Error(r.hrs_location()+"  '"+smn+"' not found in struct '"+t.name()+"'");
+//							member_accessor+=membername+".";
+//							t=tm;
+//							if(i2==-1)break;
+//						}
+//						if(member_accessor.length()==0)
+//							member_accessor=smn;
+//						else
+//							member_accessor=member_accessor.substring(0,member_accessor.length()-1);
+////						final type t=find_struct_member_type(v.type().name(),struct_member_name,false);
+////						if(t==null)
+////							throw new Error(r.hrs_location()+"  field '"+struct_member_name+"' not found in struct '"+v.type()+"' refered to by '"+v+"'");
+//						String error_addon="";
+//						if(!t.equals(st.type())){
+//							boolean ok=false;
+//							// if type refered to contains a single field, shorthand
+//							final struct ts=find_struct_or_break(t);
+//							// get fields
+//							final LinkedList<struct.slot>ls=new LinkedList<>();
+//							for(struct.slot ss:ts.slots){
+//								if(ss.isfunc||ss.isctor)continue;
+//								ls.add(ss);
+//							}
+//							if(ls.size()==1){// one field struct
+//								final struct.slot ss=ls.peek();
+//								final type statement_return_type=st.type();
+//								if(ss.type.equals(statement_return_type.name())){// compatible
+//									member_accessor+="."+ss.name;
+//									ok=true;
+//								}else{
+//									error_addon="\n  type '"+ts.name+"' is a one field structure with field '"+ss.type+" "+ss.name+"' but the right hand of the assignment, '"+st+"', is '"+st.type()+"'";
+//								}
+//							}
+//							if(!ok)throw new Error(r.hrs_location()+"  '"+v+"' refering to '"+v.type()+"."+member_accessor+"' is '"+t+"'  and  '"+st.code+"' is '"+st.type()+"'   try: '"+v+"."+member_accessor+"="+t+"("+st.code+")'"+error_addon);
+//						}
+//						return new set_struct_member(v,member_accessor,st,this);
 //						return new stmt(v.code+"."+struct_member_name+"="+st);
 					}
 				}else{// let    int i=2;
@@ -699,39 +667,41 @@ final class toc extends Writer{
 //		find_struct_member_type_or_break(v.type().name(),struc_member,true);
 		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
+	private void validate_function_arguments(source_reader r,final String funcnm,final struct s,final stmt[]args)throws Throwable{
+		final int nargs=args.length==1&&args[0]==null?0:args.length;
+		final struct.slot func=s.find_function(funcnm,false);
+		if(func==null)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' not found\n  struct "+s.name+":"+s.slots);
+		final int func_nargs=func.argument_count();
+		if(nargs!=func_nargs)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
+		// check arguments with declaration
+		int arg_i=0;
+		for(var va:func.argsvar){
+			if(args[arg_i++].type().equals(va.type()))continue;
+			throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
+		}
+	}
 	private stmt parse_operator(final char op,final stmt lh,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
 		if(op=='+'){
 			return new vm.add(lh,parse_statement(r,nms,delims));
 		}
 		throw new Error("unknown operator '"+op+"'");
 	}
-	private accessor parse_function_accessor_statement(source_reader r,LinkedList<namespace>nms)throws Throwable{
-		// r  "f.to"  or "func"
+	private accessor parse_accessor(source_reader r,LinkedList<namespace>nms,stmt stmprv)throws Throwable{
 		LinkedList<stmt>ls=new LinkedList<>();
-		stmt stmprv=null;
 		while(true){
 			stmt stm=parse_statement(r,nms,".",true,stmprv);
 			if(stm==null)break;
 			stmprv=stm;
-//			final int peek=r.read();
-//			if(peek==-1)break;
 			ls.add(stm);
 		}
-//		// validate types
-//		struct struc=null;
-//		for(stmt stm:accessor_chain){
-//			final type stm_type=stm.type();
-//			struc=find_struct_or_break(stm_type);
-//		}
 		final accessor a=new accessor();
-//		a.member_name=ls.peekLast().code;
 		final StringBuilder sb=new StringBuilder();
 		for(stmt s:ls)
 			sb.append(s).append('.');
 		sb.setLength(sb.length()-1);
 		final type t=ls.peekLast().type();
 		a.accessor_statement=new stmt(t,sb.toString());
-		a.struct=find_struct_or_break(stmprv.type());
+		a.struct=find_struct(stmprv.type(),false);
 		return a;
 	}
 	private static void check_validity_of_decinc(boolean postinc,boolean postdec,boolean preinc, boolean predec) {
