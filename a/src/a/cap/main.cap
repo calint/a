@@ -24,22 +24,8 @@ bmp{file; width_in_pixels;height_in_pixels;
 
 c{run(){
   pl("hello");
-  file f3;
-  f3.get_address();
-  f3.address.to(out);
-  f3.to(out);
-
-  bmp b1;
-  b1.file.address=0xa0000;
-  b1.width_in_pixels=200;
-  b1.to(out);
   file f;
-  b1.file=f;
-  file f2;
-  f.address=f2.address;
   f.address.to(out);
   f.to(out);
-  f.address=0xa0000;
-  f.address.i=0xa0002;
-}}
 
+}}

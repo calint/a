@@ -20,9 +20,9 @@ import a.cap.vm.set;
 import a.cap.vm.set_struct_member;
 import a.cap.vm.stmt;
 import a.cap.vm.str;
-import a.cap.vm.struct_member;
 import a.cap.vm.type;
 import a.cap.vm.var;
+import a.cap.vm.voidi;
 
 final class toc extends Writer{
 	final public String state_to_string(){return state_stack.toString()+" "+namespace_stack.toString();}
@@ -624,6 +624,7 @@ final class toc extends Writer{
 			stmt stm=v;
 			if(isaccessor){
 				stm=parse_statement(r,nms,"",false,stm);
+				stm.rht=stm.t;
 			}
 			return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);
 		}else{// coninues accessor chain   i.e.   f.•address.to(out)     f being prv stmt
@@ -633,22 +634,35 @@ final class toc extends Writer{
 			if(sl!=null){//   f.get_address•().to(out)  
 				final stmt[]args=parse_function_arguments(r,nms);
 				validate_function_arguments(r,sl.name,st,args);
-				stmt stm=new fcall(left_hand_statement,st,sl.name,args);
-//				stmt stm=new stmt(find_type_by_name_or_break(sl.type),previous_statement_in_accessor+"."+call);
-				if(isaccessor)
-					stm=parse_statement(r,nms,"",false,stm);
-				else{
-					final int c=r.read();
-					if(c=='.'){//   f.get_address().•to(out)
-						stm=parse_statement(r,nms,"",false,stm);
-					}else
-						r.unread(c);
+				type sltype=find_type_by_name_or_break(sl.type);
+				if(sltype==voidi.t){// end of chained call  f.get_address().to(out)•
+					sltype=left_hand_statement.type_at_right_edge();
 				}
+				final struct slstruc=find_struct_or_break(sltype);
+				stmt stm=new fcall(left_hand_statement,st,sltype,sl.name,args);
+//				stmt stm=new stmt(find_type_by_name_or_break(sl.type),previous_statement_in_accessor+"."+call);
+				final int c=r.read();
+				if(c=='.'){// f.get_address()•.to(out)
+					stm=parse_statement(r,nms,"",false,stm);
+					return stm;
+				}
+				r.unread(c);
+				if(isaccessor){
+					stm=parse_statement(r,nms,"",false,stm);
+				}
+//				else{
+//					final int cc=r.read();
+//					if(cc=='.'){//   f.get_address().•to(out)
+//						stm=parse_statement(r,nms,"",false,stm);
+//					}else
+//						r.unread(c);
+//				}
 				return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);				
 			}
 			final type mt=find_struct_member_type(st.name,vnm,false);
 			if(mt==null)throw new Error(r.hrs_location()+" member '"+vnm+"' not found in struct '"+st.name+"'");
 			stmt stm=new stmt(mt,left_hand_statement+"."+vnm);
+			stm.rht=mt;
 			if(isaccessor)
 				stm=parse_statement(r,nms,"",false,stm);
 			return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);

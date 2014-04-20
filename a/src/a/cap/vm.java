@@ -7,6 +7,7 @@ final class vm{
 		static class stmt{
 			String code;
 			type t;
+			type rht;
 			stmt(String code){this.code=code;}
 			stmt(type t,String code){this.code=code;this.t=t;}
 //			stmt(Reader r)throws Throwable{}
@@ -19,6 +20,7 @@ final class vm{
 				return obj.toString().equals(code);
 			}
 			type type(){return t;}
+			type type_at_right_edge(){return rht;}
 		};
 		static class call extends stmt{
 			public call(String funcname,stmt...args){
@@ -38,7 +40,11 @@ final class vm{
 		}
 		private static String args_to_string(stmt o,stmt...a){// call to function with object context
 			final StringBuilder sb=new StringBuilder();
-			sb.append("&").append(o.toString());
+			sb.append("&");
+//			final boolean isexpr=!(o instanceof var);
+//			if(isexpr)sb.append("(");
+			sb.append(o.toString());
+//			if(isexpr)sb.append(")");
 			if(a.length==0)return sb.toString();
 			if(a.length==1&&a[0]==null)return sb.toString();
 			sb.append(",");
@@ -78,9 +84,8 @@ final class vm{
 			@Override type type(){return t;}
 		};
 		static class var extends stmt{
-			private type t;
 			private boolean sm;
-			public var(type t,String name){super(name);this.t=t;}
+			public var(type t,String name){super(name);this.t=rht=t;}
 			public var(boolean struct_member,type slot_type,String slot_name){
 				super(slot_name);
 				this.t=slot_type;
@@ -89,7 +94,7 @@ final class vm{
 			final @Override public String toString(){
 				return (sm?"o->":"")+code;
 			}
-			final @Override type type(){return t;}
+//			final @Override type type(){return t;}
 		};
 //		final static class struct_member extends var{
 //			public struct_member(type t,String name){super(t,"o->"+name);}
@@ -213,8 +218,9 @@ final class vm{
 		final static class fcall extends call{
 			public fcall(var o,String funcname,stmt...args){super(o.t+"_"+funcname,o,args);}
 			public fcall(var o,struct s,String funcname,stmt...args){super(s.name+"_"+funcname,o,args);}
-			public fcall(stmt st,struct s,String funcname,stmt...args){
-				super(s.name+"_"+funcname,st,args);
+			public fcall(stmt o,struct s,type return_type,String funcname,stmt...args){
+				super(s.name+"_"+funcname,o,args);
+				t=rht=return_type;
 			}
 		}
 		final static class floati extends value{
