@@ -8,8 +8,7 @@ file{
   address;
   size_in_bytes;
   name;
-  to(stream){
-  }
+  to(stream){pls(s,"{%d %d}",address.i,size_in_bytes.i)}
   to2(stream){
   }
   address get_address(){}
@@ -24,6 +23,12 @@ bmp{file; width_in_pixels;height_in_pixels;
 }
 
 c{run(){
+  pl("hello");
+  file f3;
+  f3.get_address();
+  f3.address.to(out);
+  f3.to(out);
+
   bmp b1;
   b1.file.address=0xa0000;
   b1.width_in_pixels=200;

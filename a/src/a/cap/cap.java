@@ -141,7 +141,7 @@ final public class cap{
 		p.print("static const function "+cnm+"__func[]={");
 		if(!funcs.isEmpty())p.println();
 		for(struct.slot i:funcs){
-			p.println("  {\""+i.type+"\",\""+i.name+"\",\""+i.args_declaration_to_string()+"\","+cnm+"_"+i.name+"},");
+			p.println("  {\""+i.type+"\",\""+i.name+"\",\""+i.args_declaration_to_string()+"\",(void*)"+cnm+"_"+i.name+"},");
 		}
 		p.println("};");
 	}
