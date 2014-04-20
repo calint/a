@@ -1,3 +1,4 @@
+#include"pc.h"
 //tested on:
 // * dell inspiron 1545
 // * asus-eeepc-4g
@@ -290,3 +291,4 @@ asm(".space 0x1000,1");
   C0000-EFFFF  Optional ROMs (The VGA ROM is usually located at C0000)
   F0000-FFFFF  BIOS ROM
 */
+inline void osca_pass(){asm("hlt");}

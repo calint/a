@@ -1,26 +1,102 @@
 // - - -- -  -- - - - - -  --  --- -- - - - - - -- - - - - - - - - -- - - - - --
-void _run(){
+
+asm(".global tsk0,tsk1,tsk2,tsk3,tsk4");
+asm("tsk0:");
+asm("  movl $0x00007c00,%esi");
+asm("  movl $0x000a8000,%edi");
+asm("  movl $0x00001000,%ecx");
+asm("  rep movsl");
+asm("  hlt");
+asm("  jmp tsk0");
+asm(".align 16");
+asm("tsk1:");
+asm("  addl $2,0xa0144");
+asm("  hlt");
+asm("  jmp tsk1");
+asm(".align 16");
+asm("tsk2:");
+asm("  addl $2,0xa0148");
+asm("  hlt");
+asm("  jmp tsk2");
+asm(".align 16");
+asm("tsk3:");
+asm("  addl $2,0xa014c");
+asm("  hlt");
+asm("  jmp tsk3");
+asm(".align 16");
+asm("tsk4:");
+asm("  addl $2,0xa0150");
+asm("  hlt");
+asm("  jmp tsk4");
+
+void tsk5(){
+	while(1){
+        osca_pass();
+		*(int*)0xa0154+=3;
+	}
+}
+void tsk6(){
+	static char*p=(char*)0xa0400;
+	static char*nl=(char*)0xa0400;
+	static char key_prev=0;
+	while(1){
+        osca_pass();
+	    if(key_prev==(char)osca_key){
+	        char c=*p;
+	        *p=c+1;
+	    }else{
+		    *p=(char)osca_key;
+		    if(osca_key==1){
+		        nl+=320;
+		        p=nl;
+	    		/*p+=320;
+	    		int r=((int)p-0xa0280)%320;
+	    		p-=r;*/
+	    	}else{
+	    	    p++;
+	    	    *p=0;
+	    	}
+		    key_prev=(char)osca_key;
+        }
+	}
+}
+
+void tsk7(){
+	while(1){
+        osca_pass();
+        int*p=(int*)0xa1800;
+        int c=0x010;
+        while(c--)
+        	*p++=osca_t;
+	}
+}
+
+void tsk8(){
+	while(1){
+        osca_pass();
+		*(long int*)0xa0480=osca_t;
+	}
+}
+
+void tsk9(){
+	while(1){
+        osca_pass();
+        int n;
+        for(n=0;n<8;n++)
+        	*(int*)(0xa0100+n*4)=osca_t;
+	}
+}
+
+void tsk10(){
     while(true){
         c_run(null);
         osca_pass();
     }
 }
-int main(int argc,char*argv[]){
 
-    pl("reflection");
-    size nstructs=sizeof(structs)/sizeof(structs[0]);
-    pl("structs %lu",nstructs);
-    for(size i=0;i<nstructs;i++){
-        pl("struct %s %lu %lu",structs[i].name,structs[i].nfields,structs[i].nfuncs);
-        for(size j=0;j<structs[i].nfields;j++){
-            pl("    %s %s %lu:%lu",structs[i].fields[j].type,structs[i].fields[j].name,structs[i].fields[j].offset,structs[i].fields[j].size);
-        }
-        for(size j=0;j<structs[i].nfuncs;j++){
-            pl("    %s %s(%s) %p",structs[i].funcs[j].type,structs[i].funcs[j].name,structs[i].funcs[j].args,structs[i].funcs[j].func);
-        }
-    }
- 
-	c_run(null);
-	return 0;
+void osca_keyb_ev(){
+	static char*p=(char*)0xa4000;
+	*p++=(char)osca_key;
 }
+
 
