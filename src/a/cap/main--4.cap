@@ -2,7 +2,7 @@ address{int;
   to(stream){}
 }
 size_in_bytes{int}
-name{str}
+name{str i}
 color{int}
 file{
   address;
