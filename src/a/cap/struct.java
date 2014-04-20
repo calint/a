@@ -14,8 +14,9 @@ final public class struct{
 		final public struct.slot find_function_or_break(String funcnm){return find_function(funcnm,true);}
 		final public struct.slot find_function(String funcnm,boolean break_if_not_found){
 			for(struct.slot s:slots)
-				if(s.name.equals(funcnm))
-					return s;
+				if(s.isfunc)
+					if(s.name.equals(funcnm))
+						return s;
 			if(break_if_not_found)throw new Error("cannot find function '"+funcnm+"' in struct '"+name+"'");
 			return null;
 		}

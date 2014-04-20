@@ -351,7 +351,31 @@ final class toc extends Writer{
 //		if(stms.size()==1)return stms.peek();
 		return new block(stms);
 	}
-	stmt[]parse_function_arguments(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
+	stmt[]parse_function_arguments(final source_reader r,final LinkedList<namespace>nms)throws Throwable{
+		final ArrayList<stmt>args=new ArrayList<>();
+		while(true){
+			final stmt st=parse_statement(r,nms,",)");
+			if(st!=null)args.add(st);
+			final int c=r.read();
+			if(c==',')continue;
+			if(c==')')break;
+			throw new Error(r.hrs_location()+"  expected ',' or ')' but found '"+(char)c+"'");
+//			break;
+		}
+		final stmt[]aargs=new stmt[args.size()];
+		int i=0;
+		for(stmt s:args)
+			aargs[i++]=s;
+		return aargs;
+	}
+	stmt[]parse_function_arguments2(final source_reader r,final LinkedList<namespace>nms,final String delims)throws Throwable{
+		// find start of declaration
+		while(true){
+			final int ch=r.read();
+			if(ch=='(')break;
+			if(is_white_space((char)ch))continue;
+			throw new Error(r.hrs_location()+" expected to find '(' but found '"+((char)ch)+"'");
+		}
 		final ArrayList<stmt>args=new ArrayList<>();
 		while(true){
 			final stmt st=parse_statement(r,nms,",)");
@@ -368,83 +392,34 @@ final class toc extends Writer{
 		for(stmt s:args)
 			aargs[i++]=s;
 		return aargs;
-
-//			
-//		int ch=0,prvch=0;
-//		final StringBuilder sb=new StringBuilder(128);
-//		boolean in_string=false;
-//		while(true){
-//			prvch=ch;
-//			ch=r.read();
-//			if(ch==-1)break;
-//			if(ch=='"'){
-//				if(in_string){
-//					if(prvch=='\\'){// escaped  i.e.   "%s  \•" quote \"   "
-//						
-//					}else{
-//						in_string=false;
-//						sb.append((char)ch);
-//						continue;
-//					}
-//				}else{
-//					in_string=true;
-//				}
-//			}
-//			if(in_string){
-//				sb.append((char)ch);
-//				continue;
-//			}
-//			if(ch==','){
-//				// found next argument
-//				final String code=sb.toString();
-//				final source_reader rc=new source_reader(new StringReader(code));
-//				final stmt arg=parse_statement(rc,nms,delims);
-//				args.add(arg);
-////						System.out.println(arg);
-//				sb.setLength(0);
-//				continue;
-//			}
-//			if(ch==')'){
-//				// found end of arguments
-////						System.out.println(sb);
-//				final String code=sb.toString();
-//				sb.setLength(0);
-//				final source_reader rc=new source_reader(new StringReader(code));
-//				final stmt arg=parse_statement(rc,nms,delims);
-//				args.add(arg);
-//				break;
-//			}
-//			sb.append((char)ch);
-////					if(sb.length()==0&&Character.isWhitespace(ch))continue;
-//		}
-//		final stmt[]aargs=new stmt[args.size()];
-//		int i=0;
-//		for(stmt s:args)
-//			aargs[i++]=s;
-//		return aargs;
 	}
+
 	private final static class accessor{
-//		String member_name;
 		struct struct;
 		stmt accessor_statement;
 	}
 	stmt parse_statement(source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
 		return parse_statement(r,nms,delims,false,null);
 	}
-	stmt parse_statement(source_reader r,LinkedList<namespace>nms,final String delims,final boolean consume_delimiter,final stmt previous_statement_in_accessor)throws Throwable{
+	stmt parse_statement(source_reader r,LinkedList<namespace>nms,final String delims,final boolean consume_delimiter,stmt previous_statement_in_accessor)throws Throwable{
 		// expect call/let/set/const/fcall/str/   int/float/loop/ret
 		int ch=0;
 		final StringBuilder sb=new StringBuilder(128);
+		boolean isaccessor=false;
 		while(true){
 			ch=r.read();
 			if(ch==-1)break;
 			if(sb.length()==0&&Character.isWhitespace(ch))continue;
 			if(delims.indexOf(ch)!=-1){
 				if(!consume_delimiter)r.unread((char)ch);
-				if(sb.length()==0)
-					return null;
+				if(sb.length()==0)return null;
 				break;
 			}
+			if(ch=='.'){
+				isaccessor=true;
+				break;				
+			}
+			isaccessor=false;
 			if(ch=='\"')return new str(r);
 			if(ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='%'||ch=='^'){
 				final String lhs=sb.toString();
@@ -456,28 +431,67 @@ final class toc extends Writer{
 				// return (value v=read_number(r))
 			}
 			if(ch=='('){// call
-				final String funcname=sb.toString();
-				sb.setLength(0);
-				if(funcname.length()==0){// i.e. ^(int i)(i+3){}
-					return parse_statement(r,nms,")");
+				if(previous_statement_in_accessor==null){//  i.e.  printf•("hello")
+					final stmt[]args=parse_function_arguments(r,nms);
+//					validate_function_arguments(r,funcname,ac.struct,args);
+					final String funcname=sb.toString();sb.setLength(0);
+					return new call(funcname,args);
 				}
-				final int i=funcname.lastIndexOf('.');
-				if(i!=-1){// i.e.   f.to(out)
-					final String funcnm=funcname.substring(i+1);
-					final String accessor=funcname.substring(0,i);
-					final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
-					final accessor ac=parse_accessor(sr,namespace_stack,null);
-					final stmt[]args=parse_function_arguments(r,nms,")");
-					validate_function_arguments(r,funcnm,ac.struct,args);
-					final stmt ret=new fcall(ac.accessor_statement,ac.struct,funcnm,args);
-					return ret;
-				}
-				final stmt[]args=parse_function_arguments(r,nms,")");
-//				validate_function_arguments(r,funcname,ac.struct,args);
-				//? check args and declaration
-				return new call(funcname,args);
+				break;
+//				if(funcname.length()==0){// i.e. ^(int i)(i+3){}
+//					return parse_statement(r,nms,")");
+//				}
+//				if(previous_statement_in_accessor!=null){
+//					final type lht=previous_statement_in_accessor.type();
+//					final struct st=find_struct(lht,true);
+//					final struct.slot func=st.find_function(funcname,false);
+//					if(func==null)throw new Error(r.hrs_location()+"  '"+funcname+"' not found in '"+st.name+"'");
+//					final stmt[]args=parse_function_arguments(r,nms,")");
+//					validate_function_arguments(r,funcname,st,args);
+//					final stmt ret=new fcall(previous_statement_in_accessor,st,funcname,args);
+//					return ret;
+//				}
+//				final int i=funcname.lastIndexOf('.');
+//				if(i!=-1){// i.e.   f.to(out)
+//					final String funcnm=funcname.substring(i+1);
+//					final String accessor=funcname.substring(0,i);
+//					final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
+//					final accessor ac=parse_accessor(sr,namespace_stack,null);
+//					final stmt[]args=parse_function_arguments(r,nms,")");
+//					validate_function_arguments(r,funcnm,ac.struct,args);
+//					final stmt ret=new fcall(ac.accessor_statement,ac.struct,funcnm,args);
+//					return ret;
+//				}
 			}
 			if(ch=='='){// let or set
+				if(previous_statement_in_accessor!=null){
+					final String accessor=sb.toString();sb.setLength(0);
+					final type prv_accessor_type=previous_statement_in_accessor.type();
+//					final struct st=find_struct_or_break(prv_accessor_type);
+					final type slot_type=find_struct_member_type(prv_accessor_type.t.name(),accessor,true);
+					final stmt lh=new stmt(slot_type,previous_statement_in_accessor+"."+accessor);
+					final stmt rh=parse_statement(r,nms,delims);
+					final StringBuilder sba=new StringBuilder(lh.toString());
+					type t=lh.type();
+					if(!rh.type().equals(lh.type())){
+						boolean ok=false;
+						while(true){
+							final struct st=find_struct_or_break(t);
+							final struct.slot parent=st.inherits_from();
+							if(parent==null)throw new Error();
+							t=find_type_by_name_or_break(parent.type);
+							sba.append(".").append(parent.name);
+							if(t.equals(rh.type())){ok=true;break;}
+						}
+						if(!ok)throw new Error(r.hrs_location()+" incompatible types\n   '"+lh+"' is a '"+lh.t+"' and '"+rh+"' is a '"+rh.t+"'");
+					}
+					sba.append("=").append(rh);
+					final stmt ret=new stmt(t,sba.toString());
+					return ret;
+//					return new set_struct_member(v,sba.toString(),rh,this);					
+				}
+				
+				
 				final String s=sb.toString();
 				int i=s.lastIndexOf(' '); // int a=•1;
 				if(i==-1)i=s.lastIndexOf('*');// char*c=•'c';
@@ -594,28 +608,50 @@ final class toc extends Writer{
 		}
 		check_validity_of_decinc(postinc,postdec,preinc,predec);
 		
-		final int i=vnm.lastIndexOf('.');
-		if(i==-1){// does not refer to struct member
-			if(previous_statement_in_accessor==null){//find variable
-				final var v=find_var_in_namespace_stack(vnm,nms);
-				if(v==null)throw new Error(r.hrs_location()+"   variable '"+vnm+"' not in stack:\n"+namespaces_and_declared_types_to_string(nms));
-				return wrap_variable_with_inc_dec(v,preinc,postinc,predec,postdec);
-			}else{// coninues accessor chain   i.e.   f.•address.to(out)     f being prv stmt
-				final type t=previous_statement_in_accessor.type();
-				final struct st=find_struct_or_break(t);
-				final type mt=find_struct_member_type(st.name,vnm,false);
-				if(mt==null)throw new Error(r.hrs_location()+" member '"+vnm+"' not found in struct '"+st.name+"'");
-//				if(!mt.equals(t))throw new Error(r.hrs_location()+" "+mt+"!="+t);
-				return wrap_variable_with_inc_dec(new stmt(mt,vnm),preinc,postinc,predec,postdec);
+//		final int i=vnm.lastIndexOf('.');
+//		if(i==-1){// does not refer to struct member
+		if(previous_statement_in_accessor==null){//find variable
+			final var v=find_var_in_namespace_stack(vnm,nms);
+			if(v==null)throw new Error(r.hrs_location()+"   variable '"+vnm+"' not in stack:\n"+namespaces_and_declared_types_to_string(nms));
+			stmt stm=v;
+			if(isaccessor){
+				stm=parse_statement(r,nms,"",false,stm);
 			}
+			return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);
+		}else{// coninues accessor chain   i.e.   f.•address.to(out)     f being prv stmt
+			final type t=previous_statement_in_accessor.type();
+			final struct st=find_struct_or_break(t);
+			final struct.slot sl=st.find_function(vnm,false);
+			if(sl!=null){//   f.get_address•().to(out)  
+				final stmt[]args=parse_function_arguments(r,nms);
+				validate_function_arguments(r,sl.name,st,args);
+				stmt stm=new fcall(previous_statement_in_accessor,st,sl.name,args);
+//				stmt stm=new stmt(find_type_by_name_or_break(sl.type),previous_statement_in_accessor+"."+call);
+				if(isaccessor)
+					stm=parse_statement(r,nms,"",false,stm);
+				else{
+					final int c=r.read();
+					if(c=='.'){//   f.get_address().•to(out)
+						stm=parse_statement(r,nms,"",false,stm);
+					}else
+						r.unread(c);
+				}
+				return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);				
+			}
+			final type mt=find_struct_member_type(st.name,vnm,false);
+			if(mt==null)throw new Error(r.hrs_location()+" member '"+vnm+"' not found in struct '"+st.name+"'");
+			stmt stm=new stmt(mt,previous_statement_in_accessor+"."+vnm);
+			if(isaccessor)
+				stm=parse_statement(r,nms,"",false,stm);
+			return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);
 		}
-		// refers to struct member
-		final String varnm=vnm.substring(0,i);
-		final var v=find_var_in_namespace_stack(varnm,nms);
-		if(v==null)throw new Error(r.hrs_location()+"  variable '"+varnm+"' not found\n  "+namespaces_and_declared_types_to_string(nms));
-		final String struc_member=vnm.substring(i+1);
-//		find_struct_member_type_or_break(v.type().name(),struc_member,true);
-		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
+//		}
+//		// refers to struct member
+//		final String varnm=vnm.substring(0,i);
+//		final var v=find_var_in_namespace_stack(varnm,nms);
+//		if(v==null)throw new Error(r.hrs_location()+"  variable '"+varnm+"' not found\n  "+namespaces_and_declared_types_to_string(nms));
+//		final String struc_member=vnm.substring(i+1);
+//		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
 	private void validate_function_arguments(source_reader r,final String funcnm,final struct s,final stmt[]args)throws Throwable{
 		final int nargs=args.length==1&&args[0]==null?0:args.length;
