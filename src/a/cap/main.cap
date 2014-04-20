@@ -10,11 +10,29 @@ file{
   to(stream){
     pls(s,"file '%s' @ %p{%d %d}\n",name.i,o,address.i,size_in_bytes.i);
   }
+  to2(stream){
+    pls(s,"file{%d %d}\n",address.i,size_in_bytes.i);
+  }
   address get_address(){}
+}
+width{int}height{int}
+width_in_pixels{width}
+height_in_pixels{width}
+
+bmp{file; width_in_pixels;height_in_pixels;
+  to(stream){
+    pls(s,"bmp{%d %d}\n",width_in_pixels,height_in_pixels);
+    file.to2(s);
+  }
 }
 
 c{run(){
+  bmp b1;
+  b1.width_in_pixels=200;
+  b1.file.address=0xa0000;
+  b1.to(out);
   file f;
+  b1.file=f;
   file f2;
   f.address=f2.address;
   f.address.to(out);
@@ -22,3 +40,4 @@ c{run(){
   f.address=0xa0000;
   f.address.i=0xa0002;
 }}
+
