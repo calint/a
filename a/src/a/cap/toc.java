@@ -638,9 +638,7 @@ final class toc extends Writer{
 				if(sltype==voidi.t){// end of chained call  f.get_address().to(out)•
 					sltype=left_hand_statement.type_at_right_edge();
 				}
-				final struct slstruc=find_struct_or_break(sltype);
 				stmt stm=new fcall(left_hand_statement,st,sltype,sl.name,args);
-//				stmt stm=new stmt(find_type_by_name_or_break(sl.type),previous_statement_in_accessor+"."+call);
 				final int c=r.read();
 				if(c=='.'){// f.get_address()•.to(out)
 					stm=parse_statement(r,nms,"",false,stm);
@@ -650,13 +648,6 @@ final class toc extends Writer{
 				if(isaccessor){
 					stm=parse_statement(r,nms,"",false,stm);
 				}
-//				else{
-//					final int cc=r.read();
-//					if(cc=='.'){//   f.get_address().•to(out)
-//						stm=parse_statement(r,nms,"",false,stm);
-//					}else
-//						r.unread(c);
-//				}
 				return wrap_variable_with_inc_dec(stm,preinc,postinc,predec,postdec);				
 			}
 			final type mt=find_struct_member_type(st.name,vnm,false);
