@@ -27,11 +27,10 @@ bmp{file; width_in_pixels;height_in_pixels;
 }
 
 c{run(){
-  pl("hello");
-  file f;
-  f.address=0xa0400;
-  f.size_in_bytes=4;
-  f.address.to(out);
-  f.to(out);
-
+	file f;
+	f.address.i=0xa5a00;
+	f.size_in_bytes.i=0x20;
+    color c;
+    c.i=2;
+	f.clear(c);
 }}
