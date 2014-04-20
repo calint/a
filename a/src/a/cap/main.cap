@@ -1,5 +1,6 @@
 address{int;
-  to(stream){pls(s,"address: %d\n",i);}
+  to(stream){
+  }
 }
 size_in_bytes{int}
 name{str i}
@@ -8,10 +9,8 @@ file{
   size_in_bytes;
   name;
   to(stream){
-    pls(s,"file '%s' @ %p{%d %d}\n",name.i,o,address.i,size_in_bytes.i);
   }
   to2(stream){
-    pls(s,"file{%d %d}\n",address.i,size_in_bytes.i);
   }
   address get_address(){}
 }
@@ -21,15 +20,13 @@ height_in_pixels{height}
 
 bmp{file; width_in_pixels;height_in_pixels;
   to(stream){
-    pls(s,"bmp{%d %d}\n",width_in_pixels,height_in_pixels);
-    file.to2(s);
   }
 }
 
 c{run(){
   bmp b1;
-  b1.width_in_pixels=200;
   b1.file.address=0xa0000;
+  b1.width_in_pixels=200;
   b1.to(out);
   file f;
   b1.file=f;
@@ -40,3 +37,4 @@ c{run(){
   f.address=0xa0000;
   f.address.i=0xa0002;
 }}
+

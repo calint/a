@@ -13,6 +13,7 @@ import a.cap.vm.inti;
 import a.cap.vm.str;
 import a.cap.vm.type;
 import a.cap.vm.var;
+import a.cap.vm.voidi;
 
 final public class cap{
 	public String indent="   ";
@@ -33,6 +34,7 @@ final public class cap{
 		cc.types_add(inti.t);
 		cc.types_add(floati.t);
 		cc.types_add(str.t);
+		cc.types_add(voidi.t);
 //		cc.namespace_add_var(new var(str.t,"meta[0]"));
 		final type t=cc.find_type_by_name_or_break("stream");
 		cc.namespace_add_var(new var(t,"out"));

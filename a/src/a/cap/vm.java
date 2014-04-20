@@ -227,6 +227,12 @@ final class vm{
 			@Override type type(){return t;}
 			private type t;
 		}
+		final static class voidi extends value{
+			public voidi(){super("");}
+			@Override type type(){return t;}
+			final static type t=new type("void");
+		};
+
 		public static void main(String[] args){
 				//final ArrayList<stmt>stms=new ArrayList<>();
 				final type integer=new type("int");
