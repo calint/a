@@ -1,4 +1,10 @@
 // - - -- -  -- - - - - -  --  --- -- - - - - - -- - - - - - - - - -- - - - - --
+void _run(){
+    while(true){
+        c_run(null);
+        osca_pass();
+    }
+}
 int main(int argc,char*argv[]){
 
     pl("reflection");
