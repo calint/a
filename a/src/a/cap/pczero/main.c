@@ -90,12 +90,7 @@ void tsk9(){
 }
 
 void _run();
-void tsk10(){
-	while(1){
-        osca_pass();
-        _run();
-	}
-}
+void tsk10(){_run();}
 
 void osca_keyb_ev(){
 	static char*p=(char*)0xa4000;
@@ -146,9 +141,15 @@ typedef struct struc{
 }struc;
 #define offsetof(st, m) ((size)(&((st *)0)->m))
 //- -- - -- - - - - - -  ---  -- - - - - - - - - - -   - - - - - - - - - - - - -
-static void mem_clear(int address,int nbytes,int color){
-	while(nbytes>0)
-		*(char*)address++=(char)color;
+static void mem_clear(int address,int nbytes,int colr){
+	int*p1=(int*)address;
+	while(nbytes--)
+		*p1++=colr;
+//
+//	char*p=address;
+//	char c=(char)color;
+//	while(nbytes>0)
+//		*p++=color;
 }
 //void osca_keyb_ev();//called from keyboard interrupt when new keycode from keyboard
 //static void osca_pass();
@@ -227,7 +228,9 @@ static inline void file_name_(file*o,name v){o->name=v;}
 static inline void file_to(file*o,stream s){pls(s,"{%d %d}",o->address.i,o->size_in_bytes.i);}
 static inline void file_to2(file*o,stream s){}
 static inline address file_get_address(file*o){}
-static inline void file_clear(file*o,color c){mem_clear(o->address.i,o->size_in_bytes.i,c.i);}
+static inline void file_clear(file*o,color colr){
+	mem_clear(o->address.i,o->size_in_bytes.i,colr.i);
+}
 static const function file__func[]={
   {"void","to","stream",(void*)file_to},
   {"void","to2","stream",(void*)file_to2},
@@ -298,22 +301,30 @@ static const function bmp__func[]={
 typedef struct c c;static struct c{}c_default={};
 static const field c__field[]={};
 static inline c c_mk(){return c_default;}///keep stack pointer
+static inline void cl(){
+	file f=file_default;
+	f.address.i=0xa5a00;
+	f.size_in_bytes.i=0x20;
+	int*p1=(int*)f.address.i;
+	int c1=f.size_in_bytes.i;
+	while(c1--)
+		*p1++=3;
+}
+static inline void cl2(file*f,color colr){
+	int*p1=(int*)f->address.i;
+	int c1=f->size_in_bytes.i;
+	while(c1--)
+		*p1++=colr.i;
+}
 static inline void c_run(c*o){
 	int a=1;
 	while(1){
+		file f=file_default;
+		f.address.i=0xa5a00;
+		f.size_in_bytes.i=0x20;
+		file_clear(&f,(color){a++});
 		osca_pass();
-		int*p=(int*)0xa1a00;
-		int c=0x008;
-		while(c--){
-			*p++=a;
-			a++;
-		}
 	}
-//	pl("hello");
-//	file f=file_default;
-//	f.address.i=0xa0400;
-//	f.size_in_bytes.i=0x20;
-//	file_clear(&f,(color)3);
 }
 static const function c__func[]={
   {"void","run","",(void*)c_run},
