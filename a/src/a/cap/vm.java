@@ -6,7 +6,9 @@ import java.util.List;
 final class vm{
 		static class stmt{
 			String code;
+			type t;
 			stmt(String code){this.code=code;}
+			stmt(type t,String code){this.code=code;this.t=t;}
 //			stmt(Reader r)throws Throwable{}
 			public String toString(){return code;}
 			void to(final PrintWriter pw){pw.print(code);}
@@ -16,7 +18,7 @@ final class vm{
 //				if(!(obj instanceof type))return false;
 				return obj.toString().equals(code);
 			}
-			type type(){return null;}
+			type type(){return t;}
 		};
 		static class call extends stmt{
 			public call(String funcname,stmt...args){
@@ -171,7 +173,7 @@ final class vm{
 			final static type t=new type("int");
 		};
 		static class type extends stmt{
-			public type(String name){super(name);}
+			public type(String name){super(name);t=this;}
 			final String name(){return code;}
 		};
 //		final static class integer extends type{public integer(){super("int");}};

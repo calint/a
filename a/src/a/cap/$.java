@@ -131,7 +131,7 @@ public class $ extends a {
 		try{new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
 			y.pl(line);
 //			System.out.println(line);
-		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat main|gzip|wc&&").p(cc).p(" -o main -Wfatal-errors *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
+		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat main|gzip|wc&&").p(cc).p(" -o main -std=c1x -Wfatal-errors *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
 		finally{x.xube();}
 		x.xfocus(out);
 	}
