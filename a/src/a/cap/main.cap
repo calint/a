@@ -3,34 +3,30 @@ address{int;
   }
 }
 size_in_bytes{int}
-name{str i}
+name{str}
 color{int}
 file{
   address;
   size_in_bytes;
   name;
   to(stream){pls(s,"{%d %d}",address.i,size_in_bytes.i)}
-  to2(stream){
-  }
+  to2(stream){}
   address get_address(){}
-  void clear(color){
-     mem_clear(address.i,size_in_bytes.i,c.i);
-  }
+  void clear(color){mem_clear(address.i,size_in_bytes.i,c.i)}
 }
 width{int}height{int}
 width_in_pixels{width}
 height_in_pixels{height}
 
 bmp{file; width_in_pixels;height_in_pixels;
-  to(stream){
-  }
+  to(stream){}
 }
 
 c{run(){
-	file f;
-	f.address.i=0xa5a00;
-	f.size_in_bytes.i=0x20;
-    color c;
-    c.i=2;
-	f.clear(c);
+  file f;
+  f.address=0xa5a00;
+  f.size_in_bytes=0x20;
+  color c;
+  c.i=3;
+  f.clear(c);
 }}
