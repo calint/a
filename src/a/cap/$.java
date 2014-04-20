@@ -134,15 +134,18 @@ public class $ extends a {
 			final cli c=new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
 				y.pl(line);
 //			System.out.println(line);
-			}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat main|gzip|wc&&");
+			}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&");
 			c.p(cc);
 			if(build_pco_boot_img){
 				b.cp(cap.class.getResourceAsStream("pc.c"),basedir.get("pc.c").outputstream());
-				c.p(" -o pco.img -std=c1x -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O1 -Wall -Wextra -Wfatal-errors -Wno-int-to-pointer-cast pc.c");
+				b.cp(cap.class.getResourceAsStream("pc.h"),basedir.get("pc.h").outputstream());
+				c.p(" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast pc.c main.c");
 			}else{
-				c.p(" -o main -std=c1x -Wfatal-errors *.c");
+				c.p(" -o main -std=c1x -Wfatal-errors main.c");
 			}
-			c.p("&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();
+			c.p("&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat pco.img|gzip|wc");
+			if(!build_pco_boot_img)c.p("&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date");
+			c.exit();
 		}finally{x.xube();}
 		x.xfocus(out);
 	}
