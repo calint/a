@@ -1,13 +1,14 @@
 <!DOCTYPE html><meta charset="utf-8">
 <style>
-	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,.5);border-radius:1px}
+	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
 	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
-	#src{font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed green;display:block;margin-left:auto;margin-right:auto}
+	#src{background:#eee;font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
 	#recvsize{color:green}
 	#sts{color:brown}
+	a{text-decoration:none;color:blue}
 	t{font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 </style>
-<t><b>pczero</b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
+<t><b><a href=/pczero.vintage>pczero</a></b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
 <img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"/>
  <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output>
  <a href="javascript:compile()">compile</a> <b>source</b>
@@ -18,13 +19,13 @@ a=0300
 
 b=:blits // address of tag
 b++ // skip size
-c=*b // load
+c=*b // load blit[0].pos
 
 d=1 // step size
 k=7fff // keyb addr
 ld k e // load
-ifp c+=d // if d>0
-ifz c-=d // if d==0
+ifp c+=d // if e>0
+ifz c-=d // if e==0
 *b=c // store
 
 m=100 // dispwidth
@@ -159,9 +160,9 @@ rects:
 . 100c 0ccc 0008 0008
 
 blits:
-. 4
+. 10
 //yyxx adr  wi   hi
-. 3830 0000 0020 0020
+. 1030 0000 0020 0020
 . 2080 0000 0020 0020
 . 4080 0000 0020 0020
 . 6080 0000 0020 0020
@@ -177,6 +178,7 @@ blits:
 . 20e0 0000 0020 0020
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
+
 
 </textarea> 
 
