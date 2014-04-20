@@ -9,6 +9,7 @@ import java.util.Date;
 
 import a.x.cli;
 import b.a;
+import b.b;
 import b.osnl;
 import b.path;
 import b.req;
@@ -123,16 +124,26 @@ public class $ extends a {
 	}
 	
 	public static String cc="gcc";
+	public static boolean build_pco_boot_img=true;
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
 		final path basedir=req.get().session().path("a/cap");
 		final path csrc=basedir.get("main.c");
 		c.to(csrc);
 		final xwriter y=x.xub(out,true,true);
-		try{new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
-			y.pl(line);
+		try{
+			final cli c=new cli("sh",new osnl(){@Override public void onnewline(final String line)throws Throwable{
+				y.pl(line);
 //			System.out.println(line);
-		}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat main|gzip|wc&&").p(cc).p(" -o main -std=c1x -Wfatal-errors *.c&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();}
-		finally{x.xube();}
+			}}).p("date&&echo&&cd ").p(basedir.toString()).p("&&pwd&&echo&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat main|gzip|wc&&");
+			c.p(cc);
+			if(build_pco_boot_img){
+				b.cp(cap.class.getResourceAsStream("pc.c"),basedir.get("pc.c").outputstream());
+				c.p(" -o pco.img -std=c1x -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O1 -Wall -Wextra -Wfatal-errors -Wno-int-to-pointer-cast pc.c");
+			}else{
+				c.p(" -o main -std=c1x -Wfatal-errors *.c");
+			}
+			c.p("&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date").exit();
+		}finally{x.xube();}
 		x.xfocus(out);
 	}
 	

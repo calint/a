@@ -1,14 +1,17 @@
-#include<stdio.h>
-#define d(fmt, ...)printf("\n%s:%d: " fmt,__FILE__,__LINE__,__VA_ARGS__);
-#define nl()printf("\n");
-#define p(format,args...)fprintf(stdout,format,##args)
-#define pl(format,args...)p(format,##args);nl()
-#define pi(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
-#define pls(stream,format,args...)fprintf(stream,format,##args)
+//#include<stdio.h>
+//#define d(fmt, ...)printf("\n%s:%d: " fmt,__FILE__,__LINE__,__VA_ARGS__);
+//#define nl()printf("\n");
+//#define p(format,args...)fprintf(stdout,format,##args)
+//#define pl(format,args...)p(format,##args);nl()
+//#define pi(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+//#define pls(stream,format,args...)fprintf(stream,format,##args)
+#define pls(stream,format,args...) ;
 #define out stdout
 #define null NULL
-typedef size_t      size;
-typedef FILE*       stream;
+//typedef size_t      size;
+//typedef FILE*       stream;
+typedef int      size;
+typedef int       stream;
 typedef const char* str;
 #define int_default 0
 #define float_default 0f
@@ -35,5 +38,21 @@ typedef struct struc{
     size nfuncs;
     const function*funcs;
 }struc;
-#define offsetof(st, m) ((size_t)(&((st *)0)->m))
+#define offsetof(st, m) ((size)(&((st *)0)->m))
+void _run();
 //- -- - -- - - - - - -  ---  -- - - - - - - - - - -   - - - - - - - - - - - - -
+static void mem_clear(int address,int nbytes,int color);
+static void osca_keyb_ev();//called from keyboard interrupt when new keycode from keyboard
+//static void osca_pass();
+
+static volatile const int osca_key;//last received keycode (char)
+static volatile const int osca_t;//time lower 32b
+static volatile const int osca_t1;//time higher 32b
+static inline void osca_pass(){asm("hlt");}
+//tested on:
+// * dell inspiron 1545
+// * asus-eeepc-4g
+// * hp-compaq-mini-110
+// * sony-vaio-vgnfw11m
+// * qemu 0.11.0 on linux 2.6
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -

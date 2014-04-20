@@ -4,6 +4,7 @@ address{int;
 }
 size_in_bytes{int}
 name{str i}
+color{int}
 file{
   address;
   size_in_bytes;
@@ -12,6 +13,9 @@ file{
   to2(stream){
   }
   address get_address(){}
+  void clear(color){
+     mem_clear(address.i,size_in_bytes.i,c.i);
+  }
 }
 width{int}height{int}
 width_in_pixels{width}
@@ -25,6 +29,8 @@ bmp{file; width_in_pixels;height_in_pixels;
 c{run(){
   pl("hello");
   file f;
+  f.address=0xa0400;
+  f.size_in_bytes=4;
   f.address.to(out);
   f.to(out);
 

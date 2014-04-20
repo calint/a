@@ -3,7 +3,7 @@ IMG=install.img
 BIN=pc.img
 SRC=pc.cc file.cc main.cc
 CC=gcc
-CW=-Wall -Wextra -Wfatal-errors -Wno-int-to-pointer-cast
+CW=-Wall -Wextra -Wno-int-to-pointer-cast
 CF=-nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O1
 
 all:	clean build print display
