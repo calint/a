@@ -53,7 +53,7 @@ public class $ extends a {
 		x.divEnd();
 	}
 	private void upd_c6(xwriter x){
-	    x.ax(this,"cc","••").nl().nl();
+	    x.ax(this,"cc","••").nl();
 	    final String mode=bt.toString();
 		if(mode.equals("c"))
 			x.p("console");
