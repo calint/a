@@ -78,7 +78,8 @@ public class $ extends a {
 		for(String s:basedir.list())basedir.get(s).rm();
 		final path csrc=basedir.get("main.c");
 		csrc.writestr("");
-//		b.cp($.class.getResourceAsStream("pco.c"),csrc.outputstream());
+		if("b".equals(bt.toString()))
+			b.b.cp($.class.getResourceAsStream("pco.c"),csrc.outputstream());
 		cap.to(basedir.get("main.cap"));
 		final Reader in=new StringReader(cap.toString());
 		final Writer out=csrc.writer(true);
