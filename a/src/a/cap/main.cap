@@ -10,7 +10,7 @@ file{
   name;
   to(stream){pls(s,"{%d %d}",address.i,size_in_bytes.i)}
   to2(stream){}
-  address get_address(){}
+  address get_address(){return(address);}
   void clear(color){mem_clear(address.i,size_in_bytes.i,c.i)}
 }
 width{int}height{int}
@@ -27,6 +27,6 @@ c{run(){
     f.address=0xa5a00;
     f.size_in_bytes=0x20;
     color c;
-    c=2;
+    c=0xffffff;
     f.to(out);
 }}
