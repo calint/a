@@ -512,8 +512,22 @@ final class toc extends Writer{
 						if(lh==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						final stmt rh=parse_statement(r,nms,delims);
 						if(!lh.type().equals(rh.type())){
+							type t=lh.type();
+							boolean ok=false;
+							final StringBuilder acstr=new StringBuilder();
+							while(true){
+								final struct st=find_struct(t,false);
+								if(st==null)break;
+								final struct.slot parent=st.inherits_from();
+								if(parent==null)throw new Error();
+								t=find_type_by_name_or_break(parent.type);
+								acstr.append(".").append(parent.name);
+								if(t.equals(rh.type())){ok=true;break;}
+							}
+							if(!ok)throw new Error(r.hrs_location()+" incompatible types '"+lh+"' and '"+rh+"'\n   '"+lh+"' is a '"+lh.type()+"' and '"+rh+"' is a '"+rh.type()+"'");
+							return new set(new var(rh.type(),""+lh+acstr),rh);
 							//? compatible
-							throw new Error(r.hrs_location()+"  '"+lh.code+"' is '"+lh.type()+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh+"="+lh.type()+"("+rh.code+")'");
+//							throw new Error(r.hrs_location()+"  '"+lh.code+"' is '"+lh.type()+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh+"="+lh.type()+"("+rh.code+")'");
 						}
 						return new set(lh,rh);
 					}else{// f.a=2;
