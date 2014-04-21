@@ -484,7 +484,8 @@ final class toc extends Writer{
 					if(!rh.type().equals(lh.type())){
 						boolean ok=false;
 						while(true){
-							final struct st=find_struct_or_break(t);
+							final struct st=find_struct(t,false);
+							if(st==null)throw new Error(r.hrs_location()+"  struct '"+t+"' not found");
 							final struct.slot parent=st.inherits_from();
 							if(parent==null)throw new Error();
 							t=find_type_by_name_or_break(parent.type);
