@@ -27,7 +27,7 @@ final public class cap{
 //			throw new Error(source_reader.hr_location_string_from_line_and_col(in.line_number,in.character_number_in_line)+"  "+t.getMessage());
 //		}
 //	}
-	public void compile(Reader in,Writer ccode)throws Throwable{
+	public void compile(Reader in,Writer ccode,final String mode)throws Throwable{
 		final toc cc=new toc();
 		cc.namespace_push("cap");
 		cc.types_add(new type("stream"));
@@ -41,13 +41,13 @@ final public class cap{
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		final PrintWriter out=new PrintWriter(ccode);
-		b.b.cp(cap.class.getResourceAsStream("header"),out);
+		b.b.cp(cap.class.getResourceAsStream("header-"+mode),out);
 		cc.classes().forEach((c)->source_c(c,out));
 		out.println("static const struct struc structs[]={");
 		cc.classes().forEach((c)->{out.println("  {\""+c.name+"\",sizeof("+c.name+"__field)/sizeof(field),"+c.name+"__field,sizeof("+c.name+"__func)/sizeof(function),"+c.name+"__func},");});		
 		out.println("};");
 		// include footer		
-		b.b.cp(cap.class.getResourceAsStream("footer"),out);
+		b.b.cp(cap.class.getResourceAsStream("footer-"+mode),out);
 
 //		final InputStream main=cap.class.getResourceAsStream("main.cap");
 //		final class inc{int i;}
