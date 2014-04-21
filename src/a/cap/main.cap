@@ -22,10 +22,11 @@ bmp{file;width_in_pixels;height_in_pixels;
 }
 
 c{run(){
+    pl("hello world");
     file f;
     f.address=0xa5a00;
     f.size_in_bytes=0x20;
     color c;
     c.i=2;
-    f.clear(c);
+    f.to(out);
 }}
