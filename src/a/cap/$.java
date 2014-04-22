@@ -179,7 +179,7 @@ public class $ extends a {
 //				b.cp(cap.class.getResourceAsStream("pc.h"),basedir.get("pc.h").outputstream());
 				c.p(" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast main.c");
 			}else{
-				c.p(" -o main -std=c1x -Wfatal-errors main.c");
+				c.p(" -o main -std=c11 -Wfatal-errors main.c");
 			}
 			c.p("&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat ").p("b".equals(buildmode)?"pco.img":"main").p("|gzip|wc");
 			if(!"b".equals(buildmode))c.p("&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date");
