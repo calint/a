@@ -11,7 +11,8 @@ file{
   to(stream){pls(s,"{%d %d}",address.i,size_in_bytes.i)}
   to2(stream){}
   address get_address(){return(address);}
-  void clear(color){mem_clear(address.i,size_in_bytes.i,c.i)}
+  clear(color){mem_clear(address.i,size_in_bytes.i,c.i)}
+  fill(int){}
 }
 width{int}height{int}
 width_in_pixels{width}
@@ -29,4 +30,5 @@ c{run(){
     color c;
     c=0xffffff;
     f.to(out);
+    f.fill(c);
 }}

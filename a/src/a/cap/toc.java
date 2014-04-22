@@ -446,30 +446,6 @@ final class toc extends Writer{
 					return new call(funcname,args);
 				}
 				break;
-//				if(funcname.length()==0){// i.e. ^(int i)(i+3){}
-//					return parse_statement(r,nms,")");
-//				}
-//				if(previous_statement_in_accessor!=null){
-//					final type lht=previous_statement_in_accessor.type();
-//					final struct st=find_struct(lht,true);
-//					final struct.slot func=st.find_function(funcname,false);
-//					if(func==null)throw new Error(r.hrs_location()+"  '"+funcname+"' not found in '"+st.name+"'");
-//					final stmt[]args=parse_function_arguments(r,nms,")");
-//					validate_function_arguments(r,funcname,st,args);
-//					final stmt ret=new fcall(previous_statement_in_accessor,st,funcname,args);
-//					return ret;
-//				}
-//				final int i=funcname.lastIndexOf('.');
-//				if(i!=-1){// i.e.   f.to(out)
-//					final String funcnm=funcname.substring(i+1);
-//					final String accessor=funcname.substring(0,i);
-//					final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
-//					final accessor ac=parse_accessor(sr,namespace_stack,null);
-//					final stmt[]args=parse_function_arguments(r,nms,")");
-//					validate_function_arguments(r,funcnm,ac.struct,args);
-//					final stmt ret=new fcall(ac.accessor_statement,ac.struct,funcnm,args);
-//					return ret;
-//				}
 			}
 			if(ch=='='){// let or set
 				if(left_hand_statement!=null){
@@ -479,22 +455,23 @@ final class toc extends Writer{
 					final type slot_type=find_struct_member_type(prv_accessor_type.t.name(),accessor,true);
 					final stmt lh=new stmt(slot_type,left_hand_statement+"."+accessor);
 					final stmt rh=parse_statement(r,nms,delims);
-					final StringBuilder sba=new StringBuilder(lh.toString());
 					type t=lh.type();
 					if(!rh.type().equals(lh.type())){
-						boolean ok=false;
-						while(true){
-							final struct st=find_struct(t,false);
-							if(st==null)throw new Error(r.hrs_location()+"  struct '"+t+"' not found");
-							final struct.slot parent=st.inherits_from();
-							if(parent==null)throw new Error();
-							t=find_type_by_name_or_break(parent.type);
-							sba.append(".").append(parent.name);
-							if(t.equals(rh.type())){ok=true;break;}
-						}
-						if(!ok)throw new Error(r.hrs_location()+" incompatible types\n   '"+lh+"' is a '"+lh.t+"' and '"+rh+"' is a '"+rh.t+"'");
+						final stmt lhx=assert_assignment_compatibility(r,lh,rh);
+						return new stmt(lhx.type(),lhx+"="+rh);
+//						boolean ok=false;
+//						while(true){
+//							final struct st=find_struct(t,false);
+//							if(st==null)throw new Error(r.hrs_location()+"  struct '"+t+"' not found");
+//							final struct.slot parent=st.inherits_from();
+//							if(parent==null)throw new Error();
+//							t=find_type_by_name_or_break(parent.type);
+//							sba.append(".").append(parent.name);
+//							if(t.equals(rh.type())){ok=true;break;}
+//						}
+//						if(!ok)throw new Error(r.hrs_location()+" incompatible types\n   '"+lh+"' is a '"+lh.t+"' and '"+rh+"' is a '"+rh.t+"'");
 					}
-					sba.append("=").append(rh);
+					final StringBuilder sba=new StringBuilder().append(lh).append("=").append(rh);
 					final stmt ret=new stmt(t,sba.toString());
 					return ret;
 //					return new set_struct_member(v,sba.toString(),rh,this);					
@@ -512,22 +489,8 @@ final class toc extends Writer{
 						if(lh==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						final stmt rh=parse_statement(r,nms,delims);
 						if(!lh.type().equals(rh.type())){
-							type t=lh.type();
-							boolean ok=false;
-							final StringBuilder acstr=new StringBuilder();
-							while(true){
-								final struct st=find_struct(t,false);
-								if(st==null)break;
-								final struct.slot parent=st.inherits_from();
-								if(parent==null)throw new Error();
-								t=find_type_by_name_or_break(parent.type);
-								acstr.append(".").append(parent.name);
-								if(t.equals(rh.type())){ok=true;break;}
-							}
-							if(!ok)throw new Error(r.hrs_location()+" incompatible types '"+lh+"' and '"+rh+"'\n   '"+lh+"' is a '"+lh.type()+"' and '"+rh+"' is a '"+rh.type()+"'");
-							return new set(new var(rh.type(),""+lh+acstr),rh);
-							//? compatible
-//							throw new Error(r.hrs_location()+"  '"+lh.code+"' is '"+lh.type()+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh+"="+lh.type()+"("+rh.code+")'");
+							final stmt lhx=assert_assignment_compatibility(r,lh,rh);
+							return new stmt(lh.type(),lhx+"="+rh);
 						}
 						return new set(lh,rh);
 					}else{// f.a=2;
@@ -684,6 +647,41 @@ final class toc extends Writer{
 //		final String struc_member=vnm.substring(i+1);
 //		return wrap_variable_with_inc_dec(new struct_member(v,struc_member,this),preinc,postinc,predec,postdec);
 	}
+	private stmt assert_assignment_compatibility(source_reader r,final stmt lh, final stmt rh) throws Error {
+		type t=lh.type();
+		if(t.equals(rh.type()))return lh;
+		boolean ok=false;
+		final StringBuilder acstr=new StringBuilder(lh.toString());
+		while(true){
+			final struct st=find_struct(t,false);
+			if(st==null)break;
+			final struct.slot parent=st.inherits_from();
+			if(parent==null)throw new Error();
+			t=find_type_by_name_or_break(parent.type);
+			acstr.append(".").append(parent.name);
+			if(t.equals(rh.type())){ok=true;break;}
+		}
+		if(!ok)throw new Error(r.hrs_location()+" incompatible types '"+lh+"' and '"+rh+"'\n   '"+lh+"' is a '"+lh.type()+"' and '"+rh+"' is a '"+rh.type()+"'");
+		return new stmt(t,acstr.toString());
+	}
+	private stmt assert_function_arg_compatibility(source_reader r,final stmt lh, final stmt rh,final String funcnm,final int argn) throws Error {
+		//  file{f(int)}{}color{int}color c;f(c);
+		type t=rh.type();
+		if(lh.equals(rh.type()))return rh;
+		boolean ok=false;
+		final StringBuilder acstr=new StringBuilder(rh.toString());
+		while(true){
+			final struct st=find_struct(t,false);
+			if(st==null)break;
+			final struct.slot parent=st.inherits_from();
+			if(parent==null)throw new Error();
+			t=find_type_by_name_or_break(parent.type);
+			acstr.append(".").append(parent.name);
+			if(t.equals(lh.type())){ok=true;break;}
+		}
+		if(!ok)throw new Error(r.hrs_location()+"  argument "+(argn+1)+" to function '"+funcnm+"'   incompatible types '"+lh+"' and '"+rh+"'\n   '"+lh+"' is a '"+lh.type()+"' and '"+rh+"' is a '"+rh.type()+"'");
+		return new stmt(t,acstr.toString());
+	}
 	private void validate_function_arguments(source_reader r,final String funcnm,final struct s,final stmt[]args)throws Throwable{
 		final int nargs=args.length==1&&args[0]==null?0:args.length;
 		final struct.slot func=s.find_function(funcnm,false);
@@ -693,8 +691,11 @@ final class toc extends Writer{
 		// check arguments with declaration
 		int arg_i=0;
 		for(var va:func.argsvar){
-			if(args[arg_i++].type().equals(va.type()))continue;
-			throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
+			if(args[arg_i].type().equals(va.type()))continue;
+			final stmt lhx=assert_function_arg_compatibility(r,va.type(),args[arg_i],funcnm,arg_i);
+			args[arg_i]=lhx;
+			arg_i++;
+//			throw new Error(r.hrs_location()+" while calling function '"+funcnm+"' in struct '"+s.name+"'\n  provided argument "+arg_i+" '"+args[arg_i-1]+"' of type '"+args[arg_i-1].type()+"' does not match the required type '"+va.type()+"'");
 		}
 	}
 	private stmt parse_operator(final char op,final stmt lh,source_reader r,LinkedList<namespace>nms,final String delims)throws Throwable{
