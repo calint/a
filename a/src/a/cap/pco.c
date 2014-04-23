@@ -64,7 +64,7 @@ asm("mov %cr0,%eax");// enter 32b protected mode
 asm("or $0x1,%al");
 asm("mov %eax,%cr0");
 asm("jmp $8,$pm");// jmp to flush
-asm(".align 16,0x00");
+asm(".align 16,0x00");//align data cache friendly
 asm("gdt:.quad 0x0000000000000000");//0x00:
 asm("    .quad 0x00cf9a000000ffff");//0x08: 32b code 4g pl0 rx
 asm("	 .quad 0x00cf92000000ffff");//0x10: 32b data 4g pl0 rw
@@ -149,18 +149,18 @@ asm(".word 0xaa55");//pc boot sector signature
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm("sector2:");//0x7e00 (saved at shutdown)
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
-asm("osca_t:.long 0x00000000");
-asm("osca_t1:.long 0x00000000");
+asm("osca_t:.long 0x00000000");//lower tick
+asm("osca_t1:.long 0x00000000");//higher tick
 asm("osca_key:.long 0x00000000");
 asm(".space sector2+512-.");
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm("sector3:");//0x8000 tasks switcher
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
-asm("osca_tsk_a:.long tsk");
-asm("isr_tck_eax:.long 0x00000000");
-asm("isr_tck_ebx:.long 0x00000000");
-asm("isr_tck_esp:.long 0x00000000");
-asm("isr_tck_eip:.long 0x00000000");
+asm("osca_tsk_a:.long tsk");//active task
+asm("isr_tck_eax:.long 0x00000000");//temporary saved
+asm("isr_tck_ebx:.long 0x00000000");//while task
+asm("isr_tck_esp:.long 0x00000000");//switching
+asm("isr_tck_eip:.long 0x00000000");//
 asm(".align 16");
 asm("isr_tck:");//? critical section, clear interrupts
 asm("  movw $0x0e0e,0xa0200");
