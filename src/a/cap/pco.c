@@ -98,43 +98,43 @@ asm("xor %ebp,%ebp");
 //asm("cli");
 asm("movl $IDT,%ebx");//idt address
 asm("movl $0x0040,%ecx");//interrupt count
-asm("1:");
-asm("    movw $isr_err,   (%ebx)");//offset 0..15
+asm("1:");// set default interrupt
+asm("    movw $isr_err,(%ebx)");//offset 0..15
 asm("    movw $0x0008,2(%ebx)");//selector in gdt
 asm("    movb $0x00,  4(%ebx)");//unused
 asm("    movb $0x8e,  5(%ebx)");//type_attrs p,pv0,!s,i32b
 asm("    movw $0x0000,6(%ebx)");//offfset 16..31
-asm("    add $8,%bx");
+asm("    add $8,%bx");//next record
 asm("loop 1b");
-asm("movl $0x0e0e0f0f,0xa0118");
-asm("movw $isr_tck,(IDT+0x40)");
-asm("movw $isr_kbd,(IDT+0x48)");
-asm("lidt idtr");
+asm("movl $0x0e0e0f0f,0xa0118");//progress marker
+asm("movw $isr_tck,(IDT+0x40)");//on tick handler
+asm("movw $isr_kbd,(IDT+0x48)");//on keyboard handler
+asm("lidt idtr");//load interrupt descriptor table
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -start
 //asm("movw $0x0404,0xa4000");// dot in middle of vga buffer
 asm("movl (osca_tsk_a),%ebx");//ebx points to active task record
 asm("movl 4(%ebx),%esp");//restore esp
-asm("sti");
+asm("sti");//? racing, do sti after next instruction
 asm("jmp *(%ebx)");//jmp to restored eip
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm(".align 16");
 asm("isr_err:cli");
-asm("  incw 0xa0000");
-asm("  jmp isr_err");
+asm("  incw 0xa0000");//? better display of error condition
+asm("  jmp isr_err");//? hlt,and jmp
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm(".align 16");
-asm("isr_kbd:");
-asm("  pushw %ax");
+asm("isr_kbd:");//on keyboard event
+asm("  pushw %ax");//push register used to read keyboard port
 asm("  inb $0x60,%al");//read keyboard port
-asm("  movb %al,osca_key");//
-asm("  movb %al,0xa0100");
-asm("  pushal");//save register
+asm("  movb %al,osca_key");//save it in osca_key
+asm("  movb %al,0xa0100");//and in vga buffer
+asm("  pushal");//save lower byte of register a
 asm("  call osca_keyb_ev");//call device keyb function ev
-asm("  popal");//restore register
+asm("  popal");//restore lower byte of register a
 asm("  movb $0x20,%al");//ack interrupt
 asm("  outb %al,$0x20");//
-asm("  popw %ax");
-asm("  iret");
+asm("  popw %ax");//restore state
+asm("  iret");//done
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm(".align 16");
 asm("osca_drv_b:.byte 0x00");//boot drive
@@ -162,7 +162,7 @@ asm("isr_tck_ebx:.long 0x00000000");
 asm("isr_tck_esp:.long 0x00000000");
 asm("isr_tck_eip:.long 0x00000000");
 asm(".align 16");
-asm("isr_tck:");
+asm("isr_tck:");//? critical section, clear interrupts
 asm("  movw $0x0e0e,0xa0200");
 asm("  mov %eax,(isr_tck_eax)");//save eax,ebx
 asm("  mov %ebx,(isr_tck_ebx)");
@@ -203,7 +203,7 @@ asm("  push %ax");
 asm("  mov $0x20,%al");
 asm("  out %al,$0x20");//ack irq
 asm("  pop %ax");
-asm("  sti");//enable irq
+asm("  sti");//enable irq   //? racing, exec sti after and at the same tick with jmp
 asm("  jmp *isr_tck_eip");//jmp to restored eip
 asm(".space sector3+512-.");
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
