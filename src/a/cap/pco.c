@@ -114,13 +114,13 @@ asm("lidt idtr");//load interrupt descriptor table
 //asm("movw $0x0404,0xa4000");// dot in middle of vga buffer
 asm("movl (osca_tsk_a),%ebx");//ebx points to active task record
 asm("movl 4(%ebx),%esp");//restore esp
-asm("sti");//? racing, do sti after next instruction
+asm("sti");//note: executes after next instruction, see: http://en.wikipedia.org/wiki/Interrupt_flag
 asm("jmp *(%ebx)");//jmp to restored eip
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm(".align 16");
-asm("isr_err:cli");
-asm("  incw 0xa0000");//? better display of error condition
-asm("  jmp isr_err");//? hlt
+asm("isr_err:cli");//clear interrupts
+asm("  incw 0xa0000");//blinking lights display
+asm("  jmp isr_err");//
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm(".align 16");
 asm("isr_kbd:");//on keyboard event
@@ -203,7 +203,7 @@ asm("  push %ax");
 asm("  mov $0x20,%al");
 asm("  out %al,$0x20");//ack irq
 asm("  pop %ax");
-asm("  sti");//enable irq   //? racing, exec sti after and at the same tick with jmp
+asm("  sti");//enable irq, note: executes after next instruction
 asm("  jmp *isr_tck_eip");//jmp to restored eip
 asm(".space sector3+512-.");
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
