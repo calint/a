@@ -49,6 +49,7 @@ typedef struct struc{
 #define offsetof(st, m) ((size)(&((st *)0)->m))
 //- -- - -- - - - - - -  ---  -- - - - - - - - - - -   - - - - - - - - - - - - -
 static void mem_clear(int address,int nbytes,int colr){
+    int*vga=(int*)0xa0000;*vga++;
 	int*p1=(int*)address;
 	while(nbytes--)//? nbytes>>2 since sizeof(int)==4
 		*p1++=colr;
