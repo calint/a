@@ -1,6 +1,5 @@
 // - - -- -  -- - - - - -  --  --- -- - - - - - -- - - - - - - - - -- - - - - --
-
-asm(".global tsk0,tsk1,tsk2,tsk3,tsk4");
+//asm(".global tsk0,tsk1,tsk2,tsk3,tsk4");
 asm("tsk0:");
 asm("  movl $0x00007c00,%esi");
 asm("  movl $0x000a8000,%edi");
@@ -89,6 +88,7 @@ static void tsk9(){
 
 static void tsk10(){
     while(true){
+//        int*vga=(int*)0xa0000;++*vga;
         c_run(null);
         osca_pass();
     }
