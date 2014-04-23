@@ -120,7 +120,7 @@ asm("jmp *(%ebx)");//jmp to restored eip
 asm(".align 16");
 asm("isr_err:cli");
 asm("  incw 0xa0000");//? better display of error condition
-asm("  jmp isr_err");//? hlt,and jmp
+asm("  jmp isr_err");//? hlt
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm(".align 16");
 asm("isr_kbd:");//on keyboard event
@@ -265,7 +265,7 @@ asm("jc 8f");
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm("8:cli");
 asm("  hlt");
-asm("  jmp 8b");
+asm("  jmp 8b");//? ommit, after cli,hlt
 
 asm(".code32");
 asm("page0:");
