@@ -28,7 +28,7 @@ c{run(){
     f.address=0xa5a00;
     f.size_in_bytes=0x20;
     color c;
-    c=0xffffff;
+    c=0xf0e0d0;
     f.to(out);
-    f.fill(c);
+    f.clear(c);
 }}
