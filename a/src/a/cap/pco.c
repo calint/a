@@ -6,23 +6,24 @@
 // * sony-vaio-vgnfw11m
 // * qemu 0.11.0 on linux 2.6
 // * virtual box 4.3.10 on osx 10.9.2   2014-04-21
-//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
-asm(".set IDT,0x600");//interrupt descriptor table address
-asm(".set LOAD_SECTORS,0x1f");//15½K
-asm(".set PROG_SIZE,0x200+0x1f*0x200");
-asm(".code16");
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -export
 asm(".global osca_key");//export osca_key address to linker
 asm(".global osca_t");//.. lower tick
 asm(".global osca_t1");//.. higher tick
 asm(".global _start");//.. entry point
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -kernel
+asm(".set IDT,0x600");//interrupt descriptor table address
+asm(".set LOAD_SECTORS,0x1f");//15½K
+asm(".set PROG_SIZE,0x200+0x1f*0x200");
+asm(".code16");//? to before _start
 asm("_start:");
-//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -go
 asm("xor %bx,%bx");
 asm("movw %bx,%ds");
 asm("movb %dl,(osca_drv_b)");//save boot drive
 asm("movw %bx,%ss");
 asm("movw $_start,%sp");
-//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -load
 asm("movw $(0x0200+LOAD_SECTORS),%ax");
 asm("movw $0x0002,%cx");//from sector 2
 asm("movw $0x07e0,%bx");//to 0x7e00
@@ -37,7 +38,7 @@ asm("int $0x13");
 //asm("    hlt");
 //asm("    jmp 2b");
 //asm("1:");
-//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -vga
 asm("mov $0x13,%ax");//vga mode 320x200x8 bmp @ 0xa0000
 asm("int $0x10");
 asm("mov $0xa000,%ax");
@@ -52,7 +53,7 @@ asm("mov $0x8000,%di");
 asm("mov $0x7c00,%si");
 asm("mov $PROG_SIZE>>1,%cx");
 asm("rep movsw");
-//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+//-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -a20
 //asm("movw $0x0404,%gs:0x104");
 asm("in $0x92,%al");// enable a20 line (odd megs)
 asm("or $2,%al");
