@@ -11,10 +11,10 @@ asm(".set IDT,0x600");//interrupt descriptor table address
 asm(".set LOAD_SECTORS,0x1f");//15½K
 asm(".set PROG_SIZE,0x200+0x1f*0x200");
 asm(".code16");
-asm(".global osca_key");
-asm(".global osca_t");
-asm(".global osca_t1");
-asm(".global _start");
+asm(".global osca_key");//export osca_key address to linker
+asm(".global osca_t");//.. lower tick
+asm(".global osca_t1");//.. higher tick
+asm(".global _start");//.. entry point
 asm("_start:");
 //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
 asm("xor %bx,%bx");
@@ -162,7 +162,7 @@ asm("isr_tck_ebx:.long 0x00000000");//while task
 asm("isr_tck_esp:.long 0x00000000");//switching
 asm("isr_tck_eip:.long 0x00000000");//
 asm(".align 16");
-asm("isr_tck:");//? critical section, clear interrupts
+asm("isr_tck:");//? cli,  critical section, clear interrupts
 asm("  movw $0x0e0e,0xa0200");
 asm("  mov %eax,(isr_tck_eax)");//save eax,ebx
 asm("  mov %ebx,(isr_tck_ebx)");
