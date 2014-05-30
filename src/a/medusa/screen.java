@@ -153,7 +153,7 @@ public class screen implements Serializable{
 				if(ix_lft==last_elem_ix)ix_lft=0;
 				else ix_lft+=elems_per_vertex;					
 				x_nxt_lft=xy[ix_lft];
-				y_nxt_lft=xy[ix_lft+1];
+				y_nxt_lft=xy[ix_lft+1];//? whatif prevy==nxty
 //				dy_lft=y_nxt_lft-y_lft;
 				dy_lft=y_nxt_lft-y;
 				if(dy_lft!=0)dxdy_lft=(x_nxt_lft-x_lft)/dy_lft;
