@@ -10,6 +10,7 @@ public abstract class lst extends a implements $.labeled{
 	itm owner;
 	private String frstnm;
 	private String frstid;
+	protected boolean is_ref_list;
 	public String label(){
 		if(label!=null)
 			return label;
@@ -89,6 +90,7 @@ public abstract class lst extends a implements $.labeled{
 	//delete
 	final public synchronized void x_dl(final xwriter x,final String s)throws Throwable{
 		final String did=s;
+		//. if aggr
 		cstore.delete(itmcls(),did);
 		if(owner!=null){
 			final String dide=","+did;
