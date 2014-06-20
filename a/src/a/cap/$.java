@@ -94,7 +94,7 @@ public class $ extends a {
 			y.xu(sts,new Date()+" ok");
 			out.close();
 			c.from(csrc);
-			y.xu(c);//? escape gtlt
+			y.xu(c,true);//? escape gtlt
 			upd_linenumbers(y,0);
 			x_cc(y,null);
 		}catch(Throwable t){
