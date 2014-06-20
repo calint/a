@@ -173,6 +173,7 @@ public final class xwriter{
 	public xwriter xub(final a a,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('").p(a.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
 	public xwriter xube(){return pl("');");}
 	public xwriter xu(final a a)throws Throwable{a.to(xub(a,true,false));return xube();}
+	public xwriter xu(final a a,final boolean escltgt)throws Throwable{a.to(xub(a,true,escltgt));return xube();}
 	public xwriter xuo(final a a)throws Throwable{a.to(xub(a,false,false));return xube();}
 
 	public xwriter xinterval(final a a,final String ax,final int ms){return p("setInterval(\"$x('").p(a.id()).p(" ").p(ax).p("')\",").p(ms).pl(");");}
