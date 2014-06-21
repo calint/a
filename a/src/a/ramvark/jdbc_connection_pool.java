@@ -72,119 +72,24 @@ final class jdbc_connection_pool implements DataSource{
 		@Override public <T> T unwrap(Class<T> iface) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public boolean isWrapperFor(Class<?> iface) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public Statement createStatement() throws SQLException {throw new UnsupportedOperationException();}
-
-
-
-		@Override
-		public CallableStatement prepareCall(String sql) throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public String nativeSQL(String sql) throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setAutoCommit(boolean autoCommit) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public boolean getAutoCommit() throws SQLException {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public void commit() throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void rollback() throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public boolean isClosed() throws SQLException {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public DatabaseMetaData getMetaData() throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setReadOnly(boolean readOnly) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public boolean isReadOnly() throws SQLException {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public void setCatalog(String catalog) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public String getCatalog() throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setTransactionIsolation(int level) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public int getTransactionIsolation() throws SQLException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public SQLWarning getWarnings() throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void clearWarnings() throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public Statement createStatement(int resultSetType,
-				int resultSetConcurrency) throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public PreparedStatement prepareStatement(String sql,
-				int resultSetType, int resultSetConcurrency)
-				throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		@Override public CallableStatement prepareCall(String sql) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public String nativeSQL(String sql) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void setAutoCommit(boolean autoCommit) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public boolean getAutoCommit() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void commit() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void rollback() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public boolean isClosed() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public DatabaseMetaData getMetaData() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void setReadOnly(boolean readOnly) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public boolean isReadOnly() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void setCatalog(String catalog) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public String getCatalog() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void setTransactionIsolation(int level) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public int getTransactionIsolation() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public SQLWarning getWarnings() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void clearWarnings() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public Statement createStatement(int resultSetType,int resultSetConcurrency) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public PreparedStatement prepareStatement(String sql,int resultSetType, int resultSetConcurrency)throws SQLException {throw new UnsupportedOperationException();}
 
 		@Override
 		public CallableStatement prepareCall(String sql, int resultSetType,
