@@ -8,6 +8,11 @@ import b.a;
 import b.xwriter;
 public class insert extends a{static final long serialVersionUID=1;
 	public void to(final xwriter x)throws Throwable{
+		// browser quirk fix
+		for(int n=0;n<8;n++)x.p("                                                                ");
+		x.pl("");
+		x.pl("insert test");
+		x.flush();
 		final int npuppets=10_000;
 		final int nthreads=20;
 		final Thread[]threads=new Thread[nthreads];
