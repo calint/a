@@ -1,51 +1,53 @@
 package a.ramvark;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+
+import a.ramvark.cstore.meters;
 
 public class store_in_jdbc implements store{
 	@Override public itm create(final Class<? extends itm> cls,final itm owner)throws Throwable{
-		return null;
+		meters.creates++;
+		final itm e=cls.newInstance();
+		if(owner!=null)e.pid.set(owner.did);
+		final String docid=cstore.mkdocid();
+		e.did.set(docid);
+		//e.onnew();
+		return e;
 	}
 	@Override public void save(final itm e)throws Throwable{
-		final Connection conn=getHSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement("update blob_table set blob = ? where id = ?");
-		File blob = new File("/path/to/picture.png");
-		FileInputStream in = new FileInputStream(blob);
-
-		// the cast to int is necessary because with JDBC 4 there is 
-		// also a version of this method with a (int, long) 
-		// but that is not implemented by Oracle
-		pstmt.setBinaryStream(1, in, (int)blob.length()); 
-
-		pstmt.setInt(2, 42);  // set the PK value
-		pstmt.executeUpdate();
-		conn.commit();
+		final Connection c=getHSQLConnection();
+		final PreparedStatement s=c.prepareStatement("update b set d=? where i=?");
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream(1024);
+		e.save(baos);
+		s.setBytes(1,baos.toByteArray()); 
+		s.setString(2,e.did.toString());
+		s.executeUpdate();
+		c.commit();
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
-		final Connection conn=getHSQLConnection();
-		final String query="select d from b where i='"+did+"'";//? sqlinjection
-		final Statement stmt=conn.createStatement();//? preparedquery
-		final ResultSet rs=stmt.executeQuery(query);
+		final Connection c=getHSQLConnection();
+		final String q="select d from b where i='"+did+"'";//? sqlinjection
+		final Statement s=c.createStatement();//? preparedquery
+		final ResultSet r=s.executeQuery(q);
 		itm e;
-		if(rs.next()){
-			final byte[]bytes=rs.getBytes(1);
-			e=null;
+		if(r.next()){
+			final InputStream is=r.getBinaryStream(1);
+			e=cls.newInstance();
+			e.load(is);
+//			final byte[]bytes=r.getBytes(1);
+//			e=null;
 		}else{
 			e=null;
 		}
-		rs.close();
-		stmt.close();
-		conn.close();
+		r.close();
+		s.close();
+		c.close();
 		return e;
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
