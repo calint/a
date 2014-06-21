@@ -42,15 +42,5 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 		}else
 			conn=ds.getConnection();
 		return conn;
-//
-//		final String driver="org.gjt.mm.mysql.Driver";
-//		final String url="jdbc:mysql://localhost/b";
-//		final String username="ramvark";
-//		final String password="ramvark";
-//		
-//		Class.forName(driver);
-//		final Connection conn=DriverManager.getConnection(url,username,password);
-//		ensure_initiated(conn);
-//		return conn;
 	}
 }
