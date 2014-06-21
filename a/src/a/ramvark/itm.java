@@ -55,6 +55,9 @@ public abstract class itm extends a implements $.labeled{
 		if(notnew)
 			x.p(" ").ax(this,"rn","⌾");
 		x.p(" ").ax(this,"cl","••");
+//		x.spc().ax(this,"sc","▣");
+//		x.spc().ax(this,"sv","▢");
+
 		focus=null;
 		final LinkedList<Field>flds=new LinkedList<Field>();
 		for(final Field f:getClass().getFields())//? fieldorderissue
