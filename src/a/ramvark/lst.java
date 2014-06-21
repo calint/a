@@ -23,7 +23,7 @@ public abstract class lst extends a implements $.labeled{
 		frstnm=null;
 		frstid=null;
 		rendhead(x);
-		foreach(qry.toString(),new cstore.visitor(){public void visit(final itm e){
+		foreach(qry.toString(),new store.visitor(){public void visit(final itm e){
 			if(frstnm==null){
 				rendlisthead(x);
 				frstid=e.did.toString();
@@ -36,7 +36,7 @@ public abstract class lst extends a implements $.labeled{
 		rendfoot(x);
 		x.elend();
 	}
-	public void foreach(final String q,final cstore.visitor cv)throws Throwable{
+	public void foreach(final String q,final store.visitor cv)throws Throwable{
 		if(owner==null){
 			cstore.foreach(itmcls(),owner,qry.toString(),cv);
 			return;

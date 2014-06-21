@@ -9,11 +9,9 @@ public final class cstore{
 	static public itm create(Class<? extends itm>cls,itm owner)throws Throwable{return st.create(cls,owner);}
 	static public void save(itm e)throws Throwable{st.save(e);}
 	static public itm load(Class<? extends itm>cls,String did)throws Throwable{return st.load(cls,did);}
-	static public void foreach(Class<? extends itm>cls,itm owner,String q,visitor v)throws Throwable{st.foreach(cls,owner,q,v);}
+	static public void foreach(Class<? extends itm>cls,itm owner,String q,store.visitor v)throws Throwable{st.foreach(cls,owner,q,v);}
 	static public void delete(Class<? extends itm>cls,String did)throws Throwable{st.delete(cls,did);}
 
-
-	public interface visitor{void visit(final itm e)throws Throwable;}
 	public static class meters extends a implements cacheable{
 		static final long serialVersionUID=1;
 		public static long foreaches,creates,loads,saves,deletes;

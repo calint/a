@@ -11,12 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import a.ramvark.cstore.meters;
 import b.a;
 import b.b;
 import b.path;
 import b.req;
-import a.ramvark.cstore.meters;
-import a.ramvark.cstore.visitor;
 
 public class file_store implements store{
 	final private path root(final Class<? extends itm>cls){return req.get().session().path(cls.getName());}
@@ -133,7 +132,7 @@ public class file_store implements store{
 		}
 		e.notnew=true;
 	}
-	public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
+	public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 		meters.foreaches++;
 		final String[]fns=root(cls).list();//?. stream
 		for(final String fn:fns){
