@@ -14,7 +14,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 	private DataSource ds;
 	private boolean initiated;
 	@Override protected Connection connection()throws Throwable{
-		final Connection conn;
+		final Connection cn;
 		if(!initiated){
 			if(b.b.cloud_bees==true){
 				final Context ctx=new InitialContext();
@@ -30,14 +30,14 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 				mds.setPassword("ramvark");
 				ds=mds;
 			}
-			conn=ds.getConnection();
-			final PreparedStatement s=conn.prepareStatement("CREATE TABLE `b` (`c` char(64),`i` char(32),`o` char(32),`q` varchar(255),`d` blob) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+			cn=ds.getConnection();
+			final PreparedStatement s=cn.prepareStatement("CREATE TABLE b (c char(64),i char(32),o char(32),q varchar(255),d blob) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 			try{s.execute();}catch(Throwable ignored){}
 			//create user ramvark;
 			//grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
 			initiated=true;
 		}else
-			conn=ds.getConnection();
-		return conn;
+			cn=ds.getConnection();
+		return cn;
 	}
 }
