@@ -10,10 +10,10 @@ import javax.sql.DataSource;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 public class store_in_jdbc_mysql extends store_in_jdbc{
+	public int connection_close_intervall_in_ms=10_000;
 	private DataSource ds;
 	private boolean initiated;
-	public int connection_close_intervall_in_ms=10_000;
-	public boolean use_connection_pool=true;
+	private static boolean use_connection_pool=true;
 	@Override protected Connection connection()throws Throwable{
 		final Connection cn;
 		if(!initiated){
