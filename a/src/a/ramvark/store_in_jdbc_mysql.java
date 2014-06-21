@@ -31,7 +31,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 				ds=mds;
 			}
 			cn=ds.getConnection();
-			final PreparedStatement s=cn.prepareStatement("CREATE TABLE b (c char(64),i char(32),o char(32),q varchar(255),d blob) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+			final PreparedStatement s=cn.prepareStatement("CREATE TABLE b(c char(64),i char(32),o char(32),q varchar(255),d blob)ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 			try{s.execute();}catch(Throwable ignored){}
 			//create user ramvark;
 			//grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
