@@ -79,7 +79,7 @@ public abstract class itm extends a implements $.labeled{
 			x.nl().tr();
 			final int t=annot.type();
 
-			final a e=(a)f.get(this);
+			final an e=(an)f.get(this);
 			if(e.has_bit(0))
 				continue;
 			if(focus==null)
@@ -298,8 +298,7 @@ public abstract class itm extends a implements $.labeled{
 //		public void rm(final String did);
 //	}
 	
-	public static class ref extends a{
-		static final long serialVersionUID=1;
+	public static class ref extends an{
 		protected Class<? extends itm>cls;
 		public itm get()throws Throwable{
 			if(isempty())return null;
@@ -307,9 +306,9 @@ public abstract class itm extends a implements $.labeled{
 		}
 		final public boolean isnull(){return isempty();}
 		public void rm(){clr();}
+		static final long serialVersionUID=1;
 	}
 	final public static class agr extends ref{
-		static final long serialVersionUID=1;
 		protected itm owner;
 		public itm get()throws Throwable{
 			final itm m=super.get();
@@ -324,6 +323,7 @@ public abstract class itm extends a implements $.labeled{
 		}
 		//? ondelete
 //		public void ondelete()throws Throwable{rm();}
+		static final long serialVersionUID=1;
 	}
 
 	

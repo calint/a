@@ -1,15 +1,15 @@
 package a.ramvark.ab;
+import a.ramvark.an;
 import a.ramvark.cstore;
 import a.ramvark.in;
 import a.ramvark.itm;
 import a.ramvark.store;
-import b.a;
 import b.xwriter;
 public class expense extends itm{static final long serialVersionUID=1;
 	@in(type=3)public expenses subexpenses;
-	@in(type=5)public a unit;
-	@in(type=5)public a amount;
-	@in(type=5)public a price;
+	@in(type=5)public an unit;
+	@in(type=5)public an amount;
+	@in(type=5)public an price;
 	@Override protected void onprerender()throws Throwable{
 		final boolean b=!subexpenses.isempty();
 		price.set_bit(0,b);

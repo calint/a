@@ -2,7 +2,7 @@ package a.ramvark;
 import b.a;
 import b.b;
 import b.xwriter;
-public abstract class lst extends a implements $.labeled{
+public abstract class lst extends an implements $.labeled{
 	static final long serialVersionUID=1;
 	public a qry;
 	String label;
