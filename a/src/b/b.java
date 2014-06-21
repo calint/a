@@ -17,7 +17,7 @@ final public class b{
 	public final static String pathsep="/";
 	public static String hello="public domain server #1";
 	public static String id=""+(int)Math.floor(Math.random()*10000);
-	public static String root_dir="app";
+	public static String root_dir=".";
 	public static String server_port=ensure(System.getProperty("app.port"),"8888");
 	public static boolean try_file=true;
 	public static boolean try_rc=true;
@@ -55,7 +55,7 @@ final public class b{
 	public static int max_pending_connections=20000;// when overrun causes SYN flood warning
 	public static boolean tcpnodelay=true;
 	public static boolean save_sessions_at_shutdown=false;
-	public static boolean cloud_bees=true;
+	public static boolean cloud_bees=false;
 	
 	public static long timeatload=System.currentTimeMillis();
 	public static String timeatloadstrhtp=tolastmodstr(timeatload);
@@ -264,8 +264,8 @@ final public class b{
 	}
 	public static boolean class_init(final Class<?>cls,final String[]args)throws SecurityException,NoSuchFieldException,IllegalArgumentException,IllegalAccessException{
 		if(args==null||args.length==0)return true;
-		System.out.println("args:");
-		for(String s:args)System.out.println(s);
+//		System.out.println("args:");
+//		for(String s:args)System.out.println(s);
 		if("-1".equals(args[0])){class_printopts(cls);return false;}
 		for(int i=0;i<args.length;i+=2){
 			final String fldnm=args[i];
