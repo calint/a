@@ -1,7 +1,16 @@
 package a.ramvark;
+import static b.b.strenc;
+import static b.b.tobytes;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
+
+import a.ramvark.cstore.meters;
 import b.a;
 import b.b;
 import b.xwriter;
@@ -307,4 +316,85 @@ public abstract class itm extends a implements $.labeled{
 //		public void ondelete()throws Throwable{rm();}
 	}
 
+	
+	
+
+	final private static byte[]bafieldsep=tobytes(":");
+	final private static byte[]balinesep=tobytes("\n");		
+	final public void load(final InputStream is)throws Throwable{
+		meters.loads++;
+		final Class<? extends itm>cls=getClass();
+		final Reader re=new InputStreamReader(is,strenc);
+		try{final StringBuilder sbname=new StringBuilder(256);
+			final StringBuilder sbvalue=new StringBuilder(256);
+			Field fld=null;
+			int s=3;
+			while(true){
+				final int ch=re.read();
+				if(ch==-1)
+					break;
+				switch(s){
+				case 3://readfirstline
+					if(ch==balinesep[0]){
+						set(sbname.toString().trim().replace('\07','\n'));
+						sbname.setLength(0);
+						s=0;
+					}else
+						sbname.append((char)ch);
+					break;
+				case 0:
+					if(ch==bafieldsep[0]){
+						fld=cls.getField(sbname.toString().trim());
+						sbvalue.setLength(0);
+						s=1;
+					}else
+						sbname.append((char)ch);
+					break;
+				case 1:
+					if(ch==balinesep[0]){
+						final a ee=(a)fld.get(this);
+						ee.set(sbvalue.toString().trim().replace('\07','\n'));
+						sbname.setLength(0);
+						s=0;
+					}else
+						sbvalue.append((char)ch);
+					break;
+				default:throw new Error();
+				}
+			}
+		}finally{
+			re.close();
+		}
+		notnew=true;
+	}
+	final public void save(final OutputStream os)throws Throwable{
+		meters.saves++;
+		final Class<? extends itm>cls=getClass();
+		//head
+		//. access list,summary,load,append,edit,save,remove
+		//. time created,edited,deleted
+		//. did,pid
+		//. class
+		//. name
+		//. index,...
+		os.write(tobytes(toString().replace('\n','\07')));//? e.to(os,enc)
+		os.write(balinesep);
+		//key value pairs
+		for(final Field f:cls.getFields()){
+			if(!a.class.isAssignableFrom(f.getType()))
+				continue;
+//			final in anot=f.getAnnotation(in.class);
+//			if(anot!=null)
+//				if(anot.type()==3)//dontwriteaggmanyfield
+//					continue;
+			final a m=(a)f.get(this);
+			os.write(tobytes(f.getName()));//? f.getName().to(os,enc)
+			os.write(bafieldsep);
+			if(m!=null)
+				os.write(tobytes(m.toString().replace('\n','\07')));//? m.to(os,enc)
+			os.write(balinesep);
+		}
+		os.close();
+		notnew=true;
+	}
 }
