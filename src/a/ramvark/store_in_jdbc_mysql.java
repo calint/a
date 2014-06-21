@@ -31,6 +31,11 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 	private boolean initiated_ensured;
 	private void ensure_initiated(final Connection c)throws Throwable{
 		if(initiated_ensured==true)return;
+//		final Context ctx=new InitialContext();
+//		NamingEnumeration<NameClassPair> list = ctx.list("");
+//		while (list.hasMore()) {
+//		  System.out.println(list.next().getName());
+//		}
 		final PreparedStatement s=c.prepareStatement("CREATE TABLE `b` (`c` char(64),`i` char(32),`o` char(32),`q` varchar(255),`d` blob) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 		try{s.execute();}catch(Throwable ignored){}
 //create user ramvark;
