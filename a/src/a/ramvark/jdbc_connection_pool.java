@@ -69,10 +69,10 @@ final class jdbc_connection_pool implements DataSource{
 		
 		
 		
-		@Override public <T> T unwrap(Class<T> iface) throws SQLException {throw new UnsupportedOperationException();}
-		@Override public boolean isWrapperFor(Class<?> iface) throws SQLException {throw new UnsupportedOperationException();}
-		@Override public Statement createStatement() throws SQLException {throw new UnsupportedOperationException();}
-		@Override public CallableStatement prepareCall(String sql) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public <T>T unwrap(Class<T>iface)throws SQLException{throw new UnsupportedOperationException();}
+		@Override public boolean isWrapperFor(Class<?>iface)throws SQLException{throw new UnsupportedOperationException();}
+		@Override public Statement createStatement()throws SQLException{throw new UnsupportedOperationException();}
+		@Override public CallableStatement prepareCall(String sql)throws SQLException{throw new UnsupportedOperationException();}
 		@Override public String nativeSQL(String sql) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public void setAutoCommit(boolean autoCommit) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public boolean getAutoCommit() throws SQLException {throw new UnsupportedOperationException();}
@@ -90,7 +90,6 @@ final class jdbc_connection_pool implements DataSource{
 		@Override public void clearWarnings() throws SQLException {throw new UnsupportedOperationException();}
 		@Override public Statement createStatement(int resultSetType,int resultSetConcurrency) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public PreparedStatement prepareStatement(String sql,int resultSetType, int resultSetConcurrency)throws SQLException {throw new UnsupportedOperationException();}
-
 		@Override public CallableStatement prepareCall(String sql, int resultSetType,int resultSetConcurrency) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public Map<String, Class<?>> getTypeMap() throws SQLException {throw new UnsupportedOperationException();}
 		@Override public void setTypeMap(Map<String, Class<?>> map) throws SQLException {throw new UnsupportedOperationException();}
