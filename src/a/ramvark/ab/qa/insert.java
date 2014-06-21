@@ -23,7 +23,7 @@ public class insert extends a{static final long serialVersionUID=1;
 				e.set("puppet "+ai.incrementAndGet());
 				cstore.save(e);
 			}
-		}catch(Throwable t){throw new Error(t);}}};
+		}catch(final Throwable t){throw new Error(t);}}};
 		for(int j=1;j<=nthreads;j++){
 			final long t0=System.currentTimeMillis();
 			for(int k=0;k<j;k++){

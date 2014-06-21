@@ -10,3 +10,9 @@ bees app:deploy -a bb -t java -P java_version=1.8 -R classpath=bin:lib/mysql-con
 #bees db:create -u ramvark -p ramvark ramvark
 #bees app:bind -db ramvark -a bb -as ramvark
 #rm deploy.zip
+
+
+
+
+
+#/usr/local/mysql/bin/mysql --host=ec2-23-21-211-172.compute-1.amazonaws.com --port=3306 --user=ramvark --password=ramvark
