@@ -16,9 +16,9 @@ import java.sql.SQLXML;
 import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
@@ -27,7 +27,7 @@ final class jdbc_connection_pool implements DataSource{
 	final DataSource ds;
 	final int close_intervall_in_ms;
 //	final int max_connections;
-	final static LinkedList<jdbc_connection_wrapper>cons=new LinkedList<jdbc_connection_wrapper>();
+	final static ConcurrentLinkedQueue<jdbc_connection_wrapper>cons=new ConcurrentLinkedQueue<jdbc_connection_wrapper>();
 	jdbc_connection_pool(final DataSource d,final int close_intervall_in_ms){
 		ds=d;
 		this.close_intervall_in_ms=close_intervall_in_ms;
@@ -35,7 +35,7 @@ final class jdbc_connection_pool implements DataSource{
 	}
 	@Override public Connection getConnection()throws SQLException{
 		final Connection cn;
-		synchronized(cons){cn=cons.poll();}
+		cn=cons.poll();
 		if(cn!=null)return cn;
 		final Connection c1=ds.getConnection();
 		final Connection c2=new jdbc_connection_wrapper(c1);
