@@ -24,13 +24,10 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 	//			}
 				ds=(DataSource)ctx.lookup("java:comp/env/jdbc/ramvark");
 			}else{
-				final String url="jdbc:mysql://localhost/b";
-				final String username="ramvark";
-				final String password="ramvark";
 				final MysqlDataSource mds=new MysqlDataSource();
-				mds.setURL(url);
-				mds.setUser(username);
-				mds.setPassword(password);
+				mds.setURL("jdbc:mysql://localhost/b");
+				mds.setUser("ramvark");
+				mds.setPassword("ramvark");
 				ds=mds;
 			}
 			conn=ds.getConnection();
