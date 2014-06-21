@@ -20,13 +20,27 @@ public class store_in_jdbc implements store{
 	}
 	@Override public void save(final itm e)throws Throwable{
 		try(final Connection c=getConnection()){
-			final PreparedStatement s=c.prepareStatement("update b set d=? where i=?");
+			if(e.notnew==true){
+				final PreparedStatement s=c.prepareStatement("update b set d=? where i=?");
+				final ByteArrayOutputStream baos=new ByteArrayOutputStream(1024);
+				e.save(baos);
+				s.setBytes(1,baos.toByteArray()); 
+				s.setString(2,e.did.toString());
+				s.executeUpdate();
+//				c.commit();
+				return;
+			}
+			final PreparedStatement s=c.prepareStatement("insert into b(c,i,o,q,d) values(?,?,?,?,?)");				
+			s.setString(1,e.getClass().getName());
+			s.setString(2,e.did.toString());
+			s.setString(3,e.pid.toString());
+			s.setString(4,e.toString());
 			final ByteArrayOutputStream baos=new ByteArrayOutputStream(1024);
 			e.save(baos);
-			s.setBytes(1,baos.toByteArray()); 
-			s.setString(2,e.did.toString());
+			s.setBytes(5,baos.toByteArray()); 
 			s.executeUpdate();
-			c.commit();
+//			c.commit();
+			e.notnew=true;
 		}
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
@@ -51,11 +65,13 @@ public class store_in_jdbc implements store{
 		if(q!=null&&q.length()>0)sb.append(" and q like ?");
 		try(final Connection c=getConnection()){
 			final PreparedStatement s=c.prepareStatement(sb.toString());
-			if(owner!=null)s.setString(1,owner.did.toString());
-			if(q!=null&&q.length()>0)s.setString(2,q+"%");
+			s.setString(1,cls.getName());
+			int i=2;
+			if(owner!=null)s.setString(i++,owner.did.toString());
+			if(q!=null&&q.length()>0)s.setString(i,q+"%");
 			final ResultSet r=s.executeQuery();
 			itm e;
-			if(r.next()){
+			while(r.next()){
 				e=cls.newInstance();
 				try(final InputStream is=r.getBinaryStream(1)){e.load(is);}
 				v.visit(e);
@@ -70,20 +86,30 @@ public class store_in_jdbc implements store{
 		}
 	}
 	
-	private static Connection getConnection()throws Throwable{
-		return getHSQLConnection();
+	private boolean initiated_ensured;
+	public void ensure_initiated(final Connection c)throws Throwable{
+		if(initiated_ensured==true)return;
+//		final PreparedStatement s=c.prepareStatement("create table b(c char(128),i char(32),o char(32),q varchar(255),d blob)");
+//		s.execute();
+		initiated_ensured=true;
 	}
-	private static Connection getHSQLConnection()throws Throwable{
+	
+	private Connection getConnection()throws Throwable{
+		final Connection c=getMySqlConnection();
+		ensure_initiated(c);
+		return c;
+	}
+	private Connection getHSQLConnection()throws Throwable{
 		Class.forName("org.hsqldb.jdbcDriver");
-		final String url="jdbc:hsqldb:data/tutorial";
+		final String url="jdbc:hsqldb:data/ramvark";
 		return DriverManager.getConnection(url,"sa","");
 	}
 
-	public static Connection getMySqlConnection() throws Exception {
+	public Connection getMySqlConnection() throws Exception {
 		final String driver="org.gjt.mm.mysql.Driver";
-		final String url="jdbc:mysql://localhost/demo2s";
-		final String username="oost";
-		final String password="oost";
+		final String url="jdbc:mysql://localhost/b";
+		final String username="ramvark";
+		final String password="ramvark";
 		Class.forName(driver);
 		final Connection conn=DriverManager.getConnection(url,username,password);
 		return conn;
@@ -99,3 +125,14 @@ public class store_in_jdbc implements store{
 		return conn;
 	}
 }
+
+//CREATE TABLE `b` (
+//		  `c` char(64) NOT NULL DEFAULT '',
+//		  `i` char(32) NOT NULL DEFAULT '',
+//		  `o` char(32) NOT NULL DEFAULT '',
+//		  `q` varchar(255) NOT NULL DEFAULT '',
+//		  `d` blob NOT NULL
+//		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+//
+//create user ramvark;
+//grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
