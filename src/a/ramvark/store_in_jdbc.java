@@ -45,6 +45,22 @@ public class store_in_jdbc implements store{
 		}
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+		final StringBuilder sb=new StringBuilder();
+		sb.append("select d from b where c=?");
+		if(owner!=null)sb.append(" and o=?");
+		if(q!=null&&q.length()>0)sb.append(" and q like ?");
+		try(final Connection c=getConnection()){
+			final PreparedStatement s=c.prepareStatement(sb.toString());
+			if(owner!=null)s.setString(1,owner.did.toString());
+			if(q!=null&&q.length()>0)s.setString(2,q+"%");
+			final ResultSet r=s.executeQuery();
+			itm e;
+			if(r.next()){
+				e=cls.newInstance();
+				try(final InputStream is=r.getBinaryStream(1)){e.load(is);}
+				v.visit(e);
+			}
+		}
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
 		try(final Connection c=getConnection()){
