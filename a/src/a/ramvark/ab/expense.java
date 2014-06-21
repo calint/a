@@ -1,7 +1,7 @@
 package a.ramvark.ab;
-import a.ramvark.cstore;
 import a.ramvark.in;
 import a.ramvark.itm;
+import a.ramvark.store;
 import b.a;
 import b.xwriter;
 public class expense extends itm{static final long serialVersionUID=1;
@@ -22,7 +22,7 @@ public class expense extends itm{static final long serialVersionUID=1;
 		}
 		final class sum{int i;};
 		final sum s=new sum();
-		subexpenses.foreach(null,new cstore.visitor(){public void visit(final itm e)throws Throwable{
+		subexpenses.foreach(null,new store.visitor(){public void visit(final itm e)throws Throwable{
 			final int i=((expense)e).price.toint();
 			s.i+=i;
 		}});

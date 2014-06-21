@@ -59,7 +59,7 @@ final public class elclass implements el,el.actions{
 		@Override public List<a>actions(){
 			final List<a>ls=new ArrayList<a>();
 			for(final Method m:cls.getMethods()){
-				final int mo=m.getModifiers();
+//				final int mo=m.getModifiers();
 				final Annotation a=m.getAnnotation(ui_action.class);
 				if(a==null)continue;
 //				x.ax(this,"",m.getName()).pl(" ::");

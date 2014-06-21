@@ -169,7 +169,6 @@ public final class xwriter{
 	private xwriter jsstr(final String s){try{new osjsstr(os).write(b.tobytes(s));}catch(final IOException e){throw new Error(e);}return this;}
 	public xwriter xu(final String id,final String s){return p("$s('").p(id).p("','").jsstr(s).pl("');");}
 	public xwriter xu(final a a,final String s){return xu(a.id(),s);}
-	@SuppressWarnings("resource")
 	public xwriter xub(final a a,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('").p(a.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
 	public xwriter xube(){return pl("');");}
 	public xwriter xu(final a a)throws Throwable{a.to(xub(a,true,false));return xube();}
