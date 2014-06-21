@@ -3,13 +3,12 @@ package a.ramvark;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import a.ramvark.cstore.meters;
 
-public class store_in_jdbc implements store{
+abstract public class store_in_jdbc implements store{
 	@Override public itm create(final Class<? extends itm> cls,final itm owner)throws Throwable{
 		meters.creates++;
 		final itm e=cls.newInstance();
@@ -19,7 +18,7 @@ public class store_in_jdbc implements store{
 		return e;
 	}
 	@Override public void save(final itm e)throws Throwable{
-		try(final Connection c=getConnection()){
+		try(final Connection c=connection()){
 			if(e.notnew==true){
 				final PreparedStatement s=c.prepareStatement("update b set d=? where i=?");
 				final ByteArrayOutputStream baos=new ByteArrayOutputStream(1024);
@@ -44,7 +43,7 @@ public class store_in_jdbc implements store{
 		}
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
-		try(final Connection c=getConnection()){
+		try(final Connection c=connection()){
 			final PreparedStatement s=c.prepareStatement("select d from b where i=?");
 			s.setString(1,did);
 			final ResultSet r=s.executeQuery();
@@ -63,7 +62,7 @@ public class store_in_jdbc implements store{
 		sb.append("select d from b where c=?");
 		if(owner!=null)sb.append(" and o=?");
 		if(q!=null&&q.length()>0)sb.append(" and q like ?");
-		try(final Connection c=getConnection()){
+		try(final Connection c=connection()){
 			final PreparedStatement s=c.prepareStatement(sb.toString());
 			s.setString(1,cls.getName());
 			int i=2;
@@ -79,61 +78,14 @@ public class store_in_jdbc implements store{
 		}
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
-		try(final Connection c=getConnection()){
+		try(final Connection c=connection()){
 			final PreparedStatement s=c.prepareStatement("delete from b where i=?");
 			s.setString(1,did);
 			s.execute();
 		}
 	}
 	
-	private boolean initiated_ensured;
-	public void ensure_initiated(final Connection c)throws Throwable{
-		if(initiated_ensured==true)return;
-		final PreparedStatement s=c.prepareStatement("CREATE TABLE `b` (`c` char(64),`i` char(32),`o` char(32),`q` varchar(255),`d` blob) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
-		try{s.execute();}catch(Throwable ignored){}
-//create user ramvark;
-//grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
-		initiated_ensured=true;
-	}
-	
-	private Connection getConnection()throws Throwable{
-		final Connection c=getMySqlConnection();
-		ensure_initiated(c);
-		return c;
-	}
-	public Connection getMySqlConnection() throws Exception {
-//		final Context ctx=new InitialContext();
-//		final DataSource ds=(DataSource)ctx.lookup("java:comp/env/jdbc/ramvark");
-//		final Connection conn=ds.getConnection();
-//		return conn;
-
-		final String driver="org.gjt.mm.mysql.Driver";
-		final String url="jdbc:mysql://localhost/b";
-		final String username="ramvark";
-		final String password="ramvark";
-
-//		LocalContext ctx=LocalContextFactory.createLocalContext();
-//		ctx.addDataSource("jdbc/testdb", driverName, url, usr, pwd);
-		
-		Class.forName(driver);
-		final Connection conn=DriverManager.getConnection(url,username,password);
-		return conn;
-	}
-	
-//	private Connection getHSQLConnection()throws Throwable{
-//		Class.forName("org.hsqldb.jdbcDriver");
-//		final String url="jdbc:hsqldb:data/ramvark";
-//		return DriverManager.getConnection(url,"sa","");
-//	}
-//	public static Connection getOracleConnection() throws Exception {
-//		final String driver="oracle.jdbc.driver.OracleDriver";
-//		final String url="jdbc:oracle:thin:@localhost:1521:databaseName";
-//		final String username="username";
-//		final String password="password";
-//		Class.forName(driver);
-//		final Connection conn=DriverManager.getConnection(url,username,password);
-//		return conn;
-//	}
+	abstract protected Connection connection()throws Throwable;
 }
 
 

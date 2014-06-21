@@ -17,7 +17,7 @@ final public class b{
 	public final static String pathsep="/";
 	public static String hello="public domain server #1";
 	public static String id=""+(int)Math.floor(Math.random()*10000);
-	public static String root_dir=".";
+	public static String root_dir="app";
 	public static String server_port=ensure(System.getProperty("app.port"),"8888");
 	public static boolean try_file=true;
 	public static boolean try_rc=true;
@@ -55,6 +55,8 @@ final public class b{
 	public static int max_pending_connections=20000;// when overrun causes SYN flood warning
 	public static boolean tcpnodelay=true;
 	public static boolean save_sessions_at_shutdown=false;
+	public static boolean cloud_bees=true;
+	
 	public static long timeatload=System.currentTimeMillis();
 	public static String timeatloadstrhtp=tolastmodstr(timeatload);
 	public static PrintStream out=System.out;
@@ -229,6 +231,7 @@ final public class b{
 		ps.println("         ram free: "+(m2>>10)+" KB");
 		ps.println("          threads: "+thdreq.all.size());
 		ps.println("            cores: "+Runtime.getRuntime().availableProcessors());
+		ps.println("            cloud: "+cloud_bees);
 		ps.println("               id: "+id);
 	}
 	public static int rndint(final int from,final int tonotincl){return (int)(Math.random()*(tonotincl-from)+from);}
@@ -261,11 +264,14 @@ final public class b{
 	}
 	public static boolean class_init(final Class<?>cls,final String[]args)throws SecurityException,NoSuchFieldException,IllegalArgumentException,IllegalAccessException{
 		if(args==null||args.length==0)return true;
+		System.out.println("args:");
+		for(String s:args)System.out.println(s);
 		if("-1".equals(args[0])){class_printopts(cls);return false;}
 		for(int i=0;i<args.length;i+=2){
 			final String fldnm=args[i];
 			final Field fld=cls.getField(fldnm);
 			final String val=args[i+1];
+			System.out.println(fldnm+"="+val);
 			final Class<?>fldcls=fld.getType();
 			if(fldcls.isAssignableFrom(String.class))fld.set(null,val);
 			else if(fldcls.isAssignableFrom(int.class))fld.set(null,Integer.parseInt(val));
