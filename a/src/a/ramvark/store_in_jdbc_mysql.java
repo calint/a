@@ -12,8 +12,8 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 public class store_in_jdbc_mysql extends store_in_jdbc{
 	private DataSource ds;
 	private boolean initiated;
-	public static int connection_close_intervall_in_ms=10_000;
-	public static boolean use_connection_pool=true;
+	public int connection_close_intervall_in_ms=10_000;
+	public boolean use_connection_pool=true;
 	@Override protected Connection connection()throws Throwable{
 		final Connection cn;
 		if(!initiated){
