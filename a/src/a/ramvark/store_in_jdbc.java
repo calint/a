@@ -89,6 +89,17 @@ public class store_in_jdbc implements store{
 	private boolean initiated_ensured;
 	public void ensure_initiated(final Connection c)throws Throwable{
 		if(initiated_ensured==true)return;
+		//CREATE TABLE `b` (
+//		  `c` char(64) NOT NULL DEFAULT '',
+//		  `i` char(32) NOT NULL DEFAULT '',
+//		  `o` char(32) NOT NULL DEFAULT '',
+//		  `q` varchar(255) NOT NULL DEFAULT '',
+//		  `d` blob NOT NULL
+//		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+//
+//create user ramvark;
+//grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
+		
 //		final PreparedStatement s=c.prepareStatement("create table b(c char(128),i char(32),o char(32),q varchar(255),d blob)");
 //		s.execute();
 		initiated_ensured=true;
@@ -99,12 +110,6 @@ public class store_in_jdbc implements store{
 		ensure_initiated(c);
 		return c;
 	}
-	private Connection getHSQLConnection()throws Throwable{
-		Class.forName("org.hsqldb.jdbcDriver");
-		final String url="jdbc:hsqldb:data/ramvark";
-		return DriverManager.getConnection(url,"sa","");
-	}
-
 	public Connection getMySqlConnection() throws Exception {
 		final String driver="org.gjt.mm.mysql.Driver";
 		final String url="jdbc:mysql://localhost/b";
@@ -114,25 +119,20 @@ public class store_in_jdbc implements store{
 		final Connection conn=DriverManager.getConnection(url,username,password);
 		return conn;
 	}
-
-	public static Connection getOracleConnection() throws Exception {
-		final String driver="oracle.jdbc.driver.OracleDriver";
-		final String url="jdbc:oracle:thin:@localhost:1521:databaseName";
-		final String username="username";
-		final String password="password";
-		Class.forName(driver);
-		final Connection conn=DriverManager.getConnection(url,username,password);
-		return conn;
-	}
+//	private Connection getHSQLConnection()throws Throwable{
+//		Class.forName("org.hsqldb.jdbcDriver");
+//		final String url="jdbc:hsqldb:data/ramvark";
+//		return DriverManager.getConnection(url,"sa","");
+//	}
+//	public static Connection getOracleConnection() throws Exception {
+//		final String driver="oracle.jdbc.driver.OracleDriver";
+//		final String url="jdbc:oracle:thin:@localhost:1521:databaseName";
+//		final String username="username";
+//		final String password="password";
+//		Class.forName(driver);
+//		final Connection conn=DriverManager.getConnection(url,username,password);
+//		return conn;
+//	}
 }
 
-//CREATE TABLE `b` (
-//		  `c` char(64) NOT NULL DEFAULT '',
-//		  `i` char(32) NOT NULL DEFAULT '',
-//		  `o` char(32) NOT NULL DEFAULT '',
-//		  `q` varchar(255) NOT NULL DEFAULT '',
-//		  `d` blob NOT NULL
-//		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-//
-//create user ramvark;
-//grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
+
