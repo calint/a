@@ -89,19 +89,10 @@ public class store_in_jdbc implements store{
 	private boolean initiated_ensured;
 	public void ensure_initiated(final Connection c)throws Throwable{
 		if(initiated_ensured==true)return;
-		//CREATE TABLE `b` (
-//		  `c` char(64) NOT NULL DEFAULT '',
-//		  `i` char(32) NOT NULL DEFAULT '',
-//		  `o` char(32) NOT NULL DEFAULT '',
-//		  `q` varchar(255) NOT NULL DEFAULT '',
-//		  `d` blob NOT NULL
-//		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-//
+		final PreparedStatement s=c.prepareStatement("CREATE TABLE `b` (`c` char(64),`i` char(32),`o` char(32),`q` varchar(255),`d` blob) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+		try{s.execute();}catch(Throwable ignored){}
 //create user ramvark;
 //grant all on b.* to 'ramvark'@'localhost' identified by 'ramvark';
-		
-//		final PreparedStatement s=c.prepareStatement("create table b(c char(128),i char(32),o char(32),q varchar(255),d blob)");
-//		s.execute();
 		initiated_ensured=true;
 	}
 	
@@ -120,6 +111,10 @@ public class store_in_jdbc implements store{
 		final String url="jdbc:mysql://localhost/b";
 		final String username="ramvark";
 		final String password="ramvark";
+
+//		LocalContext ctx=LocalContextFactory.createLocalContext();
+//		ctx.addDataSource("jdbc/testdb", driverName, url, usr, pwd);
+		
 		Class.forName(driver);
 		final Connection conn=DriverManager.getConnection(url,username,password);
 		return conn;
