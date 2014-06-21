@@ -73,6 +73,7 @@ final public class b{
 		ss.bind(isa,max_pending_connections);
 		req.init_static();
 		if(thd_watch)new thdwatch().start();
+		else stats_to(System.out);
 		final Selector sel=Selector.open();
 		ssc.register(sel,SelectionKey.OP_ACCEPT);
 		Runtime.getRuntime().addShutdownHook(new jvmsdh());
