@@ -17,7 +17,7 @@ import b.b;
 import b.path;
 import b.req;
 
-public class file_store implements store{
+public class store_in_session_files implements store{
 	final private path root(final Class<? extends itm>cls){return req.get().session().path(cls.getName());}
 	private static String mkdocid(){
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyMMdd-hhmmss.SSS-",Locale.US);

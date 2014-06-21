@@ -1,5 +1,5 @@
 package a.ramvark;
-public class cached_store implements store{
+public class store_cache implements store{
 	@Override public itm create(final Class<? extends itm> cls,final itm owner)throws Throwable{
 		return null;
 	}
