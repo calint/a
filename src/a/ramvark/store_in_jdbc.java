@@ -17,44 +17,45 @@ public class store_in_jdbc implements store{
 		if(owner!=null)e.pid.set(owner.did);
 		final String docid=cstore.mkdocid();
 		e.did.set(docid);
-		//e.onnew();
 		return e;
 	}
 	@Override public void save(final itm e)throws Throwable{
-		final Connection c=getHSQLConnection();
-		final PreparedStatement s=c.prepareStatement("update b set d=? where i=?");
-		final ByteArrayOutputStream baos=new ByteArrayOutputStream(1024);
-		e.save(baos);
-		s.setBytes(1,baos.toByteArray()); 
-		s.setString(2,e.did.toString());
-		s.executeUpdate();
-		c.commit();
+		try(final Connection c=getConnection()){
+			final PreparedStatement s=c.prepareStatement("update b set d=? where i=?");
+			final ByteArrayOutputStream baos=new ByteArrayOutputStream(1024);
+			e.save(baos);
+			s.setBytes(1,baos.toByteArray()); 
+			s.setString(2,e.did.toString());
+			s.executeUpdate();
+			c.commit();
+		}
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
-		final Connection c=getHSQLConnection();
-		final String q="select d from b where i='"+did+"'";//? sqlinjection
-		final Statement s=c.createStatement();//? preparedquery
-		final ResultSet r=s.executeQuery(q);
-		itm e;
-		if(r.next()){
-			final InputStream is=r.getBinaryStream(1);
-			e=cls.newInstance();
-			e.load(is);
-//			final byte[]bytes=r.getBytes(1);
-//			e=null;
-		}else{
-			e=null;
+		try(final Connection c=getConnection()){
+			final String q="select d from b where i='"+did+"'";//? sqlinjection
+			final Statement s=c.createStatement();//? preparedquery
+			final ResultSet r=s.executeQuery(q);
+			itm e;
+			if(r.next()){
+				final InputStream is=r.getBinaryStream(1);
+				e=cls.newInstance();
+				e.load(is);
+	//			final byte[]bytes=r.getBytes(1);
+	//			e=null;
+			}else{
+				e=null;
+			}
+			return e;
 		}
-		r.close();
-		s.close();
-		c.close();
-		return e;
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
 	}
 	
+	  private static Connection getConnection() throws Exception {
+		  return getHSQLConnection();
+	  }
   private static Connection getHSQLConnection() throws Exception {
     Class.forName("org.hsqldb.jdbcDriver");
     System.out.println("Driver Loaded.");
