@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 import a.ramvark.cstore.meters;
 
@@ -32,57 +31,55 @@ public class store_in_jdbc implements store{
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
 		try(final Connection c=getConnection()){
-			final String q="select d from b where i='"+did+"'";//? sqlinjection
-			final Statement s=c.createStatement();//? preparedquery
-			final ResultSet r=s.executeQuery(q);
+			final PreparedStatement s=c.prepareStatement("select d from b where i=?");
+			s.setString(1,did);
+			final ResultSet r=s.executeQuery();
 			itm e;
 			if(r.next()){
 				final InputStream is=r.getBinaryStream(1);
 				e=cls.newInstance();
 				e.load(is);
-	//			final byte[]bytes=r.getBytes(1);
-	//			e=null;
-			}else{
+			}else
 				e=null;
-			}
 			return e;
 		}
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
+		try(final Connection c=getConnection()){
+			final PreparedStatement s=c.prepareStatement("delete from b where i=?");
+			s.setString(1,did);
+			s.execute();
+		}
 	}
 	
-	  private static Connection getConnection() throws Exception {
-		  return getHSQLConnection();
-	  }
-  private static Connection getHSQLConnection() throws Exception {
-    Class.forName("org.hsqldb.jdbcDriver");
-    System.out.println("Driver Loaded.");
-    String url = "jdbc:hsqldb:data/tutorial";
-    return DriverManager.getConnection(url, "sa", "");
-  }
+	private static Connection getConnection()throws Throwable{
+		return getHSQLConnection();
+	}
+	private static Connection getHSQLConnection()throws Throwable{
+		Class.forName("org.hsqldb.jdbcDriver");
+		final String url="jdbc:hsqldb:data/tutorial";
+		return DriverManager.getConnection(url,"sa","");
+	}
 
-  public static Connection getMySqlConnection() throws Exception {
-    String driver = "org.gjt.mm.mysql.Driver";
-    String url = "jdbc:mysql://localhost/demo2s";
-    String username = "oost";
-    String password = "oost";
+	public static Connection getMySqlConnection() throws Exception {
+		final String driver="org.gjt.mm.mysql.Driver";
+		final String url="jdbc:mysql://localhost/demo2s";
+		final String username="oost";
+		final String password="oost";
+		Class.forName(driver);
+		final Connection conn=DriverManager.getConnection(url,username,password);
+		return conn;
+	}
 
-    Class.forName(driver);
-    Connection conn = DriverManager.getConnection(url, username, password);
-    return conn;
-  }
-
-  public static Connection getOracleConnection() throws Exception {
-    String driver = "oracle.jdbc.driver.OracleDriver";
-    String url = "jdbc:oracle:thin:@localhost:1521:databaseName";
-    String username = "username";
-    String password = "password";
-
-    Class.forName(driver); // load Oracle driver
-    Connection conn = DriverManager.getConnection(url, username, password);
-    return conn;
-  }
-
+	public static Connection getOracleConnection() throws Exception {
+		final String driver="oracle.jdbc.driver.OracleDriver";
+		final String url="jdbc:oracle:thin:@localhost:1521:databaseName";
+		final String username="username";
+		final String password="password";
+		Class.forName(driver);
+		final Connection conn=DriverManager.getConnection(url,username,password);
+		return conn;
+	}
 }
