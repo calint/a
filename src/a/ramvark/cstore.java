@@ -1,7 +1,10 @@
 package a.ramvark;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import b.a;
+import b.b;
 import b.cacheable;
 import b.xwriter;
 public final class cstore{
@@ -41,5 +44,14 @@ public final class cstore{
 		}
 		public long lastmodupdms(){return 1000;}
 		public boolean cacheforeachuser(){return false;}
+	}
+
+	static String mkdocid(){
+		final SimpleDateFormat sdf=new SimpleDateFormat("yyMMdd-hhmmss.SSS-",Locale.US);
+		final StringBuilder sb=new StringBuilder(b.id).append("-").append(sdf.format(new Date()));
+		final String alf="0123456789abcdef";
+		for(int n=0;n<8;n++)
+			sb.append(alf.charAt(b.rndint(0,alf.length())));
+		return sb.toString();
 	}
 }
