@@ -47,7 +47,9 @@ public abstract class itm extends a implements $.labeled{
 			}
 		}
 	}catch(Throwable t){throw new Error(t);}}
+	protected void onprerender()throws Throwable{}
 	final public void to(final xwriter x)throws Throwable{
+		onprerender();
 		x.tag("span",id());
 //		x.nl();
 		if(notnew)
@@ -78,6 +80,8 @@ public abstract class itm extends a implements $.labeled{
 			final int t=annot.type();
 
 			final a e=(a)f.get(this);
+			if(e.has_bit(0))
+				continue;
 			if(focus==null)
 				focus=e;
 
@@ -93,51 +97,55 @@ public abstract class itm extends a implements $.labeled{
 				x.p(b.stacktraceline(e1.getTargetException()));
 				continue;
 			}
-			if(f.getType()==ref.class){
-				inputref(x,e);
-				x.spc();
-				final itm m=((ref)e).get();
-				if(m==null)
-					continue;
-				x.p(m.toString()).spc().ax(this,"refclr "+f.getName(),"x");
-				continue;
-			}
-			final Class<? extends lst>lscls=annot.lst();
-			if(lscls!=lst.class){
-				inputref(x,e);
-				x.spc();
-				if(!e.isempty()){
-					final Class<? extends itm>ocls=lscls.getAnnotation(ls.class).cls();
-					final itm m=cstore.load(ocls,e.toString());
-					x.p(m.toString());
-					x.spc().ax(this,"agrclr "+f.getName(),"x");
-				}
-				continue;
-			}
-			if(annot.itm()!=itm.class){
-				inputagr(x,e);
-				continue;
-			}
-			if(t==0){
-				x.inputText(e,"ln",this,"sc");
-				continue;
-			}
-			if(t==1){
-				x.inputTextArea(e,"ls");
-				continue;
-			}
-			if(t==3){//aggr many
-//				((lst)e).owner=this;
+			if(e.has_bit(0)){
 				x.p(e);
-				continue;
-			}
-			if(t==4){
-				x.inputTextArea(e,"ed");
-				continue;
-			}
-			if(t==5){
-				x.inputText(e,"nbr",this,"sc");
-				continue;
+			}else{
+				if(f.getType()==ref.class){
+					inputref(x,e);
+					x.spc();
+					final itm m=((ref)e).get();
+					if(m==null)
+						continue;
+					x.p(m.toString()).spc().ax(this,"refclr "+f.getName(),"x");
+					continue;
+				}
+				final Class<? extends lst>lscls=annot.lst();
+				if(lscls!=lst.class){
+					inputref(x,e);
+					x.spc();
+					if(!e.isempty()){
+						final Class<? extends itm>ocls=lscls.getAnnotation(ls.class).cls();
+						final itm m=cstore.load(ocls,e.toString());
+						x.p(m.toString());
+						x.spc().ax(this,"agrclr "+f.getName(),"x");
+					}
+					continue;
+				}
+				if(annot.itm()!=itm.class){
+					inputagr(x,e);
+					continue;
+				}
+				if(t==0){
+					x.inputText(e,"ln",this,"sc");
+					continue;
+				}
+				if(t==1){
+					x.inputTextArea(e,"ls");
+					continue;
+				}
+				if(t==3){//aggr many
+	//				((lst)e).owner=this;
+					x.p(e);
+					continue;
+				}
+				if(t==4){
+					x.inputTextArea(e,"ed");
+					continue;
+				}
+				if(t==5){
+					x.inputText(e,"nbr",this,"sc");
+					continue;
+				}
 			}
 		}
 		x.nl().tr().td(2);
@@ -230,6 +238,7 @@ public abstract class itm extends a implements $.labeled{
 		if(!validate(x))return;
 		onpresave(x);
 		cstore.save(this);
+		onaftersave(x);
 		if(selref!=null)selref.set(did.toString());
 		if(aftercloseaddtolist!=null)aftercloseaddtolist.set(aftercloseaddtolist.toString()+","+did);
 	}
@@ -259,6 +268,7 @@ public abstract class itm extends a implements $.labeled{
 	//protected void onnew()throws Throwable{}
 	//protected void onafterload()throws Throwable{}
 	protected void onpresave(final xwriter x)throws Throwable{}
+	protected void onaftersave(final xwriter x)throws Throwable{}
 	//protected void onpredelete()throws Throwable{}
 	
 ////	public static interface ref{
