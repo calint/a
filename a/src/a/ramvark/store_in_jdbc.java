@@ -58,6 +58,7 @@ abstract public class store_in_jdbc implements store{
 		}
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+		meters.foreaches++;
 		final StringBuilder sb=new StringBuilder();
 		sb.append("select d from b where c=?");
 		if(owner!=null)sb.append(" and o=?");
@@ -78,6 +79,7 @@ abstract public class store_in_jdbc implements store{
 		}
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
+		meters.deletes++;
 		try(final Connection c=connection()){
 			final PreparedStatement s=c.prepareStatement("delete from b where i=?");
 			s.setString(1,did);
