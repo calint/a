@@ -1,18 +1,11 @@
 package a.ramvark;
 
-import static b.b.strenc;
-import static b.b.tobytes;
-
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import a.ramvark.cstore.meters;
-import b.a;
 import b.b;
 import b.path;
 import b.req;
@@ -51,86 +44,16 @@ public class store_in_files implements store{
 		return e;
 	}
 	
-	final private static byte[]bafieldsep=tobytes(":");
-	final private static byte[]balinesep=tobytes("\n");
 	final public void save(final itm e)throws Throwable{
-		meters.saves++;
 		final String fn=e.did.toString();
 		final Class<? extends itm>cls=e.getClass();
 		final path file=root(cls).get(fn);
 		final OutputStream os=file.outputstream(false);
-		//head
-		//. access list,summary,load,append,edit,save,remove
-		//. time created,edited,deleted
-		//. did,pid
-		//. class
-		//. name
-		//. index,...
-		os.write(tobytes(e.toString().replace('\n','\07')));//? e.to(os,enc)
-		os.write(balinesep);
-		//key value pairs
-		for(final Field f:cls.getFields()){
-			if(!a.class.isAssignableFrom(f.getType()))
-				continue;
-//			final in anot=f.getAnnotation(in.class);
-//			if(anot!=null)
-//				if(anot.type()==3)//dontwriteaggmanyfield
-//					continue;
-			final a m=(a)f.get(e);
-			os.write(tobytes(f.getName()));//? f.getName().to(os,enc)
-			os.write(bafieldsep);
-			if(m!=null)
-				os.write(tobytes(m.toString().replace('\n','\07')));//? m.to(os,enc)
-			os.write(balinesep);
-		}
+		e.save(os);
 		os.close();
-		e.notnew=true;
 	}
 	final private static void load(final itm e,final path p)throws Throwable{
-		meters.loads++;
-		final Class<? extends itm>cls=e.getClass();
-		final Reader re=new InputStreamReader(p.inputstream(),strenc);
-		try{final StringBuilder sbname=new StringBuilder(256);
-			final StringBuilder sbvalue=new StringBuilder(256);
-			Field fld=null;
-			int s=3;
-			while(true){
-				final int ch=re.read();
-				if(ch==-1)
-					break;
-				switch(s){
-				case 3://readfirstline
-					if(ch==balinesep[0]){
-						e.set(sbname.toString().trim().replace('\07','\n'));
-						sbname.setLength(0);
-						s=0;
-					}else
-						sbname.append((char)ch);
-					break;
-				case 0:
-					if(ch==bafieldsep[0]){
-						fld=cls.getField(sbname.toString().trim());
-						sbvalue.setLength(0);
-						s=1;
-					}else
-						sbname.append((char)ch);
-					break;
-				case 1:
-					if(ch==balinesep[0]){
-						final a ee=(a)fld.get(e);
-						ee.set(sbvalue.toString().trim().replace('\07','\n'));
-						sbname.setLength(0);
-						s=0;
-					}else
-						sbvalue.append((char)ch);
-					break;
-				default:throw new Error();
-				}
-			}
-		}finally{
-			re.close();
-		}
-		e.notnew=true;
+		e.load(p.inputstream());
 	}
 	public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 		meters.foreaches++;
