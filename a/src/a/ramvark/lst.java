@@ -19,6 +19,7 @@ public abstract class lst extends a implements $.labeled{
 		return i==-1?cn:cn.substring(i+1);
 	}
 	final public void to(final xwriter x)throws Throwable{
+		final long t0=System.currentTimeMillis();
 		x.el(this);
 		frstnm=null;
 		frstid=null;
@@ -34,6 +35,8 @@ public abstract class lst extends a implements $.labeled{
 		if(frstnm!=null)
 			rendlistfoot(x);
 		rendfoot(x);
+		final long dt=System.currentTimeMillis()-t0;
+		x.p(dt);
 		x.elend();
 	}
 	public void foreach(final String q,final store.visitor cv)throws Throwable{
