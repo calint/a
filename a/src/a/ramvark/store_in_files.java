@@ -1,5 +1,6 @@
 package a.ramvark;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,12 +49,10 @@ public class store_in_files implements store{
 		final String fn=e.did.toString();
 		final Class<? extends itm>cls=e.getClass();
 		final path file=root(cls).get(fn);
-		final OutputStream os=file.outputstream(false);
-		e.save(os);
-		os.close();
+		try(final OutputStream os=file.outputstream(false)){e.save(os);}
 	}
 	final private static void load(final itm e,final path p)throws Throwable{
-		e.load(p.inputstream());
+		try(final InputStream is=p.inputstream()){e.load(is);}
 	}
 	public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 		meters.foreaches++;
