@@ -111,6 +111,11 @@ public class store_in_jdbc implements store{
 		return c;
 	}
 	public Connection getMySqlConnection() throws Exception {
+//		final Context ctx=new InitialContext();
+//		final DataSource ds=(DataSource)ctx.lookup("java:comp/env/jdbc/ramvark");
+//		final Connection conn=ds.getConnection();
+//		return conn;
+
 		final String driver="org.gjt.mm.mysql.Driver";
 		final String url="jdbc:mysql://localhost/b";
 		final String username="ramvark";
@@ -119,6 +124,7 @@ public class store_in_jdbc implements store{
 		final Connection conn=DriverManager.getConnection(url,username,password);
 		return conn;
 	}
+	
 //	private Connection getHSQLConnection()throws Throwable{
 //		Class.forName("org.hsqldb.jdbcDriver");
 //		final String url="jdbc:hsqldb:data/ramvark";
