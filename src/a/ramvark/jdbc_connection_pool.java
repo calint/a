@@ -91,84 +91,18 @@ final class jdbc_connection_pool implements DataSource{
 		@Override public Statement createStatement(int resultSetType,int resultSetConcurrency) throws SQLException {throw new UnsupportedOperationException();}
 		@Override public PreparedStatement prepareStatement(String sql,int resultSetType, int resultSetConcurrency)throws SQLException {throw new UnsupportedOperationException();}
 
-		@Override
-		public CallableStatement prepareCall(String sql, int resultSetType,
-				int resultSetConcurrency) throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public Map<String, Class<?>> getTypeMap() throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setHoldability(int holdability) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public int getHoldability() throws SQLException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public Savepoint setSavepoint() throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public Savepoint setSavepoint(String name) throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void rollback(Savepoint savepoint) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public Statement createStatement(int resultSetType,
-				int resultSetConcurrency, int resultSetHoldability)
-				throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public PreparedStatement prepareStatement(String sql,
-				int resultSetType, int resultSetConcurrency,
-				int resultSetHoldability) throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public CallableStatement prepareCall(String sql, int resultSetType,
-				int resultSetConcurrency, int resultSetHoldability)
-				throws SQLException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		@Override public CallableStatement prepareCall(String sql, int resultSetType,int resultSetConcurrency) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public Map<String, Class<?>> getTypeMap() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void setTypeMap(Map<String, Class<?>> map) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void setHoldability(int holdability) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public int getHoldability() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public Savepoint setSavepoint() throws SQLException {throw new UnsupportedOperationException();}
+		@Override public Savepoint setSavepoint(String name) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void rollback(Savepoint savepoint) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public void releaseSavepoint(Savepoint savepoint) throws SQLException {throw new UnsupportedOperationException();}
+		@Override public Statement createStatement(int resultSetType,int resultSetConcurrency, int resultSetHoldability)throws SQLException {throw new UnsupportedOperationException();}
+		@Override public PreparedStatement prepareStatement(String sql,int resultSetType, int resultSetConcurrency,int resultSetHoldability)throws SQLException{throw new UnsupportedOperationException();}
+		@Override public CallableStatement prepareCall(String sql, int resultSetType,int resultSetConcurrency, int resultSetHoldability)throws SQLException {throw new UnsupportedOperationException();}
 
 		@Override
 		public PreparedStatement prepareStatement(String sql,
