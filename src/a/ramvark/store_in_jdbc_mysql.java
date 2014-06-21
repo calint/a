@@ -12,6 +12,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 public class store_in_jdbc_mysql extends store_in_jdbc{
 	private DataSource ds;
 	private boolean initiated;
+	public static int connection_close_intervall_in_ms=10_000;
 	@Override protected Connection connection()throws Throwable{
 		final Connection cn;
 		if(!initiated){
@@ -30,7 +31,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 				mds.setPassword("ramvark");
 				d=mds;
 			}
-			final jdbc_connection_pool jcp=new jdbc_connection_pool(d,10000);
+			final jdbc_connection_pool jcp=new jdbc_connection_pool(d,connection_close_intervall_in_ms);
 			ds=jcp;
 			cn=ds.getConnection();
 			final PreparedStatement s=cn.prepareStatement("CREATE TABLE b(c char(64),i char(32),o char(32),q varchar(255),d blob)ENGINE=MyISAM DEFAULT CHARSET=utf8;");
