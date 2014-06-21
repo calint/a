@@ -5,7 +5,7 @@ import b.a;
 import b.cacheable;
 import b.xwriter;
 public final class cstore{
-	private final static store st=new store_in_session_files();
+	private final static store st=new store_in_files_session();
 	static public itm create(Class<? extends itm>cls,itm owner)throws Throwable{return st.create(cls,owner);}
 	static public void save(itm e)throws Throwable{st.save(e);}
 	static public itm load(Class<? extends itm>cls,String did)throws Throwable{return st.load(cls,did);}
