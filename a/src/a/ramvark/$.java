@@ -14,7 +14,7 @@ final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.el(this);
 		x.style();
-		x.css("body","margin:0em 0 0 2em;color:#000;font:monospace;font-size:5mm");
+		x.css("body","font-size:5mm;margin:0em 0 0 2em;color:#000;font:monospace");
 		x.css("span.a","font-weight:bold");
 		x.css("a","-webkit-transition: all .4s ease;");
 		x.css("a","-moz-transition: all .4s ease;");

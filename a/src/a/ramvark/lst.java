@@ -74,7 +74,7 @@ public abstract class lst extends an implements $.labeled{
 //		x.nl();
 //		x.tag("span",this);
 		x.ax(this,"cr","⌾").spc();
-		x.style("input.q","width:15em;background:#fff;padding:.5em 2em .5em 1em;border:0px dotted #020;box-shadow:0 0 .5em rgba(0,0,0,.5);border-radius:0em");
+		x.style("input.q","width:7em;background:#fff;padding:.5em 2em .5em 1em;border:0px dotted #020;box-shadow:0 0 .5em rgba(0,0,0,.5);border-radius:0em");
 		x.inputax(qry,"q",this,"ch","sl");
 		x.focus(qry);
 	}
