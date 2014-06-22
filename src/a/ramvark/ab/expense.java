@@ -53,5 +53,6 @@ public class expense extends itm{static final long serialVersionUID=1;
 		}});
 		price.set(s.i);
 		amount.set(1);
+		unit.clr();
 	}
 }

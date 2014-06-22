@@ -205,7 +205,7 @@ public abstract class itm extends a implements $.labeled{
 		final Class<? extends lst>clsls=f.getAnnotation(in.class).lst();
 		final lst ls=clsls.newInstance();
 		final ref rf=(ref)f.get(this);
-		ls.seltrg=rf;
+		ls.select_at_load_elem=rf;
 		final String q;
 		final itm o=rf.get();
 		if(o!=null){
