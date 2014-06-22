@@ -7,10 +7,10 @@ public class puppet extends itm{static final long serialVersionUID=1;
 	@in(type=3)public expenses expenses;
 	@in(type=3)public items items;
 	@in(itm=content.class)public agr content;
-	@in(lst=puppets.class)public ref father;
-	@in(lst=puppets.class)public ref mother;
-	@in public an email;	
+//	@in(lst=puppets.class)public ref father;
+//	@in(lst=puppets.class)public ref mother;
 	@in public an phone;	
+	@in public an email;	
 	
 	public final void itm_content_in(final xwriter x)throws Throwable{
 		inputagr(x,content);
