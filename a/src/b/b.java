@@ -78,8 +78,8 @@ final public class b{
 		ssc.register(sel,SelectionKey.OP_ACCEPT);
 		Runtime.getRuntime().addShutdownHook(new jvmsdh());
 		while(true)try{
-			sel.select(1000);
-//			sel.select();
+//			sel.select(1000);
+			sel.select();
 			thdwatch.iokeys=sel.keys().size();
 			final Iterator<SelectionKey>it=sel.selectedKeys().iterator();
 			if(!it.hasNext())continue;
