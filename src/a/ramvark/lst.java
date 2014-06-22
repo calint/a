@@ -6,7 +6,7 @@ public abstract class lst extends an implements $.labeled{
 	static final long serialVersionUID=1;
 	public a qry;
 	String label;
-	a select_at_load_elem;
+	a elem_selecting;
 	itm owner;
 	private String frstnm;
 	private String frstid;
@@ -124,14 +124,14 @@ public abstract class lst extends an implements $.labeled{
 	}
 	//load
 	final public synchronized void x_ld(final xwriter x,final String s)throws Throwable{
-		if(select_at_load_elem!=null){
-			select_at_load_elem.set(s);
+		if(elem_selecting!=null){
+			elem_selecting.set(s);
 			ev(x,this,"cl");
-			x.xfocus(select_at_load_elem);
+			x.xfocus(elem_selecting);
 			return;
 		}
 		final itm e=cstore.load(itmcls(),s);
-		e.afterclosefocus=qry;
+		e.after_close_focus_elem=qry;
 		ev(x,this,e);
 	}
 	
@@ -146,15 +146,15 @@ public abstract class lst extends an implements $.labeled{
 			x_cr(x,s);
 			return;
 		}
-		if(select_at_load_elem!=null){
-			select_at_load_elem.set(frstid);
+		if(elem_selecting!=null){
+			elem_selecting.set(frstid);
 			ev(x,this,"cl");
-			x.xfocus(select_at_load_elem);
+			x.xfocus(elem_selecting);
 			return;
 		}
 		final Class<? extends itm>ocls=getClass().getAnnotation(ls.class).cls();
 		final itm e=cstore.load(ocls,frstid);
-		e.afterclosefocus=qry;
+		e.after_close_focus_elem=qry;
 		ev(x,this,e);
 	}
 
@@ -174,10 +174,10 @@ public abstract class lst extends an implements $.labeled{
 		final Class<? extends itm>cls=getClass().getAnnotation(ls.class).cls();
 		final itm e=cstore.create(cls,owner);
 		e.set(q);
-		e.selref=select_at_load_elem;
-		e.afterclosefocus=qry;
+		e.at_save_write_did_to_elem=elem_selecting;
+		e.after_close_focus_elem=qry;
 		if(owner!=null)
-			e.aftercloseaddtolist=this;
+			e.after_save_add_to_list=this;
 		ev(x,this,e);
 	}
 	// rend helpers

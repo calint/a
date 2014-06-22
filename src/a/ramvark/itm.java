@@ -21,9 +21,9 @@ public abstract class itm extends a implements $.labeled{
 
 	boolean notnew;
 	a focus;
-	a selref;
-	a afterclosefocus;
-	lst aftercloseaddtolist;
+	a at_save_write_did_to_elem;
+	a after_close_focus_elem;
+	lst after_save_add_to_list;
 	private String label;
 	
 	protected itm(){try{
@@ -185,7 +185,7 @@ public abstract class itm extends a implements $.labeled{
 		final agr ra=(agr)f.get(this);
 		final itm m=ra.get();
 		m.label=f.getName();
-		m.afterclosefocus=ra;
+		m.after_close_focus_elem=ra;
 		ev(x,this,m);
 	}
 	final public synchronized void x_agrclr(final xwriter x,final String s)throws Throwable{
@@ -205,7 +205,7 @@ public abstract class itm extends a implements $.labeled{
 		final Class<? extends lst>clsls=f.getAnnotation(in.class).lst();
 		final lst ls=clsls.newInstance();
 		final ref rf=(ref)f.get(this);
-		ls.select_at_load_elem=rf;
+		ls.elem_selecting=rf;
 		final String q;
 		final itm o=rf.get();
 		if(o!=null){
@@ -249,8 +249,8 @@ public abstract class itm extends a implements $.labeled{
 		onpresave(x);
 		cstore.save(this);
 		onaftersave(x);
-		if(selref!=null)selref.set(did.toString());
-		if(aftercloseaddtolist!=null)aftercloseaddtolist.set(aftercloseaddtolist.toString()+","+did);
+		if(at_save_write_did_to_elem!=null)at_save_write_did_to_elem.set(did.toString());
+		if(after_save_add_to_list!=null)after_save_add_to_list.set(after_save_add_to_list.toString()+","+did);
 	}
 	//close
 	final public synchronized void x_cl(final xwriter x,final String s)throws Throwable{
@@ -261,9 +261,9 @@ public abstract class itm extends a implements $.labeled{
 		if(!validate(x))
 			return;
 		x_sv(x,null);
-		if(selref!=null){
+		if(at_save_write_did_to_elem!=null){
 			ev(x,this,"cl2");
-			x.xfocus(selref);
+			x.xfocus(at_save_write_did_to_elem);
 			return;
 		}
 		x_cl(x,null);
