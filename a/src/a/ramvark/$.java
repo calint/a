@@ -35,6 +35,7 @@ final public class $ extends a{
 			if(e==last)
 				x.tage("span");
 		}
+		x.spc();
 		x.p(el);
 		x.br();
 		meters.spclst(x);

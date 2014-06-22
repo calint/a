@@ -14,7 +14,7 @@ public class o extends a{
 	public void to(final xwriter x)throws Throwable{
 		final String id=id();
 		final jskeys js=new jskeys(x);
-		js.open();
+//		js.open();
 		js.add("cW","$x('"+id+" up')");
 		js.add("cS","$x('"+id+" u')");
 		js.add("cE","$x('"+id+" e')");
