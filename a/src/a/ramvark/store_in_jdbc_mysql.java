@@ -3,8 +3,6 @@ package a.ramvark;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
@@ -18,20 +16,23 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 		final Connection cn;
 		if(!initiated){
 			final DataSource d;
+			final String dbname="RAMVARK";
+			final String url,username,password;
 			if(b.b.cloud_bees==true){
-				final Context ctx=new InitialContext();
-	//			NamingEnumeration<NameClassPair> list = ctx.list("");
-	//			while (list.hasMore()) {
-	//			  System.out.println(list.next().getName());
-	//			}
-				d=(DataSource)ctx.lookup("java:comp/env/jdbc/ramvark");
+				url=System.getProperty("DATABASE_URL_"+dbname);
+				username=System.getProperty("DATABASE_USERNAME_"+dbname);
+				password=System.getProperty("DATABASE_PASSWORD_"+dbname);
 			}else{
-				final MysqlDataSource mds=new MysqlDataSource();
-				mds.setURL("jdbc:mysql://localhost/b");
-				mds.setUser("ramvark");
-				mds.setPassword("ramvark");
-				d=mds;
+				url="jdbc:mysql://localhost/b";
+				username="ramvark";
+				password="ramvark";
 			}
+			b.b.log(new Exception("jdbc connection info: "+url+"   "+username+"   "+password));
+			final MysqlDataSource mds=new MysqlDataSource();
+			mds.setURL(url);
+			mds.setUser(username);
+			mds.setPassword(password);
+			d=mds;
 			if(use_connection_pool){
 				final jdbc_connection_pool jcp=new jdbc_connection_pool(d,connection_close_intervall_in_ms);
 				ds=jcp;
