@@ -47,8 +47,9 @@ public class expense extends itm{static final long serialVersionUID=1;
 		final sum s=new sum();
 		subexpenses.foreach(null,new store.visitor(){public void visit(final itm e)throws Throwable{
 			final int i=((expense)e).price.toint();
-			final int a=((expense)e).amount.toint();
-			s.i+=i*a;
+//			final int a=((expense)e).amount.toint();
+//			s.i+=i*a;
+			s.i+=i;
 		}});
 		price.set(s.i);
 		amount.set(1);
