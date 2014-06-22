@@ -15,7 +15,7 @@ import a.x.jskeys;
 import b.a;
 import b.b;
 import b.xwriter;
-public abstract class itm extends a implements $.labeled{
+public abstract class itm extends an implements $.labeled{
 	static final long serialVersionUID=1;
 	public a pid,did,colr;
 
@@ -180,7 +180,10 @@ public abstract class itm extends a implements $.labeled{
 	}
 	//input aggr11
 	final protected void inputagr(final xwriter x,final a e) throws Throwable{
+//		final boolean isitm=e instanceof itm;
+//		if(isitm&&!((itm)e).colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+((itm)e).colr+"\">");
 		x.p("<a href=\"javascript:$x('").p(id()).p(" agr ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
+//		if(isitm&&!((itm)e).colr.isempty())x.spanEnd();
 	}
 	final public synchronized void x_agr(final xwriter x,final String s)throws Throwable{
 		final Field f=getClass().getField(s);
