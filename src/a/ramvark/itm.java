@@ -55,7 +55,7 @@ public abstract class itm extends a implements $.labeled{
 		x.tag("span",id);
 //		x.nl();
 		if(notnew)
-			x.p(" ").ax(this,"rn","⌾");
+			x.ax(this,"rn","⌾");
 		x.p(" ").ax(this,"cl","••");
 //		x.spc().ax(this,"sc","▣");
 //		x.spc().ax(this,"sv","▢");
@@ -73,7 +73,7 @@ public abstract class itm extends a implements $.labeled{
 		x.css("table.fm","box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
 		x.css("table.fm tr td","vertical-align:middle;padding:.25em 2em .25em 1em");
 		x.css("table.fm tr td.lbl","vertical-align:baseline;text-align:right;padding:1em 0 1em 5em;font-weight:bold");
-		x.css("table.fm tr.lst td","background:yellow");
+		x.css("table.fm tr.lst td","background:yellow;padding-bottom:1em");
 //		x.nl().css("table.fm tr:last-child","border-top:1px dotted green");
 		x.css("input,select,textarea","padding:.5em;background:#fff;box-shadow:0 0 .5em rgba(0,0,0,.5)");
 		x.css("input.ln","width:100%");
