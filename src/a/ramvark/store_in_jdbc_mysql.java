@@ -19,7 +19,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 			final String dbname="RAMVARK";
 			final String url,username,password;
 			if(b.b.cloud_bees==true){
-				url=System.getProperty("DATABASE_URL_"+dbname);
+				url="jdbc:"+System.getProperty("DATABASE_URL_"+dbname);
 				username=System.getProperty("DATABASE_USERNAME_"+dbname);
 				password=System.getProperty("DATABASE_PASSWORD_"+dbname);
 			}else{
