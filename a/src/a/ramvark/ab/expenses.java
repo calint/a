@@ -23,7 +23,9 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		final expense e=(expense)ee;
 		x.nl().tr();
 		x.td();
+		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,ee);
+		if(!e.colr.isempty())x.spanEnd();
 		x.td().p(e.price);
 		x.td().p(e.amount);
 //		sum+=e.price.toint()*e.amount.toint();
