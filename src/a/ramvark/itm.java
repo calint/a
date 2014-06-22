@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
 import a.ramvark.cstore.meters;
+import a.x.jskeys;
 import b.a;
 import b.b;
 import b.xwriter;
@@ -50,14 +51,19 @@ public abstract class itm extends a implements $.labeled{
 	protected void onprerender()throws Throwable{}
 	final public void to(final xwriter x)throws Throwable{
 		onprerender();
-		x.tag("span",id());
+		final String id=id();
+		x.tag("span",id);
 //		x.nl();
 		if(notnew)
 			x.p(" ").ax(this,"rn","⌾");
 		x.p(" ").ax(this,"cl","••");
 //		x.spc().ax(this,"sc","▣");
 //		x.spc().ax(this,"sv","▢");
-
+		try(final jskeys jk=new jskeys(x)){
+			jk.add("cS","$x('"+id+" sv');ui.alert('saved')");
+			jk.add("cW","$x('"+id+" cl')");
+			jk.add("cX","$x('"+id+" sc')");
+		}
 		focus=null;
 		final LinkedList<Field>flds=new LinkedList<Field>();
 		for(final Field f:getClass().getFields())//? fieldorderissue
@@ -67,6 +73,7 @@ public abstract class itm extends a implements $.labeled{
 		x.css("table.fm","box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
 		x.css("table.fm tr td","vertical-align:middle;padding:.25em 2em .25em 1em");
 		x.css("table.fm tr td.lbl","vertical-align:baseline;text-align:right;padding:1em 0 1em 5em;font-weight:bold");
+		x.css("table.fm tr.lst td","background:yellow");
 //		x.nl().css("table.fm tr:last-child","border-top:1px dotted green");
 		x.css("input,select,textarea","padding:.5em;background:#fff;box-shadow:0 0 .5em rgba(0,0,0,.5)");
 		x.css("input.ln","width:100%");
@@ -151,18 +158,18 @@ public abstract class itm extends a implements $.labeled{
 				}
 			}
 		}
-		x.nl().tr().td(2);
-		x.nl().tableEnd().nl();
 		
-		x.nl().style();
-		x.nl().css("ul.ac","margin-left:21px");
-		x.nl().css("ul.ac li","display:inline;margin-left:.5em");
+		x.nl().tr("lst").td(2);
+		x.style();
+		x.nl().css("ul","padding:0");
+//		x.nl().css("ul.ac","margin-left:21px");
+		x.nl().css("ul li","display:inline;margin-right:1em");
 		x.nl().styleEnd();
-		x.nl().ul("ac");
+		x.ul("ac");
 		x.li().ax(this,"sc","▣");
 		x.li().ax(this,"sv","▢");
 		x.ulEnd();
-		x.br().br();
+		x.tableEnd();
 
 		if(focus!=null)
 			x.focus(focus);

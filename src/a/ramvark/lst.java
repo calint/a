@@ -73,19 +73,19 @@ public abstract class lst extends an implements $.labeled{
 	protected void rendhead(final xwriter x){
 //		x.nl();
 //		x.tag("span",this);
-		x.spc().ax(this,"cr","⌾");
-		x.spc().style("input.q","width:20em;background:#fff;padding:.5em 2em .5em 1em;border:0px dotted #020;box-shadow:0 0 .5em rgba(0,0,0,.5);border-radius:0em");			
+		x.ax(this,"cr","⌾").spc();
+		x.style("input.q","width:20em;background:#fff;padding:.5em 2em .5em 1em;border:0px dotted #020;box-shadow:0 0 .5em rgba(0,0,0,.5);border-radius:0em");
 		x.inputax(qry,"q",this,"ch","sl");
 		x.focus(qry);
 	}
-	protected void rendlisthead(final xwriter x){x.nl();}
+	protected void rendlisthead(final xwriter x){x.p("<table style=margin-left:2em><tr><td style=\"padding-top:.5em;text-align:right;background:#f0f0f0\">");}
 	protected void rendrow(final xwriter x,final itm e)throws Throwable{
 		rendldax(x,e);
-		x.p(" ");
+		x.p("  ");
 		renddelax(x,e);
 		x.nl();
 	}
-	protected void rendlistfoot(final xwriter x){}
+	protected void rendlistfoot(final xwriter x){x.p("</table>");}
 	protected void rendfoot(final xwriter x){
 //		x.tagEnd("span");
 	}

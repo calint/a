@@ -15,7 +15,7 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		x.css("table.tb tr:last-child","border-top:1px solid green;font-weight:bold");
 		x.styleEnd();
 		x.nl().table("tb");
-		x.nl().tr().th().p("name").th().p("price").th().p("amount").th().p("unit");
+		x.nl().tr().th().p("name").th().p("total").th().p("qty").th().p("unit");
 		x.th();
 		sum=0;
 	}
@@ -26,7 +26,8 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		rendldax(x,ee);
 		x.td().p(e.price);
 		x.td().p(e.amount);
-		sum+=e.price.toint()*e.amount.toint();
+//		sum+=e.price.toint()*e.amount.toint();
+		sum+=e.price.toint();
 		x.td().p(e.unit);
 		x.td();
 		renddelax(x,ee,"x");
@@ -34,8 +35,8 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 	protected void rendlistfoot(final xwriter x){
 		x.nl().tr();
 		x.td();
-		x.td();
 		x.td().p(sum);
+		x.td();
 		x.td();
 		x.td();
 
