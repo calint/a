@@ -86,7 +86,7 @@ public abstract class lst extends an implements $.labeled{
 	protected void rendrow(final xwriter x,final itm e)throws Throwable{
 //		x.li();
 		x.spc();
-		if(!e.colr.isempty())x.p("<span style=\"border-top:3px dotted "+e.colr+"\">");
+		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,e);
 		if(!e.colr.isempty())x.spanEnd();
 		x.p(" ");
