@@ -52,9 +52,9 @@ final public class $ extends a{
 				x.xfocus(((lst)el).qry);
 			if(cl instanceof itm){
 				final itm m=(itm)cl;
-				if(m.afterclosefocus!=null){
-					x.xfocus(m.afterclosefocus);
-					m.afterclosefocus=null;
+				if(m.after_close_focus_elem!=null){
+					x.xfocus(m.after_close_focus_elem);
+					m.after_close_focus_elem=null;
 				}
 			}			
 		}else if("cl2".equals(o)){
