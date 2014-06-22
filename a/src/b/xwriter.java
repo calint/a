@@ -266,4 +266,5 @@ public final class xwriter{
 		return this;
 	}
 	public xwriter span(final String style){return tago("span").attr("style",style).tagoe();}
+	public xwriter nbsp(){return p("&nbsp;");}
 }
