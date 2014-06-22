@@ -78,14 +78,21 @@ public abstract class lst extends an implements $.labeled{
 		x.inputax(qry,"q",this,"ch","sl");
 		x.focus(qry);
 	}
-	protected void rendlisthead(final xwriter x){x.p("<table style=margin-left:2em><tr><td style=\"padding-top:.5em;text-align:right;background:#f0f0f0\">");}
+	protected void rendlisthead(final xwriter x){
+//		x.p("<table style=margin-left:2em><tr><td style=\"padding-top:.5em;text-align:right;background:#f0f0f0\">");
+		x.style("ul","margin:.5em 2em 0 2em;line-height:1.3em");
+		x.ul();
+	}
 	protected void rendrow(final xwriter x,final itm e)throws Throwable{
 		rendldax(x,e);
 		x.p("  ");
 		renddelax(x,e);
 		x.nl();
 	}
-	protected void rendlistfoot(final xwriter x){x.p("</table>");}
+	protected void rendlistfoot(final xwriter x){
+		x.ulEnd();
+//		x.p("</table>");
+	}
 	protected void rendfoot(final xwriter x){
 //		x.tagEnd("span");
 	}
@@ -174,6 +181,7 @@ public abstract class lst extends an implements $.labeled{
 	}
 	// rend helpers
 	protected void renddelax(final xwriter x,final itm e){
-		x.ax(this,"dl "+e.did,"⌫");
+//		x.ax(this,"dl "+e.did,"⌫");
+		x.ax(this,"dl "+e.did,"⨯");
 	}
 }
