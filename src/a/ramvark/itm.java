@@ -69,7 +69,7 @@ public abstract class itm extends an implements $.labeled{
 		for(final Field f:getClass().getFields())//? fieldorderissue
 			flds.addFirst(f);
 		x.style();
-		x.css("table.fm","background:#fff;margin:.5em 0 1em .5em;box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
+		x.css("table.fm","width:40em;background:#fff;margin:.5em 0 1em .5em;box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
 //		x.css("table.fm tr","border-top:1px dotted #dea");
 		x.css("table.fm tr td","vertical-align:middle;padding:.25em 2em .25em 1em");
 		x.css("table.fm tr td.lbl","vertical-align:baseline;text-align:right;padding:1em 0 1em 5em;font-weight:bold");

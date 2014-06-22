@@ -82,6 +82,7 @@ public abstract class lst extends an implements $.labeled{
 //		x.p("<table style=margin-left:2em><tr><td style=\"padding-top:.5em;text-align:right;background:#f0f0f0\">");
 //		x.style("ul","margin:.5em 2em 0 2em;line-height:1.3em");
 //		x.ul();
+		x.span("line-height:1.4em;margin-left:.3em");
 	}
 	protected void rendrow(final xwriter x,final itm e)throws Throwable{
 //		x.li();
@@ -96,6 +97,7 @@ public abstract class lst extends an implements $.labeled{
 	protected void rendlistfoot(final xwriter x){
 //		x.ulEnd();
 //		x.p("</table>");
+		x.spanEnd();
 	}
 	protected void rendfoot(final xwriter x){
 //		x.tagEnd("span");
