@@ -25,7 +25,9 @@ public @ls(cls=puppet.class)class puppets extends lst{
 		final puppet e=(puppet)ee;
 		x.nl().tr();
 		x.td();
+		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,ee);
+		if(!e.colr.isempty())x.spanEnd();
 		x.td().p(e.email);
 //		x.td().p(e.mother);
 //		x.td().p(e.father);		

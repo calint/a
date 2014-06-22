@@ -17,7 +17,7 @@ import b.b;
 import b.xwriter;
 public abstract class itm extends a implements $.labeled{
 	static final long serialVersionUID=1;
-	public a pid,did;
+	public a pid,did,colr;
 
 	boolean notnew;
 	a focus;
@@ -69,15 +69,15 @@ public abstract class itm extends a implements $.labeled{
 		for(final Field f:getClass().getFields())//? fieldorderissue
 			flds.addFirst(f);
 		x.style();
-		x.css("table.fm","background:#fff;margin:.5em 0 1em .5em");
-		x.css("table.fm","box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
+		x.css("table.fm","background:#fff;margin:.5em 0 1em .5em;box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
+//		x.css("table.fm tr","border-top:1px dotted #dea");
 		x.css("table.fm tr td","vertical-align:middle;padding:.25em 2em .25em 1em");
 		x.css("table.fm tr td.lbl","vertical-align:baseline;text-align:right;padding:1em 0 1em 5em;font-weight:bold");
-		x.css("table.fm tr.lst td","background:yellow;padding-bottom:1em");
+		x.css("table.fm tr.lst td","background:"+colr+";padding-bottom:1em");
 //		x.nl().css("table.fm tr:last-child","border-top:1px dotted green");
-		x.css("input,select,textarea","padding:.5em;background:#fff;box-shadow:0 0 .5em rgba(0,0,0,.5)");
-		x.css("input.ln","width:100%");
-		x.css("input.nm","width:100%");
+		x.css("input,select,textarea","width:20em;padding:.5em;background:#fff;box-shadow:0 0 .5em rgba(0,0,0,.5)");
+//		x.css("input.ln","width:100%");
+//		x.css("input.nm","width:100%");
 		x.css("textarea.ls","width:100%;height:100px");
 		x.css("textarea.ed","width:64em;height:400px");
 		x.css("input.nbr","text-align:right;width:5em");
@@ -169,6 +169,8 @@ public abstract class itm extends a implements $.labeled{
 		x.li().ax(this,"sc","▣");
 		x.li().ax(this,"sv","▢");
 		x.ulEnd();
+		x.style(colr,"width:7em;margin-top:.2em");
+		x.inputText(colr,this,"sc");
 		x.tableEnd();
 
 		if(focus!=null)
