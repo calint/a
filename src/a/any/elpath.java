@@ -13,8 +13,10 @@ import b.path;
 final public class elpath implements el{
 	private el pt;
 	private path pth;
+	private String name_override;
 	public elpath(final el parent,final path p){pt=parent;pth=p;}
-	@Override public String name(){return pth.name();}
+	public elpath(final el parent,final path p,final String name_override){pt=parent;pth=p;this.name_override=name_override;}
+	@Override public String name(){return name_override!=null?name_override:pth.name();}
 	@Override public boolean isdir(){return pth.isdir();}
 	@Override public boolean isfile(){return pth.isfile();}
 	@Override public List<String>list(){return Arrays.<String>asList(pth.list());}

@@ -17,9 +17,11 @@ import b.xwriter;
 final public class elclass implements el,el.el_actions{
 	private el pt;
 	private Class<?>cls;
+	private String name_override;
 	public elclass(final el parent,final Class<?>c){pt=parent;cls=c;}
+	public elclass(final el parent,final Class<?>c,final String name){pt=parent;cls=c;name_override=name;}
 	@Override public el parent(){return pt;}
-	@Override public String name(){return cls.getName().substring(cls.getName().indexOf(' ')+1);}
+	@Override public String name(){return name_override!=null?name_override:cls.getName().substring(cls.getName().indexOf(' ')+1);}
 	@Override public String fullpath(){return cls.getName();}
 	@Override public boolean isfile(){return false;}
 	@Override public boolean isdir(){return true;}

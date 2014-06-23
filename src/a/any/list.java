@@ -38,7 +38,7 @@ public class list extends a{
 	public a q;
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
-	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP|BIT_ALLOW_FILE_OPEN;
+	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
 //	protected int bits=BIT_ALL;
 	public @Retention(RetentionPolicy.RUNTIME)@interface ui_action{}
 //	public @interface ui_action{}
@@ -74,12 +74,12 @@ public class list extends a{
 	}
 	//	protected el root=new elpath(null,b.path());
 	protected el root;{
-		final elroot l=new elroot(null,"el systems");
+		final elroot l=new elroot(null,"any");
 		root=l;
-		l.add(new elclass(root,list.class));
-		l.add(new elclass(root,b.class));
-		l.add(new elclass(root,req.class));
-		l.add(new elpath(root,b.path()));
+		l.add(new elclass(root,list.class,"config any"));
+		l.add(new elclass(root,b.class,"config web server"));
+		l.add(new elclass(root,req.class,"config web server requests"));
+		l.add(new elpath(root,b.path(),"browse server files"));
 	}
 	protected el path=root;
 	private ArrayList<a>element_editors=new ArrayList<a>();
