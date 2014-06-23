@@ -1,0 +1,6 @@
+<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script><body onload=$l()><applet archive="/upload.jar" code="applet.upload" width="100%" height="100%">
+<param name="host" value="localhost">
+<param name="port" value=8888>
+<param name="session" value="aaaa-110307-064915.110-cb48e04f">
+<param name="rootpath" value="">
+</applet>

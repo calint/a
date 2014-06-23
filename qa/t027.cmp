@@ -1,0 +1,2 @@
+<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script><body onload=$l()><script>ui.alert('abc \'" ``\nhello\r\\\0');
+</script>

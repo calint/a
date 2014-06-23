@@ -2,6 +2,7 @@ echo $0
 
 WS=../..
 WD=cloudbees-deploy-work-dir
+BLITZ_IO_ID=mu-b454605f-ee5df618-eab01f6c-bc2f63cd
 
 date
 if [ -d $WD ];then echo "  •• clear workdir $WD";rm -rf $WD;fi&&
@@ -10,7 +11,7 @@ for p in a;do
   echo "  •• copy $p"&&cp -a $WS/$p/* .
 done
 if [ -d u ];then echo "  •• delete user files"&&rm -rf u;fi
-echo 42>mu-1f7c1fa1-64535080-7d8aa870-6cb91bba&&    # blitz.io key
+echo "42">$BLITZ_IO_ID&&    # blitz.io key
 zip deploy.zip -r .&&
 ls -lah deploy.zip&&
 bees app:deploy -a bb -t java -P java_version=1.8 -R classpath=bin:lib/mysql-connector-java-5.1.31-bin.jar -R class=b.b -R args="cloud_bees true root_dir app" -v -d false deploy.zip stickySession=true httpVersion=1.1 jvmFileEncoding=UTF-8&&

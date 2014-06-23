@@ -1,0 +1,35 @@
+servlet used in resin to emulate session creation, dynamic(, chunked) content:
+package qa;
+import java.io.*;
+import javax.servlet.http.*;
+import javax.servlet.*;
+public class t010 extends HttpServlet{
+	private static long counter;
+	public void doGet(final HttpServletRequest req,final HttpServletResponse res)throws ServletException,IOException{
+		final PrintWriter out=res.getWriter();
+		final HttpSession ses=req.getSession();
+		ses.setAttribute("counter",new Long(counter++));
+		out.println("hello world");
+		out.close();
+	}
+}
+
+servlet used in resin to emulate cached uri:
+
+package qa;
+import java.io.*;
+import javax.servlet.http.*;
+import javax.servlet.*;
+public class t011 extends HttpServlet{
+	public void doGet(final HttpServletRequest req,final HttpServletResponse res)throws ServletException,IOException{
+		final PrintWriter out=res.getWriter();
+		out.println("hello world");
+		out.close();
+	}
+}
+
+WEB-INF/resin-web.xml
+<web-app xmlns="http://caucho.com/ns/resin">
+   <servlet-mapping url-pattern="/qa.t010" servlet-class="qa.t010"/>
+   <servlet-mapping url-pattern="/qa.t011" servlet-class="qa.t011"/>
+</web-app>

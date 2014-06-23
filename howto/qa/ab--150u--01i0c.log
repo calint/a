@@ -1,0 +1,100 @@
+Mon Jun 23 19:24:17 ICT 2014
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+Total of 471 requests completed
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+
+
+Server Software:        nginx/1.4.2
+Server Hostname:        www.ramvark.net
+Server Port:            80
+
+Document Path:          /qa/t001.txt
+Document Length:        98054 bytes
+
+Concurrency Level:      150
+Time taken for tests:   30.121 seconds
+Complete requests:      180
+Failed requests:        0
+Write errors:           0
+Total transferred:      24178589 bytes
+HTML transferred:       24123389 bytes
+Requests per second:    5.98 [#/sec] (mean)
+Time per request:       25101.137 [ms] (mean)
+Time per request:       167.341 [ms] (mean, across all concurrent requests)
+Transfer rate:          783.89 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:      357 1074 1488.1    519   10229
+Processing:  3058 8548 5143.9   6781   27650
+Waiting:      310 2632 3542.2   1500   22407
+Total:       3586 9623 5390.8   7609   28231
+
+Percentage of the requests served within a certain time (ms)
+  50%   7609
+  66%   9704
+  75%  12605
+  80%  13872
+  90%  16935
+  95%  23188
+  98%  24508
+  99%  27020
+ 100%  28231 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+
+
+Server Software:        nginx/1.4.2
+Server Hostname:        www.ramvark.net
+Server Port:            80
+
+Document Path:          /typealine
+Document Length:        526 bytes
+
+Concurrency Level:      150
+Time taken for tests:   30.001 seconds
+Complete requests:      2007
+Failed requests:        0
+Write errors:           0
+Total transferred:      1506318 bytes
+HTML transferred:       1058838 bytes
+Requests per second:    66.90 [#/sec] (mean)
+Time per request:       2242.203 [ms] (mean)
+Time per request:       14.948 [ms] (mean, across all concurrent requests)
+Transfer rate:          49.03 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:      282  519 552.5    344    8190
+Processing:   279 1008 1836.4    372   21839
+Waiting:      279 1005 1836.6    366   21839
+Total:        575 1527 1959.3    796   22292
+
+Percentage of the requests served within a certain time (ms)
+  50%    795
+  66%    914
+  75%   1888
+  80%   1983
+  90%   2646
+  95%   4525
+  98%   6892
+  99%  11487
+ 100%  22292 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+Total of 13 requests completed
+Mon Jun 23 19:25:33 ICT 2014
