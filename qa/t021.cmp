@@ -1,4 +1,4 @@
-*{padding:0;margin:0;border:0;white-space:pre;font-family:inherit;font-size:inherit;background:inherit;color:inherit}
+*{padding:0;margin:0;border:0;white-space:pre-wrap;word-wrap:break-word;font-family:inherit;font-size:inherit;background:inherit;color:inherit}
 html{font-family:monospace;height:100%}
 body{height:100%}
 table{border-collapse:collapse;empty-cells:show}

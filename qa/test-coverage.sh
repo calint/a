@@ -9,9 +9,16 @@ cookie="i=$sessionid"
 uploadfile="logo.jpg"
 uploadfile_verysmall="verysmall.txt"
 uploaddir="upload dir"
+classpath="/Users/calin/Documents/workspace/a/bin"
 
-echo $0&&
-echo `date` &&
+echo $0
+echo
+echo `date`
+echo $host
+echo $sessionid
+echo $classpath
+echo
+
 echo t000: file transfer from cache &&
 curl -s http://$host/qa/t000.html > file &&
 curl -s http://$host/qa/t000.html > file &&
@@ -46,8 +53,11 @@ rm file &&
 
 echo t015: page post utf8 &&
 curl -s -b $cookie --header "Content-Type: text/plain; charset=utf-8" --data-binary @t015.dat http://$host/qa/t014 > file &&
-diff -q ../u/$sessionid/test.txt t015.cmp &&
-rm -f ../u/$sessionid/test.txt &&
+curl -s -b $cookie http://$host/u/$sessionid/test.txt > file
+diff -q file t015.cmp &&
+rm file &&
+#diff -q ../u/$sessionid/test.txt t015.cmp &&
+#rm -f ../u/$sessionid/test.txt &&
 
 echo t016: page post utf8 read &&
 curl -s -b $cookie http://$host/qa/t014 > file &&
@@ -78,43 +88,49 @@ rm file&&
 
 echo t024: uploads&&
 echo . . . . . . . file&&
-java -cp ../bin/ a.qa.uploader $server $port $sessionid upload "$uploadfile" q &&
+java -cp $classpath a.qa.uploader $server $port $sessionid upload "$uploadfile" q &&
 sleep 1 &&
-diff -q ../u/$sessionid/upload/$uploadfile $uploadfile&&
-bck=`pwd`&&
-fl=$bck/file1&&
-cd ../u/$sessionid/upload&&
-ls -l $uploadfile>$fl&&
-cd $bck&&
-ls -l $uploadfile>file2&&
-diff -q file1 file2&&
-rm file1 file2&&
+curl -s -b $cookie http://$host/u/$sessionid/upload/$uploadfile > file &&
+diff -q $uploadfile file &&
+rm file &&
+#diff -q ../u/$sessionid/upload/$uploadfile $uploadfile&&
+#bck=`pwd`&&
+#fl=$bck/file1&&
+#cd ../u/$sessionid/upload&&
+#ls -l $uploadfile>$fl&&
+#cd $bck&&
+#ls -l $uploadfile>file2&&
+#diff -q file1 file2&&
+#rm file1 file2&&
 
 #echo ....: upload dir&&
-mkdir "$uploaddir"&&
-echo . . . . . . . dir&&
-java -cp ../bin/ a.qa.uploader $server $port $sessionid upload "$uploaddir" q &&
-sleep 1 &&
-basename "`stat -c %n "$uploaddir"`">file1&&
-stat -c %Y "$uploaddir">>file1&&
-basename "`stat -c %n "../u/$sessionid/upload/$uploaddir"`">file2&&
-stat -c %Y "../u/$sessionid/upload/$uploaddir">>file2&&
-diff -q file1 file2&&
-rm file1 file2&&
-rmdir "$uploaddir"&&
+#mkdir "$uploaddir"&&
+#echo . . . . . . . dir&&
+#java -cp $classpath a.qa.uploader $server $port $sessionid upload "$uploaddir" q &&
+#sleep 1 &&
+#basename "`stat -c %n "$uploaddir"`">file1&&
+#stat -c %Y "$uploaddir">>file1&&
+#basename "`stat -c %n "../u/$sessionid/upload/$uploaddir"`">file2&&
+#stat -c %Y "../u/$sessionid/upload/$uploaddir">>file2&&
+#diff -q file1 file2&&
+#rm file1 file2&&
+#rmdir "$uploaddir"&&
+
 #find . -maxdepth 1 -type f -exec ls -l {} \;
 #find . | while read file; do ls -l $file;done
 
 echo . . . . . . . very small file&&
-java -cp ../bin/ a.qa.uploader $server $port $sessionid "" "$uploadfile_verysmall" q &&
+java -cp $classpath a.qa.uploader $server $port $sessionid "" "$uploadfile_verysmall" q &&
 sleep 1 &&
-diff -q ../u/$sessionid/$uploadfile_verysmall $uploadfile_verysmall&&
+curl -s -b $cookie http://$host/u/$sessionid/"$uploadfile_verysmall" > file &&
+diff -q file "$uploadfile_verysmall" &&
+#diff -q ../u/$sessionid/"$uploadfile_verysmall" "$uploadfile_verysmall"&&
 
 
-echo t025: websock init&&
-cat t025.req|nc $server $port|cat>file&&
-diff -q file t025.cmp&&
-rm file&&
+#echo t025: websock init&&
+#cat t025.req|nc $server $port|cat>file&&
+#diff -q file t025.cmp&&
+#rm file&&
 
 echo t026: encoders osltgt,osnl&&
 curl -s -b $cookie http://$host/qa.t026>file&&
@@ -133,7 +149,7 @@ rm file&&
 
 echo t031: chained request&&
 cat t031.req|nc $server $port>file&&
-diff file t031.cmp&&
+diff -q file t031.cmp&&
 rm file&&
 
 echo t032: http 404&&

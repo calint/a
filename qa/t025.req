@@ -1,4 +1,5 @@
 GET /qa.echo HTTP/1.1
+Host: www.ramvark.net:80
 Upgrade: websocket
 Connection: Upgrade
 Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
