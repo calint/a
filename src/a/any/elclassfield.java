@@ -94,4 +94,7 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 	@Override public boolean ommit_column_lastmod(){return false;}
 	@Override public boolean ommit_column_size(){return false;}
 	@Override public boolean ommit_column_icon(){return false;}
+	
+	private static final long serialVersionUID=1;
+
 }

@@ -1,6 +1,7 @@
 package a.any;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.text.DecimalFormat;
@@ -42,7 +43,7 @@ public class list extends a{
 	public @Retention(RetentionPolicy.RUNTIME)@interface ui_action{}
 //	public @interface ui_action{}
 	public @interface read{}
-	public static interface el{
+	public static interface el extends Serializable{
 		el get(final String name);
 		String name();
 		boolean isdir();
