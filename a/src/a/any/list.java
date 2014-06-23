@@ -109,8 +109,9 @@ public class list extends a{
 		x.css("table.f td.total","font-weight:bold");
 		x.css("table.f td.name","min-width:100px");
 		x.css("table.f th","padding:.5em;text-align:left;background:#f0f0f0;color:black");
-		if(hasbit(BIT_ALLOW_QUERY))
-			x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
+		if(hasbit(BIT_ALLOW_QUERY))x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
+//		x.css("table.f td.value","padding:0");
+		x.css("table.f td.value input","width:18em;background:#eee;border:1px dotted #abc;padding:.5em");
 		x.styleEnd();
 
 		if(path instanceof el.actions){
@@ -212,8 +213,7 @@ public class list extends a{
 				final long lm=p.lastmod();
 				if(lm!=0)x.p(ttoa(lm));
 				final long size=p.size();
-				if(p.isfile())
-					total_bytes+=size;
+				if(p.isfile())total_bytes+=size;
 				x.td("size").p(isdir?"--":btoa(size));
 				x.nl();
 			}
