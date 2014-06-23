@@ -14,7 +14,7 @@ import a.any.list.ui_action;
 import b.a;
 import b.xwriter;
 
-final public class elclass implements el,el.actions{
+final public class elclass implements el,el.el_actions{
 	private el pt;
 	private Class<?>cls;
 	public elclass(final el parent,final Class<?>c){pt=parent;cls=c;}

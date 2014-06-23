@@ -9,7 +9,7 @@ import a.any.list.el;
 import b.a;
 import b.xwriter;
 
-final public class elclassfield implements el,el.column_value,el.column_value_editor{
+final public class elclassfield implements el,el.el_column_value,el.el_column_value_editor{
 	private el pt;
 	private Field fld;
 	public elclassfield(final el parent,final Field f){pt=parent;fld=f;}
