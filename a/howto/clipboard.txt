@@ -17,3 +17,7 @@
 //			}
 //			zis.close();
 //		}
+
+
+
+ls lib|while read f;do echo -n $f;echo -n :;done
