@@ -258,14 +258,16 @@ public class list extends a{
 	
 	
 	synchronized public void x_sel(final xwriter x,final String s)throws Throwable{
+		//? iffileandallowenter
 		if(firstinlist!=null)x_e(x,firstinlist.name());
 	}
 	synchronized public final void x_e(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_ENTER))throw new Error("notallowed");
 		path=path.get(p);
 		if(path.isfile())bd.from(path.inputstream());
+		q.clr();
 		x.xu(this);
- 		x.xfocus(path.isfile()?bd:q);		
+ 		x.xfocus(path.isfile()?bd:q);
 	}
 
 	private void sort_dirsfirst(final List<String>files){
