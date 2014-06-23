@@ -51,6 +51,7 @@ final public class elclassfield implements el,el.column_value,el.column_value_ed
 //				x.ax(this);
 			}
 			public void x_(xwriter x,String a)throws Throwable{
+				//? if exception, set prev value
 //				x.xalert(f.toString()+"="+this);
 				final Class<?>c=f.getType();
 				if(c.isAssignableFrom(int.class)){
@@ -89,4 +90,7 @@ final public class elclassfield implements el,el.column_value,el.column_value_ed
 			}
 			private static final long serialVersionUID = 1L;
 		}
+		@Override public boolean ommit_column_edit(){return false;}
+		@Override public boolean ommit_column_lastmod(){return false;}
+		@Override public boolean ommit_column_size(){return false;}
 	}

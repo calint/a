@@ -44,23 +44,29 @@ public class list extends a{
 //	public @interface ui_action{}
 	public @interface read{}
 	public static interface el{
-		public el get(final String name);
-		public String name();
-		public boolean isdir();
-		public boolean isfile();
-		public List<String>list();//? enumerator or foreach
-		public List<String>list(final String query);
-		public long size();
-		public long lastmod();
-		public String uri();
-		public boolean exists();
-		public void append(final String cs);
-		public String fullpath();
-		public boolean rm();
-		public el parent();
+		el get(final String name);
+		String name();
+		boolean isdir();
+		boolean isfile();
+		List<String>list();//? enumerator or foreach
+		List<String>list(final String query);
+		long size();
+		long lastmod();
+		String uri();
+		boolean exists();
+		void append(final String cs);
+		String fullpath();
+		boolean rm();
+		el parent();
 //		public void to(final xwriter x);
-		public OutputStream outputstream();
-		public InputStream inputstream();
+		OutputStream outputstream();//? set(byte[]), read(input)
+		InputStream inputstream();//? void stream_to(output)
+		
+		boolean ommit_column_edit();
+		boolean ommit_column_lastmod();
+		boolean ommit_column_size();
+
+		
 		public static interface column_value{public void column_value(final xwriter x)throws Throwable;}
 		public static interface column_value_editor{public a column_value_editor()throws Throwable;}
 		public static interface actions{public List<a>actions();}
@@ -132,7 +138,14 @@ public class list extends a{
 			if(!path.equals(root))
 				x.ax(this,"up","••");
 		final boolean acttd=hasbit(BIT_ALLOW_FILE_CREATE)||hasbit(BIT_ALLOW_DIR_CREATE);
-		x.th(acttd?5:4);
+		int cols=acttd?6:5;
+		final boolean ommit_col_edit=path.ommit_column_edit();
+		if(ommit_col_edit)cols--;
+		final boolean ommit_col_lastmod=path.ommit_column_lastmod();
+		if(ommit_col_lastmod)cols--;
+		final boolean ommit_col_size=path.ommit_column_size();
+		if(ommit_col_size)cols--;
+		x.th(cols);
 		if(hasbit(BIT_DISP_PATH)){
 //			if(path.isin(root)){
 //			String pp=path.fullpath().substring(root.fullpath().length());
@@ -191,35 +204,47 @@ public class list extends a{
 					x.a(uri,fnm);
 				else
 					x.p(fnm);
-				if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))
-					x.td("del").ax(this,"r "+fnm,icndel);				
-				if(p.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))
-					x.td("del").ax(this,"r "+fnm,icndel);
-				if(hasbit(BIT_ALLOW_SELECT))
-					x.ax(this,"se "+fnm,icnsel);
-				if(hasbit(BIT_ALLOW_RENAME))
-					x.ax(this,"ren "+fnm,icnren);
-				x.td("value");
-				if(p instanceof el.column_value_editor){
-					final a e=((el.column_value_editor)p).column_value_editor();
-					e.nm(p.name().replace('_','X'));
-					e.pt(this);
-					element_editors.add(e);
-					e.to(x);
-				}else if(p instanceof el.column_value){
-					((el.column_value)p).column_value(x);
+				if(acttd){
+					x.td("del");
+					if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))
+						x.ax(this,"r "+fnm,icndel);				
+					if(p.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))
+						x.ax(this,"r "+fnm,icndel);
+					if(hasbit(BIT_ALLOW_SELECT))
+						x.ax(this,"se "+fnm,icnsel);
+					if(hasbit(BIT_ALLOW_RENAME))
+						x.ax(this,"ren "+fnm,icnren);
 				}
-				x.td("date");
-				final long lm=p.lastmod();
-				if(lm!=0)x.p(ttoa(lm));
-				final long size=p.size();
-				if(p.isfile())total_bytes+=size;
-				x.td("size").p(isdir?"--":btoa(size));
+				if(!ommit_col_edit){
+					x.td("value");
+					if(p instanceof el.column_value_editor){
+						final a e=((el.column_value_editor)p).column_value_editor();
+						e.nm(p.name().replace('_','X'));
+						e.pt(this);
+						element_editors.add(e);
+						e.to(x);
+					}else if(p instanceof el.column_value){
+						((el.column_value)p).column_value(x);
+					}
+				}
+				if(!ommit_col_lastmod){
+					x.td("date");
+					final long lm=p.lastmod();
+					if(lm!=0)x.p(ttoa(lm));
+				}
+				if(!ommit_col_size){
+					final long size=p.size();
+					if(p.isfile())total_bytes+=size;
+					x.td("size").p(isdir?"--":btoa(size));
+				}
 				x.nl();
 			}
-			x.tr().td().td().td().td();
-			if(acttd)x.td();
-			x.td("total size last").p(nf.format(total_bytes));
+			x.tr().td();//icon
+			x.td();//name
+			if(!ommit_col_edit)x.td();//value
+			if(acttd)x.td();//
+			if(!ommit_col_lastmod)x.td();//lastmod
+			if(!ommit_col_size)x.td("total size last").p(nf.format(total_bytes));//size
 			x.nl();
 		}
 		x.tableEnd();
