@@ -1,0 +1,628 @@
+Mon Dec 9 19:09:37 ICT 2013
+Linux version 3.2.0-57-generic-pae (buildd@lamiak) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #87-Ubuntu SMP Tue Nov 12 21:57:43 UTC 2013
+
+No LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 12.04.3 LTS
+Release:	12.04
+Codename:	precise
+
+Architecture:          i686
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                2
+On-line CPU(s) list:   0,1
+Thread(s) per core:    1
+Core(s) per socket:    2
+Socket(s):             1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 23
+Stepping:              6
+CPU MHz:               2267.000
+BogoMIPS:              4520.83
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              3072K
+
+             total       used       free     shared    buffers     cached
+Mem:       4120032    3605060     514972          0     157092     922816
+-/+ buffers/cache:    2525152    1594880
+Swap:            0          0          0
+
+/etc/sysctl.conf
+net.ipv4.tcp_syncookies=0
+net.core.somaxconn=20000
+net.ipv4.tcp_max_syn_backlog=10000
+#net.ipv4.tcp_syn_retries=0
+#net.ipv4.tcp_synack_retries=0
+
+fs.file-max=165535
+fs.inotify.max_user_watches=65536
+net.ipv4.icmp_echo_ignore_broadcasts=1
+net.ipv4.conf.all.rp_filter=1
+net.ipv4.conf.default.promote_secondaries=1
+net.ipv4.conf.all.promote_secondaries=1
+net.ipv4.tcp_tw_recycle=1
+net.ipv4.ip_local_port_range=1024 65535
+net.ipv6.conf.all.disable_ipv6=1
+net.ipv4.tcp_mem=1048576 1398096 4000000
+
+/etc/security/limits.conf
+*	soft	nofile	164000
+*	hard	nofile	164000
+
+test-coverage.sh
+Mon Dec 9 19:09:37 ICT 2013
+t000: file transfer from cache
+t001: file transfer bigger
+t002: file transfer byterange from 1
+t010: page empty
+t013: page large
+t014: page input utf8
+t015: page post utf8
+t016: page post utf8 read
+t021: resource from stream
+t022: big chunks reply
+t023: cached uri
+t024: uploads
+. . . . . . . file
+. . . . . . . dir
+. . . . . . . very small file
+t025: websock init
+t026: encoders osltgt,osnl
+t027: encoder osjsstr
+t029: http 304
+t031: chained request
+t032: http 404
+t100: path coverage
+t102: session coverage
+TODO t1xx: websock coverage
+TODO t1xx: chunked reply stalled by slow client
+TODO t1xx: throttling
+Mon Dec 9 19:09:41 ICT 2013
+done
+:: test page transfer
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+:: test page transfer with keepalive
+test transfer from cache
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+test transfer from cache with keepalive
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+:: test bigger file transfer
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+:: test bigger file transfer with keepalive
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+Failed requests:        0
+done
+Mon Dec  9 19:10:24 ICT 2013
+httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
+httperf: httperf-0.9.0 compiled May 17 2011 without DEBUG without TIME_SYSCALLS.
+httperf --client=0/1 --server=localhost --port=8888 --uri=/ --send-buffer=4096 --recv-buffer=16384 --num-conns=1 --num-calls=1
+Maximum connect burst length: 0
+
+Total: connections 1 requests 1 replies 1 test-duration 0.647 s
+
+Connection rate: 1.5 conn/s (647.2 ms/conn, <=1 concurrent connections)
+Connection time [ms]: min 647.2 avg 647.2 max 647.2 median 647.5 stddev 0.0
+Connection time [ms]: connect 0.1
+Connection length [replies/conn]: 1.000
+
+Request rate: 1.5 req/s (647.2 ms/req)
+Request size [B]: 62.0
+
+Reply rate [replies/s]: min 0.0 avg 0.0 max 0.0 stddev 0.0 (0 samples)
+Reply time [ms]: response 647.1 transfer 0.0
+Reply size [B]: header 106.0 content 11.0 footer 0.0 (total 117.0)
+Reply status: 1xx=0 2xx=1 3xx=0 4xx=0 5xx=0
+
+CPU time [s]: user 0.04 system 0.39 (user 6.2% system 60.6% total 66.8%)
+Net I/O: 0.3 KB/s (0.0*10^6 bps)
+
+Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
+Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
+httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
+httperf --hog --client=0/1 --server=localhost --port=8888 --uri=/qa.t010 --rate=1000 --send-buffer=4096 --recv-buffer=16384 --session-cookies --wsess=2000,100,1.000
+Maximum connect burst length: 2
+
+Total: connections 1021 requests 102100 replies 102100 test-duration 103.479 s
+
+Connection rate: 9.9 conn/s (101.4 ms/conn, <=1022 concurrent connections)
+Connection time [ms]: min 101168.8 avg 101892.2 max 102541.8 median 0.0 stddev 318.9
+Connection time [ms]: connect 0.0
+Connection length [replies/conn]: 100.000
+
+Request rate: 986.7 req/s (1.0 ms/req)
+Request size [B]: 111.0
+
+Reply rate [replies/s]: min 595.8 avg 989.3 max 1021.1 stddev 98.3 (20 samples)
+Reply time [ms]: response 28.4 transfer 0.0
+Reply size [B]: header 107.0 content 93.0 footer 2.0 (total 202.0)
+Reply status: 1xx=0 2xx=102100 3xx=0 4xx=0 5xx=0
+
+CPU time [s]: user 9.19 system 91.81 (user 8.9% system 88.7% total 97.6%)
+Net I/O: 301.1 KB/s (2.5*10^6 bps)
+
+Errors: total 979 client-timo 0 socket-timo 0 connrefused 0 connreset 0
+Errors: fd-unavail 979 addrunavail 0 ftab-full 0 other 0
+
+Session rate [sess/s]: min 0.00 avg 9.87 max 0.00 stddev 0.00 (1021/2000)
+Session: avg 1.00 connections/session
+Session lifetime [s]: 101.9
+Session failtime [s]: 0.0
+Session length histogram: 979 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1021
+httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
+httperf --hog --client=0/1 --server=localhost --port=8888 --uri=/qa/t001.txt --rate=1000 --send-buffer=4096 --recv-buffer=16384 --session-cookies --wsess=1000,1,0.000
+Maximum connect burst length: 9
+
+Total: connections 1000 requests 1000 replies 1000 test-duration 1.000 s
+
+Connection rate: 1000.2 conn/s (1.0 ms/conn, <=17 concurrent connections)
+Connection time [ms]: min 0.3 avg 1.9 max 16.4 median 0.5 stddev 2.9
+Connection time [ms]: connect 0.0
+Connection length [replies/conn]: 1.000
+
+Request rate: 1000.2 req/s (1.0 ms/req)
+Request size [B]: 73.0
+
+Reply rate [replies/s]: min 0.0 avg 0.0 max 0.0 stddev 0.0 (0 samples)
+Reply time [ms]: response 1.7 transfer 0.2
+Reply size [B]: header 131.0 content 98054.0 footer 0.0 (total 98185.0)
+Reply status: 1xx=0 2xx=1000 3xx=0 4xx=0 5xx=0
+
+CPU time [s]: user 0.08 system 0.85 (user 8.4% system 85.2% total 93.6%)
+Net I/O: 95972.4 KB/s (786.2*10^6 bps)
+
+Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
+Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
+
+Session rate [sess/s]: min 0.00 avg 1000.18 max 0.00 stddev 0.00 (1000/1000)
+Session: avg 1.00 connections/session
+Session lifetime [s]: 0.0
+Session failtime [s]: 0.0
+Session length histogram: 0 1000
+httperf: warning: open file limit > FD_SETSIZE; limiting max. # of open files to FD_SETSIZE
+httperf --hog --client=0/1 --server=localhost --port=8888 --uri=/ --rate=1000 --send-buffer=4096 --recv-buffer=16384 --session-cookies --wsess=1000,3,0.000
+Maximum connect burst length: 4
+
+Total: connections 1000 requests 3000 replies 3000 test-duration 1.004 s
+
+Connection rate: 996.4 conn/s (1.0 ms/conn, <=22 concurrent connections)
+Connection time [ms]: min 3.7 avg 5.9 max 21.2 median 4.5 stddev 3.3
+Connection time [ms]: connect 0.0
+Connection length [replies/conn]: 3.000
+
+Request rate: 2989.3 req/s (0.3 ms/req)
+Request size [B]: 62.0
+
+Reply rate [replies/s]: min 0.0 avg 0.0 max 0.0 stddev 0.0 (0 samples)
+Reply time [ms]: response 0.8 transfer 0.0
+Reply size [B]: header 106.0 content 11.0 footer 0.0 (total 117.0)
+Reply status: 1xx=0 2xx=3000 3xx=0 4xx=0 5xx=0
+
+CPU time [s]: user 0.12 system 0.82 (user 11.6% system 82.1% total 93.7%)
+Net I/O: 522.5 KB/s (4.3*10^6 bps)
+
+Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
+Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
+
+Session rate [sess/s]: min 0.00 avg 996.42 max 0.00 stddev 0.00 (1000/1000)
+Session: avg 1.00 connections/session
+Session lifetime [s]: 0.0
+Session failtime [s]: 0.0
+Session length histogram: 0 0 0 1000
+Mon Dec  9 19:12:10 ICT 2013
+Mon Dec  9 19:12:10 ICT 2013
+test-perf-siege.sh
+SIEGE 2.70
+
+Copyright (C) 2010 by Jeffrey Fulmer, et al.
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.
+
+CURRENT  SIEGE  CONFIGURATION
+JoeDog/1.00 [en] (X11; I; Siege 2.70)
+Edit the resource file to change the settings.
+----------------------------------------------
+version:                        2.70
+verbose:                        false
+debug:                          false
+protocol:                       HTTP/1.0
+connection:                     close
+concurrent users:               0
+time to run:                    n/a
+repetitions:                    n/a
+socket timeout:                 30
+delay:                          0 sec
+internet simulation:            false
+benchmark mode:                 false
+failures until abort:           1024
+named URL:                      none
+URLs file:                      /usr/etc/urls.txt
+logging:                        false
+log file:                       /var/siege.log
+resource file:                  /home/calin/.siegerc
+allow redirects:                true
+allow zero byte data:           true
+allow chunked encoding:         false
+proxy auth:                     
+www auth:                       
+GET / HTTP/1.0
+Host: localhost:8888
+Accept: */*
+Accept-Encoding: *
+User-Agent: JoeDog/1.00 [en] (X11; I; Siege 2.70)
+Connection: close
+
+
+HTTP/1.1 200
+Content-Length: 11
+Last-Modified: Fri, 29 Nov 2013 01:16:37 GMT
+Connection: Keep-Alive
+
+** SIEGE 2.70
+** Preparing 1 concurrent users for battle.
+The server is now under siege...
+done.
+Transactions:		           1 hits
+Availability:		      100.00 %
+Elapsed time:		        0.01 secs
+Data transferred:	        0.00 MB
+Response time:		        0.00 secs
+Transaction rate:	      100.00 trans/sec
+Throughput:		        0.00 MB/sec
+Concurrency:		        0.00
+Successful transactions:           1
+Failed transactions:	           0
+Longest transaction:	        0.00
+Shortest transaction:	        0.00
+ 
+[0;34mHTTP/1.1 200   0.00 secs:      11 bytes ==> /[0m
+** SIEGE 2.70
+** Preparing 10 concurrent users for battle.
+The server is now under siege...      done.
+Transactions:		       10000 hits
+Availability:		      100.00 %
+Elapsed time:		        1.92 secs
+Data transferred:	        0.10 MB
+Response time:		        0.00 secs
+Transaction rate:	     5208.33 trans/sec
+Throughput:		        0.05 MB/sec
+Concurrency:		        9.58
+Successful transactions:       10000
+Failed transactions:	           0
+Longest transaction:	        0.03
+Shortest transaction:	        0.00
+ 
+** SIEGE 2.70
+** Preparing 100 concurrent users for battle.
+The server is now under siege...      done.
+Transactions:		       10000 hits
+Availability:		      100.00 %
+Elapsed time:		        2.10 secs
+Data transferred:	        0.10 MB
+Response time:		        0.02 secs
+Transaction rate:	     4761.90 trans/sec
+Throughput:		        0.05 MB/sec
+Concurrency:		       95.40
+Successful transactions:       10000
+Failed transactions:	           0
+Longest transaction:	        0.10
+Shortest transaction:	        0.00
+ 
+[[1;31mfatal[0m] unable to allocate memory for 1000 simulated browser: Cannot allocate memory
+test-abuse.sh
+Mon Dec 9 19:12:14 ICT 2013
+TODO Txxx: open connections with incomplete requests, strains network stack with open connections
+TODO Txxx: slow client consuming thread pool, dos
+TODO Txxx: upload long file 4G+, strains int based code
+TODO t301: hack, upload path, access outside root
+TODO t302: hack, request path, access outside root
+TODO t303: hack, request path, access non web class
+TODO t304: hack, post to non public fields
+TODO t305: hack, session hijack, different sources accessing same session
+TODO t231: ddos, requests
+TODO t234: ddos, request, method size
+TODO t235: ddos, request, uri size
+TODO t236: ddos, request, protocol size
+TODO t239: ddos, request, header, name, size
+TODO t239: ddos, request, header, value, size
+TODO t238: ddos, request, headers, count
+TODO t242: ddos, request, content, size
+TODO t243: ddos, request, content, chunksize
+TODO t202: ddos, client, uptake, sessions
+TODO t202: ddos, client, uptake, threads
+TODO t203: ddos, client, uptake, storage
+TODO t205: ddos, client, uptake, cpu
+TODO t206: ddos, client, uptake, ram
+TODO t207: ddos, client, uptake, sockets
+TODO t208: ddos, client, uptake, requests, frequency
+TODO t210: ddos, client, uptake, traffic, download
+TODO t211: ddos, client, uptake, traffic, upload
+TODO t211: ddos, client, websocks
+TODO t211: ddos, client, websocks, count
+TODO t211: ddos, client, websocks, packet, size
+TODO t211: ddos, client, websocks, traffic, download
+TODO t211: ddos, client, websocks, traffic, upload
+TODO t251: ddos, sockets
+TODO t253: ddos, socket, packet, size
+TODO t254: ddos, socket, packet, slow
+TODO t256: ddos, socket, traffic, download
+TODO t257: ddos, socket, traffic, upload
+TODO t271: ddos, packets
+TODO t272: ddos, packets, too many fragments
+TODO t273: ddos, packets, too small fragments
+TODO t274: ddos, packets, too large fragments
+TODO t275: ddos, packets, too much traffic from same source
+TODO t276: ddos, packets, too much traffic from same submask
+Mon Dec 9 19:12:14 ICT 2013
+done
+Mon Dec 9 19:12:14 ICT 2013
+done

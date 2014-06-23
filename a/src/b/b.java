@@ -21,7 +21,9 @@ final public class b{
 	public static String server_port=ensure(System.getProperty("app.port"),"8888");
 	public static boolean try_file=true;
 	public static boolean try_rc=true;
-	public static boolean thd_watch=false;
+	public static boolean thd_watch=true;
+	public static int thd_watch_sleep_in_ms=1000;
+	public static int thd_watch_report_every_ms=60000;
 	public static boolean thread_pool=true;
 	public static int thread_pool_size=16;
 	public static long thread_pool_lftm=60*1000;

@@ -36,10 +36,10 @@ final public class thdwatch extends Thread{
 	final static String _pad="       ";
 	public void run(){
 		while(!_stop)try{
-			sleep(_prevry);
 			if(!b.thd_watch)continue;
+			sleep(b.thd_watch_sleep_in_ms);
 			ms=System.currentTimeMillis()-_t0;
-			if(ms-_t>2000){
+			if(ms-_t>b.thd_watch_report_every_ms){
 				_t=ms;
 				_out.println("\n\n");
 				b.stats_to(_out);

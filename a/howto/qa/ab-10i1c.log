@@ -1,0 +1,173 @@
+Mon Jun 23 19:09:35 ICT 2014
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+
+
+Server Software:        nginx/1.4.2
+Server Hostname:        www.ramvark.net
+Server Port:            80
+
+Document Path:          /
+Document Length:        1583 bytes
+
+Concurrency Level:      100
+Time taken for tests:   30.003 seconds
+Complete requests:      975
+Failed requests:        0
+Write errors:           0
+Total transferred:      1772830 bytes
+HTML transferred:       1555366 bytes
+Requests per second:    32.50 [#/sec] (mean)
+Time per request:       3077.240 [ms] (mean)
+Time per request:       30.772 [ms] (mean, across all concurrent requests)
+Transfer rate:          57.70 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:      292  470 497.1    332    9101
+Processing:   291 1684 3176.1    347   25984
+Waiting:      288 1615 3022.3    345   25984
+Total:        598 2154 3269.7    727   26493
+
+Percentage of the requests served within a certain time (ms)
+  50%    725
+  66%   1879
+  75%   1999
+  80%   2318
+  90%   4371
+  95%   8723
+  98%  15377
+  99%  17950
+ 100%  26493 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+
+
+Server Software:        nginx/1.4.2
+Server Hostname:        www.ramvark.net
+Server Port:            80
+
+Document Path:          /qa/t001.txt
+Document Length:        98054 bytes
+
+Concurrency Level:      100
+Time taken for tests:   30.166 seconds
+Complete requests:      161
+Failed requests:        0
+Write errors:           0
+Total transferred:      18800840 bytes
+HTML transferred:       18741792 bytes
+Requests per second:    5.34 [#/sec] (mean)
+Time per request:       18736.938 [ms] (mean)
+Time per request:       187.369 [ms] (mean, across all concurrent requests)
+Transfer rate:          608.63 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:      302  722 1379.1    495   15133
+Processing:  2383 9527 6581.0   6943   29459
+Waiting:      315 2838 4761.0    556   22943
+Total:       2776 10248 6660.5   7531   29830
+
+Percentage of the requests served within a certain time (ms)
+  50%   7459
+  66%  10805
+  75%  12885
+  80%  14115
+  90%  20510
+  95%  26520
+  98%  29394
+  99%  29827
+ 100%  29830 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+Total of 972 requests completed
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.ramvark.net (be patient)
+
+
+Server Software:        nginx/1.4.2
+Server Hostname:        www.ramvark.net
+Server Port:            80
+
+Document Path:          /qa.t013
+Document Length:        98147 bytes
+
+Concurrency Level:      100
+Time taken for tests:   30.071 seconds
+Complete requests:      218
+Failed requests:        0
+Write errors:           0
+Total transferred:      24066634 bytes
+HTML transferred:       23987114 bytes
+Requests per second:    7.25 [#/sec] (mean)
+Time per request:       13793.972 [ms] (mean)
+Time per request:       137.940 [ms] (mean, across all concurrent requests)
+Transfer rate:          781.57 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:      329  670 719.8    471    5919
+Processing:  2812 7429 4699.4   5662   29002
+Waiting:      317 1803 2253.8    529   12379
+Total:       3277 8099 4707.3   6369   29392
+
+Percentage of the requests served within a certain time (ms)
+  50%   6369
+  66%   7656
+  75%   9532
+  80%  10763
+  90%  15215
+  95%  18369
+  98%  21785
+  99%  27152
+ 100%  29392 (longest request)
+Mon Jun 23 19:11:21 ICT 2014
+amvark.net
+Server Port:            80
+
+Document Path:          /qa.t013
+Document Length:        98147 bytes
+
+Concurrency Level:      100
+Time taken for tests:   30.079 seconds
+Complete requests:      103
+Failed requests:        0
+Write errors:           0
+Total transferred:      12857110 bytes
+HTML transferred:       12809510 bytes
+Requests per second:    3.42 [#/sec] (mean)
+Time per request:       29202.663 [ms] (mean)
+Time per request:       292.027 [ms] (mean, across all concurrent requests)
+Transfer rate:          417.43 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:      329  598 482.0    510    4328
+Processing:  2374 9301 6223.7   6723   29606
+Waiting:      362 2483 3158.0   1843   16480
+Total:       2703 9899 6270.8   7289   30077
+
+Percentage of the requests served within a certain time (ms)
+  50%   7233
+  66%   9438
+  75%  13188
+  80%  14457
+  90%  20358
+  95%  22404
+  98%  26288
+  99%  28550
+ 100%  30077 (longest request)
+Mon Jun 23 19:10:24 ICT 2014

@@ -1,0 +1,30 @@
+test-coverage.sh
+Thu Feb 20 15:47:13 ICT 2014
+t000: file transfer from cache
+t001: file transfer bigger
+t002: file transfer byterange from 1
+t010: page empty
+t013: page large
+t014: page input utf8
+t015: page post utf8
+t016: page post utf8 read
+t021: resource from stream
+t022: big chunks reply
+t023: cached uri
+t024: uploads
+. . . . . . . file
+. . . . . . . dir
+. . . . . . . very small file
+t025: websock init
+t026: encoders osltgt,osnl
+t027: encoder osjsstr
+t029: http 304
+t031: chained request
+t032: http 404
+t100: path coverage
+t102: session coverage
+TODO t1xx: websock coverage
+TODO t1xx: chunked reply stalled by slow client
+TODO t1xx: throttling
+Thu Feb 20 15:47:17 ICT 2014
+done

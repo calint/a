@@ -1,0 +1,15 @@
+<!DOCTYPE html><meta charset="utf-8" /><style>html{font-size:1.5em;}</style>
+<pre><input id="inp" size=20 onchange="websocksend(this.value)">
+<div id="output"/></pre>
+<script>p(document.cookie);
+function p(txt){
+    console.log(txt.length);
+    document.getElementById("output").innerHTML+=txt+'\n';
+}
+var ws=new WebSocket("ws://localhost:8888/qa.echothd");
+ws.onopen=function(e){p("open");}
+ws.onmessage=function(e){p("recv("+e.data.length+"):"+e.data);};
+ws.onclose=function(e){p("close");};
+ws.onerror=function(e){p("error");};
+function websocksend(s){p("send("+ s.length+"):"+s);ws.send(s);}
+</script>
