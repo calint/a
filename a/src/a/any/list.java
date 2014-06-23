@@ -65,6 +65,7 @@ public class list extends a{
 		boolean ommit_column_edit();
 		boolean ommit_column_lastmod();
 		boolean ommit_column_size();
+		boolean ommit_column_icon();
 
 		
 		public static interface column_value{public void column_value(final xwriter x)throws Throwable;}
@@ -134,25 +135,21 @@ public class list extends a{
 		}
 		x.table("f").nl();
 		x.tr().th();
-		if(hasbit(BIT_ALLOW_DIR_UP))
-			if(!path.equals(root))
-				x.ax(this,"up","••");
+		if(hasbit(BIT_ALLOW_DIR_UP))if(!path.equals(root))x.ax(this,"up","••");
 		final boolean acttd=hasbit(BIT_ALLOW_FILE_CREATE)||hasbit(BIT_ALLOW_DIR_CREATE);
 		int cols=acttd?6:5;
-		final boolean ommit_col_edit=path.ommit_column_edit();
-		if(ommit_col_edit)cols--;
-		final boolean ommit_col_lastmod=path.ommit_column_lastmod();
-		if(ommit_col_lastmod)cols--;
-		final boolean ommit_col_size=path.ommit_column_size();
-		if(ommit_col_size)cols--;
+		final boolean ommit_col_edit=path.ommit_column_edit();if(ommit_col_edit)cols--;
+		final boolean ommit_col_lastmod=path.ommit_column_lastmod();if(ommit_col_lastmod)cols--;
+		final boolean ommit_col_size=path.ommit_column_size();if(ommit_col_size)cols--;
+		final boolean ommit_col_icon=path.ommit_column_icon();if(ommit_col_icon)cols--;
 		x.th(cols);
 		if(hasbit(BIT_DISP_PATH)){
 //			if(path.isin(root)){
 //			String pp=path.fullpath().substring(root.fullpath().length());
 			String pp=path.name();
 			x.span("float:left");
-				x.p(pp);
-				x.spanEnd();
+			x.p(pp);
+			x.spanEnd();
 //			}
 		}
 		final String icnfile="◻";
@@ -167,12 +164,9 @@ public class list extends a{
 			x.spanEnd();
 			x.nl();
 		}else{
-			if(hasbit(BIT_ALLOW_QUERY))
-				x.inputax(q,null,this,null).focus(q);
-			if(hasbit(BIT_ALLOW_FILE_CREATE))
-				x.ax(this,"c",icnfile);
-			if(hasbit(BIT_ALLOW_DIR_CREATE))
-				x.ax(this,"d",icndir);
+			if(hasbit(BIT_ALLOW_QUERY))x.inputax(q,null,this,null).focus(q);
+			if(hasbit(BIT_ALLOW_FILE_CREATE))x.ax(this,"c",icnfile);
+			if(hasbit(BIT_ALLOW_DIR_CREATE))x.ax(this,"d",icndir);
 			x.spanEnd();
 			x.nl();
 			long total_bytes=0;
@@ -184,20 +178,15 @@ public class list extends a{
 //				final String nameenc=b.urlencode(name);
 				final boolean isdir=p.isdir();
 				x.tr();
-				x.td("icns");
-				if(isdir)
-					if((bits&BIT_ALLOW_DIR_ENTER)!=0)
-						x.ax(this,"e "+fnm,icndir);
+				if(!ommit_col_icon){
+					x.td("icns");
+					if(isdir)
+						if((bits&BIT_ALLOW_DIR_ENTER)!=0)x.ax(this,"e "+fnm,icndir);
+						else x.p(icndir);
 					else
-						x.p(icndir);
-				else
-					if((bits&BIT_ALLOW_FILE_OPEN)!=0&&p.isfile())
-						x.ax(this,"e "+fnm,icnfile);
-					else
-						x.p(icnfile);
-				
-				//				x.p("<a href=\"javascript:ui.ax('").p(wid).p(" s ").p(nameEnc).p("')\">").p("↓").p("</a> ");
-				//				x.p("<a href=\"javascript:ui.ax('").p(wid).p(" r ").p(nameEnc).p("')\">").p("ĸ").p("</a> ");
+						if((bits&BIT_ALLOW_FILE_OPEN)!=0&&p.isfile())x.ax(this,"e "+fnm,icnfile);
+						else x.p(icnfile);
+				}
 				x.td("name");
 				final String uri=p.uri();
 				if((bits&BIT_ALLOW_FILE_LINK)!=0&&p.isfile()&&uri!=null)
@@ -206,14 +195,10 @@ public class list extends a{
 					x.p(fnm);
 				if(acttd){
 					x.td("del");
-					if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))
-						x.ax(this,"r "+fnm,icndel);				
-					if(p.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))
-						x.ax(this,"r "+fnm,icndel);
-					if(hasbit(BIT_ALLOW_SELECT))
-						x.ax(this,"se "+fnm,icnsel);
-					if(hasbit(BIT_ALLOW_RENAME))
-						x.ax(this,"ren "+fnm,icnren);
+					if(p.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))x.ax(this,"r "+fnm,icndel);				
+					if(p.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))x.ax(this,"r "+fnm,icndel);
+					if(hasbit(BIT_ALLOW_SELECT))x.ax(this,"se "+fnm,icnsel);
+					if(hasbit(BIT_ALLOW_RENAME))x.ax(this,"ren "+fnm,icnren);
 				}
 				if(!ommit_col_edit){
 					x.td("value");
@@ -239,7 +224,8 @@ public class list extends a{
 				}
 				x.nl();
 			}
-			x.tr().td();//icon
+			x.tr();
+			if(!ommit_col_icon)x.td();//icon
 			x.td();//name
 			if(!ommit_col_edit)x.td();//value
 			if(acttd)x.td();//
