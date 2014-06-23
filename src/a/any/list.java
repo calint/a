@@ -68,9 +68,9 @@ public class list extends a{
 		boolean ommit_column_icon();
 
 		
-		public static interface column_value{public void column_value(final xwriter x)throws Throwable;}
-		public static interface column_value_editor{public a column_value_editor()throws Throwable;}
-		public static interface actions{public List<a>actions();}
+		public static interface el_column_value{public void column_value(final xwriter x)throws Throwable;}
+		public static interface el_column_value_editor{public a column_value_editor()throws Throwable;}
+		public static interface el_actions{public List<a>actions();}
 	}
 	//	protected el root=new elpath(null,b.path());
 	protected el root;{
@@ -121,8 +121,8 @@ public class list extends a{
 		x.css("table.f td.value input","width:18em;background:#eee;border:1px dotted #abc;padding:.5em");
 		x.styleEnd();
 
-		if(path instanceof el.actions){
-			actions=((el.actions)path).actions();
+		if(path instanceof el.el_actions){
+			actions=((el.el_actions)path).actions();
 			x.p("<div style=\"text-align:center\">");
 			int i=0;
 			for(final a e:actions){
@@ -202,14 +202,14 @@ public class list extends a{
 				}
 				if(!ommit_col_edit){
 					x.td("value");
-					if(p instanceof el.column_value_editor){
-						final a e=((el.column_value_editor)p).column_value_editor();
+					if(p instanceof el.el_column_value_editor){
+						final a e=((el.el_column_value_editor)p).column_value_editor();
 						e.nm(p.name().replace('_','X'));
 						e.pt(this);
 						element_editors.add(e);
 						e.to(x);
-					}else if(p instanceof el.column_value){
-						((el.column_value)p).column_value(x);
+					}else if(p instanceof el.el_column_value){
+						((el.el_column_value)p).column_value(x);
 					}
 				}
 				if(!ommit_col_lastmod){
@@ -262,8 +262,7 @@ public class list extends a{
 	synchronized public final void x_e(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_ENTER))throw new Error("notallowed");
 		path=path.get(p);
-		if(path.isfile())
-			bd.from(path.inputstream());
+		if(path.isfile())bd.from(path.inputstream());
 		x.xu(this);
  		x.xfocus(path.isfile()?bd:q);		
 	}
@@ -298,8 +297,7 @@ public class list extends a{
 	synchronized public final void x_up(final xwriter x,final String y)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_UP))throw new Error("notallowed");
 		final el p=path.parent();
-		if(p==null)
-			return;
+		if(p==null)return;
 //		path=p.isin(root)?p:root;
 		path=p;
 		x.xu(this);
@@ -309,8 +307,7 @@ public class list extends a{
 		if(!hasbit(BIT_ALLOW_FILE_CREATE))throw new Error("notallowed");
 		if(q.toString().length()==0){x.xalert("enter name");x.xfocus(q);return;}
 		path=path.get(q.toString());
-		if(!path.exists())
-			path.append("");
+		if(!path.exists())path.append("");
 		bd.from(path.inputstream());
 		x.xu(this);
 		x.xfocus(bd);
