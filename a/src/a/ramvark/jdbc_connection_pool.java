@@ -34,9 +34,19 @@ final class jdbc_connection_pool implements DataSource{
 //		this.max_connections=max_connections;
 	}
 	@Override public Connection getConnection()throws SQLException{
-		final Connection cn;
-		cn=cons.poll();
-		if(cn!=null)return cn;
+		jdbc_connection_wrapper cn;
+		while(true){
+			cn=cons.poll();
+			if(cn==null)break;
+			final long t=System.currentTimeMillis();
+			final long dt=t-cn.t0_in_ms;
+			if(dt>close_intervall_in_ms){
+//				System.out.println("close con "+cn+"   dt "+dt+"   conpoolsize "+cons.size());
+				cn.close();
+				continue;
+			}
+			return cn;
+		}
 		final Connection c1=ds.getConnection();
 		final Connection c2=new jdbc_connection_wrapper(c1);
 		return c2;
