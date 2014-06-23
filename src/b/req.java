@@ -121,7 +121,7 @@ public final class req{
 	private int headervaluelen;
 	public static int abuse_header_value_len=256;
 	private int headerscount;
-	public static int abuse_header_count=16;
+	public static int abuse_header_count=32;
 	private void parse_header_value(){
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
@@ -129,7 +129,7 @@ public final class req{
 			if(b=='\n'){
 				hdrs.put(sb_header_name.toString().trim().toLowerCase(),sb_header_value.toString().trim());
 				headerscount++;
-				if(headerscount> abuse_header_count){close();throw new Error("abuseheaderscount"+headerscount);}
+				if(headerscount>abuse_header_count){close();throw new Error("abuseheaderscount"+headerscount);}
 				sb_header_name.setLength(0);
 				sb_header_value.setLength(0);
 				headernamelen=0;
