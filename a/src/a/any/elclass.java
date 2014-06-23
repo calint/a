@@ -86,4 +86,6 @@ final public class elclass implements el,el.el_actions{
 	@Override public boolean ommit_column_lastmod(){return true;}
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
+	
+	private static final long serialVersionUID=1;
 }
