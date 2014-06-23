@@ -6,7 +6,8 @@ import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-
+import static b.b.p;
+import b.b;
 public class store_in_jdbc_mysql extends store_in_jdbc{
 	public int connection_close_intervall_in_ms=10_000;
 	private DataSource ds;
@@ -18,7 +19,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 			final DataSource d;
 			final String dbname="RAMVARK";
 			final String url,username,password;
-			if(b.b.cloud_bees==true){
+			if(b.cloud_bees==true){
 				url="jdbc:"+System.getProperty("DATABASE_URL_"+dbname);
 				username=System.getProperty("DATABASE_USERNAME_"+dbname);
 				password=System.getProperty("DATABASE_PASSWORD_"+dbname);
@@ -27,7 +28,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 				username="ramvark";
 				password="ramvark";
 			}
-			b.b.log(new Exception("jdbc connection info: "+url+"   "+username+"   "+password));
+			p("jdbc info "+url+" "+username+" "+password);
 			final MysqlDataSource mds=new MysqlDataSource();
 			mds.setURL(url);
 			mds.setUser(username);

@@ -515,8 +515,9 @@ public final class req{
 			if(ses==null&&b.sessionfile_load){
 				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
 				if(sespth.exists()){
+					b.p("session load "+sespth);
 					try{ses=(session)sespth.readobj();}catch(final Throwable t){//? upgser
-						b.log(new Error("could not read session created new "+sespth));
+						b.log(new Error("could not read session, created new "+sespth));
 						ses=new session(sesid);
 					}
 					ses.bits(b.sessionbits(sesid));

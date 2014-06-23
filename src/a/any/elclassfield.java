@@ -45,7 +45,7 @@ final public class elclassfield implements el,el.column_value,el.column_value_ed
 				final Object o=f.get(null);
 				if(o==null)clr();
 				else set(o.toString());
-				x.inputText(this,null,this,"");
+				x.input(this,"text",null,null,this,null,null,this,null);
 //				x.p(this.toString());
 //				x.spc();
 //				x.ax(this);

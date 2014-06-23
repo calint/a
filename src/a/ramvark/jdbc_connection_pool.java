@@ -23,6 +23,7 @@ import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
 import javax.sql.DataSource;
+import static b.b.p;
 final class jdbc_connection_pool implements DataSource{
 	final DataSource ds;
 	final int close_intervall_in_ms;
@@ -41,7 +42,7 @@ final class jdbc_connection_pool implements DataSource{
 			final long t=System.currentTimeMillis();
 			final long dt=t-cn.t0_in_ms;
 			if(dt>close_intervall_in_ms){
-//				System.out.println("close con "+cn+"   dt "+dt+"   conpoolsize "+cons.size());
+				p("jdbc close ["+cons.size()+","+dt+"] "+cn);
 				cn.close();
 				continue;
 			}
@@ -56,7 +57,7 @@ final class jdbc_connection_pool implements DataSource{
 		private Connection cn;
 		private long t0_in_ms=System.currentTimeMillis();
 		jdbc_connection_wrapper(final Connection c){
-			System.out.println("new con "+c);
+			p("jdbc new "+c);
 			cn=c;
 		}
 		@Override public PreparedStatement prepareStatement(final String sql)throws SQLException{

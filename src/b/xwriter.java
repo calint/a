@@ -86,12 +86,12 @@ public final class xwriter{
 	public xwriter code(){return tag("code");}
 	public xwriter codeEnd(){return tage("code");}
 	public xwriter rend(final a a)throws Throwable{if(a==null)return this;a.to(this);return this;}
-	public xwriter inputText(final a a){return input(a,"text",null,null,null,null,null);}
-	public xwriter inputText(final a a,final String stylecls,final a axonreturn,final String axp){return input(a,"text",null,stylecls,axonreturn,axp,null);}
-	public xwriter inputText(final a a,final a axonreturn,final String axp){return input(a,"text",null,null,axonreturn,axp,null);}
-	public xwriter inputText(final a a,final String stylecls,final a axonreturn,final String axp,final String txt){return input(a,"text",null,stylecls,axonreturn,axp,txt);}
-	public xwriter inputColor(final a a){return input(a,"color",null,null,null,null,null);}
-	public xwriter input(final a a,final String type,final String style,final String stylecls,final a axonreturn,final String axp,final String txt){
+	public xwriter inputText(final a a){return input(a,"text",null,null,null,null,null,null,null);}
+	public xwriter inputText(final a a,final String stylecls,final a axonreturn,final String axp){return input(a,"text",null,stylecls,axonreturn,axp,null,null,null);}
+	public xwriter inputText(final a a,final a axonreturn,final String axp){return input(a,"text",null,null,axonreturn,axp,null,null,null);}
+	public xwriter inputText(final a a,final String stylecls,final a axonreturn,final String axp,final String txt){return input(a,"text",null,stylecls,axonreturn,axp,txt,null,null);}
+	public xwriter inputColor(final a a){return input(a,"color",null,null,null,null,null,null,null);}
+	public xwriter input(final a a,final String type,final String style,final String stylecls,final a axonreturn,final String axp,final String txt,final a on_change_ajax_elem,final String on_change_ajax_param){
 		tago("input").attr("value",txt==null?a.toString():txt).attrdef(a).attr("type",type);
 		if(style!=null)
 			attr("style",style);
@@ -101,7 +101,13 @@ public final class xwriter{
 			final String ax=axonreturn.id()+(axp!=null?(" "+axp):"");
 			attr("onkeypress","return $r(event,this,'"+ax+"')");
 		}
-		attr("onchange","$b(this)");
+		final StringBuilder sb=new StringBuilder();
+		sb.append("$b(this)");
+		if(on_change_ajax_elem!=null){
+			final String ax=axonreturn.id()+(axp!=null?(" "+on_change_ajax_param):"");
+			sb.append(";$x('"+ax+"')");
+		}
+		attr("onchange",sb.toString());
 		return tagoe();
 	}
 	public xwriter inputTextArea(final a a){return inputTextArea(a,null);}
