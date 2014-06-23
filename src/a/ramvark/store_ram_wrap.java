@@ -15,5 +15,6 @@ public class store_ram_wrap implements store{
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
 	}
 	public void load()throws Throwable{
+		st.notify();
 	}
 }
