@@ -34,4 +34,9 @@ final public class elpath implements el{
 	@Override public el parent(){return pt;}
 	@Override public OutputStream outputstream(){try{return pth.outputstream();}catch(Throwable t){throw new Error(t);}}
 	@Override public InputStream inputstream(){{try{return pth.inputstream();}catch(Throwable t){throw new Error(t);}}}
+
+	@Override public boolean ommit_column_edit(){return true;}
+	@Override public boolean ommit_column_lastmod(){return false;}
+	@Override public boolean ommit_column_size(){return false;}
+
 }

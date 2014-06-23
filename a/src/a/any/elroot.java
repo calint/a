@@ -54,4 +54,10 @@ final public class elroot implements el{
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	
 	final public elroot add(final el e){ls.add(e);return this;}
+	
+	
+	
+	@Override public boolean ommit_column_edit(){return false;}
+	@Override public boolean ommit_column_lastmod(){return false;}
+	@Override public boolean ommit_column_size(){return false;}
 }
