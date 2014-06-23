@@ -14,7 +14,6 @@ import java.util.Locale;
 
 import b.a;
 import b.b;
-import b.req;
 import b.xwriter;
 public class list extends a{
 	private static final long serialVersionUID=1;
@@ -73,14 +72,15 @@ public class list extends a{
 		public static interface el_actions{public List<a>actions();}
 	}
 	//	protected el root=new elpath(null,b.path());
-	protected el root;{
-		final elroot l=new elroot(null,"any");
-		root=l;
-		l.add(new elclass(root,list.class,"config any"));
-		l.add(new elclass(root,b.class,"config web server"));
-		l.add(new elclass(root,req.class,"config web server requests"));
-		l.add(new elpath(root,b.path(),"browse server files"));
-	}
+	protected el root;
+//	{
+//		final elroot l=new elroot(null,"any");
+//		root=l;
+//		l.add(new elclass(root,list.class,"config any"));
+//		l.add(new elclass(root,b.class,"config web server"));
+//		l.add(new elclass(root,req.class,"config web server requests"));
+//		l.add(new elpath(root,b.path(),"browse server files"));
+//	}
 	protected el path=root;
 	private ArrayList<a>element_editors=new ArrayList<a>();
 	protected boolean sort=true;
