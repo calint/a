@@ -83,4 +83,5 @@ final public class elclass implements el,el.actions{
 	@Override public boolean ommit_column_edit(){return false;}
 	@Override public boolean ommit_column_lastmod(){return true;}
 	@Override public boolean ommit_column_size(){return true;}
+	@Override public boolean ommit_column_icon(){return false;}
 }
