@@ -1,2 +1,15 @@
 package a.any;
-public class $ extends list{static final long serialVersionUID=1;}
+
+import b.b;
+import b.req;
+
+public class $ extends list{{
+
+	final elroot l=new elroot(null,"any");
+	path=root=l;
+	l.add(new elpath(root,b.path(),"files"));
+//	l.add(new elclass(root,list.class,"any"));
+	l.add(new elclass(root,b.class,"server"));
+	l.add(new elclass(root,req.class,"request"));
+	
+}static final long serialVersionUID=1;}
