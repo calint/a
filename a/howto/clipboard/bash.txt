@@ -1,0 +1,50 @@
+ls lib|while read f;do echo -n $f;echo -n :;done
+
+if [ ! -f path/filename ];then echo "file does not exist";fi
+
+if [ ! -d src ];then echo "dir does not exist";fi
+
+> date +%F
+2014-06-23
+
+> date +%F---%H:%M:%S-
+2014-06-23---13:40:01-
+
+> pwd
+/Users/calin/Documents/archive
+
+> dirname `pwd`
+/Users/calin/Documents
+
+> basename `pwd`
+archive
+> 
+
+zip -x '*/.svn/*' -x .DS_Store -rvg svn-google--`date +%F`.zip ../svn-googlecode/
+
+#!/bin/sh
+echo `date`
+FILE=googlecode--`date +%F`.zip
+DIR=$PWD
+cd ../svn-googlecode&&
+ zip -x '*/.svn/*' -x .DS_Store -rg ../archive/$FILE .&&
+  cd $DIR&&
+    echo&&echo&&ls -la $FILE
+echo `date`
+
+
+cat getdirs.ls|while read ln;do echo $ln&&svn checkout http://calintenitchi.googlecode.com/svn/$ln;done
+
+
+
+
+
+
+#!/bin/sh
+d=`date +%Y-%m-%d---%H:%M:%S-`
+mkdir -p ~/snp/ && cp -ar $1 ~/snp/$2$1---$d
+ls -l ~/snp/$1*
+
+
+
+

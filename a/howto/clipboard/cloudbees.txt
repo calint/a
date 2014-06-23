@@ -1,0 +1,8 @@
+bees app:tail bb
+
+mysql --host=ec2-23-21-211-172.compute-1.amazonaws.com --port=3306 --user=ramvark --password=ramvark
+
+bees db:create -u ramvark -p ramvark ramvark
+
+bees app:bind -db ramvark -a bb -as ramvark
+
