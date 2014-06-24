@@ -50,4 +50,5 @@ final class osjsstr extends OutputStream{
 		if(k!=0)
 			os.write(c,off+i,k);
 	}
+	@Override public void flush()throws IOException{os.flush();}
 }
