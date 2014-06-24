@@ -106,3 +106,11 @@ exit 0
 >
 
 
+
+
+
+SUSESTUDIO
+> chmod 600 ./suse-studio-b2016555-us-east-1-key.pem
+> ssh -i ./suse-studio-b2016555-us-east-1-key.pem root@ec2-54-88-112-237.compute-1.amazonaws.com
+
+
