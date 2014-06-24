@@ -1,0 +1,108 @@
+> aws configure
+AWS Access Key ID [****************7ZBQ]: 
+AWS Secret Access Key [****************0UxL]: 
+Default region name [us-west-2]: us-east-1
+Default output format [json]: 
+
+
+> aws ec2 describe-instances
+{
+    "Reservations": [
+        {
+            "OwnerId": "805417887619", 
+            "ReservationId": "r-86f29df9", 
+            "Groups": [], 
+            "Instances": [
+                {
+                    "Monitoring": {
+                        "State": "disabled"
+                    }, 
+                    "PublicDnsName": "ec2-54-88-105-115.compute-1.amazonaws.com", 
+                    "RootDeviceType": "ebs", 
+                    "State": {
+                        "Code": 16, 
+                        "Name": "running"
+                    }, 
+                    "EbsOptimized": false, 
+                    "LaunchTime": "2014-06-24T05:22:57.000Z", 
+                    "PublicIpAddress": "54.88.105.115", 
+                    "PrivateIpAddress": "172.31.18.48", 
+                    "ProductCodes": [], 
+                    "VpcId": "vpc-1bc3117e", 
+                    "StateTransitionReason": null, 
+                    "InstanceId": "i-5a43cf71", 
+                    "ImageId": "ami-018c9568", 
+
+
+> aws ec2 stop-instances --instance-ids i-5a43cf71
+{
+    "StoppingInstances": [
+        {
+            "InstanceId": "i-5a43cf71", 
+            "CurrentState": {
+                "Code": 64, 
+                "Name": "stopping"
+            }, 
+            "PreviousState": {
+                "Code": 16, 
+                "Name": "running"
+            }
+        }
+    ]
+}
+
+
+> aws ec2 start-instances --instance-ids i-5a43cf71
+{
+    "StartingInstances": [
+        {
+            "InstanceId": "i-5a43cf71", 
+            "CurrentState": {
+                "Code": 0, 
+                "Name": "pending"
+            }, 
+            "PreviousState": {
+                "Code": 80, 
+                "Name": "stopped"
+            }
+        }
+    ]
+}
+
+
+
+ubuntu@ip-172-31-18-48:~$ cat /etc/rc.local 
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+cd /home/ubuntu/a&&sh ba.sh>/home/ubuntu/a/ba.log&
+
+exit 0
+
+
+
+
+> aws ec2 reboot-instances --instance-ids i-5a43cf71
+{
+    "return": "true"
+}
+
+
+
+> aws ec2 describe-instances --instance-ids i-5a43cf71|grep PublicDnsName
+                    "PublicDnsName": "ec2-54-86-247-192.compute-1.amazonaws.com", 
+                                "PublicDnsName": "ec2-54-86-247-192.compute-1.amazonaws.com", 
+                                        "PublicDnsName": "ec2-54-86-247-192.compute-1.amazonaws.com", 
+>
+
+
