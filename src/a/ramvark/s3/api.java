@@ -36,7 +36,7 @@ public class api extends a{
 		x.css(accesskey,"width:13em");
 		x.css(secretkey,"width:25em");
 		x.styleEnd();
-		x.p("amazon s3 access key ").inputText(accesskey);
+		x.p("aws.amazon.com   access key ").inputText(accesskey);
 		x.p(" secret key ").inputText(secretkey).spc();
 		x.ax(this).nl();
 		x.output(output);
@@ -56,10 +56,8 @@ public class api extends a{
 		x.xube();
 	}
 	private void main(final String[]args,final xwriter x)throws Throwable{
-		x.pl("amazon s3 test").flush();
-
-		
-		x.pl("amazon s3: creating client").flush();
+		x.pl("amazon s3").flush();
+		x.pl("creating client").flush();
 		final AmazonS3 s3=new AmazonS3Client(new AWSCredentials(){
 			@Override public String getAWSSecretKey(){return args[0];}
 			@Override public String getAWSAccessKeyId(){return args[1];}
@@ -70,15 +68,15 @@ public class api extends a{
 		String bucketName = "my-first-s3-bucket-" + UUID.randomUUID();
 		String key = "MyObjectKey";
 		
-		x.pl("amazon s3: creating bucket").flush();
+		x.pl(" • creating bucket").flush();
 		s3.createBucket(bucketName);
-		x.pl("amazon s3: listing buckets").flush();
+		x.pl(" • listing buckets").flush();
 		for(Bucket bucket:s3.listBuckets()){
 			x.p(" - ").pl(bucket.getName()).flush();
 		}
-		x.pl("amazon s3: put object").flush();
+		x.pl(" • put object").flush();
 		s3.putObject(new PutObjectRequest(bucketName,key,createSampleFile()));
-		x.pl("amazon s3: get object").flush();
+		x.pl(" • get object").flush();
 		final S3Object object=s3.getObject(new GetObjectRequest(bucketName,key));
 		final BufferedReader reader=new BufferedReader(new InputStreamReader(object.getObjectContent()));
 		while(true){
@@ -86,14 +84,14 @@ public class api extends a{
 			if(line==null)break;
 			x.p("    ").pl(line).flush();
 		}
-		x.pl("amazon s3: list objects").flush();
+		x.pl(" • list objects").flush();
 		final ObjectListing objectListing=s3.listObjects(new ListObjectsRequest().withBucketName(bucketName).withPrefix("My"));
 		for(S3ObjectSummary objectSummary:objectListing.getObjectSummaries()){
 			x.p(" - ").p(objectSummary.getKey()).spc().p("(size = ").p(objectSummary.getSize()).pl(")");
 		}
-		x.pl("amazon s3: delete object").flush();
+		x.pl(" • delete object").flush();
 		s3.deleteObject(bucketName,key);
-		x.pl("amazon s3: delete bucket").flush();
+		x.pl(" • delete bucket").flush();
 		s3.deleteBucket(bucketName);
 	}
 	private static File createSampleFile()throws IOException{
