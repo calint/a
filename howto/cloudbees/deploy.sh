@@ -14,7 +14,7 @@ if [ -d u ];then echo "  •• delete user files"&&rm -rf u;fi
 echo "42">$BLITZ_IO_ID&&    # blitz.io key
 zip deploy.zip -r .&&
 ls -lah deploy.zip&&
-bees app:deploy -a bb -t java -P java_version=1.8 -R classpath=bin:lib/mysql-connector-java-5.1.31-bin.jar -R class=b.b -R args="cloud_bees true root_dir app" -v -d false deploy.zip stickySession=true httpVersion=1.1 jvmFileEncoding=UTF-8&&
+bees app:deploy -a bb -t java -P java_version=1.8 -R classpath=bin:lib/mysql-connector-java-5.1.31-bin.jar:aws-java-sdk-1.8.0.jar -R class=b.b -R args="cloud_bees true root_dir app" -v -d false deploy.zip stickySession=true httpVersion=1.1 jvmFileEncoding=UTF-8&&
 cd ..&&
 rm -rf $WD&&
 echo "  •• clear workdir $WD"&&
