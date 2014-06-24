@@ -7,5 +7,6 @@
 			<attribute name="javadoc_location" value="file:/Users/calin/Downloads/mysql-connector-java-5.1.31/docs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/aws-java-sdk-1.8.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
