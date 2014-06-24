@@ -29,4 +29,5 @@ public final class osltgt extends OutputStream{
 		if(l!=0)
 			os.write(c,off+i,l);
 	}
+	@Override public void flush()throws IOException{os.flush();}
 }
