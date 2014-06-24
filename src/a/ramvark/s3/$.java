@@ -26,7 +26,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
-public class api extends a{
+public class $ extends a{
 	public a accesskey;
 	public a secretkey;
 	public a output;
@@ -93,6 +93,7 @@ public class api extends a{
 		s3.deleteObject(bucketName,key);
 		x.pl(" • delete bucket").flush();
 		s3.deleteBucket(bucketName);
+		x.pl(" • done").flush();
 	}
 	private static File createSampleFile()throws IOException{
 		File file=File.createTempFile("aws-java-sdk-",".txt");

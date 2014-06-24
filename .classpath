@@ -15,5 +15,5 @@
 	<classpathentry kind="lib" path="lib/jackson-databind-2.2.4.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.3.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>
