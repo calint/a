@@ -19,10 +19,11 @@ final public class b{
 	public static String id=""+(int)Math.floor(Math.random()*10000);
 	public static String root_dir=".";
 	public static String server_port=ensure(System.getProperty("app.port"),"8888");
+	public static boolean print_requests=true;
 	public static boolean try_file=true;
 	public static boolean try_rc=true;
 	public static boolean thd_watch=true;
-	public static int thd_watch_sleep_in_ms=1000;
+	public static int thd_watch_sleep_in_ms=10000;
 	public static int thd_watch_report_every_ms=60000;
 	public static boolean thread_pool=true;
 	public static int thread_pool_size=16;
