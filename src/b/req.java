@@ -26,6 +26,7 @@ public final class req{
 			ba=bb.array();
 			ba_pos=bb.position();
 			ba_rem=bb.remaining();
+			if(b.print_requests)b.p(this.toString());
 		}
 		while(ba_rem>0){switch(state){default:throw new Error();
 			case state_nextreq:methodlen=0;state=state_method;
@@ -744,7 +745,7 @@ public final class req{
 	public String path(){return path_s;}
 	public String query(){return query_s;}
 	public session session(){return ses;}
-	public String toString(){return new String(ba, ba_pos, ba_rem)+(bb_content==null?"":new String(bb_content.slice().array()));}
+	public String toString(){return new String(ba,ba_pos,ba_rem)+(bb_content==null?"":new String(bb_content.slice().array()));}
 
 	public static req get(){return((thdreq)Thread.currentThread()).r;}
 	public static long cachef_size(){
@@ -808,7 +809,7 @@ public final class req{
 		if(b.cache_uris)cacheu=Collections.synchronizedMap(new LinkedHashMap<String,chdresp>());
 	}
 
-	final static byte[]h_http200="HTTP/1.1 200".getBytes();
+	final static byte[]h_http200="HTTP/1.1 200 OK".getBytes();
 	final static byte[]h_content_length="\r\nContent-Length: ".getBytes();
 	final static byte[]h_last_modified="\r\nLast-Modified: ".getBytes();
 	final static byte[]h_content_type="\r\nContent-Type: ".getBytes();
