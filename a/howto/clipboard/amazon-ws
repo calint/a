@@ -127,7 +127,7 @@ total size is 38545449  speedup is 1493.14
 
 
 
-> rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz -e 'ssh -i /Users/calin/Documents/workspace/wallet/ramvark-keypair.pem' . root@ec2-54-84-79-135.compute-1.amazonaws.com:/a/
+rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz -e 'ssh -i /Users/calin/Documents/workspace/wallet/ramvark-keypair.pem' /Users/calin/Documents/workspace/a root@ec2-54-84-79-135.compute-1.amazonaws.com:/a/
 building file list ... 
 1511 files to consider
 
