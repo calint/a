@@ -16,10 +16,10 @@ final public class b{
 	public final static long P=K*T;
 	public final static String pathsep="/";
 	public static String hello="public domain server #1";
-	public static String id=""+(int)Math.floor(Math.random()*10000);
+	public static String id=""+(int)Math.floor(Math.random()*10000);//? fixedwidth
 	public static String root_dir=".";
 	public static String server_port=ensure(System.getProperty("app.port"),"8888");
-	public static boolean print_requests=true;
+	public static boolean print_requests=false;
 	public static boolean try_file=true;
 	public static boolean try_rc=true;
 	public static boolean thd_watch=true;

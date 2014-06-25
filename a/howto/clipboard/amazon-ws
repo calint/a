@@ -114,3 +114,42 @@ SUSESTUDIO
 > ssh -i ./suse-studio-b2016555-us-east-1-key.pem root@ec2-54-88-112-237.compute-1.amazonaws.com
 
 
+> rsync --exclude .svn --progress -avz -e 'ssh -i ../ramvark-keypair.pem' . root@ec2-54-84-79-135.compute-1.amazonaws.com:/a/
+
+
+> rsync --delete --exclude .svn --progress -avz -e 'ssh -i /Users/calin/Documents/workspace/wallet/ramvark-keypair.pem' . root@ec2-54-84-79-135.compute-1.amazonaws.com:/a/
+building file list ... 
+1511 files to consider
+
+sent 25795 bytes  received 20 bytes  3442.00 bytes/sec
+total size is 38545449  speedup is 1493.14
+> 
+
+
+
+> rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz -e 'ssh -i /Users/calin/Documents/workspace/wallet/ramvark-keypair.pem' . root@ec2-54-84-79-135.compute-1.amazonaws.com:/a/
+building file list ... 
+1511 files to consider
+
+sent 25819 bytes  received 20 bytes  3975.23 bytes/sec
+total size is 38545772  speedup is 1491.77
+> 
+
+
+> ssh -i ~/Documents/workspace/wallet/ramvark-keypair.pem root@ec2-54-84-79-135.compute-1.amazonaws.com 'echo hello'
+hello
+
+
+
+> ssh -i ~/Documents/workspace/wallet/ramvark-keypair.pem root@ec2-54-84-79-135.compute-1.amazonaws.com 'killall -9 java ; cd /a && /jdk1.8.0_05/bin/java -cp bin b.b server_port 80'
+> conf server_port=80
+
+
+
+
+
+
+
+
+
+
