@@ -31,7 +31,7 @@ final public class any_instances implements el{
 		final ArrayList<String>ls=new ArrayList<String>();
 		for(final Instance o:instances_cache){
 			final String nm=o.getInstanceId();
-			if(query!=null&&nm.startsWith(query))continue;
+			if(query!=null&&!nm.startsWith(query))continue;
 			ls.add(nm);
 //				x.p(o.getTags()+" "+o.getState()+" "+o.getInstanceId()+"\t"+o.getPublicIpAddress()+"\t"+o.getPublicDnsName()).nl();
 		}
