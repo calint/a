@@ -41,6 +41,7 @@ public class key extends a{
 			final session s=req.get().session();
 			s.put(SECRET_KEY,aws_secret_key);
 			s.put(ACCESS_KEY_ID,aws_access_key_id);
+			//? use instance from session, cache client
 		}catch(Throwable t){
 			y.xube();
 			throw new Error(t);
