@@ -28,53 +28,74 @@ final public class any_instances implements el{
 	@Override public boolean isdir(){return true;}
 	@Override public List<String>list(){return list(null);}
 	@Override public List<String>list(final String query){
-		final session s=req.get().session();
-		final String aws_secret_key=b.b.tostr(s.get(key.SECRET_KEY),null);
-		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href=/amazon.ec2.secret>setting amazon secret</a>");
-		final String aws_access_key_id=b.b.tostr(s.get(key.ACCESS_KEY_ID),null);
-//		final long t0=System.currentTimeMillis();
-		final AmazonEC2Client ec=new AmazonEC2Client(new AWSCredentials(){
-			@Override public String getAWSSecretKey(){return aws_secret_key;}
-			@Override public String getAWSAccessKeyId(){return aws_access_key_id;}
-		});
-//		final long t1=System.currentTimeMillis();
-//		x.pl("time to create client in millis: "+(t1-t0));
-		final DescribeInstancesResult di=ec.describeInstances();
-//		final long t2=System.currentTimeMillis();
-//		x.pl("time to describe instances in millis: "+(t2-t1));
-		final List<Reservation>lsr=di.getReservations();
+		ensure_instances_cache();
 		final ArrayList<String>ls=new ArrayList<String>();
-		for(final Reservation rr:lsr){
-			for(final Instance o:rr.getInstances()){
-				final String nm=o.getInstanceId();
-				if(query!=null&&nm.startsWith(query))continue;
-				ls.add(nm);
+		for(final Instance o:instances_cache){
+			final String nm=o.getInstanceId();
+			if(query!=null&&nm.startsWith(query))continue;
+			ls.add(nm);
 //				x.p(o.getTags()+" "+o.getState()+" "+o.getInstanceId()+"\t"+o.getPublicIpAddress()+"\t"+o.getPublicDnsName()).nl();
-			}
 		}
 		return ls;
 	}
-	@Override public el get(String name){
-		System.out.println("get instance "+name);
+	private void ensure_instances_cache(){
+		final long t=System.currentTimeMillis();
+		final long dt=t-instances_cache_ts;
+		if(dt<instances_cache_ms&&instances_cache!=null)return;
+		b.b.pl("amazon.ec2: refreshing instances, "+dt+" ms");
+		instances_cache_ts=t;
 		final session s=req.get().session();
 		final String aws_secret_key=b.b.tostr(s.get(key.SECRET_KEY),null);
-		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href=/amazon.ec2.key>setting amazon secret</a>");
+		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href=/amazon.ec2.key>setting amazon key</a>");
 		final String aws_access_key_id=b.b.tostr(s.get(key.ACCESS_KEY_ID),null);
-//		final long t0=System.currentTimeMillis();
+//			final long t0=System.currentTimeMillis();
 		final AmazonEC2Client ec=new AmazonEC2Client(new AWSCredentials(){
 			@Override public String getAWSSecretKey(){return aws_secret_key;}
 			@Override public String getAWSAccessKeyId(){return aws_access_key_id;}
 		});
-		
-		final DescribeInstancesRequest dir=new DescribeInstancesRequest()
-			.withInstanceIds(name);
-		final DescribeInstancesResult di=ec.describeInstances(dir);
+//			final long t1=System.currentTimeMillis();
+//			x.pl("time to create client in millis: "+(t1-t0));
+		final DescribeInstancesResult di=ec.describeInstances();
+//			final long t2=System.currentTimeMillis();
+//			x.pl("time to describe instances in millis: "+(t2-t1));
 		final List<Reservation>lsr=di.getReservations();
-		final Reservation r=lsr.isEmpty()?null:lsr.get(0);
-		if(r==null)return null;
-		final List<Instance>ins=r.getInstances();
-		final Instance inst=ins.isEmpty()?null:ins.get(0);
-		return new any_instance(this,inst);
+		instances_cache=new ArrayList<Instance>();
+		for(final Reservation rr:lsr){
+			for(final Instance o:rr.getInstances()){
+				instances_cache.add(o);
+//					x.p(o.getTags()+" "+o.getState()+" "+o.getInstanceId()+"\t"+o.getPublicIpAddress()+"\t"+o.getPublicDnsName()).nl();
+			}
+		}
+	}
+	private List<Instance>instances_cache;
+	private long instances_cache_ts;
+	public static int instances_cache_ms=5000;
+	@Override public el get(String name){
+//		System.out.println("get instance "+name);
+//		final session s=req.get().session();
+//		final String aws_secret_key=b.b.tostr(s.get(key.SECRET_KEY),null);
+//		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href=/amazon.ec2.key>setting amazon secret</a>");
+//		final String aws_access_key_id=b.b.tostr(s.get(key.ACCESS_KEY_ID),null);
+////		final long t0=System.currentTimeMillis();
+//		final AmazonEC2Client ec=new AmazonEC2Client(new AWSCredentials(){
+//			@Override public String getAWSSecretKey(){return aws_secret_key;}
+//			@Override public String getAWSAccessKeyId(){return aws_access_key_id;}
+//		});
+//		
+//		final DescribeInstancesRequest dir=new DescribeInstancesRequest()
+//			.withInstanceIds(name);
+//		final DescribeInstancesResult di=ec.describeInstances(dir);
+//		final List<Reservation>lsr=di.getReservations();
+//		final Reservation r=lsr.isEmpty()?null:lsr.get(0);
+//		if(r==null)return null;
+//		final List<Instance>ins=r.getInstances();
+//		final Instance inst=ins.isEmpty()?null:ins.get(0);
+		ensure_instances_cache();
+		for(final Instance i:instances_cache){
+			if(i.getInstanceId().equals(name))
+				return new any_instance(this,i);
+		}
+		return null;
 	}
 	@Override public long size(){return 0;}
 	@Override public long lastmod(){return 0;}
