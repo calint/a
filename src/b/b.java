@@ -275,7 +275,7 @@ final public class b{
 			final String fldnm=args[i];
 			final Field fld=cls.getField(fldnm);
 			final String val=args[i+1];
-			p("conf "+fldnm+"="+val);
+			pl("conf "+fldnm+"="+val);
 			final Class<?>fldcls=fld.getType();
 			if(fldcls.isAssignableFrom(String.class))fld.set(null,val);
 			else if(fldcls.isAssignableFrom(int.class))fld.set(null,Integer.parseInt(val));
@@ -292,5 +292,5 @@ final public class b{
 	public static void cp(final InputStream in,final Writer out)throws Throwable{
 		cp(new InputStreamReader(in,strenc),out,null);
 	}
-	public static void p(final String s){System.out.print("> ");System.out.println(s);}
+	public static void pl(final String s){System.out.print("> ");System.out.println(s);}
 }

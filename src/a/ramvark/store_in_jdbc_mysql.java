@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-import static b.b.p;
+import static b.b.pl;
 import b.b;
 public class store_in_jdbc_mysql extends store_in_jdbc{
 	public int connection_close_intervall_in_ms=10_000;
@@ -28,7 +28,7 @@ public class store_in_jdbc_mysql extends store_in_jdbc{
 				username="ramvark";
 				password="ramvark";
 			}
-			p("jdbc info "+url+" "+username+" "+password);
+			pl("jdbc info "+url+" "+username+" "+password);
 			final MysqlDataSource mds=new MysqlDataSource();
 			mds.setURL(url);
 			mds.setUser(username);

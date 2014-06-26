@@ -26,7 +26,7 @@ public final class req{
 			ba=bb.array();
 			ba_pos=bb.position();
 			ba_rem=bb.remaining();
-			if(b.print_requests)b.p(this.toString());
+			if(b.print_requests)b.pl(this.toString());
 		}
 		while(ba_rem>0){switch(state){default:throw new Error();
 			case state_nextreq:methodlen=0;state=state_method;
@@ -516,7 +516,7 @@ public final class req{
 			if(ses==null&&b.sessionfile_load){
 				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
 				if(sespth.exists()){
-					b.p("session load "+sespth);
+					b.pl("session load "+sespth);
 					try{ses=(session)sespth.readobj();}catch(final Throwable t){//? upgser
 						b.log(new Error("could not read session, created new "+sespth));
 						ses=new session(sesid);
