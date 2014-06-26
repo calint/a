@@ -78,18 +78,18 @@ public class $ extends a{
 			@Override public String getAWSAccessKeyId(){return args[1];}
 		});
 		x.nl().nl().pl("run instances");
-		final RunInstancesRequest rir=new RunInstancesRequest()
+		final RunInstancesRequest ri=new RunInstancesRequest()
 			.withImageId("ami-8e8a70e6")
 			.withInstanceType("t1.micro")
 			.withMinCount(1)
 			.withMaxCount(1)
 			.withKeyName("ramvark-keypair")
 			.withSecurityGroups("allopen");
-		x.pl(rir.toString());
-		final RunInstancesResult rirs=ec.runInstances(rir);
-		x.pl(rirs.toString());
+		x.pl(ri.toString());
+		final RunInstancesResult ris=ec.runInstances(ri);
+		x.pl(ris.toString());
 		x.pl("");
-		final Reservation r=rirs.getReservation();
+		final Reservation r=ris.getReservation();
 		for(final Instance o:r.getInstances()){
 			x.pl(o.getInstanceId()+" "+o.getPublicIpAddress()+" "+o.getPublicIpAddress());
 		}
