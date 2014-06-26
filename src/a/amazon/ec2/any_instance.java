@@ -14,7 +14,7 @@ final public class any_instance implements el{
 	public any_instance(final el parent,final Instance i){pt=parent;ins=i;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return ins.getInstanceId();}
-	@Override public String fullpath(){return "";}
+	@Override public String fullpath(){return ins.getPublicDnsName();}
 	@Override public boolean isfile(){return false;}
 	@Override public boolean isdir(){return false;}
 	@Override public List<String>list(){return null;}
@@ -24,7 +24,7 @@ final public class any_instance implements el{
 	@Override public long lastmod(){return 0;}
 	@Override public String uri(){return null;}
 	@Override public boolean exists(){return true;}
-	@Override public void append(String cs){throw new UnsupportedOperationException();}
+	@Override public void append(final String cs){throw new UnsupportedOperationException();}
 	@Override public boolean rm(){throw new UnsupportedOperationException();}
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
