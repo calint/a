@@ -1,0 +1,18 @@
+start time: 2014-06-26---13:49:22-
+url: www.ramvark.net/typealine
+duration: 10
+clients: 20
+ • ab2 -c 20 -t 10 www.ramvark.net/typealine
+Failed requests:        0
+Failed requests:        0
+Complete requests:      7974
+Complete requests:      7862
+Total transferred:      5949350 bytes
+Total transferred:      5865052 bytes
+Transfer rate:          577.47 [Kbytes/sec] received
+Transfer rate:          572.75 [Kbytes/sec] received
+Time taken for tests:   10.061 seconds
+Time taken for tests:   10.000 seconds
+Requests per second:    792.57 [#/sec] (mean)
+Requests per second:    786.19 [#/sec] (mean)
+end time: 2014-06-26---13:49:36-
