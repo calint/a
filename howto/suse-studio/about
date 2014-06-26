@@ -1,0 +1,1 @@
+ssh root@192.168.1.35 'killall -9 java ; /studio/suse-studio-custom'
