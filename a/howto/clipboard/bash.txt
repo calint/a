@@ -45,6 +45,8 @@ d=`date +%Y-%m-%d---%H:%M:%S-`
 mkdir -p ~/snp/ && cp -ar $1 ~/snp/$2$1---$d
 ls -l ~/snp/$1*
 
+rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz /Users/calin/Documents/workspace/a/ root@192.168.1.35:/a/
+
 
 
 
