@@ -97,10 +97,13 @@ public class list extends a{
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
 		element_editors.clear();
-		if(b.isempty(query))
-			files=path.list();
-		else
-			files=path.list(query);
+		try{
+			if(b.isempty(query))files=path.list();
+			else files=path.list(query);
+		}catch(Throwable t){
+			x.pl(b.stacktrace(t));
+			return;
+		}
 		if(files!=null){
 			if(sort)sort(files);
 			if(sort_dirsfirst)sort_dirsfirst(files);
