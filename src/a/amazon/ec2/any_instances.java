@@ -41,7 +41,7 @@ final public class any_instances implements el{
 		final long t=System.currentTimeMillis();
 		final long dt=t-instances_cache_ts;
 		if(dt<instances_cache_ms&&instances_cache!=null)return;
-		b.b.pl("amazon.ec2: refreshing instances, "+dt+" ms");
+		b.b.pl("amazon.ec2: refreshing instances cache, "+dt+" ms");
 		instances_cache_ts=t;
 		final session s=req.get().session();
 		final String aws_secret_key=b.b.tostr(s.get(key.SECRET_KEY),null);
