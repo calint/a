@@ -29,7 +29,7 @@ final public class any_instance implements el{
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	
-	@Override public boolean ommit_column_edit(){return false;}
+	@Override public boolean ommit_column_edit(){return true;}
 	@Override public boolean ommit_column_lastmod(){return true;}
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
