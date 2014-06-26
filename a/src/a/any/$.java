@@ -11,5 +11,6 @@ public class $ extends list{{
 //	l.add(new elclass(root,list.class,"any"));
 	l.add(new elclass(root,b.class,"server"));
 	l.add(new elclass(root,req.class,"request"));
+	l.add(new a.amazon.ec2.any_root(root,"amazon web"));
 	
 }static final long serialVersionUID=1;}
