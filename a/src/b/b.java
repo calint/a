@@ -48,7 +48,7 @@ final public class b{
 	public static @conf boolean print_requests=false;
 	public static @conf boolean try_file=true;
 	public static @conf boolean try_rc=true;
-	public static @conf_reboot(note="can be turned off without reboot")boolean thd_watch=true;
+	public static @conf_reboot(note="requires reboot to turn on")boolean thd_watch=true;
 	public static @conf @unit(name="ms")int thd_watch_sleep_in_ms=10000;
 	public static @conf @unit(name="ms")int thd_watch_report_every_ms=60000;
 	public static @conf_reboot boolean thread_pool=true;
