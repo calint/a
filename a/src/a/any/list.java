@@ -83,30 +83,33 @@ public class list extends a{
 //		l.add(new elclass(root,req.class,"config web server requests"));
 //		l.add(new elpath(root,b.path(),"browse server files"));
 //	}
-	protected el path=root;
+	protected el path;
 	private ArrayList<a>element_editors=new ArrayList<a>();
 	protected boolean sort=true;
 	protected boolean sort_dirsfirst=true;
 	public a bd;//file content
 	public final void root(final el e){this.root=e;}
+	public final void root_and_path(final el root,final el path){this.root=root;this.path=path;}
 	public final void bits(final int bits){this.bits=bits;}
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	
 	synchronized final public void to(final xwriter x) throws Throwable{
 		x.spano(this);
-		sts.to(x);
 //		tago("span").attr("id",e.id()).tagoe();
 //		x.tago("span").attr("id",id()).tagoe();
-		final List<String>files;
+		List<String>files;
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
 		element_editors.clear();
+		Throwable exception=null;
 		try{
 			if(b.isempty(query))files=path.list();
 			else files=path.list(query);
 		}catch(Throwable t){
-			x.pl(b.stacktrace(t));
-			return;
+//			x.pl(b.stacktrace(t));//? allow ..
+			exception=t;
+			files=null;
+//			return;
 		}
 		if(files!=null){
 			if(sort)sort(files);
@@ -251,8 +254,14 @@ public class list extends a{
 		}else{
 			x.focus(q);
 		}
-		x.nl();
+		x.nl().nl();
+		x.style(sts,"position:absolute;left:0;top:0;float:right");
+		sts.to(x);
+		if(exception!=null)
+			x.nl().pl(b.stacktrace(exception));//? allow ..
 		x.spanEnd();
+		
+		
 	}
 	private el firstinlist;
 	private List<a>actions;
