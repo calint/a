@@ -49,8 +49,8 @@ final public class b{
 	public static @conf boolean try_file=true;
 	public static @conf boolean try_rc=true;
 	public static @conf_reboot(note="can be turned off without reboot")boolean thd_watch=true;
-	public static @conf int thd_watch_sleep_in_ms=10000;
-	public static @conf int thd_watch_report_every_ms=60000;
+	public static @conf @unit(name="ms")int thd_watch_sleep_in_ms=10000;
+	public static @conf @unit(name="ms")int thd_watch_report_every_ms=60000;
 	public static @conf_reboot boolean thread_pool=true;
 	public static @conf int thread_pool_size=16;
 	public static @conf @unit(name="ms")long thread_pool_lftm=60*1000;
@@ -87,7 +87,7 @@ final public class b{
 	public static boolean cloud_bees=false;
 	
 	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
-	public static @conf @unit(name="tms")String timeatloadstrhtp=tolastmodstr(timeatload);
+	public static @conf String timeatloadstrhtp=tolastmodstr(timeatload);
 	public static PrintStream out=System.out;
 	public static PrintStream err=System.err;
 	private final static LinkedList<req>pending_req=new LinkedList<req>();
