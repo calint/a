@@ -36,7 +36,8 @@ final public class thdwatch extends Thread{
 	final static String _pad="       ";
 	public void run(){
 		while(!_stop)try{
-			if(!b.thd_watch)continue;
+			if(!b.thd_watch)
+				break;
 			sleep(b.thd_watch_sleep_in_ms);
 			ms=System.currentTimeMillis()-_t0;
 			if(ms-_t>b.thd_watch_report_every_ms){
