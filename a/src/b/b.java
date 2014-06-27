@@ -320,6 +320,7 @@ final public class b{
 	}
 	public static void pl(final String s){System.out.print("> ");System.out.println(s);}
 	
+	//? safe quantity unit math
 	public static @Retention(RetentionPolicy.RUNTIME)@interface unit{String name()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface conf{String note()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface conf_reboot{String note()default"";}
