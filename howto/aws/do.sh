@@ -33,7 +33,7 @@ for((;;));do
 done
 
 echo
-echo " • restart $INSTANCE_DNS"
+echo " • restart web server on $INSTANCE_DNS"
 ssh -o StrictHostKeyChecking=no -i $HOME/wallet/ramvark-keypair.pem root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
 
 echo
