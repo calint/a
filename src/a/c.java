@@ -5,10 +5,10 @@ import static b.b.*;
 import java.io.*;
 import java.util.*;
 final public class c extends a implements cacheable,bin{static final long serialVersionUID=1;
-	public String contenttype(){return "text/plain;charset=utf8";}
+	public String contenttype(){return "text/html;charset=utf8";}
 	public boolean cacheforeachuser(){return false;}
 	public long lastmodupdms(){return 1000;}
-	public String filetype(){return "txt";}
+	public String filetype(){return "html";}
 	public String lastmod(){return null;}
 
 	public void to(final xwriter x)throws Throwable{
