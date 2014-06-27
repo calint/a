@@ -1,4 +1,6 @@
 INSTANCE_AMI="ami-b0659fd8"
+WALLET=/Users/calin/wallet
+WORKSPACE=/Users/calin/Documents/workspace
 
 # create
 echo ' • launching instance'
@@ -22,7 +24,8 @@ echo
 echo " • updating $INSTANCE_DNS"
 for((;;));do
 #	curl -v localhost:8888
-	rsync --timeout=15 --verbose --delete --exclude .svn --exclude u/ --exclude cache/ --progress -az -e "ssh -v -o StrictHostKeyChecking=no -i /Users/calin/wallet/ramvark-keypair.pem" "/Users/calin/Documents/workspace/a/" root@$INSTANCE_DNS:/a/
+	#    --verbose                                                                                 -v 
+	rsync --timeout=15 --delete --exclude .svn --exclude u/ --exclude cache/ --progress -az -e "ssh -o StrictHostKeyChecking=no -i $WALLET/ramvark-keypair.pem" "$WORKSPACE/a/" root@$INSTANCE_DNS:/a/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo
@@ -31,7 +34,7 @@ done
 
 echo
 echo " • restart $INSTANCE_DNS"
-ssh -o StrictHostKeyChecking=no -i $HOME/wallet/ramvark-keypair.pem root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom"
+ssh -o StrictHostKeyChecking=no -i $HOME/wallet/ramvark-keypair.pem root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
 
 echo
 echo " • trying http://$INSTANCE_DNS/"
