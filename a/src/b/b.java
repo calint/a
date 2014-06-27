@@ -1,10 +1,36 @@
 package b;
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.nio.channels.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.StandardSocketOptions;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.TimeZone;
 final public class b{
 	public final static String strenc="utf-8";
 	public final static String q=" ڀ ";
@@ -15,53 +41,53 @@ final public class b{
 	public final static long T=K*G;
 	public final static long P=K*T;
 	public final static String pathsep="/";
-	public static String hello="public domain server #1";
+	public static @conf String hello="public domain server #1";
 	public static String id=""+(int)Math.floor(Math.random()*10000);//? fixedwidth
-	public static String root_dir=".";
-	public static String server_port=ensure(System.getProperty("app.port"),"8888");
-	public static boolean print_requests=false;
-	public static boolean try_file=true;
-	public static boolean try_rc=true;
-	public static boolean thd_watch=true;
-	public static int thd_watch_sleep_in_ms=10000;
-	public static int thd_watch_report_every_ms=60000;
-	public static boolean thread_pool=true;
-	public static int thread_pool_size=16;
-	public static long thread_pool_lftm=60*1000;
-	public static boolean cache_uris=true;
-	public static boolean cache_files=true;
-	public static int cache_files_hashlen=K;
-	public static int cache_files_maxsize=64*K;
-	public static long cache_files_validate_dt=1000;
-	public static int transfer_file_write_size=256*K;
-	public static int io_buf_B=64*K;
-	public static int chunk_B=4*K;
-	public static int reqinbuf_B=4*K;
-	public static String default_directory_file="index.html";
-	public static String default_package_class="$";
-	public static boolean gc_before_stats=false;
-	public static int hash_size_session_values=32;
-	public static int hash_size_sessions_store=4*K;
-	public static String sessionfile="session.ser";
-	public static boolean sessionfile_load=true;
-	public static String sessions_dir="u";
-	public static boolean cacheu_tofile=true;
-	public static String cacheu_dir="/cache/";
-	public static final String webobjpkg="a.";
-	public static String datetimefmtstr="yyyy-MM-dd HH:mm:ss.sss";
-	public static long resources_lastmod=0;
-	public static boolean resources_enable_any_path=false;
+	public static @conf String root_dir=".";
+	public static @conf_reboot String server_port=ensure(System.getProperty("app.port"),"8888");
+	public static @conf boolean print_requests=false;
+	public static @conf boolean try_file=true;
+	public static @conf boolean try_rc=true;
+	public static @conf_reboot(note="can be turned off without reboot")boolean thd_watch=true;
+	public static @conf int thd_watch_sleep_in_ms=10000;
+	public static @conf int thd_watch_report_every_ms=60000;
+	public static @conf_reboot boolean thread_pool=true;
+	public static @conf int thread_pool_size=16;
+	public static @conf @unit(name="ms")long thread_pool_lftm=60*1000;
+	public static @conf boolean cache_uris=true;
+	public static @conf boolean cache_files=true;
+	public static @conf_reboot int cache_files_hashlen=K;
+	public static @conf @unit(name="B")int cache_files_maxsize=64*K;
+	public static @conf @unit(name="ms")long cache_files_validate_dt=1000;
+	public static @conf @unit(name="B")int transfer_file_write_size=256*K;
+	public static @conf @unit(name="B")int io_buf_B=64*K;
+	public static @conf @unit(name="B")int chunk_B=4*K;
+	public static @conf @unit(name="B")int reqinbuf_B=4*K;
+	public static @conf String default_directory_file="index.html";
+	public static @conf String default_package_class="$";
+	public static @conf boolean gc_before_stats=false;
+	public static @conf int hash_size_session_values=32;
+	public static @conf int hash_size_sessions_store=4*K;
+	public static @conf String sessionfile="session.ser";
+	public static @conf boolean sessionfile_load=true;
+	public static @conf String sessions_dir="u";
+	public static @conf boolean cacheu_tofile=true;
+	public static @conf String cacheu_dir="/cache/";
+	public static @conf final String webobjpkg="a.";
+	public static @conf String datetimefmtstr="yyyy-MM-dd HH:mm:ss.sss";
+	public static @conf @unit(name="tms")long resources_lastmod=0;
+	public static @conf boolean resources_enable_any_path=false;
 	public static Set<String>resources_paths=new HashSet<String>(Arrays.asList("x.js","x.css"));
-	public static boolean enable_upload=true;
+	public static @conf boolean enable_upload=true;
 //	public static boolean enable_ssl=false;
 //	public static boolean enable_cluster=false;
-	public static int max_pending_connections=20000;// when overrun causes SYN flood warning
-	public static boolean tcpnodelay=true;
-	public static boolean save_sessions_at_shutdown=false;
+	public static @conf int max_pending_connections=20000;// when overrun causes SYN flood warning
+	public static @conf boolean tcpnodelay=true;
+	public static @conf boolean save_sessions_at_shutdown=false;
 	public static boolean cloud_bees=false;
 	
-	public static long timeatload=System.currentTimeMillis();
-	public static String timeatloadstrhtp=tolastmodstr(timeatload);
+	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
+	public static @conf @unit(name="tms")String timeatloadstrhtp=tolastmodstr(timeatload);
 	public static PrintStream out=System.out;
 	public static PrintStream err=System.err;
 	private final static LinkedList<req>pending_req=new LinkedList<req>();
@@ -293,4 +319,8 @@ final public class b{
 		cp(new InputStreamReader(in,strenc),out,null);
 	}
 	public static void pl(final String s){System.out.print("> ");System.out.println(s);}
+	
+	public @Retention(RetentionPolicy.RUNTIME)@interface unit{String name()default"";}
+	public @Retention(RetentionPolicy.RUNTIME)@interface conf{String note()default"";}
+	public @Retention(RetentionPolicy.RUNTIME)@interface conf_reboot{String note()default"";}
 }

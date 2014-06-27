@@ -7,6 +7,9 @@ import java.util.List;
 
 import a.any.list.el;
 import b.a;
+import b.b.conf;
+import b.b.conf_reboot;
+import b.b.unit;
 import b.xwriter;
 
 final public class elclassfield implements el,el.el_column_value,el.el_column_value_editor{
@@ -30,7 +33,7 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	
-	@Override public void column_value(xwriter x)throws Throwable{
+	@Override public void column_value(final xwriter x)throws Throwable{
 		final Object o=fld.get(null);
 		if(o==null)return;
 		x.p(o.toString());
@@ -45,12 +48,33 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 			final Object o=f.get(null);
 			if(o==null)clr();
 			else set(o.toString());
+			final conf ca=f.getAnnotation(conf.class);
+			final conf_reboot cra=f.getAnnotation(conf_reboot.class);
+			if(ca==null&&cra==null){
+				x.p(str());
+				return;
+			}
 			x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
-//				x.p(this.toString());
-//				x.spc();
-//				x.ax(this);
+			final unit ua=f.getAnnotation(unit.class);
+			if(ua!=null){
+				x.spc().p(ua.name());
+			}
+			if(cra!=null){
+				x.pl(" <span style=color:#c00>⎋</span>");
+			}
+			if(ca!=null){
+				final String note=ca.note();
+				if(!note.isEmpty()){
+					x.nl().span("font-size:.3em").p(note).spanEnd();
+				}
+			}else if(cra!=null){
+				final String note=cra.note();
+				if(!note.isEmpty()){
+					x.span("font-size:.3em;color:brown").p("⚠ ").p(note).spanEnd();
+				}
+			}
 		}
-		public void x_(xwriter x,String a)throws Throwable{
+		public void x_(final xwriter x,final String a)throws Throwable{
 			//? if exception, set prev value
 //				x.xalert(f.toString()+"="+this);
 			final Class<?>c=f.getType();
