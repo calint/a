@@ -1,0 +1,35 @@
+#sudo tcpdump -i lo port 8888 -A
+#sudo ngrep -d lo -qW byline port 8888
+
+
+
+#lsb_release -a
+#netstat -l
+#netstat -vlepcao
+
+
+calin@vaio:~/workspace/a$ nc -l 8888
+GET / HTTP/1.1
+Host: localhost:8888
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:25.0) Gecko/20100101 Firefox/25.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: i=aaaa-130310-043332.121-db267dd5
+Connection: keep-alive
+If-Modified-Since: Sun, 17 Nov 2013 07:39:12 GMT
+Cache-Control: max-age=0
+
+
+calin@vaio:~/workspace/a$ echo "hello" |nc localhost 8888
+calin@vaio:~/workspace/a$
+
+
+
+
+
+
+
+
+
+

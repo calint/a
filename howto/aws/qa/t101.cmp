@@ -1,0 +1,24 @@
+coverage of thdwatch
+
+        ms: 0
+       mem: 0
+     input: 0
+    output: 0
+  freethds: 0
+       que: 0
+  sessions: 0
+    select: 0
+  ioevents: 0
+     iocon: 0
+    ioread: 0
+   iowrite: 0
+      reqs: 0
+cachefhits: 0
+cacheuhits: 0
+     files: 0
+     pages: 0
+     posts: 0
+     socks: 0
+    eagain: 0
+
+
