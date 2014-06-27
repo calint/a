@@ -54,7 +54,11 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 				x.p(str());
 				return;
 			}
-			x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
+			if(f.getType()==boolean.class){
+				x.input(this,"checkbox","font-weight:bold",null,this,null,null,this,null);
+//				x.p("checkbox");
+			}else
+				x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
 			final unit ua=f.getAnnotation(unit.class);
 			if(ua!=null){
 				x.spc().p(ua.name());
@@ -100,7 +104,7 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 			}
 			if(c.isAssignableFrom(boolean.class)){
 				final String s=this.toString();
-				final Boolean b="y".equals(s)||"yes".equals(s)||"true".equals(s)||"t".equals(s)?Boolean.TRUE:Boolean.FALSE;
+				final Boolean b="y".equals(s)||"yes".equals(s)||"true".equals(s)||"t".equals(s)||"1".equals(s)?Boolean.TRUE:Boolean.FALSE;
 				f.set(null,b);
 				set(b.toString());
 				x.xu(this,f.get(null).toString());
