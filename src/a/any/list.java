@@ -36,7 +36,7 @@ public class list extends a{
 	public final static int BIT_DISP_PATH=32768;
 	public final static int BIT_ALL=-1;
 	public a q;//query field
-	public a sts;//application status
+	public status_line sts;{sts.set("public domain server #1 -- ok");}//application status
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
 	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
@@ -92,15 +92,10 @@ public class list extends a{
 	public final void bits(final int bits){this.bits=bits;}
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	
-	private static final String sts_css_opened="transition-duration:1s;transition-timing-function:ease;position:absolute;padding:1em;width:20em;height:1em;background:#fed;box-shadow:0 0 .5em rgba(0,0,0,.5);";
-	private static final String sts_css_closed="transition-duration:1s;transition-timing-function:ease;position:absolute;padding:1em;width:20em;height:1em;color:rgba(255,255,255,.5);box-shadow:0 0 0 rgba(0,0,0,0);";
-	{sts.set("ok");}
 	synchronized final public void to(final xwriter x) throws Throwable{
 		x.spano(this);
+		sts.to(x);
 //		tago("span").attr("id",e.id()).tagoe();
-		x.p("<div onclick=\"console.log(event);var e=$('"+sts.id()+"');console.log(e);e.style.cssText='"+sts_css_closed+"';\">");
-		x.span(sts,sts_css_opened);
-		x.divEnd();
 //		x.tago("span").attr("id",id()).tagoe();
 		final List<String>files;
 		final boolean isfile=path.isfile();
