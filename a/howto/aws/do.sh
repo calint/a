@@ -45,12 +45,18 @@ echo
 
 echo
 echo " • stressing http://$INSTANCE_DNS"
-ab -c1  -t5 http://$INSTANCE_DNS/
-ab -c10 -t5 http://$INSTANCE_DNS/
+ab -c1    -t5 http://$INSTANCE_DNS/
+ab -c10   -t5 http://$INSTANCE_DNS/
 ab -c100  -t5 http://$INSTANCE_DNS/
-ab -c1  -t5 http://$INSTANCE_DNS/typealine
-ab -c10 -t5 http://$INSTANCE_DNS/typealine
+ab -c1    -t5 http://$INSTANCE_DNS/typealine
+ab -c10   -t5 http://$INSTANCE_DNS/typealine
 ab -c100  -t5 http://$INSTANCE_DNS/typealine
+ab -c1    -t5 http://$INSTANCE_DNS/qa.t013
+ab -c10   -t5 http://$INSTANCE_DNS/qa.t013
+ab -c100  -t5 http://$INSTANCE_DNS/qa.t013
+ab -c1    -t5 http://$INSTANCE_DNS/qa/t001.txt
+ab -c10   -t5 http://$INSTANCE_DNS/qa/t001.txt
+ab -c100  -t5 http://$INSTANCE_DNS/qa/t001.txt
 
 echo
 echo " • terminating $INSTANCE_ID"
