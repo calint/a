@@ -7,7 +7,7 @@ INST=(`cat reservation.txt |grep INSTANCES|tr "\\t" "\n"`)
 INSTANCE_ID=${INST[7]}
 echo " • instance id: $INSTANCE_ID"
 
-echo ' • waiting for ip';
+echo ' • waiting for public ip';
 for((;;));do
 	aws ec2 describe-instances --instance-ids $INSTANCE_ID > reservations.txt;
 	#cat reservations.txt;
