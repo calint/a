@@ -22,7 +22,7 @@ echo
 echo ' • sending files'
 for((;;));do
 #	curl -v localhost:8888
-	rsync --timeout=30 --verbose --delete --exclude .svn --exclude u/ --exclude cache/ --progress -az -e "ssh -v -o StrictHostKeyChecking=no -i /Users/calin/wallet/ramvark-keypair.pem" "/Users/calin/Documents/workspace/a/" root@$INSTANCE_DNS:/a/
+	rsync --timeout=15 --verbose --delete --exclude .svn --exclude u/ --exclude cache/ --progress -az -e "ssh -v -o StrictHostKeyChecking=no -i /Users/calin/wallet/ramvark-keypair.pem" "/Users/calin/Documents/workspace/a/" root@$INSTANCE_DNS:/a/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo
@@ -30,11 +30,11 @@ for((;;));do
 done
 
 echo
-echo \ • restart server $INSTANCE_DNS
+echo \ • restart $INSTANCE_DNS
 ssh -o StrictHostKeyChecking=no -i $HOME/wallet/ramvark-keypair.pem root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom"
 
 echo
-echo " • try http://$INSTANCE_DNS/"
+echo " • try $INSTANCE_DNS/"
 curl $INSTANCE_DNS
 echo
 
