@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import b.b.conf;
 public final class req{
 	b.op parse()throws Throwable{while(true){
 		if(ba_rem==0){
@@ -54,7 +56,7 @@ public final class req{
 		if(state==state_nextreq&&!is_connection_keepalive()){close();return b.op.noop;}
 	}}
 	private int methodlen;
-	public static int abuse_method_len=5;
+	public static @conf int abuse_method_len=5;
 	private void parse_method(){
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
@@ -65,7 +67,7 @@ public final class req{
 		if(methodlen>abuse_method_len){close();throw new Error("abusemethodlen"+methodlen);}
 	}
 	private int urilen;
-	public static int abuse_uri_len=512;
+	public static @conf int abuse_uri_len=512;
 	private void parse_uri(){
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
@@ -78,7 +80,7 @@ public final class req{
 		if(urilen>abuse_uri_len){close();throw new Error("abuseurilen"+urilen);}
 	}
 	private int protlen;
-	public static int abuse_prot_len=11;
+	public static @conf int abuse_prot_len=11;
 	private void parse_prot()throws Throwable{
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
@@ -108,7 +110,7 @@ public final class req{
 		state=state_header_name;
 	}
 	private int headernamelen;
-	public static int abuse_header_name_len=32;
+	public static @conf int abuse_header_name_len=32;
 	private void parse_header_name()throws Throwable{
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
@@ -120,10 +122,10 @@ public final class req{
 		headernamelen+=(ba_pos-ba_pos_prev);
 		if(headernamelen>abuse_header_name_len){close();throw new Error("abuseheadernamelen"+headernamelen);}
 	}
-	private int headervaluelen;
-	public static int abuse_header_value_len=256;
+	private @conf int headervaluelen;
+	public static @conf int abuse_header_value_len=256;
 	private int headerscount;
-	public static int abuse_header_count=32;
+	public static @conf int abuse_header_count=32;
 	private void parse_header_value(){
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
@@ -143,8 +145,8 @@ public final class req{
 		headervaluelen+=(ba_pos-ba_pos_prev);
 		if(headervaluelen>abuse_header_value_len){close();throw new Error("abuseheadervaluelen"+headervaluelen);}
 	}
-	public static long abuse_upload_len=16*b.G;
-	public static long abuse_content_len=1*b.M;
+	public static @conf long abuse_upload_len=16*b.G;
+	public static @conf long abuse_content_len=1*b.M;
 	private void do_after_header()throws Throwable{
 //		assertaccess();
 		final String ka=hdrs.get(hk_connection);if(ka!=null)connection_keep_alive=hv_keep_alive.equalsIgnoreCase(ka);
