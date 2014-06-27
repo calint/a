@@ -1,0 +1,2569 @@
+<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script><body onload=$l()>package b;
+import java.io.*;
+import java.lang.reflect.*;
+import static b.b.*;
+public class a implements Serializable{
+	static final long serialVersionUID=1;
+	private static void firewall(final a o)throws Throwable{
+		final Class<? extends a>cls=o.getClass();
+		if(cls.equals(a.class))return;
+		final String clsnm=cls.getName();
+		final int i=clsnm.lastIndexOf('.');
+		final String pkgnm=i==-1?"":clsnm.substring(0,i);
+		if(pkgnm.endsWith(".a")&&!req.get().session().bitshasall(2))throw new Error("firewalled1");
+		if(clsnm.startsWith("a.localhost.")&&!req.get().ip().toString().equals("/0:0:0:0:0:0:0:1"))throw new Error("firewalled2");
+	}
+	private a pt;
+	private String nm;
+	private String s;
+//	public boolean equals(final Object o){
+//		if(!(o instanceof a))
+//			return false;
+//		final a a=(a)o;
+//		if(a.pt!=pt)return false;
+//		if(a.nm!=null&&!a.nm.equals(nm))return false;
+//		if(a.s!=null&&!a.s.equals(s))return false;
+//		return true;
+//	}
+	public a(){try{
+		firewall(this);
+		for(final Field f:getClass().getFields()){
+			if(!a.class.isAssignableFrom(f.getType()))
+				continue;
+//			if(f.getName().startsWith("$"))
+//				continue;
+			a a=(a)f.get(this);
+			if(a==null){
+				a=(a)f.getType().newInstance();
+				f.set(this,a);
+			}
+			a.nm=f.getName();
+			a.pt=this;				
+		}
+	}catch(final Throwable e){throw new Error(e);}}
+	public a(final a parent,final String name){pt=parent;nm=name;}
+	public a(final a parent,final String name,final String value){pt=parent;nm=name;s=value;}
+	public final String id(){
+		String s=nm;
+		for(a p=this;p.pt!=null;p=p.pt)
+			s=tostr(p.pt.nm,"")+"_"+s;
+		return tostr(s,"_");
+	}
+	public final String nm(){return nm;}
+//	public final a nm(final String nm){this.nm=nm;return this;}
+	public final a pt(){return pt;}
+//	public final a pt(final a a){pt=a;return this;}
+	public final void attach(final a e,final String fld){e.pt=this;e.nm=fld;try{getClass().getField(fld).set(this,e);}catch(final Throwable t){throw new Error(t);}}
+	final a chld(final String id){try{return (a)getClass().getField(id).get(this);}catch(Throwable e){}return chldq(id);}
+	protected a chldq(final String id){return null;}
+	protected void ev(final xwriter x,final a from,final Object o)throws Throwable{if(pt!=null)pt.ev(x,from,o);}
+	final protected void ev(final xwriter x,final a from)throws Throwable{ev(x,from,null);}
+	final protected void ev(final xwriter x)throws Throwable{ev(x,this,null);}
+
+	
+	public void to(final xwriter x)throws Throwable{if(s==null)return;x.p(s);}
+	public final a set(final String s){this.s=s;return this;}
+	public final a set(final a e){this.s=e.toString();return this;}
+	public final a set(final int i){s=Integer.toString(i);return this;}
+	public final a set(final float f){s=Float.toString(f);return this;}
+	public final a set(final long i){s=Long.toString(i);return this;}
+	public final a clr(){return set((String)null);}
+	public final boolean isempty(){return s==null||s.length()==0;}
+	public final String toString(){return s==null?"":s;}
+	public final int toint(){return isempty()?0:Integer.parseInt(toString());}
+	public final float toflt(){return isempty()?0:Float.parseFloat(toString());}
+	public final long tolong(){return isempty()?0:Long.parseLong(toString());}	
+	public final short toshort(){return isempty()?0:Short.parseShort(toString());}
+	
+	
+	
+	
+	final public void to(final OutputStream os)throws IOException{os.write(tobytes(tostr(s,"")));}//? impl s?.to(os)
+	final public void to(final path p,final boolean append)throws IOException{final OutputStream os=p.outputstream(append);to(os);os.close();}
+	final public void to(final path p)throws IOException{to(p,false);}
+	final public a from(final path p)throws IOException{//? impl
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream((int)p.size());
+		p.to(baos);
+		baos.close();
+		set(baos.toString(strenc));
+		return this;
+	}
+	final public a from(final InputStream in)throws Throwable{
+		final InputStreamReader isr=new InputStreamReader(in,b.strenc);
+		final StringWriter sw=new StringWriter();
+		b.cp(isr,sw,null);
+		final String s=sw.toString();
+		set(s);
+		return this;
+	}
+	public a pt(final a e){pt=e;return this;}
+	public a nm(final String s){nm=s;return this;}
+}
+package b;public interface bin{String contenttype();}
+package b;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.nio.channels.*;
+import java.text.*;
+import java.util.*;
+final public class b{
+	public final static String strenc="utf-8";
+	public final static String q=" ڀ ";
+	public final static String a=" ํ ";
+	public final static int K=1024;
+	public final static int M=K*K;
+	public final static long G=K*M;
+	public final static long T=K*G;
+	public final static long P=K*T;
+	public final static String pathsep="/";
+	public static String hello="public domain server #1";
+	public static String id="aaaa";
+	public static String root_dir=".";
+	public static String server_port="8888";
+	public static boolean try_file=true;
+	public static boolean try_rc=true;
+	public static boolean thd_watch=true;
+	public static boolean thread_pool=true;
+	public static int thread_pool_size=16;
+	public static long thread_pool_lftm=60*1000;
+	public static boolean cache_uris=true;
+	public static boolean cache_files=true;
+	public static int cache_files_hashlen=K;
+	public static int cache_files_maxsize=64*K;
+	public static long cache_files_validate_dt=1000;
+	public static int transfer_file_write_size=256*K;
+	public static int io_buf_B=64*K;
+	public static int chunk_B=4*K;
+    public static int reqinbuf_b=4*K;
+	public static String default_directory_file="index.html";
+	public static String default_package_class="$";
+	public static boolean gc_before_stats=false;
+	public static int hash_size_session_values=32;
+	public static int hash_size_sessions_store=4*K;
+	public static String sessionfile="session.ser";
+	public static boolean sessionfile_load=true;
+	public static String sessions_dir="u";
+	public static boolean cacheu_tofile=true;
+	public static String cacheu_dir="/cache/";
+	public static final String webobjpkg="a.";
+	public static String datetimefmtstr="yyyy-MM-dd HH:mm:ss.sss";
+	public static long resources_lastmod=0;
+	public static Set<String>resources_paths=new HashSet<String>(Arrays.asList("x.js","x.css"));
+	public static boolean enable_upload=true;
+	public static boolean enable_ssl=false;
+	public static boolean enable_cluster=false;
+	public static int max_pending_connections=20000;// when overrun causes SYN flood warning
+	public static boolean tcpnodelay=true;
+    public static long timeatload=System.currentTimeMillis();
+    public static String timeatloadstrhtp=tolastmodstr(timeatload);
+	private final static LinkedList<req>pending_req=new LinkedList<req>();
+	public static PrintStream out=System.out;
+    public static PrintStream err=System.err;
+	public static void main(final String[]args)throws Throwable{
+		if(!class_init(b.class,args))return;
+		resources_lastmod=System.currentTimeMillis();
+		final ServerSocketChannel ssc=ServerSocketChannel.open();
+		ssc.configureBlocking(false);
+		final InetSocketAddress isa=new InetSocketAddress(Integer.parseInt(server_port));
+		final ServerSocket ss=ssc.socket();
+		ss.bind(isa,max_pending_connections);
+		req.init_static();
+		if(thd_watch)new thdwatch().start();
+		final Selector sel=Selector.open();
+		ssc.register(sel,SelectionKey.OP_ACCEPT);
+		Runtime.getRuntime().addShutdownHook(new jvmsdh());
+		while(true)try{
+			sel.select();
+			thdwatch.select++;
+			final Iterator<SelectionKey>it=sel.selectedKeys().iterator();
+			while(it.hasNext()){
+				thdwatch.ioevents++;
+				final SelectionKey sk=it.next();
+				it.remove();
+//                if(!sk.isValid())continue;//throw new Error();
+				if(sk.isAcceptable()){
+					thdwatch.iocon++;
+					final req r=new req();
+					r.sockch=ssc.accept();
+					r.sockch.configureBlocking(false);
+					if(tcpnodelay)r.sockch.setOption(StandardSocketOptions.TCP_NODELAY,true);
+//					r.sockch.setOption(StandardSocketOptions.SO_KEEPALIVE,true);
+					r.selkey=r.sockch.register(sel,0,r);
+					read(r);
+					continue;
+				}
+				sk.interestOps(0);
+				final req r=(req)sk.attachment();
+				if(sk.isReadable()){thdwatch.ioread++;read(r);continue;}
+				if(sk.isWritable()){thdwatch.iowrite++;write(r);continue;}
+				throw new IllegalStateException();
+			}}catch(final Throwable e){
+				log(e);
+			}
+	}
+	private static void read(final req r)throws Throwable{
+		if(r.is_sock()){
+			if(r.is_sock_thread()){
+				r.set_waiting_sock_thread_read();
+				thread(r);
+				return;
+			}
+			switch(r.sockread()){default:throw new Error();
+			case read:r.selkey.interestOps(SelectionKey.OP_READ);return;
+			case write:r.selkey.interestOps(SelectionKey.OP_WRITE);return;
+			case close:r.close();thdwatch.socks--;return;
+			case wait:r.selkey.interestOps(0);return;
+			case cont:return;
+			}
+		}
+		while(true)switch(r.parse()){default:throw new Error();
+		case read:r.selkey.interestOps(SelectionKey.OP_READ);return;
+		case write:r.selkey.interestOps(SelectionKey.OP_WRITE);return;
+		case thread:thread(r);return;
+		case nxtreq:if(r.is_connection_keepalive()){if(r.is_buf_empty()){r.selkey.interestOps(SelectionKey.OP_READ);return;}}else{r.close();return;}
+		}
+	}
+	private static void write(final req r)throws Throwable{
+		if(r.is_sock()){
+			if(r.is_sock_thread()){
+				r.set_waiting_sock_thread_write();
+				thread(r);
+				return;
+			}
+			switch(r.sockwrite()){default:throw new Error();
+			case read:r.selkey.interestOps(SelectionKey.OP_READ);break;
+			case write:r.selkey.interestOps(SelectionKey.OP_WRITE);break;
+			case close:r.close();thdwatch.socks--;break;
+			}
+			return;
+		}
+		if(r.is_waiting_write()){synchronized(r){r.notify();}return;}
+		if(r.is_transfer()){
+			if(!r.do_transfer()){r.selkey.interestOps(SelectionKey.OP_WRITE);return;}
+			if(!r.is_connection_keepalive()){r.close();return;}
+			if(r.is_buf_empty()){r.selkey.interestOps(SelectionKey.OP_READ);return;}
+			read(r);//?? bug stackrain
+			return;
+		}
+		if(r.is_waiting_run())
+            thread(r);
+        throw new Error();
+	}
+	private static void thread(final req r){
+		r.selkey.interestOps(0);
+		if(!b.thread_pool||thdreq.all.size()<thread_pool_size){new thdreq(r);return;}
+		synchronized(pending_req){pending_req.addLast(r);pending_req.notify();}
+	}
+	public static int cp(final InputStream in,final OutputStream out) throws IOException{
+		final byte[]buf=new byte[io_buf_B];
+        int n=0;while(true){final int count=in.read(buf);if(count<=0)break;out.write(buf,0,count);n+=count;}
+		return n;
+	}
+	public static int cp(final Reader in,final Writer out,final sts sts)throws Throwable{
+		final char[]buf=new char[io_buf_B];
+        int n=0;while(true){final int count=in.read(buf);if(count<=0)break;out.write(buf,0,count);n+=count;if(sts!=null)sts.setsts(Long.toString(n));}
+		return n;		
+	}
+
+	public static synchronized void log(final Throwable t){
+		Throwable e=t;
+		if(t instanceof InvocationTargetException)e=t.getCause();
+		while(e.getCause()!=null)e=e.getCause();
+		if(e instanceof java.nio.channels.CancelledKeyException)return;
+		if(e instanceof java.nio.channels.ClosedChannelException)return;
+		if(e instanceof java.io.IOException){
+			if("Broken pipe".equals(e.getMessage()))return;
+			if("Connection reset by peer".equals(e.getMessage()))return;
+			if("An existing connection was forcibly closed by the remote host".equals(e.getMessage()))return;
+		}
+		b.err.println(b.stacktraceline(e));
+	}
+	public static path path(){return new path(new File(root_dir));}
+	public static path path(final String path){if(path.contains(".."))throw new Error("illegalpath "+path);return new path(new File(root_dir,path));}
+	static LinkedList<req>pendingreqls(){return pending_req;}
+	public static void stats_to(final OutputStream out)throws Throwable{
+		final PrintStream ps=new PrintStream(out);
+		ps.println(hello);
+		ps.println("             time: "+tolastmodstr(System.currentTimeMillis()));
+		ps.println("             port: "+server_port);
+		ps.println("            input: "+(thdwatch.input>>10)+" KB");
+		ps.println("           output: "+(thdwatch.output>>10)+" KB");
+		ps.println("        downloads: "+new File(root_dir).getCanonicalPath());
+		ps.println("     sessions dir: "+new File(root_dir,sessions_dir).getCanonicalPath());
+		ps.println("         sessions: "+session.all().size());
+		ps.println("     cached files: "+(req.cachef_size()>>10)+" KB");
+		ps.println("      cached uris: "+(req.cacheu_size()>>10)+" KB");
+		ps.println("        classpath: "+System.getProperty("java.class.path"));
+		final Runtime rt=Runtime.getRuntime();
+		if(gc_before_stats)rt.gc();
+		final long m1=rt.totalMemory();
+		final long m2=rt.freeMemory();
+		ps.println("         ram used: "+((m1-m2)>>10)+" KB");
+		ps.println("         ram free: "+(m2>>10)+" KB");
+		ps.println("            cores: "+Runtime.getRuntime().availableProcessors());
+		ps.println("          threads: "+thdreq.all.size());
+	}
+	public static int rndint(final int from,final int tonotincl){return (int)(Math.random()*(tonotincl-from)+from);}
+	public static String stacktrace(final Throwable e){final StringWriter sw=new StringWriter();final PrintWriter out=new PrintWriter(sw);e.printStackTrace(out);out.close();return sw.toString();}
+	public static String stacktraceline(final Throwable e){return stacktrace(e).replace('\n',' ').replace('\r',' ').replaceAll("\\s+"," ").replaceAll(" at "," @ ");}
+	public static String tolastmodstr(final long t){final SimpleDateFormat sdf=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");sdf.setTimeZone(TimeZone.getTimeZone("GMT"));return sdf.format(new Date(t));}
+	public static String urldecode(final String s){try{return URLDecoder.decode(s,strenc);}catch(UnsupportedEncodingException e){throw new Error(e);}}
+	public static String urlencode(final String s){try{return URLEncoder.encode(s,strenc);}catch(UnsupportedEncodingException e){throw new Error(e);}}
+	public static String tostr(final Object object,final String def){return object==null?def:object.toString();}
+	public static byte[]tobytes(final String v){try{return v.getBytes(strenc);}catch(UnsupportedEncodingException e){throw new Error(e);}}
+	public static String sessionhref(final String sessionid){return sessions_dir+"/"+sessionid+"/";}
+	public static boolean isempty(final String s){return s==null||s.length()==0;}
+	public static String isempty(final String o,final String def){return isempty(o)?def:o;}
+	public static Set<String>sessionsids(){return Collections.unmodifiableSet(session.all().keySet());}//?
+	public static long sessionbits(final String sesid){
+		//? file(system){sha1(sessionid),bits}
+		if("".equals(sesid))return 2;
+		return 0;
+	}
+	
+	public static void class_printopts(final Class<?>cls)throws IllegalArgumentException,IllegalAccessException{
+		for(final Field f:cls.getFields()){
+			final Object o=f.get(null);
+			out.print(f.getName());
+			out.print("=");
+			out.print(f.getType().getName());
+			out.print("(");
+			out.print(o==null?"":o.toString().replaceAll("\\n","\\\\n"));
+			out.println(")");
+		}
+	}
+	public static boolean class_init(final Class<?>cls,final String[]args)throws SecurityException,NoSuchFieldException,IllegalArgumentException,IllegalAccessException{
+		if(args==null||args.length==0)return true;
+		if("-1".equals(args[0])){class_printopts(cls);return false;}
+		for(int i=0;i<args.length;i+=2){
+			final String fldnm=args[i];
+			final Field fld=cls.getField(fldnm);
+			final String val=args[i+1];
+			final Class<?>fldcls=fld.getType();
+			if(fldcls.isAssignableFrom(String.class))
+				fld.set(null,val);
+			else if(fldcls.isAssignableFrom(int.class))
+				fld.set(null,Integer.parseInt(val));
+			else if(fldcls.isAssignableFrom(boolean.class))
+				fld.set(null,"1".equals(val)||"true".equals(val)||"yes".equals(val)||"y".equals(val)?Boolean.TRUE:Boolean.FALSE);
+			else if(fldcls.isAssignableFrom(long.class))
+				fld.set(null,Long.parseLong(val));
+		}
+		return true;
+	}
+	static enum op{read,write,nxtreq,thread}
+}
+package b;
+public interface cacheable{
+	String filetype();
+	String contenttype();
+	String lastmod();
+	long lastmodupdms();
+	boolean cacheforeachuser();
+}
+package b;
+import java.io.*;
+import java.nio.*;
+final class chdresp{
+	private static final int hdrlencap=8*64;
+	private path path;
+	private cacheable cacheable;
+	private long lastModified;
+	private String lastModified_s;
+	private long ts;
+	private long dt;
+	private ByteBuffer byteBuffer;
+	private int hdrinsertionix;
+	private String contentType;
+	private String key;
+	private boolean isresource;
+	chdresp(final path p)throws Throwable{path=p;validate(System.currentTimeMillis(),null);}
+	chdresp(final cacheable c,final String key){cacheable=c;this.key=key;dt=c.lastmodupdms();}
+	public chdresp(final InputStream is)throws IOException{
+		final ByteArrayOutputStream os=new ByteArrayOutputStream();
+		b.cp(is,os);
+		final byte[]ba=os.toByteArray();
+		final long size=ba.length;
+		lastModified=b.resources_lastmod;
+		byteBuffer=ByteBuffer.allocateDirect(hdrlencap+(int)size);
+		byteBuffer.put(req.h_http200);
+		byteBuffer.put(req.h_content_length).put(Long.toString(size).getBytes());
+		lastModified_s=b.tolastmodstr(lastModified);
+		byteBuffer.put(req.h_last_modified).put(lastModified_s.getBytes());
+		byteBuffer.put(req.hkp_connection_keep_alive);
+		hdrinsertionix=byteBuffer.position();
+		byteBuffer.put(req.ba_crlf2);
+		byteBuffer.put(ba);
+		byteBuffer.flip();
+		isresource=true;
+	}
+	boolean ifnotmodsince(final String ifModSince){return ifModSince.equals(lastModified_s);}
+	ByteBuffer byteBuffer(){return byteBuffer;}
+	int hdrinsertionix(){return hdrinsertionix;}
+	String contentType(){return contentType;}
+	String lastModified(){return lastModified_s;}
+	boolean validate(final long now,final String lm)throws Throwable{
+		if(isresource)
+			return true;
+		if(cacheable!=null){
+			validatecacheable(now,lm);
+			return true;
+		}
+		if(now-ts<b.cache_files_validate_dt)
+			return true;
+		ts=now;
+		if(!path.exists())
+			return false;
+		final long path_lastModified=path.lastmod();
+		if(path_lastModified==lastModified)
+			return true;
+		final long path_len=path.size();
+		byteBuffer=ByteBuffer.allocateDirect(hdrlencap+(int)path_len);
+		byteBuffer.put(req.h_http200);
+		byteBuffer.put(req.h_content_length).put(Long.toString(path_len).getBytes());
+		lastModified_s=b.tolastmodstr(path_lastModified);
+		byteBuffer.put(req.h_last_modified).put(lastModified_s.getBytes());
+		byteBuffer.put(req.hkp_connection_keep_alive);
+		hdrinsertionix=byteBuffer.position();
+		byteBuffer.put(req.ba_crlf2);
+		path.to(byteBuffer);
+		byteBuffer.flip();
+		lastModified=path_lastModified;
+		return true;
+	}
+	private void validatecacheable(final long now,final String lm)throws Throwable{
+		if(isvalid(now))
+			return;
+		lastModified_s=cacheable.lastmod();
+		if(lastModified_s!=null&&lastModified_s.equals(lm))
+			return;
+		contentType=cacheable.contenttype();
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream(b.io_buf_B);
+		((a)cacheable).to(new xwriter(baos));
+		byteBuffer=ByteBuffer.wrap(baos.toByteArray());
+		ts=now;
+		if(b.cacheu_tofile)
+			b.path(b.cacheu_dir+key+"."+cacheable.filetype()).writebb(byteBuffer.slice());
+	}
+	public boolean isvalid(long now){return (now-ts)<dt;}
+}
+package b;final class jvmsdh extends Thread{public void run(){
+	thdwatch._stop=true;
+	try{session.all_save();
+}catch(final Throwable e){throw new Error(e);}}}package b;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+final class oschunked extends OutputStream{
+	private static final ByteBuffer bb_eochunk=ByteBuffer.wrap("0\r\n\r\n".getBytes());
+	private static final ByteBuffer bb_crnl=ByteBuffer.wrap("\r\n".getBytes());
+	private final req r;
+	private final int chunk_size_bytes;
+	private final byte[]chunkhx;
+	private final byte[]buf;
+	private int bufi;
+	oschunked(final req r,final int chunk_size_bytes){this.r=r;this.chunk_size_bytes=chunk_size_bytes;chunkhx=(Integer.toHexString(chunk_size_bytes)+"\r\n").getBytes();buf=new byte[chunk_size_bytes];}
+	public String toString(){return new String(buf,0,bufi);}
+	public void write(final int ch)throws IOException{throw new UnsupportedOperationException();}
+	public void write(final byte[]b)throws IOException{write(b,0,b.length);}
+	public void write(final byte[]c,int off,int len)throws IOException{
+		final int remain=buf.length-bufi;
+		if(len<=remain){
+			System.arraycopy(c,off,buf,bufi,len);
+			bufi+=len;
+			return;
+		}
+		System.arraycopy(c,off,buf,bufi,remain);
+		bufi+=remain;off+=remain;len-=remain;
+		final ByteBuffer[]bba=new ByteBuffer[]{ByteBuffer.wrap(chunkhx),ByteBuffer.wrap(buf,0,bufi),bb_crnl.slice()};
+		write_blocking(bba);
+		while(len>chunk_size_bytes){
+			final ByteBuffer[]bba2=new ByteBuffer[]{ByteBuffer.wrap(chunkhx),ByteBuffer.wrap(c,off,chunk_size_bytes),bb_crnl.slice()};
+			write_blocking(bba2);
+			off+=chunk_size_bytes;
+			len-=chunk_size_bytes;
+		}
+		if(len>0){
+			System.arraycopy(c,off,buf,0,len);
+			bufi=len;
+		}
+	}
+	private void write_blocking(final ByteBuffer[]bba)throws IOException{
+		long remaining=0;for(final ByteBuffer bb:bba)remaining+=bb.remaining();
+		while(remaining!=0){
+			final long c=r.sockch.write(bba,0,bba.length);//?
+			if(c==0)synchronized(r){
+				r.waiting_write(true);
+				r.selkey.interestOps(SelectionKey.OP_WRITE);
+				r.selkey.selector().wakeup();//?? racing
+					/*;;*/try{r.wait();}catch(final InterruptedException ok){}
+				r.waiting_write(false);
+			}
+			remaining-=c;thdwatch.output+=c;
+		}
+	}
+	public void flush()throws IOException{
+		if(bufi==0)return;
+		final ByteBuffer[]bba=new ByteBuffer[]{ByteBuffer.wrap(Integer.toHexString(bufi).getBytes()),bb_crnl.slice(),ByteBuffer.wrap(buf,0,bufi),bb_crnl.slice()};
+		write_blocking(bba);
+		bufi=0;
+	}
+	void finish()throws IOException{flush();write_blocking(new ByteBuffer[]{bb_eochunk.slice()});}
+}
+package b;
+import java.io.*;
+final class osjsstr extends OutputStream{
+	private static final byte[]b_jsstr_sq="\\'".getBytes();
+	private static final byte[]b_jsstr_cr="\\r".getBytes();
+	private static final byte[]b_jsstr_nl="\\n".getBytes();
+	private static final byte[]b_jsstr_bs="\\\\".getBytes();
+	private static final byte[]b_jsstr_eof="\\0".getBytes();
+	private final OutputStream os;
+	public osjsstr(OutputStream os){this.os=os;}
+	public void write(final int ch)throws IOException{throw new UnsupportedOperationException();}
+	public void write(final byte[]c)throws IOException{write(c,0,c.length);}
+	public void write(final byte[]c,int off,int len)throws IOException{
+		int i=0;
+		for(int n=0;n<len;n++){
+			byte b=c[off+n];
+			if(b=='\n'){
+				final int k=n-i;
+				if(k!=0)
+					os.write(c,off+i,k);
+				os.write(b_jsstr_nl);
+				i=n+1;
+			}else if(b=='\r'){
+				final int k=n-i;
+				if(k!=0)
+					os.write(c,off+i,k);
+				os.write(b_jsstr_cr);
+				i=n+1;
+			}else if(b=='\''){
+				final int k=n-i;
+				if(k!=0)
+					os.write(c,off+i,k);
+				os.write(b_jsstr_sq);
+				i=n+1;
+			}else if(b=='\\'){
+				final int k=n-i;
+				if(k!=0)
+					os.write(c,off+i,k);
+				os.write(b_jsstr_bs);
+				i=n+1;
+			}else if(b=='\0'){
+				final int k=n-i;
+				if(k!=0)
+					os.write(c,off+i,k);
+				os.write(b_jsstr_eof);
+				i=n+1;
+			}
+		}
+		final int k=len-i;
+		if(k!=0)
+			os.write(c,off+i,k);
+	}
+}
+package b;
+import java.io.*;
+public final class osltgt extends OutputStream{
+	private static final byte[]ba_html_gt="&gt;".getBytes();
+	private static final byte[]ba_html_lt="&lt;".getBytes();
+	private final OutputStream os;
+	public osltgt(final OutputStream os){this.os=os;}
+	public void write(final int ch)throws IOException{throw new UnsupportedOperationException();}
+	public void write(final byte[]c)throws IOException{write(c,0,c.length);}
+	public void write(final byte[]c,int off,int len)throws IOException{
+		int i=0;
+		for(int n=0;n<len;n++){
+			byte b=c[off+n];
+			if(b=='<'){
+				final int l=n-i;
+				if(l!=0)
+					os.write(c,off+i,l);
+				os.write(ba_html_lt);
+				i=n+1;
+			}else if(b=='>'){
+				final int l=n-i;
+				if(l!=0)
+					os.write(c,off+i,l);
+				os.write(ba_html_gt);
+				i=n+1;
+			}
+		}
+		final int l=len-i;
+		if(l!=0)
+			os.write(c,off+i,l);
+	}
+}
+package b;
+import java.io.*;
+public class osnl extends OutputStream{//? refactor
+	private final StringBuilder line=new StringBuilder(256);
+	final public void write(final int c)throws IOException{throw new UnsupportedOperationException();}
+	final public void write(final byte[]c) throws IOException{write(c,0,c.length);}
+	final public void write(final byte[]c,final int off,final int len)throws IOException{
+		for(int n=0;n<len;n++){
+			final byte b=c[off+n];
+			if(b=='\n'){
+				try{onnewline(line.toString());}catch(Throwable e){throw new Error(e);}
+				line.setLength(0);
+			}else
+				line.append((char)b);
+		}
+	}
+	public void onnewline(final String line)throws Throwable{System.out.println(line);}
+}
+package b;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.util.*;
+public final class path implements Serializable{static final long serialVersionUID=1;
+	public static path get1(final String name){return new path(new File(name));}//?
+	private final File file;
+	path(final File f){file=f;}
+	public InputStream inputstream()throws FileNotFoundException{return new FileInputStream(file);}
+	public FileInputStream fileinputstream()throws IOException{return new FileInputStream(file);}
+	public FileOutputStream outputstream(final boolean append)throws IOException{mkbasedir();return new FileOutputStream(file,append);}
+	public FileOutputStream outputstream()throws IOException{return outputstream(false);}
+	public Reader reader()throws IOException{return new InputStreamReader(inputstream(),b.strenc);}
+	public Writer writer(final boolean append)throws IOException{mkbasedir();return new OutputStreamWriter(outputstream(append),b.strenc);}
+	public boolean exists(){return file.exists();}
+	public long lastmod(){return file.lastModified();}
+	public long size(){return file.length();}
+	public boolean isfile(){return file.isFile();}
+	public boolean isdir(){if(!file.exists())return false;return file.isDirectory();}
+	public String fullpath(){try{return file.getCanonicalPath();}catch(final IOException e){throw new Error(e);}}
+	public path get(final String name){
+		if(name==null||name.length()==0||name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
+		return new path(new File(file,name));
+	}
+	public String name(){return file.getName();}
+	public String[]list(){final String[]f=file.list();if(f==null)return new String[0];return f;}
+	public String[]list(final FilenameFilter fnmf){final String[]f=file.list(fnmf);if(f==null)return new String[0];return f;}
+	public boolean rename(final path nf){return file.renameTo(nf.file);}
+	public void lastmod(final long lastmod){if(!file.setLastModified(lastmod))throw new Error();}
+	public void setreadonly(){if(!file.setReadOnly())throw new Error();}
+//	public void executable(final boolean b){if(!file.setExecutable(b))throw new Error();}
+	public boolean ishidden(){return file.getName().charAt(0)=='.';}
+	public path parent(){final File f=file.getParentFile();return f==null?null:new path(f);}
+	public void to(final xwriter x)throws IOException{to(x.outputstream());}
+	public FileChannel filechannel()throws IOException{return outputstream(false).getChannel();}
+	public final int hashCode(){return file.toString().hashCode();}
+	public boolean equals(final Object obj){if(!(obj instanceof path))return false;return ((path)obj).file.equals(file);}
+	public String toString(){
+		final String fn=file.toString();
+		if(fn.startsWith("./"))return fn.substring("./".length());
+		return fn;
+	}
+	public path mkfile()throws IOException{if(!file.createNewFile())throw new IOException("cannot make file "+file);return this;}
+	public boolean rm(){return rm(null);}
+	public boolean rm(final sts st){
+		if(!file.exists())return true;
+		if(st!=null)try{st.setsts("deleteting "+file.toString());}catch(final Throwable t){throw new Error(t);}
+		if(file.isFile())return file.delete();
+		for(final File f:file.listFiles()){
+			if(!new path(f).rm(st))return false;
+		}
+		return file.delete();
+	}
+	public void append(final String line,final String eol)throws IOException{
+		if(!file.exists())if(!file.getParentFile().isDirectory())if(!file.getParentFile().mkdirs())throw new Error();
+		final byte[]ba=b.tobytes(line);
+        final OutputStream os=outputstream(true);
+		try{os.write(ba);
+			if(eol!=null){
+				final byte[]eosba=b.tobytes(eol);
+				os.write(eosba);
+			}
+        }finally{os.close();}
+	}
+	public void append(final String line)throws IOException{append(line,null);}
+	public void append(final String[]lines,final String eol)throws IOException{
+		if(!file.exists())if(!file.getParentFile().mkdirs())throw new Error();
+		final OutputStream os=outputstream(true);
+        try{final byte[]eosba=eol!=null?b.tobytes(eol):null;
+			for(final String line:lines){
+				final byte[]ba=b.tobytes(line);
+				os.write(ba);
+				if(eol!=null)
+					os.write(eosba);
+			}
+        }finally{os.close();}
+	}
+	public path to(final OutputStream os)throws IOException{
+		final InputStream is=inputstream();
+		try{b.cp(is,os);}finally{is.close();}
+		return this;
+	}
+	public void mkdirs()throws IOException{
+		if(file.exists()&&file.isDirectory())return;
+		if(!file.mkdirs())throw new IOException("cannot make dir "+file);
+	}
+	public void mkbasedir()throws IOException{
+		final File pf=file.getParentFile();
+		if(pf!=null&&pf.isDirectory())return;
+		if(pf==null)throw new Error();
+		if(!pf.mkdirs())throw new IOException("cannot make basedir for "+file);
+	}
+	public path to(final ByteBuffer bb)throws IOException{
+		final FileInputStream fis=fileinputstream();
+		final FileChannel channelFrom=fis.getChannel();
+	    try{channelFrom.read(bb);}
+	    finally{channelFrom.close();fis.close();}
+		return this;
+	}
+	public String type(){
+		final String fn=file.getName();
+		int ix=fn.lastIndexOf('.');
+		if(ix==-1)return "";
+		return fn.substring(ix+1).toLowerCase();
+	}
+	public String uri(){
+		String s=file.getPath().substring(b.root_dir.length());
+		while(s.startsWith("./"))s=s.substring(2);//?
+		final String[]parts=s.split(b.pathsep);
+		final StringBuilder sb=new StringBuilder(s.length()*2);
+		for(final String ss:parts)
+			sb.append(b.urlencode(ss)).append(b.pathsep);
+		sb.setLength(sb.length()-b.pathsep.length());
+		return sb.toString();
+	}
+	public Object readobj()throws IOException,ClassNotFoundException{
+		final ObjectInputStream ois=new ObjectInputStream(inputstream());
+		try{final Object o=ois.readObject();return o;}finally{ois.close();}
+	}
+	public void writeobj(final Object o)throws IOException{
+		final ObjectOutputStream oos=new ObjectOutputStream(outputstream(false));
+		try{oos.writeObject(o);}finally{oos.close();}
+	}
+	public path writeba(final byte[]data)throws IOException{return writeba(data,0,data.length);}
+	public path writeba(final byte[]data,final int offset,final int count)throws IOException{
+		final OutputStream os=outputstream(false);
+		try{os.write(data,offset,count);}finally{os.close();}
+		return this;
+	}
+	public path writebb(final ByteBuffer byteBuffer)throws IOException{
+		final FileOutputStream os=outputstream(false);
+        try{final FileChannel fc=os.getChannel();
+			final int c=fc.write(byteBuffer);
+			if(byteBuffer.hasRemaining())throw new Error("incompletewrite");
+        }finally{os.close();}
+		return this;
+	}
+//	public MappedByteBuffer mappedbbrw(final int len_b)throws FileNotFoundException,IOException{
+//		return mappedbb(false,len_b);
+//	}
+//	public SeekableByteChannel seekableByteChannel(final boolean ro)throws FileNotFoundException{
+//		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel();
+//	}
+//	public MappedByteBuffer mappedbb(final boolean ro,final long pos_b,final long len_b)throws FileNotFoundException,IOException{
+//		return new RandomAccessFile(toString(),ro?"r":"rw").getChannel().map(ro?FileChannel.MapMode.READ_ONLY:FileChannel.MapMode.READ_WRITE,pos_b,len_b);
+//	}
+//	private void assert_access() throws IOException{
+//	String uri=file.toString().replace('\\','/');
+//	if(uri.startsWith("./"))
+//		uri=uri.substring(2);
+//	String[] urils=uri.split("/");
+//	if(urils.length==0)
+//		urils=new String[]{""};
+//	List<String> keys=req.get().session().accesskeys();
+//	StringBuffer pathbf=new StringBuffer(htp.root_dir);
+//	for(int n=0;n<urils.length;n++){
+//		String s=urils[n];
+//		if(pathbf.length()>0)
+//			pathbf.append("/");
+//		pathbf.append(s);
+//		File f=new File(pathbf.toString());
+//		File keysf;
+//		if(f.isDirectory())
+//			keysf=new File(f,".key");
+//		else
+//			continue;
+//		if(!keysf.exists())
+//			continue;
+//		BufferedReader reader=new BufferedReader(new FileReader(keysf));
+//		for(String line=reader.readLine().trim();line!=null;line=reader.readLine().trim()){
+//			if(line.startsWith("#")){
+//				continue;
+//			}
+//			if(keys.contains(line)){
+//				return;
+//			}
+//		}
+//		throw new Error("access denied "+uri);
+//	}
+//}
+	public String readstr()throws IOException{
+		if(!isfile())return "";
+		final ByteBuffer bb=ByteBuffer.allocate((int)size());
+		to(bb);
+		if(bb.hasRemaining())throw new Error("buffernotfullyread");
+		bb.flip();
+		return new String(bb.array(),bb.position(),bb.limit(),b.strenc);
+		//final ByteArrayOutputStream ba=new ByteArrayOutputStream((int)size());
+		//to(ba);
+		//return ba.toString("utf8");
+	}
+	//? thisisinorpisin
+	public boolean isin(final path p){try{return fullpath().startsWith(p.fullpath());}catch(Throwable t){throw new Error(t);}}
+	//? rename
+	public boolean moveto(final path p){return file.renameTo(new File(p.file,name()));}
+	public void copyto(final path dir)throws IOException{
+		final path p=dir.get(name());
+		if(p.exists())throw new Error("exists. overwrite?");
+		final OutputStream os=p.outputstream();
+		try{to(os);}finally{os.close();}
+	}
+	public path writestr(final String s)throws IOException{
+		writeba(b.tobytes(s));
+		return this;
+	}
+	public interface visitor{void visit(final path p)throws Throwable;}
+	public void apply(final visitor v)throws Throwable{
+		if(!exists())return;
+		if(isfile())v.visit(this);
+		if(isdir())for(final String fn:file.list())get(fn).apply(v);
+	}
+	public ByteBuffer readbb()throws IOException{
+		final long size=size();
+		if(size>Integer.MAX_VALUE)throw new Error("filesizetolarge "+size);
+		final ByteBuffer bb=ByteBuffer.allocate((int)size);
+		to(bb);
+		bb.flip();
+		return bb;
+	}
+}
+package b;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.text.*;
+import java.util.*;
+public final class req{
+	public static req get(){return((thdreq)Thread.currentThread()).r;}
+	private static Map<String,chdresp>cachef;
+	private static Map<String,chdresp>cacheu;
+	static void init_static(){
+		if(b.cache_files)
+			cachef=Collections.synchronizedMap(new LinkedHashMap<String,chdresp>(b.cache_files_hashlen));
+		if(b.cache_uris)
+			cacheu=Collections.synchronizedMap(new LinkedHashMap<String,chdresp>());			
+	}
+	final static byte[]h_http200="HTTP/1.1 200".getBytes();
+	final static byte[]h_content_length="\r\nContent-Length: ".getBytes();
+	final static byte[]h_last_modified="\r\nLast-Modified: ".getBytes();
+	final static byte[]h_content_type="\r\nContent-Type: ".getBytes();
+	final static byte[]hkp_connection_keep_alive="\r\nConnection: Keep-Alive".getBytes();
+	final static byte[]ba_crlf2="\r\n\r\n".getBytes();
+	private final static String axfld="$";
+	private final static byte[]h_http206="HTTP/1.1 206".getBytes();
+	private final static byte[]h_http304="HTTP/1.1 304".getBytes();
+	private final static byte[]h_http404="HTTP/1.1 404".getBytes();
+	private final static byte[]h_set_cookie="\r\nSet-Cookie: i=".getBytes();
+	private final static byte[]hkp_transfer_encoding_chunked="\r\nTransfer-Encoding: chunked".getBytes();
+	private final static byte[]hkp_accept_ranges_byte="\r\nAccept-Ranges: bytes".getBytes();
+	private final static byte[]h_content_range="\r\nContent-Range: ".getBytes();
+	private final static byte[]hk_cookie_append=";path=/;expires=Thu, 31-Dec-2020 00:00:00 GMT;".getBytes();
+	private final static String hk_connection="connection";
+	private final static String hk_content_length="content-length";
+	private final static String hk_content_type="content-type";
+	private final static String hk_cookie="cookie";
+	private final static String hk_if_modified_since="if-modified-since";
+	private final static String hv_keep_alive="keep-alive";
+	private final static String s_bytes_="bytes ";
+	private final static String s_eq="=";
+	private final static String s_minus="-";
+	private final static String s_range="range";
+	private final static String s_slash="/";
+	private static final byte[]ba_page_header="<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script><body onload=$l()>".getBytes();
+	private final static int state_method=1;
+	private final static int state_uri=2;
+	private final static int state_prot=3;
+	private final static int state_header_name=4;
+	private final static int state_header_value=5;
+	private final static int state_content_read=6;
+	private final static int state_transfer_file=7;
+	private final static int state_transfer_buffers=8;
+	private final static int state_waiting_run_page=9;
+	private final static int state_waiting_run_page_content=10;
+	private final static int state_run_page=11;
+	private final static int state_run_page_content=12;
+	private final static int state_content_upload=13;
+	private final static int state_content_upload_done=14;
+	private final static int state_sock=15;
+	private final static String text_html_utf8="text/html;charset=utf-8";
+	private final static String text_plain="text/plain";
+	private final static String text_plain_utf8="text/plain;charset=utf-8";
+	private int state=state_method;
+	private final ByteBuffer bb=ByteBuffer.allocate(b.reqinbuf_b);
+	private ByteBuffer bb_content;
+	private byte[]ba;
+	private int ba_len;
+	private int ba_off;
+	private boolean connection_keep_alive;
+	private final StringBuilder sb_path=new StringBuilder(256);
+	private String path_s;
+	private String query_s;
+	private path pth;
+	private final StringBuilder sb_header_name=new StringBuilder(32);
+	private final StringBuilder sb_header_value=new StringBuilder(256);
+	private final Map<String,String>hdrs=new HashMap<String,String>();
+	private String sesid;
+	private session ses;
+	private boolean sesid_set;
+	private String contentType;
+	private long contentLength;
+	private final Map<String,String>content=new HashMap<String,String>();
+	private ByteBuffer[]transfer_buffers;
+	private long transfer_buffers_remaining;
+	private FileChannel transfer_file_channel;
+	private long transfer_file_position;
+	private long transfer_file_remaining;
+	private boolean waiting_write;
+	SelectionKey selkey;
+	SocketChannel sockch;
+	private path upload_path;
+	private FileChannel upload_channel;
+	private String upload_lastmod_s;
+	private sock sck;
+	public session session(){return ses;}
+	public String path(){return path_s;}
+	public String query(){return query_s;}
+	boolean is_waiting_write(){return waiting_write;}
+	void waiting_write(final boolean b){waiting_write=b;}
+	boolean is_connection_keepalive(){return connection_keep_alive;}
+	boolean is_transfer(){return state==state_transfer_file||state==state_transfer_buffers;}
+	boolean is_waiting_run_page(){return state==state_waiting_run_page;}
+	boolean is_waiting_run_page_content(){return state==state_waiting_run_page_content;}
+	boolean is_waiting_run(){return is_waiting_run_page()||is_waiting_run_page_content();}
+	void close(){try{sockch.close();}catch(final Throwable t){b.log(t);}}
+	boolean is_buf_empty(){return ba_len==0;}
+	private void reply(final byte[]resultcode,final byte[]lastMod,final byte[]contentType,final byte[]content)throws IOException{
+		final ByteBuffer[]bb=new ByteBuffer[16];
+		int bi=0;
+		bb[bi++]=ByteBuffer.wrap(resultcode);
+		if(sesid_set){
+			bb[bi++]=ByteBuffer.wrap(h_set_cookie);
+			bb[bi++]=ByteBuffer.wrap(sesid.getBytes());
+			bb[bi++]=ByteBuffer.wrap(hk_cookie_append);
+			sesid_set=false;
+		}
+		if(lastMod!=null){
+            bb[bi++]=ByteBuffer.wrap(h_last_modified);
+			bb[bi++]=ByteBuffer.wrap(lastMod);			
+		}
+		if(contentType!=null){
+			bb[bi++]=ByteBuffer.wrap(h_content_type);
+			bb[bi++]=ByteBuffer.wrap(contentType);			
+		}
+		if(content!=null){
+			bb[bi++]=ByteBuffer.wrap(h_content_length);
+			bb[bi++]=ByteBuffer.wrap(Long.toString(content.length).getBytes());
+		}
+		if(connection_keep_alive)
+			bb[bi++]=ByteBuffer.wrap(hkp_connection_keep_alive);
+		bb[bi++]=ByteBuffer.wrap(ba_crlf2);
+		if(content!=null)
+			bb[bi++]=ByteBuffer.wrap(content);
+		final long n=sendpacket(bb,bi);
+		thdwatch.output+=n;
+		state=state_method;
+	}
+	private void do_after_header()throws Throwable{
+//		assertaccess();
+		final String ka=hdrs.get(hk_connection);if(ka!=null)connection_keep_alive=hv_keep_alive.equalsIgnoreCase(ka);
+		content.clear();
+		final String contentLength_s=hdrs.get(hk_content_length);
+		if(contentLength_s!=null){
+			if(!decodecookie())throw new Error("nocookie");
+			contentLength=Long.parseLong(contentLength_s);
+			contentType=hdrs.get(hk_content_type);
+			if(contentType.startsWith("file;")){
+				if(!b.enable_upload)throw new Error("uploadsdisabled");
+				final String[]q=contentType.split(";");
+				upload_lastmod_s=q.length>1?q[1]:new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS").format(new Date());
+//				final String time=q[1];
+//				final String size=q[2];
+//				final String md5=q[3];
+//				final String range=q[4];
+				upload_path=b.path(b.sessions_dir).get(sesid).get(path_s);
+				upload_channel=upload_path.filechannel();
+				bb.position(ba_off);
+				state=state_content_upload;
+				parse_content_upload();
+				return;
+			}else if(contentType.startsWith("dir;")){
+				if(!b.enable_upload)throw new Error("uploadsdisabled");
+				final String[]q=contentType.split(";");
+				final String lastmod_s=q[1];
+				final path p=b.path(b.sessions_dir).get(sesid).get(path_s);
+				if(!p.exists())p.mkdirs();
+				if(!p.isdir())throw new Error("isnotdir: "+p);
+				final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS");
+				try{p.lastmod(df.parse(lastmod_s).getTime());}catch(final ParseException e){throw new Error(e);}
+				state=state_method;
+				return;
+			}
+			bb_content=ByteBuffer.allocate((int)contentLength);
+			state=state_content_read;
+			return;
+		}
+		pth=b.path(path_s);
+		if(b.try_file&&try_file())return;
+		if(b.try_rc&&try_rc())return;
+		decodecookie();
+		state=state_waiting_run_page;
+		if(!b.cache_uris)return;
+		if(ses==null)ses=session.all().get(sesid);
+		if(ses==null)return;
+		if(sesid!=null&&!sesid.equals(ses.id()))throw new Error("cookiechangeduringconnection");
+		final a a=(a)ses.get(path_s);
+		if(a==null)return;
+		if(!(a instanceof cacheable))return;
+		final cacheable ac=(cacheable)a;
+		final String ifmodsince=hdrs.get(hk_if_modified_since);
+		final String lastmod=ac.lastmod();
+		if(ifmodsince!=null&&ifmodsince.equals(lastmod)){reply(h_http304,null,null,null);return;}
+		String key=sb_path.toString();
+		if(ac.cacheforeachuser())key=req.get().session().id()+"~"+key;
+		final chdresp c=cacheu.get(key);
+		if(c==null)return;
+		if(!c.isvalid(System.currentTimeMillis()))return;
+		reply2(c);
+		thdwatch.cacheuhits++;
+	}
+	private void reply(final cacheable cw)throws Throwable{
+		final String ifmodsince=hdrs.get(hk_if_modified_since);
+		final String lastmod=cw.lastmod();
+		if(ifmodsince!=null&&ifmodsince.equals(lastmod)){reply(h_http304,null,null,null);return;}
+		final long t=System.currentTimeMillis();
+		String key=sb_path.toString();
+		if(cw.cacheforeachuser())key=req.get().session().id()+"~"+key;
+		chdresp c=cacheu.get(key);
+		if(c==null){c=new chdresp(cw,key);cacheu.put(key,c);}
+		c.validate(t,ifmodsince);
+		reply2(c);
+	}
+//	private void assertaccess(){
+//		if(path_s.startsWith("/localhost")&&!sockch.socket().getRemoteSocketAddress().toString().startsWith("/0:0:0:0:0:0:0:1"))
+//			throw new Error("may only be accessed from localhost");
+//	}
+	private boolean decodecookie(){
+		sesid=hdrs.get(hk_cookie);
+		if(sesid==null)return false;
+		final String[]c1=sesid.split(";");
+		for(String cc:c1){
+			cc=cc.trim();
+			if(cc.startsWith("i=")){
+				final String[]c2=cc.split("i=");
+				if(c2.length<2)throw new Error("invalidcookie: "+sesid);
+				sesid=c2[1];
+				sesid_set=false;
+				return true;
+			}
+		}
+		return false;
+	}
+	private void do_after_prot(){
+		thdwatch.reqs++;
+		final String s=b.urldecode(sb_path.toString());
+		final int i=s.indexOf('?');
+		if(i==-1){path_s=s;query_s="";}
+        else{path_s=s.substring(0,i);query_s=s.substring(i+1);}
+		hdrs.clear();
+		state=state_header_name;
+    }
+	boolean do_transfer()throws Throwable{
+		if(state==state_transfer_file)return do_transfer_file();
+		else if(state==state_transfer_buffers)return do_transfer_buffers();
+		else throw new Error();
+	}
+	private boolean do_transfer_buffers()throws Throwable{
+		while(transfer_buffers_remaining!=0){
+			final long c=sockch.write(transfer_buffers);
+			if(c==0)return false;
+			transfer_buffers_remaining-=c;
+			thdwatch.output+=c;
+		}
+		state=state_method;
+		return true;
+	}
+	private boolean do_transfer_file()throws IOException{
+		//? heavy
+//		final long buf_size=this.sockch.socket().getSendBufferSize();
+		final int buf_size=b.transfer_file_write_size;
+		while(transfer_file_remaining!=0)try{
+				final long c=transfer_file_channel.transferTo(transfer_file_position,buf_size,sockch);
+				if(c==0)return false;
+				transfer_file_position+=c;
+				transfer_file_remaining-=c;
+				thdwatch.output+=c;
+			}catch(final IOException e){
+				//?
+				//? differingmessagedependingonplatform
+//				if("sendfile failed: EAGAIN (Try again)".equals(e.getMessage())){
+//					thdwatch.eagain++;
+//					b.log(e);
+//					return false;
+//				}
+//				throw e;
+				thdwatch.eagain++;
+				return false;
+			}
+		transfer_file_channel.close();
+		state=state_method;
+		return true;
+	}
+	private static String mkcookieid(){
+		final SimpleDateFormat sdf=new SimpleDateFormat("yyMMdd-hhmmss.SSS-");
+		final StringBuilder sb=new StringBuilder(b.id).append("-").append(sdf.format(new Date()));
+		final String alf="0123456789abcdef";
+		for(int n=0;n<8;n++)sb.append(alf.charAt(b.rndint(0,alf.length())));
+		return sb.toString();
+	}
+	b.op parse()throws Throwable{
+		while(true){
+			if(ba_len==0){
+				bb.clear();
+				final int c=sockch.read(bb);
+				if(c==-1){
+					connection_keep_alive=false;
+					return b.op.nxtreq;
+				}
+				if(c==0)
+					return b.op.read;
+				thdwatch.input+=c;
+				bb.flip();
+				ba=bb.array();
+				ba_off=bb.position();
+				ba_len=bb.remaining();
+			}
+			while(ba_len>0){
+				switch(state){default:throw new Error();
+				case state_method:parse_method();break;
+				case state_uri:parse_uri();break;
+				case state_prot:parse_prot();break;
+				case state_header_name:parse_header_name();break;
+				case state_header_value:parse_header_value();break;
+				case state_content_read:parse_content_read();break;
+				case state_content_upload:parse_content_upload();break;
+				}
+				if(state==state_transfer_buffers||state==state_waiting_run_page||state==state_waiting_run_page_content||state==state_content_upload_done)
+					break;
+			}
+			if(state==state_content_upload_done){
+				state=state_method;
+				if(ba_len==0)return b.op.nxtreq;
+				else continue;
+			}
+			if(is_waiting_run())
+				return b.op.thread;
+			if(is_transfer()){
+				if(do_transfer())
+					if(ba_len==0)return b.op.nxtreq;
+					else continue;
+				return b.op.write;
+			}
+		}
+	}
+	private void parse_content_upload()throws IOException{
+		final long diff=contentLength-bb.remaining();
+		final int c;
+		if(diff<0){
+			final long lim=bb.limit();
+			bb.limit((int)(lim+diff));
+			c=upload_channel.write(bb);
+			bb.limit((int)lim);
+		}else{
+			c=upload_channel.write(bb);
+		}
+		contentLength-=c;ba_len-=c;ba_off+=c;
+		if(contentLength==0){
+			upload_channel.close();
+			final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.SSS");
+			try{upload_path.lastmod(df.parse(upload_lastmod_s).getTime());}catch(final ParseException e){throw new Error(e);}
+			state=state_content_upload_done;
+		}
+	}
+	private void parse_content()throws IOException{
+		final byte[]ba=bb_content.array();
+		int i=0;
+		String name="";
+		int s=0;
+		int k=0;for(final byte c:ba){
+			switch(s){default:throw new Error();
+			case 0:if(c=='='){name=new String(ba,i,(k-i),b.strenc);i=k+1;s=1;}break;
+			case 1:if(c=='\r'){final String value=new String(ba,i,(k-i),b.strenc);content.put(name,value);i=k+1;s=0;}break;
+			}
+			k++;}
+		bb_content=null;
+	}
+	private void parse_content_read(){
+		final int c=(int)(ba_len>contentLength?contentLength:ba_len);
+		bb_content.put(ba,ba_off,c);
+		contentLength-=c;ba_off+=c;ba_len-=c;
+		if(contentLength==0){
+			bb_content.flip();
+			state=state_waiting_run_page_content;
+		}
+	}
+	private void parse_header_name()throws Throwable{
+		while(ba_len!=0){
+			final byte b=ba[ba_off++];
+			ba_len--;
+			if(b==':'){state=state_header_value;break;
+			}else if(b=='\n'){do_after_header();return;
+			}else{sb_header_name.append((char)b);}
+		}
+	}
+	private void parse_header_value(){
+		while(ba_len!=0){
+			final byte b=ba[ba_off++];
+			ba_len--;
+			if(b=='\n'){
+				hdrs.put(sb_header_name.toString().trim().toLowerCase(),sb_header_value.toString().trim());
+				sb_header_name.setLength(0);
+				sb_header_value.setLength(0);
+				state=state_header_name;
+				break;
+			}
+			sb_header_value.append((char)b);
+		}
+	}
+	private void parse_method(){
+		while(ba_len!=0){
+			final byte b=ba[ba_off++];
+			ba_len--;
+			if(b==' '){state=state_uri;sb_path.setLength(0);break;}
+		}
+	}
+	private void parse_prot()throws Throwable{
+		while(ba_len!=0){
+			final byte b=ba[ba_off++];
+			ba_len--;
+			if(b=='\n'){
+				if(ba_off>=3&&ba[ba_off-3]=='1')connection_keep_alive=true;// cheapo to set keepalive for http/1.1\r\n
+				do_after_prot();
+				break;
+			}
+		}
+	}
+	private void parse_uri(){
+		while(ba_len!=0){
+			final byte b=ba[ba_off++];
+			ba_len--;
+			if(b==' '){state=state_prot;break;}
+			sb_path.append((char)b);
+		}
+	}
+	private oschunked reply_chunked(final byte[]hdr,final String contentType,final String lastmod)throws Throwable{
+		final ByteBuffer[]bb_reply=new ByteBuffer[11];
+		int bbi=0;
+		bb_reply[bbi++]=ByteBuffer.wrap(hdr);
+		if(sesid_set){
+			bb_reply[bbi++]=ByteBuffer.wrap(h_set_cookie);
+			bb_reply[bbi++]=ByteBuffer.wrap(sesid.getBytes());
+			bb_reply[bbi++]=ByteBuffer.wrap(hk_cookie_append);
+			sesid_set=false;
+		}
+		if(connection_keep_alive)
+			bb_reply[bbi++]=ByteBuffer.wrap(hkp_connection_keep_alive);
+		if(contentType!=null){
+			bb_reply[bbi++]=ByteBuffer.wrap(h_content_type);
+			bb_reply[bbi++]=ByteBuffer.wrap(contentType.getBytes());
+		}
+		if(lastmod!=null){
+			bb_reply[bbi++]=ByteBuffer.wrap(h_last_modified);
+			bb_reply[bbi++]=ByteBuffer.wrap(lastmod.getBytes());			
+		}
+		bb_reply[bbi++]=ByteBuffer.wrap(hkp_transfer_encoding_chunked);
+		bb_reply[bbi++]=ByteBuffer.wrap(ba_crlf2);
+		thdwatch.output+=sendpacket(bb_reply,bbi);
+		return new oschunked(this,b.chunk_B);
+	}
+	private void resp_page()throws Throwable{
+		if(sesid!=null){
+			//?? sessiongetandloadracing
+			ses=session.all().get(sesid);
+			if(ses==null&&b.sessionfile_load){
+				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
+				if(sespth.exists()){
+					try{ses=(session)sespth.readobj();}catch(final Throwable t){//? upgser
+						b.log(new Error("could not read session created new "+sespth));
+						ses=new session(sesid);
+					}
+					ses.bits(b.sessionbits(sesid));
+					session.all().put(sesid,ses);
+				}
+			}
+		}else{
+			sesid=mkcookieid();
+			sesid_set=true;
+			ses=null;
+		}
+		if(ses==null){
+			ses=new session(sesid);
+			ses.bits(b.sessionbits(sesid));
+			session.all().put(ses.id(),ses);
+			thdwatch.sessions++;
+		}
+		ses.nreq++;
+		a e=(a)ses.get(path_s);
+		if(e==null){
+			String cn=path_s.replace('/','.');
+			while(cn.startsWith("."))cn=cn.substring(1);
+			try{e=(a)Class.forName(b.webobjpkg+cn).newInstance();}catch(Throwable e1){
+			try{final String clsnm=b.webobjpkg+cn+(cn.length()==0?"":".")+b.default_package_class;
+				e=(a)Class.forName(clsnm).newInstance();
+			}catch(Throwable e2){
+				final oschunked os=reply_chunked(h_http404,text_plain_utf8,null);
+				//. extractcauseofexceptionforbetterindication
+				while(e1.getCause()!=null)e1=e1.getCause();
+				new xwriter(os).p(path_s).nl().nl().p(b.stacktraceline(e1)).nl().nl().p(b.stacktraceline(e2)).nl();
+				os.finish();
+				return;
+			}}
+			if(e instanceof sock){
+                state=state_sock;
+				sck=(sock)e;
+				switch(sck.sockinit(hdrs,new sockio(sockch,selkey))){default:throw new IllegalStateException();
+				case read:selkey.interestOps(SelectionKey.OP_READ);selkey.selector().wakeup();break;
+				case write:selkey.interestOps(SelectionKey.OP_WRITE);selkey.selector().wakeup();break;
+				case close:sockch.close();break;
+				case wait:selkey.interestOps(0);break;
+				}
+				return;
+//				new Thread(new Runnable(){public void run(){}});
+			}
+			ses.put(path_s,e);
+		}
+		if(!content.isEmpty()){
+			String ax="";
+			for(final Map.Entry<String,String>me:content.entrySet()){
+				if(axfld.equals(me.getKey())){
+					ax=me.getValue();
+					continue;
+				}
+				final String[]pth=me.getKey().split("_");
+				a ee=e;
+				for(int n=1;n<pth.length;n++){
+					ee=ee.chld(pth[n]);
+					if(ee==null)throw new Error("not found: "+me.getKey());
+				}
+				ee.set(me.getValue());
+			}
+			final String[]axa=ax.split(" ");
+			if(axa.length>0){
+				final String[]pth=axa[0].split("_");
+				for(int n=1;n<pth.length;n++){
+					e=e.chld(pth[n]);
+					if(e==null)break;
+				}
+				final oschunked os=reply_chunked(h_http200,text_html_utf8,null);
+				final xwriter x=new xwriter(os);
+				if(e==null){
+					x.xalert("element not found:\n"+axa[0]);
+					os.finish();
+					return;
+				}
+				final String methodName="ax_"+(axa.length>1?axa[1]:"");
+				final Object[]params=new Object[]{x,axa};
+				final Method method;
+				try{method=e.getClass().getMethod(methodName,new Class[]{xwriter.class,String[].class});
+				try{method.invoke(e,params);}catch(final InvocationTargetException t){
+					b.log(t);
+					final String str=b.stacktraceline(t.getTargetException());
+					x.xalert(str);
+				}}catch(NoSuchMethodException t){
+					x.xalert("method not found:\n"+e.getClass().getName()+"."+methodName+"(xwriter,String[])");
+				}
+				os.finish();
+			}
+			return;
+		}
+		if(b.cache_uris){
+			if(e instanceof cacheable){
+				final cacheable cw=(cacheable)e;
+				reply(cw);
+				thdwatch.cacheuhits++;
+				return;
+			}
+		}
+		final boolean isbin=e instanceof bin;
+		final oschunked os=reply_chunked(h_http200,isbin?((bin)e).contenttype():text_html_utf8,null);
+		if(!isbin)os.write(ba_page_header);
+		final xwriter x=new xwriter(os);
+		try{e.to(x);}catch(final Throwable t){b.log(t);x.pre().p(b.stacktrace(t));}
+		os.finish();
+	}
+	private void reply2(final chdresp c) {
+		final ByteBuffer bb=ByteBuffer.allocate(512+c.byteBuffer().limit());
+		//? bba
+		bb.put(h_http200);
+		bb.put(h_content_length).put(Long.toString(c.byteBuffer().limit()).getBytes());
+		if(c.lastModified()!=null)
+			bb.put(h_last_modified).put(c.lastModified().getBytes());
+		bb.put(hkp_connection_keep_alive);
+		if(sesid_set){
+			for(final ByteBuffer b:new ByteBuffer[]{ByteBuffer.wrap(h_set_cookie),ByteBuffer.wrap(sesid.getBytes()),ByteBuffer.wrap(hk_cookie_append)})bb.put(b);
+			sesid_set=false;
+		}
+		bb.put(req.ba_crlf2);
+		bb.flip();
+		set_state_transfer_buffers(new ByteBuffer[]{bb,c.byteBuffer().slice()});
+	}
+	void run_page()throws Throwable{
+		state=state_run_page;
+		resp_page();
+		if(is_sock()){thdwatch.socks++;return;}
+		if(state==state_run_page)state=state_method;
+		thdwatch.pages++;
+	}
+	void run_page_content()throws Throwable{
+		state=state_run_page_content;
+		if(!contentType.startsWith(text_plain))throw new Error("only "+text_plain+" post allowed");
+		parse_content();
+		resp_page();
+		if(state==state_run_page_content)state=state_method;
+		thdwatch.posts++;
+	}
+	private void set_state_transfer_buffers(final ByteBuffer[]bba){
+		long n=0;
+		for(final ByteBuffer b:bba)n+=b.remaining();
+		transfer_buffers=bba;
+		transfer_buffers_remaining=n;
+		state=state_transfer_buffers;
+	}
+	private boolean try_rc()throws Throwable{
+//		final String p=pth.toString();
+        //?
+		final String p=pth.name();
+		if(!b.resources_paths.contains(p))return false;
+		final String rcpth="/"+req.class.getPackage().getName()+"/"+p;
+		final InputStream is=req.class.getResourceAsStream(rcpth);
+		if(is==null)return false;
+		final chdresp c=new chdresp(is);
+		synchronized(cachef){cachef.put(path_s,c);}
+		reply(c);
+		return true;
+	}
+	private boolean try_cache()throws Throwable{
+		chdresp cachedresp;
+		boolean validated=false;
+		cachedresp=cachef.get(path_s);
+		if(cachedresp==null){
+			if(pth.isdir())pth=pth.get(b.default_directory_file);
+			if(!pth.exists())return false;
+			if(pth.size()<=b.cache_files_maxsize){
+				cachedresp=new chdresp(pth);
+				validated=true;
+				cachef.put(path_s,cachedresp);
+				thdwatch._cachef++;
+			}
+		}
+		if(cachedresp==null)return false;
+		if(!validated&&!cachedresp.validate(System.currentTimeMillis(),null)){
+			synchronized(cachef){cachef.remove(path_s);}
+			thdwatch._cachef--;
+			return true;
+		}
+		reply(cachedresp);
+		return true;
+	}
+	private void reply(final chdresp c)throws IOException{
+		thdwatch.cachefhits++;
+		final String ifModSince=hdrs.get(hk_if_modified_since);
+		if(ifModSince!=null&&c.ifnotmodsince(ifModSince)){
+			reply(h_http304,null,null,null);
+			return;
+		}
+		if(!sesid_set){
+			set_state_transfer_buffers(new ByteBuffer[]{c.byteBuffer().slice()});
+			return;
+		}
+		sesid_set=false;
+		final ByteBuffer[]bba=new ByteBuffer[]{c.byteBuffer().slice(),ByteBuffer.wrap(h_set_cookie),ByteBuffer.wrap(sesid.getBytes()),ByteBuffer.wrap(hk_cookie_append),c.byteBuffer().slice()};
+		bba[0].limit(c.hdrinsertionix());
+		bba[4].position(c.hdrinsertionix());
+		set_state_transfer_buffers(bba);
+	}
+	private boolean try_file()throws Throwable{
+		if(cachef!=null)if(try_cache())return true;
+		if(!pth.exists())return false;
+		if(!pth.isfile()){
+			pth=pth.get(b.default_directory_file);
+			if(!pth.exists()||!pth.isfile())return false;
+		}
+		thdwatch.files++;
+		final long lastmod_l=pth.lastmod();
+		final String lastmod_s=b.tolastmodstr(lastmod_l);
+		final String ifModSince=hdrs.get(hk_if_modified_since);
+		if(ifModSince!=null&&ifModSince.equals(lastmod_s)){
+			reply(h_http304,null,null,null);
+			return true;
+		}
+		final long path_len=pth.size();
+		final String range_s=hdrs.get(s_range);
+		final ByteBuffer[]bb=new ByteBuffer[16];
+		int i=0;
+		final long range_from;
+		if(range_s!=null){
+			final String[]s=range_s.split(s_eq);
+			final String[]ss=s[1].split(s_minus);
+			range_from=Long.parseLong(ss[0]);
+			bb[i++]=ByteBuffer.wrap(h_http206);
+			bb[i++]=ByteBuffer.wrap(h_content_length);
+			bb[i++]=ByteBuffer.wrap(Long.toString(path_len-range_from).getBytes());
+			bb[i++]=ByteBuffer.wrap(h_content_range);
+			bb[i++]=ByteBuffer.wrap((s_bytes_+range_from+s_minus+path_len+s_slash+path_len).getBytes());
+		}else{
+			range_from=0;
+			bb[i++]=ByteBuffer.wrap(h_http200);
+			bb[i++]=ByteBuffer.wrap(h_content_length);
+			bb[i++]=ByteBuffer.wrap(Long.toString(path_len).getBytes());
+		}
+		bb[i++]=ByteBuffer.wrap(h_last_modified);
+		bb[i++]=ByteBuffer.wrap(lastmod_s.getBytes());
+		bb[i++]=ByteBuffer.wrap(hkp_accept_ranges_byte);
+		if(sesid_set){
+			bb[i++]=ByteBuffer.wrap(h_set_cookie);
+			bb[i++]=ByteBuffer.wrap(sesid.getBytes());
+			bb[i++]=ByteBuffer.wrap(hk_cookie_append);
+			sesid_set=false;
+		}
+		if(connection_keep_alive)
+            bb[i++]=ByteBuffer.wrap(hkp_connection_keep_alive);
+		bb[i++]=ByteBuffer.wrap(ba_crlf2);
+		final long n=sendpacket(bb,i);
+		thdwatch.output+=n;
+		transfer_file_channel=pth.fileinputstream().getChannel();
+		transfer_file_position=range_from;
+		transfer_file_remaining=path_len-range_from;
+		state=state_transfer_file;
+		return true;
+	}
+	private int sendpacket(final ByteBuffer[]bb,final int n)throws IOException{
+		long tosend=0;
+		for(int i=0;i<n;i++)tosend+=bb[i].remaining();
+		final long c=sockch.write(bb,0,n);
+		if(c!=tosend)b.log(new Error("sent "+c+" of "+tosend+" bytes"));//?
+		return n;
+	}
+	public String toString(){
+		return new String(ba,ba_off,ba_len)+(bb_content==null?"":new String(bb_content.slice().array()));
+	}
+	public String host(){final String h=hdrs.get("host");final String[]ha=h.split(":");return ha[0];}
+	public int port(){final String h=hdrs.get("host");final String[]ha=h.split(":");if(ha.length<2)return 80;return Integer.parseInt(ha[1]);}
+	public static long cachef_size(){
+		if(cachef==null)return 0;
+		long k=0;
+		//? sync(cachef)
+		for(final chdresp e:cachef.values())k+=e.byteBuffer().capacity();
+		return k;
+	}
+	public static long cacheu_size(){
+		if(cacheu==null)return 0;
+		//? sync(cacheu)
+		long k=0;
+		for(final chdresp e:cacheu.values()){
+			if(e.byteBuffer()==null)continue;
+			k+=e.byteBuffer().capacity();
+		}
+		return k;
+	}
+	public InetAddress ip(){return sockch.socket().getInetAddress();}
+
+
+
+	// socks
+	boolean is_sock(){return state==state_sock;}
+	sock.op sockread()throws Throwable{return sck.read();}
+	sock.op sockwrite()throws Throwable{return sck.write();}
+	// threaded socks
+	boolean is_sock_thread(){return sck instanceof threadedsock;}
+	private boolean waiting_sock_thread_read;
+	private boolean waiting_sock_thread_write;
+	void set_waiting_sock_thread_read(){waiting_sock_thread_read=true;}
+	void set_waiting_sock_thread_write(){waiting_sock_thread_write=true;}
+	void sock_thread_run()throws Throwable{
+		if(waiting_sock_thread_read){
+			waiting_sock_thread_read=false;
+			sock_thread_read();
+		}
+		if(waiting_sock_thread_write){
+			waiting_sock_thread_write=false;
+			sock_thread_write();
+		}
+	}
+	private void sock_thread_read()throws Throwable{
+		switch(sockread()){default:throw new Error();
+			case read:selkey.interestOps(SelectionKey.OP_READ);selkey.selector().wakeup();return;
+			case write:selkey.interestOps(SelectionKey.OP_WRITE);selkey.selector().wakeup();return;
+			case close:close();thdwatch.socks--;return;
+			case wait:selkey.interestOps(0);return;
+			case cont:return;
+		}
+	}
+	private void sock_thread_write()throws Throwable{
+		switch(sockwrite()){default:throw new Error();
+			case read:selkey.interestOps(SelectionKey.OP_READ);selkey.selector().wakeup();break;
+			case write:selkey.interestOps(SelectionKey.OP_WRITE);selkey.selector().wakeup();break;
+			case close:close();thdwatch.socks--;break;
+		}
+	}
+}
+package b;
+import java.io.*;
+import java.util.*;
+import java.util.Map.*;
+public final class session implements Serializable{
+	static final long serialVersionUID=1;
+	private static final Map<String,session>all=Collections.synchronizedMap(new HashMap<String,session>(b.hash_size_sessions_store));
+	static Map<String,session>all(){return all;}
+	static void all_save()throws Throwable{synchronized(all){
+		final long t0=System.currentTimeMillis();
+		final int s=all.size();
+		b.out.print("\n");
+		int k=1;
+		for(final Iterator<Entry<String,session>>i=all.entrySet().iterator();i.hasNext();k++){
+			final Entry<String,session>e=i.next();
+			final String id=e.getKey();
+			final path p=b.path(b.sessions_dir).get(id).get(b.sessionfile);
+			b.out.print("\r");
+			b.out.print(k);
+			b.out.print("/");
+			b.out.print(s);
+			b.out.print(" ");
+			b.out.print(e.getKey());
+			final session se=e.getValue();
+			synchronized(se){p.writeobj(se);}
+		}
+		final long dt=System.currentTimeMillis()-t0;
+		b.out.print("\n done in ");
+		b.out.print(dt);
+		b.out.print(" ms\n  wrote ");
+		long sps=s*1000;
+		if(dt!=0)
+			sps/=dt;
+		if(sps>s)
+			sps=s;
+		b.out.println(sps+" session"+(sps>1?"s":"")+"/second");
+	}}
+	private final String id;
+	private final Map<String,Serializable>kvp;
+	int nreq;
+	private long bits=1;
+	session(final String id){
+		this.id=id;
+		kvp=Collections.synchronizedMap(new HashMap<String,Serializable>(b.hash_size_session_values));
+	}
+	public Serializable get(final String key){return kvp.get(key);}
+	public String href(){return "/"+b.sessionhref(id);}
+	public String id(){return id;}
+	public Set<String>keyset(){return Collections.unmodifiableSet(kvp.keySet());}
+	public path path(final String path){return b.path(href()+path);}
+	public path path(){return b.path(href());}
+	public path path(final Class<?>cls){return b.path(href()+cls.getName().replace('.','/'));}
+	public void put(final String key,final Serializable value){kvp.put(key,value);}
+	public void save()throws IOException{path(b.sessionfile).writeobj(this);}
+	public String inpath(final path p)throws Error{
+		final String fn=p.toString();
+		final String href=b.path(href()).toString();
+		if(!fn.startsWith(href))
+			throw new Error();
+		if(fn.length()==href.length())
+			return "";
+		return fn.substring(href.length()+1);
+	}
+	public long bits(){return bits;}
+	public void bits(final long b){bits=b;}
+	public boolean bitshasany(final long b){return (bits|b)!=0;}
+	public boolean bitshasall(final long b){return (bits&b)==b;}
+	public void remove(final String key){kvp.remove(key);}
+}
+package b;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+public final class sockio{
+	private final SocketChannel sc;
+	private final SelectionKey sk;
+	sockio(final SocketChannel sc,final SelectionKey sk){this.sc=sc;this.sk=sk;}
+	public int read(final ByteBuffer bb)throws IOException{
+        final int c=sc.read(bb);
+        thdwatch.input+=c;
+        return c;
+    }
+	public int write(final ByteBuffer bb)throws IOException{
+        final int c=sc.write(bb);
+        thdwatch.output+=c;
+        return c;
+    }
+	public long write(final ByteBuffer[]bbs)throws IOException{
+        final long c=sc.write(bbs);
+        thdwatch.output+=c;
+        return c;
+    }
+	public void reqwrite(){
+        sk.interestOps(SelectionKey.OP_WRITE);
+        sk.selector().wakeup();
+    }
+}
+package b;
+import java.util.*;
+public interface sock{
+	enum op{write,read,close,cont,wait}
+	op sockinit(final Map<String,String>hdrs,final sockio so)throws Throwable;
+	op read()throws Throwable;
+	op write()throws Throwable;
+}
+package b;
+public interface sts{
+	void setsts(String s)throws Throwable;
+	void flush()throws Throwable;
+}
+package b;
+import java.nio.channels.*;
+import java.util.*;
+final class thdreq extends Thread{
+	static final Collection<thdreq>all=new LinkedList<thdreq>();
+	private static int seq;
+	req r;
+
+    thdreq(final req r){
+		super("t"+Integer.toString(seq++));
+		this.r=r;
+		synchronized(all){all.add(this);}//?!
+		start();
+	}
+	public void run(){
+		//synchronized(all){all.add(this);}//?!
+        final long t0=System.currentTimeMillis();
+		proc();
+		while(b.thread_pool){
+			final LinkedList<req>ls=b.pendingreqls();
+			synchronized(ls){
+				thdwatch.freethds++;
+				while((r=ls.poll())==null)try{ls.wait();}catch(InterruptedException ok){}
+				thdwatch.freethds--;
+			}
+			proc();
+			final long dt=System.currentTimeMillis()- t0;
+			if(dt>b.thread_pool_lftm)break;
+			//if(all.size()>htp.thread_pool_size)break;
+		}
+		synchronized(all){all.remove(this);}
+	}
+	private void proc(){try{
+		if(r.is_sock()){
+			r.sock_thread_run();
+			return;
+		}
+//			return;
+		
+		if(r.is_waiting_run_page())
+			r.run_page();
+		else if(r.is_waiting_run_page_content())
+			r.run_page_content();
+		else throw new IllegalStateException();
+
+		if(r.is_sock())
+			return;
+		
+		if(r.is_transfer()){
+			r.selkey.interestOps(SelectionKey.OP_WRITE);
+			r.selkey.selector().wakeup();
+			return;
+		}
+		
+		if(!r.is_connection_keepalive()){
+			r.close();
+			return;
+		}
+			//? bug? if r.buf_len!=0
+		r.selkey.interestOps(SelectionKey.OP_READ);
+		r.selkey.selector().wakeup();
+    }catch(Throwable e){r.close();b.log(e);}}//? logtofile
+}
+package b;
+import java.io.*;
+import java.lang.reflect.*;
+final public class thdwatch extends Thread{
+	public static long ms;
+	public static long mem;
+	public static long input;
+	public static long output;
+	public static long freethds;
+	public static long que;
+	public static long sessions;
+	public static long select;
+	public static long ioevents;
+	public static long iocon;
+	public static long ioread;
+	public static long iowrite;
+	public static long reqs;
+	public static long cachefhits;
+	public static long cacheuhits;
+	public static long files;
+	public static long pages;
+	public static long posts;
+	public static long socks;
+	public static long eagain;
+	public static long _cachef;
+	public static long _threads;
+	public static long _memfree;
+	public static int _prevry=100;
+	public static long _t0=System.currentTimeMillis();
+	public static PrintStream _out=System.out;
+	private long _t;
+	static boolean _stop;
+	final static Field[]_fields=thdwatch.class.getDeclaredFields();
+	public thdwatch(){super("watch");}
+	final static String _pad="       ";
+	public void run(){
+		while(!_stop)try{
+			sleep(_prevry);
+			if(!b.thd_watch)continue;
+			ms=System.currentTimeMillis()-_t0;
+			if(ms-_t>2000){
+				_t=ms;
+				_out.println("\n\n");
+				b.stats_to(_out);
+				_out.println();
+				print_fieldnames_to(_out,"\n");
+			}
+			_threads=thdreq.all.size();
+			final Runtime rt=Runtime.getRuntime();
+			_memfree=rt.freeMemory();
+			mem=rt.totalMemory()-_memfree;//? doesnotmatchjprofiler
+			que=b.pendingreqls().size();
+			print_fields_to(_out,"\r");
+		}catch(final Throwable t){t.printStackTrace();}
+	}
+	public static void print_fieldnames_to(final OutputStream os,final String eol)throws IOException{
+        for(final Field f:_fields){
+            String s=f.getName();
+            if (s.startsWith("_"))continue;
+            if (s.length()>_pad.length())s=s.substring(0, _pad.length());
+            os.write(_pad.substring(0,_pad.length()-s.length()).getBytes());
+            os.write(s.getBytes());
+            os.write(" ".getBytes());
+        }
+		os.write(eol.getBytes());
+	}
+	public static void print_fields_to(final OutputStream os,final String eol)throws IllegalAccessException,IOException{
+        for(final Field f:_fields){
+            String s=f.getName();
+            if(s.startsWith("_"))continue;
+            s=f.get(null).toString();
+            if(s.length()>_pad.length())s=s.substring(0,_pad.length());
+            os.write(_pad.substring(0,_pad.length()-s.length()).getBytes());
+            os.write(s.getBytes());
+            os.write(" ".getBytes());
+        }
+		os.write(eol.getBytes());
+	}
+	public static void print_fields2_to(final osnl os,final byte[]ba_eol,final byte[]ba_eor,final String pad)throws Throwable{
+        for(final Field f:_fields){
+            String s=f.getName();
+            if(s.startsWith("_"))continue;
+            if(s.length()>pad.length())s=s.substring(0,pad.length());
+            os.write(pad.substring(0,pad.length()-s.length()).getBytes());
+            os.write(s.getBytes());
+            os.write(": ".getBytes());
+            s=f.get(null).toString();
+            os.write(s.getBytes());
+            os.write(ba_eol);
+        }
+		os.write(ba_eor);		
+	}
+}
+package b;public interface threadedsock{}
+package b;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.*;
+import java.io.*;
+import java.nio.*;
+import java.security.*;
+import java.util.*;
+public class websock extends a implements sock{static final long serialVersionUID=1;
+	private sockio so;
+	private final ByteBuffer bbi=ByteBuffer.allocate(256);
+	private static enum state{closed,handshake,read_next_frame,read_continue}
+	private state st=state.closed;
+	private final byte[]maskkey=new byte[4];
+	private int payloadlendec;
+	private ByteBuffer[]bbos;
+	private session session;
+    private boolean firstpak;
+	final public op sockinit(final Map<String,String>hdrs,final sockio so)throws Throwable{
+		this.so=so;
+//        bbos=null;
+		session=req.get().session();
+		st=state.handshake;
+		// rfc6455#section-1.3
+		// Opening Handshake
+//		if(!"13".equals(hdrs.get("sec-websocket-version")))throw new Error("sec-websocket-version not 13");
+		final String key=hdrs.get("sec-websocket-key");
+		final String s=key+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+		final MessageDigest md=MessageDigest.getInstance("SHA-1");
+		final byte[]sha1ed=md.digest(s.getBytes());
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		final OutputStream encos=MimeUtility.encode(baos,"base64");
+		encos.write(sha1ed);
+		encos.close();
+		final byte[]b64encd=baos.toByteArray();
+		final String replkey=new String(b64encd);
+		final ByteBuffer bbo=ByteBuffer.allocate(b.K>>2);
+		bbo.put(("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: "+replkey+"\r\n\r\n").getBytes());
+		bbo.flip();
+		so.write(bbo);
+		if(bbo.hasRemaining())throw new Error("packetnotfullysent");
+		bbi.position(bbi.limit());
+		st=state.read_next_frame;
+        onopened();
+		return op.read;
+	}
+    protected void onopened()throws Throwable{}
+	final public op read()throws Throwable{
+		if(!bbi.hasRemaining()){
+			bbi.clear();
+			final int n=so.read(bbi);
+            if(n==0)return op.read;//? infloop?
+			if(n==-1){
+				st=state.closed;
+                onclosed();
+				return op.close;
+			}
+			bbi.flip();
+		}
+		while(true)switch(dobbi()){default:throw new Error();
+			case read:if(bbi.hasRemaining())continue;return op.read;
+			case write:return op.write;
+			case close:return op.close;
+		}		
+	}
+    protected void onclosed()throws Throwable{}
+    private int maskc;
+	final private op dobbi()throws Throwable{
+		switch(st){default:throw new Error();
+		case read_next_frame:
+			// rfc6455#section-5.2
+			// Base Framing Protocol
+			final int b0=(int)bbi.get();
+			final boolean fin=(b0&128)==128;
+//			if(fin);// to remove warning of unused variable
+			final int resv=(b0>>4)&7;
+			if(resv!=0)throw new Error("reserved bits are not 0");
+			final int opcode=b0&0xf;
+            if(opcode==8){// rfc6455#section-5.5.1
+                st=state.closed;
+                onclosed();
+                return op.close;
+            }
+            final int b1=(int)bbi.get();
+			final boolean masked=(b1&128)==128;
+			if(!masked)throw new Error("unmasked client message");
+			int payloadlen=b1&127;
+			if(payloadlen==126){
+                final int by2=(((int)bbi.get()&0xff)<<8);
+                final int by1= ((int)bbi.get()&0xff);
+                payloadlen=by2|by1;
+			}else if(payloadlen==127){
+                bbi.get();bbi.get();bbi.get();bbi.get();
+                final int by4=(((int)bbi.get()&0xff)<<24);
+                final int by3=(((int)bbi.get()&0xff)<<16);
+                final int by2=(((int)bbi.get()&0xff)<<8);
+                final int by1= ((int)bbi.get()&0xff);
+				payloadlen=by4|by3|by2|by1;
+			}
+			bbi.get(maskkey);
+			payloadlendec=payloadlen;
+            firstpak=true;
+			st=state.read_continue;
+            maskc=0;
+		case read_continue:
+			//demask
+			final byte[]bbia=bbi.array();
+			final int pos=bbi.position();
+			final int limn=bbi.remaining()>payloadlendec?pos+payloadlendec:bbi.limit();
+            if(!(maskkey[0]==0&&maskkey[1]==0&&maskkey[2]==0&&maskkey[3]==0)){
+                for(int i=pos;i<limn;i++){
+                    final byte b=(byte)(bbia[i]^maskkey[maskc]);
+                    bbia[i]=b;
+                    maskc++;
+                    maskc%=maskkey.length;
+    //                c=c++%maskkey.length;
+                }
+            }
+			final int ndata=limn-pos;
+			payloadlendec-=ndata;
+            if(payloadlendec==0)
+                st=state.read_next_frame;
+            final ByteBuffer bbii=bbi.slice();
+            bbii.limit(ndata);
+            onpayload(bbii,ndata,payloadlendec,firstpak,payloadlendec==0);
+            bbi.position(limn);
+            firstpak=false;
+            return bbos==null?op.read:op.write;
+		}
+	}
+    private ByteBuffer bbrq;
+    final private void onpayload(final ByteBuffer bb,final int nbytes,final int payloadlenlft,final boolean firstpak,final boolean lastpak)throws Throwable{
+        if(firstpak&&!lastpak){// multipak
+            bbrq=ByteBuffer.allocate(nbytes+payloadlenlft);
+            bbrq.put(bb);
+            return;
+        }
+        if(!firstpak&&!lastpak){
+            bbrq.put(bb);
+            return;
+        }
+        if(!firstpak&&lastpak){
+            bbrq.put(bb);
+            bbrq.flip();
+        }
+        if(firstpak&&lastpak){
+            bbrq=bb;
+        }
+        onmessage(bbrq);
+        bbrq=null;
+    }
+    protected void onmessage(final ByteBuffer bb)throws Throwable{}
+    final public op write()throws Throwable{
+        so.write(bbos);
+        for(final ByteBuffer b:bbos)
+            if(b.hasRemaining())
+                return op.write;
+        bbos=null;
+        return op.read;
+    }
+	final protected session session(){return session;}
+    final public void endpoint_recv(final ByteBuffer bb)throws Throwable{
+        if(bbos!=null)
+            throw new Error("overwrite");
+        // rfc6455#section-5.2
+        // Base Framing Protocol
+        final int ndata=bb.remaining();
+        int nhdr;
+        final byte[]hdr=new byte[10];
+        hdr[0]=(byte)129;
+        if(ndata<=125){
+            hdr[1]=(byte)ndata;
+            nhdr=2;
+        }else if(ndata<=65535){
+            hdr[1]=126;
+            hdr[2]=(byte)((ndata>>8)&255);
+            hdr[3]=(byte)( ndata    &255);
+            nhdr=4;
+        }else{
+            hdr[1]=127;
+//			hdr[2]=(byte)((ndata>>56)&255);
+//			hdr[3]=(byte)((ndata>>48)&255);
+//			hdr[4]=(byte)((ndata>>40)&255);
+//			hdr[5]=(byte)((ndata>>32)&255);
+            hdr[6]=(byte)((ndata>>24)&255);
+            hdr[7]=(byte)((ndata>>16)&255);
+            hdr[8]=(byte)((ndata>> 8)&255);
+            hdr[9]=(byte)( ndata     &255);
+            nhdr=10;
+        }
+        bbos=new ByteBuffer[]{ByteBuffer.wrap(hdr,0,nhdr),bb};
+        if(write()==op.write)
+            so.reqwrite();
+    }
+	final public void endpoint_recv(final ByteBuffer[]bba)throws Throwable{
+		if(bbos!=null)
+			throw new Error("overwrite");
+		// rfc6455#section-5.2
+		// Base Framing Protocol
+		int ndata=0;
+		for(final ByteBuffer b:bba)
+			ndata+=b.remaining();
+		int nhdr;
+		final byte[]hdr=new byte[10];
+		hdr[0]=(byte)129;
+		if(ndata<=125){
+			hdr[1]=(byte)ndata;
+			nhdr=2;
+		}else if(ndata<=65535){
+			hdr[1]=126;
+			hdr[2]=(byte)((ndata>>8)&255);
+			hdr[3]=(byte)( ndata    &255);
+			nhdr=4;
+		}else{
+			hdr[1]=127;
+//			hdr[2]=(byte)((ndata>>56)&255);
+//			hdr[3]=(byte)((ndata>>48)&255);
+//			hdr[4]=(byte)((ndata>>40)&255);
+//			hdr[5]=(byte)((ndata>>32)&255);
+			hdr[6]=(byte)((ndata>>24)&255);
+			hdr[7]=(byte)((ndata>>16)&255);
+			hdr[8]=(byte)((ndata>> 8)&255);
+			hdr[9]=(byte)( ndata     &255);
+			nhdr=10;
+		}
+		bbos=new ByteBuffer[bba.length+1];
+		bbos[0]=ByteBuffer.wrap(hdr,0,nhdr);
+		for(int i=1;i<bbos.length;i++)
+			bbos[i]=bba[i-1];
+		if(write()==op.write)
+			so.reqwrite();
+	}
+
+}*{padding:0;margin:0;border:0;white-space:pre;font-family:inherit;font-size:inherit;background:inherit;color:inherit}
+html{font-family:monospace;height:100%}
+body{height:100%}
+table{border-collapse:collapse;empty-cells:show}
+table td{vertical-align:top}
+table th{vertical-align:bottom}
+a,a:visited{text-decoration:none;color:blue}
+ul{list-style:none inside none;}
+ol{list-style-position:inside}
+a{color:blue;transition:all .4s ease-in-out;-webkit-transition:all .4s ease-in-out;-moz-transition:all .4s ease-in-out;-o-transition:all .4s ease-in-out;}
+a:focus,a:hover,a:active{color:red;text-shadow:0 0 .1em rgba(0,0,0,.5)}
+/*el{display:inline-block}*/
+
+
+
+ui={}
+ui.is_dbg=true;
+ui.axconwait=false;
+$d=function(v){
+	if(!ui.is_dbg)return;
+	var w=ui._dbgw;
+	if(!w||w.closed){
+		w=window.open('','uidbg','width=400,height=640');
+		w.screenLeft=w.screenTop=0;
+		if(!w){
+			if(!ui.nodbgwinalrt){
+				alert('cannot open debug window');
+				ui.nodbgwinalrt=true;
+			}
+			window.status=v;
+			return;
+		}
+		ui._dbgw=w;
+		w.document.writeln('<pre>');
+		window.focus();
+	}
+	var s=''+v;
+	s=s.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+	w.document.writeln(s);
+	w.scrollBy(0,9999);
+}
+$=function(eid){return document.getElementById(eid);}
+$s=function(eid,txt){
+	var e=$(eid);
+	if(!e){
+		$d(eid+' notfound');
+		return;
+	}
+	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
+		e.value=txt;
+		$b(e);
+	}else{
+		e.innerHTML=txt;
+		if(e.contentEditable=="true")
+			$b(e);
+	}
+}
+$o=function(eid,txt){$(eid).outerHTML=txt;}
+$p=function(eid,txt){
+	var e=$(eid);
+	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
+		e.value+=txt;
+		$b(e);
+	}else{
+		e.innerHTML+=txt;
+		if(e.contentEditable=="true")
+			$b(e);
+	}
+}
+$l=function(){if(ui.keys)document.onkeyup=ui.onkey;}
+$a=function(eid,a,v){$(eid).setAttribute(a,v);}
+$r=function(ev,ths,axpb){if(!ev)ev=window.event;$b(ths);if(ev.keyCode!=13)return true;$x(axpb);return false;}
+$f=function(eid){var e=$(eid);if(!e)return;if(e.focus)e.focus();/*if(e.select)e.select();*/}
+$t=function(s){document.title=s;}
+ui.alert=function(msg){alert(msg);}
+ui._clnfldvl=function(s){return s.replace(/\r\n/g,'\n').replace(/\r/g,'\n');}
+ui._hashKey=function(event){
+	var kc=(event.shiftKey?'s':'')+(event.ctrlKey?'c':'')+(event.altKey?'a':'')+(event.metaKey?'m':'')+String.fromCharCode(event.keyCode);
+	$d(kc);
+	return kc;
+}
+ui.keys=[];
+ui.onkey=function(ev){
+	if(!ev)ev=window.event;
+	var cmd=ui.keys[ui._hashKey(ev)];
+	if(cmd)eval(cmd);
+}
+
+
+
+ui._onreadystatechange=function(){
+	$d(" * readState:"+this.readyState);
+	switch(this.readyState){
+	case 1:
+		if(this._hasopened)break;this._hasopened=true;//? firefox quirkfix1
+		$d(" * server connection established");
+		this._t0=new Date().getMilliseconds();
+		this.setRequestHeader('Content-Type','text/plain; charset=utf-8');
+//		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+		$d(this._pd);
+//		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+		ui.req._jscodeoffset=0;
+		this.send(this._pd);
+		break;
+	case 2:
+		$d(" * request received");
+		break;
+	case 3:
+		$d(" * processing request  ("+this.status+")");
+		var s=this.responseText.charAt(this.responseText.length-1);
+		if(s!='\n'){
+			$d(" * not eol "+(this.responseText.length-this._jscodeoffset));
+//			$d(s);
+//			$d(this.responseText);
+			break;
+		}
+		var jscode=this.responseText.substring(this._jscodeoffset);
+		$d(" * run "+jscode.length+" bytes");
+		$d(jscode);
+//		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+		this._jscodeoffset+=jscode.length;
+		eval(jscode);
+		break;
+	case 4:
+		$d(" * request finished   ("+ui.req.status+")");
+		this._hasopened=null;//? firefox quirkfix1
+		this._pd=null;
+		ui._pbls=[];
+	
+	
+		var jscode=this.responseText.substring(this._jscodeoffset);
+		if(jscode.length>0){
+			$d(" * run "+jscode.length+" bytes");
+			$d(jscode);
+//			$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+			this._jscodeoffset+=jscode.length;
+			eval(jscode);
+		}
+		this._dt=new Date().getMilliseconds()-this._t0;
+		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+		$d("done in "+this._dt+" ms");
+		break;		
+	}
+}
+ui._pbls=[];
+ui.qpb=function(e){
+	$d("ui.qpb("+e.id+")");
+	if(ui.qpbhas(e.id))return;
+	ui._pbls[e.id]=e.id;
+	$d("   added");
+}
+$b=ui.qpb;
+ui.qpbhas=function(id){return id in ui._pbls;}
+ui._axc=1;
+$x=function(pb){
+	ui._axc++;
+	$d("\n\najax req #"+ui._axc);
+	var post='$='+pb+'\r';
+	for(var id in ui._pbls){
+		var e=$(id)
+		$d(id+" "+(e?e.nodeName:""));
+		post+=e.id+'=';			
+		if(e.value!==undefined)
+			post+=ui._clnfldvl(e.value);
+		else{
+			post+=ui._clnfldvl(e.innerHTML);
+		}
+		post+='\r';
+	}
+	$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+	if(!ui.req){
+		ui.req=new XMLHttpRequest();
+		ui.req.onreadystatechange=ui._onreadystatechange;
+		$d(" * new connection");
+	}else{
+		$d(" * reusing connection");
+		var count=0;
+		while(ui.req.readyState==1||ui.req.readyState==2||ui.req.readyState==3){
+			if(ui.axconwait){
+				$d("  * busy, waiting");
+				//setTimeout("goto bbt",1000);bbt:
+				alert("connection busy. waiting.");//? 
+				count++;
+				if(count>3)
+					throw "waiting cancelled";
+			}else{
+				$d("   * busy, cancelling");
+				ui.req.abort();
+				ui.req._hasopened=null;//? firefox quirkfix1
+			}
+		}	
+		$d(" * has connection");
+	}
+	ui.req._pd=post;
+	ui.req.open('post',location.href,true);
+}
+package b;
+import java.io.*;
+public final class xwriter{
+	public static String encquot(final String text){if(text==null)return"";return text.replaceAll("\"","&quot;");}
+	private final OutputStream os;
+	public xwriter(final OutputStream os){this.os=os;}
+	public xwriter(){os=new ByteArrayOutputStream();}
+	public OutputStream outputstream(){return os;}
+	public xwriter p(final String s){if(s==null)return this;try{os.write(b.tobytes(s));}catch(final IOException e){throw new Error(e);}return this;}
+	public xwriter nl(){return p('\n');}
+	public xwriter p(final char n){return p(Character.toString(n));}
+	public xwriter p(final int n){return p(Integer.toString(n));}
+	public xwriter p(final float n){return p(Float.toString(n));}
+	public xwriter p(final long n){return p(Long.toString(n));}
+	public xwriter pl(final String s){return p(s).nl();}
+	public xwriter tag(final String name){return p("<").p(name).p(">");}
+	public xwriter tag(final String name,final String id){return p("<").p(name).p(" id=").p(id).p(">");}
+	public xwriter tago(final String name){return p("<").p(name);}
+//	public xwriter tago(final String name,final String id){return p("<").p(name).p(" id=").p(id);}
+	public xwriter attrdef(final a a){final String wid=a.id();return attr("id",wid);}
+	public xwriter attr(final String name,final int value){return p(" ").p(name).p("=").p(value);}
+	public xwriter attr(final String name,final String value){return p(" ").p(name).p("=\"").p(xwriter.encquot(value)).p("\"");}
+	public xwriter attr(final String name){return p(" ").p(name);}
+	public xwriter tagoe(){return p(">");}
+//	public xwriter tagoec(){return p("/>");}
+	public xwriter tage(final String name){return p("</").p(name).p(">");}
+	public xwriter a(final String href){return tago("a").attr("href",href).tagoe();}
+	public xwriter aEnd(){return tage("a");}
+	public xwriter a(final String href,final String txt){return a(href).p(txt).aEnd();}
+	public xwriter ax(final a a,final String ax,final String html){
+		final String wid=a.id();
+		p("<a href=\"javascript:$x('").p(wid);
+		if(!b.isempty(ax))
+			p(" ").p(ax);
+		p("')\">").p(html).p("</a>");
+		return this;
+	}
+	public xwriter ax(final a a,final String ax){return ax(a,ax,ax);}
+	public xwriter axBgn(final a a,final String args){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+" "+args+"')").tagoe();}
+	public xwriter axBgn(final a a){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+"')").tagoe();}
+	public xwriter axEnd(){return tage("a");}
+	public xwriter br(){return tag("br");}
+	public xwriter div(final String cls){return tago("div").attr("class",cls).tagoe();}
+	public xwriter divEnd(){return tage("div");}
+	public xwriter focus(final a a){return script().p("$f('").p(a.id()).p("')").scriptEnd();}
+	public xwriter inputInt(final a a){return tago("input").attr("value",a.toString()).attrdef(a).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
+	public xwriter inputFlt(final a a){return tago("input").attr("value",a.toString()).attrdef(a).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
+	public xwriter inputLng(final a a){return inputInt(a);}
+	public xwriter pre(){return tag("pre");}
+	public xwriter pre(final String cls){return tago("pre").attr("class",cls).tagoe();}
+	public xwriter preEnd(){return tage("pre");}
+	public xwriter script(){return tag("script");}
+	public xwriter scriptEnd(){return tage("script");}
+	public xwriter span(final a a){tago("span").attr("id",a.id()).tagoe();try{a.to(new xwriter(new osltgt(os)));}catch(Throwable e){throw new Error(e);}return spanEnd();}
+	public xwriter span(final a a,final String style){tago("span").attr("id",a.id()).attr("style",style).tagoe();try{a.to(new osltgt(os));}catch(Throwable e){throw new Error(e);}return spanEnd();}
+	public xwriter spanh(final a a){tago("span").attr("id",a.id()).tagoe();try{a.to(os);}catch(Throwable e){throw new Error(e);}return spanEnd();}
+	public xwriter spanx(final a a)throws Throwable{tago("span").attr("id",a.id()).tagoe();a.to(this);return spanEnd();}
+	public xwriter spanEnd(){return tage("span");}
+	public xwriter table(){return tag("table");}
+	public xwriter table(final String cls){return tago("table").attr("class",cls).tagoe();}
+	public xwriter tableEnd(){return tage("table");}
+	public xwriter style(){return tag("style");}
+	public xwriter styleEnd(){return tage("style");}
+	public xwriter td(){return tag("td");}
+	public xwriter td(final String cls){if(cls==null||cls.length()==0) return td();return tago("td").attr("class",cls).tagoe();}
+	public xwriter tdEnd(){return tage("td");}
+	public xwriter th(){return tag("th");}
+	public xwriter th(final int colspan){return tago("th").attr("colspan",colspan).tagoe();}
+	public xwriter th(final String cls){return tago("th").attr("class",cls).tagoe();}
+	public xwriter thEnd(){return tage("th");}
+	public xwriter tr(){return tag("tr");}
+	public xwriter tr(final String cls){return tago("tr").attr("class",cls).tagoe();}
+	public xwriter trEnd(){return tage("tr");}
+	public xwriter ul(){return tag("ul");}
+	public xwriter ulEnd(){return tage("ul");}
+	public xwriter li(){return tag("li");}
+	public xwriter li(final String cls){if(cls==null)return li();return tago("li").attr("class",cls).tagoe();}
+	public xwriter code(){return tag("code");}
+	public xwriter codeEnd(){return tage("code");}
+	public xwriter rend(final a a)throws Throwable{if(a==null)return this;a.to(this);return this;}
+	public xwriter inputText(final a a){return inputText(a,null,null,null,null);}
+	public xwriter inputText(final a a,final String stylecls,final a axonreturn,final String axp){return inputText(a,stylecls,axonreturn,axp,null);}
+	public xwriter inputText(final a a,final String stylecls,final a axonreturn,final String axp,final String txt){
+		return inputText(a,null,stylecls,axonreturn,axp,txt);
+	}
+	public xwriter inputText(final a a,final String style,final String stylecls,final a axonreturn,final String axp,final String txt){
+		tago("input").attr("value",txt==null?a.toString():txt).attrdef(a).attr("type","text");
+		if(style!=null)
+			attr("style",style);
+		if(stylecls!=null)
+			attr("class",stylecls);
+		if(axonreturn!=null){
+			final String ax=axonreturn.id()+(axp!=null?(" "+axp):"");
+			attr("onkeypress","return $r(event,this,'"+ax+"')");
+		}
+		attr("onchange","$b(this)");
+		return tagoe();
+	}
+	public xwriter inputTextArea(final a a){return inputTextArea(a,null);}
+	public xwriter inputTextArea(final a a,final String cls){
+		tago("textarea").attrdef(a).attr("onchange","$b(this);return true;");
+		if(cls!=null)
+			attr("class",cls);
+		attr("wrap","off");
+		attr("spellcheck","false");
+		tagoe();
+		//? fld.to(new osltgt(x.outputStream()))
+		String s=a.toString();
+		s=s.replaceAll("\\<","&lt;");//?
+		s=s.replaceAll("\\>","&gt;");
+		return p(s).tage("textarea");
+	}
+	public xwriter flush(){try{os.flush();}catch (IOException e){throw new Error(e);}return this;}
+	public String toString(){return os.toString();}
+	public xwriter hr(){return tag("hr");}
+	public xwriter spc(){return p(' ');}
+	public xwriter tab(){return p('\t');}
+	public xwriter enter(){return p('\r');}
+	public xwriter bell(){return p('\07');}
+	public xwriter p(final CharSequence cs){return p(cs.toString());}
+	public xwriter title(final String s){return script().xtitle(s).scriptEnd();}
+	public xwriter css(final String cls,final String stl){return p(cls).p("{").p(stl).p("}");}
+	public xwriter css(final a a,final String stl){return p("#").p(a.id()).p("{").p(stl).p("}");}
+	public xwriter cssln(final a a,final String stl){return style().p("#").p(a.id()).p("{").p(stl).p("}").styleEnd();}
+	public xwriter inputax(final a a,final String stylecls,final a ax,final String axp){
+		tago("input").attr("value",a.toString()).attrdef(a).attr("type","text");
+//		tago("x").attrdef(a).attr("contenteditable","true");
+		if(stylecls!=null)
+			attr("class",stylecls);
+//		final String onfocus="$d(this+' onfocus');var r=document.createRange();r.selectNodeContents(this);r.collapse(false);var s=window.getSelection();s.removeAllRanges();s.addRange(r);";
+//		attr("onfocus",onfocus);
+		attr("onfocus","this.setSelectionRange(this.value.length,this.value.length)");
+		final StringBuilder sb=new StringBuilder();
+		sb.append((ax==null?a:ax).id());
+		if(!b.isempty(axp))
+			sb.append(" ").append(axp);
+		final String sbs=sb.toString();
+//		attr("oninput","this._changed=true;if(this.innerHTML=='<br>')this.innerHTML='';$x('"+sbs+"')");
+		attr("oninput","$b(this);$x('"+sbs+"');return true;");
+		attr("onkeypress","return $r(event,this,'"+ax+" sel')");
+//		attr("onblur","if(!this._changed)return true;$x('"+sbs+"')");
+//		return tagoe().p(a.toString()).tagEnd("x");
+		return tagoe();
+	}
+	public xwriter inputax(final a a,final String stylecls,final a ax,final String onchangeaxp,final String onselectaxp){
+		tago("input").attr("value",a.toString()).attrdef(a).attr("type","text");
+		if(stylecls!=null)
+			attr("class",stylecls);
+		final String eid=ax.id();
+		attr("onfocus","this.setSelectionRange(this.value.length,this.value.length)");
+		attr("oninput","$b(this);$x('"+eid+" "+onchangeaxp+"');return true;");
+		attr("onkeypress","if(!event)event=window.event;if(event.keyCode!=13)return true;$x('"+eid+" "+onselectaxp+"');return false;");
+		return tagoe();
+	}
+	public xwriter inputax(final a a){return inputax(a,null,a.pt(),null);}
+
+	public xwriter output(final a a){return tago("output").attr("id",a.id()).tagoe().tage("output");}
+	public xwriter spc(final int n){for(int i=0;i<n;i++)spc();return this;}
+	public xwriter ul(final String cls){return tago("ul").attr("class",cls).tagoe();}
+	public xwriter cssfont(final String name,final String url){return p("@font-face{font-family:").p(name).p(";src:url(").p(url).p(");}");}
+	
+	private xwriter jsstr(final String s){try{new osjsstr(os).write(b.tobytes(s));}catch(final IOException e){throw new Error(e);}return this;}
+	public xwriter xu(final String id,final String s){return p("$s('").p(id).p("','").jsstr(s).pl("');");}
+	public xwriter xu(final a a,final String s){return xu(a.id(),s);}
+	@SuppressWarnings("resource")
+	public xwriter xub(final a a,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('").p(a.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
+	public xwriter xube(){return pl("');");}
+	public xwriter xu(final a a)throws Throwable{a.to(xub(a,true,false));return xube();}
+	public xwriter xuo(final a a)throws Throwable{a.to(xub(a,false,false));return xube();}
+
+	public xwriter xinterval(final a a,final String ax,final int ms){return p("setInterval(\"$x('").p(a.id()).p(" ").p(ax).p("')\",").p(ms).pl(");");}
+	private xwriter xhide(final a a,final boolean hide){
+		//? bug style block  display:inherit
+		return p("$('").p(a.id()).p("').style.display='").p(hide?"none":"inline").pl("';");
+	}
+	public xwriter xhide(final a a){return xhide(a,true);}
+	public xwriter xshow(final a a){return xhide(a,false);}
+	public xwriter xalert(final String s){return p("ui.alert('").jsstr(s).pl("');");}
+	public xwriter xreload(){return pl("location.reload(true);");}
+	public xwriter xfocus(final a a){return p("$f('").p(a.id()).pl("');");}
+	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
+	public xwriter xp(final a a,final String s){return p("$p('").p(a.id()).p("','").jsstr(s).pl("');");}
+	public xwriter tag(final String name,final a e){return tag(name,e.id());}
+	public xwriter el(final a e){return tag("el",e);}
+	public xwriter el(final a e,final String style){return p("<el id=").p(e.id()).p(" style=\"").p(style).p("\">");}
+//	public xwriter elem(final a e,final String cssln){return tag("div",e).cssln(e,cssln);}
+	public xwriter elend(){return tage("el");}
+	public xwriter p(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
+//	public xwriter table(final a e){return tago("table").attr("name",e.id()).tagoe();}
+	public xwriter table(final a e){return tag("table",e.id());}
+//	public xwriter img(final String srcdim){
+//		final String[]sa=srcdim.split("\\.");
+//		if(sa.length>2){
+//			final String[]da=sa[sa.length-2].split("x");
+//			if(da.length>2)
+//				p("<img width=").p(da[0]).p(" height=").p(da[1]).p(" src=").p(srcdim).p(">");
+//			return this;
+//		}
+//		return p("<img src=").p(srcdim).p(">");
+//	}
+	public xwriter td(final int colspan){return p("<td colspan=").p(colspan).p(">");}
+//	public xwriter el(final String style){return p("<el style=\"").p(style).p("\">");}
+//	public xwriter elend(){return p("</el>");}
+	public xwriter style(final a e,final String style){return style().css(e,style).styleEnd();}
+	public xwriter style(final a e,final String selector,final String style){return style().css(e,selector,style).styleEnd();}
+	public xwriter style(final String selector,final String style){return style().css(selector,style).styleEnd();}
+	public xwriter el(final String style){return p("<el style=\"").p(style).p("\">");}
+	public xwriter td(String style,String any){return tago("td").attr("style",style).tagoe();}
+	public xwriter table(final String style,final String disrecarded){
+		return tago("table").attr("style",style).tagoe();
+	}
+	public xwriter el(final String cls,final String style){
+		tago("el");
+		if(cls!=null&&cls.length()>0)
+			attr("class",cls);
+		if(style!=null&&style.length()>0)
+			attr("style",style);
+		tagoe();
+		return this;
+	}
+//	public xwriter ul(final String cls,final String style){
+//		tago("ul");
+//		if(cls!=null&&cls.length()>0)attr("class",cls);
+//		if(style!=null&&style.length()>0)attr("style",cls);
+//		tagoe();
+//		return this;
+//	}
+	public xwriter el(){return tag("el");}
+	public xwriter ax(final a e){return ax(e,"","::");}
+	public xwriter xed(final a e,final a axe,final String axp,final String style)throws Throwable{
+		p("<el id=").p(e.id()).p(" contenteditable=true spellcheck=false ");
+		if(style!=null&&style.length()>0)
+			p("style=\"").p(style).p("\" ");
+		p("onkeypress=\"");
+		if(axe!=null){
+			p("if(event.charCode==13){$x('");
+			p(axe.id());
+			if(axp!=null&&axp.length()>0){
+				p(" ");
+				p(axp);
+			}
+			p("');return false;}");
+		}
+		p("$b(this)\">");
+		e.to(os);
+		return p("</el>");
+	}
+	public xwriter xed(final a e,final a axe,final String axp)throws Throwable{return xed(e,axe,axp,null);}
+	public xwriter xed(final a e)throws Throwable{return xed(e,null,null,null);}
+	public xwriter css(final a e,final String selector,final String style){
+		return css("#"+e.id()+" "+selector,style);
+	}
+	
+	
+	public xwriter ol(){return tag("ol");}
+	public xwriter ol_(){return tage("ol");}
+}

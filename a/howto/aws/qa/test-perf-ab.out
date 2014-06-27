@@ -1,0 +1,84 @@
+Mon Jun 23 20:21:21 ICT 2014
+
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)...INFO: POST header == 
+---
+GET /qa.t010 HTTP/1.0
+Host: localhost:8888
+User-Agent: ApacheBench/2.3
+Accept: */*
+
+
+---
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)...INFO: POST header == 
+---
+GET /qa.t010 HTTP/1.0
+Connection: Keep-Alive
+Host: localhost:8888
+User-Agent: ApacheBench/2.3
+Accept: */*
+
+
+---
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)...INFO: POST header == 
+---
+GET / HTTP/1.0
+Host: localhost:8888
+User-Agent: ApacheBench/2.3
+Accept: */*
+
+
+---
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)...INFO: POST header == 
+---
+GET / HTTP/1.0
+Connection: Keep-Alive
+Host: localhost:8888
+User-Agent: ApacheBench/2.3
+Accept: */*
+
+
+---
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)...INFO: POST header == 
+---
+GET /qa/t001.txt HTTP/1.0
+Host: localhost:8888
+User-Agent: ApacheBench/2.3
+Accept: */*
+
+
+---
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)...INFO: POST header == 
+---
+GET /qa/t001.txt HTTP/1.0
+Connection: Keep-Alive
+Host: localhost:8888
+User-Agent: ApacheBench/2.3
+Accept: */*
+
+
+---
+Mon Jun 23 20:21:21 ICT 2014
