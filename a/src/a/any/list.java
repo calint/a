@@ -261,6 +261,10 @@ public class list extends a{
 	
 	
 	synchronized public void x_sel(final xwriter x,final String s)throws Throwable{
+		if(q.str().equals("..")){
+			x_up(x,s);
+			return;
+		}
 		//? iffileandallowenter
 		if(firstinlist!=null)x_e(x,firstinlist.name());
 	}
