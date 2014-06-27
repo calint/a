@@ -38,6 +38,17 @@ echo " • trying http://$INSTANCE_DNS/"
 curl --verbose $INSTANCE_DNS
 echo
 
+# todo qa coverage scripts
+
+echo
+echo " • stressing http://$INSTANCE_DNS"
+ab -c1  -t5 http://$INSTANCE_DNS/
+ab -c10 -t5 http://$INSTANCE_DNS/
+ab -c100  -t5 http://$INSTANCE_DNS/
+ab -c1  -t5 http://$INSTANCE_DNS/typealine
+ab -c10 -t5 http://$INSTANCE_DNS/typealine
+ab -c100  -t5 http://$INSTANCE_DNS/typealine
+
 echo
 echo " • terminating $INSTANCE_ID"
 for((;;));do
