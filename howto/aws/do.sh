@@ -19,14 +19,14 @@ for((;;));do
 done;
 
 echo
-echo " • rsync $INSTANCE_DNS"
+echo " • updating $INSTANCE_DNS"
 for((;;));do
 #	curl -v localhost:8888
 	rsync --timeout=15 --verbose --delete --exclude .svn --exclude u/ --exclude cache/ --progress -az -e "ssh -v -o StrictHostKeyChecking=no -i /Users/calin/wallet/ramvark-keypair.pem" "/Users/calin/Documents/workspace/a/" root@$INSTANCE_DNS:/a/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo
-	echo "  · trying"
+	echo "  · trying to update $INSTANCE_DNS"
 done
 
 echo
@@ -39,13 +39,13 @@ curl --verbose $INSTANCE_DNS
 echo
 
 echo
-echo " • deleting $INSTANCE_ID"
+echo " • terminating $INSTANCE_ID"
 for((;;));do
 	aws ec2 terminate-instances --instance-ids $INSTANCE_ID
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo
-	echo "  · trying"
+	echo "  · trying to terminate instance $INSTANCE_ID"
 done
 
 echo
