@@ -1,6 +1,7 @@
 INSTANCE_AMI="ami-b0659fd8"
 WALLET=/Users/calin/wallet
 WORKSPACE=/Users/calin/Documents/workspace
+CONTINUOS_BUILD=
 
 # create
 echo ' • launching instance'
@@ -34,8 +35,10 @@ done
 
 echo
 echo " • restart web server on $INSTANCE_DNS"
-ssh -o StrictHostKeyChecking=no -i $HOME/wallet/ramvark-keypair.pem root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
+ssh -o StrictHostKeyChecking=no -i $HOME/wallet/ramvark-keypair.pem root@$INSTANCE_DNS "ifconfig && killall -9 java ; /studio/suse-studio-custom &"
 
+echo @$CONTINUOS_BUILD@
+if ! [ -z $CONTINUOS_BUILD ];then
 echo
 echo " • trying http://$INSTANCE_DNS/"
 curl --verbose $INSTANCE_DNS
@@ -59,6 +62,8 @@ ab -c100  -t5 http://$INSTANCE_DNS/qa.t013
 ab -c1    -t5 http://$INSTANCE_DNS/qa/t001.txt
 ab -c10   -t5 http://$INSTANCE_DNS/qa/t001.txt
 ab -c100  -t5 http://$INSTANCE_DNS/qa/t001.txt
+
+fi # continuous build
 
 echo
 echo " • terminating $INSTANCE_ID"
