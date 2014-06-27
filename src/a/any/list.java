@@ -35,7 +35,8 @@ public class list extends a{
 	public final static int BIT_ALLOW_COPY=16384;
 	public final static int BIT_DISP_PATH=32768;
 	public final static int BIT_ALL=-1;
-	public a q;
+	public a q;//query field
+	public a sts;//application status
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
 	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
@@ -86,13 +87,21 @@ public class list extends a{
 	private ArrayList<a>element_editors=new ArrayList<a>();
 	protected boolean sort=true;
 	protected boolean sort_dirsfirst=true;
-	public a bd;
+	public a bd;//file content
 	public final void root(final el e){this.root=e;}
 	public final void bits(final int bits){this.bits=bits;}
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	
+	private static final String sts_css_opened="transition-duration:1s;transition-timing-function:ease;position:absolute;padding:1em;width:20em;height:1em;background:#fed;box-shadow:0 0 .5em rgba(0,0,0,.5);";
+	private static final String sts_css_closed="transition-duration:1s;transition-timing-function:ease;position:absolute;padding:1em;width:20em;height:1em;color:rgba(255,255,255,.5);box-shadow:0 0 0 rgba(0,0,0,0);";
+	{sts.set("ok");}
 	synchronized final public void to(final xwriter x) throws Throwable{
-		x.tago("span").attr("id",id()).tagoe();
+		x.spano(this);
+//		tago("span").attr("id",e.id()).tagoe();
+		x.p("<div onclick=\"console.log(event);var e=$('"+sts.id()+"');console.log(e);e.style.cssText='"+sts_css_closed+"';\">");
+		x.span(sts,sts_css_opened);
+		x.divEnd();
+//		x.tago("span").attr("id",id()).tagoe();
 		final List<String>files;
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
@@ -308,6 +317,7 @@ public class list extends a{
 		if(!hasbit(BIT_ALLOW_DIR_UP))throw new Error("notallowed");
 		final el p=path.parent();
 		if(p==null)return;
+		x.xu(sts.set("up "+p.name()));
 //		path=p.isin(root)?p:root;
 		path=p;
 		x.xu(this);

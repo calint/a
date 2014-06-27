@@ -59,8 +59,16 @@ public final class xwriter{
 	public xwriter preEnd(){return tage("pre");}
 	public xwriter script(){return tag("script");}
 	public xwriter scriptEnd(){return tage("script");}
-	public xwriter span(final a a){tago("span").attr("id",a.id()).tagoe();try{a.to(new xwriter(new osltgt(os)));}catch(Throwable e){throw new Error(e);}return spanEnd();}
-	public xwriter span(final a a,final String style){tago("span").attr("id",a.id()).attr("style",style).tagoe();try{a.to(new osltgt(os));}catch(Throwable e){throw new Error(e);}return spanEnd();}
+	public xwriter spano(final a e){return tago("span").attr("id",e.id()).tagoe();}
+	public xwriter span(final a e){return span(e,null);}
+	public xwriter span(final a e,final String style){
+		tago("span").attr("id",e.id());
+		if(style!=null)
+			attr("style",style);
+		tagoe();
+		try{e.to(new osltgt(os));}catch(Throwable t){throw new Error(t);}
+		return spanEnd();
+	}
 	public xwriter spanh(final a a){tago("span").attr("id",a.id()).tagoe();try{a.to(os);}catch(Throwable e){throw new Error(e);}return spanEnd();}
 	public xwriter spanx(final a a)throws Throwable{tago("span").attr("id",a.id()).tagoe();a.to(this);return spanEnd();}
 	public xwriter spanEnd(){return tage("span");}
