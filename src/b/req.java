@@ -26,7 +26,8 @@ public final class req{
 			ba=bb.array();
 			ba_pos=bb.position();
 			ba_rem=bb.remaining();
-			if(b.print_requests)b.pl(this.toString());
+			if(b.print_requests)
+				b.pl(this.toString());
 		}
 		while(ba_rem>0){switch(state){default:throw new Error();
 			case state_nextreq:methodlen=0;state=state_method;
