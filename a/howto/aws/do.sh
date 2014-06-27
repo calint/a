@@ -41,7 +41,9 @@ echo " • trying http://$INSTANCE_DNS/"
 curl --verbose $INSTANCE_DNS
 echo
 
-# todo qa coverage scripts
+echo
+echo " • qa http://$INSTANCE_DNS"
+echo todo
 
 echo
 echo " • stressing http://$INSTANCE_DNS"
