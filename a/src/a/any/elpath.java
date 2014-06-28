@@ -1,13 +1,19 @@
 package a.any;
 
+import static b.b.tostr;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import a.any.list.el;
-import a.any.list.el.visitor;
+import b.b;
 import b.path;
 
 final public class elpath implements el{
@@ -43,7 +49,25 @@ final public class elpath implements el{
 	@Override public boolean ommit_column_icon(){return false;}
 	
 	
-	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+	@Override public void foreach(final String query,final visitor v)throws Throwable{
+		final String q=tostr(query,"");
+		final String rootpath=Paths.get(b.root_dir).toString();
+		final Path path_to_list=new File(pth.toString()).toPath();
+		Stream<Path>s=Files.list(path_to_list);
+		if(!b.isempty(query))
+			s=s.filter(e->e.getFileName().toString().startsWith(q));
+		s.sorted((e1,e2)->{
+			final String s1=(e1.toFile().isDirectory()?"0":"1")+"."+e1.getFileName();
+			final String s2=(e2.toFile().isDirectory()?"0":"1")+"."+e2.getFileName();
+			return s1.compareTo(s2);
+		}).forEach(e->{
+			final String pth=e.toFile().toString();
+			if(!e.startsWith(path_to_list))throw new Error();//?? racing
+			final path p=b.path(e.toString());
+			System.out.println(p);
+			v.visit(new elpath(this,p));
+		});
+	}
 
 	private static final long serialVersionUID=1;
 }
