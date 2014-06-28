@@ -6,7 +6,7 @@ function p(txt){
     console.log(txt.length);
     document.getElementById("output").innerHTML+=txt+'\n';
 }
-var ws=new WebSocket("ws://localhost:8888/qa.echo");
+var ws=new WebSocket("ws://"+location.host+"/qa.echo");
 ws.onopen=function(e){p("open");}
 ws.onmessage=function(e){p("recv("+e.data.length+"):"+e.data);};
 ws.onclose=function(e){p("close");};
