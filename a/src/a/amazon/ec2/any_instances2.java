@@ -1,5 +1,6 @@
 package a.amazon.ec2;
 
+import static b.b.isempty;
 import static b.b.pl;
 import static b.b.tostr;
 import java.io.InputStream;
@@ -43,7 +44,7 @@ final public class any_instances2 implements el{
 	
 	@Override public List<String>list(final String query){
 		ensure_instances_cache();
-		if(query==null||query.isEmpty())return instances_cache.stream().map(Instance::getInstanceId).collect(Collectors.toList());
+		if(isempty(query))return instances_cache.stream().map(Instance::getInstanceId).collect(Collectors.toList());
 		return instances_cache.stream().filter(i->i.getInstanceId().startsWith(query)).map(Instance::getInstanceId).collect(Collectors.toList());
 //		final ArrayList<String>ls=new ArrayList<String>();
 //		for(final Instance o:instances_cache){
