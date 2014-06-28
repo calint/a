@@ -10,13 +10,13 @@ public class $ extends a{
 	public sts_ajax ajaxsts;{ajaxsts.set("idle");}//application status
 	public list ls;
 	public $(){
-		final elroot l=new elroot(null,"any");
+		final any_menu l=new any_menu(null,"any");
 		ls.root_and_path(l,l);
 //		path=root=l;
-		l.add(new elpath(l,b.path(),"files"));
+		l.add(new any_path(l,b.path(),"files"));
 	//	l.add(new elclass(root,list.class,"any"));
-		l.add(new elclass(l,b.class,"server"));
-		l.add(new elclass(l,req.class,"request"));
+		l.add(new any_class(l,b.class,"server"));
+		l.add(new any_class(l,req.class,"request"));
 		l.add(new any_root(l,"amazon web"));
 	}
 	
