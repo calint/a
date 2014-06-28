@@ -43,14 +43,16 @@ final public class any_instances2 implements el{
 	
 	@Override public List<String>list(final String query){
 		ensure_instances_cache();
-		final ArrayList<String>ls=new ArrayList<String>();
-		for(final Instance o:instances_cache){
-			final String nm=o.getInstanceId();
-			if(query!=null&&!nm.startsWith(query))continue;
-			ls.add(nm);
+		if(query==null||query.isEmpty())return instances_cache.stream().map(Instance::getInstanceId).collect(Collectors.toList());
+		return instances_cache.stream().filter(i->i.getInstanceId().startsWith(query)).map(Instance::getInstanceId).collect(Collectors.toList());
+//		final ArrayList<String>ls=new ArrayList<String>();
+//		for(final Instance o:instances_cache){
+//			final String nm=o.getInstanceId();
+//			if(query!=null&&!nm.startsWith(query))continue;
+//			ls.add(nm);
 //				x.p(o.getTags()+" "+o.getState()+" "+o.getInstanceId()+"\t"+o.getPublicIpAddress()+"\t"+o.getPublicDnsName()).nl();
-		}
-		return ls;
+//		}
+//		return ls;
 	}
 	private void ensure_instances_cache(){
 		//todo loadlog
