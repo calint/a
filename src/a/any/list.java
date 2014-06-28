@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -145,11 +146,6 @@ public class list extends a{
 			}
 			x.divEnd();
 		}
-		
-		for(final Method m:path.getClass().getDeclaredMethods()){
-			x.pl(m.toString());
-		}
-		
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))if(!path.equals(root))x.ax(this,"up","••");
@@ -265,9 +261,14 @@ public class list extends a{
 		sts.to(x);
 		if(exception!=null)
 			x.nl().pl(b.stacktrace(exception));//? allow ..
+		
+		Arrays.asList(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
+//		for(final Method m:path.getClass().getDeclaredMethods()){
+//			x.pl(m.toString());
+//		}
+		
+
 		x.spanEnd();
-		
-		
 	}
 	private el firstinlist;
 	private List<a>actions;
