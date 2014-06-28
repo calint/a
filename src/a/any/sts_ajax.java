@@ -3,7 +3,7 @@ package a.any;
 import b.a;
 import b.xwriter;
 
-public class ajax_status extends a{
+public class sts_ajax extends a{
 	@Override public void to(final xwriter x)throws Throwable{
 		x.p("<div onclick=\"console.log(event);var e=$('"+id()+"');console.log(e);e.style.cssText='"+sts_css_closed+"';\">");
 		x.span(this,sts_css_opened);
