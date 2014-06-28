@@ -65,7 +65,9 @@ final public class any_root implements el{
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
 	
-	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+	@Override public void foreach(final String query,final visitor v)throws Throwable{
+		ls.forEach(e->{if(e.name().startsWith(query))v.visit(e);});
+	}
 
 	private static final long serialVersionUID=1;
 }
