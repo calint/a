@@ -36,7 +36,7 @@ public class list extends a{
 	public final static int BIT_DISP_PATH=32768;
 	public final static int BIT_ALL=-1;
 	public a q;//query field
-	public status_line sts;{sts.set("public domain server #1 -- ok");}//application status
+	public sts_app sts;{sts.set("public domain server #1 -- ok");}//application status
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
 	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;

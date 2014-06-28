@@ -7,7 +7,7 @@ import b.req;
 import b.xwriter;
 
 public class $ extends a{
-	public ajax_status ajaxsts;{ajaxsts.set("idle");}//application status
+	public sts_ajax ajaxsts;{ajaxsts.set("idle");}//application status
 	public list ls;
 	public $(){
 		final elroot l=new elroot(null,"any");
