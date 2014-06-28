@@ -96,7 +96,14 @@ final public class any_instances2 implements el{
 //		return null;
 //	}
 	
-	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+	@Override public void foreach(final String query,final visitor v)throws Throwable{
+		ensure_instances_cache();
+		final String q=tostr(query,"");
+		instances_cache.stream().sorted((e1,e2)->e1.getInstanceId().compareTo(e2.getInstanceId())).forEach(e->{
+			if(e.getInstanceId().startsWith(q))
+				v.visit(new any_instance(this,e));
+		});
+	}
 
 	
 	private static final long serialVersionUID=1;

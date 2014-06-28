@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import a.any.list.el;
 import a.any.list.ui_action;
@@ -86,7 +87,16 @@ final public class elclass implements el,el.el_actions{
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
 
-	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+	@Override public void foreach(String query,visitor v)throws Throwable{
+		Arrays.stream(cls.getFields()).filter(e->{
+			final int m=e.getModifiers();
+			if(!Modifier.isStatic(m))return false;
+			if(Modifier.isFinal(m))return false;
+			if(!e.getName().startsWith(query))return false;
+			return true;
+		}).sorted((e1,e2)->e1.getName().compareTo(e2.getName()))
+			.forEach(e->v.visit(new elclassfield(this,e)));
+	}
 
 	private static final long serialVersionUID=1;
 }
