@@ -4,6 +4,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -12,7 +14,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-
 import b.a;
 import b.b;
 import b.xwriter;
@@ -144,6 +145,11 @@ public class list extends a{
 			}
 			x.divEnd();
 		}
+		
+		for(final Method m:path.getClass().getDeclaredMethods()){
+			x.pl(m.toString());
+		}
+		
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))if(!path.equals(root))x.ax(this,"up","••");
