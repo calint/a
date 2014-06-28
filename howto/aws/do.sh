@@ -1,6 +1,6 @@
 INSTANCE_AMI="ami-b0659fd8"
 WALLET=/Users/calin/wallet
-WORKSPACE=/Users/calin/Documents/workspace
+WORKSPACE=/Users/calin/Documents/workspace-2
 CONTINUOS_BUILD=
 DTF=%F---%H:%M:%S-
 
