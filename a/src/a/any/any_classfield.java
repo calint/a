@@ -12,10 +12,10 @@ import b.b.conf_reboot;
 import b.b.unit;
 import b.xwriter;
 
-final public class elclassfield implements el,el.el_column_value,el.el_column_value_editor{
+final public class any_classfield implements el,el.el_column_value,el.el_column_value_editor{
 	private el pt;
 	private Field fld;
-	public elclassfield(final el parent,final Field f){pt=parent;fld=f;}
+	public any_classfield(final el parent,final Field f){pt=parent;fld=f;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return fld.getName();}
 	@Override public String fullpath(){return fld.getDeclaringClass().getName()+"."+fld.getName();}

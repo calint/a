@@ -16,12 +16,12 @@ import a.any.list.el;
 import b.b;
 import b.path;
 
-final public class elpath implements el{
+final public class any_path implements el{
 	private el pt;
 	private path pth;
 	private String name_override;
-	public elpath(final el parent,final path p){pt=parent;pth=p;}
-	public elpath(final el parent,final path p,final String name_override){pt=parent;pth=p;this.name_override=name_override;}
+	public any_path(final el parent,final path p){pt=parent;pth=p;}
+	public any_path(final el parent,final path p,final String name_override){pt=parent;pth=p;this.name_override=name_override;}
 	@Override public String name(){return name_override!=null?name_override:pth.name();}
 	@Override public boolean isdir(){return pth.isdir();}
 	@Override public boolean isfile(){return pth.isfile();}
@@ -31,7 +31,7 @@ final public class elpath implements el{
 				return name.startsWith(query);
 		}}));
 	}
-	@Override public el get(String name){return new elpath(this,pth.get(name));}
+	@Override public el get(String name){return new any_path(this,pth.get(name));}
 	@Override public long size(){return pth.size();}
 	@Override public long lastmod(){return pth.lastmod();}
 	@Override public String uri(){return pth.uri();}
@@ -65,7 +65,7 @@ final public class elpath implements el{
 			if(!e.startsWith(path_to_list))throw new Error();//?? racing
 			final path p=b.path(e.toString());
 			System.out.println(p);
-			v.visit(new elpath(this,p));
+			v.visit(new any_path(this,p));
 		});
 	}
 

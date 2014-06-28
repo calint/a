@@ -173,7 +173,7 @@ public final class xwriter{
 		final String sbs=sb.toString();
 //		attr("oninput","this._changed=true;if(this.innerHTML=='<br>')this.innerHTML='';$x('"+sbs+"')");
 		attr("oninput","$b(this);$x('"+sbs+"');return true;");
-		attr("onkeypress","return $r(event,this,'"+ax+" sel')");
+		attr("onkeypress","return $r(event,this,'"+ax.id()+" sel')");
 //		attr("onblur","if(!this._changed)return true;$x('"+sbs+"')");
 //		return tagoe().p(a.toString()).tagEnd("x");
 		return tagoe();

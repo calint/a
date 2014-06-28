@@ -7,11 +7,11 @@ import java.util.List;
 import a.any.list.el;
 import a.any.list.el.visitor;
 
-final public class elroot implements el{
+final public class any_menu implements el{
 	private el pt;
 	private List<el>ls;
 	private String nm;
-	public elroot(final el parent,final String name){
+	public any_menu(final el parent,final String name){
 		pt=parent;
 		this.nm=name;
 		ls=new ArrayList<el>();
@@ -53,7 +53,7 @@ final public class elroot implements el{
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	
-	final public elroot add(final el e){ls.add(e);return this;}
+	final public any_menu add(final el e){ls.add(e);return this;}
 	
 	
 	

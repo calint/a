@@ -14,12 +14,12 @@ import a.any.list.ui_action;
 import b.a;
 import b.xwriter;
 
-final public class elclass implements el,el.el_actions{
+final public class any_class implements el,el.el_actions{
 	private el pt;
 	private Class<?>cls;
 	private String name_override;
-	public elclass(final el parent,final Class<?>c){pt=parent;cls=c;}
-	public elclass(final el parent,final Class<?>c,final String name){pt=parent;cls=c;name_override=name;}
+	public any_class(final el parent,final Class<?>c){pt=parent;cls=c;}
+	public any_class(final el parent,final Class<?>c,final String name){pt=parent;cls=c;name_override=name;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return name_override!=null?name_override:cls.getName().substring(cls.getName().indexOf(' ')+1);}
 	@Override public String fullpath(){return cls.getName();}
@@ -47,7 +47,7 @@ final public class elclass implements el,el.el_actions{
 		}
 		return ls;
 	}
-	@Override public el get(String name){try{return new elclassfield(this,cls.getDeclaredField(name));}catch(Throwable t){throw new Error(t);}}
+	@Override public el get(String name){try{return new any_classfield(this,cls.getDeclaredField(name));}catch(Throwable t){throw new Error(t);}}
 	@Override public long size(){return 0;}
 	@Override public long lastmod(){return 0;}
 	@Override public String uri(){return null;}
@@ -95,7 +95,7 @@ final public class elclass implements el,el.el_actions{
 			if(!e.getName().startsWith(query))return false;
 			return true;
 		}).sorted((e1,e2)->e1.getName().compareTo(e2.getName()))
-			.forEach(e->v.visit(new elclassfield(this,e)));
+			.forEach(e->v.visit(new any_classfield(this,e)));
 	}
 
 	private static final long serialVersionUID=1;
