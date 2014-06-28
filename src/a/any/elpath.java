@@ -6,8 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
-
 import a.any.list.el;
+import a.any.list.el.visitor;
 import b.path;
 
 final public class elpath implements el{
@@ -42,6 +42,8 @@ final public class elpath implements el{
 	@Override public boolean ommit_column_size(){return false;}
 	@Override public boolean ommit_column_icon(){return false;}
 	
-	private static final long serialVersionUID=1;
+	
+	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
 
+	private static final long serialVersionUID=1;
 }

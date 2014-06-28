@@ -4,10 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import a.any.list.el;
+import a.any.list.el.visitor;
 
 final public class any_root implements el{
+
 	private el pt;
 	private List<el>ls;
 	private String nm;
@@ -64,5 +65,7 @@ final public class any_root implements el{
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
 	
+	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+
 	private static final long serialVersionUID=1;
 }
