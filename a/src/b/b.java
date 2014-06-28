@@ -324,4 +324,5 @@ final public class b{
 	public static @Retention(RetentionPolicy.RUNTIME)@interface unit{String name()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface conf{String note()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface conf_reboot{String note()default"";}
+	public static @Retention(RetentionPolicy.RUNTIME)@interface ref{}
 }
