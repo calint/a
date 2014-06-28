@@ -15,7 +15,7 @@ final public class any_root implements el{
 		pt=parent;
 		this.nm=name;
 		ls=new ArrayList<el>();
-		ls.add(new any_instances(this));
+		ls.add(new any_instances2(this));
 //		ls.add(new elroot(this,"s3"));
 	}
 	@Override public el get(String name){
