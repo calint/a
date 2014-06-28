@@ -1,0 +1,54 @@
+
+*{padding:0;margin:0;show-border:false;}
+
+.MTrimmedWindow.topLevel{background-color:#ffffff}
+
+.MTrimmedWindow{}
+
+.MTrimBar{visibility:hidden;height:0px;background:gray}
+
+.MToolControl.TrimStack{}
+
+.MToolBar.Draggable{}
+
+.MToolControl.Draggable{}
+
+.DragFeedback{background-color:blue}
+
+.ModifiedDragFeedback{background-color:#A0A000}
+
+
+.MPartStack{
+	swt-mru-visible:true;
+        swt-tab-height:13px;
+	swt-maximize-visible:false;
+	swt-minimize-visible:false;
+}
+
+.MPartStack.active{}
+
+.MPartStack.active.noFocus{}
+
+.MPartStack.active.noFocus > CTabItem:selected{color:green}
+
+.MPart.busy{font-style:italic}
+
+.MPart.highlighted{font-weight:bold}
+
+#org-eclipse-ui-editorss{swt-tab-height:18px;}
+
+CTabFolder{}
+
+CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active{}
+
+CTabFolder Canvas{}
+
+CTabItem{font-size:9px;swt-show-close:false}
+
+CTabItem:selected{color:green}
+
+.MPartStack > Composite{}
+
+.MPartStack.active > Composite{}
+
+.MPartStack.active.noFocus > Composite{}
