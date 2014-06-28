@@ -262,7 +262,7 @@ public class list extends a{
 		if(exception!=null)
 			x.nl().pl(b.stacktrace(exception));//? allow ..
 		
-		Arrays.asList(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
+		Arrays.stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
 //		for(final Method m:path.getClass().getDeclaredMethods()){
 //			x.pl(m.toString());
 //		}
