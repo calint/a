@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-
 import a.any.list.el;
 import a.any.list.ui_action;
 import b.a;
@@ -86,6 +85,8 @@ final public class elclass implements el,el.el_actions{
 	@Override public boolean ommit_column_lastmod(){return true;}
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
-	
+
+	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+
 	private static final long serialVersionUID=1;
 }

@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
-
 import a.any.list.el;
+import a.any.list.el.visitor;
 import b.a;
 import b.b.conf;
 import b.b.conf_reboot;
@@ -33,12 +33,12 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	
-	@Override public void column_value(final xwriter x)throws Throwable{
+	@Override public void column_value(final xwriter x){try{
 		final Object o=fld.get(null);
 		if(o==null)return;
 		x.p(o.toString());
-	}
-	@Override public a column_value_editor()throws Throwable{
+	}catch(Throwable t){throw new Error(t);}}
+	@Override public a column_value_editor(){
 		return new a_class_field_editor(fld);
 	}
 	public static class a_class_field_editor extends a{
@@ -123,6 +123,8 @@ final public class elclassfield implements el,el.el_column_value,el.el_column_va
 	@Override public boolean ommit_column_size(){return false;}
 	@Override public boolean ommit_column_icon(){return false;}
 	
-	private static final long serialVersionUID=1;
+	
+	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
 
+	private static final long serialVersionUID=1;
 }

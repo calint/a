@@ -4,11 +4,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import a.any.list.el;
+import a.any.list.el.visitor;
 import b.req;
 import b.session;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
@@ -109,6 +108,9 @@ final public class any_instances implements el{
 	@Override public boolean ommit_column_lastmod(){return true;}
 	@Override public boolean ommit_column_size(){return true;}
 	@Override public boolean ommit_column_icon(){return false;}
+	
+	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+
 	
 	private static final long serialVersionUID=1;
 }

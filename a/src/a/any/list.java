@@ -1,4 +1,6 @@
 package a.any;
+import static b.b.log;
+import static b.b.stacktrace;
 import static java.util.Arrays.stream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,9 +15,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 import b.a;
 import b.b;
-import b.b.ref;
+import b.b.conf;
 import b.xwriter;
 public class list extends a{
 	private static final long serialVersionUID=1;
@@ -52,6 +55,7 @@ public class list extends a{
 		boolean isfile();
 		List<String>list();//? enumerator or foreach
 		List<String>list(final String query);
+		void foreach(final String query,final visitor v)throws Throwable;
 		long size();
 		long lastmod();
 		String uri();
@@ -70,9 +74,11 @@ public class list extends a{
 		boolean ommit_column_icon();
 
 		
-		public static interface el_column_value{public void column_value(final xwriter x)throws Throwable;}
-		public static interface el_column_value_editor{public a column_value_editor()throws Throwable;}
+		public static interface el_column_value{public void column_value(final xwriter x);}
+		public static interface el_column_value_editor{public a column_value_editor();}
 		public static interface el_actions{public List<a>actions();}
+		
+		public static interface visitor{void visit(el e);}
 	}
 	//	protected el root=new elpath(null,b.path());
 	protected el root;
@@ -95,26 +101,165 @@ public class list extends a{
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	
 	synchronized final public void to(final xwriter x) throws Throwable{
+		x.el(this);
+		x.style();
+		x.css("table.f","margin-left:auto;margin-right:auto");
+		x.css("table.f tr:first-child","border:0;border-bottom:1px solid green;border-top:1px solid #070");
+		x.css("table.f tr:last-child td","border:0;border-top:1px solid #040");
+		x.css("table.f th:first-child","border-right:1px dotted #ccc");
+		x.css("table.f td","padding:.5em;vertical-align:middle;border-left:1px dotted #ccc;border-bottom:1px dotted #ccc");
+		x.css("table.f td:first-child","border-left:0");
+		x.css("table.f td.icns","text-align:center");
+		x.css("table.f td.size","text-align:right");
+		x.css("table.f td.total","font-weight:bold");
+		x.css("table.f td.name","min-width:100px");
+		x.css("table.f th","padding:.5em;text-align:left;background:#f0f0f0;color:black");
+		if(hasbit(BIT_ALLOW_QUERY))x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
+		x.css("table.f td.value input","width:18em;background:#eee;border:1px dotted #abc;padding:.5em");
+		x.styleEnd();
+		x.table("f").nl();
+		x.tr().th();
+		if(hasbit(BIT_ALLOW_DIR_UP))if(!path.equals(root))x.ax(this,"up","••");
+		final boolean has_actions=hasbit(BIT_ALLOW_FILE_CREATE)||hasbit(BIT_ALLOW_DIR_CREATE);
+		int cols=has_actions?6:5;
+		final boolean ommit_col_edit=path.ommit_column_edit();if(ommit_col_edit)cols--;
+		final boolean ommit_col_lastmod=path.ommit_column_lastmod();if(ommit_col_lastmod)cols--;
+		final boolean ommit_col_size=path.ommit_column_size();if(ommit_col_size)cols--;
+		final boolean ommit_col_icon=path.ommit_column_icon();if(ommit_col_icon)cols--;
+		x.th(cols);
+		if(hasbit(BIT_DISP_PATH)){
+//			if(path.isin(root)){
+//			String pp=path.fullpath().substring(root.fullpath().length());
+			String pp=path.name();
+			x.span("float:left");
+			x.p(pp);
+			x.spanEnd();
+//			}
+		}
+		x.span("margin-left:22px;float:right");
+		if(hasbit(BIT_ALLOW_QUERY))x.inputax(q,null,this,null).focus(q);
+		if(hasbit(BIT_ALLOW_FILE_CREATE))x.ax(this,"c",icnfile);
+		if(hasbit(BIT_ALLOW_DIR_CREATE))x.ax(this,"d",icndir);
+		x.spanEnd();
+		x.nl();
+		firstinlist=null;
+		final AtomicLong total_bytes=new AtomicLong();
+		Throwable exception=null;
+		try{
+			final boolean isfile=path.isfile();
+			if(isfile){
+	//			x.pre().nl().flush();
+	//			path.to(new osltgt(x.outputstream()));
+				x.style().css(bd,"width:100%;height:100%;border:1px dotted green").styleEnd();
+				x.inputTextArea(bd,"ed");
+				x.focus(bd);
+			};
+			final boolean isdir=path.isdir();
+			if(isdir){
+				path.foreach(q.toString(),e->rend_row(x,e,total_bytes,path.ommit_column_icon(),has_actions,path.ommit_column_edit(),path.ommit_column_lastmod(),path.ommit_column_size()));
+				x.focus(q);
+			}
+			x.tr();
+			if(!ommit_col_icon)x.td();//icon
+			x.td();//name
+			if(!ommit_col_edit)x.td();//value
+			if(has_actions)x.td();//
+			if(!ommit_col_lastmod)x.td();//lastmod
+			if(!ommit_col_size)x.td("total size last").p(nf.format(total_bytes));//size
+			x.nl();
+		}catch(Throwable t){exception=t;}
+		x.tableEnd();
+		x.nl().nl();
+		x.style(sts,"position:absolute;left:0;top:0;float:right");
+		sts.to(x);
+		if(exception!=null)
+			x.nl().pl(b.stacktrace(exception));//? allow ..
+		
+		stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
+//		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
+		
+		x.elend();
+	}
+	public static @conf String icnfile="◻";
+	public static @conf String icndir="⧉";
+	public static @conf String icndel="x";
+	public static @conf String icnsel="s";
+	public static @conf String icnren="r";
+	private void rend_row(xwriter x,el e,AtomicLong total_bytes,boolean ommit_col_icon,boolean acttd,boolean ommit_col_edit,boolean ommit_col_lastmod,boolean ommit_col_size){
+		if(firstinlist==null)firstinlist=e;
+		final String fnm=e.name();
+//		final String nameenc=b.urlencode(name);
+		final boolean isdir=e.isdir();//? get bitfield(file,dir)  1vs2calls
+//		final boolean isfile=e.isfile();
+		x.tr();
+		if(!ommit_col_icon){
+			x.td("icns");
+			if(isdir)
+				if((bits&BIT_ALLOW_DIR_ENTER)!=0)x.ax(this,"e "+fnm,icndir);
+				else x.p(icndir);
+			else
+				if((bits&BIT_ALLOW_FILE_OPEN)!=0&&e.isfile())x.ax(this,"e "+fnm,icnfile);
+				else x.p(icnfile);
+		}
+		x.td("name");
+		final String uri=e.uri();
+		if((bits&BIT_ALLOW_FILE_LINK)!=0&&e.isfile()&&uri!=null)
+			x.a(uri,fnm);
+		else
+			x.p(fnm);
+		if(acttd){
+			x.td("del");
+			if(e.isfile()&&hasbit(BIT_ALLOW_FILE_DELETE))x.ax(this,"r "+fnm,icndel);				
+			if(e.isdir()&&hasbit(BIT_ALLOW_DIR_DELETE))x.ax(this,"r "+fnm,icndel);
+			if(hasbit(BIT_ALLOW_SELECT))x.ax(this,"se "+fnm,icnsel);
+			if(hasbit(BIT_ALLOW_RENAME))x.ax(this,"ren "+fnm,icnren);
+		}
+		if(!ommit_col_edit){
+			x.td("value");
+			if(e instanceof el.el_column_value_editor){
+				final a ee=((el.el_column_value_editor)e).column_value_editor();
+				ee.nm(e.name().replace('_','X'));
+				ee.pt(this);
+				element_editors.add(ee);
+				try{ee.to(x);}catch(Throwable t){log(t);x.pl(stacktrace(t));}
+			}else if(e instanceof el.el_column_value){
+				((el.el_column_value)e).column_value(x);
+			}
+		}
+		if(!ommit_col_lastmod){
+			x.td("date");
+			final long lm=e.lastmod();
+			if(lm!=0)x.p(ttoa(lm));
+		}
+		if(!ommit_col_size){
+			final long size=e.size();
+			if(e.isfile())total_bytes.addAndGet(size);
+			x.td("size").p(isdir?"--":btoa(size));
+		}
+		x.nl();
+	}
+	
+	synchronized final public void to2(final xwriter x) throws Throwable{
 		x.spano(this);
 //		tago("span").attr("id",e.id()).tagoe();
 //		x.tago("span").attr("id",id()).tagoe();
-		List<String>files;
+		List<String>els;
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
 		element_editors.clear();
 		Throwable exception=null;
 		try{
-			if(b.isempty(query))files=path.list();
-			else files=path.list(query);
+			if(query.isEmpty())els=path.list();
+			else els=path.list(query);
 		}catch(Throwable t){
 //			x.pl(b.stacktrace(t));//? allow ..
 			exception=t;
-			files=null;
+			els=null;
 //			return;
 		}
-		if(files!=null){
-			if(sort)sort(files);
-			if(sort_dirsfirst)sort_dirsfirst(files);
+		if(els!=null){
+			if(sort)sort(els);
+			if(sort_dirsfirst)sort_dirsfirst(els);
 		}
 		x.style();
 		x.css("table.f","margin-left:auto;margin-right:auto");
@@ -129,7 +274,6 @@ public class list extends a{
 		x.css("table.f td.name","min-width:100px");
 		x.css("table.f th","padding:.5em;text-align:left;background:#f0f0f0;color:black");
 		if(hasbit(BIT_ALLOW_QUERY))x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
-//		x.css("table.f td.value","padding:0");
 		x.css("table.f td.value input","width:18em;background:#eee;border:1px dotted #abc;padding:.5em");
 		x.styleEnd();
 
@@ -183,7 +327,7 @@ public class list extends a{
 			x.nl();
 			long total_bytes=0;
 			firstinlist=null;
-			if(files!=null)for(final String filenm:files){
+			if(els!=null)for(final String filenm:els){
 				final el p=path.get(filenm);
 				if(firstinlist==null)firstinlist=p;
 				final String fnm=p.name();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import a.any.list.el;
+import a.any.list.el.visitor;
 import b.req;
 import b.session;
 import com.amazonaws.auth.AWSCredentials;
@@ -94,6 +95,9 @@ final public class any_instances2 implements el{
 //	@Override public List<a> actions(){
 //		return null;
 //	}
+	
+	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
+
 	
 	private static final long serialVersionUID=1;
 }
