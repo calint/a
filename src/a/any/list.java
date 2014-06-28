@@ -263,11 +263,8 @@ public class list extends a{
 			x.nl().pl(b.stacktrace(exception));//? allow ..
 		
 		Arrays.stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
-//		for(final Method m:path.getClass().getDeclaredMethods()){
-//			x.pl(m.toString());
-//		}
+//		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
 		
-
 		x.spanEnd();
 	}
 	private el firstinlist;
