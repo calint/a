@@ -1,4 +1,5 @@
 package a.any;
+import static java.util.Arrays.stream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -262,7 +263,7 @@ public class list extends a{
 		if(exception!=null)
 			x.nl().pl(b.stacktrace(exception));//? allow ..
 		
-		Arrays.stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
+		stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
 //		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
 		
 		x.spanEnd();
