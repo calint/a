@@ -1,0 +1,8 @@
+#!/bin/sh
+export JAVA_HOME=/jre
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=bin`ls /a/lib|while read f;do echo -n :;echo -n /a/lib/$f;done`
+export
+cmd='cd /a && java b.b server_port 80 >> /a/ba.log'
+echo "public domain server #1 : $cmd"
+eval $cmd
