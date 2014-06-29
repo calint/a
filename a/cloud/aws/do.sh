@@ -15,7 +15,7 @@ WAIT=           # wait for server to respond on http requests (empty for no)
 STOP=           # stop the web server
 DEPLOY=y         # deploy
 QA=             # quality assurance
-CONSOLE=y         # console open until ^C
+CONSOLE=         # console open until ^C
 REDEPLOY=        # used with CONSOLE to loop deploy,restart when user ^C in server console
 STRESS_TEST=     # stress
 TERMINATE=y       # terminate instance
@@ -26,14 +26,12 @@ COLR=
 
 echo
 echo " ${COLR}• config"
-echo " · workspace: $WORKSPACE"
+echo " ·      root: $WORKSPACE/a"
 echo " ·     image: $INSTANCE_AMI"
 echo " ·  firewall: $SECURITY"
+echo " ·  key path: $KEY_PATH"
 echo " ·       key: $KEY"
-echo " ·      path: $KEY_PATH"
-echo " ·   verbose: $VERBOSE"
-echo
-echo " ${COLR}• steps"
+echo " · "
 echo " ·    launch: $LAUNCH"
 echo " ·      wait: $WAIT"
 echo " ·      stop: $STOP"
@@ -70,9 +68,9 @@ if ! [ -z $LAUNCH ];then
 		sleep 1
 	done;
 fi
-echo "`date +$DTF`  *  dns id: $INSTANCE_DNS"
+echo "`date +$DTF`  * dns id: $INSTANCE_DNS"
 echo $INSTANCE_DNS>dns.id
-
+#echo 1
 if ! [ -z $WAIT ];then
 	echo "`date +$DTF`  ${COLR}•  waiting for http://$INSTANCE_DNS/"
 	for((;;));do curl $VERBOSE $SILENT --connect-timeout 60 $INSTANCE_DNS>wait_for_${INSTANCE_DNS}.html;if [ $? -eq 0 ];then break;fi;
@@ -80,7 +78,7 @@ if ! [ -z $WAIT ];then
 		sleep 1
 	done
 fi
-
+#echo 2
 if ! [ -z $STOP ];then
 	echo "`date +$DTF`  ${COLR}•  stopping http://$INSTANCE_DNS"
 	for((;;));do
@@ -90,9 +88,11 @@ if ! [ -z $STOP ];then
 		sleep 1
 	done
 fi
-
+#echo 3
 if ! [ -z $DEPLOY ];then 
+#	echo 4
 	for((;;));do
+#		echo 5
 		echo "`date +$DTF`  ${COLR}•  updating http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		for((;;));do
 			#    --verbose  --progress                                                          -v 
@@ -102,9 +102,13 @@ if ! [ -z $DEPLOY ];then
 			echo "`date +$DTF`  ${COLR}· trying to update http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		done
 		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
-		ssh $VERBOSE $(if [ -z $CONSOLE ];then echo -oBatchMode=yes;fi) -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java>/dev/null;/studio/suse-studio-custom"
-		if [ -z $REDEPLOY ];then break;fi
-	done;
+		if [ -z $CONSOLE ];then echo -n '-oBatchMode=yes';fi
+		echo
+		echo
+#		ssh $VERBOSE `if [ -z $CONSOLE ];then echo -n '-oBatchMode=yes';fi` -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java>/dev/null;/studio/suse-studio-custom"
+		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS 'killall java>/dev/null;/studio/suse-studio-custom'
+		if [ -z $REDEPLOY ];then break;fi;
+	done
 fi
 
 if ! [ -z $QA ];then
