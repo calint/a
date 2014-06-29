@@ -1,5 +1,5 @@
 #~~ config
-INSTANCE_AMI=ami-9c5792f4
+INSTANCE_AMI=ami-d85c99b0
 WALLET=/Users/calin/wallet
 KEY=ramvark-keypair
 KEY_PATH=$WALLET/$KEY.pem
