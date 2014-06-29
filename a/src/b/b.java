@@ -1,5 +1,4 @@
 package b;
-import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +14,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.StandardSocketOptions;
@@ -98,21 +98,26 @@ final public class b{
 //		System.out.println(hello);
 		if(!class_init(b.class,args))return;
 		resources_lastmod=System.currentTimeMillis();
+
+		if(print_conf_at_startup){
+			print_hr(out,64);
+			out.println(InetAddress.getLocalHost());
+			print_hr(out,64);
+//			out.println(b.class);
+//			print_hr(out,64);
+			class_init(b.class,new String[]{"-1"});
+			print_hr(out,64);
+		}
+		if(print_stats_at_startup)stats_to(out);
+
 		final ServerSocketChannel ssc=ServerSocketChannel.open();
 		ssc.configureBlocking(false);
 		final InetSocketAddress isa=new InetSocketAddress(Integer.parseInt(server_port));
 		final ServerSocket ss=ssc.socket();
 		ss.bind(isa,max_pending_connections);
 		req.init_static();
-		if(print_conf_at_startup){
-			out.println(b.class);
-			print_hr(out,64);
-			class_init(b.class,new String[]{"-1"});
-			print_hr(out,64);
-		}
-		if(print_stats_at_startup){stats_to(System.out);System.out.flush();}
 		if(thd_watch)new thdwatch().start();
-		else stats_to(System.out);
+		else stats_to(out);
 		final Selector sel=Selector.open();
 		ssc.register(sel,SelectionKey.OP_ACCEPT);
 		Runtime.getRuntime().addShutdownHook(new jvmsdh());
@@ -263,6 +268,13 @@ final public class b{
 		}
 		final PrintStream ps=new PrintStream(out);
 		ps.println(hello);
+		ps.print("              url: http://");
+		ps.print(InetAddress.getLocalHost().getHostAddress());
+		if(!server_port.equals("80")){
+			ps.print(":");
+			ps.print(server_port);
+		}
+		ps.println("/");
 		ps.println("             time: "+tolastmodstr(t_ms));
 		ps.println("             port: "+server_port);
 		ps.println("            input: "+(thdwatch.input>>10)+" KB");
@@ -350,7 +362,7 @@ final public class b{
 	public static void cp(final InputStream in,final Writer out)throws Throwable{
 		cp(new InputStreamReader(in,strenc),out,null);
 	}
-	public static void pl(final String s){System.out.print("> ");System.out.println(s);}
+	public static void pl(final String s){out.print("> ");out.println(s);}
 	
 	//? safe quantity unit math
 	public static @Retention(RetentionPolicy.RUNTIME)@interface unit{String name()default"";}
