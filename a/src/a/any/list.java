@@ -147,6 +147,20 @@ public class list extends a{
 		Throwable exception=null;
 		try{
 			final boolean isfile=path.isfile();
+			final boolean isdir=path.isdir();
+			if(isdir){
+				path.foreach(q.toString(),e->rend_row(x,e,total_bytes,path.ommit_column_icon(),has_actions,path.ommit_column_edit(),path.ommit_column_lastmod(),path.ommit_column_size()));
+				x.tr();
+				if(!ommit_col_icon)x.td();//icon
+				x.td();//name
+				if(!ommit_col_edit)x.td();//value
+				if(has_actions)x.td();//
+				if(!ommit_col_lastmod)x.td();//lastmod
+				if(!ommit_col_size)x.td("total size last").p(nf.format(total_bytes));//size
+				x.nl();
+				x.focus(q);
+			}
+			x.tableEnd();
 			if(isfile){
 	//			x.pre().nl().flush();
 	//			path.to(new osltgt(x.outputstream()));
@@ -154,21 +168,7 @@ public class list extends a{
 				x.inputTextArea(bd,"ed");
 				x.focus(bd);
 			};
-			final boolean isdir=path.isdir();
-			if(isdir){
-				path.foreach(q.toString(),e->rend_row(x,e,total_bytes,path.ommit_column_icon(),has_actions,path.ommit_column_edit(),path.ommit_column_lastmod(),path.ommit_column_size()));
-				x.focus(q);
-			}
-			x.tr();
-			if(!ommit_col_icon)x.td();//icon
-			x.td();//name
-			if(!ommit_col_edit)x.td();//value
-			if(has_actions)x.td();//
-			if(!ommit_col_lastmod)x.td();//lastmod
-			if(!ommit_col_size)x.td("total size last").p(nf.format(total_bytes));//size
-			x.nl();
 		}catch(Throwable t){exception=t;}
-		x.tableEnd();
 		x.nl().nl();
 		x.style(sts,"position:absolute;left:0;top:0;float:right");
 		sts.to(x);
@@ -188,9 +188,7 @@ public class list extends a{
 	private void rend_row(xwriter x,el e,AtomicLong total_bytes,boolean ommit_col_icon,boolean acttd,boolean ommit_col_edit,boolean ommit_col_lastmod,boolean ommit_col_size){
 		if(firstinlist==null)firstinlist=e;
 		final String fnm=e.name();
-//		final String nameenc=b.urlencode(name);
 		final boolean isdir=e.isdir();//? get bitfield(file,dir)  1vs2calls
-//		final boolean isfile=e.isfile();
 		x.tr();
 		if(!ommit_col_icon){
 			x.td("icns");
