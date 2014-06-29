@@ -6,6 +6,8 @@ SECURITY=allopen
 WORKSPACE=/Users/calin/Documents/workspace-2
 VERBOSE=   #-v
 PROGRESS=  #--progress
+SILENT=--silent
+QUIET=-q
 
 #~~ steps
 LAUNCH=y         # launch new instance
@@ -14,7 +16,7 @@ STOP=y           # stop the web server
 DEPLOY=y         # deploy
 REDEPLOY=        #  loop
 STRESS_TEST=     # stress
-TERMINATE=       # terminate instance
+TERMINATE=y       # terminate instance
 #~~
 
 
@@ -46,9 +48,8 @@ if ! [ -z $LAUNCH ];then
 	for((;;));do
 		aws ec2 run-instances --count 1 --image-id $INSTANCE_AMI --instance-type t1.micro --key-name $KEY --security-groups $SECURITY > reservation.txt
 		if [ $? -eq 0 ];then break;fi
-		sleep 1
-		echo
 		echo "`date +$DTF`  ${COLR}·  trying to launch instance"
+		sleep 1
 	done
 	INST=(`cat reservation.txt |grep INSTANCES|tr "\\t" "\n"`)
 	INSTANCE_ID=${INST[7]}
@@ -61,50 +62,42 @@ if ! [ -z $LAUNCH ];then
 		export INST=(`cat reservations.txt|grep ASSOCIATION|tr "\\t" "\n"`);
 		INSTANCE_DNS=${INST[2]};
 		if ! [ -z $INSTANCE_DNS ];then break;fi;
-		sleep 1
 		echo "`date +$DTF`  ${COLR}·  waiting for public address"
+		sleep 1
 	done;
 fi
 echo "`date +$DTF`  ·  $INSTANCE_DNS"
 
 if ! [ -z $WAIT ];then
 	echo "`date +$DTF`  ${COLR}•  waiting for http://$INSTANCE_DNS/"
-	for((;;));do curl $VERBOSE --connect-timeout 10 $INSTANCE_DNS;if [ $? -eq 0 ];then break;fi;
-		sleep 1
-	    echo
+	for((;;));do curl $VERBOSE $SILENT --connect-timeout 60 $INSTANCE_DNS>wait_for_${INSTANCE_DNS}.html;if [ $? -eq 0 ];then break;fi;
 		echo "`date +$DTF`  ${COLR}·  waiting for http://$INSTANCE_DNS/"
+		sleep 1
 	done
-	echo
 fi
 
 if ! [ -z $STOP ];then
 	echo "`date +$DTF`  ${COLR}•  stopping web server on $INSTANCE_DNS"
 	for((;;));do
-		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=5 -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java"
+		ssh $VERBOSE $QUIET -oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=10 -i$KEY_PATH root@$INSTANCE_DNS "killall java"
 		if [ $? -eq 0 ];then break;fi
-		sleep 1
-		echo
 		echo "`date +$DTF`  ${COLR}·  trying to stop the web server on $INSTANCE_DNS"
+		sleep 1
 	done
 fi
 
 if ! [ -z $DEPLOY ];then 
 	for((;;));do
-		echo
 		echo "`date +$DTF`  ${COLR}•  updating $INSTANCE_DNS from $WORKSPACE/a"
 		for((;;));do
 			#    --verbose  --progress                                                          -v 
 			rsync $VERBOSE --timeout=30 $PROGRESS --delete --exclude .svn --exclude u/ --exclude cache/ -aze "ssh -oStrictHostKeyChecking=no -i$KEY_PATH" "$WORKSPACE/a/" root@$INSTANCE_DNS:/a/
 			if [ $? -eq 0 ];then break;fi
 			sleep 1
-			echo
 			echo "`date +$DTF`  ${COLR}· trying to update $INSTANCE_DNS from $WORKSPACE/a"
 		done
-		
-		echo
 		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
-		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
-	
+		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java ; /studio/suse-studio-custom &"
 		if [ -z $REDEPLOY ];then break;fi
 	done;
 fi
@@ -117,9 +110,8 @@ if ! [ -z $STRESS_TEST ];then
 	
 	echo
 	echo "`date +$DTF`  ${COLR}•  qa http://$INSTANCE_DNS"
-	echo todo
+	echo "`date +$DTF`  ${COLR}·  todo"
 	
-	echo
 	echo " •  stressing http://$INSTANCE_DNS"
 	ab -c1    -t5 http://$INSTANCE_DNS/
 	ab -c10   -t5 http://$INSTANCE_DNS/
@@ -138,14 +130,13 @@ fi # continuous build
 if ! [ -z $TERMINATE ];then
 	echo "`date +$DTF`  ${COLR}•  terminating $INSTANCE_ID"
 	for((;;));do
-		aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+		aws ec2 terminate-instances --instance-ids $INSTANCE_ID > aws_terminate_${INSTANCE_ID}.txt
 		if [ $? -eq 0 ];then break;fi
-		sleep 1
-		echo
 		echo "`date +$DTF`  ${COLR}· trying to terminate instance $INSTANCE_ID"
+		sleep 1
 	done
 fi
 
-echo
 echo "`date +$DTF`  ${COLR}•${COLR}•  done"
- 
+
+
