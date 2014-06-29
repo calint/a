@@ -25,6 +25,7 @@ TERMINATE=y       # terminate instance
 DTF=%F---%H:%M:%S-
 COLR=
 
+echo
 echo " ${COLR}• config"
 echo " · workspace: $WORKSPACE"
 echo " ·     image: $INSTANCE_AMI"
