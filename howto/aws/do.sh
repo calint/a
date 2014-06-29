@@ -102,7 +102,7 @@ if ! [ -z $DEPLOY ];then
 			echo "`date +$DTF`  ${COLR}· trying to update http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		done
 		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
-		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
+		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java >/dev/null; /studio/suse-studio-custom &"
 		if [ -z $REDEPLOY ];then break;fi
 	done;
 fi
