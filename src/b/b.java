@@ -1,4 +1,5 @@
 package b;
+import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +86,8 @@ final public class b{
 	public static @conf boolean tcpnodelay=true;
 	public static @conf boolean save_sessions_at_shutdown=false;
 	public static boolean cloud_bees=false;
+	public static @conf boolean print_conf_at_startup=true;
+	public static @conf boolean print_stats_at_startup=true;
 	
 	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
 	public static @conf String timeatloadstrhtp=tolastmodstr(timeatload);
@@ -101,6 +104,13 @@ final public class b{
 		final ServerSocket ss=ssc.socket();
 		ss.bind(isa,max_pending_connections);
 		req.init_static();
+		if(print_conf_at_startup){
+			out.println(b.class);
+			print_hr(out,64);
+			class_init(b.class,new String[]{"-1"});
+			print_hr(out,64);
+		}
+		if(print_stats_at_startup){stats_to(System.out);System.out.flush();}
 		if(thd_watch)new thdwatch().start();
 		else stats_to(System.out);
 		final Selector sel=Selector.open();
@@ -135,6 +145,17 @@ final public class b{
 			}}catch(final Throwable e){
 				log(e);
 			}
+	}
+	private static void print_hr(final OutputStream os,final int width_in_chars)throws IOException{
+//		for(int i=0;i<width_in_chars;i++)
+//			os.write((byte)(Math.random()<.5?'~':' '));
+		float prob=1;
+		float dprob_di=prob/width_in_chars;
+		for(int i=0;i<width_in_chars;i++){
+			os.write((byte)(Math.random()<prob?'~':' '));
+			prob-=dprob_di;
+		}
+		os.write((byte)'\n');
 	}
 	private static void read(final req r)throws Throwable{
 		if(r.is_sock()){
@@ -286,10 +307,21 @@ final public class b{
 			final Object o=f.get(null);
 			out.print(f.getName());
 			out.print("=");
-			out.print(f.getType().getName());
-			out.print("(");
+			String type=f.getType().getName();
+			if(type.startsWith("java.lang."))type=type.substring("java.lang.".length());
+			if(type.startsWith("java.util."))type=type.substring("java.util.".length());
+			final boolean isstr=type.equals("String");
+			final boolean isbool=type.equals("boolean");
+			final boolean isint=type.equals("int");
+			final boolean islong=type.equals("long");
+			final boolean print_type=!(isstr||isbool||isint||islong);
+			if(isstr)out.print("\"");
+			if(print_type){out.print(type);out.print("(");}
 			out.print(o==null?"":o.toString().replaceAll("\\n","\\\\n"));
-			out.println(")");
+//			if(islong)out.print("L");
+			if(isstr)out.print("\"");
+			if(print_type){out.print(")");}
+			out.println();
 		}
 	}
 	public static boolean class_init(final Class<?>cls,final String[]args)throws SecurityException,NoSuchFieldException,IllegalArgumentException,IllegalAccessException{

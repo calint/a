@@ -131,7 +131,7 @@ public final class xwriter{
 			}
 		}
 		attr("onchange",sb.toString());
-		return tagoe();
+		return tagoe();//? <input hidden "">
 	}
 	public xwriter inputTextArea(final a a){return inputTextArea(a,null);}
 	public xwriter inputTextArea(final a a,final String cls){
