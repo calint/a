@@ -1,4 +1,4 @@
-INSTANCE_AMI=ami-9c5792f4
+INSTANCE_AMI=ami-a8498cc0
 WALLET=/Users/calin/wallet
 KEY=ramvark-keypair
 KEY_PATH=$WALLET/$KEY.pem
@@ -9,16 +9,18 @@ PROGRESS=  #--progress
 SILENT=--silent
 QUIET=-q
 
+INSTANCE_ID=$1
+INSTANCE_DNS=$2
+
 #~~ steps
-LAUNCH=y         # launch new instance
+LAUNCH=         # launch new instance
 WAIT=           # wait for server to respond on http requests (empty for no)
 STOP=           # stop the web server
 DEPLOY=y         # deploy
-QA=             # quality assurance
+QA=y             # quality assurance
 REDEPLOY=        #  loop
 STRESS_TEST=     # stress
-TERMINATE=y       # terminate instance
-CONSOLE=y         # console open until ^C
+TERMINATE=       # terminate instance
 #~~
 
 
@@ -40,9 +42,8 @@ echo " ·    launch: $LAUNCH"
 echo " ·      wait: $WAIT"
 echo " ·      stop: $STOP"
 echo " ·    deploy: $DEPLOY"
-echo " ·   console: $CONSOLE"
-echo " ·      loop: $REDEPLOY"
 echo " ·        qa: $QA"
+echo " ·      loop: $REDEPLOY"
 echo " ·    stress: $STRESS_TEST"
 echo " · terminate: $TERMINATE"
 echo
@@ -58,7 +59,7 @@ if ! [ -z $LAUNCH ];then
 	done
 	INST=(`cat reservation.txt |grep INSTANCES|tr "\\t" "\n"`)
 	INSTANCE_ID=${INST[7]}
-	echo "`date +$DTF`  * instance id: $INSTANCE_ID"
+	echo "`date +$DTF`  * $INSTANCE_ID"
 	echo $INSTANCE_ID>instance.id
 	
 	echo "`date +$DTF`  ${COLR}•  waiting for address"
@@ -72,7 +73,7 @@ if ! [ -z $LAUNCH ];then
 		sleep 1
 	done;
 fi
-echo "`date +$DTF`  *  dns id: $INSTANCE_DNS"
+echo "`date +$DTF`  *  $INSTANCE_DNS"
 echo $INSTANCE_DNS>dns.id
 
 if ! [ -z $WAIT ];then
@@ -104,7 +105,7 @@ if ! [ -z $DEPLOY ];then
 			echo "`date +$DTF`  ${COLR}· trying to update http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		done
 		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
-		ssh $VERBOSE $(if [ -z $CONSOLE ];then echo -oBatchMode=yes;fi) -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java>/dev/null;/studio/suse-studio-custom"
+		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java >/dev/null; /studio/suse-studio-custom &"
 		if [ -z $REDEPLOY ];then break;fi
 	done;
 fi
@@ -148,5 +149,3 @@ if ! [ -z $TERMINATE ];then
 fi
 
 echo "`date +$DTF`  ${COLR}•${COLR}•  done"
-
-
