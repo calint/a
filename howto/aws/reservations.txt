@@ -1,12 +1,14 @@
-RESERVATIONS	805417887619	r-52651a2d
-INSTANCES	0	x86_64	None	False	xen	ami-b0659fd8	i-8e3a5fa5	t1.micro	aki-825ea7eb	ramvark-keypair	2014-06-29T02:56:57.000Z	ip-172-31-20-34.ec2.internal	172.31.20.34	ec2-54-88-122-221.compute-1.amazonaws.com	54.88.122.221	/dev/sda1	ebs	True	None	subnet-c814e4bf	paravirtual	vpc-1bc3117e
+RESERVATIONS	805417887619	r-014c337e
+INSTANCES	0	x86_64	None	False	xen	ami-8421e4ec	i-7160055a	t1.micro	aki-825ea7eb	ramvark-keypair	2014-06-29T03:58:13.000Z	ip-172-31-18-134.ec2.internal	172.31.18.134	ec2-54-88-183-116.compute-1.amazonaws.com	54.88.183.116	/dev/sda1	ebs	True	None	subnet-c814e4bf	paravirtual	vpc-1bc3117e
+BLOCKDEVICEMAPPINGS	/dev/sda1
+EBS	2014-06-29T03:58:16.000Z	False	attached	vol-851e6bcc
 MONITORING	disabled
-NETWORKINTERFACES	None	eni-b8f0f4cf	805417887619	ip-172-31-20-34.ec2.internal	172.31.20.34	True	in-use	subnet-c814e4bf	vpc-1bc3117e
-ASSOCIATION	amazon	ec2-54-88-122-221.compute-1.amazonaws.com	54.88.122.221
-ATTACHMENT	2014-06-29T02:56:57.000Z	eni-attach-204a8243	True	0	attaching
+NETWORKINTERFACES	None	eni-2986825e	805417887619	ip-172-31-18-134.ec2.internal	172.31.18.134	True	in-use	subnet-c814e4bf	vpc-1bc3117e
+ASSOCIATION	amazon	ec2-54-88-183-116.compute-1.amazonaws.com	54.88.183.116
+ATTACHMENT	2014-06-29T03:58:13.000Z	eni-attach-51589032	True	0	attached
 GROUPS	sg-48107f2d	allopen
-PRIVATEIPADDRESSES	True	ip-172-31-20-34.ec2.internal	172.31.20.34
-ASSOCIATION	amazon	ec2-54-88-122-221.compute-1.amazonaws.com	54.88.122.221
+PRIVATEIPADDRESSES	True	ip-172-31-18-134.ec2.internal	172.31.18.134
+ASSOCIATION	amazon	ec2-54-88-183-116.compute-1.amazonaws.com	54.88.183.116
 PLACEMENT	us-east-1c	None	default
 SECURITYGROUPS	sg-48107f2d	allopen
-STATE	0	pending
+STATE	16	running

@@ -48,5 +48,114 @@ ls -l ~/snp/$1*
 rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz /Users/calin/Documents/workspace/a/ root@192.168.1.35:/a/
 
 
+> ls -l|sed -n 2p
+-rw-r--r--   1 calin  staff  1894 Jun 28 08:03 about
+> ls -l|sed -n 2,4p
+-rw-r--r--   1 calin  staff  1894 Jun 28 08:03 about
+-rw-r--r--   1 calin  staff  4667 Jun 29 10:57 do.sh
+drwxr-xr-x  55 calin  staff  1870 Jun 28 08:03 qa
+> 
+
+
+> ll
+total 40
+drwxr-xr-x   8 calin  staff   272 Jun 28 12:36 .
+drwxr-xr-x  16 calin  staff   544 Jun 29 08:42 ..
+-rw-r--r--   1 calin  staff  1894 Jun 28 08:03 about
+-rw-r--r--   1 calin  staff  4667 Jun 29 10:57 do.sh
+drwxr-xr-x  55 calin  staff  1870 Jun 28 08:03 qa
+-rw-r--r--   1 calin  staff   694 Jun 29 10:58 reservation.txt
+-rw-r--r--   1 calin  staff   967 Jun 29 10:58 reservations.txt
+drwxr-xr-x   9 calin  staff   306 Jun 28 08:03 stress
+> ll|sed -n 2,4p|tr -s " "|cut -d " " -f5
+272
+544
+1894
+> ll|sed -n 2,4p|tr -s " "|cut -d " " -f4
+staff
+staff
+staff
+> 
+
+
+
+
+> ll|sed -n 2,4p|tr -s \ |cut -d \  -f2
+8
+16
+1
+> 
+
+
+
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com "ps aux|grep b\.b|sed -n 1p"
+root      6239  0.1  5.1 1559440 33104 ?       Sl   03:59   0:02 java b.b server_port 80
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com "ps aux|grep b\.b|sed -n 1p|tr -s \ |cut -d \  -f2"
+6239
+> 
+
+
+
+
+> ll|sed '/pattern to match/d'
+total 40
+drwxr-xr-x   8 calin  staff   272 Jun 28 12:36 .
+drwxr-xr-x  16 calin  staff   544 Jun 29 08:42 ..
+-rw-r--r--   1 calin  staff  1894 Jun 28 08:03 about
+-rw-r--r--   1 calin  staff  4667 Jun 29 10:57 do.sh
+drwxr-xr-x  55 calin  staff  1870 Jun 28 08:03 qa
+-rw-r--r--   1 calin  staff   694 Jun 29 10:58 reservation.txt
+-rw-r--r--   1 calin  staff   967 Jun 29 10:58 reservations.txt
+drwxr-xr-x   9 calin  staff   306 Jun 28 08:03 stress
+> ll|sed '/about/d'
+total 40
+drwxr-xr-x   8 calin  staff   272 Jun 28 12:36 .
+drwxr-xr-x  16 calin  staff   544 Jun 29 08:42 ..
+-rw-r--r--   1 calin  staff  4667 Jun 29 10:57 do.sh
+drwxr-xr-x  55 calin  staff  1870 Jun 28 08:03 qa
+-rw-r--r--   1 calin  staff   694 Jun 29 10:58 reservation.txt
+-rw-r--r--   1 calin  staff   967 Jun 29 10:58 reservations.txt
+drwxr-xr-x   9 calin  staff   306 Jun 28 08:03 stress
+> 
+
+
+
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com "ps aux|grep java\ b\.b|sed '/grep /d'|sed -n 1p|tr -s \ "
+root 6239 0.1 5.1 1559440 33104 ? Sl 03:59 0:02 java b.b server_port 80
+>
+
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com "ps aux|grep java\ b\.b|sed '/grep /d'|sed -n 1p|tr -s \ |cut -d \  -f2"
+6239
+>
+
+
+
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ |cut -d \  -f2>_1&&ls&&pid=$(cat _1);echo [$pid];cat _1'
+_1
+bin
+ll
+[6239]
+6239
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ |cut -d \  -f2'
+6239
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ '
+root 6239 0.1 5.2 1561496 33364 ? Sl 03:59 0:03 java b.b server_port 80
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p'
+root      6239  0.1  5.2 1561496 33364 ?       Sl   03:59   0:03 java b.b server_port 80
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'ps aux|grep java\ b\.b|sed "/grep /d"'
+root      6239  0.1  5.2 1561496 33364 ?       Sl   03:59   0:03 java b.b server_port 80
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'ps aux|grep java\ b\.b'
+root      6239  0.1  5.2 1561496 33364 ?       Sl   03:59   0:03 java b.b server_port 80
+root      8082  0.0  0.0   4260   568 ?        S    04:40   0:00 grep java b.b
+> 
+> 
+> 
+
+
+
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-183-116.compute-1.amazonaws.com 'pid=$(ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ |cut -d \  -f2);echo $pid'
+6239
+> 
+
 
 
