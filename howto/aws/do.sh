@@ -14,8 +14,8 @@ LAUNCH=y         # launch new instance
 WAIT=y           # wait for server to respond on http requests (empty for no)
 STOP=y           # stop the web server
 DEPLOY=y         # deploy
-REDEPLOY=        #  loop
-STRESS_TEST=     # stress
+REDEPLOY=y        #  loop
+STRESS_TEST=y     # stress
 TERMINATE=y       # terminate instance
 #~~
 
