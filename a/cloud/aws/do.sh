@@ -1,3 +1,4 @@
+#~~ config
 INSTANCE_AMI=ami-9c5792f4
 WALLET=/Users/calin/wallet
 KEY=ramvark-keypair
@@ -9,20 +10,17 @@ PROGRESS=  #--progress
 SILENT=--silent
 QUIET=-q
 
-#~~ steps
 LAUNCH=y         # launch new instance
 WAIT=           # wait for server to respond on http requests (empty for no)
 STOP=           # stop the web server
 DEPLOY=y         # deploy
 QA=             # quality assurance
-REDEPLOY=        #  loop
+CONSOLE=y         # console open until ^C
+REDEPLOY=        # used with CONSOLE to loop deploy,restart when user ^C in server console
 STRESS_TEST=     # stress
 TERMINATE=y       # terminate instance
-CONSOLE=y         # console open until ^C
-#~~
 
-
-
+#~~ script
 DTF=%F---%H:%M:%S-
 COLR=
 
