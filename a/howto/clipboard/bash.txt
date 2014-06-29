@@ -159,3 +159,25 @@ root      8082  0.0  0.0   4260   568 ?        S    04:40   0:00 grep java b.b
 
 
 
+> ssh -i ~/wallet/ramvark-keypair.pem root@ec2-54-88-188-160.compute-1.amazonaws.com 'pid=$(ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ |cut -d \  -f2);echo [$pid];kill $pid'
+[6253]
+> 
+
+
+> ADR=ec2-54-86-248-109.compute-1.amazonaws.com
+> ssh -i ~/wallet/ramvark-keypair.pem root@$ADR 'pid=$(ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ |cut -d \  -f2);echo k[$pid];kill $pid'
+k[6222]
+
+
+
+> export ADR=ec2-54-86-248-109.compute-1.amazonaws.com
+> ssh -i ~/wallet/ramvark-keypair.pem root@$ADR 'pid=$(ps aux|grep java\ b\.b|sed "/grep /d"|sed -n 1p|tr -s \ |cut -d \  -f2);echo [$pid];kill $pid'
+[6368]
+> 
+
+
+
+
+
+
+

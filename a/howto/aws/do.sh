@@ -1,4 +1,4 @@
-INSTANCE_AMI="ami-8421e4ec"
+INSTANCE_AMI="ami-1435f07c"
 WALLET=/Users/calin/wallet
 KEY=ramvark-keypair
 KEY_PATH=$WALLET/$KEY.pem
@@ -14,7 +14,7 @@ STOP=y           # stop the web server
 DEPLOY=y         # deploy
 REDEPLOY=        #  loop
 STRESS_TEST=     # stress
-TERMINATE=y      # terminate instance
+TERMINATE=       # terminate instance
 #~~
 
 
@@ -38,7 +38,7 @@ echo " ·    deploy: $DEPLOY"
 echo " ·      loop: $REDEPLOY"
 echo " ·    stress: $STRESS_TEST"
 echo " · terminate: $TERMINATE"
-
+echo
 if ! [ -d $WORKSPACE/a ];then echo workspace does not contain /a;exit 1;fi
 
 if ! [ -z $LAUNCH ];then
@@ -68,9 +68,9 @@ fi
 echo "`date +$DTF`  ·  $INSTANCE_DNS"
 
 if ! [ -z $WAIT ];then
-	echo
 	echo "`date +$DTF`  ${COLR}•  waiting for http://$INSTANCE_DNS/"
 	for((;;));do curl $VERBOSE --connect-timeout 10 $INSTANCE_DNS;if [ $? -eq 0 ];then break;fi;
+		sleep 1
 	    echo
 		echo "`date +$DTF`  ${COLR}·  waiting for http://$INSTANCE_DNS/"
 	done
@@ -78,7 +78,6 @@ if ! [ -z $WAIT ];then
 fi
 
 if ! [ -z $STOP ];then
-	echo
 	echo "`date +$DTF`  ${COLR}•  stopping web server on $INSTANCE_DNS"
 	for((;;));do
 		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=5 -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java"
@@ -111,7 +110,6 @@ if ! [ -z $DEPLOY ];then
 fi
 
 if ! [ -z $STRESS_TEST ];then
-	echo
 	echo "`date +$DTF`  ${COLR}•  trying http://$INSTANCE_DNS/"
 	curl $VERBOSE  $INSTANCE_DNS
 	curl $VERBOSE  $INSTANCE_DNS/typealine
@@ -138,7 +136,6 @@ if ! [ -z $STRESS_TEST ];then
 fi # continuous build
 
 if ! [ -z $TERMINATE ];then
-	echo
 	echo "`date +$DTF`  ${COLR}•  terminating $INSTANCE_ID"
 	for((;;));do
 		aws ec2 terminate-instances --instance-ids $INSTANCE_ID
