@@ -180,4 +180,11 @@ k[6222]
 
 
 
+> man ssh|grep -ia3 quiet
+
+
+
+
+
+
 
