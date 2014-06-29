@@ -4,7 +4,7 @@ aws ec2 run-instances --count 1 --image-id ami-8e8a70e6 --instance-type t1.micro
 
 aws ec2 describe-instances --instance-ids i-afa23484|grep "PublicIpAddress"
 
-rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz -e 'ssh -i /Users/calin/Downloads/suse-studio-b2017275-us-east-1-key.pem' /Users/calin/Documents/workspace/a/ root@ec2-54-85-117-27.compute-1.amazonaws.com:/a/
+rsync --delete --exclude .svn --exclude u/ --exclude cache/ --progress -avz -e 'ssh -i/Users/calin/wallet/ramvark-keypair.pem' /Users/calin/Documents/workspace-2/a/ root@ec2-54-85-117-27.compute-1.amazonaws.com:/a/
 
 aws ec2 reboot-instances --instance-ids i-c29813e9
 

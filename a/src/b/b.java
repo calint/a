@@ -101,7 +101,7 @@ final public class b{
 
 		if(print_conf_at_startup){
 			print_hr(out,64);
-			out.println(InetAddress.getLocalHost());
+			try{out.println(InetAddress.getLocalHost());}catch(Throwable ignored){}
 			print_hr(out,64);
 //			out.println(b.class);
 //			print_hr(out,64);
@@ -268,13 +268,15 @@ final public class b{
 		}
 		final PrintStream ps=new PrintStream(out);
 		ps.println(hello);
-		ps.print("              url: http://");
-		ps.print(InetAddress.getLocalHost().getHostAddress());
-		if(!server_port.equals("80")){
-			ps.print(":");
-			ps.print(server_port);
-		}
-		ps.println("/");
+		try{
+			ps.print("             host: ");
+			ps.print(InetAddress.getLocalHost());
+			if(!server_port.equals("80")){
+				ps.print(":");
+				ps.print(server_port);
+			}
+			ps.print("/");
+		}catch(Throwable ignored){}finally{ps.println();}
 		ps.println("             time: "+tolastmodstr(t_ms));
 		ps.println("             port: "+server_port);
 		ps.println("            input: "+(thdwatch.input>>10)+" KB");
