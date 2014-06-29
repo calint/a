@@ -5,6 +5,12 @@ CONTINUOS_BUILD=
 DTF=%F---%H:%M:%S-
 
 # create
+
+echo "workspace: $WORKSPACE"
+echo "     keys: $WALLET"
+
+if [ -d $WORKSPACE/a ];do echo workspace does not contain /a;exit 1;done
+
 echo "`date +$DTF`  •  launching instance"
 aws ec2 run-instances --count 1 --image-id $INSTANCE_AMI --instance-type t1.micro --key-name ramvark-keypair --security-groups allopen > reservation.txt
 INST=(`cat reservation.txt |grep INSTANCES|tr "\\t" "\n"`)
