@@ -14,8 +14,9 @@ LAUNCH=y         # launch new instance
 WAIT=y           # wait for server to respond on http requests (empty for no)
 STOP=y           # stop the web server
 DEPLOY=y         # deploy
-REDEPLOY=y        #  loop
-STRESS_TEST=y     # stress
+QA=y             # quality assurance
+REDEPLOY=        #  loop
+STRESS_TEST=     # stress
 TERMINATE=y       # terminate instance
 #~~
 
@@ -37,6 +38,7 @@ echo " ·    launch: $LAUNCH"
 echo " ·      wait: $WAIT"
 echo " ·      stop: $STOP"
 echo " ·    deploy: $DEPLOY"
+echo " ·        qa: $QA"
 echo " ·      loop: $REDEPLOY"
 echo " ·    stress: $STRESS_TEST"
 echo " · terminate: $TERMINATE"
@@ -44,7 +46,7 @@ echo
 if ! [ -d $WORKSPACE/a ];then echo workspace does not contain /a;exit 1;fi
 
 if ! [ -z $LAUNCH ];then
-	echo "`date +$DTF`  ${COLR}•  launching instance"
+	echo "`date +$DTF`  ${COLR}•  launching"
 	for((;;));do
 		aws ec2 run-instances --count 1 --image-id $INSTANCE_AMI --instance-type t1.micro --key-name $KEY --security-groups $SECURITY > reservation.txt
 		if [ $? -eq 0 ];then break;fi
@@ -54,19 +56,21 @@ if ! [ -z $LAUNCH ];then
 	INST=(`cat reservation.txt |grep INSTANCES|tr "\\t" "\n"`)
 	INSTANCE_ID=${INST[7]}
 	echo "`date +$DTF`  · $INSTANCE_ID"
+	echo $INSTANCE_ID>instance.id
 	
-	echo "`date +$DTF`  ${COLR}•  waiting for public address"
+	echo "`date +$DTF`  ${COLR}•  waiting for address"
 	for((;;));do
 		aws ec2 describe-instances --instance-ids $INSTANCE_ID > reservations.txt;
 		#cat reservations.txt;
 		export INST=(`cat reservations.txt|grep ASSOCIATION|tr "\\t" "\n"`);
 		INSTANCE_DNS=${INST[2]};
 		if ! [ -z $INSTANCE_DNS ];then break;fi;
-		echo "`date +$DTF`  ${COLR}·  waiting for public address"
+		echo "`date +$DTF`  ${COLR}·  waiting for address"
 		sleep 1
 	done;
 fi
 echo "`date +$DTF`  ·  $INSTANCE_DNS"
+echo $INSTANCE_DNS>dns.id
 
 if ! [ -z $WAIT ];then
 	echo "`date +$DTF`  ${COLR}•  waiting for http://$INSTANCE_DNS/"
@@ -77,24 +81,24 @@ if ! [ -z $WAIT ];then
 fi
 
 if ! [ -z $STOP ];then
-	echo "`date +$DTF`  ${COLR}•  stopping web server on $INSTANCE_DNS"
+	echo "`date +$DTF`  ${COLR}•  stopping http://$INSTANCE_DNS"
 	for((;;));do
 		ssh $VERBOSE $QUIET -oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=10 -i$KEY_PATH root@$INSTANCE_DNS "killall java"
 		if [ $? -eq 0 ];then break;fi
-		echo "`date +$DTF`  ${COLR}·  trying to stop the web server on $INSTANCE_DNS"
+		echo "`date +$DTF`  ${COLR}·  trying to stop http://$INSTANCE_DNS"
 		sleep 1
 	done
 fi
 
 if ! [ -z $DEPLOY ];then 
 	for((;;));do
-		echo "`date +$DTF`  ${COLR}•  updating $INSTANCE_DNS from $WORKSPACE/a"
+		echo "`date +$DTF`  ${COLR}•  updating http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		for((;;));do
 			#    --verbose  --progress                                                          -v 
 			rsync $VERBOSE --timeout=30 $PROGRESS --delete --exclude .svn --exclude u/ --exclude cache/ -aze "ssh -oStrictHostKeyChecking=no -i$KEY_PATH" "$WORKSPACE/a/" root@$INSTANCE_DNS:/a/
 			if [ $? -eq 0 ];then break;fi
 			sleep 1
-			echo "`date +$DTF`  ${COLR}· trying to update $INSTANCE_DNS from $WORKSPACE/a"
+			echo "`date +$DTF`  ${COLR}· trying to update http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		done
 		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
 		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java ; /studio/suse-studio-custom &"
@@ -102,15 +106,18 @@ if ! [ -z $DEPLOY ];then
 	done;
 fi
 
+if ! [ -z $QA ];then
+	echo "`date +$DTF`  ${COLR}•  qa http://$INSTANCE_DNS"
+	echo "`date +$DTF`  ${COLR}·  todo"
+fi
+
 if ! [ -z $STRESS_TEST ];then
-	echo "`date +$DTF`  ${COLR}•  trying http://$INSTANCE_DNS/"
+	echo "`date +$DTF`  ${COLR}•  trying http://$INSTANCE_DNS"
 	curl $VERBOSE  $INSTANCE_DNS
 	curl $VERBOSE  $INSTANCE_DNS/typealine
 	echo
 	
 	echo
-	echo "`date +$DTF`  ${COLR}•  qa http://$INSTANCE_DNS"
-	echo "`date +$DTF`  ${COLR}·  todo"
 	
 	echo " •  stressing http://$INSTANCE_DNS"
 	ab -c1    -t5 http://$INSTANCE_DNS/
