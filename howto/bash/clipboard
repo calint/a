@@ -183,6 +183,18 @@ k[6222]
 > man ssh|grep -ia3 quiet
 
 
+> tar -tvzf a-lib.tgz 
+-rw-r--r--  0 nobody nobody 12920731 Jun 28 08:03 a/lib/aws-java-sdk-1.8.0.jar
+-rw-r--r--  0 nobody nobody    62050 Jun 28 08:03 a/lib/commons-logging-1.1.3.jar
+-rw-r--r--  0 nobody nobody   590004 Jun 28 08:03 a/lib/httpclient-4.3.4.jar
+-rw-r--r--  0 nobody nobody   282269 Jun 28 08:03 a/lib/httpcore-4.3.2.jar
+-rw-r--r--  0 nobody nobody    38605 Jun 28 08:03 a/lib/jackson-annotations-2.4.0.jar
+-rw-r--r--  0 nobody nobody   194661 Jun 28 08:03 a/lib/jackson-core-2.2.4.jar
+-rw-r--r--  0 nobody nobody  1012168 Jun 28 08:03 a/lib/jackson-databind-2.2.4.jar
+-rw-r--r--  0 nobody nobody   581571 Jun 28 08:03 a/lib/joda-time-2.3.jar
+-rw-r--r--  0 nobody nobody   964882 Jun 28 08:03 a/lib/mysql-connector-java-5.1.31-bin.jar
+> 
+
 
 
 
