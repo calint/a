@@ -15,7 +15,7 @@ WAIT=           # wait for server to respond on http requests (empty for no)
 STOP=           # stop the web server
 DEPLOY=y         # deploy
 QA=             # quality assurance
-CONSOLE=         # console open until ^C
+CONSOLE=y         # console open until ^C
 REDEPLOY=        # used with CONSOLE to loop deploy,restart when user ^C in server console
 STRESS_TEST=     # stress
 TERMINATE=y       # terminate instance
@@ -56,6 +56,7 @@ if ! [ -z $LAUNCH ];then
 	INSTANCE_ID=${INST[7]}
 	echo "`date +$DTF`  * instance id: $INSTANCE_ID"
 	echo $INSTANCE_ID>instance.id
+	export INSTANCE_ID
 	
 	echo "`date +$DTF`  ${COLR}•  waiting for address"
 	for((;;));do
@@ -70,6 +71,7 @@ if ! [ -z $LAUNCH ];then
 fi
 echo "`date +$DTF`  * dns id: $INSTANCE_DNS"
 echo $INSTANCE_DNS>dns.id
+export INSTANCE_DNS
 #echo 1
 if ! [ -z $WAIT ];then
 	echo "`date +$DTF`  ${COLR}•  waiting for http://$INSTANCE_DNS/"
@@ -99,14 +101,14 @@ if ! [ -z $DEPLOY ];then
 			rsync $VERBOSE --timeout=30 $PROGRESS --delete --exclude .svn --exclude u/ --exclude cache/ -aze "ssh -oStrictHostKeyChecking=no -oBatchMode=yes -i$KEY_PATH" "$WORKSPACE/a/" root@$INSTANCE_DNS:/a/
 			if [ $? -eq 0 ];then break;fi
 			sleep 1
-			echo "`date +$DTF`  ${COLR}· trying to update http://$INSTANCE_DNS/ from $WORKSPACE/a/"
+			echo "`date +$DTF`  ${COLR}·  trying to update http://$INSTANCE_DNS/ from $WORKSPACE/a/"
 		done
 		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
 		if [ -z $CONSOLE ];then echo -n '-oBatchMode=yes';fi
 		echo
 		echo
-#		ssh $VERBOSE `if [ -z $CONSOLE ];then echo -n '-oBatchMode=yes';fi` -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java>/dev/null;/studio/suse-studio-custom"
-		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS 'killall java>/dev/null;/studio/suse-studio-custom'
+		ssh $VERBOSE `if [ -z $CONSOLE ];then echo -n '-oBatchMode=yes';fi` -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall java>/dev/null;/studio/suse-studio-custom"
+#		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS 'killall java>/dev/null;/studio/suse-studio-custom'
 		if [ -z $REDEPLOY ];then break;fi;
 	done
 fi
