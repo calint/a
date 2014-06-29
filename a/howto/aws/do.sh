@@ -1,9 +1,11 @@
-INSTANCE_AMI="ami-b0659fd8"
+INSTANCE_AMI="ami-8421e4ec"
 WALLET=/Users/calin/wallet
 KEY=ramvark-keypair
 KEY_PATH=$WALLET/$KEY.pem
 SECURITY=allopen
 WORKSPACE=/Users/calin/Documents/workspace-2
+VERBOSE=   #-v
+PROGRESS=  #--progress
 
 #~~ steps
 LAUNCH=y         # launch new instance
@@ -18,15 +20,17 @@ TERMINATE=y      # terminate instance
 
 
 DTF=%F---%H:%M:%S-
+COLR=
 
-echo " • config"
+echo " ${COLR}• config"
 echo " · workspace: $WORKSPACE"
 echo " ·     image: $INSTANCE_AMI"
 echo " ·  firewall: $SECURITY"
 echo " ·       key: $KEY"
 echo " ·      path: $KEY_PATH"
+echo " ·   verbose: $VERBOSE"
 echo
-echo " • steps"
+echo " ${COLR}• steps"
 echo " ·    launch: $LAUNCH"
 echo " ·      wait: $WAIT"
 echo " ·      stop: $STOP"
@@ -38,68 +42,69 @@ echo " · terminate: $TERMINATE"
 if ! [ -d $WORKSPACE/a ];then echo workspace does not contain /a;exit 1;fi
 
 if ! [ -z $LAUNCH ];then
-	echo "`date +$DTF`  •  launching instance"
+	echo "`date +$DTF`  ${COLR}•  launching instance"
 	for((;;));do
 		aws ec2 run-instances --count 1 --image-id $INSTANCE_AMI --instance-type t1.micro --key-name $KEY --security-groups $SECURITY > reservation.txt
 		if [ $? -eq 0 ];then break;fi
 		sleep 1
 		echo
-		echo "  ·  trying to launch instance"
+		echo "`date +$DTF`  ${COLR}·  trying to launch instance"
 	done
 	INST=(`cat reservation.txt |grep INSTANCES|tr "\\t" "\n"`)
 	INSTANCE_ID=${INST[7]}
-	echo "  · $INSTANCE_ID"
+	echo "`date +$DTF`  · $INSTANCE_ID"
 	
-	echo "`date +$DTF`  •  waiting for public address"
+	echo "`date +$DTF`  ${COLR}•  waiting for public address"
 	for((;;));do
 		aws ec2 describe-instances --instance-ids $INSTANCE_ID > reservations.txt;
 		#cat reservations.txt;
 		export INST=(`cat reservations.txt|grep ASSOCIATION|tr "\\t" "\n"`);
 		INSTANCE_DNS=${INST[2]};
-		echo "  · $INSTANCE_DNS"
 		if ! [ -z $INSTANCE_DNS ];then break;fi;
 		sleep 1
+		echo "`date +$DTF`  ${COLR}·  waiting for public address"
 	done;
 fi
+echo "`date +$DTF`  ·  $INSTANCE_DNS"
 
 if ! [ -z $WAIT ];then
 	echo
-	echo "`date +$DTF`  •  waiting for http://$INSTANCE_DNS/"
-	for((;;));do curl --connect-timeout 10 --verbose $INSTANCE_DNS;if [ $? -eq 0 ];then break;fi;
+	echo "`date +$DTF`  ${COLR}•  waiting for http://$INSTANCE_DNS/"
+	for((;;));do curl $VERBOSE --connect-timeout 10 $INSTANCE_DNS;if [ $? -eq 0 ];then break;fi;
 	    echo
-		echo "  ·  waiting for http://$INSTANCE_DNS/"
+		echo "`date +$DTF`  ${COLR}·  waiting for http://$INSTANCE_DNS/"
 	done
 	echo
 fi
 
 if ! [ -z $STOP ];then
 	echo
-	echo "`date +$DTF`  •  stopping web server on $INSTANCE_DNS"
+	echo "`date +$DTF`  ${COLR}•  stopping web server on $INSTANCE_DNS"
 	for((;;));do
-		ssh -v -o "StrictHostKeyChecking no" -o "PasswordAuthentication no" -o "ConnectTimeout 2" -i $KEY_PATH root@$INSTANCE_DNS "killall -9 java"
+		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=5 -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java"
 		if [ $? -eq 0 ];then break;fi
 		sleep 1
 		echo
-		echo "  ·  trying to stop the web server on $INSTANCE_DNS"
+		echo "`date +$DTF`  ${COLR}·  trying to stop the web server on $INSTANCE_DNS"
 	done
 fi
 
 if ! [ -z $DEPLOY ];then 
 	for((;;));do
 		echo
-		echo "`date +$DTF`  •  updating $INSTANCE_DNS from $WORKSPACE/a"
+		echo "`date +$DTF`  ${COLR}•  updating $INSTANCE_DNS from $WORKSPACE/a"
 		for((;;));do
 			#    --verbose  --progress                                                          -v 
-			rsync --timeout=30 --progress --delete --verbose --exclude .svn --exclude u/ --exclude cache/ -aze "ssh -o StrictHostKeyChecking=no -i $KEY_PATH" "$WORKSPACE/a/" root@$INSTANCE_DNS:/a/
+			rsync $VERBOSE --timeout=30 $PROGRESS --delete --exclude .svn --exclude u/ --exclude cache/ -aze "ssh -oStrictHostKeyChecking=no -i$KEY_PATH" "$WORKSPACE/a/" root@$INSTANCE_DNS:/a/
 			if [ $? -eq 0 ];then break;fi
 			sleep 1
 			echo
-			echo "  · trying to update $INSTANCE_DNS from $WORKSPACE/a"
+			echo "`date +$DTF`  ${COLR}· trying to update $INSTANCE_DNS from $WORKSPACE/a"
 		done
 		
 		echo
-		echo "`date +$DTF`  •  restart web server on $INSTANCE_DNS"
-		ssh -o StrictHostKeyChecking=no -o PasswordAuthentication=no -i $KEY_PATH root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
+		echo "`date +$DTF`  ${COLR}•  restart web server on $INSTANCE_DNS"
+		ssh $VERBOSE -oBatchMode=yes -oStrictHostKeyChecking=no -i$KEY_PATH root@$INSTANCE_DNS "killall -9 java ; /studio/suse-studio-custom &"
 	
 		if [ -z $REDEPLOY ];then break;fi
 	done;
@@ -107,13 +112,13 @@ fi
 
 if ! [ -z $STRESS_TEST ];then
 	echo
-	echo "`date +$DTF`  •  trying http://$INSTANCE_DNS/"
-	curl --verbose $INSTANCE_DNS
-	curl --verbose $INSTANCE_DNS/typealine
+	echo "`date +$DTF`  ${COLR}•  trying http://$INSTANCE_DNS/"
+	curl $VERBOSE  $INSTANCE_DNS
+	curl $VERBOSE  $INSTANCE_DNS/typealine
 	echo
 	
 	echo
-	echo "`date +$DTF`  •  qa http://$INSTANCE_DNS"
+	echo "`date +$DTF`  ${COLR}•  qa http://$INSTANCE_DNS"
 	echo todo
 	
 	echo
@@ -134,16 +139,16 @@ fi # continuous build
 
 if ! [ -z $TERMINATE ];then
 	echo
-	echo "`date +$DTF`  •  terminating $INSTANCE_ID"
+	echo "`date +$DTF`  ${COLR}•  terminating $INSTANCE_ID"
 	for((;;));do
 		aws ec2 terminate-instances --instance-ids $INSTANCE_ID
 		if [ $? -eq 0 ];then break;fi
 		sleep 1
 		echo
-		echo "  · trying to terminate instance $INSTANCE_ID"
+		echo "`date +$DTF`  ${COLR}· trying to terminate instance $INSTANCE_ID"
 	done
 fi
 
 echo
-echo "`date +$DTF`  ••  done"
+echo "`date +$DTF`  ${COLR}•${COLR}•  done"
  
