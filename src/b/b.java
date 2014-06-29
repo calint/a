@@ -84,7 +84,7 @@ final public class b{
 //	public static boolean enable_cluster=false;
 	public static @conf int max_pending_connections=20000;// when overrun causes SYN flood warning
 	public static @conf boolean tcpnodelay=true;
-	public static @conf boolean save_sessions_at_shutdown=false;
+	public static @conf boolean sessions_save_at_shutdown=true;
 	public static boolean cloud_bees=false;
 	public static @conf boolean print_conf_at_startup=true;
 	public static @conf boolean print_stats_at_startup=true;
