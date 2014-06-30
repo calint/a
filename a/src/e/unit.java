@@ -2,10 +2,9 @@ package e;
 
 import b.a;
 
-public class unit extends a{
+public class unit extends a implements network_interface.recv{
 	final public network_interface ni;
-	unit(final network_interface ifc){ni=ifc;}
-	void recv(final packet p){}
-	
+	public unit(final network_interface n){ni=n;}
+	@Override public void network_interface_recv(final packet p){}
 	private static final long serialVersionUID=1;
 }
