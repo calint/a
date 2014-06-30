@@ -19,6 +19,7 @@ final public class network_packet implements Serializable{
 	public network_packet(final byte bits,final data d){this.bits=bits;dat=d;size=null;to=null;from=null;}
 	public network_packet(final byte bits,final data d,final byte[]to){this.bits=bits;dat=d;size=null;this.to=to;from=null;}
 	public network_packet(final byte bits,final data d,final byte[]to,final byte[]from){this.bits=bits;dat=d;size=null;this.to=to;this.from=from;}
+	public network_packet(final byte bits,final data d,final byte[]from,final boolean broadcast){this.bits=bits;dat=d;size=null;to=null;this.from=from;}
 
 	public void to(final OutputStream os)throws IOException{
 		
