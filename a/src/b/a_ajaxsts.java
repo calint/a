@@ -1,8 +1,5 @@
 package b;
-
 import b.b.conf;
-
-
 public class a_ajaxsts extends a{
 	@Override public void to(final xwriter x)throws Throwable{
 		x.p("<div onclick=\"console.log(event);var e=$('"+id()+"');console.log(e);e.style.cssText='"+sts_css_closed+"';\">");
