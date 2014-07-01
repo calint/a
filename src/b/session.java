@@ -53,8 +53,8 @@ public final class session implements Serializable,client{
 			final long cmp_bits=1<<bit_number_starting_at_0;
 			return (bits&cmp_bits)!=0;
 		}
-		@Override public boolean bits_has_any(final bits b){return (b.to_long()&bits)!=0;}
-		@Override public boolean bits_has_all(final bits b){final long l=b.to_long();return (l&bits)==l;}
+		@Override public boolean hasany(final bits b){return (b.to_long()&bits)!=0;}
+		@Override public boolean hasall(final bits b){final long l=b.to_long();return (l&bits)==l;}
 		@Override public int to_int(){return (int)bits;}
 		@Override public long to_long(){return bits;}
 	
@@ -83,7 +83,7 @@ public final class session implements Serializable,client{
 		return fn.substring(href.length()+1);
 	}
 	public bits bits(){return bits;}
-	public bits bits(final long l){bits.bits=l;return bits;}
+	public void bits(final long l){bits.bits=l;}
 //	public boolean bitshasany(final long b){return (bits|b)!=0;}
 //	public boolean bitshasall(final long b){return (bits&b)==b;}
 	public void remove(final String key){kvp.remove(key);}
