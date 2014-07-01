@@ -1,7 +1,7 @@
 package a.ramvark;
 import java.util.LinkedList;
-
 import a.ramvark.cstore.meters;
+import a.x.sts_ajax;
 import b.a;
 import b.xwriter;
 final public class $ extends a{
@@ -10,6 +10,7 @@ final public class $ extends a{
 	final LinkedList<a>stk=new LinkedList<a>();
 	public a el;
 	public a sts;
+	public sts_ajax ajaxsts;
 	{try{stk.add((a)Class.forName(homepageclass).newInstance());}catch(Throwable t){throw new Error(t);}attach(stk.getLast(),"el");}
 	public void to(final xwriter x)throws Throwable{
 		x.el(this);
@@ -39,7 +40,9 @@ final public class $ extends a{
 		x.p(el);
 		x.br();
 		meters.spclst(x);
-		x.nl().elend();
+		x.nl();
+		x.nl().nl().rend(ajaxsts);
+		x.elend();
 //		x.nl().script().p("$('"+$el.id()+"').style.position='absolute';$('"+$el.id()+"').style.left='120px';").scriptEnd();
 	}
 	protected void ev(final xwriter x,final a from,final Object o)throws Throwable{
