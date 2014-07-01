@@ -10,7 +10,7 @@ public class a implements Serializable{
 		final String clsnm=cls.getName();
 		final int i=clsnm.lastIndexOf('.');
 		final String pkgnm=i==-1?"":clsnm.substring(0,i);
-		if(pkgnm.endsWith(".a")&&!req.get().session().bitshasall(2))throw new Error("firewalled1");
+		if(pkgnm.endsWith(".a")&&!req.get().session().bits_hasall(2))throw new Error("firewalled1");
 		if(clsnm.startsWith("a.localhost.")&&!req.get().ip().toString().equals("/0:0:0:0:0:0:0:1"))throw new Error("firewalled2");
 	}
 	private a pt;

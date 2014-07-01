@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+import b.b.acl;
 import b.b.conf;
 public final class req{
 	b.op parse()throws Throwable{while(true){
@@ -568,6 +568,17 @@ public final class req{
 			}
 			ses.put(path_s,e);
 		}
+		if(b.acl_on){
+			final acl a=e.getClass().getAnnotation(acl.class);
+			if(a!=null){
+				final long r=a.view();
+				if(!ses.bits_hasany(r)){
+					final Throwable t=new SecurityException("session has no bits of acl in "+e.getClass()+":  "+Long.toBinaryString(r)+" vs "+Long.toBinaryString(ses.bits()));
+					reply(h_http403,null,null,b.stacktrace(t).getBytes());
+					throw t;
+				}
+			}
+		}
 		if(!content.isEmpty()){
 			String ax="";
 			for(final Map.Entry<String,String>me:content.entrySet()){
@@ -819,10 +830,11 @@ public final class req{
 	final static byte[]hkp_connection_keep_alive="\r\nConnection: Keep-Alive".getBytes();
 	final static byte[]ba_crlf2="\r\n\r\n".getBytes();
 	private final static String axfld="$";
-	private final static byte[]h_http204="HTTP/1.1 204".getBytes();
-	private final static byte[]h_http206="HTTP/1.1 206".getBytes();
-	private final static byte[]h_http304="HTTP/1.1 304".getBytes();
-	private final static byte[]h_http404="HTTP/1.1 404".getBytes();
+	private final static byte[]h_http204="HTTP/1.1 204 No Content".getBytes();
+	private final static byte[]h_http206="HTTP/1.1 206 Partial Content".getBytes();
+	private final static byte[]h_http304="HTTP/1.1 304 Not Modified".getBytes();
+	private final static byte[]h_http403="HTTP/1.1 403 Forbidden".getBytes();
+	private final static byte[]h_http404="HTTP/1.1 404 Not Found".getBytes();
 	private final static byte[]hk_set_cookie ="\r\nSet-Cookie: i=".getBytes();
 	private final static byte[]hkp_transfer_encoding_chunked="\r\nTransfer-Encoding: chunked".getBytes();
 	private final static byte[]hkp_accept_ranges_byte="\r\nAccept-Ranges: bytes".getBytes();
