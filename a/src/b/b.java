@@ -88,6 +88,7 @@ final public class b{
 	public static boolean cloud_bees=false;
 	public static @conf boolean print_conf_at_startup=true;
 	public static @conf boolean print_stats_at_startup=true;
+	public static @conf boolean acl_on=true;
 	
 	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
 	public static @conf String timeatloadstrhtp=tolastmodstr(timeatload);

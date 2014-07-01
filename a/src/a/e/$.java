@@ -1,4 +1,4 @@
-package a.e;import b.*;public class $ extends a{@Override public void to(xwriter x)throws Throwable{
+package a.e;import b.*;import b.b.acl;@acl(view=0b10)public class $ extends a{@Override public void to(xwriter x)throws Throwable{
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	x.pl("virtual network");
 //	u.set("unit");

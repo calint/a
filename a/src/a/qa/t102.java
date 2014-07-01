@@ -14,8 +14,8 @@ public class t102 extends a implements bin{static final long serialVersionUID=1;
 		x.p(bits).nl();
 		sn.bits(0x1248);
 		x.p(sn.bits()).nl();
-		x.pl(sn.bitshasany(0x0200)?"bitshasanyok":"");
-		x.pl(sn.bitshasall(0x1248)?"bitshasallok":"");
+		x.pl(sn.bits_hasany(0x0200)?"bitshasanyok":"");
+		x.pl(sn.bits_hasall(0x1248)?"bitshasallok":"");
 		sn.bits(bits);
 		x.p(sn.bits()).nl();
 

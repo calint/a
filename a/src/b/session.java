@@ -58,7 +58,6 @@ public final class session implements Serializable{
 //	
 //	}
 //	@Override public long acl_bits(){return bits;}
-	private long bits;
 	session(final String id){
 		this.id=id;
 		kvp=Collections.synchronizedMap(new HashMap<String,Serializable>(b.hash_size_session_values));
@@ -71,6 +70,7 @@ public final class session implements Serializable{
 	public path path(){return b.path(href());}
 	public path path(final Class<?>cls){return b.path(href()+cls.getName().replace('.','/'));}
 	public void put(final String key,final Serializable value){kvp.put(key,value);}
+	public void remove(final String key){kvp.remove(key);}
 	public void save()throws IOException{path(b.sessionfile).writeobj(this);}
 	public String inpath(final path p)throws Error{
 		final String fn=p.toString();
@@ -81,9 +81,12 @@ public final class session implements Serializable{
 			return "";
 		return fn.substring(href.length()+1);
 	}
+	// acl
+	private long bits;
 	public long bits(){return bits;}
 	public void bits(final long bs){bits=bs;}
-	public boolean bitshasany(final long b){return (bits|b)!=0;}
-	public boolean bitshasall(final long b){return (bits&b)==b;}
-	public void remove(final String key){kvp.remove(key);}
+	public boolean bits_hasany(final long b){return (bits&b)!=0;}
+	public boolean bits_hasall(final long b){return (bits&b)==b;}
+
+//	public boolean bits_hasanyorisnone(final long b){if(bits==0)return true;return (bits&b)!=0;}
 }
