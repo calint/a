@@ -104,7 +104,11 @@ public class diro extends a{
 			long total_bytes=0;
 			firstinlist=null;
 			for(final String filenm:files){
-				final path p=path.get(filenm);
+				final path p;
+				try{p=path.get(filenm);}catch(Throwable t){
+					x.tr().td(99).p(filenm+"  "+t);
+					continue;
+				}
 				if(firstinlist==null)firstinlist=p;
 				final String fnm=p.name();
 //				final String nameenc=b.urlencode(name);
@@ -172,9 +176,14 @@ public class diro extends a{
 	}
 	synchronized public final void x_e(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_ENTER))throw new Error("notallowed");
-		path=path.get(p);
-		if(path.isfile())bd.from(path);
-		q.clr();
+		try{
+			final path pp=path.get(p);
+			path=pp;
+			if(path.isfile())bd.from(path);
+			q.clr();
+		}catch(Throwable t){
+			x.xalert(b.stacktrace(t));
+		}
 		x.xu(this);
  		x.xfocus(path.isfile()?bd:q);		
 	}
@@ -188,7 +197,8 @@ public class diro extends a{
 			if(da&&!db)return -1;
 			if(!da&&db)return 1;
 			return 0;
-		}catch(final Throwable t){throw new Error(t);}}});
+//		}catch(final Throwable t){throw new Error(t);}}});
+		}catch(final Throwable ignored){return 0;}}});
 	}
 	private void sort(final String[]files){
 		Arrays.sort(files,new Comparator<String>(){public int compare(final String a,final String b){

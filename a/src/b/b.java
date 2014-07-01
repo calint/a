@@ -243,15 +243,24 @@ final public class b{
 	public static path path(){return new path(new File(root_dir));}
 	public static path path(final String path){
 		ensure_path_ok(path);
-		if(b.firewall_paths_on)firewall_ensure_path_access(root_dir+"/"+path);
-		return new path(new File(root_dir,path));
+		final path p=new path(new File(root_dir,path));//? dont inst path yet
+		final String uri=p.uri();
+		if(b.firewall_paths_on)firewall_ensure_path_access(uri);
+		return p;
 	}
-	static void firewall_ensure_path_access(final String path){
+	static void firewall_ensure_path_access(final String uri){
 		//. cleanup
-//		final path sessionsdir=new path(new File(root_dir,sessions_dir));
-//		final String sessionsdiruri=sessionsdir.uri();
-//		if(path.startsWith(sessionsdiruri+"/"+req.get().session().id()))return;// errror, not on user thread
-//		if(path.startsWith(sessionsdiruri))throw new SecurityException("cannot access user directory");
+		final path sessionsdir=new path(new File(root_dir,sessions_dir));
+		final String sessionsdiruri=sessionsdir.uri();
+		if(!uri.startsWith(sessionsdiruri+"/"))return;
+		try{
+			final req r=req.get();
+			final String sessionid=r.session().id();
+			if(uri.startsWith(sessionsdiruri+"/"+sessionid))return;
+			throw new SecurityException("session "+sessionid+" cannot access "+uri);
+		}catch(ClassCastException ignored){}
+		//? check session id cookie
+		throw new SecurityException("cannot access "+root_dir+" without proper cookie");
 	}
 	static path path_ommit_firewall_check(final String path){
 		ensure_path_ok(path);

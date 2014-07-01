@@ -1,6 +1,7 @@
 package b;
 import static b.b.stacktrace;
 import static b.b.tobytes;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -198,7 +199,11 @@ public final class req{
 			return;
 		}
 		//. firewall path
-		try{pth=b.path(path_s);}catch(final Throwable t){close();throw t;}
+		try{pth=b.path(path_s);}catch(final Throwable t){
+			reply(h_http404,null,null,tobytes(b.stacktrace(t)));
+			close();
+			throw t;
+		}
 		if(b.try_file&&try_file())return;
 		if(b.try_rc&&try_rc())return;
 		decodecookie();
@@ -519,7 +524,8 @@ public final class req{
 			//?? sessiongetandloadracing
 			ses=session.all().get(sesid);
 			if(ses==null&&b.sessionfile_load){
-				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
+//				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
+				final path sespth=new path(new File(b.sessionhref(sesid)+b.sessionfile));
 				if(sespth.exists()){
 					b.pl("session load "+sespth);
 					try{ses=(session)sespth.readobj();}catch(final Throwable t){//? upgser
