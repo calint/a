@@ -566,9 +566,9 @@ public final class req{
 				if(a!=null){
 					final long r=a.create();
 					if(!ses.bits_hasany(r)){
-						final Throwable t=new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  "+Long.toBinaryString(r)+" vs "+Long.toBinaryString(ses.bits()));
+						final Throwable t=new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  b"+Long.toBinaryString(r)+" vs b"+Long.toBinaryString(ses.bits()));
 						reply(h_http403,null,null,b.stacktrace(t).getBytes());
-						throw t;
+						return;
 					}
 				}
 			}
@@ -597,9 +597,9 @@ public final class req{
 			if(a!=null){
 				final long r=a.view();
 				if(!ses.bits_hasany(r)){
-					final Throwable t=new SecurityException("session has no bits of acl in "+e.getClass()+":  "+Long.toBinaryString(r)+" vs "+Long.toBinaryString(ses.bits()));
+					final Throwable t=new SecurityException("cannot view item of type "+e.getClass()+" due to acl\n any:  b"+Long.toBinaryString(r)+" vs b"+Long.toBinaryString(ses.bits()));
 					reply(h_http403,null,null,b.stacktrace(t).getBytes());
-					throw t;
+					return;
 				}
 			}
 		}
