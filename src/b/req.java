@@ -1,4 +1,6 @@
 package b;
+import static b.b.stacktrace;
+import static b.b.tobytes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -524,7 +526,7 @@ public final class req{
 						b.log(new Error("could not read session, created new "+sespth));
 						ses=new session(sesid);
 					}
-					ses.bits(b.sessionbits(sesid));
+					ses.bits(b.get_session_bits_for_sessionid(sesid));
 					session.all().put(sesid,ses);
 				}
 			}
@@ -535,7 +537,7 @@ public final class req{
 		}
 		if(ses==null){
 			ses=new session(sesid);
-			ses.bits(b.sessionbits(sesid));
+			ses.bits(b.get_session_bits_for_sessionid(sesid));
 			session.all().put(ses.id(),ses);
 			thdwatch.sessions++;
 		}
@@ -545,16 +547,40 @@ public final class req{
 		if(e==null){
 			String cn=path_s.replace('/','.');
 			while(cn.startsWith("."))cn=cn.substring(1);
-			try{e=(a)Class.forName(b.webobjpkg+cn).newInstance();}catch(Throwable e1){
-				try{final String clsnm=b.webobjpkg+cn+(cn.length()==0?"":".")+b.default_package_class;
-					e=(a)Class.forName(clsnm).newInstance();
-				}catch(Throwable e2){
-					final oschunked os=reply_chunked(h_http404,text_plain_utf8,null);
-					while(e1.getCause()!=null)e1=e1.getCause();
-					new xwriter(os).p(path_s).nl().nl().p(b.stacktraceline(e1)).nl().nl().p(b.stacktraceline(e2)).nl();
-					os.finish();
-					return;
-				}}
+			cn=b.webobjpkg+cn;
+			Class<? extends a>ecls;
+			try{
+				ecls=(Class<? extends a>)Class.forName(cn);
+			}catch(Throwable e1){try{
+				final String clsnm=cn+(cn.length()==0?"":".")+b.default_package_class;
+				ecls=(Class<? extends a>)Class.forName(clsnm);
+			}catch(Throwable e2){
+				final oschunked os=reply_chunked(h_http404,text_plain_utf8,null);
+				while(e1.getCause()!=null)e1=e1.getCause();
+				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(e1)).nl().nl().p(b.stacktraceline(e2)).nl();
+				reply(h_http404,null,null,tobytes(x.toString()));
+				os.finish();
+				return;
+			}}
+			
+			if(b.acl_on){//? cleanucode
+				final acl a=ecls.getAnnotation(acl.class);
+				if(a!=null){
+					final long r=a.create();
+					if(!ses.bits_hasany(r)){
+						final Throwable t=new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  "+Long.toBinaryString(r)+" vs "+Long.toBinaryString(ses.bits()));
+						reply(h_http403,null,null,b.stacktrace(t).getBytes());
+						throw t;
+					}
+				}
+			}
+
+			try{e=ecls.newInstance();}catch(Throwable ex){
+				while(ex.getCause()!=null)ex=ex.getCause();
+				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(ex)).nl();
+				reply(h_http404,null,null,tobytes(stacktrace(ex)));
+				return;
+			}
 			if(e instanceof sock){
 				state=state_sock;
 				sck=(sock)e;
