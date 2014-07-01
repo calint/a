@@ -1,7 +1,8 @@
 package a.x;
 import b.a;
+import b.sts;
 import b.xwriter;
-final public class xsts implements b.sts{
+final public class xsts implements sts{
 	private xwriter x;
 	private long update_intervall_ms;
 	private long t0;
