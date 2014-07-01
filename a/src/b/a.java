@@ -10,34 +10,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import b.b.acl;
 public class a implements Serializable{
 	static final long serialVersionUID=1;
-	private static void firewall(final a o)throws Throwable{
-		final Class<? extends a>cls=o.getClass();
-		if(cls.equals(a.class))return;
-		final String clsnm=cls.getName();
-		final int i=clsnm.lastIndexOf('.');
-		final String pkgnm=i==-1?"":clsnm.substring(0,i);
-		if(pkgnm.endsWith(".a")&&!req.get().session().bits_hasall(2))throw new Error("firewalled1");
-		if(clsnm.startsWith("a.localhost.")&&!req.get().ip().toString().equals("/0:0:0:0:0:0:0:1"))throw new Error("firewalled2");
-
-	
-		if(b.acl_on){
-			final Class<? extends a>ecls=o.getClass();
-			final acl a=ecls.getAnnotation(acl.class);
-			if(a!=null){
-				final long bits_c=a.create();
-				final req r=req.get();
-				final session ses=r.session();
-				if(!ses.bits_hasany(bits_c)){
-					throw new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  b"+Long.toBinaryString(bits_c)+" vs b"+Long.toBinaryString(ses.bits()));
-//					r.reply(req.h_http403,null,null,b.stacktrace(t).getBytes());
-//					return;
-				}
-			}
-		}
-	}
 	private a pt;
 	private String nm;
 	private String s;
@@ -51,7 +25,8 @@ public class a implements Serializable{
 //		return true;
 //	}
 	public a(){try{
-		firewall(this);
+		if(b.firewall_on)b.firewall_assert_access(this);
+		if(b.acl_on)b.acl_ensure_create(this);
 		for(final Field f:getClass().getFields()){
 			if(!a.class.isAssignableFrom(f.getType()))
 				continue;
