@@ -375,13 +375,13 @@ final public class b{
 	
 	public static @Retention(RetentionPolicy.RUNTIME)@interface acl{
 		long create()default 0;
-		long list()default 0;
-		long peek()default 0;
-		long view()default 0;
-		long append()default 0;
-		long edit()default 0;
-		long rename()default 0;
-		long delete()default 0;
+//		long list()default 0;
+//		long peek()default 0;
+//		long view()default 0;
+//		long append()default 0;
+//		long edit()default 0;
+//		long rename()default 0;
+//		long delete()default 0;
 	}
 //	public static interface client{bits acl_bits();}
 //	public static interface bits{

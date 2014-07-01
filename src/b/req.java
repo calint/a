@@ -580,17 +580,17 @@ public final class req{
 			}
 			ses.put(path_s,e);
 		}
-		if(b.acl_on){
-			final acl a=e.getClass().getAnnotation(acl.class);
-			if(a!=null){
-				final long r=a.view();
-				if(!ses.bits_hasany(r)){
-					final Throwable t=new SecurityException("cannot view item of type "+e.getClass()+" due to acl\n any:  b"+Long.toBinaryString(r)+" vs b"+Long.toBinaryString(ses.bits()));
-					reply(h_http403,null,null,b.stacktrace(t).getBytes());
-					return;
-				}
-			}
-		}
+//		if(b.acl_on){
+//			final acl a=e.getClass().getAnnotation(acl.class);
+//			if(a!=null){
+//				final long r=a.view();
+//				if(!ses.bits_hasany(r)){
+//					final Throwable t=new SecurityException("cannot view item of type "+e.getClass()+" due to acl\n any:  b"+Long.toBinaryString(r)+" vs b"+Long.toBinaryString(ses.bits()));
+//					reply(h_http403,null,null,b.stacktrace(t).getBytes());
+//					return;
+//				}
+//			}
+//		}
 		if(!content.isEmpty()){
 			String ax="";
 			for(final Map.Entry<String,String>me:content.entrySet()){

@@ -4,7 +4,7 @@ import a.ramvark.in;
 import a.ramvark.itm;
 import b.b.acl;
 import b.xwriter;
-@acl(create=1,view=2)public class puppet extends itm{static final long serialVersionUID=1;
+@acl(create=1)public class puppet extends itm{static final long serialVersionUID=1;
 	@in(type=3)public expenses expenses;
 	@in(type=3)public items items;
 	@in(itm=content.class)public agr content;
