@@ -373,21 +373,20 @@ final public class b{
 	public static @Retention(RetentionPolicy.RUNTIME)@interface ref{}
 	
 	public static @Retention(RetentionPolicy.RUNTIME)@interface acl{
-		public int a=0,c=0,v=0,e=0,d=0,l=0,p=0,r=0;
-		int create()default c;
-		int list()default l;
-		int peek()default p;
-		int view()default v;
-		int append()default a;
-		int edit()default e;
-		int rename()default r;
-		int delete()default d;
+		long create()default 0;
+		long list()default 0;
+		long peek()default 0;
+		long view()default 0;
+		long append()default 0;
+		long edit()default 0;
+		long rename()default 0;
+		long delete()default 0;
 	}
-	public static interface client{bits acl_bits();}
-	public static interface bits{
-		boolean hasany(final bits b);
-		boolean hasall(final bits b);
-		int to_int();
-		long to_long();
-	}
+//	public static interface client{bits acl_bits();}
+//	public static interface bits{
+//		boolean hasany(final bits b);
+//		boolean hasall(final bits b);
+//		int to_int();
+//		long to_long();
+//	}
 }
