@@ -67,7 +67,7 @@ public final class session implements Serializable{
 	public String id(){return id;}
 	public Set<String>keyset(){return Collections.unmodifiableSet(kvp.keySet());}
 	public path path(final String path){return b.path(href()+path);}
-	public path path(){return b.path(href());}
+	public path path(){return b.path_ommit_firewall_check(href());}
 	public path path(final Class<?>cls){return b.path(href()+cls.getName().replace('.','/'));}
 	public void put(final String key,final Serializable value){kvp.put(key,value);}
 	public void remove(final String key){kvp.remove(key);}

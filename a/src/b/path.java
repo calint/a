@@ -1,8 +1,22 @@
 package b;
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.util.regex.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.regex.Pattern;
 public final class path implements Serializable{static final long serialVersionUID=1;
 	public static path get1(final String name){return new path(new File(name));}//?
 	private final File file;
@@ -20,8 +34,10 @@ public final class path implements Serializable{static final long serialVersionU
 	public boolean isdir(){if(!file.exists())return false;return file.isDirectory();}
 	public String fullpath(){try{return file.getCanonicalPath();}catch(final IOException e){throw new Error(e);}}
 	public path get(final String name){
+		final path p=new path(new File(file,name));
+		if(b.firewall_paths_on)b.firewall_ensure_path_access(p.uri());
 		if(name==null||name.length()==0||name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
-		return new path(new File(file,name));
+		return p;
 	}
 	public String name(){return file.getName();}
 	public String[]list(){final String[]f=file.list();if(f==null)return new String[0];return f;}

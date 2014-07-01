@@ -90,6 +90,7 @@ final public class b{
 	public static @conf boolean print_stats_at_startup=true;
 	public static @conf boolean acl_on=true;
 	public static @conf boolean firewall_on=true;
+	public static @conf boolean firewall_paths_on=true;
 	
 	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
 	public static @conf String timeatloadstrhtp=tolastmodstr(timeatload);
@@ -241,9 +242,23 @@ final public class b{
 	}
 	public static path path(){return new path(new File(root_dir));}
 	public static path path(final String path){
-		//. firewall
-		if(path.contains(".."))throw new Error("illegalpath "+path);
+		ensure_path_ok(path);
+		if(b.firewall_paths_on)firewall_ensure_path_access(root_dir+"/"+path);
 		return new path(new File(root_dir,path));
+	}
+	static void firewall_ensure_path_access(final String path){
+		//. cleanup
+//		final path sessionsdir=new path(new File(root_dir,sessions_dir));
+//		final String sessionsdiruri=sessionsdir.uri();
+//		if(path.startsWith(sessionsdiruri+"/"+req.get().session().id()))return;// errror, not on user thread
+//		if(path.startsWith(sessionsdiruri))throw new SecurityException("cannot access user directory");
+	}
+	static path path_ommit_firewall_check(final String path){
+		ensure_path_ok(path);
+		return new path(new File(root_dir,path));
+	}
+	private static void ensure_path_ok(final String path) throws Error{
+		if(path.contains(".."))throw new Error("illegalpath "+path+": containing '..'");
 	}
 	static LinkedList<req>pendingreqls(){return pending_req;}
 
