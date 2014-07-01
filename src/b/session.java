@@ -7,9 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import b.b.bits;
-import b.b.client;
-public final class session implements Serializable,client{
+public final class session implements Serializable{
 	static final long serialVersionUID=1;
 	private static final Map<String,session>all=Collections.synchronizedMap(new HashMap<String,session>(b.hash_size_sessions_store));
 	static Map<String,session>all(){return all;}
@@ -45,21 +43,22 @@ public final class session implements Serializable,client{
 	private final String id;
 	private final Map<String,Serializable>kvp;
 	int nreq;
-	private bits_from_long bits=new bits_from_long(1);
-	private static class bits_from_long implements bits{
-		long bits;
-		public bits_from_long(final long l){bits=l;}
-		public boolean bits_has(int bit_number_starting_at_0){
-			final long cmp_bits=1<<bit_number_starting_at_0;
-			return (bits&cmp_bits)!=0;
-		}
-		@Override public boolean hasany(final bits b){return (b.to_long()&bits)!=0;}
-		@Override public boolean hasall(final bits b){final long l=b.to_long();return (l&bits)==l;}
-		@Override public int to_int(){return (int)bits;}
-		@Override public long to_long(){return bits;}
-	
-	}
-	@Override public bits acl_bits(){return bits;}
+//	private bits_from_long bits=new bits_from_long(1);
+//	private static class bits_from_long implements bits{
+//		long bits;
+//		public bits_from_long(final long l){bits=l;}
+//		public boolean bits_has(int bit_number_starting_at_0){
+//			final long cmp_bits=1<<bit_number_starting_at_0;
+//			return (bits&cmp_bits)!=0;
+//		}
+//		@Override public boolean hasany(final bits b){return (b.to_long()&bits)!=0;}
+//		@Override public boolean hasall(final bits b){final long l=b.to_long();return (l&bits)==l;}
+//		@Override public int to_int(){return (int)bits;}
+//		@Override public long to_long(){return bits;}
+//	
+//	}
+//	@Override public long acl_bits(){return bits;}
+	private long bits;
 	session(final String id){
 		this.id=id;
 		kvp=Collections.synchronizedMap(new HashMap<String,Serializable>(b.hash_size_session_values));
@@ -82,9 +81,9 @@ public final class session implements Serializable,client{
 			return "";
 		return fn.substring(href.length()+1);
 	}
-	public bits bits(){return bits;}
-	public void bits(final long l){bits.bits=l;}
-//	public boolean bitshasany(final long b){return (bits|b)!=0;}
-//	public boolean bitshasall(final long b){return (bits&b)==b;}
+	public long bits(){return bits;}
+	public void bits(final long bs){bits=bs;}
+	public boolean bitshasany(final long b){return (bits|b)!=0;}
+	public boolean bitshasall(final long b){return (bits&b)==b;}
 	public void remove(final String key){kvp.remove(key);}
 }
