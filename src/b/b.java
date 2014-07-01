@@ -240,7 +240,11 @@ final public class b{
 		b.err.println("\n\n"+b.stacktraceline(e));
 	}
 	public static path path(){return new path(new File(root_dir));}
-	public static path path(final String path){if(path.contains(".."))throw new Error("illegalpath "+path);return new path(new File(root_dir,path));}
+	public static path path(final String path){
+		//. firewall
+		if(path.contains(".."))throw new Error("illegalpath "+path);
+		return new path(new File(root_dir,path));
+	}
 	static LinkedList<req>pendingreqls(){return pending_req;}
 
 	private static long stats_last_t_ms;

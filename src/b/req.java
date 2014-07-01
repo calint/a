@@ -198,6 +198,7 @@ public final class req{
 			state=state_content_read;parse_content_read();
 			return;
 		}
+		//. firewall path
 		try{pth=b.path(path_s);}catch(final Throwable t){close();throw t;}
 		if(b.try_file&&try_file())return;
 		if(b.try_rc&&try_rc())return;
