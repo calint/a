@@ -371,4 +371,17 @@ final public class b{
 	public static @Retention(RetentionPolicy.RUNTIME)@interface conf{String note()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface conf_reboot{String note()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface ref{}
+	
+	public static @Retention(RetentionPolicy.RUNTIME)@interface acl{
+		public int a=0,c=0,v=0,e=0,d=0,l=0,p=0,r=0;
+		int create()default c;
+		int list()default l;
+		int peek()default p;
+		int view()default v;
+		int append()default a;
+		int edit()default e;
+		int rename()default r;
+		int delete()default d;
+	}
+	public static interface client{int acl_bits();}
 }
