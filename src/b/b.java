@@ -89,6 +89,7 @@ final public class b{
 	public static @conf boolean print_conf_at_startup=true;
 	public static @conf boolean print_stats_at_startup=true;
 	public static @conf boolean acl_on=true;
+	public static @conf boolean firewall_on=true;
 	
 	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
 	public static @conf String timeatloadstrhtp=tolastmodstr(timeatload);
@@ -390,4 +391,34 @@ final public class b{
 //		int to_int();
 //		long to_long();
 //	}
+
+	static void acl_ensure_create(final a e){
+		final Class<? extends a>ecls=e.getClass();
+		final acl a=ecls.getAnnotation(acl.class);
+		if(a==null)return;
+		final long bits_c=a.create();
+		final req r=req.get();
+		final session ses=r.session();
+		if(ses.bits_hasany(bits_c))return;
+		throw new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  b"+Long.toBinaryString(bits_c)+" vs b"+Long.toBinaryString(ses.bits()));
+	}
+	static void acl_ensure_post(final a e){
+		final Class<? extends a>ecls=e.getClass();
+		final acl a=ecls.getAnnotation(acl.class);
+		if(a==null)return;
+		final long bits_c=a.create();
+		final req r=req.get();
+		final session ses=r.session();
+		if(ses.bits_hasany(bits_c))return;
+		throw new SecurityException("cannot post to item of type "+ecls+" due to acl\n any:  b"+Long.toBinaryString(bits_c)+" vs b"+Long.toBinaryString(ses.bits()));
+	}
+	public static void firewall_assert_access(final a e){
+		final Class<? extends a>cls=e.getClass();
+		if(cls.equals(a.class))return;
+		final String clsnm=cls.getName();
+		final int i=clsnm.lastIndexOf('.');
+		final String pkgnm=i==-1?"":clsnm.substring(0,i);
+		if(pkgnm.endsWith(".a")&&!req.get().session().bits_hasall(2))throw new Error("firewalled1");
+		if(clsnm.startsWith("a.localhost.")&&!req.get().ip().toString().equals("/0:0:0:0:0:0:0:1"))throw new Error("firewalled2");
+	}
 }

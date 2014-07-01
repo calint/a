@@ -592,6 +592,7 @@ public final class req{
 //			}
 //		}
 		if(!content.isEmpty()){
+			if(b.acl_on)b.acl_ensure_post(e);
 			String ax="";
 			for(final Map.Entry<String,String>me:content.entrySet()){
 				if(axfld.equals(me.getKey())){
