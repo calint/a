@@ -555,15 +555,13 @@ public final class req{
 				final String clsnm=cn+(cn.length()==0?"":".")+b.default_package_class;
 				ecls=(Class<? extends a>)Class.forName(clsnm);
 			}catch(Throwable e2){
-				final oschunked os=reply_chunked(h_http404,text_plain_utf8,null);
 				while(e1.getCause()!=null)e1=e1.getCause();
 				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(e1)).nl().nl().p(b.stacktraceline(e2)).nl();
 				reply(h_http404,null,null,tobytes(x.toString()));
-				os.finish();
 				return;
 			}}
-			
-			if(b.acl_on){//? cleanucode
+		
+			if(b.acl_on){
 				final acl a=ecls.getAnnotation(acl.class);
 				if(a!=null){
 					final long r=a.create();
