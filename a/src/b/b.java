@@ -312,10 +312,10 @@ final public class b{
 	public static boolean isempty(final String s){return s==null||s.length()==0;}
 	public static String isempty(final String o,final String def){return isempty(o)?def:o;}
 	public static Set<String>sessionsids(){return Collections.unmodifiableSet(session.all().keySet());}//?
-	public static long sessionbits(final String sesid){//?
+	public static long get_session_bits_for_sessionid(final String sesid){//?
 		//? file(system){sha1(sessionid),bits}
-		if("".equals(sesid))return 2;
-		return 0;
+		if("".equals(sesid))return 0;
+		return 1;
 	}
 	public static void class_printopts(final Class<?>cls)throws IllegalArgumentException,IllegalAccessException{
 		for(final Field f:cls.getFields()){
