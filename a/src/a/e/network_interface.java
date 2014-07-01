@@ -1,12 +1,17 @@
-package e;
+package a.e;
 
 import b.a;
+import b.xwriter;
 
 public class network_interface extends a{
-	public static interface recv{void network_interface_recv(final packet p);}
-	recv rv;
-	public network_interface receiver(final recv r){rv=r;return this;}
+	@Override public void to(xwriter x)throws Throwable{
+		x.pl("network interface");
+	}
+	
+	
+	
 	public void broadcast(final packet np)throws Throwable{}
 	public void send(final packet np)throws Throwable{}
+
 	private static final long serialVersionUID=1;
 }
