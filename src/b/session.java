@@ -1,8 +1,15 @@
 package b;
-import java.io.*;
-import java.util.*;
-import java.util.Map.*;
-public final class session implements Serializable{
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import b.b.bits;
+import b.b.client;
+public final class session implements Serializable,client{
 	static final long serialVersionUID=1;
 	private static final Map<String,session>all=Collections.synchronizedMap(new HashMap<String,session>(b.hash_size_sessions_store));
 	static Map<String,session>all(){return all;}
@@ -38,7 +45,21 @@ public final class session implements Serializable{
 	private final String id;
 	private final Map<String,Serializable>kvp;
 	int nreq;
-	private long bits=1;
+	private bits_from_long bits=new bits_from_long(1);
+	private static class bits_from_long implements bits{
+		long bits;
+		public bits_from_long(final long l){bits=l;}
+		public boolean bits_has(int bit_number_starting_at_0){
+			final long cmp_bits=1<<bit_number_starting_at_0;
+			return (bits&cmp_bits)!=0;
+		}
+		@Override public boolean bits_has_any(final bits b){return (b.to_long()&bits)!=0;}
+		@Override public boolean bits_has_all(final bits b){final long l=b.to_long();return (l&bits)==l;}
+		@Override public int to_int(){return (int)bits;}
+		@Override public long to_long(){return bits;}
+	
+	}
+	@Override public bits acl_bits(){return bits;}
 	session(final String id){
 		this.id=id;
 		kvp=Collections.synchronizedMap(new HashMap<String,Serializable>(b.hash_size_session_values));
@@ -61,9 +82,9 @@ public final class session implements Serializable{
 			return "";
 		return fn.substring(href.length()+1);
 	}
-	public long bits(){return bits;}
-	public void bits(final long b){bits=b;}
-	public boolean bitshasany(final long b){return (bits|b)!=0;}
-	public boolean bitshasall(final long b){return (bits&b)==b;}
+	public bits bits(){return bits;}
+	public bits bits(final long l){bits.bits=l;return bits;}
+//	public boolean bitshasany(final long b){return (bits|b)!=0;}
+//	public boolean bitshasall(final long b){return (bits&b)==b;}
 	public void remove(final String key){kvp.remove(key);}
 }

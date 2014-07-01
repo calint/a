@@ -383,5 +383,11 @@ final public class b{
 		int rename()default r;
 		int delete()default d;
 	}
-	public static interface client{int acl_bits();}
+	public static interface client{bits acl_bits();}
+	public static interface bits{
+		boolean bits_has_any(final bits b);
+		boolean bits_has_all(final bits b);
+		int to_int();
+		long to_long();
+	}
 }
