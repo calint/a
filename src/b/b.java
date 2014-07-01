@@ -250,7 +250,7 @@ final public class b{
 	}
 	static void firewall_ensure_path_access(final String uri){
 		//. cleanup
-		final path sessionsdir=new path(new File(root_dir,sessions_dir));
+		final path sessionsdir=new path(new File(root_dir,sessions_dir));//? cache
 		final String sessionsdiruri=sessionsdir.uri();
 		if(!uri.startsWith(sessionsdiruri+"/"))return;
 		try{
@@ -259,8 +259,7 @@ final public class b{
 			if(uri.startsWith(sessionsdiruri+"/"+sessionid))return;
 			throw new SecurityException("session "+sessionid+" cannot access "+uri);
 		}catch(ClassCastException ignored){}
-		//? check session id cookie
-		throw new SecurityException("cannot access "+root_dir+" without proper cookie");
+		// allow access to any file, sessionid in path is passphrase
 	}
 	static path path_ommit_firewall_check(final String path){
 		ensure_path_ok(path);
