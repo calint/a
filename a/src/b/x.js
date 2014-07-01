@@ -31,6 +31,7 @@ $d=function(v){
 $=function(eid){return document.getElementById(eid);}
 $s=function(eid,txt){
 	var e=$(eid);
+	$d(eid+'  '+txt);
 	if(!e){
 		$d(eid+' notfound');
 		return;
@@ -75,23 +76,31 @@ ui.onkey=function(ev){
 	if(cmd)eval(cmd);
 }
 ui._onreadystatechange=function(){
-//	$d(" * stage "+this.readyState);
+	$d(" * stage "+this.readyState);
 	switch(this.readyState){
-	case 1:
+	case 1:// Open
 		if(this._hasopened)break;this._hasopened=true;//? firefox quirkfix1
 //		this._t0=new Date().getMilliseconds();
 		$d(new Date().getTime()-this._t0+" * sending");
+		$s('_ajaxsts','sending '+this._pd.length+' text');
 		this.setRequestHeader('Content-Type','text/plain; charset=utf-8');
 		$d(this._pd);
 		ui.req._jscodeoffset=0;
 		this.send(this._pd);
 		break;
-	case 2:
-		$d(new Date().getTime()-this._t0+" * sending done");
+	case 2:// Sent
+		var dt=new Date().getTime()-this._t0;
+//		$d(dt+" * sending done");
+		$s('_ajaxsts','sent '+this._pd.length+' in '+dt+' ms');
 		break;
-	case 3:
+	case 3:// Receiving
 		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
+		$s('_ajaxsts','receiving '+this.responseText.length+' text');
+		console.log('receiving '+this.responseText.length+' text');
+//		var e=$('_ajaxsts');
+//		console.log(e);
+//		if(e)e.innerHTML="rece••";
 		if(s!='\n'){
 			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
 			break;
@@ -102,7 +111,7 @@ ui._onreadystatechange=function(){
 		this._jscodeoffset+=jscode.length;
 		eval(jscode);
 		break;
-	case 4:
+	case 4:// Loaded
 //		$d(" * done");
 		this._hasopened=null;//? firefox quirkfix1
 		this._pd=null;
@@ -118,6 +127,8 @@ ui._onreadystatechange=function(){
 		this._dt=new Date().getTime()-this._t0;//? var _dt
 		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
 		$d("done in "+this._dt+" ms");
+//		$s('_ajaxsts','done in '+this._dt+' ms, '+this.responseText.length+' chars script, '+(((this.responseText.length/this._dt)*10)<<0)*0.1+' chars/s');
+		$s('_ajaxsts',this._dt+' ms, '+this.responseText.length+' chars');
 		break;		
 	}
 }
@@ -150,6 +161,7 @@ $x=function(pb){
 	if(!ui.req){
 		ui.req=new XMLHttpRequest();
 		ui.req.onreadystatechange=ui._onreadystatechange;
+		ui.req.onerror=function(){$('_ajaxsts','connection to server lost. try reload.');throw "connection lost";}
 		$d(" * new connection");
 	}else{
 		$d(" * reusing connection");
