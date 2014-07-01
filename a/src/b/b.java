@@ -385,8 +385,8 @@ final public class b{
 	}
 	public static interface client{bits acl_bits();}
 	public static interface bits{
-		boolean bits_has_any(final bits b);
-		boolean bits_has_all(final bits b);
+		boolean hasany(final bits b);
+		boolean hasall(final bits b);
 		int to_int();
 		long to_long();
 	}
