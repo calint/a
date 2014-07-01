@@ -4,11 +4,11 @@ import a.amazon.ec2.any_root;
 import b.a;
 import b.b;
 import b.req;
-import b.sts_ajax;
+import b.a_ajaxsts;
 import b.xwriter;
 
 public class $ extends a{
-	public sts_ajax ajaxsts;{ajaxsts.set("idle");}//application status
+	public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}//application status
 	public list ls;
 	public $(){
 		final any_menu l=new any_menu(null,"any");
