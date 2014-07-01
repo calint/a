@@ -5,7 +5,7 @@ package a.e;import b.*;import b.b.acl;@acl(create=0b1,view=0b1)public class $ ex
 //	u.ni.set("newtwork interface");
 	u.to(x);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	}
+}
 	public unit u;
 
 
