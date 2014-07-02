@@ -64,7 +64,7 @@ final public class any_object implements el{
 				try{ev=e.get(o);}catch(Throwable t){throw new Error(t);}
 				if(iscol)elem=new any_collection(this,(Collection)ev,e.getName());
 				else if(isobj)elem=new any_object(this,(Serializable)ev,e.getName());
-				else elem=new any_object_field(this,(Serializable)ev,e.getName());
+				else elem=new any_object_field(this,o,e.getName());
 				v.visit(elem);
 			});
 	}
