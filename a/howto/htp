@@ -1,15 +1,10 @@
 GET / HTTP/1.1\r\n\r\n
-g/\n\n
+G\n\n
 
 
 GET /a+file HTTP/1.1\r\n\r\n
-g/a file\n\n
-
-
-GET /a+file HTTP/1.1\r\n\r\n
-g/a file\n\n
-
+Ga file\n\n
 
 GET /a+file HTTP/1.1\r\nCookie: i=id\r\n\r\n
-G/a file\nCid\n\n\n
+Ga file\nCid\n\n
 
