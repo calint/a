@@ -34,7 +34,7 @@ final public class any_object implements el{
 		}
 		return ls;
 	}
-	@Override public el get(String name){try{return new any_objectfield(this,o,name);}catch(Throwable t){throw new Error(t);}}
+	@Override public el get(String name){try{return new any_object_field(this,o,name);}catch(Throwable t){throw new Error(t);}}
 	@Override public long size(){return 0;}
 	@Override public long lastmod(){return 0;}
 	@Override public String uri(){return null;}
@@ -56,7 +56,7 @@ final public class any_object implements el{
 			if(!e.getName().startsWith(query))return false;
 			return true;
 		}).sorted((e1,e2)->e1.getName().compareTo(e2.getName()))
-			.forEach(e->v.visit(new any_objectfield(this,o,e.getName())));
+			.forEach(e->v.visit(new any_object_field(this,o,e.getName())));
 	}
 
 	private static final long serialVersionUID=1;
