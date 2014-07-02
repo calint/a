@@ -12,13 +12,13 @@ import b.b.conf_reboot;
 import b.b.unit;
 import b.xwriter;
 
-final public class any_objectfield implements el,el.el_column_value,el.el_column_value_editor{
+final public class any_object_field implements el,el.el_column_value,el.el_column_value_editor{
 	private el pt;
 //	private Field fld;
 	private Serializable o;
 	private String fldnm;
 //	public any_classfield(final el parent,final Field f){pt=parent;fld=f;}
-	public any_objectfield(final el parent,final Serializable o,final String field_name){
+	public any_object_field(final el parent,final Serializable o,final String field_name){
 		pt=parent;this.o=o;;fldnm=field_name;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return fldnm;}
