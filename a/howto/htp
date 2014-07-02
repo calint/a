@@ -5,6 +5,11 @@ G\n\n
 GET /a+file HTTP/1.1\r\n\r\n
 Ga file\n\n
 
+
 GET /a+file HTTP/1.1\r\nCookie: i=id\r\n\r\n
 Ga file\nCid\n\n
+
+
+GET /a+file HTTP/1.1\r\nCookie: i=140408-014154.080-e7a5d0cc\r\nIf-None-Match: "686897696a7c876b7e"\r\n\r\n
+Ga file\nI140408-014154.080-e7a5d0cc\nT686897696a7c876b7e\n\n
 
