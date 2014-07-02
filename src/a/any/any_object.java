@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import a.any.list.el;
 
 final public class any_object implements el{
@@ -23,15 +24,13 @@ final public class any_object implements el{
 	@Override public boolean isdir(){return true;}
 	@Override public List<String>list(){return list(null);}
 	@Override public List<String>list(final String query){
-		final ArrayList<String>ls=new ArrayList<String>();
-		for(final Field f:o.getClass().getFields()){
-//			final int m=f.getModifiers();
-//			if(!Modifier.isStatic(m))continue;
-//			if(Modifier.isFinal(m))continue;
-			final String nm=f.getName();
-			if(query!=null&&!query.isEmpty()&&!nm.startsWith(query))continue;
-			ls.add(f.getName());
-		}
+		final List<String>ls=Arrays.stream(o.getClass().getFields()).filter(e->{
+//			final int m=e.getModifiers();
+//			if(!Modifier.isStatic(m))return false;
+//			if(Modifier.isFinal(m))return false;
+			if(query!=null&&!query.isEmpty()&&!e.getName().startsWith(query))return false;
+			return true;
+		}).map(e->e.getName()).collect(Collectors.toList());
 		return ls;
 	}
 	@Override public el get(String name){try{return new any_object_field(this,o,name);}catch(Throwable t){throw new Error(t);}}
@@ -53,7 +52,7 @@ final public class any_object implements el{
 //			final int m=e.getModifiers();
 //			if(!Modifier.isStatic(m))return false;
 //			if(Modifier.isFinal(m))return false;
-			if(!e.getName().startsWith(query))return false;
+			if(query!=null&&!query.isEmpty()&&!e.getName().startsWith(query))return false;
 			return true;
 		}).sorted((e1,e2)->e1.getName().compareTo(e2.getName()))
 			.forEach(e->v.visit(new any_object_field(this,o,e.getName())));
