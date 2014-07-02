@@ -456,6 +456,11 @@ public class list extends a{
 //	private String query;
 	synchronized public final void x_(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_QUERY))throw new Error("notallowed");
+		if(q.str().equals("..")){
+			q.clr();
+			x_up(x,null);
+			return;
+		}
 //		query=q.toString();
 		x.xuo(this);
 //		to(x.xub(this));x.xube();

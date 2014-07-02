@@ -21,7 +21,7 @@ public class $ extends a{
 		l.add(new any_class(l,b.class,"server"));
 		l.add(new any_class(l,req.class,"request"));
 		l.add(new any_class(l,c.class,"cincos"));
-		l.add(new any_sessions(l));
+		l.add(new any_sessions(l,"users"));
 		l.add(new any_root(l,"amazon web"));
 	}
 	
