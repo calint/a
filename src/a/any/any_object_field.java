@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 import a.any.list.el;
@@ -16,7 +17,10 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 	private el pt;
 	private Serializable ob;
 	private String fldnm;
-	public any_object_field(final el parent,final Serializable o,final String field_name){pt=parent;this.ob=o;;fldnm=field_name;}
+	public any_object_field(final el parent,final Serializable o,final String field_name){
+		pt=parent;this.ob=o;fldnm=field_name;
+		System.out.println("any: "+ob.getClass()+"."+fldnm);
+	}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return fldnm;}
 	@Override public String fullpath(){return Integer.toHexString(ob.hashCode())+"."+fldnm;}
@@ -61,14 +65,15 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 		private String fldnm;
 		public a_object_field_editor(final Serializable o,final String field_name){
 			this.o=o;fldnm=field_name;
+			System.out.println("any: "+o.getClass()+"."+fldnm);
 		}
 		@Override public void to(xwriter x)throws Throwable{
 			final Field f=o.getClass().getField(fldnm);
-			final Object o=f.get(this.o);
-			if(o==null)clr();
-			else set(o.toString());
+			final Object oo=f.get(o);
+			if(oo==null)clr();
+			else set(oo.toString());
 			final conf ca=f.getAnnotation(conf.class);
-			if(ca==null){
+			if(ca==null||Modifier.isFinal(f.getModifiers())){
 				x.p(str());
 				return;
 			}

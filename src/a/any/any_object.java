@@ -58,7 +58,6 @@ final public class any_object implements el{
 				final Class<?>type=e.getType();
 				final boolean iscol=Collection.class.isAssignableFrom(type);
 				final boolean isobj=!(String.class.isAssignableFrom(type)||boolean.class.isAssignableFrom(type)||int.class.isAssignableFrom(type)||long.class.isAssignableFrom(type)||float.class.isAssignableFrom(type)||double.class.isAssignableFrom(type));
-				System.out.println(e+"   "+isobj);
 				final el elem;
 				final Object ev;
 				try{ev=e.get(o);}catch(Throwable t){throw new Error(t);}
@@ -70,10 +69,12 @@ final public class any_object implements el{
 	}
 	@Override public el get(final String name){try{
 		final Field f=o.getClass().getField(name);
+		final Class type=f.getType();
 		final Object fv=f.get(o);
 		if(fv instanceof Collection)return new any_collection(this,(Collection)fv,f.getName());
-		return new any_object(this,(Serializable)fv,f.getName());
-//		return new any_object_field(this,o,name);
+		final boolean isobj=!(String.class.isAssignableFrom(type)||boolean.class.isAssignableFrom(type)||int.class.isAssignableFrom(type)||long.class.isAssignableFrom(type)||float.class.isAssignableFrom(type)||double.class.isAssignableFrom(type));
+		if(isobj)return new any_object(this,(Serializable)fv,f.getName());
+		return new any_object_field(this,o,f.getName());
 	
 	}catch(Throwable t){throw new Error(t);}}
 
