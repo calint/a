@@ -6,4 +6,5 @@ curl http://calintenitchi.googlecode.com/svn/amazon-ec2/a.tgz>a.tgz&&
 tar -xzvf a.tgz&&
 tar -xzvf a-lib.tgz&&
 tar -xzvf jre.tgz
-#chmod ugo+x *.sh
+chmod ugo+x *.sh
+chmod ugo+x /etc/rc.local
