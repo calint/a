@@ -23,10 +23,10 @@ public class $ extends a{
 //		path=root=l;
 		l.add(new any_path(l,b.path(),"files"));
 	//	l.add(new elclass(root,list.class,"any"));
-		l.add(new any_class(l,b.class,"server"));
+		l.add(new any_class(l,b.class,"tinytim"));
 		l.add(new any_class(l,req.class,"request"));
 		l.add(new any_class(l,c.class,"cincos"));
-		l.add(new any_sessions(l,"users"));
+		l.add(new any_sessions(l,"sessions"));
 		l.add(new any_root(l,"amazon web"));
 	}
 	
