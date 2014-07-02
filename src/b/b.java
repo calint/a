@@ -458,4 +458,5 @@ final public class b{
 		final String u3=u2.replace(' ','+');
 		return u3;
 	}
+	public static session session(final String id){return session.all().get(id);}
 }
