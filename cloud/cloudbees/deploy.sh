@@ -1,10 +1,9 @@
-echo $0
-
-WS=../..
+WS=/Users/calin/workspace-2
 WD=cloudbees-deploy-work-dir
 BLITZ_IO_ID=mu-b454605f-ee5df618-eab01f6c-bc2f63cd
 
 date
+echo workspace: $WS
 if [ -d $WD ];then echo "  •• clear workdir $WD";rm -rf $WD;fi&&
 mkdir $WD&&cd $WD&&
 for p in a;do
