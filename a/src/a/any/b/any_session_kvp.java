@@ -12,7 +12,7 @@ final public class any_session_kvp implements el{
 	private el pt;
 	private String session;
 	private String key;
-//	public any_session(final el parent){pt=parent;}
+
 	public any_session_kvp(final el parent,final String session,final String key){pt=parent;this.session=session;this.key=key;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return key;}
