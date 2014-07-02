@@ -45,19 +45,19 @@ final public class b{
 	public static @conf String hello="public domain server #1";
 	public static String id=""+(int)Math.floor(Math.random()*10000);//? fixedwidth
 	public static @conf String root_dir=".";
-	public static @conf_reboot String server_port=ensure(System.getProperty("app.port"),"8888");
+	public static @conf(reboot=true)String server_port=ensure(System.getProperty("app.port"),"8888");
 	public static @conf boolean print_requests=false;
 	public static @conf boolean try_file=true;
 	public static @conf boolean try_rc=true;
-	public static @conf_reboot(note="requires reboot to turn on")boolean thd_watch=true;
+	public static @conf(reboot=true,note="requires reboot to turn on")boolean thd_watch=true;
 	public static @conf @unit(name="ms")int thd_watch_sleep_in_ms=10000;
 	public static @conf @unit(name="ms")int thd_watch_report_every_ms=60000;
-	public static @conf_reboot boolean thread_pool=true;
+	public static @conf(reboot=true)boolean thread_pool=true;
 	public static @conf int thread_pool_size=16;
 	public static @conf @unit(name="ms")long thread_pool_lftm=60*1000;
 	public static @conf boolean cache_uris=true;
 	public static @conf boolean cache_files=true;
-	public static @conf_reboot int cache_files_hashlen=K;
+	public static @conf(reboot=true)int cache_files_hashlen=K;
 	public static @conf @unit(name="B")int cache_files_maxsize=64*K;
 	public static @conf @unit(name="ms")long cache_files_validate_dt=1000;
 	public static @conf @unit(name="B")int transfer_file_write_size=256*K;
@@ -399,8 +399,8 @@ final public class b{
 	
 	//? safe quantity unit math
 	public static @Retention(RetentionPolicy.RUNTIME)@interface unit{String name()default"";}
-	public static @Retention(RetentionPolicy.RUNTIME)@interface conf{String note()default"";}
-	public static @Retention(RetentionPolicy.RUNTIME)@interface conf_reboot{String note()default"";}
+	public static @Retention(RetentionPolicy.RUNTIME)@interface conf{String note()default"";boolean reboot()default false;}
+//	public static @Retention(RetentionPolicy.RUNTIME)@interface conf_reboot{String note()default"";}
 	public static @Retention(RetentionPolicy.RUNTIME)@interface ref{}
 	
 	public static @Retention(RetentionPolicy.RUNTIME)@interface acl{

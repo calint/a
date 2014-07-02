@@ -8,7 +8,6 @@ import java.util.List;
 import a.any.list.el;
 import b.a;
 import b.b.conf;
-import b.b.conf_reboot;
 import b.b.unit;
 import b.xwriter;
 
@@ -49,15 +48,15 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 		private Serializable o;
 		private String fldnm;
 		public a_object_field_editor(final Serializable o,final String field_name){
-			this.o=o;fldnm=field_name;}
+			this.o=o;fldnm=field_name;
+		}
 		@Override public void to(xwriter x)throws Throwable{
 			final Field f=o.getClass().getField(fldnm);
 			final Object o=f.get(this.o);
 			if(o==null)clr();
 			else set(o.toString());
 			final conf ca=f.getAnnotation(conf.class);
-			final conf_reboot cra=f.getAnnotation(conf_reboot.class);
-			if(ca==null&&cra==null){
+			if(ca==null){
 				x.p(str());
 				return;
 			}
@@ -67,23 +66,13 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 			}else
 				x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
 			final unit ua=f.getAnnotation(unit.class);
-			if(ua!=null){
-				x.spc().p(ua.name());
-			}
-			if(cra!=null){
-				x.pl(" <span style=color:#c00>⎋</span>");
-			}
-			if(ca!=null){
-				final String note=ca.note();
-				if(!note.isEmpty()){
-					x.nl().span("font-size:.3em").p(note).spanEnd();
-				}
-			}else if(cra!=null){
-				final String note=cra.note();
-				if(!note.isEmpty()){
-					x.span("font-size:.3em;color:brown").p("⚠ ").p(note).spanEnd();
-				}
-			}
+			if(ua!=null)x.spc().p(ua.name());
+			if(ca.reboot())x.p(" <span style=color:#c00>*</span>");//⎋
+			final String note=ca.note();
+			if(note.isEmpty())return;
+			x.span("font-size:.3em");
+			if(ca.reboot())x.p("⚠ ");
+			x.p(note).spanEnd();
 		}
 		public void x_(final xwriter x,final String a)throws Throwable{
 			final Field f=o.getClass().getField(fldnm);

@@ -5,21 +5,16 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 import a.any.list.el;
-import a.any.list.el.visitor;
 import b.a;
 import b.b.conf;
-import b.b.conf_reboot;
 import b.b.unit;
 import b.xwriter;
 
 final public class any_class_field implements el,el.el_column_value,el.el_column_value_editor{
 	private el pt;
-//	private Field fld;
 	private String clsnm;
 	private String fldnm;
-//	public any_classfield(final el parent,final Field f){pt=parent;fld=f;}
-	public any_class_field(final el parent,final String class_name,final String field_name){
-		pt=parent;clsnm=class_name;fldnm=field_name;}
+	public any_class_field(final el parent,final String class_name,final String field_name){pt=parent;clsnm=class_name;fldnm=field_name;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return fldnm;}
 	@Override public String fullpath(){return clsnm+"."+fldnm;}
@@ -48,45 +43,26 @@ final public class any_class_field implements el,el.el_column_value,el.el_column
 	public static class a_class_field_editor extends a{
 		private String clsnm;
 		private String fldnm;
-//		private Field f;
-//		public a_class_field_editor(final Field f){this.f=f;}
-		public a_class_field_editor(final String class_name,final String field_name){
-			clsnm=class_name;fldnm=field_name;}
+		public a_class_field_editor(final String class_name,final String field_name){clsnm=class_name;fldnm=field_name;}
 		@Override public void to(xwriter x)throws Throwable{
 			final Field f=Class.forName(clsnm).getField(fldnm);
 			final Object o=f.get(null);
-//			final Object o=f.get(null);
 			if(o==null)clr();
 			else set(o.toString());
 			final conf ca=f.getAnnotation(conf.class);
-			final conf_reboot cra=f.getAnnotation(conf_reboot.class);
-			if(ca==null&&cra==null){
+			if(ca==null){
 				x.p(str());
 				return;
 			}
-			if(f.getType()==boolean.class){
-				x.input(this,"checkbox","font-weight:bold",null,this,null,null,this,null);
-//				x.p("checkbox");
-			}else
-				x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
+			if(f.getType()==boolean.class)x.input(this,"checkbox","font-weight:bold",null,this,null,null,this,null);
+			else x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
 			final unit ua=f.getAnnotation(unit.class);
-			if(ua!=null){
-				x.spc().p(ua.name());
-			}
-			if(cra!=null){
-				x.pl(" <span style=color:#c00>⎋</span>");
-			}
-			if(ca!=null){
-				final String note=ca.note();
-				if(!note.isEmpty()){
-					x.nl().span("font-size:.3em").p(note).spanEnd();
-				}
-			}else if(cra!=null){
-				final String note=cra.note();
-				if(!note.isEmpty()){
-					x.span("font-size:.3em;color:brown").p("⚠ ").p(note).spanEnd();
-				}
-			}
+			if(ua!=null)x.spc().p(ua.name());
+			if(ca.reboot())x.p(" <span style=color:#c00>⎋</span>");
+//			if(ca.reboot())x.nl().span("font-size:.3em;color:brown").p(" ⚠ ").spanEnd();
+			final String note=ca.note();
+			if(note.isEmpty())return;
+			x.nl().span("font-size:.3em").p(note).spanEnd();
 		}
 		public void x_(final xwriter x,final String a)throws Throwable{
 			final Field f=Class.forName(clsnm).getField(fldnm);
