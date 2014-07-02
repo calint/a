@@ -1,887 +1,1051 @@
-Fri Dec 20 10:00:45 ICT 2013
-
-Linux version 3.11.0-14-generic (buildd@allspice) (gcc version 4.8.1 (Ubuntu/Linaro 4.8.1-10ubuntu8) ) #21-Ubuntu SMP Tue Nov 12 17:04:55 UTC 2013
-
-Distributor ID:	Ubuntu
-Description:	Ubuntu 13.10
-Release:	13.10
-Codename:	saucy
-
-Architecture:          x86_64
-CPU op-mode(s):        32-bit, 64-bit
-Byte Order:            Little Endian
-CPU(s):                2
-On-line CPU(s) list:   0,1
-Thread(s) per core:    1
-Core(s) per socket:    2
-Socket(s):             1
-NUMA node(s):          1
-Vendor ID:             GenuineIntel
-CPU family:            6
-Model:                 23
-Stepping:              6
-CPU MHz:               1600.000
-BogoMIPS:              4520.68
-Virtualization:        VT-x
-L1d cache:             32K
-L1i cache:             32K
-L2 cache:              3072K
-NUMA node0 CPU(s):     0,1
-
-             total       used       free     shared    buffers     cached
-Mem:       4046924    3464840     582084          0      10976     323692
--/+ buffers/cache:    3130172     916752
-Swap:            0          0          0
-
-/etc/sysctl.conf
-# "Performance Scalability of a Multi-Core Web Server", Nov 2007
- # Bryan Veal and Annie Foong, Intel Corporation, Page 4/10
- fs.file-max = 5000000
- net.core.netdev_max_backlog = 400000
- net.core.optmem_max = 10000000
- net.core.rmem_default = 10000000
- net.core.rmem_max = 10000000
- net.core.somaxconn = 100000
- net.core.wmem_default = 10000000
- net.core.wmem_max = 10000000
- net.ipv4.conf.all.rp_filter = 1
- net.ipv4.conf.default.rp_filter = 1
- net.ipv4.ip_local_port_range = 1024 65535
- net.ipv4.tcp_congestion_control = bic
- net.ipv4.tcp_ecn = 0
- net.ipv4.tcp_max_syn_backlog = 12000
- net.ipv4.tcp_max_tw_buckets = 2000000
- net.ipv4.tcp_mem = 30000000 30000000 30000000
- net.ipv4.tcp_rmem = 30000000 30000000 30000000
- net.ipv4.tcp_sack = 1
- net.ipv4.tcp_syncookies = 0
- net.ipv4.tcp_timestamps = 1
- net.ipv4.tcp_wmem = 30000000 30000000 30000000    
-
- # optionally, avoid TIME_WAIT states on localhost no-HTTP Keep-Alive tests:
- #    "error: connect() failed: Cannot assign requested address (99)"
- # On Linux, the 2MSL time is hardcoded to 60 seconds in /include/net/tcp.h:
- # #define TCP_TIMEWAIT_LEN (60*HZ)
- # The option below is safe to use:
- net.ipv4.tcp_tw_reuse = 1
-
- # The option below lets you reduce TIME_WAITs further
- # but this option is for benchmarks, NOT for production (NAT issues)
- net.ipv4.tcp_tw_recycle = 1
-
-
-/etc/security/limits.conf
-*	soft	nofile	64000
-*	hard	nofile	64000
+Wed Jul 2 09:27:19 ICT 2014
 
 
 sysctl -a
-abi.vsyscall32 = 1
-debug.exception-trace = 1
-debug.kprobes-optimization = 1
-dev.cdrom.autoclose = 1
-dev.cdrom.autoeject = 0
-dev.cdrom.check_media = 0
-dev.cdrom.debug = 0
-dev.cdrom.info = CD-ROM information, Id: cdrom.c 3.20 2003/12/17
-dev.cdrom.info = 
-dev.cdrom.info = drive name:		sr0
-dev.cdrom.info = drive speed:		24
-dev.cdrom.info = drive # of slots:	1
-dev.cdrom.info = Can close tray:		1
-dev.cdrom.info = Can open tray:		1
-dev.cdrom.info = Can lock tray:		1
-dev.cdrom.info = Can change speed:	1
-dev.cdrom.info = Can select disk:	0
-dev.cdrom.info = Can read multisession:	1
-dev.cdrom.info = Can read MCN:		1
-dev.cdrom.info = Reports media changed:	1
-dev.cdrom.info = Can play audio:		1
-dev.cdrom.info = Can write CD-R:		1
-dev.cdrom.info = Can write CD-RW:	1
-dev.cdrom.info = Can read DVD:		1
-dev.cdrom.info = Can write DVD-R:	1
-dev.cdrom.info = Can write DVD-RAM:	1
-dev.cdrom.info = Can read MRW:		1
-dev.cdrom.info = Can write MRW:		1
-dev.cdrom.info = Can write RAM:		1
-dev.cdrom.info = 
-dev.cdrom.info = 
-dev.cdrom.lock = 0
-dev.hpet.max-user-freq = 64
-dev.mac_hid.mouse_button2_keycode = 97
-dev.mac_hid.mouse_button3_keycode = 100
-dev.mac_hid.mouse_button_emulation = 0
-dev.parport.default.spintime = 500
-dev.parport.default.timeslice = 200
-dev.raid.speed_limit_max = 200000
-dev.raid.speed_limit_min = 1000
-dev.scsi.logging_level = 0
-fs.aio-max-nr = 65536
-fs.aio-nr = 0
-fs.binfmt_misc.llvm-3/2-runtime/binfmt = enabled
-fs.binfmt_misc.llvm-3/2-runtime/binfmt = interpreter /usr/bin/lli-3.2
-fs.binfmt_misc.llvm-3/2-runtime/binfmt = flags: 
-fs.binfmt_misc.llvm-3/2-runtime/binfmt = offset 0
-fs.binfmt_misc.llvm-3/2-runtime/binfmt = magic 4243
-fs.binfmt_misc.jar = enabled
-fs.binfmt_misc.jar = interpreter /usr/bin/jexec
-fs.binfmt_misc.jar = flags: 
-fs.binfmt_misc.jar = offset 0
-fs.binfmt_misc.jar = magic 504b0304
-fs.binfmt_misc.python2/7 = enabled
-fs.binfmt_misc.python2/7 = interpreter /usr/bin/python2.7
-fs.binfmt_misc.python2/7 = flags: 
-fs.binfmt_misc.python2/7 = offset 0
-fs.binfmt_misc.python2/7 = magic 03f30d0a
-fs.binfmt_misc.python3/3 = enabled
-fs.binfmt_misc.python3/3 = interpreter /usr/bin/python3.3
-fs.binfmt_misc.python3/3 = flags: 
-fs.binfmt_misc.python3/3 = offset 0
-fs.binfmt_misc.python3/3 = magic 9e0c0d0a
-fs.binfmt_misc.status = enabled
-fs.dentry-state = 15752	2905	45	0	0	0
-fs.dir-notify-enable = 1
-fs.epoll.max_user_watches = 824668
-fs.file-max = 5000000
-fs.file-nr = 8512	0	5000000
-fs.inode-nr = 16500	1610
-fs.inode-state = 16500	1610	0	0	0	0	0
-fs.inotify.max_queued_events = 16384
-fs.inotify.max_user_instances = 128
-fs.inotify.max_user_watches = 8192
-fs.lease-break-time = 45
-fs.leases-enable = 1
-fs.mqueue.msg_default = 10
-fs.mqueue.msg_max = 10
-fs.mqueue.msgsize_default = 8192
-fs.mqueue.msgsize_max = 8192
-fs.mqueue.queues_max = 256
-fs.nr_open = 1048576
-fs.overflowgid = 65534
-fs.overflowuid = 65534
-fs.pipe-max-size = 1048576
-fs.quota.allocated_dquots = 0
-fs.quota.cache_hits = 0
-fs.quota.drops = 0
-fs.quota.free_dquots = 0
-fs.quota.lookups = 0
-fs.quota.reads = 0
-fs.quota.syncs = 96
-fs.quota.writes = 0
-fs.suid_dumpable = 2
-kernel.acct = 4	2	30
-kernel.acpi_video_flags = 0
-kernel.auto_msgmni = 1
-kernel.blk_iopoll = 1
-kernel.bootloader_type = 114
-kernel.bootloader_version = 2
-kernel.cap_last_cap = 36
-kernel.compat-log = 1
-kernel.core_pattern = |/usr/share/apport/apport %p %s %c
-kernel.core_pipe_limit = 0
-kernel.core_uses_pid = 0
-kernel.ctrl-alt-del = 0
-kernel.dmesg_restrict = 0
-kernel.domainname = (none)
-kernel.ftrace_dump_on_oops = 0
-kernel.ftrace_enabled = 1
-kernel.hostname = vaio
-kernel.hotplug = 
-kernel.hung_task_check_count = 4194304
-kernel.hung_task_panic = 0
-kernel.hung_task_timeout_secs = 120
-kernel.hung_task_warnings = 10
-kernel.io_delay_type = 1
-kernel.keys.gc_delay = 300
-kernel.keys.maxbytes = 20000
-kernel.keys.maxkeys = 200
-kernel.keys.root_maxbytes = 20000
-kernel.keys.root_maxkeys = 200
-kernel.kptr_restrict = 1
-kernel.kstack_depth_to_print = 12
-kernel.latencytop = 0
-kernel.max_lock_depth = 1024
-kernel.modprobe = /sbin/modprobe
-kernel.modules_disabled = 0
-kernel.msg_next_id = -1
-kernel.msgmax = 8192
-kernel.msgmnb = 16384
-kernel.msgmni = 7897
-kernel.ngroups_max = 65536
-kernel.nmi_watchdog = 1
-kernel.ns_last_pid = 17731
-kernel.numa_balancing_scan_delay_ms = 1000
-kernel.numa_balancing_scan_period_max_ms = 5000
-kernel.numa_balancing_scan_period_min_ms = 100
-kernel.numa_balancing_scan_period_reset = 60000
-kernel.numa_balancing_scan_size_mb = 256
-kernel.osrelease = 3.11.0-14-generic
-kernel.ostype = Linux
-kernel.overflowgid = 65534
-kernel.overflowuid = 65534
-kernel.panic = 0
-kernel.panic_on_io_nmi = 0
-kernel.panic_on_oops = 0
-kernel.panic_on_unrecovered_nmi = 0
-kernel.perf_cpu_time_max_percent = 25
-kernel.perf_event_max_sample_rate = 25000
-kernel.perf_event_mlock_kb = 516
-kernel.perf_event_paranoid = 1
-kernel.pid_max = 32768
-kernel.poweroff_cmd = /sbin/poweroff
-kernel.print-fatal-signals = 0
-kernel.printk = 4	4	1	7
-kernel.printk_delay = 0
-kernel.printk_ratelimit = 5
-kernel.printk_ratelimit_burst = 10
-kernel.pty.max = 4096
-kernel.pty.nr = 18
-kernel.pty.reserve = 1024
-kernel.random.boot_id = 9f520557-774b-400b-8c2b-cec3f2289c79
-kernel.random.entropy_avail = 2399
-kernel.random.poolsize = 4096
-kernel.random.read_wakeup_threshold = 64
-kernel.random.uuid = 7e5cba55-085e-4d25-b00c-e990c0cae56b
-kernel.random.write_wakeup_threshold = 128
-kernel.randomize_va_space = 2
-kernel.real-root-dev = 0
-kernel.sched_autogroup_enabled = 1
-kernel.sched_cfs_bandwidth_slice_us = 5000
-kernel.sched_child_runs_first = 0
-kernel.sched_domain.cpu0.domain0.busy_factor = 64
-kernel.sched_domain.cpu0.domain0.busy_idx = 2
-kernel.sched_domain.cpu0.domain0.cache_nice_tries = 1
-kernel.sched_domain.cpu0.domain0.flags = 559
-kernel.sched_domain.cpu0.domain0.forkexec_idx = 0
-kernel.sched_domain.cpu0.domain0.idle_idx = 0
-kernel.sched_domain.cpu0.domain0.imbalance_pct = 125
-kernel.sched_domain.cpu0.domain0.max_interval = 4
-kernel.sched_domain.cpu0.domain0.min_interval = 1
-kernel.sched_domain.cpu0.domain0.name = MC
-kernel.sched_domain.cpu0.domain0.newidle_idx = 0
-kernel.sched_domain.cpu0.domain0.wake_idx = 0
-kernel.sched_domain.cpu1.domain0.busy_factor = 64
-kernel.sched_domain.cpu1.domain0.busy_idx = 2
-kernel.sched_domain.cpu1.domain0.cache_nice_tries = 1
-kernel.sched_domain.cpu1.domain0.flags = 559
-kernel.sched_domain.cpu1.domain0.forkexec_idx = 0
-kernel.sched_domain.cpu1.domain0.idle_idx = 0
-kernel.sched_domain.cpu1.domain0.imbalance_pct = 125
-kernel.sched_domain.cpu1.domain0.max_interval = 4
-kernel.sched_domain.cpu1.domain0.min_interval = 1
-kernel.sched_domain.cpu1.domain0.name = MC
-kernel.sched_domain.cpu1.domain0.newidle_idx = 0
-kernel.sched_domain.cpu1.domain0.wake_idx = 0
-kernel.sched_latency_ns = 12000000
-kernel.sched_migration_cost_ns = 500000
-kernel.sched_min_granularity_ns = 1500000
-kernel.sched_nr_migrate = 32
-kernel.sched_rr_timeslice_ms = 25
-kernel.sched_rt_period_us = 1000000
-kernel.sched_rt_runtime_us = 950000
-kernel.sched_shares_window_ns = 10000000
-kernel.sched_time_avg_ms = 1000
-kernel.sched_tunable_scaling = 1
-kernel.sched_wakeup_granularity_ns = 2000000
-kernel.sem = 250	32000	32	128
-kernel.sem_next_id = -1
-kernel.sg-big-buff = 32768
-kernel.shm_next_id = -1
-kernel.shm_rmid_forced = 0
-kernel.shmall = 2097152
-kernel.shmmax = 33554432
-kernel.shmmni = 4096
-kernel.softlockup_panic = 0
-kernel.stack_tracer_enabled = 0
-kernel.sysrq = 176
-kernel.tainted = 514
-kernel.threads-max = 62918
-kernel.timer_migration = 1
-kernel.traceoff_on_warning = 0
-kernel.unknown_nmi_panic = 0
-kernel.version = #21-Ubuntu SMP Tue Nov 12 17:04:55 UTC 2013
-kernel.watchdog = 1
-kernel.watchdog_thresh = 10
-kernel.yama.ptrace_scope = 1
-net.core.bpf_jit_enable = 0
-net.core.busy_poll = 0
-net.core.busy_read = 0
-net.core.dev_weight = 64
-net.core.flow_limit_cpu_bitmap = 00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000
-net.core.flow_limit_table_len = 4096
-net.core.message_burst = 10
-net.core.message_cost = 5
-net.core.netdev_budget = 300
-net.core.netdev_max_backlog = 400000
-net.core.netdev_tstamp_prequeue = 1
-net.core.optmem_max = 10000000
-net.core.rmem_default = 10000000
-net.core.rmem_max = 10000000
-net.core.rps_sock_flow_entries = 0
-net.core.somaxconn = 40000
-net.core.warnings = 1
-net.core.wmem_default = 10000000
-net.core.wmem_max = 10000000
-net.core.xfrm_acq_expires = 30
-net.core.xfrm_aevent_etime = 10
-net.core.xfrm_aevent_rseqth = 2
-net.core.xfrm_larval_drop = 1
-net.ipv4.cipso_cache_bucket_size = 10
-net.ipv4.cipso_cache_enable = 1
-net.ipv4.cipso_rbm_optfmt = 0
-net.ipv4.cipso_rbm_strictvalid = 1
-net.ipv4.conf.all.accept_local = 0
-net.ipv4.conf.all.accept_redirects = 1
-net.ipv4.conf.all.accept_source_route = 0
-net.ipv4.conf.all.arp_accept = 0
-net.ipv4.conf.all.arp_announce = 0
-net.ipv4.conf.all.arp_filter = 0
-net.ipv4.conf.all.arp_ignore = 0
-net.ipv4.conf.all.arp_notify = 0
-net.ipv4.conf.all.bootp_relay = 0
-net.ipv4.conf.all.disable_policy = 0
-net.ipv4.conf.all.disable_xfrm = 0
-net.ipv4.conf.all.force_igmp_version = 0
-net.ipv4.conf.all.forwarding = 0
-net.ipv4.conf.all.log_martians = 0
-net.ipv4.conf.all.mc_forwarding = 0
-net.ipv4.conf.all.medium_id = 0
-net.ipv4.conf.all.promote_secondaries = 0
-net.ipv4.conf.all.proxy_arp = 0
-net.ipv4.conf.all.proxy_arp_pvlan = 0
-net.ipv4.conf.all.route_localnet = 0
-net.ipv4.conf.all.rp_filter = 1
-net.ipv4.conf.all.secure_redirects = 1
-net.ipv4.conf.all.send_redirects = 1
-net.ipv4.conf.all.shared_media = 1
-net.ipv4.conf.all.src_valid_mark = 0
-net.ipv4.conf.all.tag = 0
-net.ipv4.conf.default.accept_local = 0
-net.ipv4.conf.default.accept_redirects = 1
-net.ipv4.conf.default.accept_source_route = 1
-net.ipv4.conf.default.arp_accept = 0
-net.ipv4.conf.default.arp_announce = 0
-net.ipv4.conf.default.arp_filter = 0
-net.ipv4.conf.default.arp_ignore = 0
-net.ipv4.conf.default.arp_notify = 0
-net.ipv4.conf.default.bootp_relay = 0
-net.ipv4.conf.default.disable_policy = 0
-net.ipv4.conf.default.disable_xfrm = 0
-net.ipv4.conf.default.force_igmp_version = 0
-net.ipv4.conf.default.forwarding = 0
-net.ipv4.conf.default.log_martians = 0
-net.ipv4.conf.default.mc_forwarding = 0
-net.ipv4.conf.default.medium_id = 0
-net.ipv4.conf.default.promote_secondaries = 0
-net.ipv4.conf.default.proxy_arp = 0
-net.ipv4.conf.default.proxy_arp_pvlan = 0
-net.ipv4.conf.default.route_localnet = 0
-net.ipv4.conf.default.rp_filter = 1
-net.ipv4.conf.default.secure_redirects = 1
-net.ipv4.conf.default.send_redirects = 1
-net.ipv4.conf.default.shared_media = 1
-net.ipv4.conf.default.src_valid_mark = 0
-net.ipv4.conf.default.tag = 0
-net.ipv4.conf.eth0.accept_local = 0
-net.ipv4.conf.eth0.accept_redirects = 1
-net.ipv4.conf.eth0.accept_source_route = 1
-net.ipv4.conf.eth0.arp_accept = 0
-net.ipv4.conf.eth0.arp_announce = 0
-net.ipv4.conf.eth0.arp_filter = 0
-net.ipv4.conf.eth0.arp_ignore = 0
-net.ipv4.conf.eth0.arp_notify = 0
-net.ipv4.conf.eth0.bootp_relay = 0
-net.ipv4.conf.eth0.disable_policy = 0
-net.ipv4.conf.eth0.disable_xfrm = 0
-net.ipv4.conf.eth0.force_igmp_version = 0
-net.ipv4.conf.eth0.forwarding = 0
-net.ipv4.conf.eth0.log_martians = 0
-net.ipv4.conf.eth0.mc_forwarding = 0
-net.ipv4.conf.eth0.medium_id = 0
-net.ipv4.conf.eth0.promote_secondaries = 0
-net.ipv4.conf.eth0.proxy_arp = 0
-net.ipv4.conf.eth0.proxy_arp_pvlan = 0
-net.ipv4.conf.eth0.route_localnet = 0
-net.ipv4.conf.eth0.rp_filter = 1
-net.ipv4.conf.eth0.secure_redirects = 1
-net.ipv4.conf.eth0.send_redirects = 1
-net.ipv4.conf.eth0.shared_media = 1
-net.ipv4.conf.eth0.src_valid_mark = 0
-net.ipv4.conf.eth0.tag = 0
-net.ipv4.conf.lo.accept_local = 0
-net.ipv4.conf.lo.accept_redirects = 1
-net.ipv4.conf.lo.accept_source_route = 1
-net.ipv4.conf.lo.arp_accept = 0
-net.ipv4.conf.lo.arp_announce = 0
-net.ipv4.conf.lo.arp_filter = 0
-net.ipv4.conf.lo.arp_ignore = 0
-net.ipv4.conf.lo.arp_notify = 0
-net.ipv4.conf.lo.bootp_relay = 0
-net.ipv4.conf.lo.disable_policy = 1
-net.ipv4.conf.lo.disable_xfrm = 1
-net.ipv4.conf.lo.force_igmp_version = 0
-net.ipv4.conf.lo.forwarding = 0
-net.ipv4.conf.lo.log_martians = 0
-net.ipv4.conf.lo.mc_forwarding = 0
-net.ipv4.conf.lo.medium_id = 0
-net.ipv4.conf.lo.promote_secondaries = 0
-net.ipv4.conf.lo.proxy_arp = 0
-net.ipv4.conf.lo.proxy_arp_pvlan = 0
-net.ipv4.conf.lo.route_localnet = 0
-net.ipv4.conf.lo.rp_filter = 1
-net.ipv4.conf.lo.secure_redirects = 1
-net.ipv4.conf.lo.send_redirects = 1
-net.ipv4.conf.lo.shared_media = 1
-net.ipv4.conf.lo.src_valid_mark = 0
-net.ipv4.conf.lo.tag = 0
-net.ipv4.conf.wlan0.accept_local = 0
-net.ipv4.conf.wlan0.accept_redirects = 1
-net.ipv4.conf.wlan0.accept_source_route = 1
-net.ipv4.conf.wlan0.arp_accept = 0
-net.ipv4.conf.wlan0.arp_announce = 0
-net.ipv4.conf.wlan0.arp_filter = 0
-net.ipv4.conf.wlan0.arp_ignore = 0
-net.ipv4.conf.wlan0.arp_notify = 0
-net.ipv4.conf.wlan0.bootp_relay = 0
-net.ipv4.conf.wlan0.disable_policy = 0
-net.ipv4.conf.wlan0.disable_xfrm = 0
-net.ipv4.conf.wlan0.force_igmp_version = 0
-net.ipv4.conf.wlan0.forwarding = 0
-net.ipv4.conf.wlan0.log_martians = 0
-net.ipv4.conf.wlan0.mc_forwarding = 0
-net.ipv4.conf.wlan0.medium_id = 0
-net.ipv4.conf.wlan0.promote_secondaries = 0
-net.ipv4.conf.wlan0.proxy_arp = 0
-net.ipv4.conf.wlan0.proxy_arp_pvlan = 0
-net.ipv4.conf.wlan0.route_localnet = 0
-net.ipv4.conf.wlan0.rp_filter = 1
-net.ipv4.conf.wlan0.secure_redirects = 1
-net.ipv4.conf.wlan0.send_redirects = 1
-net.ipv4.conf.wlan0.shared_media = 1
-net.ipv4.conf.wlan0.src_valid_mark = 0
-net.ipv4.conf.wlan0.tag = 0
-net.ipv4.icmp_echo_ignore_all = 0
-net.ipv4.icmp_echo_ignore_broadcasts = 1
-net.ipv4.icmp_errors_use_inbound_ifaddr = 0
-net.ipv4.icmp_ignore_bogus_error_responses = 1
-net.ipv4.icmp_ratelimit = 1000
-net.ipv4.icmp_ratemask = 6168
-net.ipv4.igmp_max_memberships = 20
-net.ipv4.igmp_max_msf = 10
-net.ipv4.inet_peer_maxttl = 600
-net.ipv4.inet_peer_minttl = 120
-net.ipv4.inet_peer_threshold = 65664
-net.ipv4.ip_default_ttl = 64
-net.ipv4.ip_dynaddr = 0
-net.ipv4.ip_early_demux = 1
-net.ipv4.ip_forward = 0
-net.ipv4.ip_local_port_range = 1024	65535
-net.ipv4.ip_local_reserved_ports = 
-net.ipv4.ip_no_pmtu_disc = 0
-net.ipv4.ip_nonlocal_bind = 0
-net.ipv4.ipfrag_high_thresh = 4194304
-net.ipv4.ipfrag_low_thresh = 3145728
-net.ipv4.ipfrag_max_dist = 64
-net.ipv4.ipfrag_secret_interval = 600
-net.ipv4.ipfrag_time = 30
-net.ipv4.neigh.default.anycast_delay = 100
-net.ipv4.neigh.default.app_solicit = 0
-net.ipv4.neigh.default.base_reachable_time_ms = 30000
-net.ipv4.neigh.default.delay_first_probe_time = 5
-net.ipv4.neigh.default.gc_interval = 30
-net.ipv4.neigh.default.gc_stale_time = 60
-net.ipv4.neigh.default.gc_thresh1 = 128
-net.ipv4.neigh.default.gc_thresh2 = 512
-net.ipv4.neigh.default.gc_thresh3 = 1024
-net.ipv4.neigh.default.locktime = 100
-net.ipv4.neigh.default.mcast_solicit = 3
-net.ipv4.neigh.default.proxy_delay = 80
-net.ipv4.neigh.default.proxy_qlen = 64
-net.ipv4.neigh.default.retrans_time_ms = 1000
-net.ipv4.neigh.default.ucast_solicit = 3
-net.ipv4.neigh.default.unres_qlen = 31
-net.ipv4.neigh.default.unres_qlen_bytes = 65536
-net.ipv4.neigh.eth0.anycast_delay = 100
-net.ipv4.neigh.eth0.app_solicit = 0
-net.ipv4.neigh.eth0.base_reachable_time_ms = 30000
-net.ipv4.neigh.eth0.delay_first_probe_time = 5
-net.ipv4.neigh.eth0.gc_stale_time = 60
-net.ipv4.neigh.eth0.locktime = 100
-net.ipv4.neigh.eth0.mcast_solicit = 3
-net.ipv4.neigh.eth0.proxy_delay = 80
-net.ipv4.neigh.eth0.proxy_qlen = 64
-net.ipv4.neigh.eth0.retrans_time_ms = 1000
-net.ipv4.neigh.eth0.ucast_solicit = 3
-net.ipv4.neigh.eth0.unres_qlen = 31
-net.ipv4.neigh.eth0.unres_qlen_bytes = 65536
-net.ipv4.neigh.lo.anycast_delay = 100
-net.ipv4.neigh.lo.app_solicit = 0
-net.ipv4.neigh.lo.base_reachable_time_ms = 30000
-net.ipv4.neigh.lo.delay_first_probe_time = 5
-net.ipv4.neigh.lo.gc_stale_time = 60
-net.ipv4.neigh.lo.locktime = 100
-net.ipv4.neigh.lo.mcast_solicit = 3
-net.ipv4.neigh.lo.proxy_delay = 80
-net.ipv4.neigh.lo.proxy_qlen = 64
-net.ipv4.neigh.lo.retrans_time_ms = 1000
-net.ipv4.neigh.lo.ucast_solicit = 3
-net.ipv4.neigh.lo.unres_qlen = 31
-net.ipv4.neigh.lo.unres_qlen_bytes = 65536
-net.ipv4.neigh.wlan0.anycast_delay = 100
-net.ipv4.neigh.wlan0.app_solicit = 0
-net.ipv4.neigh.wlan0.base_reachable_time_ms = 30000
-net.ipv4.neigh.wlan0.delay_first_probe_time = 5
-net.ipv4.neigh.wlan0.gc_stale_time = 60
-net.ipv4.neigh.wlan0.locktime = 100
-net.ipv4.neigh.wlan0.mcast_solicit = 3
-net.ipv4.neigh.wlan0.proxy_delay = 80
-net.ipv4.neigh.wlan0.proxy_qlen = 64
-net.ipv4.neigh.wlan0.retrans_time_ms = 1000
-net.ipv4.neigh.wlan0.ucast_solicit = 3
-net.ipv4.neigh.wlan0.unres_qlen = 31
-net.ipv4.neigh.wlan0.unres_qlen_bytes = 65536
-net.ipv4.ping_group_range = 1	0
-net.ipv4.route.error_burst = 1250
-net.ipv4.route.error_cost = 250
-net.ipv4.route.gc_elasticity = 8
-net.ipv4.route.gc_interval = 60
-net.ipv4.route.gc_min_interval = 0
-net.ipv4.route.gc_min_interval_ms = 500
-net.ipv4.route.gc_thresh = -1
-net.ipv4.route.gc_timeout = 300
-net.ipv4.route.max_size = 2147483647
-net.ipv4.route.min_adv_mss = 256
-net.ipv4.route.min_pmtu = 552
-net.ipv4.route.mtu_expires = 600
-net.ipv4.route.redirect_load = 5
-net.ipv4.route.redirect_number = 9
-net.ipv4.route.redirect_silence = 5120
-net.ipv4.tcp_abort_on_overflow = 0
-net.ipv4.tcp_adv_win_scale = 1
-net.ipv4.tcp_allowed_congestion_control = bic cubic reno
-net.ipv4.tcp_app_win = 31
-net.ipv4.tcp_available_congestion_control = bic cubic reno
-net.ipv4.tcp_base_mss = 512
-net.ipv4.tcp_challenge_ack_limit = 100
-net.ipv4.tcp_congestion_control = bic
-net.ipv4.tcp_dma_copybreak = 4096
-net.ipv4.tcp_dsack = 1
-net.ipv4.tcp_early_retrans = 3
-net.ipv4.tcp_ecn = 0
-net.ipv4.tcp_fack = 1
-net.ipv4.tcp_fastopen = 0
-net.ipv4.tcp_fin_timeout = 60
-net.ipv4.tcp_frto = 2
-net.ipv4.tcp_keepalive_intvl = 75
-net.ipv4.tcp_keepalive_probes = 9
-net.ipv4.tcp_keepalive_time = 7200
-net.ipv4.tcp_limit_output_bytes = 131072
-net.ipv4.tcp_low_latency = 0
-net.ipv4.tcp_max_orphans = 16384
-net.ipv4.tcp_max_ssthresh = 0
-net.ipv4.tcp_max_syn_backlog = 12000
-net.ipv4.tcp_max_tw_buckets = 2000000
-net.ipv4.tcp_mem = 30000000	30000000	30000000
-net.ipv4.tcp_min_tso_segs = 2
-net.ipv4.tcp_moderate_rcvbuf = 1
-net.ipv4.tcp_mtu_probing = 0
-net.ipv4.tcp_no_metrics_save = 0
-net.ipv4.tcp_orphan_retries = 0
-net.ipv4.tcp_reordering = 3
-net.ipv4.tcp_retrans_collapse = 1
-net.ipv4.tcp_retries1 = 3
-net.ipv4.tcp_retries2 = 15
-net.ipv4.tcp_rfc1337 = 0
-net.ipv4.tcp_rmem = 30000000	30000000	30000000
-net.ipv4.tcp_sack = 1
-net.ipv4.tcp_slow_start_after_idle = 1
-net.ipv4.tcp_stdurg = 0
-net.ipv4.tcp_syn_retries = 6
-net.ipv4.tcp_synack_retries = 5
-net.ipv4.tcp_syncookies = 0
-net.ipv4.tcp_thin_dupack = 0
-net.ipv4.tcp_thin_linear_timeouts = 0
-net.ipv4.tcp_timestamps = 1
-net.ipv4.tcp_tso_win_divisor = 3
-net.ipv4.tcp_tw_recycle = 1
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_window_scaling = 1
-net.ipv4.tcp_wmem = 30000000	30000000	30000000
-net.ipv4.tcp_workaround_signed_windows = 0
-net.ipv4.udp_mem = 94377	125836	188754
-net.ipv4.udp_rmem_min = 4096
-net.ipv4.udp_wmem_min = 4096
-net.ipv4.xfrm4_gc_thresh = 1024
-net.ipv6.bindv6only = 0
-net.ipv6.conf.all.accept_dad = 1
-net.ipv6.conf.all.accept_ra = 1
-net.ipv6.conf.all.accept_ra_defrtr = 1
-net.ipv6.conf.all.accept_ra_pinfo = 1
-net.ipv6.conf.all.accept_ra_rt_info_max_plen = 0
-net.ipv6.conf.all.accept_ra_rtr_pref = 1
-net.ipv6.conf.all.accept_redirects = 1
-net.ipv6.conf.all.accept_source_route = 0
-net.ipv6.conf.all.autoconf = 1
-net.ipv6.conf.all.dad_transmits = 1
-net.ipv6.conf.all.disable_ipv6 = 0
-net.ipv6.conf.all.force_mld_version = 0
-net.ipv6.conf.all.force_tllao = 0
-net.ipv6.conf.all.forwarding = 0
-net.ipv6.conf.all.hop_limit = 64
-net.ipv6.conf.all.max_addresses = 16
-net.ipv6.conf.all.max_desync_factor = 600
-net.ipv6.conf.all.mc_forwarding = 0
-net.ipv6.conf.all.mtu = 1280
-net.ipv6.conf.all.ndisc_notify = 0
-net.ipv6.conf.all.proxy_ndp = 0
-net.ipv6.conf.all.regen_max_retry = 3
-net.ipv6.conf.all.router_probe_interval = 60
-net.ipv6.conf.all.router_solicitation_delay = 1
-net.ipv6.conf.all.router_solicitation_interval = 4
-net.ipv6.conf.all.router_solicitations = 3
-net.ipv6.conf.all.temp_prefered_lft = 86400
-net.ipv6.conf.all.temp_valid_lft = 604800
-net.ipv6.conf.all.use_tempaddr = 2
-net.ipv6.conf.default.accept_dad = 1
-net.ipv6.conf.default.accept_ra = 1
-net.ipv6.conf.default.accept_ra_defrtr = 1
-net.ipv6.conf.default.accept_ra_pinfo = 1
-net.ipv6.conf.default.accept_ra_rt_info_max_plen = 0
-net.ipv6.conf.default.accept_ra_rtr_pref = 1
-net.ipv6.conf.default.accept_redirects = 1
-net.ipv6.conf.default.accept_source_route = 0
-net.ipv6.conf.default.autoconf = 1
-net.ipv6.conf.default.dad_transmits = 1
-net.ipv6.conf.default.disable_ipv6 = 0
-net.ipv6.conf.default.force_mld_version = 0
-net.ipv6.conf.default.force_tllao = 0
-net.ipv6.conf.default.forwarding = 0
-net.ipv6.conf.default.hop_limit = 64
-net.ipv6.conf.default.max_addresses = 16
-net.ipv6.conf.default.max_desync_factor = 600
-net.ipv6.conf.default.mc_forwarding = 0
-net.ipv6.conf.default.mtu = 1280
-net.ipv6.conf.default.ndisc_notify = 0
-net.ipv6.conf.default.proxy_ndp = 0
-net.ipv6.conf.default.regen_max_retry = 3
-net.ipv6.conf.default.router_probe_interval = 60
-net.ipv6.conf.default.router_solicitation_delay = 1
-net.ipv6.conf.default.router_solicitation_interval = 4
-net.ipv6.conf.default.router_solicitations = 3
-net.ipv6.conf.default.temp_prefered_lft = 86400
-net.ipv6.conf.default.temp_valid_lft = 604800
-net.ipv6.conf.default.use_tempaddr = 2
-net.ipv6.conf.eth0.accept_dad = 1
-net.ipv6.conf.eth0.accept_ra = 0
-net.ipv6.conf.eth0.accept_ra_defrtr = 1
-net.ipv6.conf.eth0.accept_ra_pinfo = 1
-net.ipv6.conf.eth0.accept_ra_rt_info_max_plen = 0
-net.ipv6.conf.eth0.accept_ra_rtr_pref = 1
-net.ipv6.conf.eth0.accept_redirects = 1
-net.ipv6.conf.eth0.accept_source_route = 0
-net.ipv6.conf.eth0.autoconf = 1
-net.ipv6.conf.eth0.dad_transmits = 1
-net.ipv6.conf.eth0.disable_ipv6 = 0
-net.ipv6.conf.eth0.force_mld_version = 0
-net.ipv6.conf.eth0.force_tllao = 0
-net.ipv6.conf.eth0.forwarding = 0
-net.ipv6.conf.eth0.hop_limit = 64
-net.ipv6.conf.eth0.max_addresses = 16
-net.ipv6.conf.eth0.max_desync_factor = 600
-net.ipv6.conf.eth0.mc_forwarding = 0
-net.ipv6.conf.eth0.mtu = 1500
-net.ipv6.conf.eth0.ndisc_notify = 0
-net.ipv6.conf.eth0.proxy_ndp = 0
-net.ipv6.conf.eth0.regen_max_retry = 3
-net.ipv6.conf.eth0.router_probe_interval = 60
-net.ipv6.conf.eth0.router_solicitation_delay = 1
-net.ipv6.conf.eth0.router_solicitation_interval = 4
-net.ipv6.conf.eth0.router_solicitations = 3
-net.ipv6.conf.eth0.temp_prefered_lft = 86400
-net.ipv6.conf.eth0.temp_valid_lft = 604800
-net.ipv6.conf.eth0.use_tempaddr = 0
-net.ipv6.conf.lo.accept_dad = -1
-net.ipv6.conf.lo.accept_ra = 1
-net.ipv6.conf.lo.accept_ra_defrtr = 1
-net.ipv6.conf.lo.accept_ra_pinfo = 1
-net.ipv6.conf.lo.accept_ra_rt_info_max_plen = 0
-net.ipv6.conf.lo.accept_ra_rtr_pref = 1
-net.ipv6.conf.lo.accept_redirects = 1
-net.ipv6.conf.lo.accept_source_route = 0
-net.ipv6.conf.lo.autoconf = 1
-net.ipv6.conf.lo.dad_transmits = 1
-net.ipv6.conf.lo.disable_ipv6 = 0
-net.ipv6.conf.lo.force_mld_version = 0
-net.ipv6.conf.lo.force_tllao = 0
-net.ipv6.conf.lo.forwarding = 0
-net.ipv6.conf.lo.hop_limit = 64
-net.ipv6.conf.lo.max_addresses = 16
-net.ipv6.conf.lo.max_desync_factor = 600
-net.ipv6.conf.lo.mc_forwarding = 0
-net.ipv6.conf.lo.mtu = 65536
-net.ipv6.conf.lo.ndisc_notify = 0
-net.ipv6.conf.lo.proxy_ndp = 0
-net.ipv6.conf.lo.regen_max_retry = 3
-net.ipv6.conf.lo.router_probe_interval = 60
-net.ipv6.conf.lo.router_solicitation_delay = 1
-net.ipv6.conf.lo.router_solicitation_interval = 4
-net.ipv6.conf.lo.router_solicitations = 3
-net.ipv6.conf.lo.temp_prefered_lft = 86400
-net.ipv6.conf.lo.temp_valid_lft = 604800
-net.ipv6.conf.lo.use_tempaddr = 2
-net.ipv6.conf.wlan0.accept_dad = 1
-net.ipv6.conf.wlan0.accept_ra = 2
-net.ipv6.conf.wlan0.accept_ra_defrtr = 1
-net.ipv6.conf.wlan0.accept_ra_pinfo = 1
-net.ipv6.conf.wlan0.accept_ra_rt_info_max_plen = 0
-net.ipv6.conf.wlan0.accept_ra_rtr_pref = 1
-net.ipv6.conf.wlan0.accept_redirects = 1
-net.ipv6.conf.wlan0.accept_source_route = 0
-net.ipv6.conf.wlan0.autoconf = 1
-net.ipv6.conf.wlan0.dad_transmits = 1
-net.ipv6.conf.wlan0.disable_ipv6 = 0
-net.ipv6.conf.wlan0.force_mld_version = 0
-net.ipv6.conf.wlan0.force_tllao = 0
-net.ipv6.conf.wlan0.forwarding = 0
-net.ipv6.conf.wlan0.hop_limit = 64
-net.ipv6.conf.wlan0.max_addresses = 16
-net.ipv6.conf.wlan0.max_desync_factor = 600
-net.ipv6.conf.wlan0.mc_forwarding = 0
-net.ipv6.conf.wlan0.mtu = 1500
-net.ipv6.conf.wlan0.ndisc_notify = 0
-net.ipv6.conf.wlan0.proxy_ndp = 0
-net.ipv6.conf.wlan0.regen_max_retry = 3
-net.ipv6.conf.wlan0.router_probe_interval = 60
-net.ipv6.conf.wlan0.router_solicitation_delay = 1
-net.ipv6.conf.wlan0.router_solicitation_interval = 4
-net.ipv6.conf.wlan0.router_solicitations = 3
-net.ipv6.conf.wlan0.temp_prefered_lft = 86400
-net.ipv6.conf.wlan0.temp_valid_lft = 604800
-net.ipv6.conf.wlan0.use_tempaddr = 2
-net.ipv6.icmp.ratelimit = 1000
-net.ipv6.ip6frag_high_thresh = 4194304
-net.ipv6.ip6frag_low_thresh = 3145728
-net.ipv6.ip6frag_secret_interval = 600
-net.ipv6.ip6frag_time = 60
-net.ipv6.mld_max_msf = 64
-net.ipv6.neigh.default.anycast_delay = 100
-net.ipv6.neigh.default.app_solicit = 0
-net.ipv6.neigh.default.base_reachable_time_ms = 30000
-net.ipv6.neigh.default.delay_first_probe_time = 5
-net.ipv6.neigh.default.gc_interval = 30
-net.ipv6.neigh.default.gc_stale_time = 60
-net.ipv6.neigh.default.gc_thresh1 = 128
-net.ipv6.neigh.default.gc_thresh2 = 512
-net.ipv6.neigh.default.gc_thresh3 = 1024
-net.ipv6.neigh.default.locktime = 0
-net.ipv6.neigh.default.mcast_solicit = 3
-net.ipv6.neigh.default.proxy_delay = 80
-net.ipv6.neigh.default.proxy_qlen = 64
-net.ipv6.neigh.default.retrans_time_ms = 1000
-net.ipv6.neigh.default.ucast_solicit = 3
-net.ipv6.neigh.default.unres_qlen = 31
-net.ipv6.neigh.default.unres_qlen_bytes = 65536
-net.ipv6.neigh.eth0.anycast_delay = 100
-net.ipv6.neigh.eth0.app_solicit = 0
-net.ipv6.neigh.eth0.base_reachable_time_ms = 30000
-net.ipv6.neigh.eth0.delay_first_probe_time = 5
-net.ipv6.neigh.eth0.gc_stale_time = 60
-net.ipv6.neigh.eth0.locktime = 0
-net.ipv6.neigh.eth0.mcast_solicit = 3
-net.ipv6.neigh.eth0.proxy_delay = 80
-net.ipv6.neigh.eth0.proxy_qlen = 64
-net.ipv6.neigh.eth0.retrans_time_ms = 1000
-net.ipv6.neigh.eth0.ucast_solicit = 3
-net.ipv6.neigh.eth0.unres_qlen = 31
-net.ipv6.neigh.eth0.unres_qlen_bytes = 65536
-net.ipv6.neigh.lo.anycast_delay = 100
-net.ipv6.neigh.lo.app_solicit = 0
-net.ipv6.neigh.lo.base_reachable_time_ms = 30000
-net.ipv6.neigh.lo.delay_first_probe_time = 5
-net.ipv6.neigh.lo.gc_stale_time = 60
-net.ipv6.neigh.lo.locktime = 0
-net.ipv6.neigh.lo.mcast_solicit = 3
-net.ipv6.neigh.lo.proxy_delay = 80
-net.ipv6.neigh.lo.proxy_qlen = 64
-net.ipv6.neigh.lo.retrans_time_ms = 1000
-net.ipv6.neigh.lo.ucast_solicit = 3
-net.ipv6.neigh.lo.unres_qlen = 31
-net.ipv6.neigh.lo.unres_qlen_bytes = 65536
-net.ipv6.neigh.wlan0.anycast_delay = 100
-net.ipv6.neigh.wlan0.app_solicit = 0
-net.ipv6.neigh.wlan0.base_reachable_time_ms = 30000
-net.ipv6.neigh.wlan0.delay_first_probe_time = 5
-net.ipv6.neigh.wlan0.gc_stale_time = 60
-net.ipv6.neigh.wlan0.locktime = 0
-net.ipv6.neigh.wlan0.mcast_solicit = 3
-net.ipv6.neigh.wlan0.proxy_delay = 80
-net.ipv6.neigh.wlan0.proxy_qlen = 64
-net.ipv6.neigh.wlan0.retrans_time_ms = 1000
-net.ipv6.neigh.wlan0.ucast_solicit = 3
-net.ipv6.neigh.wlan0.unres_qlen = 31
-net.ipv6.neigh.wlan0.unres_qlen_bytes = 65536
-net.ipv6.route.gc_elasticity = 9
-net.ipv6.route.gc_interval = 30
-net.ipv6.route.gc_min_interval = 0
-net.ipv6.route.gc_min_interval_ms = 500
-net.ipv6.route.gc_thresh = 1024
-net.ipv6.route.gc_timeout = 60
-net.ipv6.route.max_size = 4096
-net.ipv6.route.min_adv_mss = 1220
-net.ipv6.route.mtu_expires = 600
-net.ipv6.xfrm6_gc_thresh = 1024
-net.netfilter.nf_log.0 = NONE
-net.netfilter.nf_log.1 = NONE
-net.netfilter.nf_log.10 = NONE
-net.netfilter.nf_log.11 = NONE
-net.netfilter.nf_log.12 = NONE
-net.netfilter.nf_log.2 = NONE
-net.netfilter.nf_log.3 = NONE
-net.netfilter.nf_log.4 = NONE
-net.netfilter.nf_log.5 = NONE
-net.netfilter.nf_log.6 = NONE
-net.netfilter.nf_log.7 = NONE
-net.netfilter.nf_log.8 = NONE
-net.netfilter.nf_log.9 = NONE
-net.unix.max_dgram_qlen = 10
-vm.admin_reserve_kbytes = 8192
-vm.block_dump = 0
-vm.dirty_background_bytes = 0
-vm.dirty_background_ratio = 5
-vm.dirty_bytes = 0
-vm.dirty_expire_centisecs = 3000
-vm.dirty_ratio = 10
-vm.dirty_writeback_centisecs = 500
-vm.drop_caches = 0
-vm.extfrag_threshold = 500
-vm.hugepages_treat_as_movable = 0
-vm.hugetlb_shm_group = 0
-vm.laptop_mode = 0
-vm.legacy_va_layout = 0
-vm.lowmem_reserve_ratio = 256	256	32
-vm.max_map_count = 65530
-vm.memory_failure_early_kill = 0
-vm.memory_failure_recovery = 1
-vm.min_free_kbytes = 67584
-vm.min_slab_ratio = 5
-vm.min_unmapped_ratio = 1
-vm.mmap_min_addr = 65536
-vm.nr_hugepages = 0
-vm.nr_hugepages_mempolicy = 0
-vm.nr_overcommit_hugepages = 0
-vm.nr_pdflush_threads = 0
-vm.numa_zonelist_order = default
-vm.oom_dump_tasks = 1
-vm.oom_kill_allocating_task = 0
-vm.overcommit_memory = 0
-vm.overcommit_ratio = 50
-vm.page-cluster = 3
-vm.panic_on_oom = 0
-vm.percpu_pagelist_fraction = 0
-vm.scan_unevictable_pages = 0
-vm.stat_interval = 1
-vm.swappiness = 60
-vm.user_reserve_kbytes = 123782
-vm.vfs_cache_pressure = 100
-vm.zone_reclaim_mode = 0
+kern.ostype = Darwin
+kern.osrelease = 13.2.0
+kern.osrevision = 199506
+kern.version = Darwin Kernel Version 13.2.0: Thu Apr 17 23:03:13 PDT 2014; root:xnu-2422.100.13~1/RELEASE_X86_64
+kern.maxvnodes = 132096
+kern.maxproc = 1064
+kern.maxfiles = 12288
+kern.argmax = 262144
+kern.securelevel = 0
+kern.hostname = calins-MacBook-Air.local
+kern.hostid = 0
+kern.clockrate: hz = 100, tick = 10000, profhz = 100, stathz = 100
+kern.posix1version = 200112
+kern.ngroups = 16
+kern.job_control = 1
+kern.saved_ids = 1
+kern.boottime = Mon Jun 30 09:37:54 2014
+
+kern.nisdomainname = 
+kern.maxfilesperproc = 10240
+kern.maxprocperuid = 709
+kern.usrstack = 1526476800
+kern.netboot = 0
+kern.aiomax = 90
+kern.aioprocmax = 16
+kern.aiothreads = 4
+kern.corefile = /cores/core.%P
+kern.coredump = 1
+kern.sugid_coredump = 0
+kern.delayterm = 0
+kern.shreg_private = 0
+kern.usrstack64 = 140734719864832
+kern.nx = 1
+kern.procname = 
+kern.speculative_reads_disabled = 0
+kern.osversion = 13D65
+kern.safeboot = 0
+kern.rage_vnode = 0
+kern.thread_name = kern
+vfs.nfs has 1 mounted instance
+vfs.hfs has 1 mounted instance
+vfs.autofs has 2 mounted instances
+hw.machine = x86_64
+hw.model = MacBookAir6,1
+hw.ncpu = 4
+hw.byteorder = 1234
+hw.physmem = 2147483648
+hw.usermem = 1351933952
+hw.pagesize = 4096
+hw.epoch = 0
+hw.vectorunit = 1
+hw.busfrequency = 100000000
+hw.cpufrequency = 1300000000
+hw.cachelinesize = 64
+hw.l1icachesize = 32768
+hw.l1dcachesize = 32768
+hw.l2settings = 1
+hw.l2cachesize = 262144
+hw.l3settings = 1
+hw.l3cachesize = 3145728
+hw.tbfrequency = 1000000000
+hw.memsize = 8589934592
+hw.availcpu = 4
+user.cs_path = /usr/bin:/bin:/usr/sbin:/sbin
+user.bc_base_max = 99
+user.bc_dim_max = 2048
+user.bc_scale_max = 99
+user.bc_string_max = 1000
+user.coll_weights_max = 2
+user.expr_nest_max = 32
+user.line_max = 2048
+user.re_dup_max = 255
+user.posix2_version = 200112
+user.posix2_c_bind = 0
+user.posix2_c_dev = 0
+user.posix2_char_term = 0
+user.posix2_fort_dev = 0
+user.posix2_fort_run = 0
+user.posix2_localedef = 0
+user.posix2_sw_dev = 0
+user.posix2_upe = 0
+user.stream_max = 20
+user.tzname_max = 255
+kern.ostype: Darwin
+kern.osrelease: 13.2.0
+kern.osrevision: 199506
+kern.version: Darwin Kernel Version 13.2.0: Thu Apr 17 23:03:13 PDT 2014; root:xnu-2422.100.13~1/RELEASE_X86_64
+kern.maxvnodes: 132096
+kern.maxproc: 1064
+kern.maxfiles: 12288
+kern.argmax: 262144
+kern.securelevel: 0
+kern.hostname: calins-MacBook-Air.local
+kern.hostid: 0
+kern.clockrate: { hz = 100, tick = 10000, tickadj = 0, profhz = 100, stathz = 100 }
+kern.posix1version: 200112
+kern.ngroups: 16
+kern.job_control: 1
+kern.saved_ids: 1
+kern.boottime: { sec = 1404095874, usec = 0 } Mon Jun 30 09:37:54 2014
+kern.nisdomainname: 
+kern.maxfilesperproc: 10240
+kern.maxprocperuid: 709
+kern.ipc.maxsockbuf: 6291456
+kern.ipc.sockbuf_waste_factor: 8
+kern.ipc.somaxconn: 128
+kern.ipc.nmbclusters: 49152
+kern.ipc.soqlimitcompat: 1
+kern.ipc.mleak_sample_factor: 500
+kern.ipc.mb_normalized: 0
+kern.ipc.mb_watchdog: 0
+kern.ipc.sosendminchain: 16384
+kern.ipc.sorecvmincopy: 16384
+kern.ipc.sosendjcl: 1
+kern.ipc.sosendjcl_ignore_capab: 0
+kern.ipc.sodefunctlog: 0
+kern.ipc.sothrottlelog: 0
+kern.ipc.sorestrictrecv: 1
+kern.ipc.sotcdb: 1
+kern.ipc.maxsockets: 512
+kern.ipc.njcl: 16384
+kern.ipc.njclbytes: 16384
+kern.ipc.soqlencomp: 0
+kern.ipc.io_policy.throttled: 0
+kern.ipc.io_policy.log: 0
+kern.ipc.io_policy.uuid: 1
+kern.usrstack: 1526476800
+kern.netboot: 0
+kern.sysv.shmmax: 4194304
+kern.sysv.shmmin: 1
+kern.sysv.shmmni: 32
+kern.sysv.shmseg: 8
+kern.sysv.shmall: 1024
+kern.sysv.semmni: 87381
+kern.sysv.semmns: 87381
+kern.sysv.semmnu: 87381
+kern.sysv.semmsl: 87381
+kern.sysv.semume: 10
+kern.aiomax: 90
+kern.aioprocmax: 16
+kern.aiothreads: 4
+kern.corefile: /cores/core.%P
+kern.coredump: 1
+kern.sugid_coredump: 0
+kern.delayterm: 0
+kern.shreg_private: 0
+kern.posix.sem.max: 10000
+kern.usrstack64: 140734719864832
+kern.nx: 1
+kern.tfp.policy: 2
+kern.procname: 
+kern.speculative_reads_disabled: 0
+kern.osversion: 13D65
+kern.safeboot: 0
+kern.lctx.last: 1
+kern.lctx.count: 0
+kern.lctx.max: 8192
+kern.rage_vnode: 0
+kern.tty.ptmx_max: 127
+kern.threadname: 
+kern.sleeptime: { sec = 1404260449, usec = 683976 } Wed Jul  2 07:20:49 2014
+kern.waketime: { sec = 1404260486, usec = 464 } Wed Jul  2 07:21:26 2014
+kern.willshutdown: 0
+kern.progressmeterenable: 0
+kern.progressmeter: 0
+kern.hibernatefile: /var/vm/sleepimage
+kern.bootsignature: dec3dd132662052b71ba17c6c8b7765143412c30
+
+kern.hibernatemode: 0
+kern.hibernategraphicsready: 0
+kern.hibernatewakenotification: 0
+kern.hibernatelockscreenready: 0
+kern.hibernatehidready: 0
+kern.wq_yielded_threshold: 2000
+kern.wq_yielded_window_usecs: 30000
+kern.wq_stalled_window_usecs: 200
+kern.wq_reduce_pool_window_usecs: 5000000
+kern.wq_max_timer_interval_usecs: 50000
+kern.wq_max_threads: 512
+kern.wq_max_constrained_threads: 64
+kern.nbuf: 16384
+kern.maxnbuf: 16384
+kern.jnl_trim_flush: 240
+kern.flush_cache_on_write: 0
+kern.ds_supgroups_supported: 1
+kern.sugid_scripts: 0
+kern.zleak.active: 0
+kern.zleak.max_zonemap_size: 3221225472
+kern.zleak.global_threshold: 1610612736
+kern.zleak.zone_threshold: 201326592
+kern.uuid: ADD73AE6-88B0-32FB-A8BB-4F7C8BE4092E
+kern.bootargs: 
+kern.num_files: 2038
+kern.num_vnodes: 132096
+kern.num_tasks: 2048
+kern.num_threads: 10240
+kern.num_taskthreads: 2048
+kern.namecache_disabled: 0
+kern.ignore_is_ssd: 0
+kern.preheat_pages_max: 256
+kern.preheat_pages_min: 8
+kern.speculative_prefetch_max: 24576
+kern.speculative_prefetch_max_iosize: 524288
+kern.vm_page_free_target: 2000
+kern.vm_page_free_min: 1500
+kern.vm_page_free_reserved: 128
+kern.vm_page_speculative_percentage: 5
+kern.vm_page_speculative_q_age_ms: 500
+kern.vm_max_delayed_work_limit: 32
+kern.vm_max_batch: 256
+kern.bootsessionuuid: A89FA4D4-83B7-488E-BA58-C1C99D19F259
+kern.timer.coalescing_enabled: 1
+kern.timer.deadline_tracking_bin_1: 2000000
+kern.timer.deadline_tracking_bin_2: 5000000
+kern.timer.longterm.threshold: 1000
+kern.timer.longterm.qlen: 126
+kern.singleuser: 0
+kern.affinity_sets_enabled: 1
+kern.affinity_sets_mapping: 1
+kern.slide: 1
+kern.kdebug_thread_block: 0
+kern.stack_size: 16384
+kern.stack_depth_max: 9752
+kern.ipc_portbt: 0
+kern.sched: traditional_with_pset_runqueue
+kern.memorystatus_vm_pressure_level: 1
+kern.memorystatus_purge_on_warning: 2
+kern.memorystatus_purge_on_urgent: 5
+kern.memorystatus_purge_on_critical: 8
+kern.msgbuf: 16384
+kern.secure_kernel: 0
+kern.interrupt_timer_coalescing_enabled: 1
+kern.timer_coalesce_idle_entry_hard_deadline_max: 5000000
+kern.timer_coalesce_bg_scale: -5
+kern.timer_coalesce_bg_ns_max: 100000000
+kern.timer_coalesce_kt_scale: 3
+kern.timer_coalesce_kt_ns_max: 1000000
+kern.timer_coalesce_fp_scale: 3
+kern.timer_coalesce_fp_ns_max: 1000000
+kern.timer_coalesce_ts_scale: 3
+kern.timer_coalesce_ts_ns_max: 1000000
+kern.timer_coalesce_tier0_scale: 3
+kern.timer_coalesce_tier0_ns_max: 1000000
+kern.timer_coalesce_tier1_scale: 2
+kern.timer_coalesce_tier1_ns_max: 5000000
+kern.timer_coalesce_tier2_scale: 1
+kern.timer_coalesce_tier2_ns_max: 20000000
+kern.timer_coalesce_tier3_scale: -2
+kern.timer_coalesce_tier3_ns_max: 75000000
+kern.timer_coalesce_tier4_scale: -15
+kern.timer_coalesce_tier4_ns_max: 10000000000
+kern.timer_coalesce_tier5_scale: -15
+kern.timer_coalesce_tier5_ns_max: 10000000000
+vm.loadavg: { 1.60 1.56 1.51 }
+vm.swapusage: total = 1024.00M  used = 330.50M  free = 693.50M  (encrypted)
+vm.cs_force_kill: 0
+vm.cs_force_hard: 0
+vm.cs_debug: 0
+vm.cs_all_vnodes: 0
+vm.cs_enforcement: 0
+vm.cs_enforcement_panic: 0
+vm.sigpup_disable: 0
+vm.global_no_user_wire_amount: 67108864
+vm.global_user_wire_limit: 8522825728
+vm.user_wire_limit: 8522825728
+vm.vm_copy_src_not_internal: 30
+vm.vm_copy_src_not_symmetric: 4661
+vm.vm_copy_src_large: 0
+vm.vm_page_external_count: 232778
+vm.vm_page_filecache_min: 104857
+vm.compressor_mode: 4
+vm.compressor_bytes_used: 564218516
+vm.compressor_swapout_target_age: 0
+vm.compressor_eval_period_in_msecs: 250
+vm.compressor_sample_min_in_msecs: 500
+vm.compressor_sample_max_in_msecs: 10000
+vm.compressor_thrashing_threshold_per_10msecs: 50
+vm.compressor_thrashing_min_per_10msecs: 20
+vm.compressor_minorcompact_threshold_divisor: 20
+vm.compressor_majorcompact_threshold_divisor: 25
+vm.compressor_unthrottle_threshold_divisor: 35
+vm.compressor_catchup_threshold_divisor: 50
+vm.cs_validation: 1
+vm.cs_blob_count: 709
+vm.cs_blob_size: 8607776
+vm.cs_blob_count_peak: 709
+vm.cs_blob_size_peak: 8607776
+vm.cs_blob_size_max: 1675264
+vm.vm_debug_events: 0
+vm.allow_stack_exec: 0
+vm.allow_data_exec: 1
+vm.shared_region_unnest_logging: 1
+vm.shared_region_trace_level: 1
+vm.shared_region_version: 3
+vm.shared_region_persistence: 0
+vm.vm_page_free_target: 2000
+vm.memory_pressure: 0
+vm.page_free_wanted: 0
+vm.page_purgeable_count: 175560
+vm.page_purgeable_wired_count: 1800
+vm.madvise_free_debug: 0
+vm.page_reusable_count: 62219
+vm.reusable_success: 2674858
+vm.reusable_failure: 1200
+vm.reusable_shared: 32363
+vm.all_reusable_calls: 15903
+vm.partial_reusable_calls: 2645467
+vm.reuse_success: 513270
+vm.reuse_failure: 9
+vm.all_reuse_calls: 9415
+vm.partial_reuse_calls: 519869
+vm.can_reuse_success: 2040145
+vm.can_reuse_failure: 15243
+vm.reusable_reclaimed: 0
+vm.page_free_count: 676568
+vm.page_speculative_count: 66776
+vm.page_cleaned_count: 0
+vm.pageout_inactive_dirty_internal: 260
+vm.pageout_inactive_dirty_external: 27
+vm.pageout_inactive_clean: 0
+vm.pageout_speculative_clean: 5355042
+vm.pageout_inactive_used: 1958
+vm.pageout_freed_from_inactive_clean: 0
+vm.pageout_freed_from_speculative: 5355042
+vm.pageout_freed_from_cleaned: 0
+vm.pageout_enqueued_cleaned: 29
+vm.pageout_enqueued_cleaned_from_inactive_clean: 0
+vm.pageout_enqueued_cleaned_from_inactive_dirty: 29
+vm.pageout_cleaned: 0
+vm.pageout_cleaned_reactivated: 24
+vm.pageout_cleaned_reference_reactivated: 0
+vm.pageout_cleaned_volatile_reactivated: 0
+vm.pageout_cleaned_fault_reactivated: 0
+vm.pageout_cleaned_commit_reactivated: 24
+vm.pageout_cleaned_busy: 0
+vm.pageout_cleaned_nolock: 0
+vfs.generic.nfs.client.initialdowndelay: 12
+vfs.generic.nfs.client.nextdowndelay: 30
+vfs.generic.nfs.client.iosize: 1048576
+vfs.generic.nfs.client.access_cache_timeout: 60
+vfs.generic.nfs.client.allow_async: 0
+vfs.generic.nfs.client.statfs_rate_limit: 10
+vfs.generic.nfs.client.nfsiod_thread_max: 16
+vfs.generic.nfs.client.nfsiod_thread_count: 0
+vfs.generic.nfs.client.lockd_mounts: 0
+vfs.generic.nfs.client.max_async_writes: 128
+vfs.generic.nfs.client.single_des: 0
+vfs.generic.nfs.client.access_delete: 1
+vfs.generic.nfs.client.access_dotzfs: 1
+vfs.generic.nfs.client.access_for_getattr: 0
+vfs.generic.nfs.client.idmap_ctrl: 1
+vfs.generic.nfs.client.callback_port: 0
+vfs.generic.nfs.client.is_mobile: 1
+vfs.generic.nfs.client.squishy_flags: 11
+vfs.generic.nfs.client.debug_ctl: 0
+vfs.generic.nfs.server.wg_delay: 1000
+vfs.generic.nfs.server.wg_delay_v3: 0
+vfs.generic.nfs.server.require_resv_port: 0
+vfs.generic.nfs.server.async: 0
+vfs.generic.nfs.server.export_hash_size: 64
+vfs.generic.nfs.server.reqcache_size: 64
+vfs.generic.nfs.server.request_queue_length: 128
+vfs.generic.nfs.server.user_stats: 1
+vfs.generic.nfs.server.gss_context_ttl: 28800
+vfs.generic.nfs.server.fsevents: 1
+vfs.generic.nfs.server.nfsd_thread_max: 0
+vfs.generic.nfs.server.nfsd_thread_count: 0
+vfs.generic.nfs.server.use_upcall_svc: 1
+vfs.generic.nfs.server.upcall_queue_limit: 0
+vfs.generic.nfs.server.upcall_queue_max_seen: 0
+vfs.generic.nfs.server.upcall_queue_count: 0
+vfs.generic.jnl.kdebug.trim: 0
+vfs.generic.root_unmounted_cleanly: 1
+vfs.generic.always_do_fullfsync: 0
+vfs.generic.hfs.kdebug.allocation: 0
+net.local.stream.sendspace: 8192
+net.local.stream.recvspace: 8192
+net.local.stream.tracemdns: 0
+net.local.dgram.maxdgram: 2048
+net.local.dgram.recvspace: 4096
+net.local.inflight: 0
+net.inet.ip.portrange.lowfirst: 1023
+net.inet.ip.portrange.lowlast: 600
+net.inet.ip.portrange.first: 49152
+net.inet.ip.portrange.last: 65535
+net.inet.ip.portrange.hifirst: 49152
+net.inet.ip.portrange.hilast: 65535
+net.inet.ip.forwarding: 0
+net.inet.ip.redirect: 1
+net.inet.ip.ttl: 64
+net.inet.ip.rtexpire: 10
+net.inet.ip.rtminexpire: 10
+net.inet.ip.rtmaxcache: 128
+net.inet.ip.sourceroute: 0
+net.inet.ip.accept_sourceroute: 0
+net.inet.ip.gifttl: 30
+net.inet.ip.subnets_are_local: 0
+net.inet.ip.mcast.maxgrpsrc: 512
+net.inet.ip.mcast.maxsocksrc: 128
+net.inet.ip.mcast.loop: 1
+net.inet.ip.dummynet.hash_size: 64
+net.inet.ip.dummynet.curr_time: 0
+net.inet.ip.dummynet.ready_heap: 0
+net.inet.ip.dummynet.extract_heap: 0
+net.inet.ip.dummynet.searches: 0
+net.inet.ip.dummynet.search_steps: 0
+net.inet.ip.dummynet.expire: 1
+net.inet.ip.dummynet.max_chain_len: 16
+net.inet.ip.dummynet.red_lookup_depth: 256
+net.inet.ip.dummynet.red_avg_pkt_size: 512
+net.inet.ip.dummynet.red_max_pkt_size: 1500
+net.inet.ip.dummynet.debug: 0
+net.inet.ip.fw.enable: 1
+net.inet.ip.fw.autoinc_step: 100
+net.inet.ip.fw.one_pass: 0
+net.inet.ip.fw.debug: 0
+net.inet.ip.fw.verbose: 0
+net.inet.ip.fw.verbose_limit: 0
+net.inet.ip.fw.dyn_buckets: 256
+net.inet.ip.fw.curr_dyn_buckets: 256
+net.inet.ip.fw.dyn_count: 0
+net.inet.ip.fw.dyn_max: 4096
+net.inet.ip.fw.static_count: 1
+net.inet.ip.fw.dyn_ack_lifetime: 300
+net.inet.ip.fw.dyn_syn_lifetime: 20
+net.inet.ip.fw.dyn_fin_lifetime: 1
+net.inet.ip.fw.dyn_rst_lifetime: 1
+net.inet.ip.fw.dyn_udp_lifetime: 10
+net.inet.ip.fw.dyn_short_lifetime: 5
+net.inet.ip.fw.dyn_keepalive: 1
+net.inet.ip.random_id_statistics: 0
+net.inet.ip.random_id_collisions: 0
+net.inet.ip.random_id_total: 0
+net.inet.ip.sendsourcequench: 0
+net.inet.ip.maxfragpackets: 1536
+net.inet.ip.fragpackets: 0
+net.inet.ip.maxfragsperpacket: 128
+net.inet.ip.scopedroute: 1
+net.inet.ip.adj_clear_hwcksum: 0
+net.inet.ip.check_interface: 0
+net.inet.ip.linklocal.in.allowbadttl: 1
+net.inet.ip.random_id: 1
+net.inet.ip.maxchainsent: 11
+net.inet.ip.select_srcif_debug: 0
+net.inet.icmp.maskrepl: 0
+net.inet.icmp.icmplim: 250
+net.inet.icmp.timestamp: 0
+net.inet.icmp.drop_redirect: 0
+net.inet.icmp.log_redirect: 0
+net.inet.icmp.bmcastecho: 1
+net.inet.igmp.recvifkludge: 1
+net.inet.igmp.sendra: 1
+net.inet.igmp.sendlocal: 1
+net.inet.igmp.v1enable: 1
+net.inet.igmp.v2enable: 1
+net.inet.igmp.legacysupp: 0
+net.inet.igmp.default_version: 3
+net.inet.igmp.gsrdelay: 10
+net.inet.igmp.debug: 0
+net.inet.tcp.rfc1323: 1
+net.inet.tcp.rfc1644: 0
+net.inet.tcp.mssdflt: 512
+net.inet.tcp.keepidle: 7200000
+net.inet.tcp.keepintvl: 75000
+net.inet.tcp.sendspace: 131072
+net.inet.tcp.recvspace: 131072
+net.inet.tcp.keepinit: 75000
+net.inet.tcp.v6mssdflt: 1024
+net.inet.tcp.log_in_vain: 0
+net.inet.tcp.blackhole: 0
+net.inet.tcp.delayed_ack: 3
+net.inet.tcp.tcp_lq_overflow: 1
+net.inet.tcp.recvbg: 0
+net.inet.tcp.drop_synfin: 1
+net.inet.tcp.reass.maxsegments: 3072
+net.inet.tcp.reass.cursegments: 0
+net.inet.tcp.reass.overflows: 0
+net.inet.tcp.slowlink_wsize: 8192
+net.inet.tcp.maxseg_unacked: 8
+net.inet.tcp.rfc3465: 1
+net.inet.tcp.rfc3465_lim2: 1
+net.inet.tcp.rtt_samples_per_slot: 20
+net.inet.tcp.recv_allowed_iaj: 5
+net.inet.tcp.acc_iaj_high_thresh: 100
+net.inet.tcp.doautorcvbuf: 1
+net.inet.tcp.autorcvbufincshift: 3
+net.inet.tcp.autorcvbufmax: 524288
+net.inet.tcp.lro: 0
+net.inet.tcp.lrodbg: 0
+net.inet.tcp.lro_startcnt: 4
+net.inet.tcp.limited_transmit: 1
+net.inet.tcp.early_rexmt: 1
+net.inet.tcp.sack_ackadv: 1
+net.inet.tcp.rcvsspktcnt: 512
+net.inet.tcp.rexmt_thresh: 3
+net.inet.tcp.path_mtu_discovery: 1
+net.inet.tcp.slowstart_flightsize: 1
+net.inet.tcp.local_slowstart_flightsize: 8
+net.inet.tcp.tso: 1
+net.inet.tcp.ecn_initiate_out: 0
+net.inet.tcp.ecn_negotiate_in: 0
+net.inet.tcp.packetchain: 50
+net.inet.tcp.socket_unlocked_on_output: 1
+net.inet.tcp.rfc3390: 1
+net.inet.tcp.min_iaj_win: 4
+net.inet.tcp.acc_iaj_react_limit: 200
+net.inet.tcp.doautosndbuf: 1
+net.inet.tcp.autosndbufinc: 8192
+net.inet.tcp.autosndbufmax: 524288
+net.inet.tcp.ack_prioritize: 1
+net.inet.tcp.rtt_recvbg: 1
+net.inet.tcp.recv_throttle_minwin: 16384
+net.inet.tcp.sack: 1
+net.inet.tcp.sack_maxholes: 128
+net.inet.tcp.sack_globalmaxholes: 65536
+net.inet.tcp.sack_globalholes: 0
+net.inet.tcp.minmss: 216
+net.inet.tcp.do_tcpdrain: 0
+net.inet.tcp.pcbcount: 24
+net.inet.tcp.tw_pcbcount: 1
+net.inet.tcp.icmp_may_rst: 1
+net.inet.tcp.strict_rfc1948: 0
+net.inet.tcp.isn_reseed_interval: 0
+net.inet.tcp.background_io_enabled: 1
+net.inet.tcp.rtt_min: 100
+net.inet.tcp.rexmt_slop: 200
+net.inet.tcp.randomize_ports: 0
+net.inet.tcp.newreno_sockets: 16
+net.inet.tcp.background_sockets: 8
+net.inet.tcp.win_scale_factor: 3
+net.inet.tcp.tcbhashsize: 4096
+net.inet.tcp.background_io_trigger: 5
+net.inet.tcp.keepcnt: 8
+net.inet.tcp.msl: 15000
+net.inet.tcp.max_persist_timeout: 0
+net.inet.tcp.always_keepalive: 0
+net.inet.tcp.timer_fastmode_idlemax: 20
+net.inet.tcp.broken_peer_syn_rxmit_thres: 7
+net.inet.tcp.broken_peer_syn_rexmit_thres_local: 10
+net.inet.tcp.tcp_timer_advanced: 11
+net.inet.tcp.tcp_resched_timerlist: 24169
+net.inet.tcp.pmtud_blackhole_detection: 1
+net.inet.tcp.pmtud_blackhole_mss: 1200
+net.inet.tcp.timer_fastquantum: 100
+net.inet.tcp.timer_slowquantum: 500
+net.inet.tcp.lro_sz: 8
+net.inet.tcp.lro_time: 10
+net.inet.tcp.bg_target_qdelay: 100
+net.inet.tcp.bg_allowed_increase: 8
+net.inet.tcp.bg_tether_shift: 1
+net.inet.tcp.bg_ss_fltsz: 2
+net.inet.udp.checksum: 1
+net.inet.udp.maxdgram: 9216
+net.inet.udp.recvspace: 196724
+net.inet.udp.log_in_vain: 0
+net.inet.udp.blackhole: 0
+net.inet.udp.pcbcount: 25
+net.inet.udp.randomize_ports: 1
+net.inet.ipsec.def_policy: 1
+net.inet.ipsec.esp_trans_deflev: 1
+net.inet.ipsec.esp_net_deflev: 1
+net.inet.ipsec.ah_trans_deflev: 1
+net.inet.ipsec.ah_net_deflev: 1
+net.inet.ipsec.ah_cleartos: 1
+net.inet.ipsec.ah_offsetmask: 0
+net.inet.ipsec.dfbit: 0
+net.inet.ipsec.ecn: 0
+net.inet.ipsec.debug: 0
+net.inet.ipsec.esp_randpad: -1
+net.inet.ipsec.bypass: 1
+net.inet.ipsec.esp_port: 0
+net.inet.raw.maxdgram: 8192
+net.inet.raw.recvspace: 8192
+net.inet.raw.pcbcount: 1
+net.link.generic.system.ifcount: 7
+net.link.generic.system.if_verbose: 0
+net.link.generic.system.dlil_lladdr_ckreq: 0
+net.link.generic.system.dlil_verbose: 0
+net.link.generic.system.sndq_maxlen: 128
+net.link.generic.system.rcvq_maxlen: 256
+net.link.generic.system.rxpoll_decay: 2
+net.link.generic.system.rxpoll_freeze_time: 1000000000
+net.link.generic.system.rxpoll_sample_time: 10000000
+net.link.generic.system.rxpoll_interval_time: 1000000
+net.link.generic.system.rxpoll_interval_pkts: 0
+net.link.generic.system.rxpoll_wakeups_lowat: 10
+net.link.generic.system.rxpoll_wakeups_hiwat: 100
+net.link.generic.system.rxpoll_max: 0
+net.link.generic.system.rxpoll: 1
+net.link.generic.system.if_bw_smoothing_val: 3
+net.link.generic.system.if_bw_measure_size: 10
+net.link.generic.system.dlil_input_threads: 4
+net.link.generic.system.dlil_input_sanity_check: 0
+net.link.generic.system.flow_advisory: 1
+net.link.generic.system.hwcksum_in_invalidated: 0
+net.link.generic.system.hwcksum_dbg: 0
+net.link.generic.system.hwcksum_dbg_mode: 0
+net.link.generic.system.hwcksum_dbg_partial_forced: 0
+net.link.generic.system.hwcksum_dbg_partial_forced_bytes: 0
+net.link.generic.system.hwcksum_dbg_partial_rxoff_forced: 0
+net.link.generic.system.hwcksum_dbg_partial_rxoff_adj: 0
+net.link.generic.system.hwcksum_dbg_verified: 0
+net.link.generic.system.hwcksum_dbg_bad_cksum: 0
+net.link.generic.system.hwcksum_dbg_bad_rxoff: 0
+net.link.generic.system.hwcksum_dbg_adjusted: 0
+net.link.generic.system.hwcksum_dbg_finalized_hdr: 0
+net.link.generic.system.hwcksum_dbg_finalized_data: 0
+net.link.generic.system.hwcksum_tx: 1
+net.link.generic.system.hwcksum_rx: 1
+net.link.ether.inet.prune_intvl: 300
+net.link.ether.inet.max_age: 1200
+net.link.ether.inet.host_down_time: 20
+net.link.ether.inet.arp_llreach_base: 30
+net.link.ether.inet.arp_unicast_lim: 5
+net.link.ether.inet.maxtries: 5
+net.link.ether.inet.useloopback: 1
+net.link.ether.inet.proxyall: 0
+net.link.ether.inet.sendllconflict: 0
+net.link.ether.inet.log_arp_warnings: 0
+net.link.ether.inet.keep_announcements: 1
+net.link.ether.inet.send_conflicting_probes: 1
+net.link.ether.inet.verbose: 0
+net.link.ether.inet.apple_hwcksum_tx: 1
+net.link.ether.inet.apple_hwcksum_rx: 1
+net.link.bridge.inherit_mac: 0
+net.link.bridge.rtable_prune_period: 300
+net.link.bridge.rtable_hash_size_max: 2048
+net.link.bridge.txstart: 0
+net.link.bridge.debug: 0
+net.link.loopback.bw_sleep_usec: 10
+net.link.loopback.bw_measure: 0
+net.link.loopback.max_dequeue: 256
+net.link.loopback.sched_model: 0
+net.link.loopback.dequeue_sc: 0
+net.link.iptap.total_tap_count: 0
+net.link.iptap.log: 0
+net.link.pktap.total_tap_count: 0
+net.link.pktap.count_unknown_if_type: 0
+net.link.pktap.log: 0
+net.key.debug: 0
+net.key.spi_trycnt: 1000
+net.key.spi_minval: 256
+net.key.spi_maxval: 268435455
+net.key.int_random: 60
+net.key.larval_lifetime: 30
+net.key.blockacq_count: 10
+net.key.blockacq_lifetime: 20
+net.key.esp_keymin: 256
+net.key.esp_auth: 0
+net.key.ah_keymin: 128
+net.key.prefered_oldsa: 0
+net.key.natt_keepalive_interval: 20
+net.inet6.ip6.forwarding: 0
+net.inet6.ip6.redirect: 1
+net.inet6.ip6.hlim: 64
+net.inet6.ip6.maxfragpackets: 1536
+net.inet6.ip6.accept_rtadv: 1
+net.inet6.ip6.keepfaith: 0
+net.inet6.ip6.log_interval: 5
+net.inet6.ip6.hdrnestlimit: 15
+net.inet6.ip6.dad_count: 1
+net.inet6.ip6.auto_flowlabel: 1
+net.inet6.ip6.defmcasthlim: 1
+net.inet6.ip6.gifhlim: 0
+net.inet6.ip6.kame_version: 2009/apple-darwin
+net.inet6.ip6.use_deprecated: 1
+net.inet6.ip6.rr_prune: 5
+net.inet6.ip6.v6only: 0
+net.inet6.ip6.rtexpire: 3600
+net.inet6.ip6.rtminexpire: 10
+net.inet6.ip6.rtmaxcache: 128
+net.inet6.ip6.use_tempaddr: 1
+net.inet6.ip6.temppltime: 86400
+net.inet6.ip6.tempvltime: 604800
+net.inet6.ip6.auto_linklocal: 1
+net.inet6.ip6.prefer_tempaddr: 1
+net.inet6.ip6.use_defaultzone: 0
+net.inet6.ip6.maxfrags: 3072
+net.inet6.ip6.mcast_pmtu: 0
+net.inet6.ip6.neighborgcthresh: 1024
+net.inet6.ip6.maxifprefixes: 16
+net.inet6.ip6.maxifdefrouters: 16
+net.inet6.ip6.maxdynroutes: 1024
+net.inet6.ip6.fragpackets: 0
+net.inet6.ip6.fw.enable: 1
+net.inet6.ip6.fw.debug: 0
+net.inet6.ip6.fw.verbose: 0
+net.inet6.ip6.fw.verbose_limit: 0
+net.inet6.ip6.scopedroute: 1
+net.inet6.ip6.adj_clear_hwcksum: 0
+net.inet6.ip6.maxchainsent: 0
+net.inet6.ip6.select_srcif_debug: 0
+net.inet6.ip6.mcast.maxgrpsrc: 512
+net.inet6.ip6.mcast.maxsocksrc: 128
+net.inet6.ip6.mcast.loop: 1
+net.inet6.ip6.only_allow_rfc4193_prefixes: 0
+net.inet6.ipsec6.def_policy: 1
+net.inet6.ipsec6.esp_trans_deflev: 1
+net.inet6.ipsec6.esp_net_deflev: 1
+net.inet6.ipsec6.ah_trans_deflev: 1
+net.inet6.ipsec6.ah_net_deflev: 1
+net.inet6.ipsec6.ecn: 0
+net.inet6.ipsec6.debug: 0
+net.inet6.ipsec6.esp_randpad: -1
+net.inet6.icmp6.rediraccept: 1
+net.inet6.icmp6.redirtimeout: 600
+net.inet6.icmp6.nd6_prune: 1
+net.inet6.icmp6.nd6_delay: 5
+net.inet6.icmp6.nd6_umaxtries: 3
+net.inet6.icmp6.nd6_mmaxtries: 3
+net.inet6.icmp6.nd6_useloopback: 1
+net.inet6.icmp6.nodeinfo: 3
+net.inet6.icmp6.errppslimit: 500
+net.inet6.icmp6.nd6_debug: 0
+net.inet6.icmp6.nd6_accept_6to4: 1
+net.inet6.icmp6.nd6_optimistic_dad: 31
+net.inet6.icmp6.nd6_onlink_ns_rfc4861: 0
+net.inet6.icmp6.nd6_prune_lazy: 5
+net.inet6.icmp6.nd6_llreach_base: 30
+net.inet6.icmp6.nd6_maxsolstgt: 8
+net.inet6.icmp6.nd6_maxproxiedsol: 4
+net.inet6.icmp6.prproxy_cnt: 0
+net.inet6.mld.gsrdelay: 10
+net.inet6.mld.v1enable: 1
+net.inet6.mld.v2enable: 1
+net.inet6.mld.use_allow: 1
+net.inet6.mld.debug: 0
+net.inet6.send.opstate: 0
+net.inet6.send.opmode: 0
+net.ndrv_multi_max_count: 1024
+net.route.verbose: 0
+net.statistics: 1
+net.statistics_privcheck: 0
+net.classq.verbose: 0
+net.classq.sfb.holdtime: 0
+net.classq.sfb.pboxtime: 0
+net.classq.sfb.hinterval: 0
+net.classq.sfb.increment: 82
+net.classq.sfb.decrement: 16
+net.classq.sfb.allocation: 0
+net.classq.sfb.ratelimit: 0
+net.pktsched.verbose: 0
+net.alf.loglevel: 55
+net.alf.perm: 0
+net.alf.defaultaction: 1
+net.alf.mqcount: 0
+debug.lowpri_throttle_max_iosize: 131072
+debug.lowpri_throttle_tier1_window_msecs: 25
+debug.lowpri_throttle_tier2_window_msecs: 100
+debug.lowpri_throttle_tier3_window_msecs: 500
+debug.lowpri_throttle_tier1_io_period_msecs: 15
+debug.lowpri_throttle_tier2_io_period_msecs: 50
+debug.lowpri_throttle_tier3_io_period_msecs: 200
+debug.lowpri_throttle_tier1_io_period_ssd_msecs: 5
+debug.lowpri_throttle_tier2_io_period_ssd_msecs: 15
+debug.lowpri_throttle_tier3_io_period_ssd_msecs: 25
+debug.lowpri_throttle_enabled: 1
+debug.bpf_bufsize: 4096
+debug.bpf_maxbufsize: 524288
+debug.bpf_maxdevices: 256
+debug.toggle_address_reuse: 0
+debug.kextlog: 4083
+debug.iokit: 0
+debug.iotrace: 0
+debug.darkwake: 11
+debug.brcmfirewirelog: 0 0
+debug.intelfb.graphicsTracePointEnable: 0
+debug.intelfb.IGInterruptControl: 0
+debug.intelfb.fLastRequestedPState: 10
+debug.intelfb.forceSlicesGTx: 0
+debug.intelfb.sliceInfo: 11
+debug.intelfb.debug: -9223372036854775808
+debug.intelfb.testCase: 0
+debug.intelfb.temp0: 0
+debug.intelfb.temp1: 0
+debug.intelfb.temp2: 0
+debug.intelfb.temp3: 0
+debug.intelfb.temp4: 0
+debug.intelfb.FakeType2Dongle: 0
+debug.applesmc: 0
+debug.ioppf: 0
+debug.intel.ctr_operation: 0
+debug.intel.ctr_nSec: 0
+debug.intel.ctr_KMD_CTR_GT_GFX_RC6: 0
+debug.intel.ctr_KMD_CTR_GT_GFX_RC6P: 0
+debug.intel.ctr_KMD_CTR_gtIOBusy: 0
+debug.intel.ctr_KMD_CTR_gtVideoBusy: 0
+debug.intel.ctr_KMD_CTR_pp1CoreClk: 0
+debug.intel.ctr_KMD_CTR_pp0Efficient: 0
+debug.intel.ctr_KMD_CTR_pp0AnyThreadActivity: 0
+debug.intel.ctr_KMD_CTR_pp0ThreadActivity: 0
+debug.intel.ctr_KMD_CTR_pp1Efficient: 0
+debug.intel.ctr_KMD_CTR_pp1AnyThreadActivity: 0
+debug.intel.ctr_KMD_CTR_pcuReferenceClock: 0
+debug.intel.ctr_KMD_CTR_RPPREVUP: 0
+debug.intel.ctr_KMD_CTR_RPPREVDN: 0
+debug.intel.ctr_KMD_CTR_RPUPEI: 0
+debug.intel.ctr_KMD_CTR_RPDNEI: 0
+debug.intel.ctr_KMD_CTR_SRD_PERF_CNT: 0
+debug.intel.ctr_KMD_CTR_PERFCNT1H: 0
+debug.intel.ctr_KMD_CTR_PERFCNT1L: 0
+debug.intel.ctr_KMD_CTR_PERFCNT2H: 0
+debug.intel.ctr_KMD_CTR_PERFCNT2L: 0
+debug.intel.ctr_KMD_CTR_BPERFCNT1H: 0
+debug.intel.ctr_KMD_CTR_BPERFCNT1L: 0
+debug.intel.ctr_KMD_CTR_BPERFCNT2H: 0
+debug.intel.ctr_KMD_CTR_BPERFCNT2L: 0
+debug.intel.ctr_KMD_STATE_GT_PERF_STATUS: 0
+debug.intel.ctr_KMD_STATE_RP_STATE_LIMIT: 0
+debug.intel.ctr_KMD_STATE_RP_STATE_CAP: 0
+debug.intel.ctr_KMD_STATE_RPSTAT1: 0
+debug.intel.graphicsTracePointEnable: 0
+debug.intel.IGInterruptControl: 0
+debug.intel.gstSampleKMD: 0
+debug.intel.gstLoaderControl: 0
+debug.intel.gstSampleUMD: 0
+debug.intel.gstEnableGroup0: 0
+debug.intel.gstEnableGroup1: 0
+debug.intel.gstEnableGroup2: 0
+debug.intel.gstEnableGroup3: 0
+debug.intel.gstEnableGroup4: 0
+debug.intel.gstEnableGroup5: 0
+debug.intel.gstEnableGroup6: 0
+debug.intel.gstEnableGroup7: 0
+debug.intel.gstEnableGroup8: 0
+debug.intel.gstMode: 0
+debug.intel.gstWaitForDebugger: 0
+debug.intel.gstAccumN: 0
+debug.intel.gstMinuSecSample: 0
+debug.intel.gstEveryNSubmit: 0
+debug.intel.gstFirstFrame: 0
+debug.intel.gstCaptureNumFrames: 0
+debug.intel.gstOperationComplete: 0
+debug.intel.gstTestCase: 0
+debug.intel.temp0: 0
+debug.intel.temp1: 0
+debug.intel.temp2: 0
+debug.intel.temp3: 0
+debug.intel.temp4: 0
+hw.ncpu: 4
+hw.byteorder: 1234
+hw.memsize: 8589934592
+hw.activecpu: 4
+hw.physicalcpu: 2
+hw.physicalcpu_max: 2
+hw.logicalcpu: 4
+hw.logicalcpu_max: 4
+hw.cputype: 7
+hw.cpusubtype: 4
+hw.cpu64bit_capable: 1
+hw.cpufamily: 280134364
+hw.cacheconfig: 4 2 2 4 0 0 0 0 0 0
+hw.cachesize: 8589934592 32768 262144 3145728 0 0 0 0 0 0
+hw.pagesize: 4096
+hw.busfrequency: 100000000
+hw.busfrequency_min: 100000000
+hw.busfrequency_max: 100000000
+hw.cpufrequency: 1300000000
+hw.cpufrequency_min: 1300000000
+hw.cpufrequency_max: 1300000000
+hw.cachelinesize: 64
+hw.l1icachesize: 32768
+hw.l1dcachesize: 32768
+hw.l2cachesize: 262144
+hw.l3cachesize: 3145728
+hw.tbfrequency: 1000000000
+hw.packages: 1
+hw.optional.floatingpoint: 1
+hw.optional.mmx: 1
+hw.optional.sse: 1
+hw.optional.sse2: 1
+hw.optional.sse3: 1
+hw.optional.supplementalsse3: 1
+hw.optional.sse4_1: 1
+hw.optional.sse4_2: 1
+hw.optional.x86_64: 1
+hw.optional.aes: 1
+hw.optional.avx1_0: 1
+hw.optional.rdrand: 1
+hw.optional.f16c: 1
+hw.optional.enfstrg: 1
+hw.optional.fma: 1
+hw.optional.avx2_0: 1
+hw.optional.bmi1: 1
+hw.optional.bmi2: 1
+hw.optional.rtm: 0
+hw.optional.hle: 0
+hw.cputhreadtype: 1
+machdep.cpu.max_basic: 13
+machdep.cpu.max_ext: 2147483656
+machdep.cpu.vendor: GenuineIntel
+machdep.cpu.brand_string: Intel(R) Core(TM) i5-4250U CPU @ 1.30GHz
+machdep.cpu.family: 6
+machdep.cpu.model: 69
+machdep.cpu.extmodel: 4
+machdep.cpu.extfamily: 0
+machdep.cpu.stepping: 1
+machdep.cpu.feature_bits: 3219913727 2147154879
+machdep.cpu.leaf7_feature_bits: 10155
+machdep.cpu.extfeature_bits: 739248384 33
+machdep.cpu.signature: 263761
+machdep.cpu.brand: 0
+machdep.cpu.features: FPU VME DE PSE TSC MSR PAE MCE CX8 APIC SEP MTRR PGE MCA CMOV PAT PSE36 CLFSH DS ACPI MMX FXSR SSE SSE2 SS HTT TM PBE SSE3 PCLMULQDQ DTES64 MON DSCPL VMX EST TM2 SSSE3 FMA CX16 TPR PDCM SSE4.1 SSE4.2 x2APIC MOVBE POPCNT AES PCID XSAVE OSXSAVE SEGLIM64 TSCTMR AVX1.0 RDRAND F16C
+machdep.cpu.leaf7_features: SMEP ENFSTRG RDWRFSGS TSC_THREAD_OFFSET BMI1 AVX2 BMI2 INVPCID
+machdep.cpu.extfeatures: SYSCALL XD 1GBPAGE EM64T LAHF RDTSCP TSCI
+machdep.cpu.logical_per_package: 16
+machdep.cpu.cores_per_package: 8
+machdep.cpu.microcode_version: 23
+machdep.cpu.processor_flag: 6
+machdep.cpu.mwait.linesize_min: 64
+machdep.cpu.mwait.linesize_max: 64
+machdep.cpu.mwait.extensions: 3
+machdep.cpu.mwait.sub_Cstates: 286531872
+machdep.cpu.thermal.sensor: 1
+machdep.cpu.thermal.dynamic_acceleration: 1
+machdep.cpu.thermal.invariant_APIC_timer: 1
+machdep.cpu.thermal.thresholds: 2
+machdep.cpu.thermal.ACNT_MCNT: 1
+machdep.cpu.thermal.core_power_limits: 1
+machdep.cpu.thermal.fine_grain_clock_mod: 1
+machdep.cpu.thermal.package_thermal_intr: 1
+machdep.cpu.thermal.hardware_feedback: 0
+machdep.cpu.thermal.energy_policy: 1
+machdep.cpu.xsave.extended_state: 7 832 832 0
+machdep.cpu.arch_perf.version: 3
+machdep.cpu.arch_perf.number: 4
+machdep.cpu.arch_perf.width: 48
+machdep.cpu.arch_perf.events_number: 7
+machdep.cpu.arch_perf.events: 0
+machdep.cpu.arch_perf.fixed_number: 3
+machdep.cpu.arch_perf.fixed_width: 48
+machdep.cpu.cache.linesize: 64
+machdep.cpu.cache.L2_associativity: 8
+machdep.cpu.cache.size: 256
+machdep.cpu.tlb.inst.large: 8
+machdep.cpu.tlb.data.small: 64
+machdep.cpu.tlb.data.small_level1: 64
+machdep.cpu.tlb.shared: 1024
+machdep.cpu.address_bits.physical: 39
+machdep.cpu.address_bits.virtual: 48
+machdep.cpu.core_count: 2
+machdep.cpu.thread_count: 4
+machdep.vectors.timer: 221
+machdep.vectors.IPI: 222
+machdep.pmap.hashwalks: 8923651
+machdep.pmap.hashcnts: 15956604
+machdep.pmap.hashmax: 47
+machdep.pmap.kernel_text_ps: 2097152
+machdep.pmap.kern_pv_reserve: 8000
+machdep.memmap.Conventional: 8527310848
+machdep.memmap.RuntimeServices: 540672
+machdep.memmap.ACPIReclaim: 176128
+machdep.memmap.ACPINVS: 258048
+machdep.memmap.PalCode: 0
+machdep.memmap.Reserved: 44609536
+machdep.memmap.Unusable: 0
+machdep.memmap.Other: 0
+machdep.tsc.frequency: 1900000000
+machdep.tsc.deep_idle_rebase: 1
+machdep.tsc.nanotime.tsc_base: 3160791408990
+machdep.tsc.nanotime.ns_base: 64149371395957
+machdep.tsc.nanotime.scale: 2260509103
+machdep.tsc.nanotime.shift: 0
+machdep.tsc.nanotime.generation: 20
+machdep.misc.fast_uexc_support: 1
+machdep.misc.panic_restart_timeout: 1266874889
+machdep.misc.interrupt_latency_max: 0x0 0xde 0x27a6c4
+machdep.misc.machine_check_panic: 
+machdep.misc.timer_queue_trace: 
+machdep.misc.nmis: 0
+machdep.xcpm.mode: 1
+machdep.xcpm.asserts_enabled: 0
+machdep.xcpm.asserts_traced: 0
+machdep.xcpm.cpu_wakeup_energy_cost_selector: 0
+machdep.xcpm.disable_quiesce: 0
+machdep.xcpm.mp_match: 0
+machdep.xcpm.disable_idle_self_select: 0
+machdep.xcpm.mp_load_txfr_coeff: 128
+machdep.xcpm.scalability_cpi_threshold: 4
+machdep.xcpm.scalability_cpi_demotion_threshold: 5
+machdep.xcpm.scalability_reeval_interval: 1000
+machdep.xcpm.scalability_eval_ratio_min: 17
+machdep.xcpm.scalability_detection_enabled: 0
+machdep.xcpm.hard_plimit_max_100mhz_ratio: 26
+machdep.xcpm.hard_plimit_min_100mhz_ratio: 8
+machdep.xcpm.soft_plimit_max_100mhz_ratio: 26
+machdep.xcpm.soft_plimit_min_100mhz_ratio: 8
+machdep.xcpm.ratio_changes_hf: 2
+machdep.xcpm.ratio_changes_lf: 0
+machdep.xcpm.ratio_change_limited: 1
+machdep.xcpm.ratio_change_hf_limit: 2
+machdep.xcpm.ratio_change_lf_limit: 1
+machdep.xcpm.ratio_change_ratelimit_ns: 500000
+machdep.xcpm.ratio_changes_total: 54710454
+machdep.xcpm.maxbusdelay: 4294967295
+machdep.xcpm.maxintdelay: 0
+machdep.xcpm.mbd_mode: 1
+machdep.xcpm.mbd_applications: 282835
+machdep.xcpm.mbd_relaxations: 282849
+machdep.xcpm.forced_idle_ratio: 100
+machdep.xcpm.forced_idle_period: 30000000
+machdep.xcpm.deep_idle_log: 0
+machdep.xcpm.qos_txfr: 1
+machdep.xcpm.q_migration_ttd_min: 1000000
+machdep.xcpm.q_migration_ttd_max: 100000000
+machdep.xcpm.preidle_spin_tsc: 0
+machdep.xcpm.qos_ratio_change_limited: 0
+machdep.xcpm.qos_ratio_change_hf_limit: 8
+machdep.xcpm.qos_ratio_change_lf_limit: 1
+machdep.xcpm.qos_ratelimiting_enabled: 1
+machdep.xcpm.quiesce_trace: 0
+machdep.xcpm.deep_idle_count: 14
+machdep.xcpm.deep_idle_last_stats: 0:00:35 CC7:99% C2:0% C3:0% C6:0% C7:0% C8:0% C9:0% C10:99%
+machdep.xcpm.deep_idle_total_stats: 13:14:23 CC7:99% C2:0% C3:0% C6:0% C7:0% C8:0% C9:0% C10:99%
+machdep.eager_timer_evaluations: 40589
+machdep.eager_timer_evaluation_max: 2813370
+machdep.user_idle_level: 0
+audit.session.superuser_set_sflags_mask: 24576
+audit.session.superuser_clear_sflags_mask: 24576
+audit.session.member_set_sflags_mask: 0
+audit.session.member_clear_sflags_mask: 16384
+kperf.blessed_pid: -1
+kperf.kdbg_cswitch: 0
+kperf.debug_level: 0
+kpc.classes: 3
+kpc.counting: 0
+kpc.thread_counting: 0
+security.mac.sandbox.sentinel: .sb-76535970
+security.mac.sandbox.audio_active: 0
+security.mac.qtn.sandbox_enforce: 1
+security.mac.qtn.user_approved_exec: 1
+security.mac.max_slots: 7
+security.mac.labelvnodes: 0
+security.mac.mmap_revocation: 0
+security.mac.mmap_revocation_via_cow: 0
+security.mac.device_enforce: 1
+security.mac.pipe_enforce: 1
+security.mac.posixsem_enforce: 1
+security.mac.posixshm_enforce: 1
+security.mac.proc_enforce: 1
+security.mac.socket_enforce: 1
+security.mac.system_enforce: 1
+security.mac.sysvmsg_enforce: 1
+security.mac.sysvsem_enforce: 1
+security.mac.sysvshm_enforce: 1
+security.mac.vm_enforce: 1
+security.mac.vnode_enforce: 1
