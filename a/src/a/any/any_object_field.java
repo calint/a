@@ -65,7 +65,7 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 		private String fldnm;
 		public a_object_field_editor(final Serializable o,final String field_name){
 			this.o=o;fldnm=field_name;
-			System.out.println("any: "+o.getClass()+"."+fldnm);
+//			System.out.println("any: "+o.getClass()+"."+fldnm);
 		}
 		@Override public void to(xwriter x)throws Throwable{
 			final Field f=o.getClass().getField(fldnm);
