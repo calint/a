@@ -1,0 +1,9 @@
+ssh root@104.131.232.102 "`cat install.sh`"
+chmod ugo+x restart.sh
+scp restart.sh root@104.131.232.102:/
+
+
+cd /Users/calin/Documents/workspace-2/a/cloud/digitalocean&&
+
+rsync --recursive --verbose . root@104.131.232.102:/
+
