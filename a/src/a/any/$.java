@@ -1,5 +1,9 @@
 package a.any;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 import a.c;
 import a.amazon.ec2.any_root;
 import a.any.b.any_sessions;
@@ -30,5 +34,7 @@ public class $ extends a{
 		ajaxsts.to(x);
 		ls.to(x);
 	}
+	
+	public Collection<String>col=Arrays.asList("one item","two items","third item");
 
 static final long serialVersionUID=1;}

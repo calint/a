@@ -177,7 +177,7 @@ public class list extends a{
 		
 		stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
 //		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
-		
+		x.nl().pl(path.getClass().getName());
 		x.elend();
 	}
 	public static @conf String icnfile="◻";
