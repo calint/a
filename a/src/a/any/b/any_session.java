@@ -4,18 +4,20 @@ import static b.b.session;
 import static b.b.tostr;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.List;
 import b.session;
+import a.any.any_object;
 import a.any.list.el;
 
 final public class any_session implements el{
 	private el pt;
-	private String name;
+	private String session_id;
 //	public any_session(final el parent){pt=parent;}
-	public any_session(final el parent,final String name){pt=parent;this.name=name;}
+	public any_session(final el parent,final String name){pt=parent;this.session_id=name;}
 	@Override public el parent(){return pt;}
-	@Override public String name(){return name;}
-	@Override public String fullpath(){return name;}
+	@Override public String name(){return session_id;}
+	@Override public String fullpath(){return session_id;}
 	@Override public boolean isfile(){return false;}
 	@Override public boolean isdir(){return true;}
 	@Override public List<String>list(){return list(null);}
@@ -36,20 +38,17 @@ final public class any_session implements el{
 	@Override public List<String>list(final String query){throw new UnsupportedOperationException();}
 	@Override public void foreach(final String query,final visitor v)throws Throwable{
 		final String q=tostr(query,"");
-		final session s=session(name);
+		final session s=session(session_id);
 		s.keyset().
 			stream().
 				sorted((e1,e2)->e1.compareTo(e2)).
 					forEach(e->{
 						if(e.startsWith(q))
-							v.visit(new any_session_kvp(this,name,e));
+							v.visit(new any_session_kvp(this,session_id,e));
 					});
 		
 	}
-	@Override public el get(final String name){
-		throw new UnsupportedOperationException();
-	}
-
+	@Override public el get(final String name){return new any_object(this,session(session_id).get(name),name);}
 	
 	private static final long serialVersionUID=1;
 }
