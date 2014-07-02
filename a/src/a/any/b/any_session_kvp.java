@@ -24,13 +24,12 @@ final public class any_session_kvp implements el{
 	@Override public long lastmod(){return 0;}
 	@Override public String uri(){return null;}
 	@Override public boolean exists(){return true;}
+	@Override public boolean ommit_column_icon(){return false;}	
 	@Override public boolean ommit_column_edit(){return true;}
 	@Override public boolean ommit_column_lastmod(){return true;}
 	@Override public boolean ommit_column_size(){return true;}
-	@Override public boolean ommit_column_icon(){return false;}	
 	@Override public List<String>list(final String query){throw new UnsupportedOperationException();}
 	@Override public void foreach(final String query,final visitor v)throws Throwable{throw new UnsupportedOperationException();}
-
 	@Override public void append(String cs){throw new UnsupportedOperationException();}
 	@Override public boolean rm(){throw new UnsupportedOperationException();}
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
