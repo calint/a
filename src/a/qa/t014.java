@@ -3,8 +3,10 @@ import b.*;
 final public class t014 extends a{static final long serialVersionUID=1;
 	public a s;
 	public void to(final xwriter x)throws Throwable{
-		if(req.get().query().equals("rst"))
+		if(req.get().query().equals("rst")){
 			s.set("");
+			req.get().session().path("test.txt").rm();
+		}
 		x.p(req.get().session().href()).br();
 		x.p("ĸoö: ");
 		x.inputText(s,null,this,"a").spc().ax(this,"a","post");

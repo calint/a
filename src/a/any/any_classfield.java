@@ -14,11 +14,15 @@ import b.xwriter;
 
 final public class any_classfield implements el,el.el_column_value,el.el_column_value_editor{
 	private el pt;
-	private Field fld;
-	public any_classfield(final el parent,final Field f){pt=parent;fld=f;}
+//	private Field fld;
+	private String clsnm;
+	private String fldnm;
+//	public any_classfield(final el parent,final Field f){pt=parent;fld=f;}
+	public any_classfield(final el parent,final String class_name,final String field_name){
+		pt=parent;clsnm=class_name;fldnm=field_name;}
 	@Override public el parent(){return pt;}
-	@Override public String name(){return fld.getName();}
-	@Override public String fullpath(){return fld.getDeclaringClass().getName()+"."+fld.getName();}
+	@Override public String name(){return fldnm;}
+	@Override public String fullpath(){return clsnm+"."+fldnm;}
 	@Override public boolean isfile(){return false;}
 	@Override public boolean isdir(){return false;}
 	@Override public List<String>list(){return null;}
@@ -34,18 +38,24 @@ final public class any_classfield implements el,el.el_column_value,el.el_column_
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
 	
 	@Override public void column_value(final xwriter x){try{
-		final Object o=fld.get(null);
+		final Object o=Class.forName(clsnm).getField(fldnm).get(null);
 		if(o==null)return;
 		x.p(o.toString());
 	}catch(Throwable t){throw new Error(t);}}
 	@Override public a column_value_editor(){
-		return new a_class_field_editor(fld);
+		return new a_class_field_editor(clsnm,fldnm);
 	}
 	public static class a_class_field_editor extends a{
-		private Field f;
-		public a_class_field_editor(final Field f){this.f=f;}
+		private String clsnm;
+		private String fldnm;
+//		private Field f;
+//		public a_class_field_editor(final Field f){this.f=f;}
+		public a_class_field_editor(final String class_name,final String field_name){
+			clsnm=class_name;fldnm=field_name;}
 		@Override public void to(xwriter x)throws Throwable{
+			final Field f=Class.forName(clsnm).getField(fldnm);
 			final Object o=f.get(null);
+//			final Object o=f.get(null);
 			if(o==null)clr();
 			else set(o.toString());
 			final conf ca=f.getAnnotation(conf.class);
@@ -79,6 +89,7 @@ final public class any_classfield implements el,el.el_column_value,el.el_column_
 			}
 		}
 		public void x_(final xwriter x,final String a)throws Throwable{
+			final Field f=Class.forName(clsnm).getField(fldnm);
 			//? if exception, set prev value
 //				x.xalert(f.toString()+"="+this);
 			final Class<?>c=f.getType();

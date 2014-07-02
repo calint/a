@@ -20,7 +20,14 @@ import java.util.regex.Pattern;
 public final class path implements Serializable{static final long serialVersionUID=1;
 	public static path get1(final String name){return new path(new File(name));}//?
 	private final File file;
-	path(final File f){file=f;}
+	path(final File f){
+		file=f;
+		final String name=f.getName();
+//		if(name==null||name.length()==0||name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
+		if(name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
+		if(b.firewall_paths_on)b.firewall_ensure_path_access(uri());
+	}
+	path(final File f,final boolean ommit_checks){file=f;}// called by b.b
 	public InputStream inputstream()throws FileNotFoundException{return new FileInputStream(file);}
 	public FileInputStream fileinputstream()throws IOException{return new FileInputStream(file);}
 	public FileOutputStream outputstream(final boolean append)throws IOException{mkbasedir();return new FileOutputStream(file,append);}
@@ -35,8 +42,6 @@ public final class path implements Serializable{static final long serialVersionU
 	public String fullpath(){try{return file.getCanonicalPath();}catch(final IOException e){throw new Error(e);}}
 	public path get(final String name){
 		final path p=new path(new File(file,name));
-		if(b.firewall_paths_on)b.firewall_ensure_path_access(p.uri());
-		if(name==null||name.length()==0||name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
 		return p;
 	}
 	public String name(){return file.getName();}
@@ -121,22 +126,7 @@ public final class path implements Serializable{static final long serialVersionU
 		if(ix==-1)return "";
 		return fn.substring(ix+1).toLowerCase();
 	}
-	public String uri(){
-		String s=file.getPath().substring(b.root_dir.length());
-		while(s.startsWith("./"))s=s.substring(2);//?
-		final StringBuilder sb=new StringBuilder(s.length()*2);
-//		int i0;
-//		while(true){
-//			final int i=s.indexOf(File.pathSeparatorChar,i0);
-//			if(i==-1){
-//			}
-//		}	
-		final String[]parts=s.split(Pattern.quote(File.separator));
-		for(final String ss:parts)
-			sb.append(b.urlencode(ss)).append(b.pathsep);
-		sb.setLength(sb.length()-b.pathsep.length());
-		return sb.toString();
-	}
+	public String uri(){return b.file_to_uri(file);}
 	public Object readobj()throws IOException,ClassNotFoundException{
 		final ObjectInputStream ois=new ObjectInputStream(inputstream());
 		try{final Object o=ois.readObject();return o;}finally{ois.close();}
