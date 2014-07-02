@@ -8,14 +8,15 @@ final class chdresp{
 	private long lastModified;
 	private String lastModified_s;
 	private long ts;
-	private long dt;
+//	private long dt;
 	private ByteBuffer byteBuffer;
 	private int hdrinsertionix;
 	private String contentType;
 	private String key;
 	private boolean isresource;
 	chdresp(final path p)throws Throwable{path=p;validate(System.currentTimeMillis(),null);}
-	chdresp(final cacheable c,final String key){cacheable=c;this.key=key;dt=c.lastmodupdms();}
+//	chdresp(final cacheable c,final String key){cacheable=c;this.key=key;dt=c.lastmodupdms();}
+	chdresp(final cacheable c,final String key){cacheable=c;this.key=key;}
 	public chdresp(final InputStream is)throws IOException{
 		isresource=true;
 		final ByteArrayOutputStream os=new ByteArrayOutputStream();
@@ -85,5 +86,5 @@ final class chdresp{
 		byteBuffer.put(ba);
 		byteBuffer.flip();
 	}
-	boolean isvalid(final long now){return now-ts<dt;}
+	boolean isvalid(final long now){return now-ts<cacheable.lastmodupdms();}
 }
