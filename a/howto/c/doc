@@ -1,11 +1,6 @@
 `@header`
 
 `figlet -w 128 public domain server #1`
-`date`
-
-`homeuri`
-<a href=`homeuri`>`homeuri`</a>
-
 
 `imgtoascii /logo.jpg`
 
@@ -14,7 +9,5 @@
 `banner banner`
 
 `cowsay cowsay`
-
-parser `version`
 
 `@footer`

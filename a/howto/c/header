@@ -1,1 +1,17 @@
-header
+<title>a c stream</title>
+<style>
+*{padding:0;margin:0;border:0;white-space:pre;font-family:inherit;font-size:inherit;background:inherit;color:inherit}
+html{font-family:monospace;height:100%}
+body{height:100%}
+table{border-collapse:collapse;empty-cells:show}
+table td{vertical-align:top}
+table th{vertical-align:bottom}
+a,a:visited{text-decoration:none;color:blue}
+ul{list-style:none inside none;}
+ol{list-style-position:inside}
+a{color:blue;transition:all .4s ease-in-out;-webkit-transition:all .4s ease-in-out;-moz-transition:all .4s ease-in-out;-o-transition:all .4s ease-in-out;}
+a:focus,a:hover,a:active{color:red;text-shadow:0 0 .1em rgba(0,0,0,.5)}
+/*el{display:inline-block}*/
+</style>
+   `date`    <a href=`homeuri`>`homeuri`</a>
+~~~~ ~ ~ ~ ~~~  ~~~~~~ ~~~~~~~~~~~~~ ~~~~~~~~~ ~~~  ~ ~ ~ ~ ~  ~~~

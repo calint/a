@@ -5,10 +5,12 @@ import static b.b.*;
 import java.io.*;
 import java.util.*;
 final public class c extends a implements cacheable,bin{static final long serialVersionUID=1;
-	public String contenttype(){return "text/html;charset=utf8";}
+	// bin
+	public String contenttype(){return"text/html;charset=utf8";}
+	// cache
 	public boolean cacheforeachuser(){return false;}
 	public long lastmodupdms(){return 1000;}
-	public String filetype(){return "html";}
+	public String filetype(){return"html";}
 	public String lastmod(){return null;}
 
 	public void to(final xwriter x)throws Throwable{
@@ -17,9 +19,7 @@ final public class c extends a implements cacheable,bin{static final long serial
 //		final path p=r.session().path(qs);
 		final path p=path(qs);
 		final OutputStream os=new osinc(x.outputstream(),p.parent(),null,this);
-		try{p.to(os);}
-		catch(final Throwable t){x.p(stacktrace(t));}
-		finally{os.close();}
+		try{p.to(os);}catch(final Throwable t){x.p(stacktrace(t));}finally{os.close();}
 	}
 	
 	public final static String version="1";
@@ -44,4 +44,10 @@ final public class c extends a implements cacheable,bin{static final long serial
 	public static void cowsay(final OutputStream os,final String a)throws Throwable{
 		new cli("cowsay "+a,os).wait_for_cli();
 	}
+	public static long counter;
+	public static void counter(final OutputStream os,final String a)throws Throwable{
+		counter++;
+		os.write(Long.toString(counter).getBytes());
+	}
+
 }
