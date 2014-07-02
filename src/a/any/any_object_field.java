@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import a.any.list.el;
 import b.a;
@@ -13,17 +14,14 @@ import b.xwriter;
 
 final public class any_object_field implements el,el.el_column_value,el.el_column_value_editor{
 	private el pt;
-//	private Field fld;
-	private Serializable o;
+	private Serializable ob;
 	private String fldnm;
-//	public any_classfield(final el parent,final Field f){pt=parent;fld=f;}
-	public any_object_field(final el parent,final Serializable o,final String field_name){
-		pt=parent;this.o=o;;fldnm=field_name;}
+	public any_object_field(final el parent,final Serializable o,final String field_name){pt=parent;this.ob=o;;fldnm=field_name;}
 	@Override public el parent(){return pt;}
 	@Override public String name(){return fldnm;}
-	@Override public String fullpath(){return Integer.toHexString(o.hashCode())+"."+fldnm;}
+	@Override public String fullpath(){return Integer.toHexString(ob.hashCode())+"."+fldnm;}
 	@Override public boolean isfile(){return false;}
-	@Override public boolean isdir(){return false;}
+	@Override public boolean isdir(){return ob instanceof Collection<?>;}
 	@Override public List<String>list(){return null;}
 	@Override public List<String>list(final String query){return null;}
 	@Override public el get(String name){return null;}
@@ -35,15 +33,29 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 	@Override public boolean rm(){throw new UnsupportedOperationException();}
 	@Override public OutputStream outputstream(){throw new UnsupportedOperationException();}
 	@Override public InputStream inputstream(){throw new UnsupportedOperationException();}
+
+	@Override public boolean ommit_column_edit(){return false;}
+	@Override public boolean ommit_column_lastmod(){return false;}
+	@Override public boolean ommit_column_size(){return false;}
+	@Override public boolean ommit_column_icon(){return false;}
+	
+	
+	@Override public void foreach(final String query,final visitor v)throws Throwable{
+		((Collection<?>)ob).stream().
+			filter(e->Integer.toHexString(e.hashCode()).startsWith(query)).
+				forEach(e->v.visit(new any_object(this,(Serializable)e)));
+	}
 	
 	@Override public void column_value(final xwriter x){try{
-		final Object o=this.o.getClass().getField(fldnm).get(this.o);
+		final Object o=this.ob.getClass().getField(fldnm).get(this.ob);
 		if(o==null)return;
 		x.p(o.toString());
 	}catch(Throwable t){throw new Error(t);}}
+	
 	@Override public a column_value_editor(){
-		return new a_object_field_editor(o,fldnm);
+		return new a_object_field_editor(ob,fldnm);
 	}
+	
 	public static class a_object_field_editor extends a{
 		private Serializable o;
 		private String fldnm;
@@ -115,13 +127,6 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 		}
 		private static final long serialVersionUID = 1L;
 	}
-	@Override public boolean ommit_column_edit(){return false;}
-	@Override public boolean ommit_column_lastmod(){return false;}
-	@Override public boolean ommit_column_size(){return false;}
-	@Override public boolean ommit_column_icon(){return false;}
-	
-	
-	@Override public void foreach(String query,visitor v) throws Throwable{throw new UnsupportedOperationException();}
 
 	private static final long serialVersionUID=1;
 }
