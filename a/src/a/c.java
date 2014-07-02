@@ -5,11 +5,13 @@ import static b.b.*;
 import java.io.*;
 import java.util.*;
 final public class c extends a implements cacheable,bin{static final long serialVersionUID=1;
+	@conf public static @unit(name="ms") long refresh_rate_ms=1000;
+
 	// bin
 	public String contenttype(){return"text/html;charset=utf8";}
 	// cache
 	public boolean cacheforeachuser(){return false;}
-	public long lastmodupdms(){return 1000;}
+	public long lastmodupdms(){return refresh_rate_ms;}
 	public String filetype(){return"html";}
 	public String lastmod(){return null;}
 
