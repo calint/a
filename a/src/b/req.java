@@ -1,9 +1,12 @@
 package b;
+import static b.b.pl;
 import static b.b.stacktrace;
 import static b.b.tobytes;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -75,7 +78,7 @@ public final class req{
 		while(ba_rem!=0){
 			final byte b=ba[ba_pos++];ba_rem--;
 			if(b==' '){state=state_prot;protlen=0;break;}
-			if(b=='\n'){do_after_prot();break;}
+			if(b=='\n'){do_after_prot();break;}// ie: '. index.html\n' //todo allow white space in request line
 			sb_path.append((char)b);
 		}
 		urilen+=(ba_pos-ba_pos_prev);
@@ -87,11 +90,11 @@ public final class req{
 		final int ba_pos_prev=ba_pos;
 		while(ba_rem!=0){
 			final byte b=ba[ba_pos++];ba_rem--;
-			if(b=='\n'){
-				if(ba_pos>=3&&ba[ba_pos-3]=='1')connection_keep_alive=true;// cheapo to set keepalive for http/1.1\r\n
-				do_after_prot();
-				break;
-			}
+			if(b!='\n')continue;
+			if(ba_pos>=3&&ba[ba_pos-3]=='1')connection_keep_alive=true;// cheapo to set keepalive for http/1.1\r\n
+			else if(ba_pos>=2&&ba[ba_pos-2]=='1')connection_keep_alive=true;// cheapo to set keepalive for 1\n
+			do_after_prot();
+			break;
 		}
 		protlen+=(ba_pos-ba_pos_prev);
 		if(protlen>abuse_prot_len){close();throw new Error("abuseprotlen"+protlen);}
@@ -519,54 +522,59 @@ public final class req{
 		if(state==state_sock){thdwatch.socks++;return;}
 		if(state==state_run_page)state=state_nextreq;
 	}
+	static private session load_session(final String session_id)throws IOException{
+		final File serfile=new File(b.root_dir+'/'+b.sessions_dir+'/'+session_id+'/'+b.sessionfile);
+		pl("session load "+serfile);
+		if(!serfile.exists())return null;
+		try(final InputStream is=new FileInputStream(serfile)){
+			try{
+				final ObjectInputStream ois=new ObjectInputStream(is);
+				return (session)ois.readObject();
+			}catch(final Throwable t){
+				b.pl("while loading session "+session_id+": "+t);
+				return null;
+			}
+		}
+	}
 	private void resp_page()throws Throwable{
-		if(sesid!=null){
-			//?? sessiongetandloadracing
+		if(sesid!=null&&ses==null){//?? sessiongetandloadracing 
 			ses=session.all().get(sesid);
 			if(ses==null&&b.sessionfile_load){
-//				final path sespth=b.path(b.sessionhref(sesid)+b.sessionfile);
-				final path sespth=new path(new File(b.sessionhref(sesid)+b.sessionfile));
-				if(sespth.exists()){
-					b.pl("session load "+sespth);
-					try{ses=(session)sespth.readobj();}catch(final Throwable t){//? upgser
-						b.log(new Error("could not read session, created new "+sespth));
-						ses=new session(sesid);
-					}
-					ses.bits(b.get_session_bits_for_sessionid(sesid));
-					session.all().put(sesid,ses);
+				ses=load_session(sesid);
+				if(ses==null){
+					pl("could not load, new session with same id "+sesid);
+					ses=new session(sesid);					
 				}
+				ses.bits(b.get_session_bits_for_sessionid(sesid));
+				session.all().put(sesid,ses);
+				thdwatch.sessions++;
 			}
-		}else{
+		}else if(sesid==null){
 			sesid=mkcookieid();
 			sesid_set=true;
-			ses=null;
-		}
-		if(ses==null){
+			pl("new session "+sesid);
 			ses=new session(sesid);
 			ses.bits(b.get_session_bits_for_sessionid(sesid));
-			session.all().put(ses.id(),ses);
+			session.all().put(sesid,ses);
 			thdwatch.sessions++;
 		}
 		ses.nreq++;
 		a e=(a)ses.get(path_s);
-//		System.out.println("e is null");
 		if(e==null){
 			String cn=path_s.replace('/','.');
 			while(cn.startsWith("."))cn=cn.substring(1);
 			cn=b.webobjpkg+cn;
 			Class<? extends a>ecls;
-			try{
-				ecls=(Class<? extends a>)Class.forName(cn);
-			}catch(Throwable e1){try{
+			try{ecls=(Class<? extends a>)Class.forName(cn);}catch(Throwable e1){try{
 				final String clsnm=cn+(cn.length()==0?"":".")+b.default_package_class;
 				ecls=(Class<? extends a>)Class.forName(clsnm);
 			}catch(Throwable e2){
 				while(e1.getCause()!=null)e1=e1.getCause();
 				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(e1)).nl().nl().p(b.stacktraceline(e2)).nl();
+				pl(x.toString());
 				reply(h_http404,null,null,tobytes(x.toString()));
 				return;
 			}}
-
 			try{e=ecls.newInstance();}catch(Throwable ex){
 				while(ex.getCause()!=null)ex=ex.getCause();
 				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(ex)).nl();
@@ -586,17 +594,6 @@ public final class req{
 			}
 			ses.put(path_s,e);
 		}
-//		if(b.acl_on){
-//			final acl a=e.getClass().getAnnotation(acl.class);
-//			if(a!=null){
-//				final long r=a.view();
-//				if(!ses.bits_hasany(r)){
-//					final Throwable t=new SecurityException("cannot view item of type "+e.getClass()+" due to acl\n any:  b"+Long.toBinaryString(r)+" vs b"+Long.toBinaryString(ses.bits()));
-//					reply(h_http403,null,null,b.stacktrace(t).getBytes());
-//					return;
-//				}
-//			}
-//		}
 		if(!content.isEmpty()){
 			if(b.acl_on)b.acl_ensure_post(e);
 			String ax="";

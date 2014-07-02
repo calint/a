@@ -240,7 +240,9 @@ final public class b{
 		}
 		b.err.println("\n\n"+b.stacktraceline(e));
 	}
-	public static path path(){return new path(new File(root_dir));}
+	public static path path(){
+		return new path(new File(root_dir),true);
+	}
 	public static path path(final String path){
 		ensure_path_ok(path);
 		final path p=new path(new File(root_dir,path));//? dont inst path yet
@@ -250,8 +252,8 @@ final public class b{
 	}
 	static void firewall_ensure_path_access(final String uri){
 		//. cleanup
-		final path sessionsdir=new path(new File(root_dir,sessions_dir));//? cache
-		final String sessionsdiruri=sessionsdir.uri();
+//		final path sessionsdir=new path(new File(root_dir,sessions_dir));//? cache
+		final String sessionsdiruri=b.file_to_uri(new File(b.root_dir,b.sessions_dir));
 		if(!uri.startsWith(sessionsdiruri+"/"))return;
 		try{
 			final req r=req.get();
@@ -261,10 +263,10 @@ final public class b{
 		}catch(ClassCastException ignored){}
 		// allow access to any file, sessionid in path is passphrase
 	}
-	static path path_ommit_firewall_check(final String path){
-		ensure_path_ok(path);
-		return new path(new File(root_dir,path));
-	}
+//	static path path_ommit_firewall_check(final String path){
+//		ensure_path_ok(path);
+//		return new path(new File(root_dir,path));
+//	}
 	private static void ensure_path_ok(final String path) throws Error{
 		if(path.contains(".."))throw new Error("illegalpath "+path+": containing '..'");
 	}
@@ -447,5 +449,13 @@ final public class b{
 		final String pkgnm=i==-1?"":clsnm.substring(0,i);
 		if(pkgnm.endsWith(".a")&&!req.get().session().bits_hasall(2))throw new Error("firewalled1");
 		if(clsnm.startsWith("a.localhost.")&&!req.get().ip().toString().equals("/0:0:0:0:0:0:0:1"))throw new Error("firewalled2");
+	}
+	public static String file_to_uri(final File f){//? cleanup
+		final String u1=f.getPath();
+		if(!u1.startsWith(root_dir))throw new SecurityException("path "+u1+" not in root "+root_dir);
+		final String u4=u1.substring(root_dir.length());
+		final String u2=u4.replace(File.pathSeparatorChar,'/');
+		final String u3=u2.replace(' ','+');
+		return u3;
 	}
 }

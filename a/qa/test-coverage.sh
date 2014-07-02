@@ -1,8 +1,8 @@
 #!/bin/sh
-#port=8888
-port=80
-#server=localhost
-server=www.ramvark.net
+port=8888
+#port=80
+server=localhost
+#server=www.ramvark.net
 host=$server:$port
 sessionid=aaaa-110307-064915.110-cb48e04f
 cookie="i=$sessionid"

@@ -1,5 +1,10 @@
-test-coverage.sh
-Thu Feb 20 15:47:13 ICT 2014
+-bash
+
+Wed Jul 2 08:51:42 ICT 2014
+localhost:8888
+aaaa-110307-064915.110-cb48e04f
+/Users/calin/Documents/workspace/a/bin
+
 t000: file transfer from cache
 t001: file transfer bigger
 t002: file transfer byterange from 1
@@ -13,9 +18,7 @@ t022: big chunks reply
 t023: cached uri
 t024: uploads
 . . . . . . . file
-. . . . . . . dir
 . . . . . . . very small file
-t025: websock init
 t026: encoders osltgt,osnl
 t027: encoder osjsstr
 t029: http 304
@@ -26,5 +29,5 @@ t102: session coverage
 TODO t1xx: websock coverage
 TODO t1xx: chunked reply stalled by slow client
 TODO t1xx: throttling
-Thu Feb 20 15:47:17 ICT 2014
+Wed Jul 2 08:51:44 ICT 2014
 done

@@ -1,5 +1,4 @@
-HTTP/1.1 404
+HTTP/1.1 404 Not Found
+Content-Length: 1365
 Connection: Keep-Alive
-Content-Type: text/plain;charset=utf-8
-Transfer-Encoding: chunked
 

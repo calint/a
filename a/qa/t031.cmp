@@ -1,6 +1,6 @@
-HTTP/1.1 200
+HTTP/1.1 200 OK
 Content-Length: 1583
-Last-Modified: Mon, 23 Jun 2014 03:25:07 GMT
+Last-Modified: Sat, 28 Jun 2014 01:03:37 GMT
 Connection: Keep-Alive
 
 <!doctype html><meta charset="UTF-8">
@@ -24,9 +24,9 @@ a:focus,a:hover,a:active{color:#c00;text-shadow:0 0 .1em rgba(0,0,0,.5)}
 /*el{display:inline-block}*/
 body{background-color:#efe}
 </style>
-</script>HTTP/1.1 200
+</script>HTTP/1.1 200 OK
 Content-Length: 1583
-Last-Modified: Mon, 23 Jun 2014 03:25:07 GMT
+Last-Modified: Sat, 28 Jun 2014 01:03:37 GMT
 Connection: Keep-Alive
 
 <!doctype html><meta charset="UTF-8">
