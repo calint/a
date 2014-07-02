@@ -56,8 +56,6 @@ curl -s -b $cookie --header "Content-Type: text/plain; charset=utf-8" --data-bin
 curl -s -b $cookie http://$host/u/$sessionid/test.txt > file
 diff -q file t015.cmp &&
 rm file &&
-#diff -q ../u/$sessionid/test.txt t015.cmp &&
-#rm -f ../u/$sessionid/test.txt &&
 
 echo t016: page post utf8 read &&
 curl -s -b $cookie http://$host/qa/t014 > file &&
@@ -89,10 +87,11 @@ rm file&&
 echo t024: uploads&&
 echo . . . . . . . file&&
 java -cp $classpath a.qa.uploader $server $port $sessionid upload "$uploadfile" q &&
-sleep 1 &&
+#sleep 1 &&
 curl -s -b $cookie http://$host/u/$sessionid/upload/$uploadfile > file &&
 diff -q $uploadfile file &&
 rm file &&
+#todo 
 #diff -q ../u/$sessionid/upload/$uploadfile $uploadfile&&
 #bck=`pwd`&&
 #fl=$bck/file1&&
@@ -121,10 +120,9 @@ rm file &&
 
 echo . . . . . . . very small file&&
 java -cp $classpath a.qa.uploader $server $port $sessionid "" "$uploadfile_verysmall" q &&
-sleep 1 &&
+#sleep 1 &&
 curl -s -b $cookie http://$host/u/$sessionid/"$uploadfile_verysmall" > file &&
 diff -q file "$uploadfile_verysmall" &&
-#diff -q ../u/$sessionid/"$uploadfile_verysmall" "$uploadfile_verysmall"&&
 
 
 #echo t025: websock init&&
@@ -142,40 +140,40 @@ curl -s -b $cookie http://$host/qa.t027>file&&
 diff -q file t027.cmp&&
 rm file&&
 
-echo t029: http 304&&
-cat t029.req|nc $server $port|cat>file&&
-diff -q file t029.cmp&&
-rm file&&
+#echo t029: http 304&&
+#cat t029.req|nc $server $port|cat>file&&
+#diff -q file t029.cmp&&
+#rm file&&
 
-echo t031: chained request&&
-cat t031.req|nc $server $port>file&&
-diff -q file t031.cmp&&
-rm file&&
+#echo t031: chained request&&
+#cat t031.req|nc $server $port>file&&
+#diff -q file t031.cmp&&
+#rm file&&
 
-echo t032: http 404&&
-curl -s --head -b $cookie http://$host/nofile.404err>file&&
-diff -q file t032.cmp&&
-rm file&&
+#echo t032: http 404&&
+#curl -s --head -b $cookie http://$host/nofile.404err|sed /Server:/d|sed /Date:/d>file&&
+#diff -q file t032.cmp&&
+#rm file&&
 
-echo t100: path coverage&&
-curl -s http://$host/qa/t100>file&&
-diff -q file t100.cmp&&
-rm file&&
+#echo t100: path coverage&&
+#curl -s http://$host/qa/t100>file&&
+#diff -q file t100.cmp&&
+#rm file&&
 
 #echo t101: thdwatch coverage&&
 #curl -s http://$host/qa/t101>file&&
 #diff -q file t101.cmp&&
 #rm file&&
 
-echo t102: session coverage&&
-curl -s -b $cookie http://$host/qa/t102>file&&
-diff -q file t102.cmp&&
-rm file&&
+#echo t102: session coverage&&
+#curl -s -b $cookie http://$host/qa/t102>file&&
+#diff -q file t102.cmp&&
+#rm file&&
 
 
-echo TODO t1xx: websock coverage&&
-echo TODO t1xx: chunked reply stalled by slow client&&
-echo TODO t1xx: throttling&&
+#echo TODO t1xx: websock coverage&&
+#echo TODO t1xx: chunked reply stalled by slow client&&
+#echo TODO t1xx: throttling&&
 
 #echo cleanup&&
 rm -rf ../u/$sessionid&&
