@@ -1,17 +1,20 @@
 #!/bin/sh
-IP=162.243.127.160
-SRC=/Users/calin/Documents/workspace-2/a/cloud/digitalocean/ubuntu14.04/
+echo $0
+
+IP=$(if [ -z $1 ];then echo 162.243.127.160;else echo $1;fi)
+WS=/Users/calin/Documents/workspace-2
+SRC=$WS/a/cloud/digitalocean/ubuntu14.04/
 
 date
 echo patch
 echo " src: $SRC"
 echo "dest: $IP"
 echo
-rsync --recursive --verbose --progress --exclude .svn -aze "ssh -oStrictHostKeyChecking=no -oBatchMode=yes" $SRC root@$IP:/
+rsync --recursive --verbose --progress --exclude .svn -aze 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes' $SRC root@$IP:/
 date
-ssh root@$IP /install
+ssh root@$IP 'chmod ugo+x /install && /install'
 date
-ssh root@$IP '/etc/rc.local&'
+ssh root@$IP 'chmod ugo+x /etc/rc.local && /etc/rc.local'
 date
 ssh root@$IP 'apt-get install gcc clang figlet cowsay fortune'
 date
