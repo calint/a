@@ -156,21 +156,20 @@ final public class vintage extends a{
 		if(pt()==null){
 			x.el(this,"width:768px;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 			final String id=id();
-			final jskeys jskeys=new jskeys(x);
-			x.nl().script().nl();
-			jskeys.add("cS","$x('"+id+" s')");
-			jskeys.add("cL","$x('"+id+" l')");
-			jskeys.add("cT","$x('"+id+" n')");
-			jskeys.add("cR","$x('"+id+" r')");
-			jskeys.add("cF","$x('"+id+" i')");
-			jskeys.add("cG","$x('"+id+" g')");
-			jskeys.add("cU","$x('"+id+" u')");
-			jskeys.add("cO","$x('"+id+" c')");
-			jskeys.add("cF","$x('"+id+" f')");
-			jskeys.add("cD","$x('"+ram.id()+" rfh')");
-			jskeys.add("cB","$x('"+id+" b')");
-			jskeys.add("cK","alert('info')");
-			x.scriptEnd();
+			try(final jskeys jskeys=new jskeys(x)){
+				jskeys.add("cS","$x('"+id+" s')");
+				jskeys.add("cL","$x('"+id+" l')");
+				jskeys.add("cT","$x('"+id+" n')");
+				jskeys.add("cR","$x('"+id+" r')");
+				jskeys.add("cF","$x('"+id+" i')");
+				jskeys.add("cG","$x('"+id+" g')");
+				jskeys.add("cU","$x('"+id+" u')");
+				jskeys.add("cO","$x('"+id+" c')");
+				jskeys.add("cF","$x('"+id+" f')");
+				jskeys.add("cD","$x('"+ram.id()+" rfh')");
+				jskeys.add("cB","$x('"+id+" b')");
+				jskeys.add("cK","alert('info')");
+			}
 			x.nl().style();
 			x.nl().css(this,"text-align:center");
 			x.nl().cssfont("tini","/ttf/tini.ttf");
