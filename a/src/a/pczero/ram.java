@@ -39,10 +39,10 @@ final public class ram extends a{
 			}
 		}
 		ImageIO.write(bi,"png",baos);
-		final ByteBuffer bbpng=ByteBuffer.wrap(baos.toByteArray());
-		final ByteBuffer png_base64=Base64.getEncoder().encode(bbpng);
-		final String png_base64_str=new String(png_base64.array(),png_base64.position(),png_base64.limit());
-		pngbase64.set(png_base64_str);
+		final ByteBuffer bb_png=ByteBuffer.wrap(baos.toByteArray());
+		final ByteBuffer bb_png_base64=Base64.getEncoder().encode(bb_png);
+		final String str_png_base64=new String(bb_png_base64.array(),bb_png_base64.position(),bb_png_base64.limit());
+		pngbase64.set(str_png_base64);
 		x.xu(pngbase64);
 		x.pl("var c=$('"+id()+"');var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,'+$('"+pngbase64.id()+"').value;");
 	}
