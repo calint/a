@@ -11,14 +11,12 @@ final public class ram extends a{
 	public final static int width=256;
 	public final static int height=128;	
 	public final static int size=width*height;
-	final int scl=2;
+	final private int scl=2;
 	private short[]ram=new short[size];
-//	public a pngbase64;
 	public ram(){rst();}
 	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
 	public void to(final xwriter x)throws Throwable{
-//		x.style(pngbase64,"display:none").output(pngbase64);
 		x.p("<canvas id=").p(id()).p(" width=").p(width*scl).p(" height=").p(height*scl).p("></canvas>");
 	}
 	public void x_rfh(final xwriter x,final String s)throws Throwable{// refresh ram ui
@@ -42,8 +40,6 @@ final public class ram extends a{
 		final ByteBuffer bb_png=ByteBuffer.wrap(baos.toByteArray());
 		final ByteBuffer bb_png_base64=Base64.getEncoder().encode(bb_png);
 		final String str_png_base64=new String(bb_png_base64.array(),bb_png_base64.position(),bb_png_base64.limit());
-//		pngbase64.set(str_png_base64);
-//		x.xu(pngbase64);
 		x.pl("var c=$('"+id()+"');var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,"+str_png_base64+"';");
 	}
 	public short get(final int addr){
