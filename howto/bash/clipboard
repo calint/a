@@ -232,7 +232,10 @@ k[6222]
                 quit
                 echo foo 
                 
-                
+zip -vTx *.svn* -r googlecode--20140703.zip svn-googlecode/
+
+
+
                 
                         
 
