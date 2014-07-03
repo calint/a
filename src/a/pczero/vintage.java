@@ -10,11 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
 import javax.imageio.ImageIO;
-
 import a.x.jskeys;
 import b.a;
+import b.a_ajaxsts;
 import b.path;
 import b.xwriter;
 final public class vintage extends a{
@@ -204,6 +203,7 @@ final public class vintage extends a{
 		}
 		final boolean dispram=(dispbits&1)==1;
 		if(dispram){
+			if(pt()==null)ajaxsts.to(x);
 			ram.to(x);
 			x.style(ram,"border:1px solid #488");
 			x.nl();
@@ -242,6 +242,7 @@ final public class vintage extends a{
 		}
 		x.elend();
 	}
+	public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}//application status
 	void rendpanel(xwriter x)throws Throwable{
 		x.pre();
 		x.span(sts,"font-weight:bold").nl();
