@@ -6,9 +6,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
-
 import a.x.cli;
 import b.a;
+import b.b.conf;
 import b.osnl;
 import b.path;
 import b.req;
@@ -160,7 +160,9 @@ public class $ extends a {
 		return m;
 	}
 	
-	public static String cc="gcc";
+	public static @conf String cc="gcc";
+	public static @conf String gcc_opts_for_boot_image=" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast main.c";
+	public static @conf String gcc_opts_for_console=" -o main -std=c11 -Wfatal-errors main.c";
 	public static boolean build_pco_boot_img=true;
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
 		final path basedir=req.get().session().path("a/cap");
@@ -177,9 +179,9 @@ public class $ extends a {
 			if("b".equals(buildmode)){
 //				b.cp(cap.class.getResourceAsStream("pc.c"),basedir.get("pc.c").outputstream());
 //				b.cp(cap.class.getResourceAsStream("pc.h"),basedir.get("pc.h").outputstream());
-				c.p(" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast main.c");
+				c.p(gcc_opts_for_boot_image);
 			}else{
-				c.p(" -o main -std=c11 -Wfatal-errors main.c");
+				c.p(gcc_opts_for_console);
 			}
 			c.p("&&ls -lA&&echo&&echo zipped word count&&cat main.cap|gzip|wc&&cat main.c|gzip|wc&&cat ").p("b".equals(buildmode)?"pco.img":"main").p("|gzip|wc");
 			if(!"b".equals(buildmode))c.p("&&echo&&echo program output&&echo -- --- --- - - --- - -- - -- - - --- - - -- -  -&&./main&&echo&&echo -- - - - - -- -- - - - - ---  ---  -- - - - -----&&echo&&date");

@@ -1,9 +1,8 @@
-ssh root@104.131.232.102 "`cat install.sh`"
-chmod ugo+x restart.sh
-scp restart.sh root@104.131.232.102:/
 
 
-cd /Users/calin/Documents/workspace-2/a/cloud/digitalocean&&
 
-rsync --recursive --verbose . root@104.131.232.102:/
 
+
+# update
+rsync --recursive --verbose --exclude .svn --exclude u/ /Users/calin/Documents/workspace-2/a/  root@162.243.127.160:/a/
+ssh root@162.243.127.160 'killall java;. /etc/rc.local'
