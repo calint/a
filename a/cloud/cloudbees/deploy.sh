@@ -1,4 +1,4 @@
-WS=/Users/calin/workspace-2
+WS=/Users/calin/Documents/workspace-2
 WD=__tmp__workdir
 BLITZ_IO_ID=mu-b454605f-ee5df618-eab01f6c-bc2f63cd
 
