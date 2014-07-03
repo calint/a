@@ -40,7 +40,7 @@ final public class ram extends a{
 		final ByteBuffer bb_png=ByteBuffer.wrap(baos.toByteArray());
 		final ByteBuffer bb_png_base64=Base64.getEncoder().encode(bb_png);
 		final String str_png_base64=new String(bb_png_base64.array(),bb_png_base64.position(),bb_png_base64.limit());
-		x.pl("var c=$('"+id()+"');var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,"+str_png_base64+"';");
+		x.p("var c=$('").p(id()).p("');var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,").p(str_png_base64).p("';");
 	}
 	public short get(final int addr){
 		final int a;
