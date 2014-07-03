@@ -82,7 +82,8 @@ public final class req{
 			sb_path.append((char)b);
 		}
 		urilen+=(ba_pos-ba_pos_prev);
-		if(urilen>abuse_uri_len){close();throw new Error("abuseurilen"+urilen);}
+		if(urilen>abuse_uri_len)
+			{close();throw new Error("abuseurilen"+urilen);}
 	}
 	private int protlen;
 	public static @conf int abuse_prot_len=11;
