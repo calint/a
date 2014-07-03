@@ -1,5 +1,5 @@
 WS=/Users/calin/workspace-2
-WD=cloudbees-deploy-work-dir
+WD=__tmp__workdir
 BLITZ_IO_ID=mu-b454605f-ee5df618-eab01f6c-bc2f63cd
 
 date
