@@ -25,6 +25,7 @@ public class store_in_ram implements store{
 			e.load(is);
 		}
 		return e;
+		
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 	}

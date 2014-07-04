@@ -71,6 +71,7 @@ public class t100 extends a implements bin{static final long serialVersionUID=1;
 		p3.append(s);
 		p3.append(s,"\n");
 		p3.append(new String[]{s,"1"+s},"\n");
+//		p3.append({s,"1"+s},"\n");
 		p3.to(x);
 		p3.to(x.outputstream());
 		x.nl().nl();

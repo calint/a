@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 public class wrds extends a{
 	static final long serialVersionUID=1;
-	String[]words=new String[]{
+	String[]words={
 			"",
 			"hello",
 			"world"

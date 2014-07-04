@@ -6,7 +6,7 @@ import a.medusa.medusa.reads;
 import a.medusa.screen;
 
 public class sprite implements glo{
-	private String[]scan_lines=new String[]{
+	private String[]scan_lines={
 			" ____ ",
 			"|O  O|",
 			"|_  _|",

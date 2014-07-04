@@ -48,6 +48,7 @@ public class $ extends a{
 		final String aws_access_key_id=accesskey.toString();
 		try{
 			main(new String[]{aws_secret_key,aws_access_key_id},y);
+//			main({aws_secret_key,aws_access_key_id},y);
 		}catch(Throwable t){
 			x.xube();
 			throw new Error(t);
