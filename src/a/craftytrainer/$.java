@@ -1,4 +1,4 @@
-package a.y.craftytrainer;
+package a.craftytrainer;
 import static b.b.tobytes;
 
 import java.io.ByteArrayInputStream;
