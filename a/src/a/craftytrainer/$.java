@@ -17,7 +17,7 @@ public class $ extends a{
 	public a hint;
 	public a in1;
 	public a devthr;{devthr.set(.8f);}
-	final crafty cft=new crafty();
+	public a craftybinpath;{craftybinpath.set("crafty");}
 	public void to(final xwriter x)throws Throwable{
 		x.style();
 		x.css(sts,"color:green");
@@ -33,7 +33,7 @@ public class $ extends a{
 		x.css(devthr,"border:1px solid green;text-align:right;width:2em");
 		x.styleEnd();
 		x.pre();
-		x.p("paste pgn below then ").ax(this,null,"•·scan").p(" for blunders using threshold ").inputFlt(devthr).nl();
+		x.p("paste pgn below then ").ax(this,null,"•·scan").p(" for blunders using threshhold ").inputFlt(devthr).nl();
 		x.inputTextArea(in1,"in1").nl();
 		x.output(sts).nl();
 		x.output(grph);
@@ -45,6 +45,7 @@ public class $ extends a{
 		x.tage("figcaption");
 		x.tage("figure");
 		x.nl().nl();
+		x.p("crafty bin path: ").input(craftybinpath,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
 		final pgnscanner pgn=new pgnscanner(new Scanner(in1.toString()));
@@ -59,6 +60,8 @@ public class $ extends a{
 		float prvevf=0;
 //		String prvcev="";
 //		String prvmove="";
+		crafty.crafty=craftybinpath.str();
+		final crafty cft=new crafty();
 		cft.reset();
 		int ply=0;
 		boolean found=false;
