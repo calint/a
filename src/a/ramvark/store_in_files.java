@@ -2,13 +2,11 @@ package a.ramvark;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import a.ramvark.cstore.meters;
 import b.path;
-import b.req;
 
-public class store_in_files implements store{
-	protected path root(final Class<? extends itm>cls){return req.get().session().path(cls.getName());}
+abstract public class store_in_files implements store{
+	abstract protected path root(final Class<? extends itm>cls);
 	public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
 		meters.deletes++;
 		//final itm e=load(cls,did);
