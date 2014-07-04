@@ -35,7 +35,7 @@ public class $ extends a{
 		x.styleEnd();
 		x.pre();
 		x.p("paste pgn below then ").ax(this,null,"•·scan").p(" for blunders using threshhold ").inputFlt(devthr).nl();
-		x.inputTextArea(in1,"in1").nl();
+		x.inputTextArea(in1).nl();
 		x.output(sts).nl();
 		x.output(grph);
 		x.tag("figure");
@@ -62,7 +62,7 @@ public class $ extends a{
 //		String prvcev="";
 //		String prvmove="";
 		crafty.crafty=crafty_bin_path.str();
-		final crafty cft=new crafty();
+		final crafty cft=new crafty();//? optional construct for custom path
 		cft.reset();
 		int ply=0;
 		boolean found=false;
@@ -71,23 +71,18 @@ public class $ extends a{
 			final String move=pgn.readNextMove();
 			if(move==null)break;
 			ply++;
-			if(ply%2==1)
-				xds.p((ply>>1)+1).p(". ");
+			if(ply%2==1)xds.p((ply>>1)+1).p(". ");
 			xds.p(move).spc();
-			if(ply%2!=1)
-				xds.spc();
-			final String cev=cft.move(move).trim();
+			if(ply%2!=1)xds.spc();
+			final String cev=cft.move(move);
 			x.xu(sts,"ply "+ply+". "+move+": "+cev).flush();
 			final String[]splt=cev.split("\\s+");
 			final String ev=splt[1];
-			if((ply%2)==1)
-				x.xp(grph,((ply/2)+1)+". ");
+			if((ply%2)==1)x.xp(grph,((ply/2)+1)+". ");
 			x.xp(grph,move+" ("+ev+") ");
-			if((ply%2)!=1)
-				x.xp(grph,"\n");
+			if((ply%2)!=1)x.xp(grph,"\n");
 			if(ev.contains("Mat")){
-				x.xalert("no blunder at threshold "+devthr);
-//				x.xu(devthr.set(devthr.toflt()/2));
+				x.xalert("no blunder at threshold "+devthr);//x.xu(devthr.set(devthr.toflt()/2));
 				x.xfocus(devthr);
 				return;
 			}
@@ -108,23 +103,21 @@ public class $ extends a{
 					final String ln=scb.nextLine();
 					if((lineno++%2)==1)continue;
 					if(lineno==17)break;
-					final Scanner scln=new Scanner(ln);
-					scln.findInLine("\\|");
-					dg.tr();
-					for(int i=0;i<8;i++){
-						final String cell=scln.findInLine("(\\s{3})|(\\<.*?\\>)|(\\-.*?\\-)|( . )");
-						final boolean iswht=cell.substring(0,1).equals("-");
-						final String piece=cell.substring(1,2).toLowerCase();
-						dg.td(sqcolwh?"wht":"blk");
-						final String img;
-						if(piece.equals(" ")||piece.equals("."))
-							img="";
-						else
-							img="<img src=/chs/45px-Chess_"+piece+(iswht?"l":"d")+"t45.svg.png>";
-						sqcolwh=!sqcolwh;
-						dg.p(img);
+					try(final Scanner scln=new Scanner(ln)){
+						scln.findInLine("\\|");
+						dg.tr();
+						for(int i=0;i<8;i++){
+							final String cell=scln.findInLine("(\\s{3})|(\\<.*?\\>)|(\\-.*?\\-)|( . )");
+							final boolean iswht=cell.substring(0,1).equals("-");
+							final String piece=cell.substring(1,2).toLowerCase();
+							dg.td(sqcolwh?"wht":"blk");
+							final String img;
+							if(piece.equals(" ")||piece.equals("."))img="";
+							else img="<img src=/chs/45px-Chess_"+piece+(iswht?"l":"d")+"t45.svg.png>";
+							sqcolwh=!sqcolwh;
+							dg.p(img);
+						}
 					}
-					scln.close();
 					sqcolwh=!sqcolwh;
 				}
 				scb.close();
