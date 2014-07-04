@@ -20,6 +20,7 @@ public class $ extends a{
 	public a craftybinpath;{craftybinpath.set("crafty");}
 	public void to(final xwriter x)throws Throwable{
 		x.style();
+		x.css("body","margin:0 4em 0 4em;padding:0 4em 0 4em;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 		x.css(sts,"color:green");
 		x.css(in1,"border:1px dotted green;width:100%;height:200px");
 		x.css(dsp,"border:1px dotted blue;display:block");

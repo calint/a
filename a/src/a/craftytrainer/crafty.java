@@ -21,7 +21,7 @@ class crafty{
 		p=pb.start();
 		is=p.getInputStream();
 		os=p.getOutputStream();
-		os.write(("log off\nsd "+srchdpth+"\nanalyze\n").getBytes());
+		os.write(("book off\nlog off\nsd "+srchdpth+"\nanalyze\n").getBytes());
 		os.flush();
 		sc=new Scanner(is);
 		sc.findWithinHorizon("analyze\\.White\\(1\\): ",0);
