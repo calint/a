@@ -22,7 +22,7 @@ public class planes implements Serializable{
 		// if sphere totally outside planes in list => return 2 (cull)
 		// if sphere totally inside planes in list => return 1 (render_noclip)
 		// if sphere intersects => return 3 (render_clip(clipinfo))
-		final AtomicInteger inside=new AtomicInteger();
+		final AtomicInteger inside=new AtomicInteger();//? use accumulator
 		final AtomicInteger outside=new AtomicInteger();
 		final AtomicInteger intersects=new AtomicInteger();
 		list.parallelStream().forEach((pn)->{
