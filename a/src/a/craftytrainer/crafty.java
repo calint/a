@@ -36,7 +36,7 @@ final public class crafty{
 		os.write((mv+"\n").getBytes());
 		os.flush();
 		sc.findWithinHorizon("->",0);
-		final String ln=sc.nextLine();
+		final String ln=sc.nextLine().trim();
 		scantillnextinput();
 		return ln;
 	}
