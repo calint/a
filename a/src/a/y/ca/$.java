@@ -1,4 +1,4 @@
-package a.ca;
+package a.y.ca;
 
 import java.util.HashMap;
 import java.util.Scanner;

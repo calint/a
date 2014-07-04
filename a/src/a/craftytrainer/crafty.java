@@ -1,4 +1,4 @@
-package a.y.craftytrainer;
+package a.craftytrainer;
 
 import java.io.File;
 import java.io.IOException;

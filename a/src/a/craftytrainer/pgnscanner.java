@@ -1,4 +1,4 @@
-package a.y.craftytrainer;
+package a.craftytrainer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
