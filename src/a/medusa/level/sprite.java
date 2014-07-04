@@ -22,10 +22,7 @@ public class sprite implements glo{
 		final int w=s.wi;
 		final int x=(int)p.x;
 		final int y=(int)p.y;
-		if(x>w)return;
-		if(x+wi<0)return;
-		if(y>=h)return;
-		if(y+hi<0)return;
+		if(x>w)return;if(x+wi<0)return;if(y>=h)return;if(y+hi<0)return;
 		int r=y,c=x;
 		int cut_left=0;
 		if(c<0){
