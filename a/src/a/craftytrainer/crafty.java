@@ -6,9 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import b.b.conf;
 
-class crafty{
-	public static String crafty="crafty";
+final public class crafty{
+	@conf public static String crafty="crafty";
 	public int srchdpth=10;
 	private final Process p;
 	private final OutputStream os;

@@ -23,8 +23,9 @@ public class $ extends b.a{
 		l.add(new any_class(l,req.class,"request"));
 		l.add(new any_class(l,c.class,"cincos"));
 		l.add(new any_sessions(l,"sessions"));
-		l.add(new any_root(l,"amazon web"));
+		l.add(new any_root(l,"z amazon web"));
 		l.add(new any_class(l,a.cap.$.class,"z cap"));
+		l.add(new any_class(l,a.craftytrainer.crafty.class,"z crafty trainer"));
 	}
 	
 	@Override public void to(xwriter x) throws Throwable{
