@@ -1,41 +1,12 @@
 ui={}
 ui.is_dbg=true;
 ui.axconwait=false;
-$d=function(v){
-	console.log(v);
-	return;
-
-	if(!ui.is_dbg)return;
-	var w=ui._dbgw;
-	if(!w||w.closed){
-		w=window.open('','uidbg','width=240,height=640');
-		w.screenLeft=w.screenTop=0;
-		if(!w){
-			if(!ui.nodbgwinalrt){
-				alert('cannot open debug window');
-				ui.nodbgwinalrt=true;
-			}
-			window.status=v;
-			return;
-		}
-		ui._dbgw=w;
-		//w.document.writeln('<script>window.title="debug window. turn off in file a/src/b/x.js"');
-		w.document.writeln('<pre>');
-		window.focus();
-	}
-	var s=''+v;
-	s=s.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-	w.document.writeln(s);
-	w.scrollTo(0,w.document.body.scrollHeight) 
-}
 $=function(eid){return document.getElementById(eid);}
+$d=function(v){console.log(v);}
 $s=function(eid,txt){
 	var e=$(eid);
 	$d(eid+'  '+txt);
-	if(!e){
-		$d(eid+' notfound');
-		return;
-	}
+	if(!e){$d(eid+' notfound');return;}
 	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
 		e.value=txt;
 		$b(e);
@@ -80,7 +51,6 @@ ui._onreadystatechange=function(){
 	switch(this.readyState){
 	case 1:// Open
 		if(this._hasopened)break;this._hasopened=true;//? firefox quirkfix1
-//		this._t0=new Date().getMilliseconds();
 		$d(new Date().getTime()-this._t0+" * sending");
 		$s('_ajaxsts','sending '+this._pd.length+' text');
 		this.setRequestHeader('Content-Type','text/plain; charset=utf-8');
@@ -91,16 +61,13 @@ ui._onreadystatechange=function(){
 	case 2:// Sent
 		var dt=new Date().getTime()-this._t0;
 //		$d(dt+" * sending done");
-		$s('_ajaxsts','sent '+this._pd.length+' in '+dt+' ms');
+		$s('_ajaxsts','&nbsp;sent '+this._pd.length+' in '+dt+' ms');
 		break;
 	case 3:// Receiving
 		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
 		$s('_ajaxsts','receiving '+this.responseText.length+' text');
 		console.log('receiving '+this.responseText.length+' text');
-//		var e=$('_ajaxsts');
-//		console.log(e);
-//		if(e)e.innerHTML="rece••";
 		if(s!='\n'){
 			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
 			break;
@@ -112,7 +79,6 @@ ui._onreadystatechange=function(){
 		eval(jscode);
 		break;
 	case 4:// Loaded
-//		$d(" * done");
 		this._hasopened=null;//? firefox quirkfix1
 		this._pd=null;
 		ui._pbls=[];
@@ -127,17 +93,14 @@ ui._onreadystatechange=function(){
 		this._dt=new Date().getTime()-this._t0;//? var _dt
 		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
 		$d("done in "+this._dt+" ms");
-//		$s('_ajaxsts','done in '+this._dt+' ms, '+this.responseText.length+' chars script, '+(((this.responseText.length/this._dt)*10)<<0)*0.1+' chars/s');
 		$s('_ajaxsts',this._dt+' ms, '+this.responseText.length+' chars');
 		break;		
 	}
 }
 ui._pbls=[];
 ui.qpb=function(e){
-//	$d("$b("+e.id+")");
 	if(ui.qpbhas(e.id))return;
 	ui._pbls[e.id]=e.id;
-//	$d("   added");
 }
 $b=ui.qpb;
 ui.qpbhas=function(id){return id in ui._pbls;}
@@ -148,7 +111,6 @@ $x=function(pb){
 	var post='$='+pb+'\r';
 	for(var id in ui._pbls){
 		var e=$(id)
-//		$d(id+" "+(e?e.nodeName:""));
 		post+=e.id+'=';			
 		if(e.value!==undefined)
 			post+=ui._clnfldvl(e.value);
@@ -179,7 +141,6 @@ $x=function(pb){
 				ui.req._hasopened=null;//? firefox quirkfix1
 			}
 		}	
-//		$d(" * has connection");
 	}
 	ui.req._t0=new Date().getTime();
 	ui.req._pd=post;
