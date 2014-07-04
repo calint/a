@@ -604,7 +604,7 @@ public final class req{
 					continue;
 				}
 				//? indexofloop
-				final String[]pth=me.getKey().split("_");
+				final String[]pth=me.getKey().split(a.field_path_separator);
 				a ee=e;
 				for(int n=1;n<pth.length;n++){
 					ee=ee.chld(pth[n]);
@@ -629,7 +629,7 @@ public final class req{
 					axarg=ax.substring(i2+1);
 				}
 			}
-			final String[]pth=axid.split("_");//? indexofloop
+			final String[]pth=axid.split(a.field_path_separator);//? indexofloop
 			for(int n=1;n<pth.length;n++){
 				e=e.chld(pth[n]);
 				if(e==null)break;

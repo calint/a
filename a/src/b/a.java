@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 public class a implements Serializable{
-	static final long serialVersionUID=1;
 	private a pt;
 	private String nm;
 	private String s;
@@ -46,7 +45,7 @@ public class a implements Serializable{
 	public final String id(){
 		String s=nm;
 		for(a p=this;p.pt!=null;p=p.pt)
-			s=tostr(p.pt.nm,"")+"_"+s;
+			s=tostr(p.pt.nm,"")+a.field_path_separator+s;
 		return tostr(s,"_");
 	}
 	public final String nm(){return nm;}
@@ -103,4 +102,7 @@ public class a implements Serializable{
 	}
 	public a pt(final a e){pt=e;return this;}
 	public a nm(final String s){nm=s;return this;}
+	
+	public final static String field_path_separator="-";	
+	static final long serialVersionUID=1;
 }
