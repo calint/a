@@ -31,8 +31,7 @@ public class sprite implements glo{
 		}
 		for(final String ln:scan_lines){
 			s.cursor_place(r++,c);
-			if(r<1)continue;
-			if(r>=h)break;
+			if(r<1)continue;if(r>=h)break;
 			s.print(ln,cut_left);
 		}
 	}
