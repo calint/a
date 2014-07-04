@@ -17,7 +17,7 @@ public class $ extends a{
 	public a hint;
 	public a in1;
 	public a devthr;{devthr.set(.8f);}
-	public a craftybinpath;{craftybinpath.set("crafty");}
+	public a crafty_bin_path;{crafty_bin_path.set("crafty");}
 	public void to(final xwriter x)throws Throwable{
 		x.style();
 		x.css("body","margin:0 4em 0 4em;padding:0 4em 0 4em;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
@@ -46,7 +46,7 @@ public class $ extends a{
 		x.tage("figcaption");
 		x.tage("figure");
 		x.nl().nl();
-		x.p("crafty bin path: ").input(craftybinpath,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
+		x.p("crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
 		final pgnscanner pgn=new pgnscanner(new Scanner(in1.toString()));
@@ -61,7 +61,7 @@ public class $ extends a{
 		float prvevf=0;
 //		String prvcev="";
 //		String prvmove="";
-		crafty.crafty=craftybinpath.str();
+		crafty.crafty=crafty_bin_path.str();
 		final crafty cft=new crafty();
 		cft.reset();
 		int ply=0;
