@@ -45,8 +45,8 @@ public class a implements Serializable{
 	public final String id(){
 		String s=nm;
 		for(a p=this;p.pt!=null;p=p.pt)
-			s=tostr(p.pt.nm,"")+a.field_path_separator+s;
-		return tostr(s,"_");
+			s=tostr(p.pt.nm,"")+field_path_separator+s;
+		return tostr(s,field_path_separator);
 	}
 	public final String nm(){return nm;}
 //	public final a nm(final String nm){this.nm=nm;return this;}
