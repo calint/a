@@ -9,14 +9,14 @@ import java.util.Scanner;
 import b.b.conf;
 
 final public class crafty{
-	@conf public static String crafty="crafty";
+	@conf public static String crafty_path="crafty";
 	public int srchdpth=10;
 	private final Process p;
 	private final OutputStream os;
 	private final InputStream is;
 	private final Scanner sc;
 	public crafty(){try{
-		final ProcessBuilder pb=new ProcessBuilder(crafty);
+		final ProcessBuilder pb=new ProcessBuilder(crafty_path);
 		pb.directory(new File("."));
 		pb.redirectErrorStream(true);
 		p=pb.start();

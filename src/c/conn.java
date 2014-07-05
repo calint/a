@@ -13,7 +13,7 @@ public final class conn{
 		sc.configureBlocking(false);
 		sc.setOption(StandardSocketOptions.TCP_NODELAY,true);
 		sc.connect(new InetSocketAddress(host,port));
-		sk=sc.register(client.selector(),SelectionKey.OP_CONNECT,this);
+		sk=sc.register(cl.selector,SelectionKey.OP_CONNECT,this);
 	}
 	void close(){try{sc.close();}catch(final IOException ok){}}
 	void get(final String path,final kvps hd,final oncontent oncontent,final ongetdone ongetdone)throws Throwable{

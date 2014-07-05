@@ -2,15 +2,19 @@ package c;
 import java.io.*;
 import java.nio.channels.*;
 import java.util.*;
-public final class client{
-	public client(final String host,final int port){count++;this.host=host;this.port=port;}
-	public void close()throws Throwable{
+public final class client implements AutoCloseable{
+	public client(final String host,final int port)throws IOException{
+		count++;this.host=host;this.port=port;
+		selector=Selector.open();	
+	}
+	public void close(){
 		if(conn!=null){
 			conn.close();
 			conn=null;
 		}
-		if(--count==0)
-			on=false;
+//		if(--count==0)
+//			on=false;
+		on=false;
 	}
 	public void get(final String uri,final conn.oncontent oncontent,final conn.ongetdone ongetdone)throws Throwable{
 		if(conn!=null){
@@ -35,7 +39,6 @@ public final class client{
 		conn.websock_sendframe(s,onwebsockframe);
 	}
 	public client pl(final String s){c.out.println(s);return this;}
-	static Selector selector(){return sel;}
 
 	final private String host;
 	final private int port;
@@ -43,14 +46,16 @@ public final class client{
 	private conn conn;
 
 	private static int count;
-	private static boolean on=true;
+	public boolean on=true;
 
-	public static void loop(){
+	Selector selector;
+//	Selector selector(){return sel;}
+	public void run()throws Throwable{
 		final long t0_ms=System.currentTimeMillis();
 		while(on)try{
-			sel.select();
+			selector.select();
 			metrs.select++;
-			final Iterator<SelectionKey> it=sel.selectedKeys().iterator();
+			final Iterator<SelectionKey>it=selector.selectedKeys().iterator();
 			while(it.hasNext()){
 				metrs.ioevent++;
 				final SelectionKey sk=it.next();
@@ -62,15 +67,15 @@ public final class client{
 				if(sk.isWritable()){metrs.iowrite++;cn.onwrite();}
 			}
 		}catch(final Throwable e){
-			if(e instanceof ClosedChannelException)continue;
+			if(e instanceof ClosedChannelException)break;
 			if(e instanceof ClosedSelectorException)break;
-			if(e instanceof CancelledKeyException)continue;
+			if(e instanceof CancelledKeyException)break;
 			throw new Error(e);
 		}
+		selector.close();
 		final long dt_ms=System.currentTimeMillis()-t0_ms;
-		if(c.pstats)System.out.println(c.nclients+" req, "+dt_ms+" ms, "+c.nclients*1000/dt_ms+" req/s, "+(((metrs.output+metrs.input)*1000/dt_ms)>>10)+" KB/s");
+		if(c.pstats)System.out.println(c.nclients+" req, "+dt_ms+" ms, "+c.nclients*1000/(dt_ms==0?1:dt_ms)+" req/s, "+(((metrs.output+metrs.input)*1000/(dt_ms==0?1:dt_ms))>>10)+" KB/s");
 	}
-	private static Selector sel;static{try{sel=Selector.open();}catch(final IOException t){throw new Error(t);}}
 
 	public static interface onwebsockconnect{void onwebsockconnect()throws Throwable;}
 }

@@ -18,6 +18,7 @@ public class $ extends a{
 	public a in1;
 	public a devthr;{devthr.set(.8f);}
 	public a crafty_bin_path;{crafty_bin_path.set("crafty");}
+	public ficsgames fg;
 	public void to(final xwriter x)throws Throwable{
 		x.style();
 		x.css("body","margin:0 4em 0 4em;padding:0 4em 0 4em;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
@@ -47,10 +48,12 @@ public class $ extends a{
 		x.tage("figure");
 		x.nl().nl();
 		x.p("crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
+		x.nl().nl();
+		fg.to(x);
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
-		final pgnscanner pgn=new pgnscanner(new Scanner(in1.toString()));
-		final Map<String,String>hdr=pgn.readHeaders();
+		final pgnreader pgn=new pgnreader(in1.toString());
+		final Map<String,String>hdr=pgn.readTags();
 		hdr.clear();
 		x.xu(sts,"");
 		x.xu(dsp,"");
@@ -61,7 +64,7 @@ public class $ extends a{
 		float prvevf=0;
 //		String prvcev="";
 //		String prvmove="";
-		crafty.crafty=crafty_bin_path.str();
+		crafty.crafty_path=crafty_bin_path.str();
 		final crafty cft=new crafty();//? optional construct for custom path
 		cft.reset();
 		int ply=0;
