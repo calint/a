@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import b.a;
@@ -67,6 +68,6 @@ final public class ficsgames extends a{
 			}
 		}
 	}
-	
+
 	private static final long serialVersionUID=1L;
 }
