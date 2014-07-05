@@ -52,7 +52,7 @@ ui._onreadystatechange=function(){
 	case 1:// Open
 		if(this._hasopened)break;this._hasopened=true;//? firefox quirkfix1
 		$d(new Date().getTime()-this._t0+" * sending");
-		$s('_ajaxsts','sending '+this._pd.length+' text');
+		$s('-ajaxsts','sending '+this._pd.length+' text');
 		this.setRequestHeader('Content-Type','text/plain; charset=utf-8');
 		$d(this._pd);
 		ui.req._jscodeoffset=0;
@@ -61,12 +61,12 @@ ui._onreadystatechange=function(){
 	case 2:// Sent
 		var dt=new Date().getTime()-this._t0;
 //		$d(dt+" * sending done");
-		$s('_ajaxsts','&nbsp;sent '+this._pd.length+' in '+dt+' ms');
+		$s('-ajaxsts','&nbsp;sent '+this._pd.length+' in '+dt+' ms');
 		break;
 	case 3:// Receiving
 		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
-		$s('_ajaxsts','receiving '+this.responseText.length+' text');
+		$s('-ajaxsts','receiving '+this.responseText.length+' text');
 		console.log('receiving '+this.responseText.length+' text');
 		if(s!='\n'){
 			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
@@ -93,7 +93,7 @@ ui._onreadystatechange=function(){
 		this._dt=new Date().getTime()-this._t0;//? var _dt
 		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
 		$d("done in "+this._dt+" ms");
-		$s('_ajaxsts',this._dt+' ms, '+this.responseText.length+' chars');
+		$s('-ajaxsts',this._dt+' ms, '+this.responseText.length+' chars');
 		break;		
 	}
 }

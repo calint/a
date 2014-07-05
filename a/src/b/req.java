@@ -644,7 +644,9 @@ public final class req{
 			try{e.getClass().getMethod("x_"+axfunc,xwriter.class,String.class).invoke(e,x,axarg);
 			}catch(final InvocationTargetException t){
 				b.log(t);
-				final String str=b.stacktraceline(t.getTargetException());
+//				final String str=b.stacktraceline(t.getTargetException());
+				final String str=t.getTargetException().getMessage();
+				b.log(t);
 				x.xalert(str);
 			}catch(NoSuchMethodException t){
 				x.xalert("method not found:\n"+e.getClass().getName()+".x_"+axfunc+"(xwriter,String)");

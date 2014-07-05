@@ -8,6 +8,7 @@ public final class xwriter{
 	public OutputStream outputstream(){return os;}
 	public xwriter p(final String s){if(s==null)return this;try{os.write(b.tobytes(s));}catch(final IOException e){throw new Error(e);}return this;}
 	public xwriter nl(){return p('\n');}
+	public xwriter nl(final int number_of_newlines){for(int i=0;i<number_of_newlines;i++)p('\n');return this;}
 	public xwriter p(final char n){return p(Character.toString(n));}
 	public xwriter p(final int n){return p(Integer.toString(n));}
 	public xwriter p(final float n){return p(Float.toString(n));}
@@ -242,7 +243,7 @@ public final class xwriter{
 	public xwriter style(final String selector,final String style){return style().css(selector,style).styleEnd();}
 	public xwriter el(final String style){return p("<el style=\"").p(style).p("\">");}
 	public xwriter td(String style,String any){return tago("td").attr("style",style).tagoe();}
-	public xwriter table(final String style,final String disrecarded){
+	public xwriter table(final String style,final String disrecarded_param_to_overcome_overloading){
 		return tago("table").attr("style",style).tagoe();
 	}
 	public xwriter el(final String cls,final String style){
