@@ -16,7 +16,7 @@ final public class c{
 	public static void main(final String[]args)throws Throwable{
 		if(!class_init(c.class,args))return;
 		for(int i=0;i<nclients;i++)Class.forName(clientt).newInstance();
-		client.loop();
+//		client.loop();
 	}
 	public static void class_printopts(final Class<?>cls)throws Throwable{
 		for(final Field f:cls.getFields()){
