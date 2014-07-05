@@ -53,7 +53,7 @@ final public class ficsgames extends a{
 			sb.append("/cgi-bin/search.cgi?white=").append(player_name).append("&date-sel-after=").append(ad[0]).append("&date-sel-after-mm=").append(ad[1]).append("&date-sel-after-dd=").append(ad[2]).append("&colors=1&dlgamesnomtimes=Download+(no+movetimes)");
 			final String uri=sb.toString();
 			
-			final ByteArrayOutputStream bos=new ByteArrayOutputStream(8*K);//? ybuffer
+			final ByteArrayOutputStream bos=new ByteArrayOutputStream(8*K);//? buffer in file, pipe
 			try{c.get(uri,bos::write,c::close);}catch(Throwable t){t.printStackTrace();}
 			c.run();
 			
