@@ -44,7 +44,7 @@ public class $ extends a{
 		x.output(hint);
 		x.tage("figcaption");
 		x.tage("figure");
-		x.nl().nl();
+		x.nl();
 		x.p("crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
 		x.nl().nl();
 		fg.to(x);
@@ -58,7 +58,7 @@ public class $ extends a{
 		x.xu(diag,"");
 		x.xu(hint,"");
 		x.xu(grph,"");
-		x.xfocus(sts);
+//		x.xfocus(sts);
 		final xwriter xds=new xwriter();
 		float prvevf=0;
 //		String prvcev="";
@@ -91,7 +91,7 @@ public class $ extends a{
 			final float evf=Float.parseFloat(ev);
 			final float devf=evf-prvevf;
 			if(Math.abs(devf)>devthresh){
-				x.xu(dsp," "+(devf>=0?"white":"black")+" to move and gain "+Math.abs(devf));
+				x.xu(dsp," "+(devf>=0?"white":"black")+" to move and gain "+((float)((int)(Math.abs(devf)*10))/10));
 				final xwriter board=new xwriter();
 				cft.diagram(board.outputstream());
 				final byte[]diagbytes=tobytes(board.toString());
