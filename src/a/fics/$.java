@@ -43,7 +43,7 @@ final public class $ extends a{
 		ajaxsts.to(x);
 		x.nl();
 		fg.to(x);
-		x.nl(10);
+		x.nl(11);
 //		x.output(sts).nl();
 //		x.table("margin-left:auto;margin-right:auto",null).tr().td();
 		x.output(grph).nl().output(sts).output(dsp).nl(2);
@@ -55,14 +55,16 @@ final public class $ extends a{
 		x.tage("figure");
 //		x.tableEnd();
 		x.nl(2);
-		x.pl("<a href=javascript:$('"+ajaxsts.id()+"').scrollIntoView(true)>to top of page</a>");
+		x.spc(5).pl("<a href=javascript:$('"+ajaxsts.id()+"').scrollIntoView(true)>to top of page</a>");
 		x.nl(23);
 		
-		x.p("crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
 		x.nl(2);
 		x.p("paste pgn below").nl().inputTextArea(in1);
 		x.ax(this,null,"•·scan").p(" for blunders using threshhold ").inputFlt(devthr).nl();
-		x.nl(2);
+		x.nl(2).spc(7).pl(" <a href=javascript:$('"+ajaxsts.id()+"').scrollIntoView(true)>to top of page</a>");
+		x.nl(13);
+		x.p("config:\n   crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
+		x.nl(7);
 		x.elend();
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
