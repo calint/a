@@ -21,9 +21,9 @@ final public class pgnreader{
 				if(ch=='1'){pr.unread(ch);break;}//no headers
 				if(ch!='[')throw new Error("expected [ for tag start");
 				//read tagname
-				final tagname tn=new tagname(pr);
+				final tag_name tn=new tag_name(pr);
 				skip_white_space(pr);
-				final tagvalue tv=new tagvalue(pr);
+				final tag_value tv=new tag_value(pr);
 				tags.put(tn.toString(),tv.toString());
 			}
 			return tags;
@@ -70,9 +70,9 @@ final public class pgnreader{
 				break;
 			}
 		}
-		private static class tagname{
+		private static class tag_name{
 			final String s;
-			tagname(Reader r)throws IOException{
+			tag_name(Reader r)throws IOException{
 				final StringBuilder sb=new StringBuilder();
 				while(true){
 					final int ch=r.read();
@@ -84,9 +84,9 @@ final public class pgnreader{
 			}
 			public String toString(){return s;}
 		}	
-		private static class tagvalue{
+		private static class tag_value{
 			final String s;
-			tagvalue(Reader r)throws IOException{
+			tag_value(Reader r)throws IOException{
 				final StringBuilder sb=new StringBuilder();
 				if(r.read()!='"')throw new Error("expected \"");
 				while(true){
