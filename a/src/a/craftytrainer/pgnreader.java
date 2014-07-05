@@ -11,7 +11,7 @@ final public class pgnreader{
 		private PushbackReader pr;
 		public pgnreader(final Reader r){pr=new PushbackReader(r,1);}
 		public pgnreader(final String s){pr=new PushbackReader(new StringReader(s),1);}
-		/**@return null when end of file otherwise proceed with next_move*/
+		/**@return null when end of file otherwise proceed with next_move()*/
 		public Map<String,String>next_tags()throws IOException{
 			final LinkedHashMap<String,String>tags=new LinkedHashMap<String,String>();
 			while(true){
@@ -28,7 +28,7 @@ final public class pgnreader{
 			}
 			return tags;
 		}
-		/**@return null when end of game, proceed with next_tags*/
+		/**@return null when end of game, proceed with next_tags()*/
 		public String next_move()throws IOException{
 			skip_white_space(pr);
 			if(!blkmv){
