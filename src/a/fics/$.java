@@ -1,4 +1,4 @@
-package a.craftytrainer;
+package a.fics;
 import static b.b.tobytes;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 import b.a;
 import b.a_ajaxsts;
 import b.xwriter;
-public class $ extends a{
+final public class $ extends a{
 	static final long serialVersionUID=1;
 	public a sts;
 	public a dsp;
@@ -29,10 +29,10 @@ public class $ extends a{
 		x.css("body","margin-left:1em;font-size:1em");
 		x.css(sts,"color:green");
 		x.css(in1,"border:1px dotted green;width:100%;height:8em");
-		x.css(dsp,"border:1px dotted blue;display:block");
+//		x.css(dsp,"border:1px dotted blue;display:block");
 //		x.css(grph,"display:block");
 		x.css(diag,"display:block");
-		x.css(hint,"display:block;border:1px dotted yellow;background:#f0fff0;margin:1em;padding:1em;break:left");
+		x.css(hint,"display:block;margin-top:1em;border:1px dotted yellow;background:#f0fff0;margin:1em;padding:1em;break:left");
 		x.css("table.chsboard","border:1px solid black");
 		x.css("table.chsboard td","width:45px;height:45px;align:center;vertical-align:middle");
 		x.css("table.chsboard td.wht","background:white");
@@ -44,9 +44,9 @@ public class $ extends a{
 		x.nl();
 		fg.to(x);
 		x.nl(10);
-		x.output(sts);
+//		x.output(sts).nl();
 //		x.table("margin-left:auto;margin-right:auto",null).tr().td();
-		x.output(grph).nl().output(dsp).nl();
+		x.output(grph).nl().output(sts).output(dsp).nl(2);
 		x.tag("figure");
 		x.span(diag);
 		x.tag("figcaption");
@@ -85,7 +85,7 @@ public class $ extends a{
 		int ply=0;
 		boolean found=false;
 		final float devthresh=devthr.toflt();
-		x.pl("$('"+sts.id()+"').scrollIntoView(true);");
+		x.pl("$('"+grph.id()+"').scrollIntoView(true);");
 		while(true){
 			final String move=pgn.next_move();
 			if(move==null)break;
@@ -94,7 +94,7 @@ public class $ extends a{
 			xds.p(move).spc();
 			if(ply%2!=1)xds.spc();
 			final String cev=cft.move(move);
-			x.xu(sts,"ply "+ply+". "+move+": "+cev).flush();
+			x.xu(sts,ply+". "+move+": "+cev).flush();
 			final String[]splt=cev.split("\\s+");
 			final String ev=splt[1];
 			if((ply%2)==1)x.xp(grph,((ply/2)+1)+". ");

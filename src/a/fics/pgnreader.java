@@ -1,4 +1,4 @@
-package a.craftytrainer;
+package a.fics;
 
 import java.io.IOException;
 import java.io.PushbackReader;
