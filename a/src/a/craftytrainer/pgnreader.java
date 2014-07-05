@@ -44,7 +44,7 @@ final public class pgnreader{
 					blkmv=false;
 					return null;//end of game
 				}
-				if(!s.endsWith(".")){
+				if(!s.endsWith(".")){// unnumbered moves, consider white move
 					blkmv=!blkmv;
 					final move mv=new move(new StringReader(s));
 					skip_white_space(pr);
@@ -57,7 +57,7 @@ final public class pgnreader{
 						return null;//end of game
 					}
 					return ss;				
-				}//? probably un-numbered moves, consider it white move
+				}
 				skip_white_space(pr);
 			}
 			blkmv=!blkmv;
