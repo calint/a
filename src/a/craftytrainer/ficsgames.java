@@ -4,8 +4,9 @@ import static b.b.K;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import b.a;
@@ -19,6 +20,10 @@ final public class ficsgames extends a{
 	public a pl;//player name
 	public a af;//query date
 	public a ot;//output
+	public ficsgames(){
+		final String s=DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDateTime.now());
+		af.set(s);
+	}
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
 		x.p("player: ").inputText(pl).p("  from date: ").input(af,"date",null,null,null,null,null,null,null).ax(this).nl().output(ot);

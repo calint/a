@@ -40,7 +40,7 @@ final public class pgnreader{
 					sb.append((char)ch);
 				}
 				final String s=sb.toString();
-				if(s.equals("1-0")||s.equals("0-1")||s.equals("1/2-1/2")){
+				if(is_end_of_game(s)){
 					blkmv=false;
 					return null;//end of game
 				}
@@ -53,8 +53,8 @@ final public class pgnreader{
 			final int ch=pr.read();
 			if(ch=='{')new comment(pr);
 			else if(ch!=-1)pr.unread(ch);
-			final String mvstr=mv.toString();
-			if(mvstr.equals("1-0")||mvstr.equals("0-1")||mvstr.equals("1/2-1/2")){
+			final String s=mv.toString();
+			if(is_end_of_game(s)){
 				blkmv=false;
 				return null;//end of game
 			}
@@ -62,6 +62,9 @@ final public class pgnreader{
 		}
 
 		private boolean blkmv;
+
+		static private boolean is_end_of_game(final String s){return s.equals("1-0")||s.equals("0-1")||s.equals("1/2-1/2");}
+
 		private static void skip_white_space(PushbackReader pr)throws IOException{
 			while(true){
 				final int ch=pr.read();
