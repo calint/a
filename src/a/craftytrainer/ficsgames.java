@@ -17,7 +17,7 @@ import b.xwriter;
 import c.client;
 
 final public class ficsgames extends a{
-	public a pl;//player name
+	public a pl;{pl.set("ctenitchi");}//player name
 	public a af;//query date
 	public a ot;//output
 	public ficsgames(){
@@ -26,7 +26,9 @@ final public class ficsgames extends a{
 	}
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
-		x.p("player: ").inputText(pl).p("  from date: ").input(af,"date",null,null,null,null,null,null,null).ax(this).nl();
+		x.input(pl,"text","width:6em;padding:.5em;background:yellow;border:1px dotted gray",null,null,null,null,null,null);
+		x.input(af,"date","width:10em;padding:.5em;background:yellow;border:1px dotted gray",null,null,null,null,null,null);
+		x.spc(3).ax(this).nl();
 		x.spano(ot).spanEnd();
 		x.elend();
 	}
@@ -39,14 +41,19 @@ final public class ficsgames extends a{
 			final Map<String,String>tags=ps.next_tags();
 			if(tags==null)break;
 //			x.pl(tags.toString());
+			x.el("border-bottom:1px dotted gray;display:block;padding:1em;font-size:1em");
+			x.p(tags.get("Date")).spc().p(tags.get("Time")).spc(3);
 			String mv=ps.next_move();
 			final xwriter z=new xwriter();
 			while(mv!=null){
 				z.p(mv).spc();
 				mv=ps.next_move();
 			}
-			x.ax(this,"e "+z,z.toString());
-			x.nl().nl();
+			final String moves=z.toString();
+			final int chars_per_line=60;
+			final String link_text=moves.length()>chars_per_line?moves.substring(0,chars_per_line):moves;
+			x.ax(this,"e "+z,moves,link_text);
+			x.elend();
 		}
 		y.xube();
 	}

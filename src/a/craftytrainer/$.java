@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Scanner;
 import b.a;
+import b.a_ajaxsts;
 import b.xwriter;
 public class $ extends a{
 	static final long serialVersionUID=1;
@@ -15,44 +16,56 @@ public class $ extends a{
 	public a hint;
 	public a in1;//pgn input
 	public a devthr;{devthr.set(.8f);}
-	public a crafty_bin_path;{crafty_bin_path.set("crafty");}
+	public a crafty_bin_path;{crafty_bin_path.set("/opt/local/bin/crafty");}
 	public ficsgames fg;
+	public a_ajaxsts ajaxsts;
 	public void to(final xwriter x)throws Throwable{
+		x.el(this);
+//		x.el(this,"width:30em;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+//		x.el(this);
 		x.style();
-		x.css("body","margin:0 4em 0 4em;padding:0 4em 0 4em;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+//		x.css(this,"width:768px;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+//		x.css(this,"margin:0 4em 0 4em;padding:0 4em 0 4em;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+		x.css("body","margin-left:1em;font-size:1em");
 		x.css(sts,"color:green");
-		x.css(in1,"border:1px dotted green;width:100%;height:200px");
+		x.css(in1,"border:1px dotted green;width:100%;height:8em");
 		x.css(dsp,"border:1px dotted blue;display:block");
-		x.css(grph,"display:block;");
-		x.css(diag,"display:block;");
-		x.css(hint,"border:1px dotted yellow;background:#f0fff0;display:block");
+//		x.css(grph,"display:block");
+		x.css(diag,"display:block");
+		x.css(hint,"display:block;border:1px dotted yellow;background:#f0fff0;margin:1em;padding:1em;break:left");
 		x.css("table.chsboard","border:1px solid black");
 		x.css("table.chsboard td","width:45px;height:45px;align:center;vertical-align:middle");
 		x.css("table.chsboard td.wht","background:white");
 		x.css("table.chsboard td.blk","background:#a0a0a0");
-		x.css(devthr,"border:1px solid green;text-align:right;width:2em");
+		x.css(devthr,"border:1px dotted green;text-align:right;width:2em;padding:.5em;background:yellow");
 		x.styleEnd();
-		x.pre();
-		x.p("paste pgn below then ").ax(this,null,"•·scan").p(" for blunders using threshhold ").inputFlt(devthr).nl();
-		x.inputTextArea(in1).nl();
-		x.output(sts).nl();
-		x.output(grph);
+//		x.pre();
+		ajaxsts.to(x);
+		x.nl();
+		fg.to(x);
+		x.output(sts);
+//		x.table("margin-left:auto;margin-right:auto",null).tr().td();
+		x.output(grph).nl().output(dsp).nl();
 		x.tag("figure");
-		x.output(dsp).nl();
 		x.span(diag);
 		x.tag("figcaption");
 		x.output(hint);
 		x.tage("figcaption");
 		x.tage("figure");
-		x.nl();
+//		x.tableEnd();
+		x.nl(23);
+		
 		x.p("crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
-		x.nl().nl();
-		fg.to(x);
+		x.nl(2);
+		x.p("paste pgn below").nl().inputTextArea(in1);
+		x.ax(this,null,"•·scan").p(" for blunders using threshhold ").inputFlt(devthr).nl();
+		x.nl(2);
+		x.elend();
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
 		final pgnreader pgn=new pgnreader(in1.toString());
 		final Map<String,String>hdr=pgn.next_tags();
-		hdr.clear();
+		if(hdr==null)throw new Exception("no pgn to parse");
 		x.xu(sts,"");
 		x.xu(dsp,"");
 		x.xu(diag,"");
@@ -69,6 +82,7 @@ public class $ extends a{
 		int ply=0;
 		boolean found=false;
 		final float devthresh=devthr.toflt();
+		x.pl("$('"+sts.id()+"').scrollIntoView(true);");
 		while(true){
 			final String move=pgn.next_move();
 			if(move==null)break;
