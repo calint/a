@@ -26,28 +26,33 @@ final public class ficsgames extends a{
 	}
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
-		x.p("player: ").inputText(pl).p("  from date: ").input(af,"date",null,null,null,null,null,null,null).ax(this).nl().output(ot);
+		x.p("player: ").inputText(pl).p("  from date: ").input(af,"date",null,null,null,null,null,null,null).ax(this).nl();
+		x.spano(ot).spanEnd();
 		x.elend();
 	}
 
 	public void x_(xwriter y,String s)throws Throwable{
-		final xwriter x=y.xub(ot,true,true);
+		final xwriter x=y.xub(ot,true,false);
 		final pgnreader ps=query(pl.str(),af.str());
 		while(true){
-			x.nl().nl();
+//			x.nl().nl();
 			final Map<String,String>tags=ps.next_tags();
 			if(tags==null)break;
-			x.pl(tags.toString());
+//			x.pl(tags.toString());
 			String mv=ps.next_move();
+			final xwriter z=new xwriter();
 			while(mv!=null){
-				x.p(mv).spc();
+				z.p(mv).spc();
 				mv=ps.next_move();
 			}
+			x.ax(this,"e "+z,z.toString());
 			x.nl().nl();
 		}
 		y.xube();
 	}
-	
+	public void x_e(xwriter x,String s)throws Throwable{
+		ev(x,this,s);
+	}	
 //	http://ficsgames.org/cgi-bin/search.cgi?player=ctenitchi&action=Finger
 
 	public pgnreader query(final String player_name,final String after_date)throws Throwable{

@@ -1,11 +1,9 @@
 package a.craftytrainer;
 import static b.b.tobytes;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Scanner;
-
 import b.a;
 import b.xwriter;
 public class $ extends a{
@@ -15,7 +13,7 @@ public class $ extends a{
 	public a diag;
 	public a grph;
 	public a hint;
-	public a in1;
+	public a in1;//pgn input
 	public a devthr;{devthr.set(.8f);}
 	public a crafty_bin_path;{crafty_bin_path.set("crafty");}
 	public ficsgames fg;
@@ -60,6 +58,7 @@ public class $ extends a{
 		x.xu(diag,"");
 		x.xu(hint,"");
 		x.xu(grph,"");
+		x.xfocus(sts);
 		final xwriter xds=new xwriter();
 		float prvevf=0;
 //		String prvcev="";
@@ -144,5 +143,16 @@ public class $ extends a{
 			x.xu(dsp," no blunders found at evaluation threshhold "+devthresh+" with search depth "+cft.srchdpth+" ply");
 			return;
 		}
+	}
+	
+	
+	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
+		if(from==fg){
+			in1.set(o.toString());
+			x.xu(in1);
+			x_(x,null);
+			return;
+		}
+		super.ev(x,from,o);
 	}
 }
