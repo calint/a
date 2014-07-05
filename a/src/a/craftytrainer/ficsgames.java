@@ -29,13 +29,13 @@ final public class ficsgames extends a{
 		final pgnreader ps=query(pl.str(),af.str());
 		while(true){
 			x.nl().nl();
-			final Map<String,String>tags=ps.readTags();
+			final Map<String,String>tags=ps.next_tags();
 			if(tags==null)break;
 			x.pl(tags.toString());
-			String mv=ps.readNextMove();
+			String mv=ps.next_move();
 			while(mv!=null){
 				x.p(mv).spc();
-				mv=ps.readNextMove();
+				mv=ps.next_move();
 			}
 			x.nl().nl();
 		}
@@ -62,6 +62,7 @@ final public class ficsgames extends a{
 				final ZipEntry ze=zis.getNextEntry();
 				final path p=req.get().session().path(getClass()).get(uri);
 				try(final OutputStream pos=p.outputstream()){b.cp(zis,pos);}
+//				zis.close();
 				return new pgnreader(p.reader());
 			}
 		}

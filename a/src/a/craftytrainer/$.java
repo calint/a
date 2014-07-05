@@ -53,7 +53,7 @@ public class $ extends a{
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
 		final pgnreader pgn=new pgnreader(in1.toString());
-		final Map<String,String>hdr=pgn.readTags();
+		final Map<String,String>hdr=pgn.next_tags();
 		hdr.clear();
 		x.xu(sts,"");
 		x.xu(dsp,"");
@@ -71,7 +71,7 @@ public class $ extends a{
 		boolean found=false;
 		final float devthresh=devthr.toflt();
 		while(true){
-			final String move=pgn.readNextMove();
+			final String move=pgn.next_move();
 			if(move==null)break;
 			ply++;
 			if(ply%2==1)xds.p((ply>>1)+1).p(". ");
