@@ -44,6 +44,7 @@ final public class pgnreader{
 					blkmv=false;
 					return null;//end of game
 				}
+//				if(!s.endsWith(".")){}//? probably un-numbered moves
 				skip_white_space(pr);
 			}
 			blkmv=!blkmv;
