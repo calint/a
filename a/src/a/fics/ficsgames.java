@@ -1,4 +1,4 @@
-package a.craftytrainer;
+package a.fics;
 
 import static b.b.K;
 import java.io.ByteArrayInputStream;
