@@ -43,6 +43,7 @@ public class $ extends a{
 		ajaxsts.to(x);
 		x.nl();
 		fg.to(x);
+		x.nl(10);
 		x.output(sts);
 //		x.table("margin-left:auto;margin-right:auto",null).tr().td();
 		x.output(grph).nl().output(dsp).nl();
@@ -53,6 +54,8 @@ public class $ extends a{
 		x.tage("figcaption");
 		x.tage("figure");
 //		x.tableEnd();
+		x.nl(2);
+		x.pl("<a href=javascript:$('"+ajaxsts.id()+"').scrollIntoView(true)>to top of page</a>");
 		x.nl(23);
 		
 		x.p("crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
