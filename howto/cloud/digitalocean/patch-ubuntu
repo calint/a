@@ -16,5 +16,5 @@ ssh root@$IP 'chmod ugo+x /install && /install'
 date
 ssh root@$IP 'chmod ugo+x /etc/rc.local && /etc/rc.local'
 date
-ssh root@$IP 'apt-get install gcc clang figlet cowsay fortune'
+ssh root@$IP 'apt-get install gcc clang crafty figlet cowsay fortune'
 date
