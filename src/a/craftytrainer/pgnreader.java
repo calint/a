@@ -18,8 +18,8 @@ final public class pgnreader{
 				skip_white_space(pr);
 				final int ch=pr.read();
 				if(ch==-1){return null;}
-				if(ch=='1'){pr.unread(ch);break;}//no headers
-				if(ch!='[')throw new Error("expected [ for tag start");
+				if(ch!='['){pr.unread(ch);break;}//no headers
+//				if(ch!='[')throw new Error("expected [ for tag start");
 				//read tagname
 				final tag_name tn=new tag_name(pr);
 				skip_white_space(pr);
@@ -44,7 +44,20 @@ final public class pgnreader{
 					blkmv=false;
 					return null;//end of game
 				}
-//				if(!s.endsWith(".")){}//? probably un-numbered moves
+				if(!s.endsWith(".")){
+					blkmv=!blkmv;
+					final move mv=new move(new StringReader(s));
+					skip_white_space(pr);
+					final int ch=pr.read();
+					if(ch=='{')new comment(pr);
+					else if(ch!=-1)pr.unread(ch);
+					final String ss=mv.toString();
+					if(is_end_of_game(ss)){
+						blkmv=false;
+						return null;//end of game
+					}
+					return ss;				
+				}//? probably un-numbered moves, consider it white move
 				skip_white_space(pr);
 			}
 			blkmv=!blkmv;
@@ -58,7 +71,7 @@ final public class pgnreader{
 				blkmv=false;
 				return null;//end of game
 			}
-			return mv.toString();
+			return s;
 		}
 
 		private boolean blkmv;
