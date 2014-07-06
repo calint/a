@@ -27,7 +27,7 @@ final public class wav extends a implements cacheable,bin{
 //			range_to_byte=Integer.parseInt(tostr(ft[1],"0"));
 //		}else{
 			range_from_byte=0;
-			range_to_byte=0x10000;
+			range_to_byte=0x200;
 //		}
 		final header_wav h=new header_wav();
 		final int size_in_bytes=range_to_byte-range_from_byte;
