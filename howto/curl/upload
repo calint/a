@@ -11,3 +11,6 @@ T=`date -r $st_mtime +%Y-%m-%d--%T.000`      # freebsd
 #T=`date -d @$st_mtime +%Y-%m-%d--%T.000`    # linux
 echo • upload $1 to $H/u/$I$D
 curl $V --cookie i=$I --header "Content-Type:file;$T" --data-binary @$1 "$H$D"
+
+
+#find src|while read ln;do if [ -f $ln ];then howto/curl/upload $ln;fi;done
