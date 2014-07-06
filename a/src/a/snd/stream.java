@@ -28,7 +28,7 @@ final public class stream extends a implements cacheable,bin{
 //			range_to_byte=Integer.parseInt(tostr(ft[1],"0"));
 //		}else{
 			range_from_byte=0;
-			range_to_byte=0x1000000;
+			range_to_byte=0x1000;
 //		}
 		final header_au h=new header_au();
 		final int size_in_bytes=range_to_byte-range_from_byte;
@@ -37,8 +37,11 @@ final public class stream extends a implements cacheable,bin{
 		final OutputStream os=x.outputstream();
 		h.to(os);
 		final byte[]ba=new byte[size_in_bytes];
+		double da_dt=Math.PI*2/8000*5000;
+		double a=0;
 		for(int i=0;i<size_in_bytes;i++){
-			ba[i]=(byte)(Math.random()*256-128);
+			ba[i]=(byte)(Math.sin(a+=da_dt)*127);
+			da_dt+=Math.PI*2/8000;
 		}
 		os.write(ba);
 	}
