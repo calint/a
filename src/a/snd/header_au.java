@@ -15,7 +15,7 @@ final class header_au implements Serializable,header{
 		0,0,0,0,
 		0,0,0,0,
 	};
-	@Override public void set_size_in_bytes(final int n){set_int_in_bytes_array(n,8);}
+	@Override public void set_data_size_in_bytes(final int n){set_int_in_bytes_array(n,8);}
 	@Override public void set_samples_per_second(final int n){set_int_in_bytes_array(n,16);}
 	@Override public void set_number_of_channels(final int n){set_int_in_bytes_array(n,20);}
 	@Override public void to(OutputStream os)throws IOException{os.write(ba);}
