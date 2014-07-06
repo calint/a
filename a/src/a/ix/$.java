@@ -43,7 +43,7 @@ final public class $ extends a{
 	}
 	void to_ix(final xwriter x)throws Throwable{
 		x.style().css("body","text-align:center").css(st,"color:grey").styleEnd();
-		x.ax(this,"viewix","  search").ax(this,"cfg","  config").ax(this,"reindex"," reindex").ax(this,"cancelix"," cancel").ax(this,"ixdel"," delete").ax(this,"size"," size");
+		x.ax(this,"viewix","  search").ax(this,"cfg","  config").ax(this,"reindex"," reindex").ax(this,"cancelix"," cancel").ax(this,"ixdel"," delete").ax(this,"size"," size").ax(this,"rfsh"," refresh");
 		x.nl().span(st).spc().ax(this,"stsx","[·]").nl();
 		x.p(xd);
 	}

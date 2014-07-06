@@ -1,0 +1,13 @@
+#!/bin/sh
+H=localhost:8888                # host
+I=140706-124220.172-ba8e10b6    # session id
+V= #--verbose
+
+
+D=`if ! [ -z $2 ];then echo -n /$2;fi`/$1 
+export `stat -s $1`
+#echo mtime: $st_mtime
+T=`date -r $st_mtime +%Y-%m-%d--%T.000`      # freebsd
+#T=`date -d @$st_mtime +%Y-%m-%d--%T.000`    # linux
+echo • upload $1 to $H/u/$I$D
+curl $V --cookie i=$I --header "Content-Type:file;$T" --data-binary @$1 "$H$D"
