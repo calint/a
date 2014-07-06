@@ -31,7 +31,7 @@ final public class stream extends a implements cacheable,bin{
 //		}
 		final header_au h=new header_au();
 		final int size_in_bytes=range_to_byte-range_from_byte;
-		h.set_size_in_bytes(size_in_bytes);
+		h.set_data_size_in_bytes(size_in_bytes);
 //		h.set_samples_per_second(8000);
 		final OutputStream os=x.outputstream();
 		h.to(os);
