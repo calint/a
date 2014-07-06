@@ -74,6 +74,7 @@ final class chdresp{
 		final ByteArrayOutputStream baos=new ByteArrayOutputStream(b.io_buf_B);
 		((a)cacheable).to(new xwriter(baos));
 		final byte[]ba=baos.toByteArray();
+		//? consider byte ranges
 		if(b.cacheu_tofile)b.path(b.cacheu_dir+key+"."+cacheable.filetype()).writebb(ByteBuffer.wrap(ba));
 		byteBuffer=ByteBuffer.allocate(256+ba.length);//? calcsize
 		byteBuffer.put(req.h_http200);

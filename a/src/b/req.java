@@ -779,7 +779,9 @@ public final class req{
 	public String query(){return query_s;}
 	public session session(){return ses;}
 	public String toString(){return new String(ba,ba_pos,ba_rem)+(bb_content==null?"":new String(bb_content.slice().array()));}
-
+	public Map<String,String>headers(){return hdrs;}
+	
+	
 	public static req get(){return((thdreq)Thread.currentThread()).r;}
 	public static long cachef_size(){
 		if(cachef==null)return 0;
