@@ -123,7 +123,7 @@ $x=function(pb){
 	if(!ui.req){
 		ui.req=new XMLHttpRequest();
 		ui.req.onreadystatechange=ui._onreadystatechange;
-		ui.req.onerror=function(){$('_ajaxsts','connection to server lost. try reload.');throw "connection lost";}
+		ui.req.onerror=function(){$s('-ajaxsts','connection to server lost. try reload or wait and re-try.');}
 		$d(" * new connection");
 	}else{
 		$d(" * reusing connection");
