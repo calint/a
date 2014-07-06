@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 final public class header_au implements Serializable,header{
-	final public byte[]ba=new byte[]{
+	final public byte[]ba=new byte[]{// from  http://en.wikipedia.org/wiki/Au_file_format.
 /*0*/	'.','s','n','d',//magic number
 /*4*/	0,0,0,0x20,//data offset
 /*8*/	-1,-1,-1,-1,//data size  default unknown 0xff

@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 final public class header_wav implements Serializable,header{
+	// from http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
 	final public byte[]ba=new byte[]{// [0][1][2][3]     0x3210
 /*0*/	'R','I','F','F',//ChunkID   Contains the letters "RIFF" in ASCII form
 /*4*/	36,0,0,0,//ChunkSize    36 + SubChunk2Size
