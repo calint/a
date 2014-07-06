@@ -56,7 +56,7 @@ final public class $ extends a{
 //		x.tableEnd();
 		x.nl();
 		x.pl("             done             try again later");
-		x.nl(4);
+		x.nl(1);
 		x.spc(5).pl("<a href=javascript:$('"+ajaxsts.id()+"').scrollIntoView(true)>to top of page</a>");
 		x.nl(23);
 		
