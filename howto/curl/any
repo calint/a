@@ -1,0 +1,9 @@
+#!/bin/sh
+S=localhost:8888/any            # service
+I=140706-124220.172-ba8e10b6    # session id
+AX='$'                          # ajax field
+NL=$'\r'                        # form item delimiter
+P=$AX=-ls$NL-ls-q=$1$NL         # ajax post, method x_ls in a.any with state change _ls_q=$1
+V=--verbose
+
+curl $V --cookie i=$I --header "Content-Type:text/plain" --data-binary $P $S
