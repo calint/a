@@ -45,11 +45,15 @@ public class store_in_ram implements store{
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
 		final Map<String,byte[]>map=maps.get(cls);
 		if(map==null)return;
-		map.entrySet().stream().forEach(me->{
-			if(!me.getKey().startsWith(q))return;
-			try{final itm e=cls.newInstance();e.load(new ByteArrayInputStream(me.getValue()));v.visit(e);}catch(Throwable t){throw new Error(t);}
-		});
-		
+		if(q!=null&&!q.isEmpty())
+			map.entrySet().stream().forEach(me->{
+				if(!me.getKey().startsWith(q))return;
+				try{final itm e=cls.newInstance();e.load(new ByteArrayInputStream(me.getValue()));v.visit(e);}catch(Throwable t){throw new Error(t);}
+			});
+		else
+			map.entrySet().stream().forEach(me->{
+				try{final itm e=cls.newInstance();e.load(new ByteArrayInputStream(me.getValue()));v.visit(e);}catch(Throwable t){throw new Error(t);}
+			});
 	}
 	@Override public void delete(@NotNull final Class<? extends itm>cls,@NotNull final String did)throws Throwable{
 		final ConcurrentHashMap<String,byte[]>map=maps.get(cls);
