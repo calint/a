@@ -1,7 +1,9 @@
 package b;
+import static b.b.p;
 import static b.b.pl;
 import static b.b.stacktrace;
 import static b.b.tobytes;
+import static b.b.tostr;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,8 +35,10 @@ public final class req{
 			ba=bb.array();
 			ba_pos=bb.position();
 			ba_rem=bb.remaining();
-			if(b.print_requests)
-				b.pl(this.toString());
+			if(b.print_requests){
+				final String s=new String(ba,ba_pos,ba_rem);
+				p(s);
+			}
 		}
 		while(ba_rem>0){switch(state){default:throw new Error();
 			case state_nextreq:methodlen=0;state=state_method;
@@ -213,6 +217,7 @@ public final class req{
 		decodecookie();
 		state=state_waiting_run_page;
 		if(!b.cache_uris)return;
+		if(hdrs.get("range")!=null)return;//? mk ranged response from cache
 		if(ses==null)ses=session.all().get(sesid);
 		if(ses==null)return;
 		if(sesid!=null&&!sesid.equals(ses.id()))throw new Error("cookiechangeduringconnection");
@@ -360,14 +365,42 @@ public final class req{
 			reply(h_http304,null,null,null);
 			return;
 		}
-		if(!sesid_set){
+		//? handle ranges
+		if(b.allow_partial_content_from_cache){
+			final String range=hdrs.get("range");
+			if(range!=null){
+				int i=0;
+				final String from_to_in_bytes=range.split("=")[1];
+				final String[]ft=from_to_in_bytes.split("-");
+				final int range_from_byte=Integer.parseInt(tostr(ft[0],"0"));
+				final int range_to_byte=Integer.parseInt(tostr(ft[1],"0"));
+				final ByteBuffer[]bba=new ByteBuffer[sesid_set?10:7];
+				bba[i++]=ByteBuffer.wrap(h_http206);
+				bba[i++]=ByteBuffer.wrap(h_content_length);
+				bba[i++]=ByteBuffer.wrap(Integer.toString(range_to_byte-range_from_byte).getBytes());
+				bba[i++]=ByteBuffer.wrap(hk_content_range);
+				bba[i++]=ByteBuffer.wrap((s_bytes_+range_from_byte+s_minus+range_to_byte+s_slash+c.content_length_in_bytes()).getBytes());
+				if(sesid_set){
+					sesid_set=false;// set cookie
+					bba[i++]=ByteBuffer.wrap(hk_set_cookie);
+					bba[i++]=ByteBuffer.wrap(sesid.getBytes());
+					bba[i++]=ByteBuffer.wrap(hkv_cookie_append);
+				}
+				bba[i++]=ByteBuffer.wrap(ba_crlf2);
+				final int d=c.data_position();
+				bba[i++]=(ByteBuffer)c.byteBuffer().slice().position(d+range_from_byte).limit(d+range_to_byte);		
+				transferbuffers(bba);
+				return;
+			}
+		}
+		if(!sesid_set){// no cookie to set
 			transferbuffers(new ByteBuffer[]{c.byteBuffer().slice()});
 			return;
 		}
-		sesid_set=false;
+		sesid_set=false;// set cookie
 		final ByteBuffer[]bba=new ByteBuffer[]{c.byteBuffer().slice(),ByteBuffer.wrap(hk_set_cookie),ByteBuffer.wrap(sesid.getBytes()),ByteBuffer.wrap(hkv_cookie_append),c.byteBuffer().slice()};
-		bba[0].limit(c.hdrinsertionix());
-		bba[4].position(c.hdrinsertionix());
+		bba[0].limit(c.additional_headers_insertion_position());
+		bba[4].position(c.additional_headers_insertion_position());
 		transferbuffers(bba);
 	}
 	private void reply(final byte[]firstline,final byte[]lastMod,final byte[]contentType,final byte[]content)throws Throwable{
@@ -404,7 +437,7 @@ public final class req{
 	private int sendpacket(final ByteBuffer[]bb,final int n)throws Throwable{
 		long tosend=0;
 		for(int i=0;i<n;i++)tosend+=bb[i].remaining();
-		final long c=sockch.write(bb,0,n);
+		final long c=sockch.write(bb,0,n);//? while
 		if(c!=tosend)b.log(new Error("sent "+c+" of "+tosend+" bytes"));//? throwerror
 		return n;
 	}
@@ -425,6 +458,20 @@ public final class req{
 //		transferbuffers(new ByteBuffer[]{bb,c.byteBuffer().slice()});
 //	}
 	private void transferbuffers(final ByteBuffer[] bba)throws Throwable{
+		if(b.print_replies){
+			for(final ByteBuffer bb:bba)
+				if(bb.hasArray())
+					p(new String(bb.array(),bb.position(),bb.remaining()));
+				else{
+//					pl("pos:"+bb.position());
+					final byte[]ba=new byte[bb.remaining()];
+					bb.get(ba);
+//					pl("posa:"+bb.position());
+					bb.position(bb.position()-ba.length);
+					p(new String(ba));
+				}
+		}
+		
 		long n=0;for(final ByteBuffer b:bba)n+=b.remaining();
 		transfer_buffers=bba;
 		transfer_buffers_remaining=n;
