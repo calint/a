@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import b.b.conf;
 
-final public class crafty{
+final public class crafty implements AutoCloseable{
 	@conf public static String crafty_path="crafty";
 	public int srchdpth=10;
 	private final Process p;
@@ -60,4 +60,9 @@ final public class crafty{
 	private void scantillnextinput(){
 		sc.findWithinHorizon("analyze\\.(White|Black)\\(\\d+\\): ",0);
 	}
+	public void close(){try{
+//		os.write("q\n".getBytes());
+//		os.flush();
+		p.destroy();
+	}catch(Throwable t){throw new Error(t);}}
 }
