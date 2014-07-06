@@ -1,6 +1,6 @@
-test-coverage.sh
+-bash
 
-Wed Jul 2 09:27:19 ICT 2014
+Sun Jul 6 10:31:57 ICT 2014
 localhost:8888
 aaaa-110307-064915.110-cb48e04f
 /Users/calin/Documents/workspace/a/bin
@@ -21,5 +21,5 @@ t024: uploads
 . . . . . . . very small file
 t026: encoders osltgt,osnl
 t027: encoder osjsstr
-Wed Jul 2 09:27:20 ICT 2014
+Sun Jul 6 10:31:58 ICT 2014
 done

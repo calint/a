@@ -53,7 +53,7 @@ rm file &&
 
 echo t015: page post utf8 &&
 curl -s -b $cookie --header "Content-Type: text/plain; charset=utf-8" --data-binary @t015.dat http://$host/qa/t014 > file &&
-curl -s -b $cookie http://$host/u/$sessionid/test.txt > file
+curl -s -b $cookie http://$host/u/$sessionid/test.txt > file &&
 diff -q file t015.cmp &&
 rm file &&
 

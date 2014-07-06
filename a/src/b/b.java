@@ -46,7 +46,8 @@ final public class b{
 	public static String id=""+(int)Math.floor(Math.random()*10000);//? fixedwidth
 	public static @conf String root_dir=".";
 	public static @conf(reboot=true)String server_port=ensure(System.getProperty("app.port"),"8888");
-	public static @conf boolean print_requests=false;
+	public static @conf boolean print_requests=true;
+	public static @conf boolean print_replies=false;
 	public static @conf boolean try_file=true;
 	public static @conf boolean try_rc=true;
 	public static @conf(reboot=true,note="requires reboot to turn on")boolean thd_watch=true;
@@ -60,6 +61,7 @@ final public class b{
 	public static @conf(reboot=true)int cache_files_hashlen=K;
 	public static @conf @unit(name="B")int cache_files_maxsize=64*K;
 	public static @conf @unit(name="ms")long cache_files_validate_dt=1000;
+	public static @conf boolean allow_partial_content_from_cache=true;
 	public static @conf @unit(name="B")int transfer_file_write_size=256*K;
 	public static @conf @unit(name="B")int io_buf_B=64*K;
 	public static @conf @unit(name="B")int chunk_B=4*K;
@@ -396,6 +398,7 @@ final public class b{
 		cp(new InputStreamReader(in,strenc),out,null);
 	}
 	public static void pl(final String s){out.print("> ");out.println(s);}
+	public static void p(final String s){out.print(s);}
 	
 	//? safe quantity unit math
 	public static @Retention(RetentionPolicy.RUNTIME)@interface unit{String name()default"";}
