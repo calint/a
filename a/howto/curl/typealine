@@ -2,10 +2,9 @@
 H=localhost:8888                # host
 I=140706-124220.172-ba8e10b6    # session id
 U=typealine                     # uri without leading /
-A='$=- a'                       # ajax
-  N=$'\r'                       # form item delimiter
-P=${A}$N-s=$1$N                 # ajax post, method x_a in a.typealine with state change _s=$1
-S=$H/$U                         # url
+N=$'\r'                         # form item delimiter
+A='$=- a'$N                     # ajax item
+P=$A-s=$1$N                     # ajax post, method x_a in a.typealine with state change _s=$1
 V= #--verbose
 
-curl $V --cookie i=$I --header "Content-Type:text/plain" --data-binary "$P" $S
+curl $V --cookie i=$I --header "Content-Type:text/plain" --data-binary "$P" "$H/$U"
