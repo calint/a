@@ -433,7 +433,7 @@ final public class b{
 		final req r=req.get();
 		final session ses=r.session();
 		if(ses.bits_hasany(bits_c))return;
-		throw new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  b"+Long.toBinaryString(bits_c)+" vs b"+Long.toBinaryString(ses.bits()));
+		throw new SecurityException("cannot create item of type "+ecls+" due to acl\n any:  0b"+Long.toBinaryString(ses.bits())+" vs 0b"+Long.toBinaryString(bits_c));
 	}
 	static void acl_ensure_post(final a e){
 		final Class<? extends a>ecls=e.getClass();
@@ -443,7 +443,7 @@ final public class b{
 		final req r=req.get();
 		final session ses=r.session();
 		if(ses.bits_hasany(bits_c))return;
-		throw new SecurityException("cannot post to item of type "+ecls+" due to acl\n any:  b"+Long.toBinaryString(bits_c)+" vs b"+Long.toBinaryString(ses.bits()));
+		throw new SecurityException("cannot post to item of type "+ecls+" due to acl\n any:  0b"+Long.toBinaryString(ses.bits())+" vs 0b"+Long.toBinaryString(bits_c));
 	}
 	public static void firewall_assert_access(final a e){
 		final Class<? extends a>cls=e.getClass();
