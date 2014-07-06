@@ -6,12 +6,12 @@ import java.io.Serializable;
 
 final class header_wav implements Serializable,header{
 	final public byte[]ba=new byte[]{
-		'R','I','F','F',//ChunkID   Contains the letters "RIFF" in ASCII form
-		0,0,0,36,//ChunkSize    36 + SubChunk2Size
-		'W','A','V','E',//Format  Contains the letters "WAVE"
-		'f','m','t',' ',//Subchunk1ID    Contains the letters "fmt "
-		0,0,0,16,//Subchunk1Size    16 for PCM.
-		0,1,//AudioFormat    PCM = 1
+/*0*/	'R','I','F','F',//ChunkID   Contains the letters "RIFF" in ASCII form
+/*4*/	0,0,0,36,//ChunkSize    36 + SubChunk2Size
+/*8*/	'W','A','V','E',//Format  Contains the letters "WAVE"
+/*12*/	'f','m','t',' ',//Subchunk1ID    Contains the letters "fmt "
+/*16*/	0,0,0,16,//Subchunk1Size    16 for PCM.
+/*20*/	0,1,//AudioFormat    PCM = 1
 /*22*/	0,1,//NumChannels   Mono = 1, Stereo = 2, etc.
 /*24*/	0,0,0x1f,0x40,//SampleRate    8000, 44100, etc.
 /*28*/	0,0,0,0,//ByteRate  == SampleRate * NumChannels * BitsPerSample/8
