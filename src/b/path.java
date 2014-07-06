@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.regex.Pattern;
 public final class path implements Serializable{static final long serialVersionUID=1;
 	public static path get1(final String name){return new path(new File(name));}//?
 	private final File file;

@@ -512,7 +512,7 @@ public final class req{
 		final int match_len=match.length;
 		int match_i=0;
 		int i=0;
-		final String bastr=new String(ba);
+//		final String bastr=new String(ba);
 		while(true){
 			final byte b=ba[i];
 			if(b==match[match_i]){
@@ -625,8 +625,7 @@ public final class req{
 		pl("session load "+serfile);
 		if(!serfile.exists())return null;
 		try(final InputStream is=new FileInputStream(serfile)){
-			try{
-				final ObjectInputStream ois=new ObjectInputStream(is);
+			try(final ObjectInputStream ois=new ObjectInputStream(is)){
 				return (session)ois.readObject();
 			}catch(final Throwable t){
 				b.pl("while loading session "+session_id+": "+t);
@@ -634,7 +633,7 @@ public final class req{
 			}
 		}
 	}
-	private void resp_page()throws Throwable{
+	@SuppressWarnings("unchecked") private void resp_page()throws Throwable{
 		if(sesid!=null&&ses==null){//?? sessiongetandloadracing 
 			ses=session.all().get(sesid);
 			if(ses==null&&b.sessionfile_load){
@@ -675,7 +674,7 @@ public final class req{
 			}}
 			try{e=ecls.newInstance();}catch(Throwable ex){
 				while(ex.getCause()!=null)ex=ex.getCause();
-				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(ex)).nl();
+//				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(ex)).nl();
 				reply(h_http404,null,null,tobytes(stacktrace(ex)));
 				return;
 			}
@@ -987,5 +986,5 @@ public final class req{
 	private final static int state_sock=15;
 	private final static String text_html_utf8="text/html;charset=utf-8";
 	private final static String text_plain="text/plain";
-	private final static String text_plain_utf8="text/plain;charset=utf-8";
+//	private final static String text_plain_utf8="text/plain;charset=utf-8";
 }
