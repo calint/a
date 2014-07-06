@@ -365,7 +365,6 @@ public final class req{
 			reply(h_http304,null,null,null);
 			return;
 		}
-		//? handle ranges
 		if(b.allow_partial_content_from_cache){
 			final String range=hdrs.get("range");
 			if(range!=null){

@@ -12,6 +12,6 @@ public boolean cacheforeachuser(){return false;}
 
 	@Override public void to(final xwriter x)throws Throwable{
 		pl("&& player");
-		x.pl("<audio controls style=width:100%><source src=/snd.stream type=audio/basic></audio>");
+		x.pl("<audio controls preload=meta seekable style=width:100%><source src=/snd.stream type=audio/basic></audio>");
 	}
 }
