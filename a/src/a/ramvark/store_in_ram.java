@@ -31,6 +31,6 @@ public class store_in_ram implements store{
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
 	}
-	public void read_from(final InputStream is)throws Throwable{}
-	public void write_to(final OutputStream is)throws Throwable{}
+	public void load_from(final InputStream is)throws Throwable{}
+	public void save_to(final OutputStream is)throws Throwable{}
 }
