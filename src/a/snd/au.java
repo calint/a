@@ -6,7 +6,7 @@ import b.bin;
 import b.cacheable;
 import b.req;
 import b.xwriter;
-final public class stream extends a implements cacheable,bin{
+final public class au extends a implements cacheable,bin{
 	@Override public String filetype(){return"au";}
 	@Override public String contenttype(){return"audio/basic";}
 	@Override public boolean cacheforeachuser(){return false;}
