@@ -433,10 +433,16 @@ public final class req{
 		thdwatch.output+=n;
 		state=state_nextreq;
 	}
-	private int sendpacket(final ByteBuffer[]bb,final int n)throws Throwable{
+	private int sendpacket(final ByteBuffer[]bba,final int n)throws Throwable{
+		if(b.print_reply_headers){
+			for(int i=0;i<n;i++){
+				final ByteBuffer bb=bba[i];
+				b.p(new String(bb.array(),bb.position(),bb.limit()));
+			}
+		}
 		long tosend=0;
-		for(int i=0;i<n;i++)tosend+=bb[i].remaining();
-		final long c=sockch.write(bb,0,n);//? while
+		for(int i=0;i<n;i++)tosend+=bba[i].remaining();
+		final long c=sockch.write(bba,0,n);//? while
 		if(c!=tosend)b.log(new Error("sent "+c+" of "+tosend+" bytes"));//? throwerror
 		return n;
 	}
@@ -456,8 +462,33 @@ public final class req{
 //		bb.flip();
 //		transferbuffers(new ByteBuffer[]{bb,c.byteBuffer().slice()});
 //	}
-	private void transferbuffers(final ByteBuffer[] bba)throws Throwable{
-		if(b.print_replies){
+	private void transferbuffers(final ByteBuffer[]bba)throws Throwable{
+		if(b.print_reply_headers){
+			for(final ByteBuffer bb:bba){
+				final byte[]ba;
+				if(bb.hasArray()){
+					ba=bb.array();
+					final int header_len=find_end_of_header(ba);
+					if(header_len==-1)
+						p(new String(bb.array(),bb.position(),bb.remaining()));
+					else{
+						p(new String(bb.array(),bb.position(),header_len));
+						break;
+					}
+				}else{
+					ba=new byte[bb.remaining()];
+					bb.get(ba);
+					bb.position(bb.position()-ba.length);
+					final int header_len=find_end_of_header(ba);
+					if(header_len==-1)
+						p(new String(ba));
+					else{
+						p(new String(ba,0,header_len));
+						break;
+					}
+				}
+			}
+		}else if(b.print_replies){
 			for(final ByteBuffer bb:bba)
 				if(bb.hasArray())
 					p(new String(bb.array(),bb.position(),bb.remaining()));
@@ -475,6 +506,26 @@ public final class req{
 		transfer_buffers=bba;
 		transfer_buffers_remaining=n;
 		state=state_transfer_buffers;do_transfer_buffers();
+	}
+	private int find_end_of_header(final byte[]ba){
+		final byte[]match=ba_crlf2;
+		final int match_len=match.length;
+		int match_i=0;
+		int i=0;
+		final String bastr=new String(ba);
+		while(true){
+			final byte b=ba[i];
+			if(b==match[match_i]){
+				match_i++;
+				if(match_i==match_len)
+					return i;
+			}else{
+				match_i=0;
+			}
+			i++;
+			if(i==ba.length)
+				return-1;
+		}
 	}
 	boolean do_transfer()throws Throwable{
 		if(state==state_transfer_file)return do_transfer_file();
