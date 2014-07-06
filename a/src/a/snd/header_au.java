@@ -18,6 +18,7 @@ final public class header_au implements Serializable,header{
 	@Override public void set_data_size_in_bytes(final int n){set_int_in_bytes_array(n,8);}
 	@Override public void set_samples_per_second(final int n){set_int_in_bytes_array(n,16);}
 	@Override public void set_number_of_channels(final int n){set_int_in_bytes_array(n,20);}
+	@Override public void set_bits_per_sample(int n){throw new UnsupportedOperationException();}
 	@Override public void to(OutputStream os)throws IOException{os.write(ba);}
 
 	private void set_int_in_bytes_array(final int n,final int offset_starting_at_zero){
