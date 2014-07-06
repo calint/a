@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-final class header_wav implements Serializable,header{
+final public class header_wav implements Serializable,header{
 	final public byte[]ba=new byte[]{
 /*0*/	'R','I','F','F',//ChunkID   Contains the letters "RIFF" in ASCII form
 /*4*/	0,0,0,36,//ChunkSize    36 + SubChunk2Size

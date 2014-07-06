@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-final class header_au implements Serializable,header{
+final public class header_au implements Serializable,header{
 	final public byte[]ba=new byte[]{
-		'.','s','n','d',//magic number
-		0,0,0,0x20,//data offset
-		-1,-1,-1,-1,//data size  default unknown 0xff
-		0,0,0,1,//encoding
-		0,0,0x1f,0x40,//samples/second
-		0,0,0,1,//channels
-		0,0,0,0,
-		0,0,0,0,
+/*0*/	'.','s','n','d',//magic number
+/*4*/	0,0,0,0x20,//data offset
+/*8*/	-1,-1,-1,-1,//data size  default unknown 0xff
+/*12*/	0,0,0,1,//encoding
+/*16*/	0,0,0x1f,0x40,//samples/second
+/*20*/	0,0,0,1,//channels
+/*24*/	0,0,0,0,
+/*28*/	0,0,0,0,
 	};
 	@Override public void set_data_size_in_bytes(final int n){set_int_in_bytes_array(n,8);}
 	@Override public void set_samples_per_second(final int n){set_int_in_bytes_array(n,16);}
