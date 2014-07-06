@@ -46,8 +46,8 @@ final public class b{
 	public static String id=""+(int)Math.floor(Math.random()*10000);//? fixedwidth
 	public static @conf String root_dir=".";
 	public static @conf(reboot=true)String server_port=ensure(System.getProperty("app.port"),"8888");
-	public static @conf boolean print_requests=true;
-	public static @conf boolean print_reply_headers=true;
+	public static @conf boolean print_requests=false;
+	public static @conf boolean print_reply_headers=false;
 	public static @conf boolean print_replies=false;
 	public static @conf boolean try_file=true;
 	public static @conf boolean try_rc=true;
