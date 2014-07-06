@@ -376,7 +376,7 @@ public final class req{
 				final ByteBuffer[]bba=new ByteBuffer[sesid_set?10:7];
 				bba[i++]=ByteBuffer.wrap(h_http206);
 				bba[i++]=ByteBuffer.wrap(h_content_length);
-				bba[i++]=ByteBuffer.wrap(Integer.toString(range_to_byte-range_from_byte).getBytes());
+				bba[i++]=ByteBuffer.wrap(Integer.toString(1+range_to_byte-range_from_byte).getBytes());
 				bba[i++]=ByteBuffer.wrap(hk_content_range);
 				bba[i++]=ByteBuffer.wrap((s_bytes_+range_from_byte+s_minus+range_to_byte+s_slash+c.content_length_in_bytes()).getBytes());
 				if(sesid_set){
@@ -387,7 +387,7 @@ public final class req{
 				}
 				bba[i++]=ByteBuffer.wrap(ba_crlf2);
 				final int d=c.data_position();
-				bba[i++]=(ByteBuffer)c.byteBuffer().slice().position(d+range_from_byte).limit(d+range_to_byte);		
+				bba[i++]=(ByteBuffer)c.byteBuffer().slice().position(d+range_from_byte).limit(d+range_to_byte+1);		
 				transferbuffers(bba);
 				return;
 			}
