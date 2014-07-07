@@ -5,10 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class store_in_ram implements store{
-	final private ConcurrentHashMap<Class<? extends itm>,ConcurrentHashMap<String,byte[]>>maps=new ConcurrentHashMap<>();
+public class store_in_ram implements store,Serializable{
 	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{
 		cstore.meters.creates++;
 		final itm e=cls.newInstance();
@@ -36,9 +36,8 @@ public class store_in_ram implements store{
 		final byte[]ba=map.get(did);
 		if(ba==null)return null;
 		final itm e=cls.newInstance();
-		try(final InputStream is=new ByteArrayInputStream(ba)){
-			e.load(is);
-		}
+		final InputStream is=new ByteArrayInputStream(ba);
+		e.load(is);
 		return e;
 	}
 	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
@@ -64,4 +63,9 @@ public class store_in_ram implements store{
 	}
 	public void load_from(final InputStream is)throws Throwable{}
 	public void save_to(final OutputStream is)throws Throwable{}
+	
+	
+	final private ConcurrentHashMap<Class<? extends itm>,ConcurrentHashMap<String,byte[]>>maps=new ConcurrentHashMap<>();
+
+	private static final long serialVersionUID=1L;
 }
