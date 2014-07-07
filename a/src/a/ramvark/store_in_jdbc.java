@@ -5,18 +5,10 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
 import a.ramvark.cstore.meters;
 
 abstract public class store_in_jdbc implements store{
-	@Override public itm create(final Class<? extends itm> cls,final itm owner)throws Throwable{
-		meters.creates++;
-		final itm e=cls.newInstance();
-		if(owner!=null)e.pid.set(owner.did);
-		final String docid=cstore.mkdocid();
-		e.did.set(docid);
-		return e;
-	}
+	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{return cstore.mk(cls,owner);}
 	@Override public void save(final itm e)throws Throwable{
 		try(final Connection c=connection()){
 			if(e.notnew==true){

@@ -1,4 +1,5 @@
 package a.ramvark;
+import static b.b.pl;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -57,5 +58,17 @@ public final class cstore{
 		for(int n=0;n<8;n++)
 			sb.append(alf.charAt(b.rndint(0,alf.length())));
 		return sb.toString();
+	}
+	
+	static itm mk(final Class<? extends itm>cls,final itm owner)throws Throwable{
+		cstore.meters.creates++;
+		final long t0=System.currentTimeMillis();
+		final itm e=cls.newInstance();
+		if(owner!=null)e.pid.set(owner.did);
+		final String docid=cstore.mkdocid();
+		e.did.set(docid);
+		final long t1=System.currentTimeMillis();
+		pl(cstore.class.getName()+": created "+cls+" with owner "+owner+"  "+(t1-t0)+" ms");
+		return e;
 	}
 }

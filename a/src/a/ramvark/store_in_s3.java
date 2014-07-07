@@ -22,17 +22,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class store_in_s3 implements store{
-	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{
-		cstore.meters.creates++;
-		final long t0=System.currentTimeMillis();
-		final itm e=cls.newInstance();
-		if(owner!=null)e.pid.set(owner.did);
-		final String docid=cstore.mkdocid();
-		e.did.set(docid);
-		final long t1=System.currentTimeMillis();
-		pl(this.getClass().getName()+" create "+cls+" with owner "+owner+"  "+(t1-t0)+" ms");
-		return e;
-	}
+	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{return cstore.mk(cls,owner);}
 	@Override public void save(final itm e)throws Throwable{
 		final AmazonS3Client s3=client();
 		final long t0=System.currentTimeMillis();
