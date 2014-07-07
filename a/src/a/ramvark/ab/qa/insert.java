@@ -25,6 +25,9 @@ public class insert extends a{static final long serialVersionUID=1;
 				cstore.save(e);
 			}
 		}catch(final Throwable t){throw new Error(t);}}};
+
+		//? b.run(r);
+		
 		for(int j=1;j<=nthreads;j+=nthreads_step){
 			final long t0=System.currentTimeMillis();
 			for(int k=0;k<j;k++){
@@ -41,5 +44,7 @@ public class insert extends a{static final long serialVersionUID=1;
 			x.flush();
 			//		System.out.println(dt0);
 		}
+		x.pl("done");
+		x.flush();
 	}
 }
