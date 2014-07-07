@@ -9,14 +9,7 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class store_in_ram implements store,Serializable{
-	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{
-		cstore.meters.creates++;
-		final itm e=cls.newInstance();
-		if(owner!=null)e.pid.set(owner.did);
-		final String docid=cstore.mkdocid();
-		e.did.set(docid);
-		return e;
-	}
+	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{return cstore.mk(cls,owner);}
 	@Override public void save(final itm e)throws Throwable{
 		final Class<? extends itm>cls=e.getClass();
 		ConcurrentHashMap<String,byte[]>map=maps.get(cls);
