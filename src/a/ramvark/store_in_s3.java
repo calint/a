@@ -64,16 +64,20 @@ public class store_in_s3 implements store{
 		final long t0=System.currentTimeMillis();
 		final String bucket=cls.getName();
 		final String prefix=tostr(q,"");
-		final ObjectListing ols=s3.listObjects(new ListObjectsRequest().withBucketName(bucket));
-		for(final S3ObjectSummary sos:ols.getObjectSummaries()){
-			final String did=sos.getKey();
-			final itm e=load(cls,did);
-			final String name=e.toString();
-			if(!name.startsWith(prefix))continue;
-			v.visit(e);
+		try{
+			final ObjectListing ols=s3.listObjects(new ListObjectsRequest().withBucketName(bucket));
+			for(final S3ObjectSummary sos:ols.getObjectSummaries()){
+				final String did=sos.getKey();
+				final itm e=load(cls,did);
+				final String name=e.toString();
+				if(!name.startsWith(prefix))continue;
+				v.visit(e);
+			}
+			final long t1=System.currentTimeMillis();
+			pl(this.getClass().getName()+" foreach "+cls.getName()+" using query "+q+"  "+(t1-t0)+" ms");
+		}catch(Throwable t){
+			t.printStackTrace();
 		}
-		final long t1=System.currentTimeMillis();
-		pl(this.getClass().getName()+" foreach "+cls.getName()+" using query "+q+"  "+(t1-t0)+" ms");
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
 		final AmazonS3Client s3=client();
