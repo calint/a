@@ -16,7 +16,6 @@ import b.a;
 import b.b;
 import b.xwriter;
 public abstract class itm extends an implements $.labeled{
-	static final long serialVersionUID=1;
 	public a pid,did,colr;
 
 	boolean notnew;
@@ -422,4 +421,6 @@ public abstract class itm extends an implements $.labeled{
 		os.close();
 		notnew=true;
 	}
+	
+	static final long serialVersionUID=1;
 }
