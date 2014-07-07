@@ -1,8 +1,10 @@
 package a.ramvark;
 
+import static b.b.K;
 import static b.b.pl;
 import static b.b.tostr;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import a.amazon.key;
 import b.req;
@@ -17,7 +19,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class store_in_s3 implements store{
 	@Override public itm create(final Class<? extends itm>cls,final itm owner)throws Throwable{
@@ -36,9 +37,9 @@ public class store_in_s3 implements store{
 		final long t0=System.currentTimeMillis();
 		final String bucket=e.getClass().getName();
 		final String key=e.did.str();
-		final ByteOutputStream bos=new ByteOutputStream(b.b.K);
+		final ByteArrayOutputStream bos=new ByteArrayOutputStream(K);
 		e.save(bos);
-		final byte[]ba=bos.getBytes();
+		final byte[]ba=bos.toByteArray();
 		final ObjectMetadata omd=new ObjectMetadata();
 		omd.setLastModified(new Date());
 		omd.setContentLength(ba.length);
@@ -77,9 +78,9 @@ public class store_in_s3 implements store{
 		final AmazonS3Client s3=client();
 		final long t0=System.currentTimeMillis();
 		final String bucket=cls.getName();
-		final S3Object object=s3.getObject(new GetObjectRequest(bucket,did));
+		final S3Object ob=s3.getObject(new GetObjectRequest(bucket,did));
 		final itm e=cls.newInstance();
-		e.load(object.getObjectContent());
+		e.load(ob.getObjectContent());
 		final long t1=System.currentTimeMillis();
 		pl(this.getClass().getName()+" load "+cls.getName()+" "+did+" "+(t1-t0)+" ms");
 		return e;
