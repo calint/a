@@ -44,8 +44,8 @@ public class store_in_s3 implements store{
 		final ObjectMetadata omd=new ObjectMetadata();
 		omd.setLastModified(new Date());
 		omd.setContentLength(ba.length);
-		omd.setContentEncoding("text/plain");
-//		omd.setContentType("");
+//		omd.setContentEncoding("gzip");
+		omd.setContentType("text/plain");
 		final ByteArrayInputStream bis=new ByteArrayInputStream(ba);
 		while(true)
 			try{
