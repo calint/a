@@ -14,7 +14,8 @@ public class insert extends a{static final long serialVersionUID=1;
 		x.pl("insert test");
 		x.flush();
 		final int npuppets=10_000;
-		final int nthreads=20;
+		final int nthreads=10;
+		final int nthreads_step=2;
 		final Thread[]threads=new Thread[nthreads];
 		final AtomicInteger ai=new AtomicInteger();
 		final Runnable r=new Runnable(){@Override public void run(){try{
@@ -24,7 +25,7 @@ public class insert extends a{static final long serialVersionUID=1;
 				cstore.save(e);
 			}
 		}catch(final Throwable t){throw new Error(t);}}};
-		for(int j=1;j<=nthreads;j++){
+		for(int j=1;j<=nthreads;j+=nthreads_step){
 			final long t0=System.currentTimeMillis();
 			for(int k=0;k<j;k++){
 				final Thread t=new Thread(r);
