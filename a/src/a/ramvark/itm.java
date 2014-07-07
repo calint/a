@@ -19,8 +19,8 @@ public abstract class itm extends an implements $.labeled{
 	public a pid,did,colr;
 
 	boolean notnew;
-	a focus;
-	a at_save_write_did_to_elem;
+	a elem_in_focus;
+	a after_save_write_did_to_elem;
 	a after_close_focus_elem;
 	lst after_save_add_to_list;
 	private String label;
@@ -63,7 +63,7 @@ public abstract class itm extends an implements $.labeled{
 			jk.add("cW","$x('"+id+" cl')");
 			jk.add("cX","$x('"+id+" sc')");
 		}
-		focus=null;
+		elem_in_focus=null;
 		final LinkedList<Field>flds=new LinkedList<Field>();
 		for(final Field f:getClass().getFields())//? fieldorderissue
 			flds.addFirst(f);
@@ -91,8 +91,8 @@ public abstract class itm extends an implements $.labeled{
 			final an e=(an)f.get(this);
 			if(e.has_bit(0))
 				continue;
-			if(focus==null)
-				focus=e;
+			if(elem_in_focus==null)
+				elem_in_focus=e;
 
 			if(t==4)
 				x.td(2);
@@ -172,8 +172,8 @@ public abstract class itm extends an implements $.labeled{
 		x.inputText(colr,this,"sc");
 		x.tableEnd();
 
-		if(focus!=null)
-			x.focus(focus);
+		if(elem_in_focus!=null)
+			x.focus(elem_in_focus);
 		
 		x.tage("span");
 	}
@@ -253,7 +253,7 @@ public abstract class itm extends an implements $.labeled{
 		onpresave(x);
 		cstore.save(this);
 		onaftersave(x);
-		if(at_save_write_did_to_elem!=null)at_save_write_did_to_elem.set(did.toString());
+		if(after_save_write_did_to_elem!=null)after_save_write_did_to_elem.set(did.toString());
 		if(after_save_add_to_list!=null)after_save_add_to_list.set(after_save_add_to_list.toString()+","+did);
 	}
 	//close
@@ -265,9 +265,9 @@ public abstract class itm extends an implements $.labeled{
 		if(!validate(x))
 			return;
 		x_sv(x,null);
-		if(at_save_write_did_to_elem!=null){
+		if(after_save_write_did_to_elem!=null){
 			ev(x,this,"cl2");
-			x.xfocus(at_save_write_did_to_elem);
+			x.xfocus(after_save_write_did_to_elem);
 			return;
 		}
 		x_cl(x,null);
