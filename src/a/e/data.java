@@ -4,5 +4,6 @@ import java.io.OutputStream;
 
 public interface data{
 	void to(OutputStream os)throws Throwable;
-	long size()throws Throwable;// Long.MAX_VALUE == unknown
+	/** @return Long.MAX_VALUE is unknown size */
+	long size()throws Throwable;
 }
