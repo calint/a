@@ -1,11 +1,13 @@
 package a.amazon.ec2;
 
+import static b.b.tostr;
+import static b.b.uri_to;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import a.amazon.key;
 import a.any.list.el;
-import a.any.list.el.visitor;
 import b.req;
 import b.session;
 import com.amazonaws.auth.AWSCredentials;
@@ -43,9 +45,9 @@ final public class any_instances implements el{
 		b.b.pl("amazon.ec2: refreshing instances cache, "+dt+" ms");
 		instances_cache_ts=t;
 		final session s=req.get().session();
-		final String aws_secret_key=b.b.tostr(s.get(key.SECRET_KEY),null);
-		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href=/amazon.ec2.key>setting amazon key</a>");
-		final String aws_access_key_id=b.b.tostr(s.get(key.ACCESS_KEY_ID),null);
+		final String aws_secret_key=tostr(s.get(key.SECRET_KEY),null);
+		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href="+uri_to(key.class)+">setting amazon key</a>");
+		final String aws_access_key_id=tostr(s.get(key.ACCESS_KEY_ID),null);
 //			final long t0=System.currentTimeMillis();
 		final AmazonEC2Client ec=new AmazonEC2Client(new AWSCredentials(){
 			@Override public String getAWSSecretKey(){return aws_secret_key;}
