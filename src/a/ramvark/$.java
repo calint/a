@@ -72,7 +72,7 @@ final public class $ extends a{
 			stk.add((a)o);
 			attach(stk.getLast(),"el");
 			x.xuo(this);
-			x.xfocus(((itm)el).focus);
+			x.xfocus(((itm)el).elem_in_focus);
 		}else if(o instanceof lst){
 			stk.add((a)o);
 			attach(stk.getLast(),"el");

@@ -180,7 +180,7 @@ public abstract class lst extends an implements $.labeled{
 		final Class<? extends itm>cls=getClass().getAnnotation(ls.class).cls();
 		final itm e=cstore.create(cls,owner);
 		e.set(q);
-		e.at_save_write_did_to_elem=elem_selecting;
+		e.after_save_write_did_to_elem=elem_selecting;
 		e.after_close_focus_elem=qry;
 		if(owner!=null)
 			e.after_save_add_to_list=this;
