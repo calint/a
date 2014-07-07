@@ -18,7 +18,7 @@ public class key extends a{
 		x.css("input","border:1px dotted green;padding:.5em");
 		x.css(key,"border:1px dotted green;padding:.5em;width:40em;height:3em");
 		x.styleEnd();
-		x.p("aws.amazon.com   paste rootkey.cvs below:").nl();
+		x.p("paste rootkey.cvs from aws.amazon.com below:").nl();
 		x.inputTextArea(key);
 		x.nl().ax(this,null," :: validate");
 		x.spc(3).output(output);
