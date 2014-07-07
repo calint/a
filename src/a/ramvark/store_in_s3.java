@@ -3,6 +3,7 @@ package a.ramvark;
 import static b.b.K;
 import static b.b.pl;
 import static b.b.tostr;
+import static b.b.uri_to;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -98,7 +99,7 @@ public class store_in_s3 implements store{
 		final long t0=System.currentTimeMillis();
 		final session s=req.get().session();
 		final String aws_secret_key=tostr(s.get(key.SECRET_KEY),null);
-		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href=/"+b.b.uri_to(key.class)+">setting amazon key</a>");
+		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href="+uri_to(key.class)+">setting amazon key</a>");
 		final String aws_access_key_id=tostr(s.get(key.ACCESS_KEY_ID),null);
 		final AmazonS3Client s3=new AmazonS3Client(new AWSCredentials(){
 			@Override public String getAWSSecretKey(){return aws_secret_key;}
