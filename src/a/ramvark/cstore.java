@@ -23,11 +23,11 @@ public final class cstore{
 		public static long foreaches,creates,loads,saves,deletes;
 		public void to(final xwriter x)throws Throwable{spclst(x);}
 		public static void spclst(final xwriter x)throws Throwable{
-			x.p(foreaches).spc();
 			x.p(creates).spc();
-			x.p(loads).spc();
 			x.p(saves).spc();
+			x.p(loads).spc();
 			x.p(deletes);
+			x.p(foreaches).spc();
 		}
 
 		// cache
