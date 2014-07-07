@@ -1,4 +1,4 @@
-package a.amazon.ec2;
+package a.amazon;
 
 import b.a;
 import b.req;
@@ -8,7 +8,7 @@ import b.xwriter;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
-public class key extends a{
+public class key0 extends a{
 	public final static String ACCESS_KEY_ID="__aws_access_key_id";
 	public final static String SECRET_KEY="__aws_secret_key";
 	public a accesskey;

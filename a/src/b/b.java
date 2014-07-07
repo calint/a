@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TimeZone;
+import a.amazon.key;
 final public class b{
 	public final static String strenc="utf-8";
 	public final static String q=" ڀ ";
@@ -463,4 +464,5 @@ final public class b{
 		return u3;
 	}
 	public static session session(final String id){return session.all().get(id);}
+	public static String uri_to(final Class<? extends a>cls){return"/"+cls.getName().substring(webobjpkg.length());}
 }
