@@ -30,7 +30,7 @@ public class store_in_ram implements store,Serializable{
 		e.notnew=true;
 	}
 	@Override public itm load(final Class<? extends itm>cls,final String did)throws Throwable{
-//		final byte[]ba=items.get(cls)?.get(did);
+//?j		final byte[]ba=items.get(cls)?.get(did);
 		final ConcurrentHashMap<String,byte[]>map=maps.get(cls);
 		if(map==null)return null;
 		final byte[]ba=map.get(did);
@@ -61,11 +61,11 @@ public class store_in_ram implements store,Serializable{
 		map.remove(did);//? cascade agr
 		if(map.isEmpty())maps.remove(cls);//? y
 	}
+	
 	public void load_from(final InputStream is)throws Throwable{}
 	public void save_to(final OutputStream is)throws Throwable{}
 	
-	
 	final private ConcurrentHashMap<Class<? extends itm>,ConcurrentHashMap<String,byte[]>>maps=new ConcurrentHashMap<>();
-
+	
 	private static final long serialVersionUID=1L;
 }
