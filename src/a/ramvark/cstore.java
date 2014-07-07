@@ -26,8 +26,8 @@ public final class cstore{
 			x.p(creates).spc();
 			x.p(saves).spc();
 			x.p(loads).spc();
-			x.p(deletes);
 			x.p(foreaches).spc();
+			x.p(deletes);
 		}
 
 		// cache
