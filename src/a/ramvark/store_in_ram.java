@@ -6,14 +6,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import a.ramvark.cstore.meters;
 import com.sun.istack.internal.NotNull;
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class store_in_ram implements store{
-	final private ConcurrentHashMap<Class<? extends itm>,ConcurrentHashMap<String,byte[]>>maps=new ConcurrentHashMap<Class<? extends itm>,ConcurrentHashMap<String,byte[]>>();
-//	public store_in_ram(){}
+	final private ConcurrentHashMap<Class<? extends itm>,ConcurrentHashMap<String,byte[]>>maps=new ConcurrentHashMap<>();
 	@Override public itm create(@NotNull final Class<? extends itm>cls,final itm owner)throws Throwable{
 		cstore.meters.creates++;
 		final itm e=cls.newInstance();
@@ -26,7 +24,7 @@ public class store_in_ram implements store{
 		final Class<? extends itm>cls=e.getClass();
 		ConcurrentHashMap<String,byte[]>map=maps.get(cls);
 		if(map==null){
-			map=new ConcurrentHashMap<String,byte[]>();
+			map=new ConcurrentHashMap<>();
 			maps.put(cls,map);
 		}
 		final ByteOutputStream bos=new ByteOutputStream(K);
@@ -47,9 +45,9 @@ public class store_in_ram implements store{
 		return e;
 		
 	}
-	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+	@Override public void foreach(@NotNull final Class<? extends itm>cls,final itm owner,final String q,@NotNull final store.visitor v)throws Throwable{
 		cstore.meters.foreaches++;
-		final Map<String,byte[]>map=maps.get(cls);
+		final ConcurrentHashMap<String,byte[]>map=maps.get(cls);
 		if(map==null)return;
 		if(q!=null&&!q.isEmpty())
 			map.entrySet().stream().forEach(me->{
