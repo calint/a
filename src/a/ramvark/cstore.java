@@ -2,13 +2,13 @@ package a.ramvark;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import b.a;
 import b.b;
 import b.cacheable;
 import b.xwriter;
 public final class cstore{
 //	private final static store st=new store_in_files_session();
+//	private final static store st=new store_in_files_root();
 //	private final static store st=new store_in_jdbc_mysql();
 	private final static store st=new store_in_ram();
 	
