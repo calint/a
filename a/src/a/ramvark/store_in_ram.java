@@ -34,7 +34,7 @@ public class store_in_ram implements store{
 	}
 	@Override public itm load(@NotNull final Class<? extends itm>cls,@NotNull final String did)throws Throwable{
 //		final byte[]ba=items.get(cls)?.get(did);
-		final Map<String,byte[]>map=maps.get(cls);
+		final ConcurrentHashMap<String,byte[]>map=maps.get(cls);
 		if(map==null)return null;
 		final byte[]ba=map.get(did);
 		if(ba==null)return null;
@@ -43,7 +43,6 @@ public class store_in_ram implements store{
 			e.load(is);
 		}
 		return e;
-		
 	}
 	@Override public void foreach(@NotNull final Class<? extends itm>cls,final itm owner,final String q,@NotNull final store.visitor v)throws Throwable{
 		cstore.meters.foreaches++;
@@ -62,6 +61,7 @@ public class store_in_ram implements store{
 	@Override public void delete(@NotNull final Class<? extends itm>cls,@NotNull final String did)throws Throwable{
 		cstore.meters.deletes++;
 		final ConcurrentHashMap<String,byte[]>map=maps.get(cls);
+		if(map==null)return;//? silently ignores ...
 		map.remove(did);//? cascade agr
 		if(map.isEmpty())maps.remove(cls);//? y
 	}
