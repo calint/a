@@ -81,6 +81,7 @@ public class store_in_s3 implements store{
 		for(final S3ObjectSummary sos:ols.getObjectSummaries()){
 			final String did=sos.getKey();
 			final itm e=load(cls,did);
+			if(!e.toString().startsWith(prefix))continue;
 			v.visit(e);
 		}
 		final long t1=System.currentTimeMillis();
