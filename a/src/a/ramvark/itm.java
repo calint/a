@@ -107,7 +107,7 @@ public abstract class itm extends an implements $.labeled{
 				continue;
 			}
 			if(e.has_bit(0)){
-				x.p(e);
+				x.r(e);
 			}else{
 				if(f.getType()==ref.class){
 					inputref(x,e);
@@ -144,7 +144,7 @@ public abstract class itm extends an implements $.labeled{
 				}
 				if(t==3){//aggr many
 	//				((lst)e).owner=this;
-					x.p(e);
+					x.r(e);
 					continue;
 				}
 				if(t==4){

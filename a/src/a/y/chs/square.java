@@ -19,7 +19,7 @@ public class square extends a{
 		x.td(sb.toString());
 		x.a("javascript:$x('"+id()+" clk')");
 		if(piece!=null){
-			x.rend(piece);
+			x.r(piece);
 		}else{
 			x.p("&nbsp;&nbsp;");
 		}

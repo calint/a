@@ -20,7 +20,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(xwr
 	for(Field f:b.b.class.getFields()){
 		final a fld=new jfld(this,b.b.class,f.getName());
 		ls.add(fld);
-		x.spc(lblw-f.getName().length()).p(f.getName()).p(": ").rend(fld).nl();
+		x.spc(lblw-f.getName().length()).p(f.getName()).p(": ").r(fld).nl();
 	}
 }
 	private List<a>ls=new ArrayList<a>();

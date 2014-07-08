@@ -249,10 +249,10 @@ final public class vintage extends a{
 	void rendpanel(xwriter x)throws Throwable{
 		x.pre();
 		x.span(sts,"font-weight:bold").nl();
-		x.p(sys).nl();
-		x.p(regs);
-		x.p(calls);
-		x.p(loops);
+		x.r(sys).nl();
+		x.r(regs);
+		x.r(calls);
+		x.r(loops);
 		x.preEnd();
 	}
 	void rendrom(xwriter x){

@@ -10,7 +10,7 @@ public class $ extends a{
 //		x.pl("frameless");
 		for(final window w:windows.values()){
 //			x.p("<div id="+w.id()+" onclick=\"$x('"+w.id()+"')\" style=\"border:1px solid black;position:absolute;top:"+w.y+"px;left:"+w.x+"px\">");
-			x.p(w);
+			x.r(w);
 //			x.p("</div>");
 //			x.nl();
 		}

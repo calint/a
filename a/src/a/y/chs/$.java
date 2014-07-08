@@ -92,7 +92,7 @@ public class $ extends a{
 		}
 	}
 	public void to(final xwriter x)throws Throwable{
-		x.rend(brd);
+		x.r(brd);
 		x.style().nl();
 		x.p("input.movefld{width:80px;border:1px dotted black;}").nl();
 		x.style_().nl();

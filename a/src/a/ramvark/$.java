@@ -37,11 +37,11 @@ final public class $ extends a{
 				x.tage("span");
 		}
 		x.spc();
-		x.p(el);
+		x.r(el);
 		x.br();
 		meters.spclst(x);
 		x.nl();
-		x.nl().nl().rend(ajaxsts);
+		x.nl().nl().r(ajaxsts);
 		x.el_();
 //		x.nl().script().p("$('"+$el.id()+"').style.position='absolute';$('"+$el.id()+"').style.left='120px';").scriptEnd();
 	}
