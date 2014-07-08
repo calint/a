@@ -5,8 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 public final class xwriter{
-	public static String encquot(final String text){if(text==null)return"";return text.replaceAll("\"","&quot;");}
-	private final OutputStream os;
 	public xwriter(final OutputStream os){this.os=os;}
 	public xwriter(){os=new ByteArrayOutputStream();}
 	public OutputStream outputstream(){return os;}
@@ -275,4 +273,8 @@ public final class xwriter{
 	public xwriter xlocation(final String uri){return p("location='").p(uri).pl("';");}
 	public xwriter span(final String style){return tago("span").attr("style",style).tagoe();}
 	public xwriter nbsp(){return p("&nbsp;");}
+
+	private final OutputStream os;
+
+	private static String encquot(final String text){if(text==null)return"";return text.replaceAll("\"","&quot;");}
 }
