@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.StandardSocketOptions;
 import java.net.URLDecoder;
@@ -107,8 +108,8 @@ final public class b{
 		resources_lastmod=System.currentTimeMillis();
 
 		if(print_conf_at_startup){
-			print_hr(out,64);
-			try{out.println(InetAddress.getLocalHost());}catch(Throwable ignored){}
+//			print_hr(out,64);
+//			try{out.println(InetAddress.getLocalHost());}catch(Throwable ignored){}
 			print_hr(out,64);
 //			out.println(b.class);
 //			print_hr(out,64);
@@ -303,15 +304,17 @@ final public class b{
 		}
 		final PrintStream ps=new PrintStream(out);
 		ps.println(hello);
-		try{
-			ps.print("             host: ");
-			ps.print(InetAddress.getLocalHost());
-			if(!server_port.equals("80")){
-				ps.print(":");
-				ps.print(server_port);
-			}
-			ps.print("/");
-		}catch(Throwable ignored){}finally{ps.println();}
+		for(final NetworkInterface ni:Collections.list(NetworkInterface.getNetworkInterfaces())){
+		    final String nm=ni.getName();
+		    if(nm.startsWith("lo"))continue;
+			p("              url: ");
+	        for (final InetAddress ia:Collections.list(ni.getInetAddresses())){
+	        	final String s=ia.getHostAddress();
+	        	if(!s.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))continue;
+	        	p("http://");p(s);if(!server_port.equals("80")){p(":");p(server_port);}p("/");
+	        }
+	        p("\n");
+		}
 		ps.println("             time: "+tolastmodstr(t_ms));
 		ps.println("             port: "+server_port);
 		ps.println("            input: "+(thdwatch.input>>10)+" KB");
