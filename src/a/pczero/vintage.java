@@ -197,19 +197,21 @@ final public class vintage extends a{
 		final boolean dispramble=(dispbits&8)==8;
 		if(dispramble){
 			x.pre();
-			x.el("border:0px solid green;display:block;text-align:center");
+			x.el("display:block;text-align:center");
 			pramble(x);
-			x.elend().nl();
+			x.elend();
 		}
 		final boolean dispram=(dispbits&1)==1;
 		if(dispram){
-			if(pt()==null)ajaxsts.to(x);
-			ram.to(x);
+			if(pt()==null){x.style(ajaxsts,"position:fixed;bottom:0;right:0");ajaxsts.to(x);}
+			x.el("display:block;text-align:center");
 			x.style(ram,"border:1px solid #488");
-			x.nl();
+			ram.to(x);
+			x.elend().nl();
 		}
 		final boolean dispmenu=(dispbits&2)==2;
 		if(dispmenu){
+			x.el("display:block;text-align:center");
 			x.ax(this,"l"," load");
 			x.ax(this,"c"," compile");
 			x.ax(this,"r"," reset");
@@ -219,7 +221,7 @@ final public class vintage extends a{
 			x.ax(this,"u"," run");
 			x.ax(this,"s"," save");
 			x.ax(this,"b"," run-to-break-point");
-			x.nl();
+			x.elend();
 		}
 		final boolean disprom=(dispbits&4)==4;
 		if(disprom){
