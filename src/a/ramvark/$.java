@@ -11,7 +11,10 @@ final public class $ extends a{
 	public a el;
 	public a sts;
 	public a_ajaxsts ajaxsts;
-	{try{stk.add((a)Class.forName(homepageclass).newInstance());}catch(Throwable t){throw new Error(t);}attach(stk.getLast(),"el");}
+	public $()throws Throwable{
+		stk.add((a)Class.forName(homepageclass).newInstance());
+		attach(stk.getLast(),"el");
+	}
 	public void to(final xwriter x)throws Throwable{
 		x.el(this);
 		x.style();

@@ -11,8 +11,8 @@ public final class cstore{
 //	private final static store st=new store_in_files_session();
 //	private final static store st=new store_in_files_root();
 //	private final static store st=new store_in_jdbc_mysql();
-//	private final static store st=new store_in_ram();
-	private final static store st=new store_in_s3();
+	private final static store st=new store_in_ram();
+//	private final static store st=new store_in_s3();
 	
 	static public itm create(Class<? extends itm>cls,itm owner)throws Throwable{return st.create(cls,owner);}
 	static public void save(itm e)throws Throwable{st.save(e);}
