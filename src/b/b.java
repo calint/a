@@ -308,7 +308,7 @@ final public class b{
 		    final String nm=ni.getName();
 		    if(nm.startsWith("lo"))continue;
 			p("              url: ");
-	        for (final InetAddress ia:Collections.list(ni.getInetAddresses())){
+	        for(final InetAddress ia:Collections.list(ni.getInetAddresses())){
 	        	final String s=ia.getHostAddress();
 	        	if(!s.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))continue;
 	        	p("http://");p(s);if(!server_port.equals("80")){p(":");p(server_port);}p("/");
