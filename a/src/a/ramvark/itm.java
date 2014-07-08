@@ -51,7 +51,7 @@ public abstract class itm extends an implements $.labeled{
 	final public void to(final xwriter x)throws Throwable{
 		onprerender();
 		final String id=id();
-		x.tag("span",id);
+		x.spano(this);
 //		x.nl();
 		if(notnew)
 			x.ax(this,"rn","⌾");
