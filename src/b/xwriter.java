@@ -147,7 +147,7 @@ public final class xwriter{
 		try{e.to(new osltgt(outputstream()));}catch(final Throwable t){b.log(t);p(b.stacktrace(t));}
 		return tage("textarea");
 	}
-	public xwriter flush(){try{os.flush();}catch (final IOException e){throw new Error(e);}return this;}
+	public xwriter flush(){try{os.flush();return this;}catch(final IOException e){throw new Error(e);}}
 	public String toString(){return os.toString();}
 	public xwriter hr(){return tag("hr");}
 	public xwriter spc(){return p(' ');}
