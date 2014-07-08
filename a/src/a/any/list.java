@@ -101,7 +101,7 @@ public class list extends a{
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	
 	synchronized final public void to(final xwriter x) throws Throwable{
-		x.el(this);
+		x.div(this);
 		x.style();
 		x.css("table.f","margin-left:auto;margin-right:auto");
 		x.css("table.f tr:first-child","border:0;border-bottom:1px solid green;border-top:1px solid #070");
@@ -121,7 +121,7 @@ public class list extends a{
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))if(!path.equals(root))x.ax(this,"up","••");
 		final boolean has_actions=hasbit(BIT_ALLOW_FILE_CREATE)||hasbit(BIT_ALLOW_DIR_CREATE);
-		int cols=has_actions?6:5;
+		int cols=has_actions?5:4;
 		final boolean ommit_col_edit=path.ommit_column_edit();if(ommit_col_edit)cols--;
 		final boolean ommit_col_lastmod=path.ommit_column_lastmod();if(ommit_col_lastmod)cols--;
 		final boolean ommit_col_size=path.ommit_column_size();if(ommit_col_size)cols--;
@@ -170,15 +170,17 @@ public class list extends a{
 			};
 		}catch(Throwable t){exception=t;}
 		x.nl().nl();
+		x.div();
 		x.style(sts,"position:fixed;left:0;top:0");
 		sts.to(x);
+		x.divEnd();
 		if(exception!=null)
 			x.nl().pl(b.stacktrace(exception));//? allow ..
 		
 		stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
 //		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
 		x.nl().pl(path.getClass().getName());
-		x.elend();
+		x.divEnd();
 	}
 	public static @conf String icnfile="◻";
 	public static @conf String icndir="⧉";
