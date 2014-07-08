@@ -175,7 +175,7 @@ public abstract class itm extends an implements $.labeled{
 		if(elem_in_focus!=null)
 			x.focus(elem_in_focus);
 		
-		x.tage("span");
+		x.el_();
 	}
 	//input aggr11
 	final protected void inputagr(final xwriter x,final a e) throws Throwable{
