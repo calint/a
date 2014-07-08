@@ -29,7 +29,7 @@ public class $ extends b.a{
 	}
 	
 	@Override public void to(xwriter x) throws Throwable{
-		x.style(ajaxsts,"position:absolute;left:1em;top:4em;text-align:right");
+		x.style(ajaxsts,"position:fixed;right:0;bottom:0;text-align:right");
 		ajaxsts.to(x);
 		ls.to(x);
 	}

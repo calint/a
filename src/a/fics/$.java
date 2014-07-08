@@ -40,6 +40,7 @@ final public class $ extends a{
 		x.css(devthr,"border:1px dotted green;text-align:right;width:2em;padding:.5em;background:yellow");
 		x.styleEnd();
 //		x.pre();
+		x.style(ajaxsts,"position:fixed;bottom:0;right:0");
 		ajaxsts.to(x);
 		x.nl();
 		fg.to(x);
