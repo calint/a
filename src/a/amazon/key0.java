@@ -22,7 +22,7 @@ public class key0 extends a{
 		x.style_();
 		x.p("aws.amazon.com   access key ").inputText(accesskey);
 		x.p(" secret key ").inputText(secretkey).spc().ax(this).spc();
-		x.output(output);
+		x.output_holder(output);
 		
 	}
 	public void x_(final xwriter y,final String a)throws Throwable{

@@ -156,10 +156,10 @@ public final class xwriter{
 	public xwriter bell(){return p('\07');}
 	public xwriter p(final CharSequence cs){return p(cs.toString());}
 //	public xwriter title(final String s){return script().xtitle(s).scriptEnd();}
-	/** first element to render */
+	/** first element to render for correct HTML5 */
 	public xwriter title(final String s){return tag("title").p(s).tage("title");}
-	public xwriter css(final String cls,final String stl){return p(cls).p("{").p(stl).p("}");}
-	public xwriter css(final a e,final String stl){return p("#").p(e.id()).p("{").p(stl).p("}");}
+	public xwriter css(final String selector,final String stl){return p(selector).p("{").p(stl).p("}");}
+	public xwriter css(final a e,final String style){return p("#").p(e.id()).p("{").p(style).p("}");}
 //	public xwriter cssln(final a e,final String stl){return style().p("#").p(e.id()).p("{").p(stl).p("}").styleEnd();}
 	public xwriter inputax(final a e,final String stylecls,final a ax,final String axp){
 		tago("input").attr("value",e.toString()).attrdef(e).attr("type","text");
@@ -193,7 +193,7 @@ public final class xwriter{
 	}
 	public xwriter inputax(final a e){return inputax(e,null,e.pt(),null);}
 
-	public xwriter output(final a e){return tago("output").attr("id",e.id()).tagoe().tage("output");}//? value
+	public xwriter output_holder(final a e){return tago("output").attr("id",e.id()).tagoe().tage("output");}//? value
 	public xwriter spc(final int n){for(int i=0;i<n;i++)spc();return this;}
 	public xwriter ul(final String cls){return tago("ul").attr("class",cls).tagoe();}
 	public xwriter cssfont(final String name,final String url){return p("@font-face{font-family:").p(name).p(";src:url(").p(url).p(");}");}
