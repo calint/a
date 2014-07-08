@@ -54,7 +54,7 @@ public final class $ extends a{
 		x.ax(this,"clrsts","[·]");
 		x.br().p("inbox: ").p(inbox_dir);
 		x.br().p("store: ").p(store_dir);
-		x.br().rend(dirox);
+		x.br().r(dirox);
 	}
 	public void x_clrsts(xwriter x,String q)throws Throwable{
 		sts.set("");

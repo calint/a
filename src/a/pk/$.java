@@ -28,7 +28,7 @@ public class $ extends a{
 		x.nl();
 		if(q.toString().length()==0)
 			return;
-		x.rend(wta[i]).nl().nl();
+		x.r(wta[i]).nl().nl();
 	}
 	public void x_upd(xwriter x,String s) throws Throwable{
 		x.p("location.href=location.pathname+'?"+b.urlencode(q.toString())+"';");

@@ -26,11 +26,11 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,ee);
 		if(!e.colr.isempty())x.span_();
-		x.td().p(e.price);
-		x.td().p(e.amount);
+		x.td().r(e.price);
+		x.td().r(e.amount);
 //		sum+=e.price.toint()*e.amount.toint();
 		sum+=e.price.toint();
-		x.td().p(e.unit);
+		x.td().r(e.unit);
 		x.td();
 		renddelax(x,ee,"x");
 	}

@@ -45,7 +45,7 @@ final public class $ extends a{
 		x.style().css("body","text-align:center").css(st,"color:grey").style_();
 		x.ax(this,"viewix","  search").ax(this,"cfg","  config").ax(this,"reindex"," reindex").ax(this,"cancelix"," cancel").ax(this,"ixdel"," delete").ax(this,"size"," size").ax(this,"rfsh"," refresh");
 		x.nl().span(st).spc().ax(this,"stsx","[·]").nl();
-		x.p(xd);
+		x.r(xd);
 	}
 	void to_srch(final xwriter y)throws IOException{
 		y.p("“");

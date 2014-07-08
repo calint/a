@@ -23,7 +23,7 @@ public class index extends a{
 		InputStream is=p.fileinputstream();
 		BufferedReader br=new BufferedReader(new InputStreamReader(is,"utf8"));
 		x.pre().nl();
-		x.rend(sts);
+		x.r(sts);
 		int lineno=0;
 		Set<String> set=new HashSet<String>();
 		for(String line=br.readLine();line!=null;line=br.readLine()){
