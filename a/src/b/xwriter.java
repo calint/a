@@ -112,13 +112,13 @@ public final class xwriter{
 	public xwriter inputText(final a e,final a axonreturn,final String axp){return input(e,"text",null,null,axonreturn,axp,null,null,null);}
 	public xwriter inputText(final a e,final String stylecls,final a axonreturn,final String axp,final String txt){return input(e,"text",null,stylecls,axonreturn,axp,txt,null,null);}
 	public xwriter inputColor(final a e){return input(e,"color",null,null,null,null,null,null,null);}
-	public xwriter input(final a e,final String type,final String style,final String stylecls,final a axonreturn,final String axp,final String txt,final a on_change_ajax_elem,final String on_change_ajax_param){
+	public xwriter input(final a e,final String type,final String style,final String stylecls,final a on_enter_ajax_elem,final String on_enter_ajax_param,final String txt,final a on_change_ajax_elem,final String on_change_ajax_param){
 		final String value=txt==null?e.toString():txt;
 		tago("input").attr("value",value).attrdef(e).attr("type",type);
 		if(stylecls!=null)attr("class",stylecls);
 		if(style!=null)attr("style",style);
-		if(axonreturn!=null){
-			final String ax=axonreturn.id()+(axp!=null?(" "+axp):"");
+		if(on_enter_ajax_elem!=null){
+			final String ax=on_enter_ajax_elem.id()+(on_enter_ajax_param!=null?(" "+on_enter_ajax_param):"");
 			attr("onkeypress","return $r(event,this,'"+ax+"')");
 		}
 		final StringBuilder sb=new StringBuilder();
@@ -126,13 +126,13 @@ public final class xwriter{
 			if(value.equals(Boolean.TRUE.toString()))attr("checked","checked");
 			sb.append("this.value=this.checked?'1':'0';$b(this)");
 			if(on_change_ajax_elem!=null){
-				final String ax=axonreturn.id()+(axp!=null?(" "+on_change_ajax_param):"");
+				final String ax=on_enter_ajax_elem.id()+(on_enter_ajax_param!=null?(" "+on_change_ajax_param):"");
 				sb.append(";$x('"+ax+"')");
 			}		
 		}else{
 			sb.append("$b(this)");
 			if(on_change_ajax_elem!=null){
-				final String ax=axonreturn.id()+(axp!=null?(" "+on_change_ajax_param):"");
+				final String ax=on_enter_ajax_elem.id()+(on_enter_ajax_param!=null?(" "+on_change_ajax_param):"");
 				sb.append(";$x('"+ax+"')");
 			}
 		}
