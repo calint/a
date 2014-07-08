@@ -7,8 +7,10 @@ public class a_ajaxsts extends a{
 		x.spanEnd();
 	}
 	
-	@conf public static String sts_css_opened="transition-duration:1s;transition-timing-function:ease;padding:1em;width:20em;height:1em;background:#fed;box-shadow:0 0 .5em rgba(0,0,0,.5);";
-	@conf public static String sts_css_closed="transition-duration:1s;transition-timing-function:ease;padding:1em;width:20em;height:1em;color:rgba(255,255,255,.5);box-shadow:0 0 0 rgba(0,0,0,0);";
+//	@conf public static String sts_css_opened="transition-duration:1s;transition-timing-function:ease;padding:1em;width:20em;height:1em;background:#fed;box-shadow:0 0 .5em rgba(0,0,0,.5);";
+//	@conf public static String sts_css_closed="transition-duration:1s;transition-timing-function:ease;padding:1em;width:20em;height:1em;color:rgba(255,255,255,.5);box-shadow:0 0 0 rgba(0,0,0,0);";
+	@conf public static String sts_css_opened="transition-duration:1s;transition-timing-function:ease;padding:1em;background:#fed;box-shadow:0 0 .5em rgba(0,0,0,.5);";
+	@conf public static String sts_css_closed="transition-duration:1s;transition-timing-function:ease;padding:1em;color:rgba(255,255,255,.5);box-shadow:0 0 0 rgba(0,0,0,0);";
 
 	private static final long serialVersionUID=1;
 }
