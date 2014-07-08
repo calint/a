@@ -227,6 +227,7 @@ public final class xwriter{
 	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
 	public xwriter xp(final a e,final String s){return p("$p('").p(e.id()).p("','").jsstr(s).pl("');");}
 	public xwriter tag(final String name,final a e){return tag(name,e.id());}
+	public xwriter el(){return tag("div");}
 	public xwriter el(final a e){return tag("div",e);}
 	public xwriter el(final a e,final String style){return p("<div id=").p(e.id()).p(" style=\"").p(style).p("\">");}
 	public xwriter el(final String style){return p("<div style=\"").p(style).p("\">");}
@@ -249,7 +250,6 @@ public final class xwriter{
 	public xwriter table(final String style,final String disrecarded_param_to_overcome_overloading){
 		return tago("table").attr("style",style).tagoe();
 	}
-	public xwriter el(){return tag("el");}
 	public xwriter ax(final a e){return ax(e,"","::");}
 	public xwriter xed(final a e,final a axe,final String axp,final String style)throws Throwable{
 		p("<el id=").p(e.id()).p(" contenteditable=true spellcheck=false ");
