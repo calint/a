@@ -26,7 +26,7 @@ public class $ extends a{
 		x.p("aws.amazon.com   access key ").inputText(accesskey);
 		x.p(" secret key ").inputText(secretkey).spc().nl();
 		x.p("  instance ").ax(this,"c","• run").spc().ax(this,"l","• list").nl();
-		x.output(output);
+		x.output_holder(output);
 	}
 	public void x_c(final xwriter x,final String a)throws Throwable{
 //		for(int i=0;i<100;i++)

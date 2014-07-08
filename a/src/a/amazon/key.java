@@ -21,7 +21,7 @@ public class key extends a{
 		x.p("paste rootkey.cvs from aws.amazon.com below:").nl();
 		x.inputTextArea(key);
 		x.nl().ax(this,null," :: validate");
-		x.spc(3).output(output);
+		x.spc(3).output_holder(output);
 		
 	}
 	public void x_(final xwriter y,final String a)throws Throwable{

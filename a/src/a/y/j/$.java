@@ -5,7 +5,7 @@ public class $ extends a{static final long serialVersionUID=1;public void to(fin
 	x.style(s,"width:100%;height:200px;border:1px dotted green").inputTextArea(s);
 	x.nl();
 	x.pl("java source");
-	x.style(o,"display:block;width:100%;height:200px;border:1px dotted green").output(o);
+	x.style(o,"display:block;width:100%;height:200px;border:1px dotted green").output_holder(o);
 }
 	synchronized public void x_(final xwriter x,final String q){
 		final javawriter j=new javawriter();

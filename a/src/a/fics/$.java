@@ -47,11 +47,11 @@ final public class $ extends a{
 		x.nl(11);
 //		x.output(sts).nl();
 //		x.table("margin-left:auto;margin-right:auto",null).tr().td();
-		x.output(grph).nl().output(sts).output(dsp).nl(2);
+		x.output_holder(grph).nl().output_holder(sts).output_holder(dsp).nl(2);
 		x.tag("figure");
 		x.span(diag);
 		x.tag("figcaption");
-		x.output(hint);
+		x.output_holder(hint);
 		x.tage("figcaption");
 		x.tage("figure");
 //		x.tableEnd();
