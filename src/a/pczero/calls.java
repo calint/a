@@ -14,7 +14,7 @@ public class calls extends a{
 			if((i%4)==0)
 				x.nl();
 		}
-		x.elend();
+		x.el_();
 	}
 	public void push(final int v){
 		stk[ix]=v;

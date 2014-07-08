@@ -38,7 +38,7 @@ public class board extends a{
 		x.p("table.chs td.wht{background-color:#f8f8f8;}").nl();;
 		x.p("table.chs .hilite{border:1px solid red;}").nl();;
 		x.p("table.chs img{border:0px}").nl();
-		x.styleEnd().nl();;
+		x.style_().nl();;
 		x.table("chs").nl();
 		if(!flipped){
 			for(int i=(wihi-1);i>=0;i--){
@@ -46,7 +46,7 @@ public class board extends a{
 				for(int j=0;j<wihi;j++){
 					squares[i][j].to(x);
 				}
-				x.trEnd().nl();
+				x.tr_().nl();
 			}
 		}else{
 			for(int i=0;i<wihi;i++){
@@ -54,9 +54,9 @@ public class board extends a{
 				for(int j=(wihi-1);j>=0;j--){
 					squares[i][j].to(x);
 				}
-				x.trEnd().nl();
+				x.tr_().nl();
 			}
 		}
-		x.tableEnd();
+		x.table_();
 	}
 }

@@ -116,7 +116,7 @@ public class list extends a{
 		x.css("table.f th","padding:.5em;text-align:left;background:#f0f0f0;color:black");
 		if(hasbit(BIT_ALLOW_QUERY))x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
 		x.css("table.f td.value input","width:18em;background:#eee;border:1px dotted #abc;padding:.5em");
-		x.styleEnd();
+		x.style_();
 		x.table("f").nl();
 		x.tr().th();
 		if(hasbit(BIT_ALLOW_DIR_UP))if(!path.equals(root))x.ax(this,"up","••");
@@ -133,14 +133,14 @@ public class list extends a{
 			String pp=path.name();
 			x.span("float:left");
 			x.p(pp);
-			x.spanEnd();
+			x.span_();
 //			}
 		}
 		x.span("margin-left:22px;float:right");
 		if(hasbit(BIT_ALLOW_QUERY))x.inputax(q,null,this,null).focus(q);
 		if(hasbit(BIT_ALLOW_FILE_CREATE))x.ax(this,"c",icnfile);
 		if(hasbit(BIT_ALLOW_DIR_CREATE))x.ax(this,"d",icndir);
-		x.spanEnd();
+		x.span_();
 		x.nl();
 		firstinlist=null;
 		final AtomicLong total_bytes=new AtomicLong();
@@ -160,11 +160,11 @@ public class list extends a{
 				x.nl();
 				x.focus(q);
 			}
-			x.tableEnd();
+			x.table_();
 			if(isfile){
 	//			x.pre().nl().flush();
 	//			path.to(new osltgt(x.outputstream()));
-				x.style().css(bd,"width:100%;height:100%;border:1px dotted green").styleEnd();
+				x.style().css(bd,"width:100%;height:100%;border:1px dotted green").style_();
 				x.inputTextArea(bd,"ed");
 				x.focus(bd);
 			};
@@ -173,14 +173,14 @@ public class list extends a{
 		x.div();
 		x.style(sts,"position:fixed;left:0;top:0");
 		sts.to(x);
-		x.divEnd();
+		x.div_();
 		if(exception!=null)
 			x.nl().pl(b.stacktrace(exception));//? allow ..
 		
 		stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
 //		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
 		x.nl().pl(path.getClass().getName());
-		x.divEnd();
+		x.div_();
 	}
 	public static @conf String icnfile="◻";
 	public static @conf String icndir="⧉";
@@ -275,7 +275,7 @@ public class list extends a{
 		x.css("table.f th","padding:.5em;text-align:left;background:#f0f0f0;color:black");
 		if(hasbit(BIT_ALLOW_QUERY))x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
 		x.css("table.f td.value input","width:18em;background:#eee;border:1px dotted #abc;padding:.5em");
-		x.styleEnd();
+		x.style_();
 
 		if(path instanceof el.el_actions){
 			actions=((el.el_actions)path).actions();
@@ -287,7 +287,7 @@ public class list extends a{
 				i++;
 				e.to(x);
 			}
-			x.divEnd();
+			x.div_();
 		}
 		x.table("f").nl();
 		x.tr().th();
@@ -305,7 +305,7 @@ public class list extends a{
 			String pp=path.name();
 			x.span("float:left");
 			x.p(pp);
-			x.spanEnd();
+			x.span_();
 //			}
 		}
 		final String icnfile="◻";
@@ -317,13 +317,13 @@ public class list extends a{
 		if(isfile){
 			x.ax(this,"s",icnfile);
 			x.ax(this,"sx","▣");
-			x.spanEnd();
+			x.span_();
 			x.nl();
 		}else{
 			if(hasbit(BIT_ALLOW_QUERY))x.inputax(q,null,this,null).focus(q);
 			if(hasbit(BIT_ALLOW_FILE_CREATE))x.ax(this,"c",icnfile);
 			if(hasbit(BIT_ALLOW_DIR_CREATE))x.ax(this,"d",icndir);
-			x.spanEnd();
+			x.span_();
 			x.nl();
 			long total_bytes=0;
 			firstinlist=null;
@@ -389,11 +389,11 @@ public class list extends a{
 			if(!ommit_col_size)x.td("total size last").p(nf.format(total_bytes));//size
 			x.nl();
 		}
-		x.tableEnd();
+		x.table_();
 		if(isfile){
 //			x.pre().nl().flush();
 //			path.to(new osltgt(x.outputstream()));
-			x.style().css(bd,"width:100%;height:100%;border:1px dotted green").styleEnd();
+			x.style().css(bd,"width:100%;height:100%;border:1px dotted green").style_();
 			x.inputTextArea(bd,"ed");
 			x.focus(bd);
 		}else{
@@ -408,7 +408,7 @@ public class list extends a{
 		stream(path.getClass().getDeclaredMethods()).forEach(m->x.pl(m.getName()));
 //		for(Method m:path.getClass().getDeclaredMethods())x.pl(m.toString());
 		
-		x.spanEnd();
+		x.span_();
 	}
 	private el firstinlist;
 	private List<a>actions;

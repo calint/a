@@ -9,7 +9,7 @@ public class utf extends a{
 		final int line_width=33;
 		final int chars=Integer.parseInt(tostr(req.get().query(),Integer.toString(0x20000)));
 		final int lines=chars/line_width;
-		x.style().p("*{font-family:monospaced;font-size:32px}").styleEnd();
+		x.style().p("*{font-family:monospaced;font-size:32px}").style_();
 		x.tag("center").code().pre();
 		char ch=0;
 //		final int lines=0x20000/33;
@@ -21,7 +21,7 @@ public class utf extends a{
 			}
 			x.nl();
 		}
-		x.codeEnd();
+		x.code_();
 	}
 }
 //ڀ

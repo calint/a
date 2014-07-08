@@ -11,13 +11,13 @@ public class blok extends a{
 		x.style();
 		x.css("el","display:inline-block;margin:.25em;padding:0 1em 0 1em;box-shadow:0 0 .5em rgba(0,1,0,1);border-radius:0px");
 		x.css("el:hover","font-weight:bold");
-		x.styleEnd();
+		x.style_();
 		for(final String fn:p.list()){
 			x.el();
 			x.ax(this,"dsp "+b.urlencode(fn),fn);
 			x.ax(this,"add "+b.urlencode(fn)," • ").nl();
 			x.p(p.get(fn).size()).p(" B").nl();
-			x.elend();
+			x.el_();
 		}
 	}
 }

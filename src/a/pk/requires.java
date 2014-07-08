@@ -23,7 +23,7 @@ public class requires extends a{
 				return;
 			s=s.substring(i+1).trim();
 			sb.append(s);
-			x.a(sb.toString()).p(s).aEnd().nl();
+			x.a(sb.toString()).p(s).a_().nl();
 			sb.setLength(sbl);
 		};}).p("apt-cache -i depends ").p(qs[0]).exit();
 	}

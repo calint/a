@@ -13,7 +13,7 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		x.css("table.tb tr th","padding:.5em 1em .4em 1em;background:#fff;border:1px solid #ddd");
 		x.css("table.tb tr td","padding:.5em 1em .5em 1em;border:1px dotted #ddd");
 		x.css("table.tb tr:last-child","border-top:1px solid green;font-weight:bold");
-		x.styleEnd();
+		x.style_();
 		x.nl().table("tb");
 		x.nl().tr().th().p("name").th().p("total").th().p("qty").th().p("unit");
 		x.th();
@@ -25,7 +25,7 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		x.td();
 		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,ee);
-		if(!e.colr.isempty())x.spanEnd();
+		if(!e.colr.isempty())x.span_();
 		x.td().p(e.price);
 		x.td().p(e.amount);
 //		sum+=e.price.toint()*e.amount.toint();
@@ -42,7 +42,7 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		x.td();
 		x.td();
 
-		x.nl().tableEnd();
+		x.nl().table_();
 	}
 
 }

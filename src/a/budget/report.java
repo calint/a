@@ -9,7 +9,7 @@ public class report extends a{
 		x.nl();
 		x.el(l);
 		try{path().to(x);}catch(final Throwable t){x.pl(stacktraceline(t));}
-		x.elend();
+		x.el_();
 	}
 	private path path(){
 		return req.get().session().path(getClass().getPackage().getName()).get("log");

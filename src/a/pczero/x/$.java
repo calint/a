@@ -53,13 +53,13 @@ final public class $ extends a{
 			x.p("   ").p(e.getClass().getName().substring(e.getClass().getPackage().getName().length()+1));
 			x.tage("a");
 			x.p("  ");
-			x.elend();
+			x.el_();
 		}
 		x.nl();
 		x.nl();
 		x.el(id()+"$");
 		lse.get(ix).to(x);
-		x.elend();
-		x.elend();
+		x.el_();
+		x.el_();
 	}
 }

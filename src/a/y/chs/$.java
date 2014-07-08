@@ -95,7 +95,7 @@ public class $ extends a{
 		x.rend(brd);
 		x.style().nl();
 		x.p("input.movefld{width:80px;border:1px dotted black;}").nl();
-		x.styleEnd().nl();
+		x.style_().nl();
 		x.ax(this,"clr","::clear").p(" ");
 		x.ax(this,"rst","::reset").p(" ");
 		x.ax(this,"flp","::flip").br();

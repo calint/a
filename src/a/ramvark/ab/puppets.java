@@ -15,7 +15,7 @@ public @ls(cls=puppet.class)class puppets extends lst{
 		x.css("table.tb tr td","padding:.5em 1em .5em 1em;border:1px dotted #ddd");//;white-space:nowrap
 //		x.css("table.tb tr td:first-child","");
 //		x.css("table.tb tr td:last-child","background:yellow;width:100%");
-		x.styleEnd();
+		x.style_();
 		x.nl().table("tb");
 		x.nl().tr().th().p("name").th().p("email");
 //		x.th().p("mother").th().p("father");
@@ -27,7 +27,7 @@ public @ls(cls=puppet.class)class puppets extends lst{
 		x.td();
 		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,ee);
-		if(!e.colr.isempty())x.spanEnd();
+		if(!e.colr.isempty())x.span_();
 		x.td().p(e.email);
 //		x.td().p(e.mother);
 //		x.td().p(e.father);		
@@ -35,6 +35,6 @@ public @ls(cls=puppet.class)class puppets extends lst{
 		renddelax(x,ee,"x");
 	}
 	protected void rendlistfoot(final xwriter x){
-		x.nl().tableEnd();
+		x.nl().table_();
 	}
 }

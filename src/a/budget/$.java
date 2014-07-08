@@ -12,7 +12,7 @@ public class $ extends a{
 		x.css("html","font-size:2em;padding-left:4em");
 		x.css("table.bgt td","border:1px dotted black;padding:.5em");
 		x.css("table.bgt td.n","text-align:right");
-		x.styleEnd();
+		x.style_();
 		x.pre().ax(this,"recalc","::resum").spc().ax(this,"foldall","::fold").nl().nl();
 //		final path p=req.get().session().path(fsroot);
 		final path p=b.path(fsroot);
@@ -25,7 +25,7 @@ public class $ extends a{
 		x.td("n").p("uninstall");
 		x.nl();
 		prtfl(0,x,p);
-		x.tableEnd();
+		x.table_();
 		x.nl().p(" source '").p(p.fullpath()).p("'");
 	}
 	private void prtfl(final int indent,final xwriter x,final path p)throws Throwable{
@@ -64,7 +64,7 @@ public class $ extends a{
 		final String[]a=txt.split(" ");
 		for(final String s:a){
 			if(s.length()==0)continue;
-			x.td("n").tago("span").attr("style","color:"+colrs[indent]).tagoe().p(s).spanEnd();				
+			x.td("n").tago("span").attr("style","color:"+colrs[indent]).tagoe().p(s).span_();				
 		}
 		x.nl();
 		if(p.isdir()){

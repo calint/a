@@ -28,9 +28,9 @@ public final class coki3d extends a{
 		x.css("table.t td.l","color:#880000;border-left:3px dotted red;border-right:3px dotted red");
 		x.css("table.t td.r","color:#006600;border-right:3px dotted red");
 		x.css(s,"font-size:8px;color:white");
-		x.styleEnd();
-		x.pre("d").table("t").tr().td("l").output(d0).td("r").output(d1).tableEnd().preEnd().output(s);
-		x.script().p("setTimeout(\"$x('"+id()+" a')\",0)").scriptEnd();
+		x.style_();
+		x.pre("d").table("t").tr().td("l").output(d0).td("r").output(d1).table_().preEnd().output(s);
+		x.script().p("setTimeout(\"$x('"+id()+" a')\",0)").script_();
 	}
 	public void x_a(final xwriter x,final String st)throws Throwable{
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:MM:ss.SSS");

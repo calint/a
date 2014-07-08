@@ -3,6 +3,7 @@ import static b.b.rndint;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import b.a;
+import b.b.conf;
 import b.req;
 import b.xwriter;
 public class typealine extends a{
@@ -12,26 +13,26 @@ public class typealine extends a{
 	public a b;
 	public typealine(){upd();}
 	public void to(final xwriter x)throws Throwable{
+		if(pt()==null)x.title("typealine");
 		x.el(this);
 		x.style();
 		x.css("input.line","border:0;width:32em;border-bottom:1px dotted grey;padding:.1em");
 		x.css(".box","text-align:center;border:1px dotted blue;padding:7px;");
 		x.css(".line","width:250px;");
-		x.styleEnd();
-		x.title("typealine");
+		x.style_();
 		x.div("box");
-		x.span(q).inputText(s,"line",this,"a").focus(s).p(" ").axBgn(this,"a").span(b).axEnd();
-		x.divEnd();//? verbose
-		x.elend();
+		x.span(q).inputText(s,"line",this,"a").focus(s).p(" ").ajx(this,"a").span(b).ajx_();
+		x.div_();//? verbose
+		x.el_();
 	}
 	public void x_a(final xwriter x,final String p)throws Throwable{
-		final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd---hh:mm:ss.SSS---");
-		final String line=s.toString();
-		req.get().session().path("log.txt").append(simpleDateFormat.format(new Date())+line,"\n");
+		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd---hh:mm:ss.SSS---");
+		final String ln=s.toString();
+		req.get().session().path("log.txt").append(sdf.format(new Date())+ln,"\n");
 		upd();
 		s.clr();
 		if(x==null)return;
-		x.xtitle("typealine: "+line).xu(q).xu(s).xu(b).xfocus(s);
+		x.xtitle("typealine: "+ln).xu(q).xu(s).xu(b).xfocus(s);
 	}
 	private void upd(){
 		final long len=req.get().session().path("log.txt").size();
@@ -41,9 +42,10 @@ public class typealine extends a{
 			q.set(" ڀ ");
 		b.set(glyph_random());
 	}
-	private static final String glyphs="ᐖᐛツ";
 	private static String glyph_random(){
 		final int i=rndint(0,glyphs.length());
 		return glyphs.substring(i,i+1);
 	}
+
+	@conf public static String glyphs="ᐖᐛツ";
 }

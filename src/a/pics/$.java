@@ -16,6 +16,6 @@ public class $ extends a{static final long serialVersionUID=1;
 			x.tago("img").attr("src",s).tagoe();
 			return false;
 		}});
-		x.elend();
+		x.el_();
 	}
 }

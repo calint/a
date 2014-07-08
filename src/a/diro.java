@@ -64,7 +64,7 @@ public class diro extends a{
 		x.css("table.f th","padding:.5em;text-align:left;background:#f0f0f0;color:black");
 		if(hasbit(BIT_ALLOW_QUERY))
 			x.css(q,"float:right;background:yellow;border:1px dotted #555;text-align:right;width:10em;margin-left:1em");
-		x.styleEnd();
+		x.style_();
 		x.style(selection,"display:table;padding-top:.5em;padding-bottom:.5em;margin-left:auto;margin-right:auto;background:#fefefe;text-align:center;box-shadow:0 0 .5em rgba(0,0,0,.5);");
 		x.table("f").nl();
 		x.tr().th();
@@ -78,7 +78,7 @@ public class diro extends a{
 				String pp=path.fullpath().substring(root.fullpath().length());
 				x.span("float:left");
 				x.p(pp);
-				x.spanEnd();
+				x.span_();
 			}
 		}
 		final String icnfile="◻";
@@ -90,7 +90,7 @@ public class diro extends a{
 		if(isfile){
 			x.ax(this,"s",icnfile);
 			x.ax(this,"sx","▣");
-			x.spanEnd();
+			x.span_();
 			x.nl();
 		}else{
 			if(hasbit(BIT_ALLOW_QUERY))
@@ -99,7 +99,7 @@ public class diro extends a{
 				x.ax(this,"c",icnfile);
 			if(hasbit(BIT_ALLOW_DIR_CREATE))
 				x.ax(this,"d",icndir);
-			x.spanEnd();
+			x.span_();
 			x.nl();
 			long total_bytes=0;
 			firstinlist=null;
@@ -154,11 +154,11 @@ public class diro extends a{
 			x.td("total size last").p(nf.format(total_bytes));
 			x.nl();
 		}
-		x.tableEnd();
+		x.table_();
 		if(isfile){
 //			x.pre().nl().flush();
 //			path.to(new osltgt(x.outputstream()));
-			x.style().css(bd,"width:100%;height:100%;border:1px dotted green").styleEnd();
+			x.style().css(bd,"width:100%;height:100%;border:1px dotted green").style_();
 			x.inputTextArea(bd,"ed");
 			x.focus(bd);
 		}else{
@@ -168,7 +168,7 @@ public class diro extends a{
 			x.focus(q);
 		}
 		x.nl();
-		x.spanEnd();
+		x.span_();
 	}
 	private path firstinlist;
 	synchronized public void x_sel(final xwriter x,final String s)throws Throwable{
@@ -289,7 +289,7 @@ public class diro extends a{
 			x.style(rnm,"padding:.2em;border-bottom:1px dotted green;border-left:1px dotted greenl;width:12em;text-align:center");
 			x.ax(this,"ts",hidelist?" show":" hide");
 			if(hidelist){
-				x.elend();
+				x.el_();
 				return;
 			}
 			x.inputText(rnm).br();
@@ -330,8 +330,8 @@ public class diro extends a{
 			x.tr();
 			for(int i=0;i<cols-1;i++)x.td();
 			x.td("total size last").p(dr.nf.format(total_bytes));
-			x.nl().tableEnd();
-			x.elend();
+			x.nl().table_();
+			x.el_();
 		}
 		public void x_ts(final xwriter x,final String s)throws Throwable{
 			hidelist=!hidelist;

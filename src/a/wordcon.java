@@ -9,7 +9,7 @@ public class wordcon extends a{
 	public void to(final xwriter x) throws Throwable{
 		x.style();
 		x.css(txt,"border:1px dotted blue;width:100%;height:640px;");
-		x.styleEnd();
+		x.style_();
 		x.ax(this,"ok",":: wordcon").nl();
 		x.inputTextArea(txt).br();
 	}

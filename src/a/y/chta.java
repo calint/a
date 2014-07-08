@@ -44,7 +44,7 @@ public final class chta extends a{
 		x_a(x,null);
 		x.xfocus(inp);
 		x.xinterval(this,"e",5000);
-		x.scriptEnd();
+		x.script_();
 	}
 	public void x_a(final xwriter x,final String s)throws Throwable{
 		final String inps=inp.toString();

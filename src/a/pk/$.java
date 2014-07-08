@@ -23,7 +23,7 @@ public class $ extends a{
 			if(i==j)
 				x.p("  :: ").p(wt.nm());
 			else
-				x.p("  :: ").a(r.path()+"?"+b.urlencode(qs[0])+"?"+j).p(wt.nm()).aEnd();
+				x.p("  :: ").a(r.path()+"?"+b.urlencode(qs[0])+"?"+j).p(wt.nm()).a_();
 		}
 		x.nl();
 		if(q.toString().length()==0)

@@ -80,7 +80,7 @@ public abstract class itm extends an implements $.labeled{
 		x.css("textarea.ls","width:100%;height:100px");
 		x.css("textarea.ed","width:64em;height:400px");
 		x.css("input.nbr","text-align:right;width:5em");
-		x.styleEnd();
+		x.style_();
 		x.table("fm");
 		for(final Field f:flds){
 			final in annot=f.getAnnotation(in.class);
@@ -163,14 +163,14 @@ public abstract class itm extends an implements $.labeled{
 		x.nl().css("ul","padding:0");
 //		x.nl().css("ul.ac","margin-left:21px");
 		x.nl().css("ul li","display:inline;margin-right:1em");
-		x.nl().styleEnd();
+		x.nl().style_();
 		x.ul("ac");
 		x.li().ax(this,"sc","▣");
 		x.li().ax(this,"sv","▢");
-		x.ulEnd();
+		x.ul_();
 		x.style(colr,"width:7em;margin-top:.2em");
 		x.inputText(colr,this,"sc");
-		x.tableEnd();
+		x.table_();
 
 		if(elem_in_focus!=null)
 			x.focus(elem_in_focus);

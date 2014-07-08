@@ -31,8 +31,8 @@ public final class xwriter{
 //	public xwriter tagoec(){return p("/>");}
 	public xwriter tage(final String name){return p("</").p(name).p(">");}
 	public xwriter a(final String href){return tago("a").attr("href",href).tagoe();}
-	public xwriter aEnd(){return tage("a");}
-	public xwriter a(final String href,final String txt){return a(href).p(txt).aEnd();}
+	public xwriter a_(){return tage("a");}
+	public xwriter a(final String href,final String txt){return a(href).p(txt).a_();}
 	public xwriter ax(final a e,final String func){return ax(e,func,func);}
 	public xwriter ax(final a e,final String func,final String html){
 		final String wid=e.id();
@@ -52,15 +52,15 @@ public final class xwriter{
 	}
 //	public xwriter axBgn(final a a,final String args){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+" "+args+"')").tagoe();}
 //	public xwriter axBgn(final a a){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+"')").tagoe();}
-	public xwriter axBgn(final a e,final String args){return tago("a").attr("href","javascript:$x('"+e.id()+" "+args+"')").tagoe();}
-	public xwriter axBgn(final a e){return tago("a").attr("href","javascript:$x('"+e.id()+"')").tagoe();}
-	public xwriter axEnd(){return tage("a");}
+	public xwriter ajx(final a e,final String args){return tago("a").attr("href","javascript:$x('"+e.id()+" "+args+"')").tagoe();}
+	public xwriter ajx(final a e){return tago("a").attr("href","javascript:$x('"+e.id()+"')").tagoe();}
+	public xwriter ajx_(){return tage("a");}
 	public xwriter br(){return tag("br");}
 	public xwriter div(final String cls){return tago("div").attr("class",cls).tagoe();}
 	public xwriter div(){return tag("div");}
 	public xwriter div(final a e){return tago("div").attr("id",e.id()).tagoe();}
-	public xwriter divEnd(){return tage("div");}
-	public xwriter focus(final a e){return script().p("$f('").p(e.id()).p("')").scriptEnd();}
+	public xwriter div_(){return tage("div");}
+	public xwriter focus(final a e){return script().p("$f('").p(e.id()).p("')").script_();}
 	public xwriter inputInt(final a e){return tago("input").attr("value",e.toString()).attrdef(e).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
 	public xwriter inputFlt(final a e){return tago("input").attr("value",e.toString()).attrdef(e).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
 	public xwriter inputLng(final a e){return inputInt(e);}
@@ -68,7 +68,7 @@ public final class xwriter{
 	public xwriter pre(final String cls){return tago("pre").attr("class",cls).tagoe();}
 	public xwriter preEnd(){return tage("pre");}
 	public xwriter script(){return tag("script");}
-	public xwriter scriptEnd(){return tage("script");}
+	public xwriter script_(){return tage("script");}
 	public xwriter spano(final a e){return spano(e,null);}
 	public xwriter spano(final a e,final String style){
 		tago("span").attr("id",e.id());
@@ -81,32 +81,32 @@ public final class xwriter{
 		if(style!=null)attr("style",style);
 		tagoe();
 		try{e.to(new osltgt(os));}catch(Throwable t){throw new Error(t);}
-		return spanEnd();
+		return span_();
 	}
-	public xwriter spanh(final a e){tago("span").attr("id",e.id()).tagoe();try{e.to(os);}catch(Throwable t){throw new Error(t);}return spanEnd();}
-	public xwriter spanx(final a e)throws Throwable{tago("span").attr("id",e.id()).tagoe();e.to(this);return spanEnd();}
-	public xwriter spanEnd(){return tage("span");}
+	public xwriter spanh(final a e){tago("span").attr("id",e.id()).tagoe();try{e.to(os);}catch(Throwable t){throw new Error(t);}return span_();}
+	public xwriter spanx(final a e)throws Throwable{tago("span").attr("id",e.id()).tagoe();e.to(this);return span_();}
+	public xwriter span_(){return tage("span");}
 	public xwriter table(){return tag("table");}
 	public xwriter table(final String cls){return tago("table").attr("class",cls).tagoe();}
-	public xwriter tableEnd(){return tage("table");}
-	public xwriter style(){return p("<style>");}
-	public xwriter styleEnd(){return tage("style");}
+	public xwriter table_(){return tage("table");}
+	public xwriter style(){return p("<style scoped>");}
+	public xwriter style_(){return tage("style");}
 	public xwriter td(){return tag("td");}
 	public xwriter td(final String cls){if(cls==null||cls.length()==0) return td();return tago("td").attr("class",cls).tagoe();}
-	public xwriter tdEnd(){return tage("td");}
+	public xwriter td_(){return tage("td");}
 	public xwriter th(){return tag("th");}
 	public xwriter th(final int colspan){return tago("th").attr("colspan",colspan).tagoe();}
 	public xwriter th(final String cls){return tago("th").attr("class",cls).tagoe();}
-	public xwriter thEnd(){return tage("th");}
+	public xwriter th_(){return tage("th");}
 	public xwriter tr(){return tag("tr");}
 	public xwriter tr(final String cls){return tago("tr").attr("class",cls).tagoe();}
-	public xwriter trEnd(){return tage("tr");}
+	public xwriter tr_(){return tage("tr");}
 	public xwriter ul(){return tag("ul");}
-	public xwriter ulEnd(){return tage("ul");}
+	public xwriter ul_(){return tage("ul");}
 	public xwriter li(){return tag("li");}
 	public xwriter li(final String cls){if(cls==null)return li();return tago("li").attr("class",cls).tagoe();}
 	public xwriter code(){return tag("code");}
-	public xwriter codeEnd(){return tage("code");}
+	public xwriter code_(){return tage("code");}
 	public xwriter rend(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
 	public xwriter inputText(final a e){return input(e,"text",null,null,null,null,null,null,null);}
 	public xwriter inputText(final a e,final String stylecls,final a axonreturn,final String axp){return input(e,"text",null,stylecls,axonreturn,axp,null,null,null);}
@@ -164,7 +164,8 @@ public final class xwriter{
 	public xwriter enter(){return p('\r');}
 	public xwriter bell(){return p('\07');}
 	public xwriter p(final CharSequence cs){return p(cs.toString());}
-	public xwriter title(final String s){return script().xtitle(s).scriptEnd();}
+//	public xwriter title(final String s){return script().xtitle(s).scriptEnd();}
+	public xwriter title(final String s){return tag("title").p(s).tage("title");}
 	public xwriter css(final String cls,final String stl){return p(cls).p("{").p(stl).p("}");}
 	public xwriter css(final a e,final String stl){return p("#").p(e.id()).p("{").p(stl).p("}");}
 //	public xwriter cssln(final a e,final String stl){return style().p("#").p(e.id()).p("{").p(stl).p("}").styleEnd();}
@@ -226,14 +227,14 @@ public final class xwriter{
 	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
 	public xwriter xp(final a e,final String s){return p("$p('").p(e.id()).p("','").jsstr(s).pl("');");}
 	public xwriter tag(final String name,final a e){return tag(name,e.id());}
-	public xwriter el(final a e){return tag("el",e);}
+	public xwriter el(final a e){return tag("div",e);}
 	public xwriter el(final a e,final String style){return p("<div id=").p(e.id()).p(" style=\"").p(style).p("\">");}
-	public xwriter elend(){return tage("el");}
+	public xwriter el_(){return tage("div");}
 	public xwriter p(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
 	public xwriter td(final int colspan){return p("<td colspan=").p(colspan).p(">");}
-	public xwriter style(final a e,final String style){return style().css(e,style).styleEnd();}
-	public xwriter style(final a e,final String selector,final String style){return style().css(e,selector,style).styleEnd();}
-	public xwriter style(final String selector,final String style){return style().css(selector,style).styleEnd();}
+	public xwriter style(final a e,final String style){return style().css(e,style).style_();}
+	public xwriter style(final a e,final String selector,final String style){return style().css(e,selector,style).style_();}
+	public xwriter style(final String selector,final String style){return style().css(selector,style).style_();}
 	public xwriter el(final String style){return p("<el style=\"").p(style).p("\">");}
 	public xwriter td(String style,String disrecarded_param_to_overcome_overloading){return tago("td").attr("style",style).tagoe();}
 	public xwriter table(final String style,final String disrecarded_param_to_overcome_overloading){

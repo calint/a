@@ -30,7 +30,7 @@ final public class srcviwr extends a{
 		x.style();
 		x.css(this,"ol li.brk","background:green");
 		x.css(this,"ol li.stp","background:#c88");
-		x.styleEnd();
+		x.style_();
 		x.p("source");
 		x.ax(this,"f1"," edit");
 		x.ax(this,"f2"," view");
@@ -38,7 +38,7 @@ final public class srcviwr extends a{
 			x.nl();
 			x.style(txt,"outline:none;width:20em;height:100%;min-height:128em;resize:none;border-left:0px dotted #333;color:#444;padding:0 1em 0 .5em;line-height:1.5em;background:#fef");
 			x.inputTextArea(txt);
-			x.elend();
+			x.el_();
 			return;
 		}
 		final StringReader sr=new StringReader(txt.toString());
@@ -55,7 +55,7 @@ final public class srcviwr extends a{
 		}
 		x.tage("ol");
 //		x.style("ol li:hover","cursor:pointer;background-color:"+libghvr);
-		x.elend();
+		x.el_();
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);

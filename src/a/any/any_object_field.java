@@ -89,7 +89,7 @@ final public class any_object_field implements el,el.el_column_value,el.el_colum
 			if(note.isEmpty())return;
 			x.span("font-size:.3em");
 			if(ca.reboot())x.p("⚠ ");
-			x.p(note).spanEnd();
+			x.p(note).span_();
 		}
 		public void x_(final xwriter x,final String a)throws Throwable{
 			final Field f=o.getClass().getField(fldnm);

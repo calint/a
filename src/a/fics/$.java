@@ -38,7 +38,7 @@ final public class $ extends a{
 		x.css("table.chsboard td.wht","background:white");
 		x.css("table.chsboard td.blk","background:#a0a0a0");
 		x.css(devthr,"border:1px dotted green;text-align:right;width:2em;padding:.5em;background:yellow");
-		x.styleEnd();
+		x.style_();
 //		x.pre();
 		x.style(ajaxsts,"position:fixed;bottom:0;right:0");
 		ajaxsts.to(x);
@@ -68,7 +68,7 @@ final public class $ extends a{
 		x.nl(13);
 		x.p("config:\n   crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
 		x.nl(7);
-		x.elend();
+		x.el_();
 	}
 	public void x_(final xwriter x,final String s)throws Throwable{
 		final pgnreader pgn=new pgnreader(in1.toString());
@@ -145,7 +145,7 @@ final public class $ extends a{
 						sqcolwh=!sqcolwh;
 					}
 					scb.close();
-					dg.tableEnd();
+					dg.table_();
 					x.xu(diag,dg.toString());
 					final Scanner evsc=new Scanner(cev);
 					evsc.next("\\-?\\d+\\.\\d+");

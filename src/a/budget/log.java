@@ -33,7 +33,7 @@ final public class log extends a{
 		x.css("table.log tr td.t","text-align:right");
 		x.css("table.log tr td:last-of-type","border-right:0");
 		x.css("table.log tr.total","font-weight:bold;border-bottom:0");
-		x.styleEnd();
+		x.style_();
 //		x.pl(getClass().toString());
 //		x.nl();
 		x.table().tr().td();
@@ -49,13 +49,13 @@ final public class log extends a{
 		
 		x.el(fo);
 		rend_filters(x);
-		x.elend();
+		x.el_();
 		x.hr();
 		x.el(l);
 		rend_log(x);
-		x.elend();
+		x.el_();
 		x.nl().p("ꖵ from ").inputText(ffr).p(" to ").inputText(fto).nl();
-		x.tableEnd();
+		x.table_();
 	}
 	private void rend_filters(final xwriter x){
 		final int i=f.toint();
@@ -89,7 +89,7 @@ final public class log extends a{
 			sc.close();
 		}});
 		x.tr("total").td().td("t").p(g.total).td().td();
-		x.tableEnd();
+		x.table_();
 	}
 	final public void x_s(final xwriter x,final String st)throws Throwable{
 //		path().append(" "+tologdatestr(parse(d.toString()))+" "+t.toint()+" "+q.toint()+" "+s,"\n");
