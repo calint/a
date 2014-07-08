@@ -45,11 +45,15 @@ public final class xwriter{
 		if(!b.isempty(param))p(" ").p(param);
 		return p("')");
 	}
-	public xwriter axBgn(final a a,final String args){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+" "+args+"')").tagoe();}
-	public xwriter axBgn(final a a){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+"')").tagoe();}
+//	public xwriter axBgn(final a a,final String args){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+" "+args+"')").tagoe();}
+//	public xwriter axBgn(final a a){return tago("a").attrdef(a).attr("href","javascript:$x('"+a.id()+"')").tagoe();}
+	public xwriter axBgn(final a a,final String args){return tago("a").attr("href","javascript:$x('"+a.id()+" "+args+"')").tagoe();}
+	public xwriter axBgn(final a a){return tago("a").attr("href","javascript:$x('"+a.id()+"')").tagoe();}
 	public xwriter axEnd(){return tage("a");}
 	public xwriter br(){return tag("br");}
 	public xwriter div(final String cls){return tago("div").attr("class",cls).tagoe();}
+	public xwriter div(){return tag("div");}
+	public xwriter div(final a e){return tago("div").attr("id",e.id()).tagoe();}
 	public xwriter divEnd(){return tage("div");}
 	public xwriter focus(final a a){return script().p("$f('").p(a.id()).p("')").scriptEnd();}
 	public xwriter inputInt(final a a){return tago("input").attr("value",a.toString()).attrdef(a).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
@@ -80,7 +84,7 @@ public final class xwriter{
 	public xwriter table(){return tag("table");}
 	public xwriter table(final String cls){return tago("table").attr("class",cls).tagoe();}
 	public xwriter tableEnd(){return tage("table");}
-	public xwriter style(){return tag("style");}
+	public xwriter style(){return p("<style>");}
 	public xwriter styleEnd(){return tage("style");}
 	public xwriter td(){return tag("td");}
 	public xwriter td(final String cls){if(cls==null||cls.length()==0) return td();return tago("td").attr("class",cls).tagoe();}
@@ -219,7 +223,7 @@ public final class xwriter{
 	public xwriter xp(final a a,final String s){return p("$p('").p(a.id()).p("','").jsstr(s).pl("');");}
 	public xwriter tag(final String name,final a e){return tag(name,e.id());}
 	public xwriter el(final a e){return tag("el",e);}
-	public xwriter el(final a e,final String style){return p("<el id=").p(e.id()).p(" style=\"").p(style).p("\">");}
+	public xwriter el(final a e,final String style){return p("<div id=").p(e.id()).p(" style=\"").p(style).p("\">");}
 //	public xwriter elem(final a e,final String cssln){return tag("div",e).cssln(e,cssln);}
 	public xwriter elend(){return tage("el");}
 	public xwriter p(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}

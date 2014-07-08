@@ -3,7 +3,7 @@ WS=/Users/calin/Documents/workspace-2
 IP=162.243.127.160
 VERBOSE=--verbose
 #VERBOSE=   # silent
-CMD_RESET='killall java;. /etc/rc.local'
+CMD_RESET='killall java;/etc/rc.local'
 SSH_OPTS='-oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=60'
 
 DTF=%F---%H:%M:%S-

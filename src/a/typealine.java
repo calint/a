@@ -12,15 +12,17 @@ public class typealine extends a{
 	public a b;
 	public typealine(){upd();}
 	public void to(final xwriter x)throws Throwable{
-		x.title("typealine");
+		x.el(this);
 		x.style();
-		x.css("input.line","border:0;width:32em;border-bottom:1px dotted grey;");
+		x.css("input.line","border:0;width:32em;border-bottom:1px dotted grey;padding:.1em");
 		x.css(".box","text-align:center;border:1px dotted blue;padding:7px;");
 		x.css(".line","width:250px;");
 		x.styleEnd();
+		x.title("typealine");
 		x.div("box");
-		x.span(q).inputText(s,"line",this,"a").p(" ").axBgn(this,"a").span(b).axEnd();
-		x.focus(s);
+		x.span(q).inputText(s,"line",this,"a").focus(s).p(" ").axBgn(this,"a").span(b).axEnd();
+		x.divEnd();//? verbose
+		x.elend();
 	}
 	public void x_a(final xwriter x,final String p)throws Throwable{
 		final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd---hh:mm:ss.SSS---");
