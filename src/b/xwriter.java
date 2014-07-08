@@ -221,10 +221,11 @@ public final class xwriter{
 	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
 	public xwriter xp(final a e,final String s){return p("$p('").p(e.id()).p("','").jsstr(s).pl("');");}
 //	public xwriter tag(final String name,final a e){return tag(name,e.id());}
-	public xwriter el(){return p("<div>");}
-	public xwriter el(final String style){return p("<div style=\"").p(style).p("\">");}
-	public xwriter el(final a e){return p("<div id=").p(e.id()).p(">");}
-	public xwriter el(final a e,final String style){return p("<div id=").p(e.id()).p(" style=\"").p(style).p("\">");}
+	public xwriter el(){return p("<span>");}
+	public xwriter el(final String style){return p("<span style=\"").p(style).p("\">");}
+//	public xwriter el(final String id){return p("<span id=").p(id).p(">");}
+	public xwriter el(final a e){return p("<span id=").p(e.id()).p(">");}
+	public xwriter el(final a e,final String style){return p("<span id=").p(e.id()).p(" style=\"").p(style).p("\">");}
 //	public xwriter el(final a e,final String cls,final String style){
 //		tago("div");
 //		if(e!=null)
@@ -236,7 +237,7 @@ public final class xwriter{
 //		tagoe();
 //		return this;
 //	}
-	public xwriter el_(){return tage("div");}
+	public xwriter el_(){return p("</span>");}
 	/** render element, equivalent to e.to(x) */
 	public xwriter r(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
 	public xwriter td(final int colspan){return p("<td colspan=").p(colspan).p(">");}
