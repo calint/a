@@ -170,7 +170,7 @@ public class list extends a{
 			};
 		}catch(Throwable t){exception=t;}
 		x.nl().nl();
-		x.style(sts,"position:absolute;left:0;top:0;float:right");
+		x.style(sts,"position:fixed;left:0;top:0");
 		sts.to(x);
 		if(exception!=null)
 			x.nl().pl(b.stacktrace(exception));//? allow ..
