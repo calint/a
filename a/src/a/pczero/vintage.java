@@ -171,14 +171,14 @@ final public class vintage extends a{
 			}
 			x.nl().style();
 			x.nl().css(this,"text-align:center");
-			x.nl().cssfont("tini","/ttf/tini.ttf");
-			x.nl().css("*","white-space:pre");
-			x.nl().css("*","-webkit-transition: all .4s ease-in-out;");
-			x.nl().css("*","-moz-transition: all .4s ease-in-out;");
-			x.nl().css("*","-o-transition: all .4s ease-in-out;");
-			x.nl().css("*","transition: all .4s ease-in-out;");
-			x.nl().css("a","color:blue");
-			x.nl().css("a:focus,a:hover,a:active","color:red;text-shadow:0 0 .1em rgba(0,0,0,.5);");
+//			x.nl().cssfont("tini","/ttf/tini.ttf");
+//			x.nl().css("*","white-space:pre");
+//			x.nl().css("*","-webkit-transition: all .4s ease-in-out;");
+//			x.nl().css("*","-moz-transition: all .4s ease-in-out;");
+//			x.nl().css("*","-o-transition: all .4s ease-in-out;");
+//			x.nl().css("*","transition: all .4s ease-in-out;");
+//			x.nl().css("a","color:blue");
+//			x.nl().css("a:focus,a:hover,a:active","color:red;text-shadow:0 0 .1em rgba(0,0,0,.5);");
 			x.nl().styleEnd();
 //			src.libgbrkpt="#8a8";
 //			src.libgstep="#c88";
