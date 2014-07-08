@@ -1,0 +1,102 @@
+<!DOCTYPE HTML><!-- from http://weebtutorials.com/2012/08/css3-navigation-menu-tutorial/ -->
+<html lang="en"><head><meta charset="UTF-8"><title>drop down menu</title><style>
+html{
+    padding:0;
+	display:table;
+	margin:0 auto 0 auto;
+    font-family:monospace;
+}
+
+#nav{
+    list-style:none;
+    font-size:2em;
+    border:.2em moccasin solid;
+    float:left;
+    margin:0;
+    padding:.2em;
+    border-radius:.7em;
+}
+
+#nav>li{
+    float:left;
+    position:relative;
+    border-right:.2em dashed linen;
+}
+#nav>li:first-child{
+    margin-left:1.5em;
+}
+#nav>li:last-child{
+    border-right:0;
+    margin-right:1.5em;
+}
+#nav>li>a{
+    color:#f4e4e6;
+    text-decoration:none;
+    padding:.2em 1em .2em 1.2em;
+	transition:all .3s ease-in-out;
+}
+#nav>li>a:hover{
+    background:mintcream;
+	transition:all .3s ease-in-out;
+	border-radius:.1em;
+}
+#nav ul{
+    display:none;
+    position:absolute;
+    list-style:none;
+    left:0;
+    padding:0;
+    margin:0;
+    background:yellow;
+    margin-left:1em;
+}
+#nav ul>li>a{
+    color:#5d6364;
+    text-decoration:none;
+    display:block;
+    padding:.7em 2em .5em 2em;
+    border-bottom:.1em solid gray;
+    border-left:.1em solid gray;
+    border-right: .1em solid gray;
+    font-size:.6em;
+}
+#nav ul>li:first-child{
+    border-top:.1em solid gray;
+}
+#nav ul>li:hover{
+	background:mintcream;
+}
+
+#nav li:hover>ul{
+    display:block;
+    white-space:nowrap;
+    top:1.2em;
+    box-shadow:0 0 .5em rgba(0,0,0,.7);
+}
+</style></head><body>
+
+<nav>
+
+<ul id="nav">
+<li><a href="/about">about</a></li>
+<li><a href="/diro">files</a>
+	<ul>
+	<li><a href="/diro">root</a></li>
+	<li><a href="/dirox">home</a></li>
+	</ul>
+</li>
+<li><a href="/typealine">typealine</a></li>
+<li><a href="/ramvark">ramvark</a></li>
+<li><a href="/pczero.vintage">pczero</a></li>
+<li><a href="/cap">crun</a></li>
+<li><a href="/any">any</a></li>
+<li><a href="#">me</a>
+	<ul>
+	<li><a href="#">info</a></li>
+	<li><a href="#">keys</a></li>
+	</ul>
+</li>
+</ul>
+
+</nav>
+</body></html>
