@@ -229,25 +229,25 @@ public final class xwriter{
 	public xwriter tag(final String name,final a e){return tag(name,e.id());}
 	public xwriter el(final a e){return tag("div",e);}
 	public xwriter el(final a e,final String style){return p("<div id=").p(e.id()).p(" style=\"").p(style).p("\">");}
-	public xwriter el_(){return tage("div");}
-	public xwriter p(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
-	public xwriter td(final int colspan){return p("<td colspan=").p(colspan).p(">");}
-	public xwriter style(final a e,final String style){return style().css(e,style).style_();}
-	public xwriter style(final a e,final String selector,final String style){return style().css(e,selector,style).style_();}
-	public xwriter style(final String selector,final String style){return style().css(selector,style).style_();}
-	public xwriter el(final String style){return p("<el style=\"").p(style).p("\">");}
-	public xwriter td(String style,String disrecarded_param_to_overcome_overloading){return tago("td").attr("style",style).tagoe();}
-	public xwriter table(final String style,final String disrecarded_param_to_overcome_overloading){
-		return tago("table").attr("style",style).tagoe();
-	}
+	public xwriter el(final String style){return p("<div style=\"").p(style).p("\">");}
 	public xwriter el(final String cls,final String style){
-		tago("el");
+		tago("div");
 		if(cls!=null&&cls.length()>0)
 			attr("class",cls);
 		if(style!=null&&style.length()>0)
 			attr("style",style);
 		tagoe();
 		return this;
+	}
+	public xwriter el_(){return tage("div");}
+	public xwriter p(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
+	public xwriter td(final int colspan){return p("<td colspan=").p(colspan).p(">");}
+	public xwriter style(final a e,final String style){return style().css(e,style).style_();}
+	public xwriter style(final a e,final String selector,final String style){return style().css(e,selector,style).style_();}
+	public xwriter style(final String selector,final String style){return style().css(selector,style).style_();}
+	public xwriter td(String style,String disrecarded_param_to_overcome_overloading){return tago("td").attr("style",style).tagoe();}
+	public xwriter table(final String style,final String disrecarded_param_to_overcome_overloading){
+		return tago("table").attr("style",style).tagoe();
 	}
 	public xwriter el(){return tag("el");}
 	public xwriter ax(final a e){return ax(e,"","::");}
