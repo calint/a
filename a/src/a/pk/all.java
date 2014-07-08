@@ -21,7 +21,7 @@ final public class all extends a{
 				x.p("<a href=\"").p(getClass().getName().substring(b.b.webobjpkg.length()).replace('.','/'));
 				if(qs!=null)
 					x.p("?").p(qs);
-				x.p("\">").p(s).aEnd().nl();
+				x.p("\">").p(s).a_().nl();
 			};
 		}).p("apt-cache pkgnames ").p(qs).exit();
 	}

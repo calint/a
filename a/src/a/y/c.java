@@ -39,7 +39,7 @@ public class c extends a {
 			p=p.get(s);
 			//p.assureacess
 		}
-		x.scriptEnd();
+		x.script_();
 		x.div("editor2");
 		if(p.isfile())try{
 			final Map<String,Object>ctx=new HashMap<String,Object>();
@@ -50,9 +50,9 @@ public class c extends a {
 		else{
 			x.script();
 			updlvl(x,i++,p,"");
-			x.scriptEnd();
+			x.script_();
 		}
-		x.divEnd();
+		x.div_();
 			
 	}
 	private void updlvl(final xwriter x,final int lvl,final path pth,final String sel){
@@ -63,7 +63,7 @@ public class c extends a {
 			if(s.equals(sel))
 				y.p("[").p(s).p("]");
 			else
-				y.p("<a href=c?").p(b.urlencode(ses.inpath(pth.get(s)))).p(">").p(s).aEnd();
+				y.p("<a href=c?").p(b.urlencode(ses.inpath(pth.get(s)))).p(">").p(s).a_();
 		}
 		x.xu(menu[lvl],y.toString());
 	}

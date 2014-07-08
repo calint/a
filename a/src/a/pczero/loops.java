@@ -17,7 +17,7 @@ public class loops extends a{
 			if((i%2)==0)
 				x.nl();
 		}
-		x.elend();
+		x.el_();
 	}
 	public void push(final int addr,final int counter){
 		stkadr[ix]=addr;

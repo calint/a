@@ -33,7 +33,7 @@ public class index extends a{
 			String datestr=line.substring(53,73);
 			String href=basehref+$.store_dir+$.filename_for_hash(hash)+"."+type;
 			set.add(type);
-			x.a(href).p(type).aEnd();
+			x.a(href).p(type).a_();
 			x.p("    ").p(size);
 			x.p("    ").p(datestr);
 			x.p("    ").p(++lineno);
@@ -42,7 +42,7 @@ public class index extends a{
 		x.preEnd();
 		x.script();
 		sts.set(set.toString());
-		x.scriptEnd();
+		x.script_();
 		is.close();
 	}
 }

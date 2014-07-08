@@ -23,8 +23,8 @@ public class square extends a{
 		}else{
 			x.p("&nbsp;&nbsp;");
 		}
-		x.aEnd();
-		x.tdEnd();
+		x.a_();
+		x.td_();
 	}
 	public void x_clk(final xwriter x,final String s)throws Throwable{
 		ev(x,this,null);

@@ -65,7 +65,7 @@ public class xn extends a{
 			jskeys.add("cU","$x('"+id+" u')");
 			jskeys.add("cO","$x('"+id+" c')");
 			jskeys.add("cD","$x('"+ram.id()+" rfh')");
-			x.scriptEnd();
+			x.script_();
 		}
 		
 		if(disppramble){
@@ -74,7 +74,7 @@ public class xn extends a{
 		}
 		x.el("display:inline-block;border:1px solid #080");
 		ram.to(x);
-		x.elend();
+		x.el_();
 		x.nl();
 		x.el("display:inline-block;border:0px solid #f00");
 		x.ax(this,"l"," load");
@@ -86,14 +86,14 @@ public class xn extends a{
 		x.ax(this,"u"," run");
 		x.ax(this,"s"," save");
 		x.spc().span(sts);
-		x.elend();
+		x.el_();
 		x.nl();
 		for(final vintage c:core){
 			x.el("display:inline-block;vertical-align:top;border:0px solid red");
 			c.to(x);
-			x.elend();
+			x.el_();
 		}
-		x.elend();
+		x.el_();
 	}
 	synchronized public void x_l(xwriter x,String s)throws Throwable{
 		int i=0;

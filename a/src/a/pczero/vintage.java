@@ -144,12 +144,13 @@ final public class vintage extends a{
 	public int dispbits=-1;
 	public void setpth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
+		if(pt()==null)x.title("pczero - 16 bits vintage edition");
 		if(mode==1){
 			x.el(this);
 //			x.p(coreid);
 			rendpanel(x);
 			src.to(x);
-			x.elend();
+			x.el_();
 			return;
 		}
 		if(pt()==null){
@@ -179,7 +180,7 @@ final public class vintage extends a{
 //			x.nl().css("*","transition: all .4s ease-in-out;");
 //			x.nl().css("a","color:blue");
 //			x.nl().css("a:focus,a:hover,a:active","color:red;text-shadow:0 0 .1em rgba(0,0,0,.5);");
-			x.nl().styleEnd();
+			x.nl().style_();
 //			src.libgbrkpt="#8a8";
 //			src.libgstep="#c88";
 //			src.libghvr="#898";
@@ -191,7 +192,7 @@ final public class vintage extends a{
 		if(mode==1){
 			rendpanel(x);
 			src.to(x);
-			x.elend();
+			x.el_();
 			return;
 		}
 		final boolean dispramble=(dispbits&8)==8;
@@ -199,7 +200,7 @@ final public class vintage extends a{
 			x.pre();
 			x.el("display:block;text-align:center");
 			pramble(x);
-			x.elend();
+			x.el_();
 		}
 		final boolean dispram=(dispbits&1)==1;
 		if(dispram){
@@ -207,7 +208,7 @@ final public class vintage extends a{
 			x.el("display:block;text-align:center");
 			x.style(ram,"border:1px solid #488");
 			ram.to(x);
-			x.elend().nl();
+			x.el_().nl();
 		}
 		final boolean dispmenu=(dispbits&2)==2;
 		if(dispmenu){
@@ -221,7 +222,7 @@ final public class vintage extends a{
 			x.ax(this,"u"," run");
 			x.ax(this,"s"," save");
 			x.ax(this,"b"," run-to-break-point");
-			x.elend();
+			x.el_();
 		}
 		final boolean disprom=(dispbits&4)==4;
 		if(disprom){
@@ -240,9 +241,9 @@ final public class vintage extends a{
 		}
 		src.to(x);
 		if(disprom){
-			x.nl().tableEnd();
+			x.nl().table_();
 		}
-		x.elend();
+		x.el_();
 	}
 	public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}//application status
 	void rendpanel(xwriter x)throws Throwable{

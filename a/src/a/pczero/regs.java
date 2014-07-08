@@ -19,7 +19,7 @@ final public class regs extends a{
 			if((i%4)==0)
 				x.nl();
 		}
-		x.elend();
+		x.el_();
 	}
 	public void rst(){for(int i=0;i<r.length;i++)r[i]=0;}
 	public short getinc(final int ri){return r[ri]++;}

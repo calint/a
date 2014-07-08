@@ -30,8 +30,8 @@ final public class ficsgames extends a{
 		x.spc();
 		x.input(af,"date","width:10em;padding:.5em;background:yellow;border:1px dotted gray",null,this,"",null,null,null);
 		x.spc(8).ax(this,"","•..•").nl();
-		x.spano(ot).spanEnd();
-		x.elend();
+		x.spano(ot).span_();
+		x.el_();
 	}
 
 	public void x_(xwriter y,String s)throws Throwable{
@@ -54,7 +54,7 @@ final public class ficsgames extends a{
 			final int chars_per_line=60;
 			final String link_text=moves.length()>chars_per_line?moves.substring(0,chars_per_line):moves;
 			x.ax(this,"e "+z,moves,link_text);
-			x.elend();
+			x.el_();
 		}
 		y.xube();
 	}

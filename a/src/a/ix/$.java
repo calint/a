@@ -42,7 +42,7 @@ final public class $ extends a{
 			to_srch(x);
 	}
 	void to_ix(final xwriter x)throws Throwable{
-		x.style().css("body","text-align:center").css(st,"color:grey").styleEnd();
+		x.style().css("body","text-align:center").css(st,"color:grey").style_();
 		x.ax(this,"viewix","  search").ax(this,"cfg","  config").ax(this,"reindex"," reindex").ax(this,"cancelix"," cancel").ax(this,"ixdel"," delete").ax(this,"size"," size").ax(this,"rfsh"," refresh");
 		x.nl().span(st).spc().ax(this,"stsx","[·]").nl();
 		x.p(xd);
@@ -52,7 +52,7 @@ final public class $ extends a{
 		y.style();
 		y.css("body","text-align:center");
 		y.css(qf,"color:brown;background:yellow;border:0;border-bottom: 1px dotted grey;");
-		y.styleEnd();
+		y.style_();
 		y.inputax(qf);
 		y.p("”").br();
 //		y.style().css(ds,"border:1px solid red").styleEnd();
@@ -60,7 +60,7 @@ final public class $ extends a{
 		y.script();
 		y.xfocus(qf);
 		x_(y,null);
-		y.scriptEnd();
+		y.script_();
 	}
 	public void x_(final xwriter x,final String st)throws IOException{
 		final xwriter y=x.xub(ds,true,false);
@@ -83,7 +83,7 @@ final public class $ extends a{
 		x.css("table.f td.total","font-weight:bold");
 		x.css("table.f td.name","min-width:100px");
 		x.css("table.f th","padding:3px;text-align:left;background:#f0f0f0;color:black");
-		x.styleEnd();
+		x.style_();
 		y.table("f").nl().tr().nl();
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		final NumberFormat lnf=new DecimalFormat("#,###,###,###,###");
@@ -99,15 +99,15 @@ final public class $ extends a{
 				iconName="◻";
 			y.tr().td("icns first").p(iconName).td("name");
 			if(p1.isfile())
-				y.a(p1.uri()).p(p1.name()).aEnd();
+				y.a(p1.uri()).p(p1.name()).a_();
 			else
 				y.p(p1.toString());
-			y.tdEnd();
-			y.td("date").p(sdf.format(new Date(p1.lastmod()))).tdEnd();
-			y.td("size last").p(isDir?"----":lnf.format(p1.size())).p(" B").tdEnd();
-			y.trEnd().nl();
+			y.td_();
+			y.td("date").p(sdf.format(new Date(p1.lastmod()))).td_();
+			y.td("size last").p(isDir?"----":lnf.format(p1.size())).p(" B").td_();
+			y.tr_().nl();
 		}
-		y.tr().nl().tableEnd();
+		y.tr().nl().table_();
 		x.xube();
 	}
 	public void x_stsx(final xwriter x,final String s)throws Throwable{x.xu(st.set(""));}

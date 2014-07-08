@@ -37,18 +37,18 @@ public class o extends a{
 		if(b.isempty(val)&&dispallopts())
 			refreshopts();
 
-		x.style().css(ed,"height:100%;width:100%").styleEnd();
+		x.style().css(ed,"height:100%;width:100%").style_();
 		x.p("<div style='height:320px;width:100%;border:1px dotted blue'>");
 		x.span(fc).inputTextArea(ed,null);
-		x.divEnd();
-		x.script().xhide(fc).xhide(ed).scriptEnd();
+		x.div_();
+		x.script().xhide(fc).xhide(ed).script_();
 	}
 	private int refreshopts(){
 		final String[]opls=options();
 		final ByteArrayOutputStream baos=new ByteArrayOutputStream();
 		final xwriter y=new xwriter(baos);
 		for(final String f:opls)
-			y.tago("span").attr("style","font-size:"+(9+b.rndint(0,8))+"px"+(dir.get(f).isdir()?";color:brown":"")).tagoe().p(f.toString()).spanEnd();
+			y.tago("span").attr("style","font-size:"+(9+b.rndint(0,8))+"px"+(dir.get(f).isdir()?";color:brown":"")).tagoe().p(f.toString()).span_();
 		y.flush();
 		opts.set(y.toString());
 		return opls.length;

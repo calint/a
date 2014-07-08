@@ -22,7 +22,7 @@ final public class $ extends a{
 		x.css("a","-o-transition: all .4s ease;");
 		x.css("a","transition: all .4s ease;");
 		x.css("a:focus,a:hover,a:active","color:red;text-shadow:0px 0px 1px rgba(0, 0, 0, 0.5);");
-		x.styleEnd();
+		x.style_();
 		x.p("ramvark");
 		final a last=stk.getLast();
 		for(final a e:stk){
@@ -42,7 +42,7 @@ final public class $ extends a{
 		meters.spclst(x);
 		x.nl();
 		x.nl().nl().rend(ajaxsts);
-		x.elend();
+		x.el_();
 //		x.nl().script().p("$('"+$el.id()+"').style.position='absolute';$('"+$el.id()+"').style.left='120px';").scriptEnd();
 	}
 	protected void ev(final xwriter x,final a from,final Object o)throws Throwable{

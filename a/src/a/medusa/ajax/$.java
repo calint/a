@@ -1,13 +1,9 @@
 package a.medusa.ajax;
 
 import java.nio.ByteBuffer;
-
 import a.medusa.medusa;
 import a.medusa.player;
 import a.medusa.screen;
-import a.medusa.algebra.plane;
-import a.medusa.algebra.planes;
-import a.medusa.algebra.point;
 import a.medusa.level.sprite;
 import b.a;
 import b.xwriter;
@@ -54,12 +50,12 @@ public class $ extends a{
 		x.pl("ui.keys['D']=\"$x('_ keyb d')\"");
 		x.pl("ui.keys['E']=\"$x('_ keyb e')\"");
 		x.pl("document.focus();");
-		x.scriptEnd();
+		x.script_();
 		x.pl("- - - - - -  - - - - -- - - - - - - - - - -- - - - -- - - - - - -- - - -- - --");
 		x.style(div,"display:block;margin:auto;border:1px dotted white;");
 		x.el(div);
 		scr.screen_to_outputstream(x.outputstream());
-		x.elend();
+		x.el_();
 		x.pl("- - - - - -  - - - - -- - - - - - - - - - -- - - - -- - - - - - -- - - -- - --");
 	}
 	private void name_to(xwriter x){

@@ -62,7 +62,7 @@ final public class any_class_field implements el,el.el_column_value,el.el_column
 //			if(ca.reboot())x.nl().span("font-size:.3em;color:brown").p(" ⚠ ").spanEnd();
 			final String note=ca.note();
 			if(note.isEmpty())return;
-			x.nl().span("font-size:.3em").p(note).spanEnd();
+			x.nl().span("font-size:.3em").p(note).span_();
 		}
 		public void x_(final xwriter x,final String a)throws Throwable{
 			final Field f=Class.forName(clsnm).getField(fldnm);

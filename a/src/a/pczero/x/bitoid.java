@@ -68,7 +68,7 @@ public class bitoid extends a{
 			jskeys.add("cO","$x('"+id+" c')");//compile
 			jskeys.add("cD","$x('"+vram.id()+" rfh')");
 			jskeys.add("cB","$x('"+id+" b')");//run to break point
-			x.scriptEnd();
+			x.script_();
 		}else
 			x.el(this);
 
@@ -106,10 +106,10 @@ public class bitoid extends a{
 			c.to(x);
 //			x.style(c,"display:inline-block;text-align:left;vertical-align:top;border:0px solid red");
 //			x.style(c.src.txt,"width:16em");
-			x.elend();
+			x.el_();
 //			x.spc();
 		}
-		x.elend();
+		x.el_();
 	}
 	synchronized public void x_l(xwriter x,String s)throws Throwable{
 		int i=0;

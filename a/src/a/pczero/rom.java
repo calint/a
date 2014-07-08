@@ -37,9 +37,9 @@ final public class rom extends a{
 			if(row>=disppagenrows)
 				break;
 		}
-		x.ulEnd();
+		x.ul_();
 		x.preEnd();
-		x.elend();
+		x.el_();
 	}
 	int focusline=-1;
 	private int lstfocusline=focusline;

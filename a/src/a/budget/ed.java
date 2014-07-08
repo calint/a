@@ -12,7 +12,7 @@ public class ed extends a{
 		x.style();
 		x.css("html","font-size:2em;padding-left:4em;line-height:1.5em");
 		x.css(s,"border:1px dotted green;padding:.5em");
-		x.styleEnd();
+		x.style_();
 		fnm_old=p.name();
 		fnm.set(fnm_old);
 		if(!p.exists()||p.isdir())

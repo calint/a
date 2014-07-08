@@ -19,7 +19,7 @@ public class tinitus extends a{
 //			x.pre();
 			x.el("float:right;color:#040;text-shadow:0 0 5px #ff0000;padding:.25em;border:0px solid red;display:inline-table;box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
 			x.p("  tinitus "+(tts.samplerate/1000)+" kHz  ");
-			x.elend();
+			x.el_();
 //			x.el("float:right;color:#040;text-shadow:0 0 5px #ff0000;padding:.25em;border:0px solid red;display:inline-table;box-shadow:0 0 .5em rgba(0,0,0,1);border-radius:0px");
 //			x.p("  vintage");
 //			x.elend().nl();

@@ -30,7 +30,7 @@ final public class depends_rec extends a{
 				//System.out.println(s);
 				for(int n=0;n<indent.length();n++)
 					x.p("·");
-				x.a(rt.path()+"?"+s).p(s).aEnd();
+				x.a(rt.path()+"?"+s).p(s).a_();
 				if(list.contains(s)){
 					x.p("*");
 					x.br().nl();

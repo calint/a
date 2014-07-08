@@ -13,7 +13,7 @@ final public class files extends a{
 		//x.p(qs).nl();
 		new cli("sh",new osnl(){public void onnewline(final String line){
 				String s=line.toLowerCase().trim();
-				x.a(s).p(s).aEnd().nl();
+				x.a(s).p(s).a_().nl();
 		};}).p("dpkg-query -L ").p(qs[0]).exit();
 	}
 }

@@ -8,7 +8,7 @@ public class httpbrowser extends a{static final long serialVersionUID=1;
 		x.style();
 		x.css(url,"border:1px solid blue;width:100%");
 		x.css(output,"border:1px solid red");
-		x.styleEnd();
+		x.style_();
 		x.pre();
 		x.inputText(url,null,this,"a").nl();
 		x.output(output);

@@ -37,7 +37,7 @@ public abstract class lst extends an implements $.labeled{
 		rendfoot(x);
 //		final long dt=System.currentTimeMillis()-t0;
 //		x.p(dt);
-		x.elend();
+		x.el_();
 	}
 	public void foreach(final String q,final store.visitor cv)throws Throwable{
 		if(owner==null){
@@ -89,7 +89,7 @@ public abstract class lst extends an implements $.labeled{
 		x.spc();
 		if(!e.colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+e.colr+"\">");
 		rendldax(x,e);
-		if(!e.colr.isempty())x.spanEnd();
+		if(!e.colr.isempty())x.span_();
 		x.nbsp();
 		renddelax(x,e);
 //		x.nl();
@@ -97,7 +97,7 @@ public abstract class lst extends an implements $.labeled{
 	protected void rendlistfoot(final xwriter x){
 //		x.ulEnd();
 //		x.p("</table>");
-		x.spanEnd();
+		x.span_();
 	}
 	protected void rendfoot(final xwriter x){
 //		x.tagEnd("span");

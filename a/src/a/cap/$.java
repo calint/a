@@ -41,16 +41,16 @@ public class $ extends a {
 		x.style("div.la div.c7","float:left");
 		x.style("div.la div.c8","float:left");
 		x.div("la");
-			x.el(ln);for(int i=1;i<100;i++)x.pl(""+i);x.elend();
-			x.div("c2").inputTextArea(cap).focus(cap).divEnd();
-			x.div("c3").spc().ax(this).nl().el(sts).elend().divEnd();
-			x.div("c7").el(out).p("console output").elend().divEnd();
-			x.el(c6);upd_c6(x);x.elend();
+			x.el(ln);for(int i=1;i<100;i++)x.pl(""+i);x.el_();
+			x.div("c2").inputTextArea(cap).focus(cap).div_();
+			x.div("c3").spc().ax(this).nl().el(sts).el_().div_();
+			x.div("c7").el(out).p("console output").el_().div_();
+			x.el(c6);upd_c6(x);x.el_();
 //			x.div("c8").p(" :: ").ax(this,"cr","etc ").divEnd();
-			x.div("c4");for(int i=1;i<100;i++)x.pl(""+i);x.divEnd();
-			x.div("c5").el(c).elend();
+			x.div("c4");for(int i=1;i<100;i++)x.pl(""+i);x.div_();
+			x.div("c5").el(c).el_();
 			x.pl("<br style=clear:left />");
-		x.divEnd();
+		x.div_();
 	}
 	private void upd_c6(xwriter x){
 	    x.ax(this,"cc","••").nl();
