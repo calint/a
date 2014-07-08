@@ -312,6 +312,7 @@ final public class b{
 	        	final String s=ia.getHostAddress();
 	        	if(!s.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"))continue;
 	        	p("http://");p(s);if(!server_port.equals("80")){p(":");p(server_port);}p("/");
+	        	break;
 	        }
 	        p("\n");
 		}
