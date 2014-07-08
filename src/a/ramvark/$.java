@@ -16,7 +16,7 @@ final public class $ extends a{
 		attach(stk.getLast(),"el");
 	}
 	public void to(final xwriter x)throws Throwable{
-		x.el(this);
+		x.el(this,"display:block");
 		x.style();
 		x.css("body","font-size:5mm;margin:0em 0 0 2em;color:#000;font:monospace");
 		x.css("span.a","font-weight:bold");
@@ -46,7 +46,6 @@ final public class $ extends a{
 		x.nl();
 		x.nl().nl().r(ajaxsts);
 		x.el_();
-//		x.nl().script().p("$('"+$el.id()+"').style.position='absolute';$('"+$el.id()+"').style.left='120px';").scriptEnd();
 	}
 	protected void ev(final xwriter x,final a from,final Object o)throws Throwable{
 		if("cl".equals(o)){
