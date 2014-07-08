@@ -24,9 +24,9 @@ public final class xwriter{
 	public xwriter tag(final String name,final String id){return p("<").p(name).p(" id=").p(id).p(">");}
 	public xwriter tago(final String name){return p("<").p(name);}
 //	public xwriter tago(final String name,final String id){return p("<").p(name).p(" id=").p(id);}
-	public xwriter attrdef(final a e){final String wid=e.id();return attr("id",wid);}
+	public xwriter attrdef(final a e){final String id=e.id();return attr("id",id);}
 	public xwriter attr(final String name,final int value){return p(" ").p(name).p("=").p(value);}
-	public xwriter attr(final String name,final String value){return p(" ").p(name).p("=\"").p(xwriter.encquot(value)).p("\"");}
+	public xwriter attr(final String name,final String value){return p(" ").p(name).p("=\"").p(encquot(value)).p("\"");}
 	public xwriter attr(final String name){return p(" ").p(name);}
 	public xwriter tagoe(){return p(">");}
 //	public xwriter tagoec(){return p("/>");}
@@ -249,7 +249,7 @@ public final class xwriter{
 //	}
 	public xwriter ax(final a e){return ax(e,"","::");}
 	public xwriter xed(final a e,final a axe,final String axp,final String style)throws Throwable{
-		p("<el id=").p(e.id()).p(" contenteditable=true spellcheck=false ");
+		p("<div id=").p(e.id()).p(" contenteditable=true spellcheck=false ");
 		if(style!=null&&style.length()>0)
 			p("style=\"").p(style).p("\" ");
 		p("onkeypress=\"");
@@ -264,7 +264,7 @@ public final class xwriter{
 		}
 		p("$b(this)\">");
 		e.to(os);
-		return p("</el>");
+		return p("</div>");
 	}
 	public xwriter xed(final a e,final a axe,final String axp)throws Throwable{return xed(e,axe,axp,null);}
 	public xwriter xed(final a e)throws Throwable{return xed(e,null,null,null);}
