@@ -117,18 +117,15 @@ public final class xwriter{
 	public xwriter input(final a e,final String type,final String style,final String stylecls,final a axonreturn,final String axp,final String txt,final a on_change_ajax_elem,final String on_change_ajax_param){
 		final String value=txt==null?e.toString():txt;
 		tago("input").attr("value",value).attrdef(e).attr("type",type);
-		if(style!=null)
-			attr("style",style);
-		if(stylecls!=null)
-			attr("class",stylecls);
+		if(stylecls!=null)attr("class",stylecls);
+		if(style!=null)attr("style",style);
 		if(axonreturn!=null){
 			final String ax=axonreturn.id()+(axp!=null?(" "+axp):"");
 			attr("onkeypress","return $r(event,this,'"+ax+"')");
 		}
 		final StringBuilder sb=new StringBuilder();
 		if("checkbox".equals(type)){
-			if(value.equals(Boolean.TRUE.toString()))
-				attr("checked","checked");
+			if(value.equals(Boolean.TRUE.toString()))attr("checked","checked");
 			sb.append("this.value=this.checked?'1':'0';$b(this)");
 			if(on_change_ajax_elem!=null){
 				final String ax=axonreturn.id()+(axp!=null?(" "+on_change_ajax_param):"");
@@ -142,7 +139,7 @@ public final class xwriter{
 			}
 		}
 		attr("onchange",sb.toString());
-		return tagoe();//? <input hidden "">
+		return tagoe();//? <input hidden value="false">
 	}
 	public xwriter inputTextArea(final a e){return inputTextArea(e,null);}
 	public xwriter inputTextArea(final a e,final String cls){
@@ -150,11 +147,6 @@ public final class xwriter{
 		if(cls!=null)attr("class",cls);
 		attr("wrap","off").attr("spellcheck","false").tagoe();
 		try{e.to(new osltgt(outputstream()));}catch(final Throwable t){b.log(t);p(b.stacktrace(t));}
-		//? fld.to(new osltgt(x.outputStream()))
-//		String s=a.toString();
-//		s=s.replaceAll("\\<","&lt;");//?
-//		s=s.replaceAll("\\>","&gt;");
-//		return p(s).tage("textarea");
 		return tage("textarea");
 	}
 	public xwriter flush(){try{os.flush();}catch (final IOException e){throw new Error(e);}return this;}
