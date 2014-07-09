@@ -2,12 +2,16 @@
 <html lang="en"><head><meta charset="UTF-8"><title>drop down menu</title><style>
 html{
     padding:0;
+    margin:0;
 	display:table;
 	margin:0 auto 0 auto;
     font-family:monospace;
 }
+body{
+}
 
-#nav{
+ul.menu{ /* is ul */
+    box-shadow:0 0 .1em rgba(0,0,0,.1);
     list-style:none;
     font-size:2em;
     border:.2em moccasin solid;
@@ -17,30 +21,33 @@ html{
     border-radius:.7em;
 }
 
-#nav>li{
+ul.menu>li{
     float:left;
     position:relative;
     border-right:.2em dashed linen;
 }
-#nav>li:first-child{
+ul.menu>li:first-child{
     margin-left:1.5em;
 }
-#nav>li:last-child{
+ul.menu>li:last-child{
     border-right:0;
     margin-right:1.5em;
 }
-#nav>li>a{
+ul.menu>li>a{
     color:#f4e4e6;
     text-decoration:none;
     padding:.2em 1em .2em 1.2em;
 	transition:all .3s ease-in-out;
 }
-#nav>li>a:hover{
+ul.menu>li>a:hover{
     background:mintcream;
 	transition:all .3s ease-in-out;
 	border-radius:.1em;
 }
-#nav ul{
+ul.menu>li:hover>ul{/* when li in #nav is hovered the style for ul in li changes to this */
+    display:block;
+}
+ul.menu>li>ul{/* refers to ul in li in #nav */
     display:none;
     position:absolute;
     list-style:none;
@@ -49,8 +56,11 @@ html{
     margin:0;
     background:yellow;
     margin-left:1em;
+    white-space:nowrap;
+    top:1.2em;
+    box-shadow:0 0 .5em rgba(0,0,0,.7);
 }
-#nav ul>li>a{
+ul.menu>li>ul>li>a{
     color:#5d6364;
     text-decoration:none;
     display:block;
@@ -60,24 +70,17 @@ html{
     border-right: .1em solid gray;
     font-size:.6em;
 }
-#nav ul>li:first-child{
+ul.menu>li>ul>li:first-child{
     border-top:.1em solid gray;
 }
-#nav ul>li:hover{
+ul.menu>li>ul>li:hover,
+ul.menu>li>ul>li>a:focus{
 	background:mintcream;
 }
 
-#nav li:hover>ul{
-    display:block;
-    white-space:nowrap;
-    top:1.2em;
-    box-shadow:0 0 .5em rgba(0,0,0,.7);
-}
-</style></head><body>
+</style></head><body><nav>
 
-<nav>
-
-<ul id="nav">
+<ul class="menu">
 <li><a href="/about">about</a></li>
 <li><a href="/diro" onKeyUp="console.log(event);if(event.keyCode==40){var sm=event.target.parentElement.childNodes[2];sm.style.cssText='display:block';sm.focus();console.log('  arrow down ')}">files</a>
 	<ul>
@@ -99,5 +102,4 @@ html{
 </li>
 </ul>
 
-</nav>
-</body></html>
+</nav></body></html>
