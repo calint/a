@@ -84,8 +84,8 @@ function foo(){
 	console.log(event);
 	var sm=event.target.parentElement.childNodes[2];// get submenu ul
 	console.log(event.keyIdentifier)
-	if(event.keyIdentifier=="Down"){console.log('  arrow down ');sm.style.cssText='display:block';}
-	else if(event.keyIdentifier=="Up"){console.log('  arrow up ');sm.style.cssText='display:none';}
+	if(event.keyIdentifier=="Down"){console.log('  down ');sm.style.display='block';}
+	else if(event.keyIdentifier=="Up"){console.log(' up ');sm.style.display='none';}
 	
 }
 </script>
