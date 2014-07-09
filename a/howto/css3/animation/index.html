@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><title>animation</title>
 <style> 
 body{
-    -webkit-animation: myfirst 2s; /* Chrome, Safari, Opera */
-    animation: myfirst 2s;
+    -webkit-animation: anim0 2s; /* Chrome, Safari, Opera */
+    animation: anim0 2s;
 }
 div {
     width: 100px;
@@ -12,14 +12,14 @@ div {
     background: red;
 }
 /* Chrome, Safari, Opera */
-@-webkit-keyframes myfirst {
+@-webkit-keyframes anim0 {
     from {background: red;}
     to {background: yellow;margin-top:100px;}
 }
 
 
 /* Standard syntax */
-@keyframes myfirst {
+@keyframes anim0 {
     from {background: red}
     to {background: yellow;width:10px;}
 }
