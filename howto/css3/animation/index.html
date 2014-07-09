@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> 
+body{
+    -webkit-animation: myfirst 2s; /* Chrome, Safari, Opera */
+    animation: myfirst 2s;
+}
+div {
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+/* Chrome, Safari, Opera */
+@-webkit-keyframes myfirst {
+    from {background: red;}
+    to {background: yellow;margin-top:100px;}
+}
+
+
+/* Standard syntax */
+@keyframes myfirst {
+    from {background: red}
+    to {background: yellow;width:10px;}
+}
+</style>
+</head>
+<body>
+<div></div>
+</body>
+</html>
