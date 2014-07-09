@@ -1,5 +1,5 @@
 <!DOCTYPE HTML><!-- from http://weebtutorials.com/2012/08/css3-navigation-menu-tutorial/ -->
-<html lang="en"><head><meta charset="UTF-8"><title>drop down menu</title><style>
+<html lang="en"><head><meta charset=UTF-8><meta charset="UTF-8"><title>drop down menu</title><style>
 html{
     padding:0;
     margin:0;
@@ -10,7 +10,7 @@ html{
 body{
 }
 
-ul.menu{ /* is ul */
+ul.menu{
     box-shadow:0 0 .1em rgba(0,0,0,.1);
     list-style:none;
     font-size:2em;
@@ -44,7 +44,7 @@ ul.menu>li>a:hover{
 	transition:all .3s ease-in-out;
 	border-radius:.1em;
 }
-ul.menu>li:hover>ul{/* when li in #nav is hovered the style for ul in li changes to this */
+ul.menu>li:hover>ul{/* when li in ul.menu is hovered the style for ul in li changes to this */
     display:block;
 }
 ul.menu>li>ul{/* refers to ul in li in #nav */
@@ -78,11 +78,23 @@ ul.menu>li>ul>li>a:focus{
 	background:mintcream;
 }
 
-</style></head><body><nav>
+</style>
+<script>
+function foo(){
+	console.log(event);
+	var sm=event.target.parentElement.childNodes[2];// get submenu ul
+	console.log(event.keyIdentifier)
+	if(event.keyIdentifier=="Down"){console.log('  arrow down ');sm.style.cssText='display:block';}
+	else if(event.keyIdentifier=="Up"){console.log('  arrow up ');sm.style.cssText='display:none';}
+	
+}
+</script>
+
+</head><body><nav>
 
 <ul class="menu">
 <li><a href="/about">about</a></li>
-<li><a href="/diro" onKeyUp="console.log(event);if(event.keyCode==40){var sm=event.target.parentElement.childNodes[2];sm.style.cssText='display:block';sm.focus();console.log('  arrow down ')}">files</a>
+<li><a href="/diro" onKeyUp="foo()">files</a>
 	<ul>
 	<li><a href="/diro">root</a></li>
 	<li><a href="/dirox">home</a></li>
@@ -93,7 +105,7 @@ ul.menu>li>ul>li>a:focus{
 <li><a href="/pczero.vintage">pczero</a></li>
 <li><a href="/cap">crun</a></li>
 <li><a href="/any">any</a></li>
-<li><a href="#" onKeyUp="console.log(event);if(event.keyCode==40){var sm=event.target.parentElement.childNodes[2];sm.style.cssText='display:block';sm.focus();console.log('  arrow down ')}">me</a>
+<li><a href="#" onKeyUp="foo()">me</a>
 	<ul>
 	<li><a href="/dirox">files</a></li>
 	<li><a href="/save">session</a></li>
