@@ -24,10 +24,8 @@ final public class $ extends a{
 	static class ram{}
 	static class storage_tape extends component{
 		void record_seek(final int position){}
-		void record_read(){}
-		void record_write(){}
-		byte[]record_get(){return null;}
-		void record_set(byte[]ba){}
+		byte[]record_read(){return new byte[0];}
+		void record_write(final ByteBuffer bb){}
 	}
 	static class output_printer extends component{
 		void print(final ByteBuffer bb){}
