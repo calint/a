@@ -26,6 +26,7 @@ final public class $ extends a{
 		void record_seek(final int position){}
 		byte[]record_read(){return new byte[0];}
 		void record_write(final ByteBuffer bb){}
+		void record_write(final ByteBuffer bb,final int offset_in_bytes){}
 	}
 	static class output_printer extends component{
 		void print(final ByteBuffer bb){}
