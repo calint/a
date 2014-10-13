@@ -16,28 +16,28 @@ final public class $ extends a{
 	static class port_in{void receive(final ByteBuffer bb,final on_done x){}}
 	static class port_out{void send(final ByteBuffer bb,final on_done x){}}
 	interface on_done{void x(final int code);}
-	static class computer{
-		final io io=new io();
+	static class computer extends component{
 		final core cpu=new core();
 		final ram ram=new ram();
 	}
 	static class core{}
 	static class ram{}
-	static class storage_tape{
-		final io io=new io();
+	static class storage_tape extends component{
 		void record_seek(final int position){}
 		void record_read(){}
 		void record_write(){}
 		byte[]record_get(){return null;}
 		void record_set(byte[]ba){}
 	}
-	static class output_printer{
-		final io io=new io();
+	static class output_printer extends component{
 		void print(final ByteBuffer bb){}
 		void new_line(){}
 //		void carriage_return(){}
 		void bell(){}
 		
+	}
+	static class component{
+		final io io=new io();		
 	}
 //	static class network{}
 
