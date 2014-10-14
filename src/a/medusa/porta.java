@@ -46,26 +46,24 @@ final public class porta extends websock implements threadedsock{static final lo
 	public static long medusa_loop_sleep_ms=100;
 	private static medusa m=new medusa();
 	private static float dt;
-	private static Thread medusa_thread=new Thread("medusa"){
-		@Override public void run(){
-			long last_dt_ms=System.currentTimeMillis();
-			while(medusa_thread_on){
-				final long t_ms=System.currentTimeMillis();
-				long dt_try=(t_ms-last_dt_ms);
-				if(dt_try<=0)dt_try=1;// set dt=1ms
-				last_dt_ms=t_ms;
-				dt=dt_try/1000.f;
-				m.tick(dt,m);
+	private static Thread medusa_thread=new Thread("medusa"){@Override public void run(){
+		long last_dt_ms=System.currentTimeMillis();
+		while(medusa_thread_on){
+			final long t_ms=System.currentTimeMillis();
+			long dt_try=(t_ms-last_dt_ms);
+			if(dt_try<=0)dt_try=1;// set dt=1ms
+			last_dt_ms=t_ms;
+			dt=dt_try/1000.f;
+			m.tick(dt,m);
 //				System.out.println("medusa dt "+dt);
-				if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
-				while(m.has_active_players()){
-					System.out.println(new Date()+": medusa: no players active, sleeping");
-					try{Thread.sleep(24*60*60*1000);}catch(InterruptedException ok){}
-					System.out.println(new Date()+": medusa: wakeup");
-				}
+			if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
+			while(m.has_active_players()){
+				System.out.println(new Date()+": medusa: no players active, sleeping");
+				try{Thread.sleep(24*60*60*1000);}catch(InterruptedException ok){}
+				System.out.println(new Date()+": medusa: wakeup");
 			}
 		}
-	};
+	}};
 	static boolean medusa_thread_on=true;
 	static{
 		try{m.reset();}catch(Throwable t){throw new Error(t);}
