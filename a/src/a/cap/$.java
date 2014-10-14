@@ -161,7 +161,7 @@ public class $ extends a {
 	}
 	
 	public static @conf String cc="gcc";
-	public static @conf String gcc_opts_for_boot_image=" -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast main.c";
+	public static @conf String gcc_opts_for_boot_image=" -m32 -o pco.img -nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O0 -Wfatal-errors -Wno-int-to-pointer-cast main.c";
 	public static @conf String gcc_opts_for_console=" -o main -std=c11 -Wfatal-errors main.c";
 	public static boolean build_pco_boot_img=true;
 	synchronized public void x_cc(xwriter x,String a)throws Throwable{
