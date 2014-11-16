@@ -11,19 +11,25 @@ public class game{
 	class tile{}
 	class map{
 		public void refresh_console(OutputStream os)throws Throwable{
-			data[0][0]='o';
-			data[1][1]='p';
-			data[0][1]='q';
-			data[1][0]='b';
+			data[0][0]='1';
+			data[0][1]='2';
+			data[0][2]='3';
+			data[0][3]='4';
+			
+			data[1][0]='a';
+			data[1][1]='b';
+			data[1][2]='c';
+			data[1][3]='d';
+			
 			final byte[]nl="\n".getBytes();
-			for(int i=0;i<hi;i++){
-				for(int j=0;j<wi;j++){
+			for(int i=0;i<3;i++){
+				for(int j=0;j<wi;j+=2){
 					os.write(tobytes("/"+maptile(i,j)+" \\__"));
 				}
 				os.write("/".getBytes());
 				os.write(nl);
-				for(int j=0;j<wi;j++){
-					os.write("\\__/  ".getBytes());
+				for(int j=0;j<wi;j+=2){
+					os.write(tobytes("\\__/"+maptile(i,j+1)+" "));
 				}
 				os.write("\\".getBytes());
 				os.write(nl);
@@ -35,7 +41,7 @@ public class game{
 		}
 		
 		final int hi=12,wi=8;
-		int[][]data=new int[hi][wi];
+		int[][]data=new int[hi+1][wi+1];
 	}
 	class player{}
 	
