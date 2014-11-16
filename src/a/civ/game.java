@@ -23,6 +23,11 @@ public class game{
 	class player{}
 	
 	
+//	/..\__/
+//	\__/..\
+//	/..\__/
+//	\__/..\
+	
 	
 	@clickable public void reset(){}
 	public void refresh_console(OutputStream os)throws Throwable{
