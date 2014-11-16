@@ -1,9 +1,6 @@
 package a.civ;
 import static b.b.*;
 import b.*;
-
-import java.lang.annotation.*;
-
 final public class $ extends a{
 	public game g=new game();
 	public void to(final xwriter x)throws Throwable{
@@ -37,6 +34,9 @@ final public class $ extends a{
 	}
 
 	public a c;//console
-	public @Retention(RetentionPolicy.RUNTIME)@interface clickable{}
+
 	static final long serialVersionUID=1;
+
+
+//	public @Retention(RetentionPolicy.RUNTIME)@interface clickable{}
 }
