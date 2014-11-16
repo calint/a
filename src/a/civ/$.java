@@ -10,10 +10,10 @@ final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 //		x.pl(g.toString());
 
-		x.pl("//		/.\\_/");
-		x.pl("//		\\_/.\\");
-		x.pl("//		/.\\_/");
-		x.pl("//		\\_/.\\");
+		x.pl("//		/.\\_/.");
+		x.pl("//		\\_/.\\_");
+		x.pl("//		/.\\_/.");
+		x.pl("//		\\_/.\\_");
 
 		x.style().cssfont("tini","/ttf/tini.ttf").style_();
 		Stream.of(g.getClass().getDeclaredMethods())
