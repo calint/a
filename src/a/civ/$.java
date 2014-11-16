@@ -8,7 +8,8 @@ final public class $ extends a{
 		x.style("html","background:#222;color:#0c0");
 		x.style("a","color:#0c0");
 		x.span("font-size:2em").p("con civ").span_().nl(2);
-		x.pl("// || || || \\\\ ||");
+		x.pl("  _  ___  ||\\\\ ||");
+		x.pl("//  || || || \\\\||");
 		x.spano(m);
 		x.r(h);
 		x.nl().spano(s);
