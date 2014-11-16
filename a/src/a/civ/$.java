@@ -7,7 +7,8 @@ final public class $ extends a{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
 		x.style("html","background:#222;color:#0c0");
 		x.style("a","color:#0c0");
-		x.span("font-size:2em").p("con civ hot seat").span_().nl(2);
+		x.span("font-size:2em").p("con civ").span_().nl(2);
+		x.pl("// || || || \\\\ ||");
 		x.spano(m);
 		x.r(h);
 		x.nl().spano(s);
