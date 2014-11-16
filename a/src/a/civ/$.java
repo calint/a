@@ -9,7 +9,12 @@ final public class $ extends a{
 	public game g=new game();
 	public void to(final xwriter x)throws Throwable{
 //		x.pl(g.toString());
-		
+
+		x.pl("//		/.\\_/");
+		x.pl("//		\\_/.\\");
+		x.pl("//		/.\\_/");
+		x.pl("//		\\_/.\\");
+
 		x.style().cssfont("tini","/ttf/tini.ttf").style_();
 		Stream.of(g.getClass().getDeclaredMethods())
 			.filter(m->m.getDeclaredAnnotation(clickable.class)!=null)
@@ -17,6 +22,8 @@ final public class $ extends a{
 		x.nl();
 //		x.pl("- - - -- - -  -- -- -  -- - - - --  --  - -- -  - -- -- ---");
 		g.refresh_console(x.outputstream());
+		
+		x.nl(2);
 	}
 
 	public @Retention(RetentionPolicy.RUNTIME)@interface clickable{}
