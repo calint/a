@@ -18,18 +18,16 @@ class map extends a{
 		}
 		x.nl();
 	}
-	public void exec(String ln)throws Throwable{
-		if(ln.length()<2)return;
-		final int row=ln.charAt(0)-'a';
-		final int col=ln.charAt(1)-'1';
-		data[row][col]="o ";
-	}
-	
-	
 	private String maptile(int i,int j){
 		return data[i][j]==null?"  ":data[i][j];
 	}
 	
 	final int hi=10,wi=10;
 	private String[][]data=new String[hi+1][wi+1];
+	public void put(int row,int col,String str){
+		data[row][col]=str;
+	}
+	public void remove(int row,int col){
+		data[row][col]="  ";
+	}
 }
