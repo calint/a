@@ -20,14 +20,19 @@ final public class $ extends a{
 //			.forEach(m->{x.p(m.getName());});
 //		x.nl();
 //		x.pl("- - - -- - -  -- -- -  -- - - - --  --  - -- -  - -- -- ---");
+		
+		x.ax(this).nl();
 		x.output_holder(c);
-		x.script();
-		g.refresh_console(x.xub(c,true,false).outputstream());
-		x.xube();
-		x.script_();
+//		x.script();
+//		x_(x,"");
+//		x.script_();
 		x.nl(2);
 	}
 
+	public synchronized void x_(xwriter x,String arg)throws Throwable{
+		g.refresh_console(x.xub(c,true,false).outputstream());
+		x.xube();	
+	}
 
 	public a c;//console
 	public @Retention(RetentionPolicy.RUNTIME)@interface clickable{}
