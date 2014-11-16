@@ -14,16 +14,15 @@ final public class $ extends a{
 		x.r(h);
 		x.nl().spano(s);
 		x.nl().spano(p).style(p,"display:block");
-		x.nl(2).r(ajaxsts).nl();
-		x.style(ajaxsts,"font-size:.5em");
-		x.script();x_(x,"");x.script_();
-		x.nl(4);
+		x.nl();
 		x.pl(".._..___..||\\\\.||..__.__._...._.");
 		x.pl("//..||.||.||.\\\\||.//..||.\\\\..//.");
 		x.pl("||..||.||.||...||.||..||..\\.//..");
 		x.pl("\\\\__\\|_|/.||...||.\\\\..||...\\/...");
 		x.nl();
-
+		x.nl(2).r(ajaxsts).nl();
+		x.style(ajaxsts,"font-size:.5em");
+		x.script();x_(x,"");x.script_();
 	}
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
