@@ -1,6 +1,5 @@
 package a.civ;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 import b.a;
@@ -20,8 +19,8 @@ public class game extends a{
 			if(c=='o'){//clear
 				turn=0;
 				m.clear();
-				m.put("a1","a ");
-				m.put("h8","b ");
+				m.put("a1",new tile("o "));
+				m.put("j8",new tile("x "));
 				return;
 			}
 		}

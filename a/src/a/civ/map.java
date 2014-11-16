@@ -85,27 +85,25 @@ public class map extends a{
 
 
 
-	public void put(String tile,String content){
+	public void put(String tile,tile t){
 		final int col=tile.charAt(0)-'a';
 		final int row=tile.charAt(1)-'1';
-		data[row][col]=new tile(content);
+		data[row][col]=t;
 	}
-	public String get(String tile){
+	public tile get(String tile){
+		final int col=tile.charAt(0)-'a';
+		final int row=tile.charAt(1)-'1';
+		return data[row][col];
+	}
+	public tile take(String tile){
 		final int col=tile.charAt(0)-'a';
 		final int row=tile.charAt(1)-'1';
 		final tile t=data[row][col];
-		if(t==null)return null;
-		return t.toString();
+		data[row][col]=null;
+		return t;
 	}
 	
 	
 	private final int hi=8,wi=10;
 	private tile[][]data=new tile[hi][wi];
-	static class tile{
-//		tile(int i){this.i=i;}
-		tile(String s){this.s=s;}
-//		private int i;
-		private String s;
-		public String toString(){return s;}
-	}
 }
