@@ -10,11 +10,7 @@ public class unit extends a{
 		x.style(o,"border-bottom:1px dotted blue;width:4em");
 		x.nl();
 	}
-	public synchronized void x_(xwriter x,String a)throws Throwable{
-		b.b.pl("oldo "+id()+"   "+nm()+"   "+str());
-		old_o=o.str();
-	}
-
+	public synchronized void x_(xwriter x,String a)throws Throwable{}
 	String old_o;
 
 	/** order */public a o=new a(this,"o");//orders for this turn
