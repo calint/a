@@ -1,14 +1,13 @@
 package a.civ;
-import java.util.Arrays;
-
-import b.*;
+import b.a;
+import b.xwriter;
 class map extends a{
 //	/..\__/
 //	\__/..\
 //	/..\__/
 //	\__/..\
 	public void to(xwriter x)throws Throwable{
-		for(int i=0;i<(hi-1);i++){
+		for(int i=0;i<=(hi-1);i++){
 			for(int j=0;j<(wi-1);j+=2){
 				x.p("/").p(tile(i,j)).p("\\__");
 			}
@@ -24,7 +23,7 @@ class map extends a{
 		return data[i][j]==null?"  ":data[i][j];
 	}
 	
-	final int hi=10,wi=10;
+	final int hi=10,wi=12;
 	private String[][]data=new String[hi+1][wi+1];
 	public void put(int row,int col,String str){
 		data[row][col]=str;
