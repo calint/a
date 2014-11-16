@@ -27,6 +27,8 @@ public class game extends a{
 				map.remove(row,col);
 				return;
 			}
+			// qwe
+			// asd
 			if(c=='m'){//move
 				final int from_col=is.read()-'a';
 				final int from_row=is.read()-'1';
@@ -39,6 +41,8 @@ public class game extends a{
 			if(c=='o'){//clear
 				turn=0;
 				map.clear();
+				map.put(0,0,"a ");
+				map.put(9,11,"b ");
 				return;
 			}
 		}
