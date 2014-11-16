@@ -67,7 +67,17 @@ public class map extends a{
 		data[row][col]=null;
 		if(t==null)throw new Error("tile "+rowcol_to_str(row,col)+" is empty");
 
-		final int ncol=pis.read()-'a';
+		final int a=pis.read();
+		if(a=='-'){// ma1-e       qwe asd
+			final int dir=pis.read();
+			if(dir=='w'){data[row-1][col]=t;return;}
+			if(dir=='s'){data[row+1][col]=t;return;}
+			if(dir=='e'){data[row-1][col+1]=t;return;}
+			
+			throw new Error();
+		}
+
+		final int ncol=a-'a';
 		final int nrow=pis.read()-'1';
 		data[nrow][ncol]=t;
 	}

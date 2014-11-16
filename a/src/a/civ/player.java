@@ -7,9 +7,9 @@ public class player extends a{
 		x.inputText(this,this,"");
 		x.style(this,"background:yellow;border-top:1px dotted blue;border-radius:1em;padding:.2em;text-align:center;width:12em");
 		x.nl();
-		x.pl("  gold: 0   ");
+//		x.pl("  gold: 0   ");
 		x.pl(" units: none");
-		x.pl("cities: none");
+//		x.pl("cities: none");
 	}
 	public a o;//orders for this turn
 	public a l;//orders log
