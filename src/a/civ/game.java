@@ -1,6 +1,5 @@
 package a.civ;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import a.civ.$.clickable;
@@ -14,7 +13,7 @@ public class game{
 	
 	
 	@clickable public void reset(){}
-	public void refresh_console(OutputStream os){
-		try{os.write("bmp width height depth".getBytes());}catch(IOException e){throw new Error(e);}
+	public void refresh_console(OutputStream os)throws Throwable{
+		os.write("bmp width height depth".getBytes());
 	}
 }
