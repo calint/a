@@ -14,13 +14,15 @@ public class game{
 			for(int i=0;i<hi;i++){
 				for(int j=0;j<wi;j++){
 //					os.write("_".getBytes());
-					os.write("/.\\_".getBytes());
+//					os.write("/.\\_".getBytes());
+					os.write("/..\\__".getBytes());
 				}
 				os.write("/".getBytes());
 				os.write(nl);
 				for(int j=0;j<wi;j++){
 //					os.write("_".getBytes());
-					os.write("\\_/.".getBytes());
+//					os.write("\\_/.".getBytes());
+					os.write("\\__/..".getBytes());
 				}
 				os.write("\\".getBytes());
 				os.write(nl);
