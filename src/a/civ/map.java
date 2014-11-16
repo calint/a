@@ -1,4 +1,6 @@
 package a.civ;
+import java.util.Arrays;
+
 import b.*;
 class map extends a{
 //	/..\__/
@@ -35,5 +37,12 @@ class map extends a{
 		if(s==null)throw new Error("nothing to take at "+(char)(row+'a')+(char)(col+'1'));
 		data[row][col]="  ";
 		return s;
+	}
+	public void clear(){
+		for(int r=0;r<data.length;r++){
+			for(int c=0;c<data[r].length;c++){
+				data[r][c]=null;
+			}
+		}
 	}
 }

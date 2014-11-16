@@ -36,6 +36,11 @@ public class game extends a{
 				map.put(to_row,to_col,s);
 				return;
 			}
+			if(c=='o'){//clear
+				turn=0;
+				map.clear();
+				return;
+			}
 		}
 		throw new Error("unknown command "+cmd);
 	}
