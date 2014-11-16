@@ -1,16 +1,12 @@
 package a.civ;
-
-import java.io.OutputStream;
-
-
-//import a.civ.$.clickable;
+import java.io.*;
 import static b.b.*;
-
-public class game extends b.a{
-	class unit{}
-	class tile{}
-	class map{
-		public void refresh_console(OutputStream os)throws Throwable{
+import b.*;
+public class game extends a{
+	class unit extends a{}
+	class tile extends a{}
+	class map extends a{
+		public void to(xwriter x)throws Throwable{
 			data[0][0]='1';
 			data[0][1]='2';
 			data[0][2]='3';
@@ -20,7 +16,7 @@ public class game extends b.a{
 			data[1][1]='b';
 			data[1][2]='c';
 			data[1][3]='d';
-			
+			final OutputStream os=x.outputstream();
 			final byte[]nl="\n".getBytes();
 			for(int i=0;i<hi;i++){
 				for(int j=0;j<wi;j+=2){
@@ -51,11 +47,9 @@ public class game extends b.a{
 //	/..\__/
 //	\__/..\
 	
-	
-//	@clickable public void reset(){}
-	public void refresh_console(OutputStream os)throws Throwable{
-		os.write(tobytes("turn: "+turn+"\n\b"));
-		map.refresh_console(os);
+	public void to(xwriter x)throws Throwable{
+		x.pl("turn: "+turn+"\n\b");
+		map.to(x);
 		turn++;
 	}
 	
