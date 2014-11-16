@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 public class player extends a{
 	@Override public void to(xwriter x) throws Throwable {
-		x.pl(getClass()+":"+this);
+		x.pl(str());
 	}
-	public a nm;//name
+	{set("player");}
 }

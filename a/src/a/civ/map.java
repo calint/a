@@ -8,14 +8,20 @@ public class map extends a{
 //	\__/..\
 	public void to(xwriter x)throws Throwable{
 		for(int i=0;i<=(hi-1);i++){
+			x.p(""+(char)(i+'1')+" ");
 			for(int j=0;j<(wi-1);j+=2){
 				x.p("/").p(tile(i,j)).p("\\__");
 			}
 			x.pl("/");
+			x.p("  ");
 			for(int j=0;j<wi;j+=2){
 				x.p("\\__/").p(tile(i,j+1));
 			}
 			x.pl("\\");
+		}
+		x.p("  ");
+		for(int j=0;j<wi;j++){
+			x.p(" "+(char)(j+'a')+" ");
 		}
 		x.nl();
 	}
@@ -23,7 +29,7 @@ public class map extends a{
 		return data[i][j]==null?"  ":data[i][j];
 	}
 	
-	final int hi=10,wi=12;
+	final int hi=8,wi=8;
 	private String[][]data=new String[hi+1][wi+1];
 	public void put(int row,int col,String str){
 		data[row][col]=str;

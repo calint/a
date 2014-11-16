@@ -10,12 +10,14 @@ final public class $ extends a{
 		x.ax(this).nl(2);
 		x.output_holder(c);
 		x.script();x_(x,"");x.script_();
-		x.nl().r(ajaxsts).nl();
+		
+		x.nl(2).r(ajaxsts).nl();
+		x.style(ajaxsts,"font-size:.5em");
 	}
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
-		g.exec(inp.str());
-		g.to(x.xub(c,true,false));
+		g.xec(inp.str());
+		g.m.to(x.xub(c,true,false));
 		x.xube();
 		x.xu(inp.clr());
 	}
