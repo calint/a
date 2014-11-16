@@ -9,10 +9,13 @@ final public class $ extends a{
 	public game g=new game();
 	public void to(final xwriter x)throws Throwable{
 //		x.pl(g.toString());
+		
+		x.style().cssfont("tini","/ttf/tini.ttf").style_();
 		Stream.of(g.getClass().getDeclaredMethods())
 			.filter(m->m.getDeclaredAnnotation(clickable.class)!=null)
-			.forEach(m->{x.p(" * ").p(m.getName());});
-		x.nl().pl("- - - -- - -  -- -- -  -- - - - --  --  - -- -  - -- -- ---");
+			.forEach(m->{x.p(m.getName());});
+		x.nl();
+//		x.pl("- - - -- - -  -- -- -  -- - - - --  --  - -- -  - -- -- ---");
 		g.refresh_console(x.outputstream());
 	}
 

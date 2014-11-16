@@ -9,7 +9,15 @@ public class game{
 	class tile{}
 	class map{
 		public void refresh_console(OutputStream os)throws Throwable{
-			os.write("••••\n••••\n••••\n••••".getBytes());
+			final int hi=16,wi=16;
+			final byte[]nl="\n".getBytes();
+			for(int i=0;i<hi;i++){
+				for(int j=0;j<wi;j++){
+					os.write("_".getBytes());
+				}
+				os.write(nl);
+			}
+			os.write(nl);
 		}
 	}
 	class player{}
