@@ -7,10 +7,10 @@ import b.xwriter;
 public class player extends a{
 	public player(a apt,String anm,String name){super(apt,anm,name);}
 	@Override public void to(xwriter x)throws Throwable{
-		x.inputText(this,this,"").style(this,"border-bottom:1px dotted black;padding:.2em;text-align:center;width:12em");
+		x.inputText(this,this,"").style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:12em");
 		x.nl();
 		units.forEach(u->{try{u.to(x);}catch(Throwable t){throw new Error(t);}});
-		x.ax(this,"s"," :: next");
+		x.ax(this,"s","::");
 	}
 	public a o=new a(this,"o");//orders for this turn
 	public a l=new a(this,"l");//orders log

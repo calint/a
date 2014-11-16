@@ -7,7 +7,7 @@ public class unit extends a{
 		x.p(str()).p(": ");
 		x.p(old_o).p("-");
 		x.inputText(o,this,"");
-		x.style(o,"border-bottom:1px dotted blue;width:4em");
+		x.style(o,"border-bottom:1px dotted;width:4em");
 		x.nl();
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
