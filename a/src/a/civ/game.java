@@ -32,6 +32,8 @@ public class game extends a{
 	public List<player>players=new ArrayList<>();
 	{
 		players.add(new player(this,"player_john","john"));
+		players.add(new player(this,"player_jane","jane"));
+		players.add(new player(this,"player_jay","jay"));
 	}
 	@Override protected a chldq(String id){
 		final player x=players.stream()
@@ -42,6 +44,19 @@ public class game extends a{
 		return super.chldq(id);
 	}
 
+	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
+		if(from instanceof player){
+			b.b.pl("event from "+from);
+			player++;
+			if(player>=players.size()){
+				player=0;
+					turn++;
+			}
+			super.ev(x,this);
+			return;
+		}
+		super.ev(x,from,o);
+	}
 	
 	
 	public @readonly map m;//map
