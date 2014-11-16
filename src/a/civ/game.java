@@ -17,13 +17,23 @@ public class game extends a{
 			if(c=='p'){//put
 				final int col=is.read()-'a';
 				final int row=is.read()-'1';
-				map.put(row,col,"o ");
+				final String s=(char)is.read()+" ";
+				map.put(row,col,s);
 				return;
 			}
 			if(c=='r'){//remove
 				final int col=is.read()-'a';
 				final int row=is.read()-'1';
 				map.remove(row,col);
+				return;
+			}
+			if(c=='m'){//move
+				final int from_col=is.read()-'a';
+				final int from_row=is.read()-'1';
+				final String s=map.take(from_row,from_col);
+				final int to_col=is.read()-'a';
+				final int to_row=is.read()-'1';
+				map.put(to_row,to_col,s);
 				return;
 			}
 		}

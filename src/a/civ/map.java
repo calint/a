@@ -8,17 +8,17 @@ class map extends a{
 	public void to(xwriter x)throws Throwable{
 		for(int i=0;i<(hi-1);i++){
 			for(int j=0;j<(wi-1);j+=2){
-				x.p("/").p(maptile(i,j)).p("\\__");
+				x.p("/").p(tile(i,j)).p("\\__");
 			}
 			x.pl("/");
 			for(int j=0;j<wi;j+=2){
-				x.p("\\__/").p(maptile(i,j+1));
+				x.p("\\__/").p(tile(i,j+1));
 			}
 			x.pl("\\");
 		}
 		x.nl();
 	}
-	private String maptile(int i,int j){
+	private String tile(int i,int j){
 		return data[i][j]==null?"  ":data[i][j];
 	}
 	
@@ -28,6 +28,12 @@ class map extends a{
 		data[row][col]=str;
 	}
 	public void remove(int row,int col){
+		data[row][col]=null;
+	}
+	public String take(int row,int col){
+		final String s=data[row][col];
+		if(s==null)throw new Error("nothing to take at "+(char)(row+'a')+(char)(col+'1'));
 		data[row][col]="  ";
+		return s;
 	}
 }
