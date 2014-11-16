@@ -4,6 +4,10 @@ import java.io.OutputStream;
 import b.a;
 import b.xwriter;
 class map extends a{
+//	/..\__/
+//	\__/..\
+//	/..\__/
+//	\__/..\
 	public void to(xwriter x)throws Throwable{
 		for(int i=0;i<hi;i++){
 			for(int j=0;j<wi;j++){
