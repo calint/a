@@ -1,7 +1,7 @@
 package a.civ;
 import b.a;
 import b.xwriter;
-class map extends a{
+public class map extends a{
 //	/..\__/
 //	\__/..\
 //	/..\__/
