@@ -45,26 +45,26 @@ public class game extends a{
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		if(from instanceof player){
 			b.b.pl("moves from "+from);
-			final player p=(player)from;
-			p.units.stream().forEach(u->{
-				if(u.o.isempty())return;
-				final String s=u.o.str();
-				if(s.charAt(0)==' '){
-					final char dir=s.charAt(1);
-					// qwe
-					// asd
-					if(dir=='w'){
-						return;
-					}
-					throw new Error();
-				}
-				if(u.old_o!=null)m.take(u.old_o);
-				u.old_o=s;
-				m.put(s,new tile(p.str().charAt(0)+u.str()));
-			});
-			
 			player++;
 			if(player>=players.size()){
+				players.stream().forEach(p->{
+					p.units.stream().forEach(u->{
+						if(u.o.isempty())return;
+						final String s=u.o.str();
+						if(s.charAt(0)==' '){
+							final char dir=s.charAt(1);
+							// qwe
+							// asd
+							if(dir=='w'){
+								return;
+							}
+							throw new Error();
+						}
+						if(u.old_o!=null)m.take(u.old_o);
+						u.old_o=s;
+						m.put(s,new tile(p.str().charAt(0)+u.str()));
+					});
+				});
 				player=0;
 				turn++;
 			}
