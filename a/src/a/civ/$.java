@@ -21,8 +21,10 @@ final public class $ extends a{
 //		x.nl();
 //		x.pl("- - - -- - -  -- -- -  -- - - - --  --  - -- -  - -- -- ---");
 		
+		x.style("html","text-align:center");
 		x.ax(this).nl();
 		x.output_holder(c);
+//		x.style(c,"display:table;border:1px dotted black;margin-left:auto;margin-right:auto");
 //		x.script();
 //		x_(x,"");
 //		x.script_();
