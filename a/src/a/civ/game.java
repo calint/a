@@ -29,9 +29,9 @@ public class game extends a{
 	
 	public List<player>players=new ArrayList<>();
 	{
-		players.add(new player(this,"player_john","john"));
-		players.add(new player(this,"player_jane","jane"));
-		players.add(new player(this,"player_jay","jay"));
+		players.add(new player(this,"player_1","player 1"));
+		players.add(new player(this,"player_2","player 2"));
+		players.add(new player(this,"player_3","player 3"));
 	}
 	@Override protected a chldq(String nm){
 		final player x=players.stream()
@@ -44,11 +44,25 @@ public class game extends a{
 
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		if(from instanceof player){
-			b.b.pl("event from "+from);
+			b.b.pl("moves from "+from);
+			final player p=(player)from;
+			p.units.stream().forEach(u->{
+				if(u.o.isempty())return;
+				final String s=u.o.str();
+				if(s.charAt(0)==' '){
+					final char dir=s.charAt(1);
+					// qwe
+					// asd
+					if(dir=='w'){
+						
+					}
+				}else m.put(u.o.str(),new tile("u"+u.str()));
+			});
+			
 			player++;
 			if(player>=players.size()){
 				player=0;
-					turn++;
+				turn++;
 			}
 			super.ev(x,this);
 			return;

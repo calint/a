@@ -20,18 +20,6 @@ final public class $ extends a{
 //		x.xu(inp.clr());
 	}
 
-	public game g;
-	public a m;//map
-	public a p;//player
-//	public a inp;//input
-	public a s;//sts
-
-
-	public a_ajaxsts ajaxsts;//system supplied ajax status line
-
-
-
-
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		b.b.pl("event from "+from.getClass());
 		if(from instanceof game){
@@ -41,8 +29,11 @@ final public class $ extends a{
 		super.ev(x,from,o);
 	}
 
-
-
+	public game g;
+	public a m;//map
+	public a p;//player
+	public a s;//sts
+	public a_ajaxsts ajaxsts;//system supplied ajax status line
 
 	static final long serialVersionUID=1;
 }
