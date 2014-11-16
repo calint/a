@@ -33,13 +33,13 @@ public class game extends a{
 		players.add(new player(this,"player_jane","jane"));
 		players.add(new player(this,"player_jay","jay"));
 	}
-	@Override protected a chldq(String id){
+	@Override protected a chldq(String nm){
 		final player x=players.stream()
-			.filter(u->id.equals(u.nm()))
+			.filter(u->nm.equals(u.nm()))
 			.findAny()
 			.get();
 		if(x!=null)return x;
-		return super.chldq(id);
+		return super.chldq(nm);
 	}
 
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
