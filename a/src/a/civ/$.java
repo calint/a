@@ -8,8 +8,9 @@ final public class $ extends a{
 		
 		x.span("font-size:2em").p("mini civ hot seat").span_().nl(2);
 		x.spano(m);
+		x.r(h);
 		x.nl().spano(s);
-		x.nl(2).spano(p).style(p,"display:block");
+		x.nl().spano(p).style(p,"display:block");
 		x.nl(2).r(ajaxsts).nl();
 		x.style(ajaxsts,"font-size:.5em");
 		x.script();x_(x,"");x.script_();
@@ -32,10 +33,11 @@ final public class $ extends a{
 	}
 
 	public game g;
-	public a m;//map
-	public a p;//player
-	public a s;//sts
-	public a_ajaxsts ajaxsts;//system supplied ajax status line
+	/**mapoutput*/public a m;
+	/**playeroutput*/public a p;
+	/**statusoutput*/public a s;
+	/**builtinajaxstatusline*/public a_ajaxsts ajaxsts;
+	/**cheatsheet*/public hlp h;
 
 	static final long serialVersionUID=1;
 }

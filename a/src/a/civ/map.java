@@ -2,10 +2,12 @@ package a.civ;
 import b.a;
 import b.xwriter;
 public class map extends a{
-//	/..\__/
-//	\__/..\
-//	/..\__/
-//	\__/..\
+//	   /..\   
+//	/..\__/..\
+//	\__/..\__/
+//	/..\__/..\
+//	\__/..\__/
+//     \__/   
 	public void to(xwriter x)throws Throwable{
 		final boolean rend_col_letters=true;
 		
