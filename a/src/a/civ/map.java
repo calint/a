@@ -1,4 +1,6 @@
 package a.civ;
+import java.io.PushbackInputStream;
+
 import b.a;
 import b.xwriter;
 public class map extends a{
@@ -47,23 +49,53 @@ public class map extends a{
 	
 	final int hi=8,wi=10;
 	private String[][]data=new String[hi+1][wi+1];
-	public void put(int row,int col,String str){
-		data[row][col]=str;
+	public void put(PushbackInputStream pis)throws Throwable{
+		final int col=pis.read()-'a';
+		final int row=pis.read()-'1';
+		final int i=pis.read();
+		data[row][col]=(char)i+" ";
 	}
-	public void remove(int row,int col){
+//	public void put(int row,int col,String str){
+//		data[row][col]=str;
+//	}
+	public void remove(PushbackInputStream pis)throws Throwable{
+		final int col=pis.read()-'a';
+		final int row=pis.read()-'1';
 		data[row][col]=null;
 	}
-	public String take(int row,int col){
+	public void move(PushbackInputStream pis)throws Throwable{
+		final int col=pis.read()-'a';
+		final int row=pis.read()-'1';
 		final String s=data[row][col];
-		if(s==null)throw new Error("nothing to take at "+(char)(row+'a')+(char)(col+'1'));
-		data[row][col]="  ";
-		return s;
+		data[row][col]=null;
+		if(s==null)throw new Error("tile "+rowcol_to_str(row,col)+" is empty");
+
+		final int ncol=pis.read()-'a';
+		final int nrow=pis.read()-'1';
+		data[nrow][ncol]=s;
 	}
+	private static String rowcol_to_str(int row,int col){
+		return (char)('a'+col)+""+(char)('1'+row);
+	}
+	public String query(String loc){
+		return null;
+	}
+//	public String take(int row,int col){
+//		final String s=data[row][col];
+//		if(s==null)throw new Error("nothing to take at "+(char)(row+'a')+(char)(col+'1'));
+//		data[row][col]="  ";
+//		return s;
+//	}
 	public void clear(){
 		for(int r=0;r<data.length;r++){
 			for(int c=0;c<data[r].length;c++){
 				data[r][c]=null;
 			}
 		}
+	}
+	public void put(String tile,String content){
+		final int col=tile.charAt(0)-'a';
+		final int row=tile.charAt(1)-'1';
+		data[row][col]=content;
 	}
 }
