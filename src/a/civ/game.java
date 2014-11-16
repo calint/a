@@ -13,7 +13,8 @@ public class game{
 		public void refresh_console(OutputStream os)throws Throwable{
 			data[0][0]='o';
 			data[1][1]='p';
-			
+			data[0][1]='q';
+			data[1][0]='b';
 			final byte[]nl="\n".getBytes();
 			for(int i=0;i<hi;i++){
 				for(int j=0;j<wi;j++){
