@@ -2,7 +2,6 @@ package a.civ;
 import static b.b.*;
 import b.*;
 final public class $ extends a{
-	public game g=new game();
 	public void to(final xwriter x)throws Throwable{
 //		x.style().cssfont("tini","/ttf/monospace-typewriter.ttf").style_();
 //		x.pl(g.toString());
@@ -34,6 +33,7 @@ final public class $ extends a{
 	}
 
 	public a c;//console
+	public game g;
 
 	static final long serialVersionUID=1;
 

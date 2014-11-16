@@ -6,7 +6,7 @@ import java.io.OutputStream;
 //import a.civ.$.clickable;
 import static b.b.*;
 
-public class game{
+public class game extends b.a{
 	class unit{}
 	class tile{}
 	class map{
