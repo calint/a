@@ -10,7 +10,8 @@ final public class $ extends a{
 		x.focus(inp);
 		x.style(inp,"border:1px dotted green;width:5em;padding:.5em;border-radius:.5em");
 		x.ax(this).nl(2);
-		x.output_holder(p);
+		x.spano(p);
+		x.style(p,"display:block");
 //		x.style(p,"float:right");
 		x.output_holder(m);
 //		x.style(m,"float:left");

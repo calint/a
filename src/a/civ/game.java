@@ -26,9 +26,9 @@ public class game extends a{
 		}
 		throw new Error("unknown command "+cmd);
 	}
+	public @readonly map m;//map
+	public @readonly player p;//player
+	public @readonly int turn;
 
-	
-	public map m;//map
-	private int turn;
-	public player p;//player
+	public static @interface readonly{}
 }
