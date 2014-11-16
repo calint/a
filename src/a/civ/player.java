@@ -9,11 +9,8 @@ public class player extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.inputText(this,this,"").style(this,"border-bottom:1px dotted black;padding:.2em;text-align:center;width:12em");
 		x.nl();
-//		x.pl("  gold: 0   ");
-//		x.pl(" units: "+units);
 		units.forEach(u->{try{u.to(x);}catch(Throwable t){throw new Error(t);}});
 		x.ax(this,"s"," :: next");
-//		x.pl("cities: none");
 	}
 	public a o=new a(this,"o");//orders for this turn
 	public a l=new a(this,"l");//orders log

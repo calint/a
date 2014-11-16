@@ -4,4 +4,5 @@ public class tile{
 	public String toString(){return s;}
 
 	private String s;
+	private unit u;
 }
