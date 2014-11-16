@@ -15,8 +15,7 @@ public class game extends a{
 			if(c==-1)return;
 			if(c=='p'){m.put(pis);return;}
 			if(c=='r'){m.remove(pis);return;}
-			// qwe
-			// asd
+			// qweasd
 			if(c=='m'){m.move(pis);return;}
 			if(c=='o'){//clear
 				turn=0;
