@@ -7,10 +7,8 @@ import b.xwriter;
 public class game extends a{
 	public void to(xwriter x)throws Throwable{
 		m.to(x);
-		turn++;
-		x.pl("turn: "+turn+"\n\b");
 	}
-	public void exec(String cmd)throws Throwable{
+	public void xec(String cmd)throws Throwable{
 		try(final InputStream is=new ByteArrayInputStream(cmd.getBytes())){
 			final int c=is.read();
 			if(c==-1)return;
@@ -42,7 +40,7 @@ public class game extends a{
 				turn=0;
 				m.clear();
 				m.put(0,0,"a ");
-				m.put(9,11,"b ");
+				m.put(7,7,"b ");
 				return;
 			}
 		}
@@ -52,4 +50,5 @@ public class game extends a{
 	
 	public map m;//map
 	private int turn;
+	public player p;//player
 }
