@@ -6,6 +6,7 @@ final public class $ extends a{
 		x.style("html","text-align:center");
 		x.ax(this).nl();
 		x.output_holder(c);
+		x.nl().r(ajaxsts).nl();
 	}
 
 	public synchronized void x_(xwriter x,String arg)throws Throwable{
@@ -16,6 +17,8 @@ final public class $ extends a{
 	public a c;//console
 	public game g;
 
+
+	public a_ajaxsts ajaxsts;//system supplied ajax status line
 
 
 
