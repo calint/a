@@ -13,14 +13,14 @@ final public class $ extends a{
 		x.nl().r(ajaxsts).nl();
 	}
 
-	public synchronized void x_(xwriter x,String arg)throws Throwable{
+	public synchronized void x_(xwriter x,String a)throws Throwable{
 		g.exec(inp.str());
 		g.to(x.xub(c,true,false));
 		x.xube();	
 	}
 
-	public a c;//console
 	public game g;
+	public a c;//console
 	public a inp;//input
 
 

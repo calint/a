@@ -15,14 +15,14 @@ public class game extends a{
 			final int c=is.read();
 			if(c==-1)return;
 			if(c=='p'){//put
-				final int row=is.read()-'a';
-				final int col=is.read()-'1';
+				final int col=is.read()-'a';
+				final int row=is.read()-'1';
 				map.put(row,col,"o ");
 				return;
 			}
 			if(c=='r'){//remove
-				final int row=is.read()-'a';
-				final int col=is.read()-'1';
+				final int col=is.read()-'a';
+				final int row=is.read()-'1';
 				map.remove(row,col);
 				return;
 			}
