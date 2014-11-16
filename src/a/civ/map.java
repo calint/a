@@ -44,16 +44,16 @@ public class map extends a{
 		}
 	}
 	private String tile(int i,int j){
-		return data[i][j]==null?"  ":data[i][j];
+		final tile t=data[i][j];
+		if(t==null)return"  ";
+		return t.toString();
 	}
 	
-	private final int hi=8,wi=10;
-	private String[][]data=new String[hi+1][wi+1];
 	public void put(PushbackInputStream pis)throws Throwable{
 		final int col=pis.read()-'a';
 		final int row=pis.read()-'1';
 		final int i=pis.read();
-		data[row][col]=(char)i+" ";
+		data[row][col]=new tile(""+(char)i+" ");
 	}
 	public void remove(PushbackInputStream pis)throws Throwable{
 		final int col=pis.read()-'a';
@@ -63,13 +63,13 @@ public class map extends a{
 	public void move(PushbackInputStream pis)throws Throwable{
 		final int col=pis.read()-'a';
 		final int row=pis.read()-'1';
-		final String s=data[row][col];
+		final tile t=data[row][col];
 		data[row][col]=null;
-		if(s==null)throw new Error("tile "+rowcol_to_str(row,col)+" is empty");
+		if(t==null)throw new Error("tile "+rowcol_to_str(row,col)+" is empty");
 
 		final int ncol=pis.read()-'a';
 		final int nrow=pis.read()-'1';
-		data[nrow][ncol]=s;
+		data[nrow][ncol]=t;
 	}
 	private static String rowcol_to_str(int row,int col){
 		return (char)('a'+col)+""+(char)('1'+row);
@@ -88,13 +88,24 @@ public class map extends a{
 	public void put(String tile,String content){
 		final int col=tile.charAt(0)-'a';
 		final int row=tile.charAt(1)-'1';
-		data[row][col]=content;
+		data[row][col]=new tile(content);
 	}
 	public String get(String tile){
 		final int col=tile.charAt(0)-'a';
 		final int row=tile.charAt(1)-'1';
-		return data[row][col];
+		final tile t=data[row][col];
+		if(t==null)return null;
+		return t.toString();
 	}
 	
-	static class tile{String str;}
+	
+	private final int hi=8,wi=10;
+	private tile[][]data=new tile[hi][wi];
+	static class tile{
+//		tile(int i){this.i=i;}
+		tile(String s){this.s=s;}
+//		private int i;
+		private String s;
+		public String toString(){return s;}
+	}
 }
