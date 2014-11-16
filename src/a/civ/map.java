@@ -9,13 +9,11 @@ class map extends a{
 //	/..\__/
 //	\__/..\
 	public void to(xwriter x)throws Throwable{
-		for(int i=0;i<hi;i++){
-			for(int j=0;j<wi;j++){
-				data[i][j]=String.valueOf(i+1)+String.valueOf((char)('a'+j));
-			}
-		}
-		
-		final byte[]nl="\n".getBytes();
+//		for(int i=0;i<hi;i++){
+//			for(int j=0;j<wi;j++){
+//				data[i][j]=String.valueOf(i+1)+String.valueOf((char)('a'+j));
+//			}
+//		}
 		for(int i=0;i<(hi-1);i++){
 			for(int j=0;j<(wi-1);j+=2){
 				x.p("/").p(maptile(i,j)).p("\\__");
