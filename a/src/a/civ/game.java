@@ -22,7 +22,7 @@ public class game{
 			data[1][3]='d';
 			
 			final byte[]nl="\n".getBytes();
-			for(int i=0;i<3;i++){
+			for(int i=0;i<hi;i++){
 				for(int j=0;j<wi;j+=2){
 					os.write(tobytes("/"+maptile(i,j)+" \\__"));
 				}
@@ -40,7 +40,7 @@ public class game{
 			return data[i][j]==0?" ":(""+(char)data[i][j]);
 		}
 		
-		final int hi=12,wi=8;
+		final int hi=8,wi=10;
 		int[][]data=new int[hi+1][wi+1];
 	}
 	class player{}
