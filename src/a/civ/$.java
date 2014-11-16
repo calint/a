@@ -10,6 +10,7 @@ final public class $ extends a{
 		x.span("font-size:2em").p("con civ").span_().nl(2);
 		x.pl("  _  ___  ||\\\\ ||");
 		x.pl("//  || || || \\\\||");
+		x.pl("||  || || ||   ||");
 		x.spano(m);
 		x.r(h);
 		x.nl().spano(s);
