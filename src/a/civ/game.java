@@ -3,6 +3,7 @@ package a.civ;
 import java.io.OutputStream;
 
 import a.civ.$.clickable;
+import static b.b.*;
 
 public class game{
 	class unit{}
@@ -41,8 +42,11 @@ public class game{
 	
 	@clickable public void reset(){}
 	public void refresh_console(OutputStream os)throws Throwable{
+		os.write(tobytes("turn: "+turn+"\n\b"));
 		map.refresh_console(os);
+		turn++;
 	}
 	
 	private map map=new map();
+	private int turn;
 }
