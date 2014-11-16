@@ -30,8 +30,8 @@ public class game extends a{
 	public List<player>players=new ArrayList<>();
 	{
 		players.add(new player(this,"player_1","player 1"));
-		players.add(new player(this,"player_2","player 2"));
-		players.add(new player(this,"player_3","player 3"));
+		players.add(new player(this,"player_2","olayer 2"));
+		players.add(new player(this,"player_3","nlayer 3"));
 	}
 	@Override protected a chldq(String nm){
 		final player x=players.stream()
@@ -54,9 +54,13 @@ public class game extends a{
 					// qwe
 					// asd
 					if(dir=='w'){
-						
+						return;
 					}
-				}else m.put(u.o.str(),new tile("u"+u.str()));
+					throw new Error();
+				}
+				if(u.old_o!=null)m.take(u.old_o);
+				u.old_o=s;
+				m.put(s,new tile(p.str().charAt(0)+u.str()));
 			});
 			
 			player++;

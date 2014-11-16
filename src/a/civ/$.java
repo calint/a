@@ -5,6 +5,8 @@ import b.xwriter;
 final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
+		
+		x.span("font-size:2em").p("mini civ hot seat").span_().nl(2);
 		x.spano(m);
 		x.nl().spano(s);
 		x.nl(2).spano(p).style(p,"display:block");
