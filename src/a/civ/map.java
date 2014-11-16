@@ -7,6 +7,8 @@ public class map extends a{
 //	/..\__/
 //	\__/..\
 	public void to(xwriter x)throws Throwable{
+		final boolean rend_col_letters=true;
+		
 		x.p("  ");
 		for(int j=0;j<wi;j+=2){
 			x.p(" __ ").p("  ");
@@ -31,11 +33,13 @@ public class map extends a{
 		}
 		x.pl("/");
 		
-		x.p("  ");
-		for(int j=0;j<wi;j++){
-			x.p(" "+(char)(j+'a')+" ");
+		if(rend_col_letters){
+			x.p("  ");
+			for(int j=0;j<wi;j++){
+				x.p(" "+(char)(j+'a')+" ");
+			}
+			x.nl();
 		}
-		x.nl();
 	}
 	private String tile(int i,int j){
 		return data[i][j]==null?"  ":data[i][j];
