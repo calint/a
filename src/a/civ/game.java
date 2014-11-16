@@ -13,7 +13,7 @@ public class game extends a{
 			final int c=pis.read();
 			if(c==-1)return;
 			if(c=='p'){m.put(pis);return;}
-			if(c=='r'){m.remove(pis);return;}
+			if(c=='t'){m.remove(pis);return;}
 			// qweasd
 			if(c=='m'){m.move(pis);return;}
 			if(c=='o'){//clear
