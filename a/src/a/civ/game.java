@@ -2,6 +2,7 @@ package a.civ;
 
 import java.io.OutputStream;
 
+
 //import a.civ.$.clickable;
 import static b.b.*;
 
@@ -16,21 +17,20 @@ public class game{
 			final byte[]nl="\n".getBytes();
 			for(int i=0;i<hi;i++){
 				for(int j=0;j<wi;j++){
-//					os.write("_".getBytes());
-//					os.write("/.\\_".getBytes());
-					os.write(("/"+(data[i][j]==0?" ":(char)data[i][j])+" \\__").getBytes());
+					os.write(tobytes("/"+maptile(i,j)+" \\__"));
 				}
 				os.write("/".getBytes());
 				os.write(nl);
 				for(int j=0;j<wi;j++){
-//					os.write("_".getBytes());
-//					os.write("\\_/.".getBytes());
 					os.write("\\__/  ".getBytes());
 				}
 				os.write("\\".getBytes());
 				os.write(nl);
 			}
 			os.write(nl);
+		}
+		private String maptile(int i,int j) {
+			return data[i][j]==0?" ":(""+(char)data[i][j]);
 		}
 		
 		final int hi=12,wi=8;
