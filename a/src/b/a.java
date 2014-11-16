@@ -54,7 +54,7 @@ public class a implements Serializable{
 //	public final a pt(final a a){pt=a;return this;}
 	public final void attach(final a e,final String fld){e.pt=this;e.nm=fld;try{getClass().getField(fld).set(this,e);}catch(final Throwable t){throw new Error(t);}}
 	final a chld(final String id){try{return (a)getClass().getField(id).get(this);}catch(Throwable e){}return chldq(id);}
-	protected a chldq(final String id){return null;}
+	protected a chldq(final String nm){return null;}
 	protected void ev(final xwriter x,final a from,final Object o)throws Throwable{if(pt!=null)pt.ev(x,from,o);}
 	final protected void ev(final xwriter x,final a from)throws Throwable{ev(x,from,null);}
 	final protected void ev(final xwriter x)throws Throwable{ev(x,this,null);}

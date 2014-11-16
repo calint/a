@@ -18,6 +18,7 @@ public final class xwriter{
 	public xwriter p(final long n){return p(Long.toString(n));}
 	public xwriter p(final double n){return p(Double.toString(n));}
 	public xwriter pl(final String s){return p(s).nl();}
+	public xwriter pl(){return nl();}
 	public xwriter tag(final String name){return p("<").p(name).p(">");}
 	public xwriter tag(final String name,final String id){return p("<").p(name).p(" id=").p(id).p(">");}
 	public xwriter tago(final String name){return p("<").p(name);}
