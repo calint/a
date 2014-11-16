@@ -15,21 +15,18 @@ class map extends a{
 			}
 		}
 		
-		final OutputStream os=x.outputstream();
 		final byte[]nl="\n".getBytes();
 		for(int i=0;i<(hi-1);i++){
 			for(int j=0;j<(wi-1);j+=2){
-				os.write(tobytes("/"+maptile(i,j)+"\\__"));
+				x.p("/").p(maptile(i,j)).p("\\__");
 			}
-			os.write("/".getBytes());
-			os.write(nl);
+			x.pl("/");
 			for(int j=0;j<wi;j+=2){
-				os.write(tobytes("\\__/"+maptile(i,j+1)));
+				x.p("\\__/").p(maptile(i,j+1));
 			}
-			os.write("\\".getBytes());
-			os.write(nl);
+			x.pl("\\");
 		}
-		os.write(nl);
+		x.nl();
 	}
 	private String maptile(int i,int j){
 		return data[i][j]==null?"  ":data[i][j];
