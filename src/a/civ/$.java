@@ -14,6 +14,7 @@ final public class $ extends a{
 	}
 
 	public synchronized void x_(xwriter x,String arg)throws Throwable{
+		g.exec(inp.str());
 		g.to(x.xub(c,true,false));
 		x.xube();	
 	}

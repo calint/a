@@ -1,5 +1,4 @@
 package a.civ;
-import static b.b.*;
 import b.*;
 public class game extends a{
 	public void to(xwriter x)throws Throwable{
@@ -7,6 +6,8 @@ public class game extends a{
 		turn++;
 		x.pl("turn: "+turn+"\n\b");
 	}
+	public void exec(String ln)throws Throwable{map.exec(ln);}
+
 	
 	private map map=new map();
 	private int turn;
