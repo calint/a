@@ -5,7 +5,7 @@ import java.io.OutputStream;
 
 import a.civ.$.clickable;
 
-public class game implements ui.display{
+public class game{
 	class unit{}
 	class tile{}
 	class map{}
@@ -14,7 +14,7 @@ public class game implements ui.display{
 	
 	
 	@clickable public void reset(){}
-	@Override public void refresh_console(OutputStream os){
+	public void refresh_console(OutputStream os){
 		try{os.write("bmp width height depth".getBytes());}catch(IOException e){throw new Error(e);}
 	}
 }
