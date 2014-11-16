@@ -5,7 +5,8 @@ import b.xwriter;
 final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
-		
+		x.style("html","background:#222;color:#0c0");
+		x.style("a","color:#0c0");
 		x.span("font-size:2em").p("mini civ hot seat").span_().nl(2);
 		x.spano(m);
 		x.r(h);
@@ -19,7 +20,7 @@ final public class $ extends a{
 	public synchronized void x_(xwriter x,String a)throws Throwable{
 		g.m.to(x.xub(m,true,false));x.xube();
 		g.players.get(g.player).to(x.xub(p,true,false));x.xube();
-		x.xu(s,"turn: "+g.turn);
+		x.xu(s,"turn "+g.turn);
 //		x.xu(inp.clr());
 	}
 
