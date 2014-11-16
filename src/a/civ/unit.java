@@ -11,9 +11,10 @@ public class unit extends a{
 		x.nl();
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
+
 	String old_o;
 
-	/** order */public a o=new a(this,"o");//orders for this turn
-	public a l=new a(this,"l");//orders log
+	/**order*/public a o=new a(this,"o");
+	/**order log*/public a l=new a(this,"l");
 	
 }
