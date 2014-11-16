@@ -5,7 +5,7 @@ import b.xwriter;
 final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
-		x.output_holder(m);
+		x.spano(m);
 
 //		x.inputText(inp,this,"");
 //		x.focus(inp);
@@ -25,7 +25,7 @@ final public class $ extends a{
 		g.xec(inp.str());
 		
 		g.m.to(x.xub(m,true,false));x.xube();
-		g.p.to(x.xub(p,true,false));x.xube();
+		g.players.get(g.player).to(x.xub(p,true,false));x.xube();
 		
 		x.xu(inp.clr());
 	}

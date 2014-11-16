@@ -1,6 +1,8 @@
 package a.civ;
 import java.io.ByteArrayInputStream;
 import java.io.PushbackInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import b.a;
 import b.xwriter;
@@ -26,9 +28,26 @@ public class game extends a{
 		}
 		throw new Error("unknown command "+cmd);
 	}
+	
+	public List<player>players=new ArrayList<>();
+	{
+		players.add(new player(this,"player_john","john"));
+	}
+	@Override protected a chldq(String id){
+		final player x=players.stream()
+			.filter(u->id.equals(u.nm()))
+			.findAny()
+			.get();
+		if(x!=null)return x;
+		return super.chldq(id);
+	}
+
+	
+	
 	public @readonly map m;//map
-	public @readonly player p;//player
+//	public @readonly player p;//player
 	public @readonly int turn;
+	public @readonly int player;
 
 	public static @interface readonly{}
 }
