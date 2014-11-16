@@ -1,12 +1,5 @@
 *{padding:0;margin:0;border:0;outline:0;white-space:pre;font-family:inherit;font-size:inherit;background:inherit;color:inherit}
-/*html{font-family:monospace}*/
-/*@font-face{font-family:tini;src:url(/ttf/tini.ttf)}*/
-/*@font-face{font-family:tini;src:url(/ttf/monospace-typewriter.ttf)}*/
-/*@font-face{font-family:tini;src:url(/ttf/slkscr.ttf)}*/
-/*@font-face{font-family:tini;src:url(/ttf/adler.ttf)}*/
-@font-face{font-family:tini;src:url(/ttf/1942.ttf)}
-/*@font-face{font-family:tini;src:url(/ttf/amadeus.ttf)}*/
-html{font-family:tini}
+html{font-family:monospace}
 table{border-collapse:collapse;empty-cells:show}
 table td{vertical-align:top}
 table th{vertical-align:bottom}

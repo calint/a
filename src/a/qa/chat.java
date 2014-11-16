@@ -26,5 +26,5 @@ final public class chat extends websock implements threadedsock{static final lon
 			final ByteBuffer[]bba=new ByteBuffer[]{bbsesid.slice(),bbspc.slice(),bb.slice()};
 			ws.endpoint_recv(bba);
 		}
-		}
+	}
 }
