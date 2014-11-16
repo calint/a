@@ -7,11 +7,12 @@ final public class $ extends a{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
 		x.output_holder(m);
 
-		x.inputText(inp,this,"");
-		x.focus(inp);
-		x.style(inp,"border-bottom:1px dotted green;width:5em;padding:.5em;border-radius:.5em");
-		x.ax(this).nl(2);
+//		x.inputText(inp,this,"");
+//		x.focus(inp);
+//		x.style(inp,"border-bottom:1px dotted green;width:5em;padding:.5em;border-radius:.5em");
+//		x.ax(this).nl(2);
 
+		x.nl();
 		x.spano(p);x.style(p,"display:block");
 		x.nl(2).r(ajaxsts).nl();
 		x.style(ajaxsts,"font-size:.5em");
