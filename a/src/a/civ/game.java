@@ -75,8 +75,7 @@ public class game extends a{
 	}
 	
 	
-	public @readonly map m;//map
-//	public @readonly player p;//player
+	/**map*/public @readonly map m;
 	public @readonly int turn;
 	public @readonly int player;
 
