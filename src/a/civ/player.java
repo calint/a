@@ -34,7 +34,9 @@ public class player extends a{
 
 
 	{
-		units.add(new unit(this,"unit_a","a"));
-		units.add(new unit(this,"unit_b","b"));
+		units.add(new unit(this,"unit_1","1"));
+		units.add(new unit(this,"unit_2","2"));
+		units.add(new unit(this,"unit_3","3"));
+		units.add(new unit(this,"unit_4","4"));
 	}
 }
