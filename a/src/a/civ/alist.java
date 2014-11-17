@@ -1,13 +1,7 @@
 package a.civ;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-import b.a;
-import b.xwriter;
-
+import java.util.*;
+import java.util.stream.*;
+import b.*;
 final public class alist<T extends a>extends a{
 	private int mode,focus;
 	public void mode_view_focus(int ix){mode=1;focus=ix;}
@@ -91,7 +85,6 @@ final public class alist<T extends a>extends a{
 	private alist<T>lft;
 	private List<T>ls=new ArrayList<>();
 	private alist<T>rht;
-	
 	@Override protected a chldq(String nm){
 		final a e=ls.stream()
 			.filter(ee->nm.equals(ee.nm()))
@@ -116,6 +109,5 @@ final public class alist<T extends a>extends a{
 	}
 	public int size(){return ls.size();}
 	public T get(int ix){return ls.get(ix);}
-	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID=1;
 }

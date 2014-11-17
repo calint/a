@@ -1,7 +1,5 @@
 package a.civ;
-import b.a;
-import b.a_ajaxsts;
-import b.xwriter;
+import b.*;
 final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.style("html","background:#111");
@@ -18,31 +16,22 @@ final public class $ extends a{
 		x.xrfsh(g.p);
 		x.xu(s,"turn "+g.t);
 	}
-	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
-		el.to(x.xub(to,inner,escltgt));
-		x.xube();
-	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
-		b.b.pl("ev "+from.getClass()+" "+o);
+		b.pl("ev "+from.getClass()+" "+o);
 		if(from instanceof game){
 			x_(x,"");
 			return;
 		}
 		super.ev(x,from,o);
 	}
-
 	public game g;{	
 		g.p.add(new player("player 1"));
 		g.p.add(new player("olayer 2"));
 		g.p.add(new player("nlayer 3"));
 	}
-	
-//	/**map*/public a m;
-	/**player*/public a p;
 	/**status*/public a s;
-	public a_ajaxsts ajaxsts;
 	public hud h;
 	public logo l;
-
-	static final long serialVersionUID=1;
+	public a_ajaxsts ajaxsts;
+	private static final long serialVersionUID=1;
 }
