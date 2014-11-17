@@ -5,11 +5,13 @@ public class techs extends a{
 	public void to(xwriter x)throws Throwable{
 		x.div(this);
 		x.pl("discovered technologies:");
-		x.pl("sharp sticking");
-		x.pl("rock throwing");
-		x.pl("kicking");
-		x.pl("hitting");
-		x.pl("shouting");
+		x.pl("sharpstickin");
+		x.pl("rockthrowin");
+		x.pl("kickin");
+		x.pl("hittin");
+		x.pl("shoutin");
+		x.pl("shootin");
+		x.pl("rocketin");
 		x.div_();
 	}
 
