@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 import b.a;
 import b.xwriter;
 final public class player extends a{
-	public player(a apt,String anm,String name){super(apt,anm,name);}
+	public player(String name){set(name);}
 	@Override public void to(xwriter x)throws Throwable{
 		x.inputText(this,this,"");
 		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:24em");

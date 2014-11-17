@@ -108,8 +108,8 @@ final public class alist<T extends a>extends a{
 		rht=ls;
 		ls.lft=this;
 	}
-	
-//	public static void link(final alist lft,final alist rht){lft.rht=rht;rht.lft=lft;}
+	public int size(){return ls.size();}
+	public T get(int ix){return ls.get(ix);}
 	
 	private static final long serialVersionUID = 1L;
 }

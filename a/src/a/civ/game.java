@@ -1,27 +1,24 @@
 package a.civ;
-import java.util.ArrayList;
-import java.util.List;
-
 import b.a;
 import b.xwriter;
 final public class game extends a{
 	public void to(xwriter x)throws Throwable{m.to(x);}
-	public List<player>players=new ArrayList<>();
+	public alist<player>players;
 	{
-		players.add(new player(this,"player_1","player 1"));
-		players.add(new player(this,"player_2","olayer 2"));
-		players.add(new player(this,"player_3","nlayer 3"));
+		players.add(new player("player 1"));
+		players.add(new player("olayer 2"));
+		players.add(new player("nlayer 3"));
 	}
-	@Override protected a chldq(String nm){
-		if(nm.startsWith("player_")){
-			final player x=players.stream()
-				.filter(u->nm.equals(u.nm()))
-				.findAny()
-				.get();
-			if(x!=null)return x;
-		}
-		return super.chldq(nm);
-	}
+//	@Override protected a chldq(String nm){
+//		if(nm.startsWith("player_")){
+//			final player x=players.stream()
+//				.filter(u->nm.equals(u.nm()))
+//				.findAny()
+//				.get();
+//			if(x!=null)return x;
+//		}
+//		return super.chldq(nm);
+//	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		if(from instanceof player){
 			b.b.pl("moves from "+from);
