@@ -8,6 +8,10 @@ public class $ extends a{
 		x.style("a","color:#0c0");
 		x.style("table.o","margin-left:auto;margin-right:auto");
 		x.style("table.o input","background:#030;width:4em");
+//		x.style("table.ls","margin-left:auto;margin-right:auto");
+		x.style("table.ls tr td","padding-left:1em");
+		x.style("table.ls tr td:first-child","text-align:right");
+		x.style("table.ls tr td:last-child","text-align:right");
 //		x.table().tr().td().r(a).td().r(b).table_();
 		x.r(a);
 		x.r(t);
