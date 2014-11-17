@@ -12,11 +12,11 @@ public class atape extends a{
 	}
 	private InputStream is;
 	{rewind();}
-	public atape stream_next_file_name(final OutputStream os)throws IOException,sig_eot{
+	public atape stream_next_file_name(final OutputStream os)throws IOException,eot{
 		final byte[]cha=new byte[1];
 		while(true){
 			final int ch=is.read();
-			if(ch==-1)throw new sig_eot();
+			if(ch==-1)throw new eot();
 			if(ch=='\n')break;
 			cha[0]=(byte)ch;//overcomeswritingarraysonly
 			os.write(cha);
@@ -60,7 +60,7 @@ public class atape extends a{
 			x.td();
 			x.p(osc.count);
 			total+=osc.count;
-		}}catch(atape.sig_eot ok){}
+		}}catch(atape.eot ok){}
 		x.tr().td().td().p(total);
 		x.table_();
 		y.xube();
@@ -73,9 +73,9 @@ public class atape extends a{
 			stream_next_file_name(os);
 			x.nl();
 			stream_next_file_content(os);
-		}}catch(atape.sig_eot ok){}
+		}}catch(atape.eot ok){}
 		y.xube();
 	}
-	/**endoftapesignal*/final public static class sig_eot extends Throwable{private static final long serialVersionUID=1;}
+	/**endoftapesignal*/final public static class eot extends Throwable{private static final long serialVersionUID=1;}
 	private static final long serialVersionUID=1;
 }
