@@ -51,6 +51,7 @@ public class atape extends a{
 		final OutputStream os=x.outputstream();
 		final oscounter osc=new oscounter(osvoid.i);
 		x.table();
+		long total=0;
 		try{while(true){
 			x.tr().td();
 			stream_next_file_name(os);
@@ -58,7 +59,9 @@ public class atape extends a{
 			stream_next_file_content(osc);
 			x.td();
 			x.p(osc.count);
+			total+=osc.count;
 		}}catch(Error r){}
+		x.tr().td().td().p(total);
 		x.table_();
 		y.xube();
 	}
