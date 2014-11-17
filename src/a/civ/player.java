@@ -7,9 +7,9 @@ public class player extends a{
 	public player(a apt,String anm,String name){super(apt,anm,name);}
 	@Override public void to(xwriter x)throws Throwable{
 		x.inputText(this,this,"");
-//		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:12em");
+		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:24em");
 		x.nl();
-		x.table().tr().td().r(ull).td().r(ul).td().r(ulr).table_();
+		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ull).td().r(ul).td().r(ulr).table_();
 		x.ax(this,"s","::");
 	}
 //	/**ordersforthisturn*/public a o;

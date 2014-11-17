@@ -88,6 +88,13 @@ public final class xwriter{
 	public xwriter span_(){return tage("span");}
 	public xwriter table(){return tag("table");}
 	public xwriter table(final String cls){return tago("table").attr("class",cls).tagoe();}
+	public xwriter table(final String cls,final String style){
+		tago("table");
+		if(!isempty(cls))attr("class",cls);
+		if(!isempty(style))attr("style",style);
+		tagoe();
+		return this;
+	}
 	public xwriter table_(){return tage("table");}
 	public xwriter style(){return p("<style scoped>");}
 	public xwriter style_(){return tage("style");}

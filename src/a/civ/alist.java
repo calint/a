@@ -10,14 +10,14 @@ import b.xwriter;
 final public class alist extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
-		x.pl("- -- - - - -  --- - - -");
+//		x.pl("- -- - - - -  --- - - -");
 		final String id=id();
 		ls.stream().forEach(o->{try{
 			final a e=(a)o;
 			x.p("<a id=\""+id+"~"+e.nm()+"\" onkeydown=\"if(!event.shiftKey)return;var i=event.keyIdentifier;if(i!='Down'&&i!='Up'&&i!='Right'&&i!='Left')return;$x('"+id+" '+i+' "+e.nm()+"');\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
-		x.pl("- -- - - - -  --- - - -");
+//		x.pl("- -- - - - -  --- - - -");
 		x.el_();
 	}
 	/**elem click*/
