@@ -13,9 +13,7 @@ final public class $ extends a{{upd();}
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{
 		upd();
-		x.xuo(g.m);
-		x.xuo(g.p);
-		x.xu(s);
+		x.xuo(g.m).xuo(g.p).xu(s);
 	}
 	private void upd(){
 		g.p.mode_view_focus(g.ap);
