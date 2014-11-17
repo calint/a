@@ -42,7 +42,7 @@ public class $ extends a{
 		//////
 		x.nl();
 		x.style(medid,"border:1px dotted green;width:1em;text-align:right;margin:3px;background:green;color:white");
-		x.p("   ").ax(this,"reset",":: reset").p("   use keys wesd to move medusa -> ").inputText(medid).nl().nl();
+		x.p("   ").ax(this,"reset",":: reset").p("   use keys wesd to move medusa -> ").inptxt(medid).nl().nl();
 		x.script().nl();
 		x.pl("ui.keys['W']=\"$x('_ keyb w')\"");
 		x.pl("ui.keys['A']=\"$x('_ keyb a')\"");

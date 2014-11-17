@@ -10,7 +10,7 @@ public class httpbrowser extends a{static final long serialVersionUID=1;
 		x.css(output,"border:1px solid red");
 		x.style_();
 		x.pre();
-		x.inputText(url,null,this,"a").nl();
+		x.inptxt(url,null,this,"a").nl();
 		x.output_holder(output);
 	}
 	public void x_a(final xwriter x,final String p)throws Throwable{

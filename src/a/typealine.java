@@ -21,7 +21,7 @@ public class typealine extends a{
 		x.css(".line","width:250px;");
 		x.style_();
 		x.div("box");
-		x.span(q).inputText(s,"line",this,"a").focus(s).p(" ").ajx(this,"a").span(b).ajx_();
+		x.span(q).inptxt(s,"line",this,"a").focus(s).p(" ").ajx(this,"a").span(b).ajx_();
 		x.div_();//? verbose
 		x.el_();
 	}

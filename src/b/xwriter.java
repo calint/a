@@ -128,11 +128,11 @@ public final class xwriter{
 	public xwriter code(){return tag("code");}
 	public xwriter code_(){return tage("code");}
 //	public xwriter rend(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
-	public xwriter inputText(final a e){return input(e,"text",null,null,null,null,null,null,null);}
-	public xwriter inputText(final a e,final String stylecls,final a axonreturn,final String axp){return input(e,"text",null,stylecls,axonreturn,axp,null,null,null);}
-	public xwriter inputText(final a e,final a axonreturn,final String axp){return input(e,"text",null,null,axonreturn,axp,null,null,null);}
-	public xwriter inputText(final a e,final String stylecls,final a axonreturn,final String axp,final String txt){return input(e,"text",null,stylecls,axonreturn,axp,txt,null,null);}
-	public xwriter inputColor(final a e){return input(e,"color",null,null,null,null,null,null,null);}
+	public xwriter inptxt(final a e){return input(e,"text",null,null,null,null,null,null,null);}
+	public xwriter inptxt(final a e,final String stylecls,final a axonreturn,final String axp){return input(e,"text",null,stylecls,axonreturn,axp,null,null,null);}
+	public xwriter inptxt(final a e,final a axonreturn,final String axp){return input(e,"text",null,null,axonreturn,axp,null,null,null);}
+	public xwriter inptxt(final a e,final String stylecls,final a axonreturn,final String axp,final String txt){return input(e,"text",null,stylecls,axonreturn,axp,txt,null,null);}
+	public xwriter inpcolr(final a e){return input(e,"color",null,null,null,null,null,null,null);}
 	public xwriter input(final a e,final String type,final String style,final String stylecls,final a on_enter_ajax_elem,final String on_enter_ajax_param,final String txt,final a on_change_ajax_elem,final String on_change_ajax_param){
 		final String value=txt==null?e.toString():txt;
 		tago("input").attr("value",value).attrdef(e).attr("type",type);
