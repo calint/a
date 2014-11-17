@@ -1,6 +1,6 @@
 package a.civ;
 import b.*;
-final public class ui extends a{{upd();}
+final public class ui extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.r(g.m).divr(s).r(g.p).divr(ajaxsts).r(h).r(l).r(t);
 	}
@@ -16,15 +16,17 @@ final public class ui extends a{{upd();}
 		// next-player
 		x_(x,"");
 	}
-	public game g;{	
-		g.p.add(new player("player 1"));
-		g.p.add(new player("olayer 2"));
-		g.p.add(new player("nlayer 3"));
-	}
+	public game g;
 	/**status*/public a s;
 	public hud h;
 	public logo l;
 	public techs t;
 	/**builtinajaxstatusline*/public a ajaxsts;
 	private static final long serialVersionUID=1;
+
+	{	g.p.add(new player("player 1"));
+		g.p.add(new player("olayer 2"));
+		g.p.add(new player("nlayer 3"));
+		upd();
+	}
 }
