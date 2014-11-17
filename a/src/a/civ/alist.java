@@ -11,14 +11,12 @@ import b.xwriter;
 final public class alist<T extends a>extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
-//		x.pl("- -- - - - -  --- - - -");
 		final String id=id();
 		ls.stream().forEach(o->{try{
 			final a e=(a)o;
 			x.p("<a id=\""+id+"~"+e.nm()+"\" onkeydown=\"if(!event.shiftKey)return;var i=event.keyIdentifier;if(i!='Down'&&i!='Up'&&i!='Right'&&i!='Left')return;$x('"+id+" '+i+' "+e.nm()+"');\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
-//		x.pl("- -- - - - -  --- - - -");
 		x.el_();
 	}
 	private int ix;
@@ -38,7 +36,6 @@ final public class alist<T extends a>extends a{
 		int d=c+1;
 		if(d==ls.size())d=0;
 		swp(x,s,c,d);
-//		ev(x,this);
 	}
 	/**move elem up*/
 	synchronized public void x_Up(xwriter x,String s)throws Throwable{
@@ -50,33 +47,30 @@ final public class alist<T extends a>extends a{
 	private void swp(xwriter x,String s,int c,int d) throws Throwable {
 		Collections.swap(ls,c,d);
 		if(x==null)return;
-		xrfsh(x);
-//		$.xto(x,this,this,true,false);
+		x.xrfsh(this);
 		x.xfocus(id()+"~"+s);
 	}
 	/**move elem to right list*/
 	synchronized public void x_Right(xwriter x,String s)throws Throwable{
 		if(rht==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
-		final a e=ls.remove(c);
-		rht.add((T)e);
+		final T e=ls.remove(c);
+		rht.add(e);
 		if(x==null)return;
-		xrfsh(x);
-//		$.xto(x,this,this,true,false);
-//		$.xto(x,rht,rht,true,false);
-		rht.xrfsh(x);
-		rht.xfocus(x,(T)e);
+		x.xrfsh(this);
+		x.xrfsh(rht);
+		rht.xfocus(x,e);
 	}
 	/**move elem to left list*/
 	synchronized public void x_Left(xwriter x,String s)throws Throwable{
 		if(lft==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
-		final a e=ls.remove(c);
-		lft.add((T)e);
+		final T e=ls.remove(c);
+		lft.add(e);
 		if(x==null)return;
-		$.xto(x,this,this,true,false);
-		$.xto(x,lft,lft,true,false);
-		lft.xfocus(x,(T)e);
+		x.xrfsh(this);
+		x.xrfsh(lft);
+		lft.xfocus(x,e);
 	}
 	public void xfocus(xwriter x,T e){x.xfocus(id()+"~"+e.nm());}
 	public void xfocus(xwriter x,String elem_name){x.xfocus(id()+"~"+elem_name);}
@@ -100,8 +94,22 @@ final public class alist<T extends a>extends a{
 		if(e!=null)return e;
 		return super.chldq(nm);
 	}
+	public void link_to_left_of(final alist<T>ls){
+		lft=ls.lft;
+		ls.lft=this;
+		rht=ls;
+	}
+	public void link_to_right_of(final alist<T>ls){
+		rht=ls.rht;
+		ls.rht=this;
+		lft=ls;
+	}
+	public void link_warp(final alist<T>ls){
+		rht=ls;
+		ls.lft=this;
+	}
 	
-	public static void link(final alist lft,final alist rht){lft.rht=rht;rht.lft=lft;}
+//	public static void link(final alist lft,final alist rht){lft.rht=rht;rht.lft=lft;}
 	
 	private static final long serialVersionUID = 1L;
 }

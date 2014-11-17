@@ -19,7 +19,8 @@ public class player extends a{
 	/**unitslistleft*/public alist<unit>ul;
 	/**unitslistcenter*/public alist<unit>uc;
 	/**unitslistright*/public alist<unit>ur;
-	{uc.link(ul,uc);uc.link(uc,ur);uc.link(ur,ul);}
+	{ul.link_to_left_of(uc);ur.link_to_right_of(uc);ur.link_warp(ul);}
+//	{alist.<unit>link(ul,uc);alist.<unit>link(uc,ur);alist.<unit>link(ur,ul);}
 
 	public Stream<unit>units_stream(){
 		return Stream.concat(uc.stream(),Stream.concat(ul.stream(),ur.stream()));
