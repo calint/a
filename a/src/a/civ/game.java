@@ -21,7 +21,7 @@ final public class game extends a{
 							}
 							throw new Error();
 						}
-						if(u.old_o!=null)m.take(u.old_o);
+						if(u.old_o!=null)m.take_unit(u.old_o);
 						u.old_o=s;
 						m.put_unit(s,u);
 					});
