@@ -22,10 +22,8 @@ final public class player extends a{
 		uc.add(new unit("3"));
 		uc.add(new unit("4"));
 	}
-
 	public Stream<unit>units_stream(){return Stream.concat(uc.stream(),Stream.concat(ul.stream(),ur.stream()));}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
 	public synchronized void x_s(xwriter x,String a)throws Throwable{ev(x);}
-
 	private static final long serialVersionUID=1;
 }

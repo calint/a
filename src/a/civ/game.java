@@ -24,7 +24,7 @@ final public class game extends a{
 						}
 						if(u.old_o!=null)m.take(u.old_o);
 						u.old_o=s;
-						m.put(s,new tile(p.str().charAt(0)+u.str()));
+						m.put_unit(s,u);
 					});
 				});
 				ap=0;
