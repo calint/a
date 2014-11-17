@@ -1,5 +1,4 @@
 package a.civ;
-import java.util.Arrays;
 import b.*;
 public class map extends a{
 //	   /..\   
