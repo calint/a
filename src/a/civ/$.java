@@ -20,10 +20,9 @@ final public class $ extends a{
 	}
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
-//		xto(x,g.m,m,true,false);
 		x.xrfsh(g.m);
+		g.p.mode_view_focus(g.player);
 		x.xrfsh(g.p);
-//		xto(x,g.p.get(g.player),p,true,false);
 		x.xu(s,"turn "+g.turn);
 	}
 	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
