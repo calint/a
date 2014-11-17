@@ -75,4 +75,14 @@ final public class alist extends a{
 	/**wire move elem to left list*/alist lft;
 	/**wire wrapped list*/List ls;
 	/**wire move elem to right list*/alist rht;
+	
+	
+	@Override protected a chldq(String nm){
+		final a e=(a)ls.stream()
+			.filter(u->nm.equals(((a)u).nm()))
+			.findAny()
+			.get();
+		if(e!=null)return e;
+		return super.chldq(nm);
+	}
 }
