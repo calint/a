@@ -8,11 +8,16 @@ import b.xwriter;
 final public class listui extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
+		final String id=id();
 		ls.stream().forEach(e->{try{
-			x.ax(this," c "+e.nm()," • ");
+			x.p("<a href=\"javascript:").axjs(id,""," c "+e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
 	}
-	public List<? extends a>ls;
+	synchronized public void x_(xwriter x,String s){
+		x.xalert(s);
+	}
+	
+	/**wire*/public List<? extends a>ls;
 }
