@@ -88,7 +88,7 @@ final public class alist<T extends a>extends a{
 	
 	@Override protected a chldq(String nm){
 		final a e=ls.stream()
-			.filter(u->nm.equals(((a)u).nm()))
+			.filter(ee->nm.equals(ee.nm()))
 			.findAny()
 			.get();
 		if(e!=null)return e;
