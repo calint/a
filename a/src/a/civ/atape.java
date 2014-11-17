@@ -50,7 +50,7 @@ public class atape extends a{
 		final xwriter x=y.xub(d,true,false);
 		final OutputStream os=x.outputstream();
 		final oscounter osc=new oscounter(osvoid.i);
-		x.table();
+		x.table("ls");
 		long total=0;
 		try{while(true){
 			x.tr().td();
