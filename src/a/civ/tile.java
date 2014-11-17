@@ -1,8 +1,9 @@
 package a.civ;
-public class tile{
-	public tile(String s){this.s=s;}
-	public String toString(){return s;}
 
-	private String s;
-	private unit u;
+import b.a;
+
+public class tile extends a{
+	public tile(String s){set(s);}
+//	private unit u;
+	private static final long serialVersionUID = 1L;
 }

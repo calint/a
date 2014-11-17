@@ -17,4 +17,5 @@ public class unit extends a{
 	/**order*/public a o;
 	/**order log*/public a l;
 	
+		private static final long serialVersionUID = 1L;
 }

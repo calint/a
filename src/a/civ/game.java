@@ -83,4 +83,7 @@ public class game extends a{
 	public @readonly int player;
 
 	public static @interface readonly{}
+	
+	
+		private static final long serialVersionUID = 1L;
 }

@@ -16,12 +16,12 @@ public class player extends a{
 //	/**orderslog*/public a l;
 	
 	
-	/**leftunitslist*/public alist ull;
-	/**rightunitslist*/public alist ulr;{ulr.rht=ull;ull.lft=ulr;}
-	/**unitslist*/public alist ul;{ul.rht=ulr;ul.lft=ull;}
+	/**leftunitslist*/public alist<unit>ull;
+	/**rightunitslist*/public alist<unit>ulr;{ulr.rht=ull;ull.lft=ulr;}
+	/**unitslist*/public alist<unit>ul;{ul.rht=ulr;ul.lft=ull;}
 	{ulr.lft=ull.rht=ul;}
 
-	public Stream<a>units_stream(){
+	public Stream<unit>units_stream(){
 		return Stream.concat(ul.ls.stream(),Stream.concat(ull.ls.stream(),ulr.ls.stream()));
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
@@ -33,4 +33,8 @@ public class player extends a{
 		ul.ls.add(new unit(ul,"3","3"));
 		ul.ls.add(new unit(ul,"4","4"));
 	}
+	
+	
+		private static final long serialVersionUID = 1L;
+
 }
