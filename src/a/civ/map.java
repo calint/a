@@ -1,4 +1,5 @@
 package a.civ;
+import java.util.Arrays;
 import b.*;
 public class map extends a{
 //	   /..\   
@@ -57,25 +58,20 @@ public class map extends a{
 		}
 	}
 	public void put_unit(final String tileid,final unit u){
-		final int col=tileid.charAt(0)-'a';
-		final int row=tileid.charAt(1)-'1';
-		tile t=ta[row][col];
-		if(t==null){
-			t=new tile(this,tileid);
-			ta[row][col]=t;
-		}
-		t.u.add(u);
+		get_tile(tileid).u.add(u);
 	}
 	public tile get_tile(String id){
 		final int col=id.charAt(0)-'a';
 		final int row=id.charAt(1)-'1';
-		return ta[row][col];
+		tile t=ta[row][col];
+		if(t==null){
+			t=new tile(this,id);
+			ta[row][col]=t;
+		}
+		return t;
 	}
-	public unit take(String tile){
-		final int col=tile.charAt(0)-'a';
-		final int row=tile.charAt(1)-'1';
-		final tile t=ta[row][col];
-		if(t==null)throw new Error();
+	public unit take_unit(String tile){
+		final tile t=get_tile(tile);
 		final unit u=t.u.get_first();
 		t.u.clear();
 		return u;
