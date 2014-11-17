@@ -3,11 +3,11 @@ import b.*;
 final public class $ extends a{{upd();}
 	public void to(final xwriter x)throws Throwable{
 		if(pt()==null){//if-root
-			x.style("html","background:#111");
+			x.style("html","background:#333");
 			x.style("body","");
 			x.style("a","color:#0c0");
 		}
-		x.div(this,null,"border:1px dashed;border-radius:.5em;box-shadow:0 0 1em rgba(0,0,0,1);padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
+		x.div(this,null,"margin:0;border:1px dashed;border-radius:.5em;box-shadow:0 0 1em rgba(1,0,0,1);padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
 		x.r(g.m).divr(s).r(g.p).divr(ajaxsts).r(h).r(l).r(t);
 		x.div_();
 	}
