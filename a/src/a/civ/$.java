@@ -7,10 +7,10 @@ final public class $ extends a{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
 		x.style("html","background:#222;color:#0c0");
 		x.style("a","color:#0c0");
-		x.spano(m);
+		x.spano(g.m);
 		x.r(h);
 		x.nl().spano(s);
-		x.nl().spano(p).style(p,"display:block");
+		x.nl().spano(g.p).style(p,"display:block");
 		x.nl();
 		x.r(i);
 		x.nl();
@@ -20,8 +20,10 @@ final public class $ extends a{
 	}
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
-		xto(x,g.m,m,true,false);
-		xto(x,g.p.get(g.player),p,true,false);
+//		xto(x,g.m,m,true,false);
+		x.xrfsh(g.m);
+		x.xrfsh(g.p);
+//		xto(x,g.p.get(g.player),p,true,false);
 		x.xu(s,"turn "+g.turn);
 	}
 	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
@@ -37,17 +39,17 @@ final public class $ extends a{
 		super.ev(x,from,o);
 	}
 
-	public game g;
-	{	
+	public game g;{	
 		g.p.add(new player("player 1"));
 		g.p.add(new player("olayer 2"));
 		g.p.add(new player("nlayer 3"));
 	}
-	/**mapoutput*/public a m;
-	/**playeroutput*/public a p;
-	/**statusoutput*/public a s;
-	/**builtinajaxstatusline*/public a_ajaxsts ajaxsts;
-	/**cheatsheet*/public hud h;
+	
+//	/**map*/public a m;
+	/**player*/public a p;
+	/**status*/public a s;
+	public a_ajaxsts ajaxsts;
+	public hud h;
 	public logo i;
 
 	static final long serialVersionUID=1;
