@@ -4,6 +4,7 @@ import b.xwriter;
 public class techs extends a{
 	public void to(xwriter x)throws Throwable{
 		x.div(this);
+		x.pl("discovered technologies:");
 		x.pl("sharp sticking");
 		x.pl("rock throwing");
 		x.pl("kicking");
