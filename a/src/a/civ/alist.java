@@ -1,5 +1,6 @@
 package a.civ;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +50,7 @@ final public class alist extends a{
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=(a)ls.remove(c);
 		e.pt(rht);
-		rht.ls.add(e);//? givescompilererrorwithgenerics?
+		rht.ls.add(e);
 		$.xto(x,this,this,true,false);
 		$.xto(x,rht,rht,true,false);
 		x.xfocus(rht.id()+"~"+s);
@@ -60,27 +61,25 @@ final public class alist extends a{
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=(a)ls.remove(c);
 		e.pt(lft);
-		lft.ls.add(e);//? givescompilererrorwithgenerics?
+		lft.ls.add(e);
 		$.xto(x,this,this,true,false);
 		$.xto(x,lft,lft,true,false);
 		x.xfocus(lft.id()+"~"+s);
 	}
 	private int find_elem_index_by_name_or_break(final String name){
 		int c=0;
-		for(final Object o:ls){
-			final a e=(a)o;
+		for(final a e:ls){
 			if(name.equals(e.nm()))return c;
 			c++;
 		}
 		throw new Error();
 	}
 	/**wire move elem to left list*/alist lft;
-	/**wire wrapped list*/List ls;
+	List<a>ls=new ArrayList<>();
 	/**wire move elem to right list*/alist rht;
 	
-	
 	@Override protected a chldq(String nm){
-		final a e=(a)ls.stream()
+		final a e=ls.stream()
 			.filter(u->nm.equals(((a)u).nm()))
 			.findAny()
 			.get();
