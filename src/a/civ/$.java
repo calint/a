@@ -8,8 +8,10 @@ public class $ extends a{
 		x.style("a","color:#0c0");
 		x.style("table.o","margin-left:auto;margin-right:auto");
 		x.style("table.o input","background:#030;width:4em");
-		x.table().tr().td().r(a).td().r(b).table_();
+//		x.table().tr().td().r(a).td().r(b).table_();
+		x.r(a);
 	}
-	public ui a,b;
+//	public ui a,b;
+	public ui a;
 	private static final long serialVersionUID=1;
 }
