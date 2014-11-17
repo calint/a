@@ -12,7 +12,7 @@ final public class listui extends a{
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
 		final String id=id();
 		ls.stream().forEach(e->{try{
-			x.p("<a onkeydown=\"if(event.shiftKey&&event.keyIdentifier=='Down'){").axjs(id,"d",e.nm()).p(";}if(event.shiftKey&&event.keyIdentifier=='Up'){").axjs(id,"u",e.nm()).p(";}\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
+			x.p("<a id=\""+id+"~"+e.nm()+"\" onkeydown=\"if(event.shiftKey&&event.keyIdentifier=='Down'){").axjs(id,"d",e.nm()).p(";}if(event.shiftKey&&event.keyIdentifier=='Up'){").axjs(id,"u",e.nm()).p(";}\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
@@ -34,6 +34,7 @@ final public class listui extends a{
 		Collections.swap(ls,c,d);
 		
 		$.xto(x,this,this,true,false);
+		x.xfocus(id()+"~"+s);
 //		ev(x,this);
 	}
 	/**move elem up*/
@@ -48,6 +49,7 @@ final public class listui extends a{
 		Collections.swap(ls,c,d);
 		
 		$.xto(x,this,this,true,false);
+		x.xfocus(id()+"~"+s);
 //		ev(x,this);
 	}
 	/**wire*/public List<? extends a>ls;
