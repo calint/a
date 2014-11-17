@@ -1,8 +1,7 @@
 package a.civ;
-import b.a;
-import b.xwriter;
+import b.*;
 public class hud extends a{
-	public void to(xwriter x)throws Throwable{
+	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		x.pl("    __    ");
 		x.pl(" __/w \\__ ");
@@ -13,6 +12,5 @@ public class hud extends a{
 		x.pl("   \\__/   ");
 		x.div_();
 	}
-
 	private static final long serialVersionUID=1;
 }

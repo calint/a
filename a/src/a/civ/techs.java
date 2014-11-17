@@ -15,6 +15,5 @@ public class techs extends a{
 		x.pl("shoutin");
 		x.div_();
 	}
-
 	private static final long serialVersionUID=1;
 }
