@@ -13,7 +13,7 @@ final public class ui extends a{{upd();}
 		s.set("turn "+g.t);
 	}
 	@Override protected void ev(final xwriter x,a from,final Object o)throws Throwable{
-		// refresh-view
+		// next-player
 		x_(x,"");
 	}
 	public game g;{	
