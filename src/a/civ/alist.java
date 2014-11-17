@@ -48,6 +48,7 @@ final public class alist extends a{
 		if(rht==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=(a)ls.remove(c);
+		e.pt(rht);
 		rht.ls.add(e);//? givescompilererrorwithgenerics?
 		$.xto(x,this,this,true,false);
 		$.xto(x,rht,rht,true,false);
@@ -58,6 +59,7 @@ final public class alist extends a{
 		if(lft==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=(a)ls.remove(c);
+		e.pt(lft);
 		lft.ls.add(e);//? givescompilererrorwithgenerics?
 		$.xto(x,this,this,true,false);
 		$.xto(x,lft,lft,true,false);

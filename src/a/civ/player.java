@@ -26,7 +26,7 @@ public class player extends a{
 	{ulr.lft=ull.rht=ul;}
 
 	public Stream units_stream(){
-		final Stream s=Stream.concat(ul.ls.stream(),Stream.concat(ull.ls.stream(),ul.ls.stream()));
+		final Stream s=Stream.concat(ul.ls.stream(),Stream.concat(ull.ls.stream(),ulr.ls.stream()));
 		return s;
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
