@@ -2,10 +2,12 @@ package a.civ;
 import b.*;
 final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
-		x.style("html","background:#111");
-		x.style("a","color:#0c0");
+		if(pt()==null){//if-root
+			x.style("html","background:#111");
+			x.style("a","color:#0c0");
+		}
 		x.div(this,null,"padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
-		x.divx(g.m).divx(s).nl().divx(g.p).nl().r(h).nl().r(l).nl().r(ajaxsts);
+		x.divx(g.m).divx(s).divx(g.p).r(h).r(l).r(ajaxsts);
 		x.style(ajaxsts,"font-size:.5em");
 		x.script();x_(x,"");x.script_();
 		x.div_();
