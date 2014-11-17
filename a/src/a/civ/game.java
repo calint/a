@@ -1,16 +1,15 @@
 package a.civ;
-import b.a;
-import b.xwriter;
+import b.*;
 final public class game extends a{
 	public void to(xwriter x)throws Throwable{m.to(x);}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		if(from instanceof player){
-			b.b.pl("moves from "+from);
+			b.pl("player "+from+" submitted moves");
 			ap++;
 			if(ap>=p.size()){
+				b.pl("all players submitted moves. processing turn.");
 				p.stream().forEach(p->{
-					p.units_stream().forEach(oo->{
-						final unit u=(unit)oo;
+					p.units_stream().forEach(u->{
 						if(u.o.isempty())return;
 						final String s=u.o.str();
 						if(s.charAt(0)==' '){
@@ -29,8 +28,10 @@ final public class game extends a{
 				});
 				ap=0;
 				t++;
+				super.ev(x,this);//end-of-turn
+				return;
 			}
-			super.ev(x,this);
+			super.ev(x,from,o);//player-submitted-move
 			return;
 		}
 		super.ev(x,from,o);
