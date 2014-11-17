@@ -1,6 +1,4 @@
 package a.civ;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import b.a;
@@ -18,16 +16,13 @@ public class player extends a{
 //	/**orderslog*/public a l;
 	
 	
-	/**leftunitslist*/public alist ull;{ull.ls=new ArrayList<>();}
-	/**rightunitslist*/public alist ulr;{ulr.ls=new ArrayList<>();ulr.rht=ull;ull.lft=ulr;}
-//	private List<unit>units=new ArrayList<>();
-//	/**unitslist*/public alist ul;{ul.ls=units;ul.rht=ulr;ul.lft=ull;}
-	/**unitslist*/public alist ul;{ul.ls=new ArrayList<>();ul.rht=ulr;ul.lft=ull;}
+	/**leftunitslist*/public alist ull;
+	/**rightunitslist*/public alist ulr;{ulr.rht=ull;ull.lft=ulr;}
+	/**unitslist*/public alist ul;{ul.rht=ulr;ul.lft=ull;}
 	{ulr.lft=ull.rht=ul;}
 
-	public Stream units_stream(){
-		final Stream s=Stream.concat(ul.ls.stream(),Stream.concat(ull.ls.stream(),ulr.ls.stream()));
-		return s;
+	public Stream<a>units_stream(){
+		return Stream.concat(ul.ls.stream(),Stream.concat(ull.ls.stream(),ulr.ls.stream()));
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
 	public synchronized void x_s(xwriter x,String a)throws Throwable{ev(x);}
