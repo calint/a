@@ -76,6 +76,6 @@ public class atape extends a{
 		}}catch(atape.sig_eot ok){}
 		y.xube();
 	}
-	final public static class sig_eot extends Throwable{private static final long serialVersionUID=1;}
+	/**endoftapesignal*/final public static class sig_eot extends Throwable{private static final long serialVersionUID=1;}
 	private static final long serialVersionUID=1;
 }
