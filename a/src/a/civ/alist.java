@@ -21,7 +21,13 @@ final public class alist<T extends a>extends a{
 //		x.pl("- -- - - - -  --- - - -");
 		x.el_();
 	}
-	public void add(T e){ls.add(e);}
+	private int ix;
+	synchronized public void add(T e){
+//		e.pt().detach(e);//? ondetach
+		e.pt(this);
+		e.nm(Integer.toString(ix++));
+		ls.add(e);
+	}
 	public Stream<T>stream(){return ls.stream();}
 	/**elem click*/
 	synchronized public void x_c(xwriter x,String s){

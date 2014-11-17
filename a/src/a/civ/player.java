@@ -28,10 +28,10 @@ public class player extends a{
 	public synchronized void x_s(xwriter x,String a)throws Throwable{ev(x);}
 
 	{
-		uc.add(new unit(uc,"1","1"));
-		uc.add(new unit(uc,"2","2"));
-		uc.add(new unit(uc,"3","3"));
-		uc.add(new unit(uc,"4","4"));
+		uc.add(new unit("1"));
+		uc.add(new unit("2"));
+		uc.add(new unit("3"));
+		uc.add(new unit("4"));
 	}
 	
 	
