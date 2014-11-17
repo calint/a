@@ -5,8 +5,8 @@ public class unit extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.p(str()).p(":");
 		x.inputText(o,this,"");
-		if(!b.isempty(old_o))x.p("-").p(old_o);
 		x.style(o,"background:#030;width:4em");
+//		if(!b.isempty(old_o))x.p("-").p(old_o);
 		x.nl();
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
