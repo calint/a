@@ -17,8 +17,8 @@ final public class $ extends a{
 		x.xu(s,"turn "+g.t);
 	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
-		b.pl("ev "+from.getClass()+" "+o);
 		if(from instanceof game){
+			b.pl("event from game");
 			x_(x,"");
 			return;
 		}

@@ -108,6 +108,8 @@ final public class alist<T extends a>extends a{
 		ls.lft=this;
 	}
 	public int size(){return ls.size();}
+	public void clear(){ls.clear();}
 //	public T get(int ix){return ls.get(ix);}
 	private static final long serialVersionUID=1;
+	public T get_first(){if(ls.isEmpty())return null;return ls.get(0);}
 }
