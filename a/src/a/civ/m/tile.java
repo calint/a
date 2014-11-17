@@ -1,4 +1,5 @@
-package a.civ;
+package a.civ.m;
+import a.civ.x.alist;
 import b.*;
 public class tile extends a{
 	public tile(final map m,final String id){super(m,id);}
