@@ -9,11 +9,17 @@ import b.a;
 import b.xwriter;
 
 final public class alist<T extends a>extends a{
+	private int mode,focus;
+	public void mode_view_focus(int ix){mode=1;focus=ix;}
+	public void mode_view_all(){mode=0;}
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
+		if(mode==1){
+			ls.get(focus).to(x);
+			return;
+		}
 		final String id=id();
-		ls.stream().forEach(o->{try{
-			final a e=(a)o;
+		ls.stream().forEach(e->{try{
 			x.p("<a id=\""+id+"~"+e.nm()+"\" onkeydown=\"if(!event.shiftKey)return;var i=event.keyIdentifier;if(i!='Down'&&i!='Up'&&i!='Right'&&i!='Left')return;$x('"+id+" '+i+' "+e.nm()+"');\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
