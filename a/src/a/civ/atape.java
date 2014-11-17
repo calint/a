@@ -17,6 +17,18 @@ public class atape extends a{
 		while(true){
 			final int ch=is.read();
 			if(ch==-1)throw new sig_eot();
+			if(ch=='~')break;
+			if(ch=='\n')break;
+			cha[0]=(byte)ch;//overcomeswritingarraysonly
+			os.write(cha);
+		}
+		return this;
+	}
+	public atape stream_next_file_meta(final OutputStream os)throws IOException,sig_eot{
+		final byte[]cha=new byte[1];
+		while(true){
+			final int ch=is.read();
+			if(ch==-1)throw new sig_eot();
 			if(ch=='\n')break;
 			cha[0]=(byte)ch;//overcomeswritingarraysonly
 			os.write(cha);
