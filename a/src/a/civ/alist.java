@@ -21,12 +21,12 @@ final public class alist<T extends a>extends a{
 //		x.pl("- -- - - - -  --- - - -");
 		x.el_();
 	}
-//	private int ix;
+	private int ix;
 	synchronized public void add(T e){
 //		e.pt().detach(e);//? ondetach
 		e.pt(this);
-		e.nm(Integer.toString(ls.size()));
-//		e.nm(Integer.toString(ix++));
+//		e.nm(Integer.toString(ls.size()));
+		e.nm(Integer.toString(ix++));
 		ls.add(e);
 	}
 	public Stream<T>stream(){return ls.stream();}
@@ -59,23 +59,20 @@ final public class alist<T extends a>extends a{
 		if(rht==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=ls.remove(c);
-		e.pt(rht);
-//		rht.ls.add(e);//?compilererror
-		rht.ls.add((T)e);
+		rht.add((T)e);
 		$.xto(x,this,this,true,false);
 		$.xto(x,rht,rht,true,false);
-		x.xfocus(rht.id()+"~"+s);
+		x.xfocus(rht.id()+"~"+e.nm());
 	}
 	/**move elem to left list*/
 	synchronized public void x_Left(xwriter x,String s)throws Throwable{
 		if(lft==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=ls.remove(c);
-		e.pt(lft);
-		lft.ls.add((T)e);
+		lft.add((T)e);
 		$.xto(x,this,this,true,false);
 		$.xto(x,lft,lft,true,false);
-		x.xfocus(lft.id()+"~"+s);
+		x.xfocus(lft.id()+"~"+e.nm());
 	}
 	private int find_elem_index_by_name_or_break(final String name){
 		int c=0;
