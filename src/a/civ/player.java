@@ -10,7 +10,7 @@ final public class player extends a{
 		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:24em");
 		x.nl();
 		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ul).td().r(uc).td().r(ur).table_();
-		x.ax(this,"s","::");
+		x.ax(this,"s","::").nl();
 	}
 	/**unitlistleft*/public alist<unit>ul;
 	/**unitlistcenter*/public alist<unit>uc;
