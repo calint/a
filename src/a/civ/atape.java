@@ -5,12 +5,12 @@ import b.a;
 import b.xwriter;
 public class atape extends a{
 	public String resource_path="data.tape";
-	public void reset(){
+	public void rewind(){
 		is=getClass().getResourceAsStream(resource_path);
 		if(is==null)throw new Error("3 "+resource_path);
 	}
 	private InputStream is;
-	{reset();}
+	{rewind();}
 	public atape stream_next_file_name(final OutputStream os)throws IOException{
 		final byte[]cha=new byte[1];
 		while(true){
@@ -45,7 +45,7 @@ public class atape extends a{
 	/**display*/public a d;
 //	synchronized public void x_rst(xwriter x,String s){reset();}
 	synchronized public void x_ls(xwriter y,String s)throws IOException{
-		reset();
+		rewind();
 		final xwriter x=y.xub(d,true,false);
 		final OutputStream os=x.outputstream();
 		try{while(true){
@@ -56,7 +56,7 @@ public class atape extends a{
 		y.xube();
 	}
 	synchronized public void x_d(xwriter y,String s)throws IOException{
-		reset();
+		rewind();
 		final xwriter x=y.xub(d,true,false);
 		final OutputStream os=x.outputstream();
 		try{while(true){
