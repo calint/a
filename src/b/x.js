@@ -99,6 +99,7 @@ ui._onreadystatechange=function(){
 }
 ui._pbls=[];
 ui.qpb=function(e){
+	$d('qpb '+e.id);
 	if(ui.qpbhas(e.id))return;
 	ui._pbls[e.id]=e.id;
 }
@@ -110,6 +111,7 @@ $x=function(pb){
 	$d("\n\nrequest #"+ui._axc);
 	var post='$='+pb+'\r';
 	for(var id in ui._pbls){
+		//$d('field '+id);
 		var e=$(id)
 		post+=e.id+'=';			
 		if(e.value!==undefined)
