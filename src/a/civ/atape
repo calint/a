@@ -1,58 +1,58 @@
-medusa
+medusa~2x2
 ./\.
 /--\
 
-medusa_l
+medusa_l~2x2
 ./\.
 /| \
 
-medusa_r
+medusa_r~2x2
 ./\.
 / |\
 
-medusa_rk
+medusa_rk~2x2
 ./\_
 / |\
 
-medusa_lk
+medusa_lk~2x2
 _/\.
 /| \
 
-mountain
+mountain~2x1
 /\
 
-mountain_2
+mountain~2x2
  /\ 
 /  \
 
-trace_3
+trace2~1x1
 .
 
-trace_2
+trace1~1x1
 o
 
-trace_1
+trace~1x1
 O
 
-projectile
+projectile~1x1
 *
 
-water
+water~1x1
 ~
 
-forrest_1
+forrest~1x1
 p
 
-forrest_2
+forrest~2x2
 qp
 qp
 
-forrest_3
+forrest~3x3
  p 
 qqp
  q
 
-river-system
+river~9x8
 \     \  
  \     | 
   \   /  
@@ -62,7 +62,7 @@ river-system
       |  
      /   
 
-river-forrest-system
+system~11x8
 qp\qppqp\qp
  qp\qpqpp|q
   qp\qpp/qq
