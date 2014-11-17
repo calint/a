@@ -23,9 +23,7 @@ final public class alist<T extends a>extends a{
 	}
 	private int ix;
 	synchronized public void add(T e){
-//		e.pt().detach(e);//? ondetach
-		e.pt(this);
-//		e.nm(Integer.toString(ls.size()));
+		e.pt(this);//? ondetach
 		e.nm(Integer.toString(ix++));
 		ls.add(e);
 	}
@@ -51,6 +49,7 @@ final public class alist<T extends a>extends a{
 	}
 	private void swp(xwriter x,String s,int c,int d) throws Throwable {
 		Collections.swap(ls,c,d);
+		if(x==null)return;
 		$.xto(x,this,this,true,false);
 		x.xfocus(id()+"~"+s);
 	}
@@ -60,6 +59,7 @@ final public class alist<T extends a>extends a{
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=ls.remove(c);
 		rht.add((T)e);
+		if(x==null)return;
 		$.xto(x,this,this,true,false);
 		$.xto(x,rht,rht,true,false);
 		x.xfocus(rht.id()+"~"+e.nm());
@@ -70,6 +70,7 @@ final public class alist<T extends a>extends a{
 		final int c=find_elem_index_by_name_or_break(s);
 		final a e=ls.remove(c);
 		lft.add((T)e);
+		if(x==null)return;
 		$.xto(x,this,this,true,false);
 		$.xto(x,lft,lft,true,false);
 		x.xfocus(lft.id()+"~"+e.nm());
@@ -94,10 +95,8 @@ final public class alist<T extends a>extends a{
 		if(e!=null)return e;
 		return super.chldq(nm);
 	}
-	public static void link(alist lft,alist rht){
-		lft.rht=rht;
-		rht.lft=lft;
-	}
+	
+	public static void link(final alist lft,final alist rht){lft.rht=rht;rht.lft=lft;}
 	
 	private static final long serialVersionUID = 1L;
 }
