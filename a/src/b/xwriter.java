@@ -217,6 +217,7 @@ public final class xwriter{
 	public xwriter xalert(final String s){return p("ui.alert('").jsstr(s).pl("');");}
 	public xwriter xreload(){return pl("location.reload(true);");}
 	public xwriter xfocus(final a e){return p("$f('").p(e.id()).pl("');");}
+	public xwriter xfocus(final String id){return p("$f('").p(id).pl("');");}
 	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
 	public xwriter xp(final a e,final String s){return p("$p('").p(e.id()).p("','").jsstr(s).pl("');");}
 //	public xwriter tag(final String name,final a e){return tag(name,e.id());}
