@@ -7,11 +7,13 @@ final public class game extends a{
 			b.pl("player "+from+" submitted moves");
 			ap++;
 			if(ap>=p.size()){
-				b.pl("all players submitted moves. processing turn.");
+				b.pl("all players submitted moves for turn "+t);
 				p.stream().forEach(p->{
+					b.pl(" processing "+p);
 					p.units_stream().forEach(u->{
 						if(u.o.isempty())return;
 						final String s=u.o.str();
+						b.pl("  unit "+u+": "+s);
 						if(s.charAt(0)==' '){
 							final char dir=s.charAt(1);
 							// qwe
@@ -28,6 +30,7 @@ final public class game extends a{
 				});
 				ap=0;
 				t++;
+				b.pl("next turn "+t);
 				super.ev(x,this);//end-of-turn
 				return;
 			}
