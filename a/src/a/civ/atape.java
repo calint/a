@@ -60,7 +60,7 @@ public class atape extends a{
 			x.td();
 			x.p(osc.count);
 			total+=osc.count;
-		}}catch(atape.sig_eot r){}
+		}}catch(atape.sig_eot ok){}
 		x.tr().td().td().p(total);
 		x.table_();
 		y.xube();
@@ -73,9 +73,9 @@ public class atape extends a{
 			stream_next_file_name(os);
 			x.nl();
 			stream_next_file_content(os);
-		}}catch(atape.sig_eot r){}
+		}}catch(atape.sig_eot ok){}
 		y.xube();
 	}
-	final public static class sig_eot extends Throwable{}
+	final public static class sig_eot extends Throwable{private static final long serialVersionUID=1;}
 	private static final long serialVersionUID=1;
 }
