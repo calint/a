@@ -26,9 +26,9 @@ final public class ficsgames extends a{
 	}
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
-		x.input(pl,"text","width:6em;padding:.5em;background:yellow;border:1px dotted gray",null,this,"",null,null,null);
+		x.inp(pl,"text","width:6em;padding:.5em;background:yellow;border:1px dotted gray",null,this,"",null,null,null);
 		x.spc();
-		x.input(af,"date","width:10em;padding:.5em;background:yellow;border:1px dotted gray",null,this,"",null,null,null);
+		x.inp(af,"date","width:10em;padding:.5em;background:yellow;border:1px dotted gray",null,this,"",null,null,null);
 		x.spc(8).ax(this,"","•..•").nl();
 		x.spanx(ot);
 		x.el_();

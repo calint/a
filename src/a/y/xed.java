@@ -8,7 +8,7 @@ public class xed extends a{
 		x.p("content editable: ");
 //		x.xed(this);
 		x.p("  ");
-		x.xed(this,this,null);
+		x.dived(this,this,null);
 		x.style(this,"display:inline-block;border:1px dotted green;background:yellow;min-width:8em");
 		x.focus(this);
 //		x.nl();

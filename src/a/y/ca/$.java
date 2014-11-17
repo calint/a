@@ -34,10 +34,10 @@ public class $ extends a {
 		x.style("div.la div.c8","float:left");
 		x.div("la");
 			x.div("c1");for(int i=1;i<100;i++)x.pl(""+i);x.div_();
-			x.div("c2").inputTextArea(cap).focus(cap).div_();
+			x.div("c2").inptxtarea(cap).focus(cap).div_();
 			x.div("c3").spc().ax(this).p(" to c ").el(sts).el_().div_();
 			x.div("c4");for(int i=1;i<100;i++)x.pl(""+i);x.div_();
-			x.div("c5").inputTextArea(c).div_();
+			x.div("c5").inptxtarea(c).div_();
 			x.div("c6").p(" :: ").ax(this,"cc","run ").div_();
 			x.div("c7").el(out).p("console output").el_().div_();
 			x.div("c8").p(" :: ").ax(this,"cr","etc ").div_();

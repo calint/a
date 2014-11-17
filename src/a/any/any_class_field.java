@@ -54,8 +54,8 @@ final public class any_class_field implements el,el.el_column_value,el.el_column
 				x.p(str());
 				return;
 			}
-			if(f.getType()==boolean.class)x.input(this,"checkbox","font-weight:bold",null,this,null,null,this,null);
-			else x.input(this,"text","font-weight:bold",null,this,null,null,this,null);
+			if(f.getType()==boolean.class)x.inp(this,"checkbox","font-weight:bold",null,this,null,null,this,null);
+			else x.inp(this,"text","font-weight:bold",null,this,null,null,this,null);
 			final unit ua=f.getAnnotation(unit.class);
 			if(ua!=null)x.spc().p(ua.name());
 			if(ca.reboot())x.p(" <span style=color:#c00>⎋</span>");

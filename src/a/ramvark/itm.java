@@ -139,7 +139,7 @@ public abstract class itm extends an implements $.labeled{
 					continue;
 				}
 				if(t==1){
-					x.inputTextArea(e,"ls");
+					x.inptxtarea(e,"ls");
 					continue;
 				}
 				if(t==3){//aggr many
@@ -148,7 +148,7 @@ public abstract class itm extends an implements $.labeled{
 					continue;
 				}
 				if(t==4){
-					x.inputTextArea(e,"ed");
+					x.inptxtarea(e,"ed");
 					continue;
 				}
 				if(t==5){

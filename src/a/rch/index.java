@@ -39,7 +39,7 @@ public class index extends a{
 			x.p("    ").p(++lineno);
 			x.nl();
 		}
-		x.preEnd();
+		x.pre_();
 		x.script();
 		sts.set(set.toString());
 		x.script_();

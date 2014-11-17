@@ -253,7 +253,7 @@ final public class vintage extends a{
 		x.r(regs);
 		x.r(calls);
 		x.r(loops);
-		x.preEnd();
+		x.pre_();
 	}
 	void rendrom(xwriter x){
 		rom.to(x);

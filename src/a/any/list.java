@@ -137,7 +137,7 @@ public class list extends a{
 //			}
 		}
 		x.span("margin-left:22px;float:right");
-		if(hasbit(BIT_ALLOW_QUERY))x.inputax(q,null,this,null).focus(q);
+		if(hasbit(BIT_ALLOW_QUERY))x.inpax(q,null,this,null).focus(q);
 		if(hasbit(BIT_ALLOW_FILE_CREATE))x.ax(this,"c",icnfile);
 		if(hasbit(BIT_ALLOW_DIR_CREATE))x.ax(this,"d",icndir);
 		x.span_();
@@ -165,7 +165,7 @@ public class list extends a{
 	//			x.pre().nl().flush();
 	//			path.to(new osltgt(x.outputstream()));
 				x.style().css(bd,"width:100%;height:100%;border:1px dotted green").style_();
-				x.inputTextArea(bd,"ed");
+				x.inptxtarea(bd,"ed");
 				x.focus(bd);
 			};
 		}catch(Throwable t){exception=t;}
