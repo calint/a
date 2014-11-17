@@ -24,26 +24,25 @@ final public class listui extends a{
 	}
 	/**move elem down*/
 	synchronized public void x_d(xwriter x,String s)throws Throwable{
-		final int c=find_elem_index_by_name_or_break(ls,s);
+		final int c=find_elem_index_by_name_or_break(s);
 		int d=c+1;
 		if(d==ls.size())d=0;
-		Collections.swap(ls,c,d);
-		
-		$.xto(x,this,this,true,false);
-		x.xfocus(id()+"~"+s);
+		swp(x, s, c, d);
 //		ev(x,this);
 	}
 	/**move elem up*/
 	synchronized public void x_u(xwriter x,String s)throws Throwable{
-		final int c=find_elem_index_by_name_or_break(ls,s);
+		final int c=find_elem_index_by_name_or_break(s);
 		int d=c-1;
 		if(d==-1)d=ls.size()-1;
+		swp(x, s, c, d);
+	}
+	private void swp(xwriter x, String s, final int c, int d) throws Throwable {
 		Collections.swap(ls,c,d);
 		$.xto(x,this,this,true,false);
 		x.xfocus(id()+"~"+s);
-//		ev(x,this);
 	}
-	public static int find_elem_index_by_name_or_break(final List<? extends a>ls,final String name){
+	private int find_elem_index_by_name_or_break(final String name){
 		int c=0;
 		for(final a e:ls){
 			if(name.equals(e.nm()))return c;
