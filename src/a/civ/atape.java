@@ -1,8 +1,9 @@
 package a.civ;
 import java.io.*;//import java.io;
 import b.a;
+import b.xwriter;
 public class atape extends a{
-	public String resource_path;
+	public String resource_path="data.tape";
 	public void reset(){
 		is=getClass().getResourceAsStream(resource_path);
 	}
@@ -25,6 +26,11 @@ public class atape extends a{
 			os.write(ch);
 		}
 		return this;
+	}
+	
+	@Override public void to(xwriter x) throws Throwable{
+		x.ax(this,"ls","list");
+		while(true){}
 	}
 	private static final long serialVersionUID=1;
 }
