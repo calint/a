@@ -10,6 +10,14 @@ medusa_r
 ./\.
 / |\
 
+medusa_rk
+./\_
+/ |\
+
+medusa_lk
+_/\.
+/| \
+
 mountain
 /\
 
@@ -28,3 +36,6 @@ O
 
 water
 ~
+
+
+end-of-tape
