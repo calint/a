@@ -37,7 +37,8 @@ public class atape extends a{
 	
 	@Override public void to(final xwriter x) throws Throwable{
 //		x.ax(this,"rst"," :: reset");
-		x.ax(this,"ls"," :: list");
+		x.ax(this,"ls"," :: catalog");
+		x.ax(this,"d"," :: display");
 		x.nl();
 		x.divr(d);
 	}
@@ -46,10 +47,22 @@ public class atape extends a{
 	synchronized public void x_ls(xwriter y,String s)throws IOException{
 		reset();
 		final xwriter x=y.xub(d,true,false);
+		final OutputStream os=x.outputstream();
 		try{while(true){
-			stream_next_file_name(x.outputstream());
+			stream_next_file_name(os);
 			x.nl();
-			stream_next_file_content(new osvoid());
+			stream_next_file_content(osvoid.i);
+		}}catch(Error r){}
+		y.xube();
+	}
+	synchronized public void x_d(xwriter y,String s)throws IOException{
+		reset();
+		final xwriter x=y.xub(d,true,false);
+		final OutputStream os=x.outputstream();
+		try{while(true){
+			stream_next_file_name(os);
+			x.nl();
+			stream_next_file_content(os);
 		}}catch(Error r){}
 		y.xube();
 	}
