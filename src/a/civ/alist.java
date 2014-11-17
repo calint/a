@@ -21,12 +21,12 @@ final public class alist<T extends a>extends a{
 		x.el_();
 	}
 	private int ix;//? rolloverissue
-	synchronized public void add(T e){
+	public void add(T e){
 		e.pt(this);//? ondetach
 		e.nm(Integer.toString(ix++));
 		ls.add(e);
 	}
-	synchronized public Stream<T>stream(){return ls.stream();}
+	public Stream<T>stream(){return ls.stream();}
 	/**elem click*/
 	synchronized public void x_c(xwriter x,String s){
 		x.xalert(s);
@@ -108,9 +108,9 @@ final public class alist<T extends a>extends a{
 		rht=ls;
 		ls.lft=this;
 	}
-	synchronized public int size(){return ls.size();}
-	synchronized public void clear(){ls.clear();}
+	public int size(){return ls.size();}
+	public void clear(){ls.clear();}
 //	public T get(int ix){return ls.get(ix);}
 	private static final long serialVersionUID=1;
-	synchronized public T get_first(){if(ls.isEmpty())return null;return ls.get(0);}
+	public T get_first(){if(ls.isEmpty())return null;return ls.get(0);}
 }
