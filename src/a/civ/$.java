@@ -4,26 +4,20 @@ import b.a_ajaxsts;
 import b.xwriter;
 final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
-		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
-		x.style("html","background:#222;color:#0c0");
+		x.style("html","background:#111");
 		x.style("a","color:#0c0");
-		x.spano(g.m);
-		x.r(h);
-		x.nl().spano(s);
-		x.nl().spano(g.p).style(p,"display:block");
-		x.nl();
-		x.r(i);
-		x.nl();
-		x.nl(2).r(ajaxsts).nl();
+		x.span("padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto");
+		x.divx(g.m).divx(s).nl().divx(g.p).nl().r(h).nl().r(l).nl().r(ajaxsts);
 		x.style(ajaxsts,"font-size:.5em");
 		x.script();x_(x,"");x.script_();
+		x.span_();
 	}
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
 		x.xrfsh(g.m);
-		g.p.mode_view_focus(g.player);
+		g.p.mode_view_focus(g.ap);
 		x.xrfsh(g.p);
-		x.xu(s,"turn "+g.turn);
+		x.xu(s,"turn "+g.t);
 	}
 	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
 		el.to(x.xub(to,inner,escltgt));
@@ -49,7 +43,7 @@ final public class $ extends a{
 	/**status*/public a s;
 	public a_ajaxsts ajaxsts;
 	public hud h;
-	public logo i;
+	public logo l;
 
 	static final long serialVersionUID=1;
 }

@@ -3,23 +3,11 @@ import b.a;
 import b.xwriter;
 final public class game extends a{
 	public void to(xwriter x)throws Throwable{m.to(x);}
-	public alist<player>p;
-
-//	@Override protected a chldq(String nm){
-//		if(nm.startsWith("player_")){
-//			final player x=players.stream()
-//				.filter(u->nm.equals(u.nm()))
-//				.findAny()
-//				.get();
-//			if(x!=null)return x;
-//		}
-//		return super.chldq(nm);
-//	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		if(from instanceof player){
 			b.b.pl("moves from "+from);
-			player++;
-			if(player>=p.size()){
+			ap++;
+			if(ap>=p.size()){
 				p.stream().forEach(p->{
 					p.units_stream().forEach(oo->{
 						final unit u=(unit)oo;
@@ -39,18 +27,18 @@ final public class game extends a{
 						m.put(s,new tile(p.str().charAt(0)+u.str()));
 					});
 				});
-				player=0;
-				turn++;
+				ap=0;
+				t++;
 			}
 			super.ev(x,this);
 			return;
 		}
 		super.ev(x,from,o);
 	}
-	public @readonly map m;
-	public @readonly int turn;
-	public @readonly int player;
+	public map m;
+	/**turn*/public int t;
+	/**activeplayer*/public int ap;
+	public alist<player>p;
 
-	public static @interface readonly{}
 	private static final long serialVersionUID=1;
 }
