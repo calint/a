@@ -16,7 +16,7 @@ public class atape extends a{
 		}
 		return this;
 	}
-	public atape stream_next_file_content(OutputStream os)throws IOException{
+	public atape stream_next_file_content(final OutputStream os)throws IOException{
 		boolean last_ch_was_nl=false;
 		while(true){
 			final int ch=is.read();
