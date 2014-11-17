@@ -62,7 +62,17 @@ public final class xwriter{
 		if(!isempty(intaginline))spc().p(intaginline);
 		return tagoe();
 	}
-	public xwriter divx(final a e){return tago("div").attr("id",e.id()).tagoe().tage("div");}
+	public xwriter divr(final a e){return divr(e,null);}
+	public xwriter divr(final a e,final String intaginline){
+		tago("div").attr("id",e.id());
+//		if(!isempty(cls))attr("class",cls);
+//		if(!isempty(style))attr("style",style);
+		if(!isempty(intaginline))spc().p(intaginline);
+		tagoe();
+		try{e.to(this);}catch(Throwable t){throw new Error(t);}//? printerror
+		return div_();
+	}
+//	public xwriter ph_div(final a e){return tago("div").attr("id",e.id()).tagoe().tage("div");}
 	public xwriter div_(){return tage("div");}
 	public xwriter focus(final a e){return script().p("$f('").p(e.id()).p("')").script_();}
 	public xwriter inputInt(final a e){return tago("input").attr("value",e.toString()).attrdef(e).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
