@@ -21,11 +21,12 @@ final public class alist<T extends a>extends a{
 //		x.pl("- -- - - - -  --- - - -");
 		x.el_();
 	}
-	private int ix;
+//	private int ix;
 	synchronized public void add(T e){
 //		e.pt().detach(e);//? ondetach
 		e.pt(this);
-		e.nm(Integer.toString(ix++));
+		e.nm(Integer.toString(ls.size()));
+//		e.nm(Integer.toString(ix++));
 		ls.add(e);
 	}
 	public Stream<T>stream(){return ls.stream();}
