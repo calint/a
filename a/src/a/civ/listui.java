@@ -10,15 +10,21 @@ final public class listui extends a{
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
 		final String id=id();
 		ls.stream().forEach(e->{try{
-			x.p("<a onkeydown=\"if(event.shiftKey&&event.keyIdentifier=='Down'){").axjs(id,"d",e.nm()).p("}\" href=\"javascript:").axjs(id,""," c "+e.nm()).p("\">").p(" • ").p("</a>");
+			x.p("<a onkeydown=\"if(event.shiftKey&&event.keyIdentifier=='Down'){").axjs(id,"d",e.nm()).p(";}if(event.shiftKey&&event.keyIdentifier=='Up'){").axjs(id,"u",e.nm()).p(";}\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
 	}
-	synchronized public void x_(xwriter x,String s){
+	/**elem click*/
+	synchronized public void x_c(xwriter x,String s){
 		x.xalert(s);
 	}
+	/**move elem down*/
 	synchronized public void x_d(xwriter x,String s){
+		x.xalert(s);
+	}
+	/**move elem up*/
+	synchronized public void x_u(xwriter x,String s){
 		x.xalert(s);
 	}
 	
