@@ -7,7 +7,8 @@ final public class player extends a{
 //		x.span(this);
 		x.spaned(this);
 		x.nl();
-		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ul).td().r(uc).td().r(ur).table_();
+//		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ul).td().r(uc).td().r(ur).table_();
+		x.table("o").tr().td().r(ul).td().r(uc).td().r(ur).table_();
 		x.ax(this,"s","::");
 //		x.span_();
 	}
