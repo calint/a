@@ -34,12 +34,21 @@ final public class listui extends a{
 		Collections.swap(ls,c,d);
 		
 		$.xto(x,this,this,true,false);
-		ev(x,this);
+//		ev(x,this);
 	}
 	/**move elem up*/
-	synchronized public void x_u(xwriter x,String s){
-		x.xalert(s);
+	synchronized public void x_u(xwriter x,String s)throws Throwable{
+		int c=0;
+		for(final a e:ls){
+			if(s.equals(e.nm()))break;
+			c++;
+		}
+		int d=c-1;
+		if(d==-1)d=ls.size()-1;
+		Collections.swap(ls,c,d);
+		
+		$.xto(x,this,this,true,false);
+//		ev(x,this);
 	}
-	
 	/**wire*/public List<? extends a>ls;
 }
