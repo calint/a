@@ -47,7 +47,7 @@ final public class alist<T extends a>extends a{
 	private void swp(xwriter x,String s,int c,int d) throws Throwable {
 		Collections.swap(ls,c,d);
 		if(x==null)return;
-		x.xrfsh(this);
+		x.xu(this);
 		x.xfocus(id()+"~"+s);
 	}
 	/**move elem to right list*/
@@ -57,8 +57,8 @@ final public class alist<T extends a>extends a{
 		final T e=ls.remove(c);
 		rht.add(e);
 		if(x==null)return;
-		x.xrfsh(this);
-		x.xrfsh(rht);
+		x.xu(this);
+		x.xu(rht);
 		rht.xfocus(x,e);
 	}
 	/**move elem to left list*/
@@ -68,8 +68,8 @@ final public class alist<T extends a>extends a{
 		final T e=ls.remove(c);
 		lft.add(e);
 		if(x==null)return;
-		x.xrfsh(this);
-		x.xrfsh(lft);
+		x.xu(this);
+		x.xu(lft);
 		lft.xfocus(x,e);
 	}
 	public void xfocus(xwriter x,T e){x.xfocus(id()+"~"+e.nm());}
