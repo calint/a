@@ -12,10 +12,7 @@ final public class $ extends a{
 		x.nl().spano(s);
 		x.nl().spano(p).style(p,"display:block");
 		x.nl();
-		x.pl(".._..___..||\\\\.||..__.__._...._.");
-		x.pl("//..||.||.||.\\\\||.//..||.\\\\..//.");
-		x.pl("||..||.||.||...||.||..||..\\.//..");
-		x.pl("\\\\__\\|_|/.||...||.\\\\..||...\\/...");
+		x.r(i);
 		x.nl();
 		x.nl(2).r(ajaxsts).nl();
 		x.style(ajaxsts,"font-size:.5em");
@@ -46,6 +43,7 @@ final public class $ extends a{
 	/**statusoutput*/public a s;
 	/**builtinajaxstatusline*/public a_ajaxsts ajaxsts;
 	/**cheatsheet*/public hud h;
+	public logo i;
 
 	static final long serialVersionUID=1;
 }
