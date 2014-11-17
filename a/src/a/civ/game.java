@@ -50,7 +50,8 @@ public class game extends a{
 			player++;
 			if(player>=players.size()){
 				players.stream().forEach(p->{
-					p.units.stream().forEach(u->{
+					p.units_stream().forEach(oo->{
+						final unit u=(unit)oo;
 						if(u.o.isempty())return;
 						final String s=u.o.str();
 						if(s.charAt(0)==' '){
