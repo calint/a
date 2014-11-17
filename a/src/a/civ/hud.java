@@ -1,7 +1,7 @@
 package a.civ;
 import b.a;
 import b.xwriter;
-public class hlp extends a{
+public class hud extends a{
 	public void to(xwriter x)throws Throwable{
 		x.pl("    __    ");
 		x.pl(" __/w \\__ ");

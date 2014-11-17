@@ -9,13 +9,19 @@ public class player extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.inputText(this,this,"");
 //		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:12em");
-		x.nl().r(ul);
+		x.nl();
+		x.table().tr().td().r(ull).td().r(ul).td().r(ulr).table_();
 		x.ax(this,"s","::");
 	}
-	/**ordersforthisturn*/public a o;
-	/**orderslog*/public a l;
+//	/**ordersforthisturn*/public a o;
+//	/**orderslog*/public a l;
+	
+	
+	/**leftunitslist*/public alist ull;{ull.ls=new ArrayList<>();}
+	/**rightunitslist*/public alist ulr;{ulr.ls=new ArrayList<>();ulr.rht=ull;ull.lft=ulr;}
 	List<unit>units=new ArrayList<>();
-	/**unitslist*/public listui ul;{ul.ls=units;}
+	/**unitslist*/public alist ul;{ul.ls=units;ul.rht=ulr;ul.lft=ull;}
+	{ulr.lft=ull.rht=ul;}
 
 	@Override protected a chldq(String id){
 		if(id.startsWith("unit_")){
