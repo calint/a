@@ -62,7 +62,7 @@ final public class alist<T extends a>extends a{
 		if(x==null)return;
 		$.xto(x,this,this,true,false);
 		$.xto(x,rht,rht,true,false);
-		x.xfocus(rht.id()+"~"+e.nm());
+		rht.xfocus(x,e);
 	}
 	/**move elem to left list*/
 	synchronized public void x_Left(xwriter x,String s)throws Throwable{
@@ -73,8 +73,10 @@ final public class alist<T extends a>extends a{
 		if(x==null)return;
 		$.xto(x,this,this,true,false);
 		$.xto(x,lft,lft,true,false);
-		x.xfocus(lft.id()+"~"+e.nm());
+		lft.xfocus(x,e);
 	}
+	public void xfocus(xwriter x,a e){x.xfocus(id()+"~"+e.nm());}
+	public void xfocus(xwriter x,String elem_name){x.xfocus(id()+"~"+elem_name);}
 	private int find_elem_index_by_name_or_break(final String name){
 		int c=0;
 		for(final a e:ls){
