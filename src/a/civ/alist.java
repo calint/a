@@ -1,0 +1,78 @@
+package a.civ;
+
+import java.util.Collections;
+import java.util.List;
+
+import b.a;
+import b.xwriter;
+
+final public class alist extends a{
+	@Override public void to(xwriter x)throws Throwable{
+		x.el(this);
+		x.pl("- -- - - - -  --- - - -");
+		final String id=id();
+		ls.stream().forEach(o->{try{
+			final a e=(a)o;
+			x.p("<a id=\""+id+"~"+e.nm()+"\" onkeydown=\"if(!event.shiftKey)return;var i=event.keyIdentifier;if(i!='Down'&&i!='Up'&&i!='Right'&&i!='Left')return;$x('"+id+" '+i+' "+e.nm()+"');\" href=\"javascript:").axjs(id,"c",e.nm()).p("\">").p(" • ").p("</a>");
+			e.to(x);
+		}catch(Throwable t){throw new Error(t);}});
+		x.pl("- -- - - - -  --- - - -");
+		x.el_();
+	}
+	/**elem click*/
+	synchronized public void x_c(xwriter x,String s){
+		x.xalert(s);
+	}
+	/**move elem down*/
+	synchronized public void x_Down(xwriter x,String s)throws Throwable{
+		final int c=find_elem_index_by_name_or_break(s);
+		int d=c+1;
+		if(d==ls.size())d=0;
+		swp(x,s,c,d);
+//		ev(x,this);
+	}
+	/**move elem up*/
+	synchronized public void x_Up(xwriter x,String s)throws Throwable{
+		final int c=find_elem_index_by_name_or_break(s);
+		int d=c-1;
+		if(d==-1)d=ls.size()-1;
+		swp(x,s,c,d);
+	}
+	private void swp(xwriter x,String s,int c,int d) throws Throwable {
+		Collections.swap(ls,c,d);
+		$.xto(x,this,this,true,false);
+		x.xfocus(id()+"~"+s);
+	}
+	/**move elem to right list*/
+	synchronized public void x_Right(xwriter x,String s)throws Throwable{
+		if(rht==null)return;
+		final int c=find_elem_index_by_name_or_break(s);
+		final a e=(a)ls.remove(c);
+		rht.ls.add(e);//? givescompilererrorwithgenerics?
+		$.xto(x,this,this,true,false);
+		$.xto(x,rht,rht,true,false);
+		x.xfocus(rht.id()+"~"+s);
+	}
+	/**move elem to left list*/
+	synchronized public void x_Left(xwriter x,String s)throws Throwable{
+		if(lft==null)return;
+		final int c=find_elem_index_by_name_or_break(s);
+		final a e=(a)ls.remove(c);
+		lft.ls.add(e);//? givescompilererrorwithgenerics?
+		$.xto(x,this,this,true,false);
+		$.xto(x,lft,lft,true,false);
+		x.xfocus(lft.id()+"~"+s);
+	}
+	private int find_elem_index_by_name_or_break(final String name){
+		int c=0;
+		for(final Object o:ls){
+			final a e=(a)o;
+			if(name.equals(e.nm()))return c;
+			c++;
+		}
+		throw new Error();
+	}
+	/**wire move elem to left list*/alist lft;
+	/**wire wrapped list*/List ls;
+	/**wire move elem to right list*/alist rht;
+}

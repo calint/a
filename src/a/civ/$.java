@@ -24,17 +24,13 @@ final public class $ extends a{
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
 		xto(x,g.m,m,true,false);
-//		g.m.to(x.xub(m,true,false));x.xube();
 		xto(x,g.players.get(g.player),p,true,false);
-//		g.players.get(g.player).to(x.xub(p,true,false));x.xube();
 		x.xu(s,"turn "+g.turn);
-//		x.xu(inp.clr());
 	}
 	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
 		el.to(x.xub(to,inner,escltgt));
 		x.xube();
 	}
-
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
 		b.b.pl("event from "+from.getClass());
 		if(from instanceof game){
@@ -49,7 +45,7 @@ final public class $ extends a{
 	/**playeroutput*/public a p;
 	/**statusoutput*/public a s;
 	/**builtinajaxstatusline*/public a_ajaxsts ajaxsts;
-	/**cheatsheet*/public hlp h;
+	/**cheatsheet*/public hud h;
 
 	static final long serialVersionUID=1;
 }
