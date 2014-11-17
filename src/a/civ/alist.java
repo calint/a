@@ -26,7 +26,7 @@ final public class alist<T extends a>extends a{
 		e.nm(Integer.toString(ix++));
 		ls.add(e);
 	}
-	public Stream<T>stream(){return ls.stream();}
+	synchronized public Stream<T>stream(){return ls.stream();}
 	/**elem click*/
 	synchronized public void x_c(xwriter x,String s){
 		x.xalert(s);
@@ -108,9 +108,9 @@ final public class alist<T extends a>extends a{
 		rht=ls;
 		ls.lft=this;
 	}
-	public int size(){return ls.size();}
-	public void clear(){ls.clear();}
+	synchronized public int size(){return ls.size();}
+	synchronized public void clear(){ls.clear();}
 //	public T get(int ix){return ls.get(ix);}
 	private static final long serialVersionUID=1;
-	public T get_first(){if(ls.isEmpty())return null;return ls.get(0);}
+	synchronized public T get_first(){if(ls.isEmpty())return null;return ls.get(0);}
 }
