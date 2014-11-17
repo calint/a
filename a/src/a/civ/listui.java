@@ -10,7 +10,7 @@ final public class listui extends a{
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
 		final String id=id();
 		ls.stream().forEach(e->{try{
-			x.p("<a onkeydown=\"console.log(event)\" href=\"javascript:").axjs(id,""," c "+e.nm()).p("\">").p(" • ").p("</a>");
+			x.p("<a onkeydown=\"if(event.shiftKey&&event.keyIdentifier=='Down'){").axjs(id,"d",e.nm()).p("}\" href=\"javascript:").axjs(id,""," c "+e.nm()).p("\">").p(" • ").p("</a>");
 			e.to(x);
 		}catch(Throwable t){throw new Error(t);}});
 		x.pl("-- -- - - - -  --- - - - - - - - - - - - -- -  - --  -- - - - - - - ");
