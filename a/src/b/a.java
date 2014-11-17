@@ -101,7 +101,7 @@ public class a implements Serializable{
 		try{from(in);}catch(final Throwable t){set(defaultIfError);}
 		return this;
 	}
-	public a pt(final a e){pt=e;return this;}
+	public a pt(final a e){pt=e;return this;}//? if pt ondetach?
 	public a nm(final String s){nm=s;return this;}
 	
 	public final static String field_path_separator="-";	
