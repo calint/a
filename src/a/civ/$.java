@@ -21,7 +21,7 @@ final public class $ extends a{
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
 		xto(x,g.m,m,true,false);
-		xto(x,g.players.get(g.player),p,true,false);
+		xto(x,g.p.get(g.player),p,true,false);
 		x.xu(s,"turn "+g.turn);
 	}
 	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
@@ -38,6 +38,11 @@ final public class $ extends a{
 	}
 
 	public game g;
+	{	
+		g.p.add(new player("player 1"));
+		g.p.add(new player("olayer 2"));
+		g.p.add(new player("nlayer 3"));
+	}
 	/**mapoutput*/public a m;
 	/**playeroutput*/public a p;
 	/**statusoutput*/public a s;

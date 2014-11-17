@@ -3,12 +3,8 @@ import b.a;
 import b.xwriter;
 final public class game extends a{
 	public void to(xwriter x)throws Throwable{m.to(x);}
-	public alist<player>players;
-	{
-		players.add(new player("player 1"));
-		players.add(new player("olayer 2"));
-		players.add(new player("nlayer 3"));
-	}
+	public alist<player>p;
+
 //	@Override protected a chldq(String nm){
 //		if(nm.startsWith("player_")){
 //			final player x=players.stream()
@@ -23,8 +19,8 @@ final public class game extends a{
 		if(from instanceof player){
 			b.b.pl("moves from "+from);
 			player++;
-			if(player>=players.size()){
-				players.stream().forEach(p->{
+			if(player>=p.size()){
+				p.stream().forEach(p->{
 					p.units_stream().forEach(oo->{
 						final unit u=(unit)oo;
 						if(u.o.isempty())return;
