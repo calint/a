@@ -1,12 +1,11 @@
 package a.civ;
-import b.a;
-import b.xwriter;
+import b.*;
 public class unit extends a{
 	public unit(String name){set(name);}
 	@Override public void to(xwriter x)throws Throwable{
-		x.p(str()).p(": ");
-		x.p(old_o).p("-");
+		x.p(str()).p(":");
 		x.inputText(o,this,"");
+		if(!b.isempty(old_o))x.p("-").p(old_o);
 		x.style(o,"background:#030;width:4em");
 		x.nl();
 	}
