@@ -37,5 +37,9 @@ O
 water
 ~
 
+projectile
+*
 
-end-of-tape
+eot
+
+

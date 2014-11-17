@@ -37,8 +37,8 @@ public class atape extends a{
 	
 	@Override public void to(final xwriter x) throws Throwable{
 //		x.ax(this,"rst"," :: reset");
-		x.ax(this,"ls"," :: catalog");
-		x.ax(this,"d"," :: display");
+		x.ax(this,"ls"," :: list");
+		x.ax(this,"d"," :: print");
 		x.nl();
 		x.divr(d);
 	}
