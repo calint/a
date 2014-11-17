@@ -17,12 +17,15 @@ public class map extends a{
 		for(int i=0;i<hi;i++){
 			x.p(""+(char)(i+'1')+" ");
 			for(int j=0;j<(wi-1);j+=2){
-				x.p("/").p(tile_str(i,j)).p("\\__");
+				x.p("/");
+				tile_str_to(x,i,j);
+				x.p("\\__");
 			}
 			x.pl(i==0?" ":"/");
 			x.p("  ");
 			for(int j=0;j<wi;j+=2){
-				x.p("\\__/").p(tile_str(i,j+1));
+				x.p("\\__/");
+				tile_str_to(x,i,j+1);
 			}
 			x.pl("\\");
 		}
@@ -40,10 +43,10 @@ public class map extends a{
 			x.nl();
 		}
 	}
-	private String tile_str(int i,int j){
+	private void tile_str_to(final xwriter x,final int i,final int j){
 		final tile t=data[i][j];
-		if(t==null)return"  ";
-		return t.get_map_abbrv();
+		if(t==null){x.p("  ");return;}
+		t.map_abbrv_to(x);
 	}
 	public void clear(){
 		for(int r=0;r<data.length;r++){

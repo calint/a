@@ -11,11 +11,8 @@ public class unit extends a{
 		x.nl();
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
-
 	String old_o;
-
 	/**order*/public a o;
-	/**order log*/public a l;
-	
+//	/**order log*/public a l;
 	private static final long serialVersionUID=1;
 }
