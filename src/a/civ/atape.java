@@ -17,14 +17,14 @@ public class atape extends a{
 		return this;
 	}
 	public atape stream_next_file_content(OutputStream os)throws IOException{
-		boolean last_line_empty=false;
+		boolean last_ch_was_nl=false;
 		while(true){
 			final int ch=is.read();
 			if(ch==-1)break;
-			if(ch=='\n'){
-				if(last_line_empty)break;
-				else last_line_empty=true;
-			}else last_line_empty=false;
+			if(ch=='\n')
+				if(last_ch_was_nl)break;
+				else last_ch_was_nl=true;
+			else last_ch_was_nl=false;
 			os.write(ch);
 		}
 		return this;
