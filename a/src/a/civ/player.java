@@ -29,12 +29,7 @@ public class player extends a{
 	}
 	
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
-	public synchronized void x_s(xwriter x,String a)throws Throwable{
-		ev(x,this);
-	}
-
-
-
+	public synchronized void x_s(xwriter x,String a)throws Throwable{ev(x);}
 
 	{
 		units.add(new unit(this,"unit_1","1"));
