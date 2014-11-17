@@ -3,6 +3,7 @@ package a.civ;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import b.a;
 import b.xwriter;
@@ -20,6 +21,8 @@ final public class alist<T extends a>extends a{
 //		x.pl("- -- - - - -  --- - - -");
 		x.el_();
 	}
+	public void add(T e){ls.add(e);}
+	public Stream<T>stream(){return ls.stream();}
 	/**elem click*/
 	synchronized public void x_c(xwriter x,String s){
 		x.xalert(s);
@@ -75,9 +78,9 @@ final public class alist<T extends a>extends a{
 		}
 		throw new Error();
 	}
-	/**wire move elem to left list*/alist<T>lft;
-	List<T>ls=new ArrayList<>();
-	/**wire move elem to right list*/alist<T>rht;
+	private alist<T>lft;
+	private List<T>ls=new ArrayList<>();
+	private alist<T>rht;
 	
 	@Override protected a chldq(String nm){
 		final a e=ls.stream()
@@ -86,6 +89,10 @@ final public class alist<T extends a>extends a{
 			.get();
 		if(e!=null)return e;
 		return super.chldq(nm);
+	}
+	public static void link(alist lft,alist rht){
+		lft.rht=rht;
+		rht.lft=lft;
 	}
 	
 	private static final long serialVersionUID = 1L;

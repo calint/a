@@ -9,29 +9,29 @@ public class player extends a{
 		x.inputText(this,this,"");
 		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:24em");
 		x.nl();
-		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ull).td().r(ul).td().r(ulr).table_();
+		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ul).td().r(uc).td().r(ur).table_();
 		x.ax(this,"s","::");
 	}
 //	/**ordersforthisturn*/public a o;
 //	/**orderslog*/public a l;
 	
 	
-	/**leftunitslist*/public alist<unit>ull;
-	/**rightunitslist*/public alist<unit>ulr;{ulr.rht=ull;ull.lft=ulr;}
-	/**unitslist*/public alist<unit>ul;{ul.rht=ulr;ul.lft=ull;}
-	{ulr.lft=ull.rht=ul;}
+	/**unitslistleft*/public alist<unit>ul;
+	/**unitslistcenter*/public alist<unit>uc;
+	/**unitslistright*/public alist<unit>ur;
+	{uc.link(ul,uc);uc.link(uc,ur);uc.link(ur,ul);}
 
 	public Stream<unit>units_stream(){
-		return Stream.concat(ul.ls.stream(),Stream.concat(ull.ls.stream(),ulr.ls.stream()));
+		return Stream.concat(uc.stream(),Stream.concat(ul.stream(),ur.stream()));
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{}
 	public synchronized void x_s(xwriter x,String a)throws Throwable{ev(x);}
 
 	{
-		ul.ls.add(new unit(ul,"1","1"));
-		ul.ls.add(new unit(ul,"2","2"));
-		ul.ls.add(new unit(ul,"3","3"));
-		ul.ls.add(new unit(ul,"4","4"));
+		uc.add(new unit(uc,"1","1"));
+		uc.add(new unit(uc,"2","2"));
+		uc.add(new unit(uc,"3","3"));
+		uc.add(new unit(uc,"4","4"));
 	}
 	
 	
