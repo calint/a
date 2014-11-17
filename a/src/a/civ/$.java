@@ -10,8 +10,10 @@ public class $ extends a{
 		x.style("table.o input","background:#030;width:4em");
 //		x.table().tr().td().r(a).td().r(b).table_();
 		x.r(a);
+		x.r(t);
 	}
 //	public ui a,b;
 	public ui a;
+	public atape t;
 	private static final long serialVersionUID=1;
 }
