@@ -24,11 +24,7 @@ final public class listui extends a{
 	}
 	/**move elem down*/
 	synchronized public void x_d(xwriter x,String s)throws Throwable{
-		int c=0;
-		for(final a e:ls){
-			if(s.equals(e.nm()))break;
-			c++;
-		}
+		final int c=find_elem_index_by_name_or_break(ls,s);
 		int d=c+1;
 		if(d==ls.size())d=0;
 		Collections.swap(ls,c,d);
@@ -39,18 +35,23 @@ final public class listui extends a{
 	}
 	/**move elem up*/
 	synchronized public void x_u(xwriter x,String s)throws Throwable{
-		int c=0;
-		for(final a e:ls){
-			if(s.equals(e.nm()))break;
-			c++;
-		}
+		final int c=find_elem_index_by_name_or_break(ls,s);
 		int d=c-1;
 		if(d==-1)d=ls.size()-1;
 		Collections.swap(ls,c,d);
-		
 		$.xto(x,this,this,true,false);
 		x.xfocus(id()+"~"+s);
 //		ev(x,this);
 	}
-	/**wire*/public List<? extends a>ls;
+	public static int find_elem_index_by_name_or_break(final List<? extends a>ls,final String name){
+		int c=0;
+		for(final a e:ls){
+			if(name.equals(e.nm()))return c;
+			c++;
+		}
+		throw new Error();
+	}
+	/**wire wrapped list*/public List<? extends a>ls;
+	/**wire wire move elem to right list*/public List<? extends a>lsr;
+	/**wire wire move elem to left list*/public List<? extends a>lsl;
 }
