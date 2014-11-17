@@ -59,6 +59,14 @@ public final class xwriter{
 	public xwriter div(final String cls){return tago("div").attr("class",cls).tagoe();}
 	public xwriter div(){return tag("div");}
 	public xwriter div(final a e){return tago("div").attr("id",e.id()).tagoe();}
+	public xwriter div(final a e,final String cls,final String style,final String intaginline){
+		tago("div").attr("id",e.id());
+		if(!isempty(cls))attr("class",cls);
+		if(!isempty(style))attr("style",style);
+		if(!isempty(intaginline))spc().p(intaginline);
+		return tagoe();
+	}
+	public xwriter divx(final a e){return tago("div").attr("id",e.id()).tagoe().tage("div");}
 	public xwriter div_(){return tage("div");}
 	public xwriter focus(final a e){return script().p("$f('").p(e.id()).p("')").script_();}
 	public xwriter inputInt(final a e){return tago("input").attr("value",e.toString()).attrdef(e).attr("type","text").attr("class","nbr").attr("size",5).attr("onchange","$b(this)").tagoe();}
@@ -69,8 +77,8 @@ public final class xwriter{
 	public xwriter preEnd(){return tage("pre");}
 	public xwriter script(){return tag("script");}
 	public xwriter script_(){return tage("script");}
-	public xwriter spano(final a e){return spano(e,null);}
-	public xwriter spano(final a e,final String style){
+	public xwriter spanx(final a e){return spanx(e,null);}
+	public xwriter spanx(final a e,final String style){
 		tago("span").attr("id",e.id());
 		if(style!=null)attr("style",style);
 		return tagoe().tage("span");
@@ -84,7 +92,6 @@ public final class xwriter{
 		return span_();
 	}
 	public xwriter spanh(final a e){tago("span").attr("id",e.id()).tagoe();try{e.to(os);}catch(Throwable t){throw new Error(t);}return span_();}
-//	public xwriter spanx(final a e)throws Throwable{tago("span").attr("id",e.id()).tagoe();e.to(this);return span_();}
 	public xwriter span_(){return tage("span");}
 	public xwriter table(){return tag("table");}
 	public xwriter table(final String cls){return tago("table").attr("class",cls).tagoe();}
@@ -282,6 +289,7 @@ public final class xwriter{
 	public xwriter xlocation(final String uri){return p("location='").p(uri).pl("';");}
 	public xwriter span(final String style){return tago("span").attr("style",style).tagoe();}
 	public xwriter nbsp(){return p("&nbsp;");}
+	public xwriter xrfsh(final a e)throws Throwable{e.to(xub(e,true,false));return xube();} 
 
 	private final OutputStream os;
 

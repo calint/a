@@ -103,6 +103,7 @@ public class a implements Serializable{
 	}
 	public a pt(final a e){pt=e;return this;}//? if pt ondetach?
 	public a nm(final String s){nm=s;return this;}
+	final public void xrfsh(final xwriter x)throws Throwable{to(x.xub(this,true,false));x.xube();} 
 	
 	public final static String field_path_separator="-";	
 	static final long serialVersionUID=1;
