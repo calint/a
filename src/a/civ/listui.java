@@ -18,6 +18,9 @@ final public class listui extends a{
 	synchronized public void x_(xwriter x,String s){
 		x.xalert(s);
 	}
+	synchronized public void x_d(xwriter x,String s){
+		x.xalert(s);
+	}
 	
 	/**wire*/public List<? extends a>ls;
 }
