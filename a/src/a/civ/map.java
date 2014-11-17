@@ -80,6 +80,9 @@ public class map extends a{
 	public void load(final InputStream is)throws Throwable{
 		
 	}
+	public void load(final InputStream is,final int offset_x,final int offset_y)throws Throwable{
+		
+	}
 	private final int hi=8,wi=10;
 	private tile[][]ta=new tile[hi][wi];
 	private static final long serialVersionUID=1;
