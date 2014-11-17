@@ -8,14 +8,14 @@ final public class $ extends a{
 		}
 		x.div(this,null,"padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
 		x.divx(g.m).divx(s).divx(g.p).divx(ajaxsts).r(h).r(l).r(ajaxsts);
-		x.style(ajaxsts,"font-size:.5em");
+//		x.style(ajaxsts,"font-size:.5em");
 		x.script();x_(x,"");x.script_();
 		x.div_();
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{
-		x.xrfsh(g.m);
+		x.xu(g.m);
 		g.p.mode_view_focus(g.ap);
-		x.xrfsh(g.p);
+		x.xu(g.p);
 		x.xu(s,"turn "+g.t);
 	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{x_(x,"");}
