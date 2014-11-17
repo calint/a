@@ -10,7 +10,7 @@ public class atape extends a{
 	public atape stream_next_file_name(final OutputStream os)throws IOException{
 		while(true){
 			final int ch=is.read();
-			if(ch==-1)throw new Error("1");;
+			if(ch==-1)throw new Error("1");
 			if(ch=='\n')break;
 			os.write(ch);
 		}
