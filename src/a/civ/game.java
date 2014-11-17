@@ -40,6 +40,5 @@ final public class game extends a{
 	/**turn*/public int t;
 	/**activeplayer*/public int ap;
 	public alist<player>p;
-
 	private static final long serialVersionUID=1;
 }

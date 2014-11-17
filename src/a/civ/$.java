@@ -8,15 +8,13 @@ final public class $ extends a{
 			x.style("a","color:#0c0");
 		}
 		x.div(this,null,"border:1px dashed;border-radius:.5em;box-shadow:0 0 1em rgba(0,0,0,1);padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
-		x.divx(g.m).divx(s).divx(g.p).divx(ajaxsts).r(h).r(l).r(t).r(ajaxsts);
-//		x.style(ajaxsts,"font-size:.5em");
-		x.script();x_(x,"");x.script_();
+		x.r(g.m).spanx(s).r(g.p).divx(ajaxsts).r(h).r(l).r(t).r(ajaxsts);
 		x.div_();
 	}
 	public synchronized void x_(xwriter x,String a)throws Throwable{
-		x.xu(g.m);
+		x.xuo(g.m);
 		g.p.mode_view_focus(g.ap);
-		x.xu(g.p);
+		x.xuo(g.p);
 		x.xu(s,"turn "+g.t);
 	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{x_(x,"");}

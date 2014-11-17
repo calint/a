@@ -8,6 +8,7 @@ public class map extends a{
 //	\__/..\__/
 //     \__/   
 	public void to(xwriter x)throws Throwable{
+		x.div(this);
 		final boolean rend_col_letters=true;
 		x.p("  ");
 		for(int j=0;j<wi;j+=2){
@@ -41,6 +42,7 @@ public class map extends a{
 			}
 			x.nl();
 		}
+		x.div_();
 	}
 	private void tile_str_to(final xwriter x,final int i,final int j){
 		final tile t=ta[i][j];

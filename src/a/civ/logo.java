@@ -1,8 +1,7 @@
 package a.civ;
-import b.a;
-import b.xwriter;
+import b.*;
 public class logo extends a{
-	public void to(xwriter x)throws Throwable{
+	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		x.pl(".._..___..||\\\\.||..__.__._...._.");
 		x.pl("//..||.||.||.\\\\||.//..||.\\\\..//.");
@@ -10,6 +9,5 @@ public class logo extends a{
 		x.pl("\\\\__\\|_|/.||...||.\\\\..||...\\/...");
 		x.div_();
 	}
-
 	private static final long serialVersionUID=1;
 }

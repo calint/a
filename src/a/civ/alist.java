@@ -20,7 +20,7 @@ final public class alist<T extends a>extends a{
 		}catch(Throwable t){throw new Error(t);}});
 		x.el_();
 	}
-	private int ix;
+	private int ix;//? rolloverissue
 	synchronized public void add(T e){
 		e.pt(this);//? ondetach
 		e.nm(Integer.toString(ix++));
