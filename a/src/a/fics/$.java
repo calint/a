@@ -62,11 +62,11 @@ final public class $ extends a{
 		x.nl(23);
 		
 		x.nl(2);
-		x.p("paste pgn below").nl().inputTextArea(in1);
-		x.ax(this,null,"•·scan").p(" for blunders using threshhold ").inputFlt(devthr).nl();
+		x.p("paste pgn below").nl().inptxtarea(in1);
+		x.ax(this,null,"•·scan").p(" for blunders using threshhold ").inpflt(devthr).nl();
 		x.nl(2).spc(7).pl(" <a href=javascript:$('"+ajaxsts.id()+"').scrollIntoView(true)>to top of page</a>");
 		x.nl(13);
-		x.p("config:\n   crafty bin path: ").input(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
+		x.p("config:\n   crafty bin path: ").inp(crafty_bin_path,"text","border:1px solid #eee;width:15em",null,null,null,null,null,null);
 		x.nl(7);
 		x.el_();
 	}

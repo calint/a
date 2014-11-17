@@ -39,7 +39,7 @@ public class o extends a{
 
 		x.style().css(ed,"height:100%;width:100%").style_();
 		x.p("<div style='height:320px;width:100%;border:1px dotted blue'>");
-		x.span(fc).inputTextArea(ed,null);
+		x.span(fc).inptxtarea(ed,null);
 		x.div_();
 		x.script().xhide(fc).xhide(ed).script_();
 	}

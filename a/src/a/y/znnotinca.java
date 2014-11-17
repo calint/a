@@ -83,7 +83,7 @@ public class znnotinca extends a{
 		ob.root.tick(x,0);
 		x.nl();
 		x.pl("source:");
-		x.inputTextArea(src,"editor2").nl();
+		x.inptxtarea(src,"editor2").nl();
 		x.ax(this,"c","compile").tag("hr").spanh(bin).tag("hr");
 		x.ax(this,"r","run").tag("hr").spanh(run).tag("hr");
 	}

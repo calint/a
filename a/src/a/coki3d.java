@@ -29,7 +29,7 @@ public final class coki3d extends a{
 		x.css("table.t td.r","color:#006600;border-right:3px dotted red");
 		x.css(s,"font-size:8px;color:white");
 		x.style_();
-		x.pre("d").table("t").tr().td("l").output_holder(d0).td("r").output_holder(d1).table_().preEnd().output_holder(s);
+		x.pre("d").table("t").tr().td("l").output_holder(d0).td("r").output_holder(d1).table_().pre_().output_holder(s);
 		x.script().p("setTimeout(\"$x('"+id()+" a')\",0)").script_();
 	}
 	public void x_a(final xwriter x,final String st)throws Throwable{

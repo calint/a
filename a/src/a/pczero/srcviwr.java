@@ -37,7 +37,7 @@ final public class srcviwr extends a{
 		if(edit){
 			x.nl();
 			x.style(txt,"outline:none;width:20em;height:100%;min-height:128em;resize:none;border-left:0px dotted #333;color:#444;padding:0 1em 0 .5em;line-height:1.5em;background:#fef");
-			x.inputTextArea(txt);
+			x.inptxtarea(txt);
 			x.el_();
 			return;
 		}

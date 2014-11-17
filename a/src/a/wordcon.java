@@ -11,7 +11,7 @@ public class wordcon extends a{
 		x.css(txt,"border:1px dotted blue;width:100%;height:640px;");
 		x.style_();
 		x.ax(this,"ok",":: wordcon").nl();
-		x.inputTextArea(txt).br();
+		x.inptxtarea(txt).br();
 	}
 	public void x_ok(final xwriter x,final String s){
 		final Set<String>set=new HashSet<String>();
