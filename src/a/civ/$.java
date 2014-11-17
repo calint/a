@@ -7,7 +7,7 @@ final public class $ extends a{
 			x.style("a","color:#0c0");
 		}
 		x.div(this,null,"padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
-		x.divx(g.m).divx(s).divx(g.p).r(h).r(l).r(ajaxsts);
+		x.divx(g.m).divx(s).divx(g.p).divx(ajaxsts).r(h).r(l).r(ajaxsts);
 		x.style(ajaxsts,"font-size:.5em");
 		x.script();x_(x,"");x.script_();
 		x.div_();
@@ -27,6 +27,6 @@ final public class $ extends a{
 	/**status*/public a s;
 	public hud h;
 	public logo l;
-	public a_ajaxsts ajaxsts;
+	/**builtinajaxstatusline*/public a ajaxsts;
 	private static final long serialVersionUID=1;
 }
