@@ -6,13 +6,12 @@ final public class $ extends a{
 	public void to(final xwriter x)throws Throwable{
 		x.style("html","background:#111");
 		x.style("a","color:#0c0");
-		x.span("padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto");
+		x.div(this,null,"padding:5em;padding-top:0;background:#222;color:#0c0;text-align:center;display:table;margin-left:auto;margin-right:auto",null);
 		x.divx(g.m).divx(s).nl().divx(g.p).nl().r(h).nl().r(l).nl().r(ajaxsts);
 		x.style(ajaxsts,"font-size:.5em");
 		x.script();x_(x,"");x.script_();
-		x.span_();
+		x.div_();
 	}
-
 	public synchronized void x_(xwriter x,String a)throws Throwable{
 		x.xrfsh(g.m);
 		g.p.mode_view_focus(g.ap);
@@ -24,7 +23,7 @@ final public class $ extends a{
 		x.xube();
 	}
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
-		b.b.pl("event from "+from.getClass());
+		b.b.pl("ev "+from.getClass()+" "+o);
 		if(from instanceof game){
 			x_(x,"");
 			return;
