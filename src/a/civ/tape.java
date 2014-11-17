@@ -29,7 +29,5 @@ public class tape extends a{
 		}
 		return this;
 	}
-	public String next_file_name(){return null;}
-	public String next_file_content(){return null;}
 	private static final long serialVersionUID=1;
 }
