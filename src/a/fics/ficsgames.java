@@ -30,7 +30,7 @@ final public class ficsgames extends a{
 		x.spc();
 		x.input(af,"date","width:10em;padding:.5em;background:yellow;border:1px dotted gray",null,this,"",null,null,null);
 		x.spc(8).ax(this,"","•..•").nl();
-		x.spano(ot);
+		x.spanx(ot);
 		x.el_();
 	}
 
