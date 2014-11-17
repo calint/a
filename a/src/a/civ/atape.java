@@ -1,5 +1,6 @@
 package a.civ;
 import java.io.*;//import java.io;
+import a.x.oscounter;
 import a.x.osvoid;
 import b.a;
 import b.xwriter;
@@ -48,11 +49,17 @@ public class atape extends a{
 		rewind();
 		final xwriter x=y.xub(d,true,false);
 		final OutputStream os=x.outputstream();
+		final oscounter osc=new oscounter(osvoid.i);
+		x.table();
 		try{while(true){
+			x.tr().td();
 			stream_next_file_name(os);
-			x.nl();
-			stream_next_file_content(osvoid.i);
+			osc.rst();
+			stream_next_file_content(osc);
+			x.td();
+			x.p(osc.count);
 		}}catch(Error r){}
+		x.table_();
 		y.xube();
 	}
 	synchronized public void x_d(xwriter y,String s)throws IOException{

@@ -34,11 +34,11 @@ o
 smoke_3
 O
 
-water
-~
-
 projectile
 *
+
+water
+~
 
 eot
 
