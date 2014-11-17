@@ -11,7 +11,7 @@ final public class $ extends a{{upd();}
 		x.r(g.m).divr(s).r(g.p).divr(ajaxsts).r(h).r(l).r(t);
 		x.div_();
 	}
-	public synchronized void x_(xwriter x,String a)throws Throwable{
+	public synchronized void x_(final xwriter x,final String a)throws Throwable{
 		upd();
 		x.xuo(g.m).xuo(g.p).xu(s);
 	}
@@ -19,7 +19,7 @@ final public class $ extends a{{upd();}
 		g.p.mode_view_focus(g.ap);
 		s.set("turn "+g.t);
 	}
-	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
+	@Override protected void ev(final xwriter x,a from,final Object o)throws Throwable{
 		// refresh-view
 		x_(x,"");
 	}
