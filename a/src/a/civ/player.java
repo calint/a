@@ -6,8 +6,9 @@ import b.xwriter;
 final public class player extends a{
 	public player(String name){set(name);}
 	@Override public void to(xwriter x)throws Throwable{
-		x.inputText(this,this,"");
+//		x.inputText(this,this,"");
 //		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center");
+		x.spaned(this);
 		x.nl();
 		x.table("","margin-left:auto;margin-right:auto").tr().td().r(ul).td().r(uc).td().r(ur).table_();
 		x.ax(this,"s","::").nl();
