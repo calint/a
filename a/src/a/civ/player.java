@@ -7,14 +7,14 @@ import b.xwriter;
 public class player extends a{
 	public player(a apt,String anm,String name){super(apt,anm,name);}
 	@Override public void to(xwriter x)throws Throwable{
-		x.inputText(this,this,"").style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:12em");
-		x.nl();
-		x.r(ul);
+		x.inputText(this,this,"");
+//		x.style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:12em");
+		x.nl().r(ul);
 		x.ax(this,"s","::");
 	}
 	/**ordersforthisturn*/public a o;
 	/**orderslog*/public a l;
-	public List<unit>units=new ArrayList<>();
+	List<unit>units=new ArrayList<>();
 	/**unitslist*/public listui ul;{ul.ls=units;}
 
 	@Override protected a chldq(String id){
