@@ -14,7 +14,7 @@ public class unit extends a{
 
 	String old_o;
 
-	/**order*/public a o=new a(this,"o");
-	/**order log*/public a l=new a(this,"l");
+	/**order*/public a o;
+	/**order log*/public a l;
 	
 }
