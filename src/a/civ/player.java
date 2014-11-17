@@ -9,13 +9,14 @@ public class player extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.inputText(this,this,"").style(this,"border-bottom:1px dotted;padding:.2em;text-align:center;width:12em");
 		x.nl();
-		units.forEach(u->{try{u.to(x);}catch(Throwable t){throw new Error(t);}});
+		x.r(ul);
 		x.ax(this,"s","::");
 	}
 	/**ordersforthisturn*/public a o;
 	/**orderslog*/public a l;
-	
 	public List<unit>units=new ArrayList<>();
+	/**unitslist*/public listui ul;{ul.ls=units;}
+
 	@Override protected a chldq(String id){
 		if(id.startsWith("unit_")){
 			final unit x=units.stream()
