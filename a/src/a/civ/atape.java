@@ -21,10 +21,7 @@ public class atape extends a{
 		while(true){
 			final int ch=is.read();
 			if(ch==-1)break;
-			if(ch=='\n')
-				if(last_ch_was_nl)break;
-				else last_ch_was_nl=true;
-			else last_ch_was_nl=false;
+			if(ch=='\n')if(last_ch_was_nl)break;else last_ch_was_nl=true;else last_ch_was_nl=false;
 			os.write(ch);
 		}
 		return this;
