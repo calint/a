@@ -1,6 +1,5 @@
-package a.civ.m;
+package a.civ;
 import java.util.stream.*;
-import a.civ.x.alist;
 import b.*;
 final public class player extends a{
 	public player(String name){set(name);}

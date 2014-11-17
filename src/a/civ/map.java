@@ -1,4 +1,4 @@
-package a.civ.m;
+package a.civ;
 import b.*;
 public class map extends a{
 //	   /..\   
