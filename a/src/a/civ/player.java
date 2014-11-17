@@ -17,11 +17,13 @@ public class player extends a{
 	
 	public List<unit>units=new ArrayList<>();
 	@Override protected a chldq(String id){
-		final unit x=units.stream()
-			.filter(u->id.equals(u.nm()))
-			.findAny()
-			.get();
-		if(x!=null)return x;
+		if(id.startsWith("unit_")){
+			final unit x=units.stream()
+				.filter(u->id.equals(u.nm()))
+				.findAny()
+				.get();
+			if(x!=null)return x;
+		}
 		return super.chldq(id);
 	}
 	

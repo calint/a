@@ -7,9 +7,6 @@ final public class $ extends a{
 		x.style("html","text-align:center;padding:1em 0 0 0;width:40em");
 		x.style("html","background:#222;color:#0c0");
 		x.style("a","color:#0c0");
-//		x.span("font-size:2em").p("con civ").span_().nl(2);
-//		x.span("text-align:left;color:red;border:1px solid red;display:block");
-//		x.span_();
 		x.spano(m);
 		x.r(h);
 		x.nl().spano(s);
@@ -26,10 +23,16 @@ final public class $ extends a{
 	}
 
 	public synchronized void x_(xwriter x,String a)throws Throwable{
-		g.m.to(x.xub(m,true,false));x.xube();
-		g.players.get(g.player).to(x.xub(p,true,false));x.xube();
+		xto(x,g.m,m,true,false);
+//		g.m.to(x.xub(m,true,false));x.xube();
+		xto(x,g.players.get(g.player),p,true,false);
+//		g.players.get(g.player).to(x.xub(p,true,false));x.xube();
 		x.xu(s,"turn "+g.turn);
 //		x.xu(inp.clr());
+	}
+	static void xto(final xwriter x,final a el,final a to,final boolean inner,final boolean escltgt)throws Throwable{
+		el.to(x.xub(to,inner,escltgt));
+		x.xube();
 	}
 
 	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{

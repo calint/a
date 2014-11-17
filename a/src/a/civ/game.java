@@ -34,11 +34,13 @@ public class game extends a{
 		players.add(new player(this,"player_3","nlayer 3"));
 	}
 	@Override protected a chldq(String nm){
-		final player x=players.stream()
-			.filter(u->nm.equals(u.nm()))
-			.findAny()
-			.get();
-		if(x!=null)return x;
+		if(nm.startsWith("player_")){
+			final player x=players.stream()
+				.filter(u->nm.equals(u.nm()))
+				.findAny()
+				.get();
+			if(x!=null)return x;
+		}
 		return super.chldq(nm);
 	}
 
