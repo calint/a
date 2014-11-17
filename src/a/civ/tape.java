@@ -16,7 +16,19 @@ public class tape extends a{
 		}
 		return this;
 	}
-	public tape stream_next_file_content(OutputStream os){return this;}
+	public tape stream_next_file_content(OutputStream os)throws IOException{
+		boolean last_line_empty=false;
+		while(true){
+			final int ch=is.read();
+			if(ch==-1)break;
+			if(ch=='\n'){
+				if(last_line_empty)break;
+				else last_line_empty=true;
+			}else last_line_empty=false;
+			os.write(ch);
+		}
+		return this;
+	}
 	public String next_file_name(){return null;}
 	public String next_file_content(){return null;}
 	private static final long serialVersionUID=1;
