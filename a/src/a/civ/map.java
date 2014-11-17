@@ -1,5 +1,7 @@
 package a.civ;
-import b.*;
+import java.io.InputStream;
+import b.a;
+import b.xwriter;
 public class map extends a{
 //	   /..\   
 //	/..\__/..\
@@ -75,6 +77,7 @@ public class map extends a{
 		t.u.clear();
 		return u;
 	}
+	public void load(final InputStream is)throws Throwable{}
 	private final int hi=8,wi=10;
 	private tile[][]ta=new tile[hi][wi];
 	private static final long serialVersionUID=1;

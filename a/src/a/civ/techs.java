@@ -8,11 +8,8 @@ public class techs extends a{
 //		x.pl("bombin");
 //		x.pl("shootin");
 //		x.pl("rocketin");
-		x.pl("sharpstickin");
-		x.pl("rockthrowin");
-		x.pl("kickin");
-		x.pl("hittin");
-		x.pl("shoutin");
+		x.pl("sharp sticks");
+		x.pl("rocks");
 		x.div_();
 	}
 	private static final long serialVersionUID=1;
