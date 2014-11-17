@@ -25,13 +25,13 @@ mountain_2
  /\ 
 /  \
 
-smoke_1
+trace_3
 .
 
-smoke_2
+trace_2
 o
 
-smoke_3
+trace_1
 O
 
 projectile
@@ -39,6 +39,28 @@ projectile
 
 water
 ~
+
+forrest_1
+p
+
+forrest_2
+qp
+qp
+
+forrest_3
+ p 
+qqp
+ q
+
+river-system
+\       /
+ \     / 
+  \   /  
+   \ /   
+    |    
+    |    
+    |    
+    |    
 
 eot
 

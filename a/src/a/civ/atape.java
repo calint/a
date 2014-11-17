@@ -5,18 +5,18 @@ import a.x.osvoid;
 import b.a;
 import b.xwriter;
 public class atape extends a{
-	public String resource_path="data.tape";
+	public String resource_path="atape";
 	public void rewind(){
 		is=getClass().getResourceAsStream(resource_path);
 		if(is==null)throw new Error("3 "+resource_path);
 	}
 	private InputStream is;
 	{rewind();}
-	public atape stream_next_file_name(final OutputStream os)throws IOException{
+	public atape stream_next_file_name(final OutputStream os)throws IOException,sig_eot{
 		final byte[]cha=new byte[1];
 		while(true){
 			final int ch=is.read();
-			if(ch==-1)throw new Error("1");
+			if(ch==-1)throw new sig_eot();
 			if(ch=='\n')break;
 			cha[0]=(byte)ch;//overcomeswritingarraysonly
 			os.write(cha);
@@ -28,7 +28,7 @@ public class atape extends a{
 		final byte[]cha=new byte[1];
 		while(true){
 			final int ch=is.read();
-			if(ch==-1)throw new Error("2");
+			if(ch==-1)throw new Error("1");
 			if(ch=='\n')if(last_ch_was_nl)break;else last_ch_was_nl=true;else last_ch_was_nl=false;
 			cha[0]=(byte)ch;
 			os.write(cha);
@@ -60,7 +60,7 @@ public class atape extends a{
 			x.td();
 			x.p(osc.count);
 			total+=osc.count;
-		}}catch(Error r){}
+		}}catch(atape.sig_eot r){}
 		x.tr().td().td().p(total);
 		x.table_();
 		y.xube();
@@ -73,8 +73,9 @@ public class atape extends a{
 			stream_next_file_name(os);
 			x.nl();
 			stream_next_file_content(os);
-		}}catch(Error r){}
+		}}catch(atape.sig_eot r){}
 		y.xube();
 	}
+	final public static class sig_eot extends Throwable{}
 	private static final long serialVersionUID=1;
 }
