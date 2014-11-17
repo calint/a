@@ -10,6 +10,7 @@ final public class alist<T extends a>extends a{
 		x.el(this);
 		if(mode==1){
 			ls.get(focus).to(x);
+			x.el_();
 			return;
 		}
 		final String id=id();
