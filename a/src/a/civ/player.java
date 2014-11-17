@@ -12,8 +12,8 @@ public class player extends a{
 		units.forEach(u->{try{u.to(x);}catch(Throwable t){throw new Error(t);}});
 		x.ax(this,"s","::");
 	}
-	public a o=new a(this,"o");//orders for this turn
-	public a l=new a(this,"l");//orders log
+	/**ordersforthisturn*/public a o;
+	/**orderslog*/public a l;
 	
 	public List<unit>units=new ArrayList<>();
 	@Override protected a chldq(String id){

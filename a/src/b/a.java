@@ -23,7 +23,10 @@ public class a implements Serializable{
 //		if(a.s!=null&&!a.s.equals(s))return false;
 //		return true;
 //	}
-	public a(){try{
+	public a(){autonew();}
+	public a(final a parent,final String name){pt=parent;nm=name;autonew();}
+	public a(final a parent,final String name,final String value){pt=parent;nm=name;s=value;autonew();}
+	private void autonew(){try{
 		if(b.firewall_on)b.firewall_assert_access(this);
 		if(b.acl_on)b.acl_ensure_create(this);
 		for(final Field f:getClass().getFields()){
@@ -40,8 +43,6 @@ public class a implements Serializable{
 			a.pt=this;				
 		}
 	}catch(final Throwable e){throw new Error(e);}}
-	public a(final a parent,final String name){pt=parent;nm=name;}
-	public a(final a parent,final String name,final String value){pt=parent;nm=name;s=value;}
 	public final String id(){
 		String s=nm;
 		for(a p=this;p.pt!=null;p=p.pt)
