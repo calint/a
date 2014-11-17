@@ -1,4 +1,6 @@
 package a.civ;
+import a.civ.m.game;
+import a.civ.m.player;
 import b.*;
 final public class ui extends a{
 	public void to(final xwriter x)throws Throwable{

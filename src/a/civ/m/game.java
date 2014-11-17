@@ -1,4 +1,5 @@
-package a.civ;
+package a.civ.m;
+import a.civ.x.alist;
 import b.*;
 final public class game extends a{
 	public void to(xwriter x)throws Throwable{m.to(x);}

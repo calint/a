@@ -1,4 +1,4 @@
-package a.civ;
+package a.civ.m;
 import b.*;
 public class unit extends a{
 	public unit(String name){set(name);}
