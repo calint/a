@@ -16,14 +16,7 @@ final public class $ extends a{
 		x.xrfsh(g.p);
 		x.xu(s,"turn "+g.t);
 	}
-	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{
-		if(from instanceof game){
-			b.pl("event from game");
-			x_(x,"");
-			return;
-		}
-		super.ev(x,from,o);
-	}
+	@Override protected void ev(xwriter x,a from,Object o)throws Throwable{x_(x,"");}
 	public game g;{	
 		g.p.add(new player("player 1"));
 		g.p.add(new player("olayer 2"));
