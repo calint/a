@@ -37,11 +37,11 @@ final public class log extends a{
 //		x.pl(getClass().toString());
 //		x.nl();
 		x.table().tr().td();
-		x.p("⠸  item").inputText(s,null,this,"s").nl();
+		x.p("⠸  item").inptxt(s,null,this,"s").nl();
 		x.focus(s);
-		x.p("⠷ total").inputText(t,null,this,"s").nl();
+		x.p("⠷ total").inptxt(t,null,this,"s").nl();
 //		x.p("   qty").inputText(q,null,this,"s").nl();
-		x.p("⡹  date").inputText(d,null,this,"s").nl();
+		x.p("⡹  date").inptxt(d,null,this,"s").nl();
 //		x.p("  time <input type=date name="+d.id()+" value=\""+d+"\">").inputText(d,null,this,"s").nl();
 		x.nl().nl();
 		
@@ -54,7 +54,7 @@ final public class log extends a{
 		x.el(l);
 		rend_log(x);
 		x.el_();
-		x.nl().p("ꖵ from ").inputText(ffr).p(" to ").inputText(fto).nl();
+		x.nl().p("ꖵ from ").inptxt(ffr).p(" to ").inptxt(fto).nl();
 		x.table_();
 	}
 	private void rend_filters(final xwriter x){

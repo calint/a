@@ -135,7 +135,7 @@ public abstract class itm extends an implements $.labeled{
 					continue;
 				}
 				if(t==0){
-					x.inputText(e,"ln",this,"sc");
+					x.inptxt(e,"ln",this,"sc");
 					continue;
 				}
 				if(t==1){
@@ -152,7 +152,7 @@ public abstract class itm extends an implements $.labeled{
 					continue;
 				}
 				if(t==5){
-					x.inputText(e,"nbr",this,"sc");
+					x.inptxt(e,"nbr",this,"sc");
 					continue;
 				}
 			}
@@ -169,7 +169,7 @@ public abstract class itm extends an implements $.labeled{
 		x.li().ax(this,"sv","▢");
 		x.ul_();
 		x.style(colr,"width:7em;margin-top:.2em");
-		x.inputText(colr,this,"sc");
+		x.inptxt(colr,this,"sc");
 		x.table_();
 
 		if(elem_in_focus!=null)

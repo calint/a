@@ -20,8 +20,8 @@ public class key0 extends a{
 		x.css(accesskey,"width:13em");
 		x.css(secretkey,"width:25em");
 		x.style_();
-		x.p("aws.amazon.com   access key ").inputText(accesskey);
-		x.p(" secret key ").inputText(secretkey).spc().ax(this).spc();
+		x.p("aws.amazon.com   access key ").inptxt(accesskey);
+		x.p(" secret key ").inptxt(secretkey).spc().ax(this).spc();
 		x.output_holder(output);
 		
 	}

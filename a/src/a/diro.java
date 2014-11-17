@@ -292,7 +292,7 @@ public class diro extends a{
 				x.el_();
 				return;
 			}
-			x.inputText(rnm).br();
+			x.inptxt(rnm).br();
 			x.tag("select").tag("option").p("selection").tage("select");
 			x.table("f").nl();
 			final int cols=5;

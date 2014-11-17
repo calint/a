@@ -9,7 +9,7 @@ public class keys extends a{
 	public a bits;
 	{bits.set(req.get().session().bits());}
 	public void to(final xwriter x)throws Throwable{
-		x.p("access control bits ").inputText(bits,null,this,null);
+		x.p("access control bits ").inptxt(bits,null,this,null);
 	}
 	public void x_(final xwriter x,final String s){
 		final session ses=req.get().session();

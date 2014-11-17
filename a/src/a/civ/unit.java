@@ -3,7 +3,7 @@ import b.*;
 public class unit extends a{
 	public unit(String name){set(name);}
 	@Override public void to(xwriter x)throws Throwable{
-		x.p(str()).p(":").inputText(o).nl();
+		x.p(str()).p(":").inptxt(o).nl();
 	}
 	String old_o;
 	/**order*/public a o;
