@@ -11,4 +11,9 @@ public class hud extends a{
 		x.pl("\\__/s \\__/");
 		x.pl("   \\__/   ");
 	}
+	
+	
+	
+		private static final long serialVersionUID = 1L;
+
 }

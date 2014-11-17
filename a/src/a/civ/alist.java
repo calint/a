@@ -7,7 +7,7 @@ import java.util.List;
 import b.a;
 import b.xwriter;
 
-final public class alist extends a{
+final public class alist<T extends a>extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.el(this);
 //		x.pl("- -- - - - -  --- - - -");
@@ -48,9 +48,10 @@ final public class alist extends a{
 	synchronized public void x_Right(xwriter x,String s)throws Throwable{
 		if(rht==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
-		final a e=(a)ls.remove(c);
+		final a e=ls.remove(c);
 		e.pt(rht);
-		rht.ls.add(e);
+//		rht.ls.add(e);//?compilererror
+		rht.ls.add((T)e);
 		$.xto(x,this,this,true,false);
 		$.xto(x,rht,rht,true,false);
 		x.xfocus(rht.id()+"~"+s);
@@ -59,9 +60,9 @@ final public class alist extends a{
 	synchronized public void x_Left(xwriter x,String s)throws Throwable{
 		if(lft==null)return;
 		final int c=find_elem_index_by_name_or_break(s);
-		final a e=(a)ls.remove(c);
+		final a e=ls.remove(c);
 		e.pt(lft);
-		lft.ls.add(e);
+		lft.ls.add((T)e);
 		$.xto(x,this,this,true,false);
 		$.xto(x,lft,lft,true,false);
 		x.xfocus(lft.id()+"~"+s);
@@ -74,9 +75,9 @@ final public class alist extends a{
 		}
 		throw new Error();
 	}
-	/**wire move elem to left list*/alist lft;
-	List<a>ls=new ArrayList<>();
-	/**wire move elem to right list*/alist rht;
+	/**wire move elem to left list*/alist<T>lft;
+	List<T>ls=new ArrayList<>();
+	/**wire move elem to right list*/alist<T>rht;
 	
 	@Override protected a chldq(String nm){
 		final a e=ls.stream()
@@ -86,4 +87,6 @@ final public class alist extends a{
 		if(e!=null)return e;
 		return super.chldq(nm);
 	}
+	
+	private static final long serialVersionUID = 1L;
 }

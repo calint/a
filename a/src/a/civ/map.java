@@ -112,4 +112,8 @@ public class map extends a{
 	
 	private final int hi=8,wi=10;
 	private tile[][]data=new tile[hi][wi];
+	
+	
+		private static final long serialVersionUID = 1L;
+
 }
