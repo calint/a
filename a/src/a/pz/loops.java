@@ -1,7 +1,7 @@
 package a.pz;
 import b.a;
 import b.xwriter;
-public class loops extends a{
+final public class loops extends a{
 	public void to(final xwriter x){
 		x.div(this);
 		x.p("loop stack:").p(Integer.toHexString(ix)).nl();
