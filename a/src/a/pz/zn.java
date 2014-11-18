@@ -130,19 +130,19 @@ final public class zn extends a{
 	public a bits;{bits.set(0b111111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
-		x.div(this,"border");
+		x.div(this);
 		final String id=id();
 		if(pt()==null){
 	//		x.el(this,"text-align:center;line-height:1.5em;width:768px;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
-			x.style();
-			x.css("body","text-align:center;line-height:1.5em;width:50em;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
-			x.css(ajaxsts,"position:fixed;bottom:0;right:0");
-			x.css(".border","border:1px dotted red");
-			x.css(".float","float:left");
-			x.css(".textleft","text-align:left");
-			x.style_();
+			x.style()
+				.css("body","text-align:center;line-height:1.5em;width:50em;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px")
+				.css(".border","border:1px dotted red")
+				.css(".float","float:left")
+				.css(".textleft","text-align:left")
+				.css(".floatclear","clear:both")
+				.css(ajaxsts,"position:fixed;bottom:0;right:0")
+			.style_();
 			ajaxsts.to(x);
-			x.style("body","text-align:center");
 			try(final jskeys jskeys=new jskeys(x)){
 				jskeys.add("cS","$x('"+id+" s')");
 				jskeys.add("cL","$x('"+id+" l')");
@@ -172,7 +172,7 @@ final public class zn extends a{
 		}
 		if((b&1)==1)x.r(ra);//disp ram
 		if((b&2)==2){
-			x.div(null,"","border:1px dotted","")
+			x.div()
 				.ax(this,"l"," load")
 				.ax(this,"c"," compile")
 				.ax(this,"r"," reset")
@@ -185,24 +185,15 @@ final public class zn extends a{
 			.div_();
 		}
 		final boolean disprom=(b&4)==4;
-//		if(disprom){
-//			x.style("table.d tr td","padding-left:1em;text-align:left")
-//			.style("table.d tr td:first-child","padding-left:0em")
-//			.table("d").tr().td();
-//		}
-//		x.el("display:table;margin-left:auto;text-align:right;margin-right:1em");
 		if((b&16)==16){
-			x.div(null,"","float:left;border:1px dotted","")
+			x.div(null,"float")
 				.span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo)
 			.div_();
 		}
-//		if(disprom)x.td().r(ro).td();
 		if(disprom)x.r(ro);
 		if((b&8)==8)x.r(sr);
-//		if(disprom)x.nl().table_();
-//		x.el_();
 		x.nl(8);
-		x.div(null,"","border:1px dotted;clear:both","").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
+		x.div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		x.div_();
 	}
 	synchronized public void x_(xwriter x,String s)throws Throwable{}
