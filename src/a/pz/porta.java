@@ -22,7 +22,7 @@ final public class porta extends websock implements threadedsock{static final lo
 //			System.out.println(cmd);
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
 //			System.out.println(src);
-			v.src.txt.set(src);
+			v.sr.txt.set(src);
 			try{
 				v.x_c(null,null);
 			}catch(final Throwable t){
@@ -30,7 +30,7 @@ final public class porta extends websock implements threadedsock{static final lo
 				endpoint_recv(bbe,false);
 				return;
 			}
-			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+v.sts.toString()));
+			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+v.st.toString()));
 			endpoint_recv(bbe,false);
 			v.x_r(null,null);
 		}
@@ -38,7 +38,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		v.x_f(null,null);
 //		final long t0=System.currentTimeMillis();
 		final ByteArrayOutputStream baos=new ByteArrayOutputStream(zn.scr_wi*zn.scr_hi);
-		v.snapshot(baos);
+		v.stream_snapshot(baos);
 		final ByteBuffer[]bbpng=new ByteBuffer[]{ByteBuffer.wrap(new byte[]{0}),ByteBuffer.wrap(baos.toByteArray())};
 //		final long t1=System.currentTimeMillis();
 		while(issending()){

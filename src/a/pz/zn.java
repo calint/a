@@ -23,6 +23,9 @@ final public class zn extends a{
 		x.pl("clare "+strdatasize(ram.size));
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
+	public void stream_copyright(final xwriter x){
+//		x.pl("(c) 1984 some rights reserved ltd");
+	}
 	public void stream_schematics(final xwriter x){
 		x.pl("|_______|______|____|____|  ");
 		x.pl("|z n x r|c i 00|0000|0000|  ");
@@ -101,17 +104,17 @@ final public class zn extends a{
 	public rom ro;
 	public ram ra;
 	public sys sy;
-	public int pcr;
+	int pc;
 	int ir;
 	int zn;
 	public regs re;
 	public calls ca;
 	public loops lo;
-	public a sts;
-	public a coreid;
-	public ed src;
+	/**statusline*/public a st;
+	/**coreid*/public a co;
+	/**sourcecode*/public ed sr;
 //	public int mode;//1:multicore
-	public final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
+	final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
 	private int lno;
 	private int lnosrc;
 	private final Map<Integer,String>callmap=new HashMap<Integer,String>();
@@ -120,12 +123,12 @@ final public class zn extends a{
 	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
 	private final List<String>srclines=new ArrayList<String>(32);
 	private int loadreg=-1;
-	public long mtrinstr;
-	public long mtrframes;
+	long mtrinstr;
+	long mtrframes;
 	long mtrldc;
 	long mtrstc;
-	public int dispbits=-1;
-	public void setpth(final path p){pth=p;}
+	int bits=-1;
+	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
 		x.el(this,"text-align:center;line-height:1.5em;width:768px;color:#222;margin-left:auto;margin-right:auto;padding:16em 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 		final String id=id();
@@ -149,19 +152,20 @@ final public class zn extends a{
 			}
 		}
 		ro.libgstp="#c88";
-		final boolean dispramble=(dispbits&8)==8;
+		final boolean dispramble=(bits&8)==8;
 		if(dispramble){
 			stream_logo(x);
-			x.nl();
+			stream_copyright(x);
+			x.nl(4);
 			stream_schematics(x);
 			x.nl();
 			stream_pramble(x);
 			x.nl();
 			stream_instruction_table(x);
 		}
-		final boolean dispram=(dispbits&1)==1;
+		final boolean dispram=(bits&1)==1;
 		if(dispram)x.nl().r(ra);
-		final boolean dispmenu=(dispbits&2)==2;
+		final boolean dispmenu=(bits&2)==2;
 		if(dispmenu){
 			x.nl();
 			x.ax(this,"l"," load");
@@ -174,7 +178,7 @@ final public class zn extends a{
 			x.ax(this,"s"," save");
 			x.ax(this,"b"," run-to-break-point");
 		}
-		final boolean disprom=(dispbits&4)==4;
+		final boolean disprom=(bits&4)==4;
 		if(disprom){
 			x.style("table.d tr td","padding-left:1em;text-align:left");
 			x.style("table.d tr td:first-child","padding-left:0em");
@@ -188,16 +192,16 @@ final public class zn extends a{
 			ro.to(x);
 			x.nl().td();
 		}
-		src.to(x);
+		sr.to(x);
 		if(disprom){
 			x.nl().table_();
 		}
 		x.el_();
 	}
-	public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}//application status
+	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
 	void rendpanel(xwriter x)throws Throwable{
 		x.pre();
-		x.span(sts,"font-weight:bold").nl();
+		x.span(st,"font-weight:bold").nl();
 		x.r(sy).nl();
 		x.r(re);
 		x.r(ca);
@@ -208,15 +212,15 @@ final public class zn extends a{
 		ro.to(x);
 	}
 	synchronized public void x_i(xwriter x,String s)throws Throwable{
-		ir=ro.get(pcr);
+		ir=ro.get(pc);
 	}
 	boolean running;
 	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
-	public boolean stopped;
+	boolean stopped;
 	public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
-		sts.set("reseting");
-		if(x!=null)x.xu(sts).flush();
+		st.set("reseting");
+		if(x!=null)x.xu(st).flush();
 		zn=0;
 		loadreg=-1;
 //		rom.rst();
@@ -233,32 +237,32 @@ final public class zn extends a{
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
-		x.xu(sts.set("refresh display"));
+		x.xu(st.set("refresh display"));
 		x.flush();
-		if((dispbits&1)==1){
-			x.xu(sts.set("refreshing display")).flush();
+		if((bits&1)==1){
+			x.xu(st.set("refreshing display")).flush();
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
-		x.xu(sts.set("reseted"));
+		x.xu(st.set("reseted"));
 	}
 	public void x_s(final xwriter x,final String s)throws Throwable{
-		src.txt.to(pth);
-		sts.set("saved "+pth.name());
+		sr.txt.to(pth);
+		st.set("saved "+pth.name());
 		if(x==null)return;
-		x.xu(sts);
+		x.xu(st);
 	}
 	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
 		if(pth!=null&&pth.exists()){
-			src.txt.from(pth);
-			sts.set("loaded "+pth.name());
+			sr.txt.from(pth);
+			st.set("loaded "+pth.name());
 		}else{
 			final InputStream is=getClass().getResourceAsStream(filenmromsrc);
-			src.txt.from(is);
-			sts.set("loaded default");
+			sr.txt.from(is);
+			st.set("loaded default");
 		}
 		if(x==null)return;
-		x.xuo(src);
-		x.xu(sts);
+		x.xuo(sr);
+		x.xu(st);
 		x.xuo(ro);
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
@@ -266,39 +270,40 @@ final public class zn extends a{
 			running=false;
 			return;
 		}
-		sts.clr();
+		st.clr();
 		ra.x=x;
-		final int srclineno=lino.get(pcr);
+		final int srclineno=lino.get(pc);
 		final String srcline=srclines.get(srclineno-1);
 		step();
 		ra.x=null;
 		if(x==null)return;
-		x.xu(sts.set(srcline));
+		x.xu(st.set(srcline));
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
 	}
+	/**step until stopped*/
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
 		while(true){
 			x_n(x,s);
 			if(x!=null)x.flush();
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		}
 	}
 	public void xfocusline(xwriter x){
-		final boolean disprom=(dispbits&4)==4;
+		final boolean disprom=(bits&4)==4;
 		if(disprom){
-			ro.focusline=pcr;
+			ro.focusline=pc;
 			ro.xfocusline(x);
 		}
 		if(lino.isEmpty())return;
-		src.focusline=lino.get(pcr);
-		src.xfocusline(x);
+		sr.focusline=lino.get(pc);
+		sr.xfocusline(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
 		if(running)throw new Error("already running");
 		running=true;
-		if(x!=null)x.xu(sts.set("running "+runms+" ms")).flush();
+		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		final long minstr=mtrinstr;
 		final long mframes=mtrframes;
@@ -317,12 +322,12 @@ final public class zn extends a{
 			final long dminstr=mtrinstr-minstr;
 			final long dmframes=mtrframes-mframes;
 			if(dt==0)dt=1;
-			sts.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
+			st.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
 			if(x==null)return;
-			x.xu(sts).xu(re).xu(ca).xu(lo);
+			x.xu(st).xu(re).xu(ca).xu(lo);
 			ro.xfocusline(x);
 			x.flush();
-			if((dispbits&1)==1){
+			if((bits&1)==1){
 				ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 			}
 		}
@@ -330,16 +335,16 @@ final public class zn extends a{
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
 		if(running)throw new Error("already running");
 		running=true;
-		if(x!=null)x.xu(sts.set("running to breakpoint")).flush();
+		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 		final long t0=System.currentTimeMillis();
 		final long instr0=mtrinstr;
-		sts.clr();
+		st.clr();
 		while(running){
 			boolean go=true;
 			step();
-			final int srclno=lino.get(pcr);
-			if(src.isonbrkpt(srclno)){
-				sts.set("breakpoint @ "+srclno);
+			final int srclno=lino.get(pc);
+			if(sr.isonbrkpt(srclno)){
+				st.set("breakpoint @ "+srclno);
 				go=false;
 			}
 			if(!go)break;
@@ -349,9 +354,9 @@ final public class zn extends a{
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=mtrinstr-instr0;
 			final int l=lino.get(ro.focusline);
-			sts.set(dinstr+" instr, "+dt+" ms, "+l);
+			st.set(dinstr+" instr, "+dt+" ms, "+l);
 			if(x==null)return;
-			x.xu(sts);
+			x.xu(st);
 			x.xu(sy);
 			x.xu(re);
 			x.xu(ca);
@@ -363,7 +368,7 @@ final public class zn extends a{
 	/**step frame*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
 		if(running)throw new Error("already running");
-		if(x!=null)x.xu(sts.set("running frame")).flush();
+		if(x!=null)x.xu(st.set("running frame")).flush();
 		running=true;
 		final long instr0=mtrinstr;
 		final long t0=System.currentTimeMillis();
@@ -377,18 +382,18 @@ final public class zn extends a{
 		if(running){
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=mtrinstr-instr0;
-			sts.set("#"+mtrframes+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
+			st.set("#"+mtrframes+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
 			running=false;
 		}
 		if(x==null)return;
 		xfocusline(x);
-		x.xu(sts).xu(sy).xu(re).xu(ca).xu(lo);
-		if((dispbits&1)==1){
+		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
+		if((bits&1)==1){
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
 	final static int scr_wi=256,scr_hi=128;
-	public void snapshot(final OutputStream os)throws IOException{
+	public void stream_snapshot(final OutputStream os)throws IOException{
 		final BufferedImage bi=new BufferedImage(scr_wi,scr_hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
 		for(int i=0;i<scr_hi;i++){
@@ -409,7 +414,7 @@ final public class zn extends a{
 //		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
 	}
 	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
-		if(x!=null)x.xu(sts.set("compiling")).flush();
+		if(x!=null)x.xu(st.set("compiling")).flush();
 		ra.rst();;
 		ro.rst();
 		callmap.clear();
@@ -418,7 +423,7 @@ final public class zn extends a{
 		loadlabelmap.clear();
 		skplabelmap.clear();
 		srclines.clear();
-		final Scanner sc=new Scanner(src.txt.toString());
+		final Scanner sc=new Scanner(sr.txt.toString());
 		try{
 		lno=0;
 		lnosrc=0;
@@ -429,7 +434,7 @@ final public class zn extends a{
 			lnosrc++;
 			srclines.add(ln);
 			if(ln.startsWith("#")){
-				if(ln.charAt(1)!=coreid.toString().charAt(0))
+				if(ln.charAt(1)!=co.toString().charAt(0))
 					continue;
 				else
 					ln=ln.substring(2).trim();
@@ -765,9 +770,9 @@ final public class zn extends a{
 			final int i1=i0+(skp<<8);//znxr ci.. .... ....
 			ro.set(ln,i1);
 		}
-		sts.set(lno+" x 16b ops");
+		st.set(lno+" x 16b ops");
 		if(x==null)return;
-		x.xu(sts);
+		x.xu(st);
 		x.flush();
 		x.xuo(ro);
 	}		
@@ -783,12 +788,12 @@ final public class zn extends a{
 		return i;
 	}
 	boolean wait;
-	public boolean notify;
-	public void step(){
+	boolean notify;
+	void step(){
 		if(wait){
 			if(notify){
 				synchronized(this){wait=notify=false;}
-				setpcr(pcr+1);
+				setpcr(pc+1);
 			}else{
 				return;
 			}
@@ -800,7 +805,7 @@ final public class zn extends a{
 		if(loadreg!=-1){
 			re.setr(loadreg,ir);
 			loadreg=-1;
-			setpcr(pcr+1);
+			setpcr(pc+1);
 			return;
 		}
 		if(ir==0xffff){//? move
@@ -817,7 +822,7 @@ final public class zn extends a{
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
 			final int skp=op==0?2:1;// ifloadopskip2
 //			if(skp!=1)throw new Error();
-			setpcr(pcr+skp);
+			setpcr(pc+skp);
 			return;
 		}
 		in>>=2;// xr ci.. .rai .rdi
@@ -826,7 +831,7 @@ final public class zn extends a{
 		if(!rcinvalid&&(in&4)==4){//call
 			final int imm10=in>>4;// .. .... ....
 			final int znx=zn+((xr&1)<<2);// nxt after ret
-			final int stkentry=(znx<<12)|(pcr+1);
+			final int stkentry=(znx<<12)|(pc+1);
 			setpcr(imm10);
 			ca.push(stkentry);
 			return;			
@@ -874,7 +879,7 @@ final public class zn extends a{
 					if(rai==1){//lp
 						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
 						final int d=re.get(rdi);
-						lo.push(pcr+1,d);	
+						lo.push(pc+1,d);	
 					}else if(rai==2){//inc
 						re.inc(rdi);	
 					}else if(rai==3){//neg
@@ -892,7 +897,7 @@ final public class zn extends a{
 				}else{
 					if(isret||isnxt){
 						if(!ispcrset){
-							setpcr(pcr+1);
+							setpcr(pc+1);
 						}
 						return;
 					}
@@ -928,7 +933,7 @@ final public class zn extends a{
 			}else if(op==4){//skp
 				if(imm8==0)throw new Error("unencoded op (rol x)");
 				if(ispcrset)throw new Error("unimplemented");
-				setpcr(pcr+imm8);
+				setpcr(pc+imm8);
 				ispcrset=true;
 			}else if(op==5){//add
 				{final int a=re.get(rai);
@@ -951,7 +956,7 @@ final public class zn extends a{
 			}else if(op==1){//skp
 				if(imm8==0)throw new Error("unencoded op (rol x)");
 				if(ispcrset)throw new Error("unimplemented");
-				setpcr(pcr+imm8);
+				setpcr(pc+imm8);
 				ispcrset=true;
 			}else if(op==2){// wait
 				if(!wait){// first time
@@ -982,10 +987,10 @@ final public class zn extends a{
 			}else throw new Error();
 		}
 		if(!ispcrset)
-			setpcr(pcr+1);
+			setpcr(pc+1);
 	}
 	private void setpcr(final int i){
-		pcr=i;
+		pc=i;
 		ir=ro.get(i);
 	}
 //	private String tknsnxtret(final int i){
@@ -1070,5 +1075,5 @@ final public class zn extends a{
 		}
 		return sb.toString();
 	}
-	public boolean wasrerun;
+	boolean wasrerun;
 }
