@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 final public class rom extends a{
 	public void to(final xwriter x){
-		x.div(this,"float");
+		x.div(this,"float panel");
 		x.style(this,"ul li.stp","background-color:#c88");
 		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
