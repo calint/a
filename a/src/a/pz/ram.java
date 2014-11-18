@@ -17,9 +17,9 @@ final public class ram extends a{
 	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
 	public void to(final xwriter x)throws Throwable{
-		x.div(null,"border");
-		x.p("<canvas id=").p(id()).p(" width=").p(256*scl).p(" height=").p(128*scl).p("></canvas>");
-		x.div_();
+//		x.div();
+		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(256*scl).p(" height=").p(128*scl).p("></canvas>");
+//		x.div_();
 	}
 	public void x_rfh(final xwriter x,final String s,final int width,final int height,final int offset,final int nl)throws Throwable{// refresh ram ui
 		final int size_of_short_in_bytes=2;
@@ -42,7 +42,7 @@ final public class ram extends a{
 		final ByteBuffer bb_png=ByteBuffer.wrap(baos.toByteArray());
 		final ByteBuffer bb_png_base64=Base64.getEncoder().encode(bb_png);
 		final String str_png_base64=new String(bb_png_base64.array(),bb_png_base64.position(),bb_png_base64.limit());
-		x.p("var c=$('").p(id()).p("');if(!c)return;var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,").p(str_png_base64).p("';");
+		x.p("var c=$('").p(id()).p("');if(c){var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,").p(str_png_base64).p("';}");
 	}
 	public int get(final int addr){
 		final int a;

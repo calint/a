@@ -7,7 +7,7 @@ final public class rom extends a{
 	private int disppagenrows=128;
 	private int[]rom=new int[size];
 	public void to(final xwriter x){
-		x.div(this,"border float");
+		x.div(this,"float");
 		x.style(this,"ul li.stp","background-color:#c88");
 		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
