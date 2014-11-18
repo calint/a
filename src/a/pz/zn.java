@@ -150,10 +150,9 @@ final public class zn extends a{
 				jskeys.add("cB","$x('"+id+" b')");
 				jskeys.add("cK","alert('info')");
 			}
+			ro.libgstp="#c88";
 		}
-		ro.libgstp="#c88";
-		final boolean dispramble=(bits&8)==8;
-		if(dispramble){
+		if((bits&8)==8){//disp pramble
 			stream_logo(x);
 			stream_copyright(x);
 			x.nl(4);
@@ -163,11 +162,8 @@ final public class zn extends a{
 			x.nl();
 			stream_instruction_table(x);
 		}
-		final boolean dispram=(bits&1)==1;
-		if(dispram)x.nl().r(ra);
-		final boolean dispmenu=(bits&2)==2;
-		if(dispmenu){
-			x.nl();
+		if((bits&1)==1)x.nl().r(ra).nl();//disp ram
+		if((bits&2)==2){//disp menu
 			x.ax(this,"l"," load");
 			x.ax(this,"c"," compile");
 			x.ax(this,"r"," reset");
