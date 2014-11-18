@@ -142,14 +142,19 @@ final public class zn extends a{
 		final String id=id();
 		if(pt()==null){
 			x.style()
-				.css("body","text-align:center;line-height:1.4em;width:50em;color:#222;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px")
+				.css("html","background:#111;color:#080")
+				.css("body","text-align:center;line-height:1.4em;width:50em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("a","color:#008")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
 				.css(".floatclear","clear:both")
 				.css(".panel","padding-left:.5em;padding-right:.5em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
+				.css(".stp","background-color:#020")
+				.css(".brk","background-color:#060")
 			.style_();
+//			ro.libgstp="#030";
 			ajaxsts.to(x);
 			try(final jskeys jskeys=new jskeys(x)){
 				jskeys.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
@@ -165,7 +170,6 @@ final public class zn extends a{
 				jskeys.add("cB","$x('"+id+" b')");
 				jskeys.add("cK","alert('info')");
 			}
-			ro.libgstp="#c88";
 		}
 		final int b=bits.toint();
 		if((b&32)==32){//disp pramble

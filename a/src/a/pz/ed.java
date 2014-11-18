@@ -27,10 +27,10 @@ final public class ed extends a{
 	public a txt;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this,"float textleft panel");
-		x.style();
-		x.css(this,"ol li.brk","background:green");
-		x.css(this,"ol li.stp","background:#c88");
-		x.style_();
+//		x.style();
+//		x.css(this,"ol li.brk","background:green");
+//		x.css(this,"ol li.stp","background:#c88");
+//		x.style_();
 		x.p("source");
 		x.ax(this,"f1"," edit");
 		x.ax(this,"f2"," view");
