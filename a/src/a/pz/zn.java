@@ -141,18 +141,18 @@ final public class zn extends a{
 		x.div(this);
 		final String id=id();
 		if(pt()==null){
-	//		x.el(this,"text-align:center;line-height:1.5em;width:768px;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 			x.style()
-				.css("body","text-align:center;line-height:1.5em;width:50em;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px")
+				.css("body","text-align:center;line-height:1.4em;width:50em;color:#222;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
 				.css(".floatclear","clear:both")
+				.css(".panel","padding-left:.5em;padding-right:.5em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 			.style_();
 			ajaxsts.to(x);
 			try(final jskeys jskeys=new jskeys(x)){
-				jskeys.add("cS","$x('"+id+" s')");
+				jskeys.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
 				jskeys.add("cL","$x('"+id+" l')");
 				jskeys.add("cT","$x('"+id+" n')");
 				jskeys.add("cR","$x('"+id+" r')");
@@ -179,7 +179,7 @@ final public class zn extends a{
 			instructions_table_to(x);
 		}
 		if((b&1)==1)x.r(ra);//disp ram
-		if((b&2)==2){
+		if((b&2)==2){//disp menu
 			x.div()
 				.ax(this,"l"," load")
 				.ax(this,"c"," compile")
@@ -192,13 +192,12 @@ final public class zn extends a{
 				.ax(this,"b"," run-to-break-point")
 			.div_();
 		}
-		final boolean disprom=(b&4)==4;
-		if((b&16)==16){
-			x.div(null,"float")
+		if((b&16)==16){//disp panels
+			x.div(null,"float panel")
 				.span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo)
 			.div_();
 		}
-		if(disprom)x.r(ro);
+		if((b&4)==4)x.r(ro);
 		if((b&8)==8)x.r(sr);
 		x.nl(8);
 		x.div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
