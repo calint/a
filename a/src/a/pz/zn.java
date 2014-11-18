@@ -21,7 +21,7 @@ final public class zn extends a{
 		for(int k=0;k<48;k++)x.p('-');x.nl();
 		x.pl(" pczero "+strdatasize(ram.size));
 		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl("   "+regs.size+" x 32b regs");
+		x.pl("   "+re.size+" x 32b regs");
 		x.pl("   "+strdatasize(ram.size)+" x 32b ram in "+ram.width+"x"+ram.height+" display");
 		x.pl("   "+strdatasize2(rom.size)+" x 16b code cache");
 		x.pl("   "+loops.size+" loops stack");
@@ -96,15 +96,15 @@ final public class zn extends a{
 //	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
 	private path pth;
-	public rom r;
-	public ram rm;
-	public sys sys;
+	public rom ro;
+	public ram ra;
+	public sys sy;
 	public int pcr;
 	int ir;
 	int zn;
-	public regs regs;
-	public calls c;
-	public loops l;
+	public regs re;
+	public calls ca;
+	public loops lo;
 	public a sts;
 	public a coreid;
 	public ed src;
@@ -147,7 +147,7 @@ final public class zn extends a{
 				jskeys.add("cU","$x('"+id+" u')");
 				jskeys.add("cO","$x('"+id+" c')");
 				jskeys.add("cF","$x('"+id+" f')");
-				jskeys.add("cD","$x('"+rm.id()+" rfh')");
+				jskeys.add("cD","$x('"+ra.id()+" rfh')");
 				jskeys.add("cB","$x('"+id+" b')");
 				jskeys.add("cK","alert('info')");
 			}
@@ -165,7 +165,7 @@ final public class zn extends a{
 //			src.libgbrkpt="#8a8";
 //			src.libgstep="#c88";
 //			src.libghvr="#898";
-			r.libgstp="#c88";
+			ro.libgstp="#c88";
 //			x.style(this,"ol li.stp","cursor:pointer;background-color:#c88");
 		}else
 			x.el(this,"display:inline-block");
@@ -187,8 +187,8 @@ final public class zn extends a{
 		if(dispram){
 			if(pt()==null){x.style(ajaxsts,"position:fixed;bottom:0;right:0");ajaxsts.to(x);}
 			x.el("display:block;text-align:center");
-			x.style(rm,"border:1px solid #488");
-			rm.to(x);
+			x.style(ra,"border:1px solid #488");
+			ra.to(x);
 			x.el_().nl();
 		}
 		final boolean dispmenu=(dispbits&2)==2;
@@ -217,7 +217,7 @@ final public class zn extends a{
 		rendpanel(x);
 		if(disprom){
 			x.nl().td();
-			r.to(x);
+			ro.to(x);
 			x.nl().td();
 		}
 		src.to(x);
@@ -230,17 +230,17 @@ final public class zn extends a{
 	void rendpanel(xwriter x)throws Throwable{
 		x.pre();
 		x.span(sts,"font-weight:bold").nl();
-		x.r(sys).nl();
-		x.r(regs);
-		x.r(c);
-		x.r(l);
+		x.r(sy).nl();
+		x.r(re);
+		x.r(ca);
+		x.r(lo);
 		x.pre_();
 	}
 	void rendrom(xwriter x){
-		r.to(x);
+		ro.to(x);
 	}
 	synchronized public void x_i(xwriter x,String s)throws Throwable{
-		ir=r.get(pcr);
+		ir=ro.get(pcr);
 	}
 	boolean running;
 	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
@@ -253,23 +253,23 @@ final public class zn extends a{
 		loadreg=-1;
 //		rom.rst();
 		setpcr(0);
-		c.rst();
-		l.rst();
-		regs.rst();
-		rm.rst();
+		ca.rst();
+		lo.rst();
+		re.rst();
+		ra.rst();
 		mtrinstr=mtrframes=mtrldc=mtrstc=0;
 		for(int i=0;i<rom.size;i++)
-			rm.set(i,r.get(i));
+			ra.set(i,ro.get(i));
 		ev(null,this);
 		wait=notify=stopped=false;
 		if(x==null)return;
 		xfocusline(x);
-		x.xu(sys).xuo(regs).xuo(c).xuo(l);
+		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
 		x.xu(sts.set("refresh display"));
 		x.flush();
 		if((dispbits&1)==1&&mode==0){
 			x.xu(sts.set("refreshing display")).flush();
-			rm.x_rfh(x,s);
+			ra.x_rfh(x,s);
 		}
 		x.xu(sts.set("reseted"));
 	}
@@ -291,7 +291,7 @@ final public class zn extends a{
 		if(x==null)return;
 		x.xuo(src);
 		x.xu(sts);
-		x.xuo(r);
+		x.xuo(ro);
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
@@ -299,14 +299,14 @@ final public class zn extends a{
 			return;
 		}
 		sts.clr();
-		rm.x=x;
+		ra.x=x;
 		final int srclineno=lino.get(pcr);
 		final String srcline=srclines.get(srclineno-1);
 		step();
-		rm.x=null;
+		ra.x=null;
 		if(x==null)return;
 		x.xu(sts.set(srcline));
-		x.xuo(sys).xuo(regs).xuo(c).xuo(l);
+		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
 	}
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
@@ -319,8 +319,8 @@ final public class zn extends a{
 	public void xfocusline(xwriter x){
 		final boolean disprom=(dispbits&4)==4;
 		if(disprom){
-			r.focusline=pcr;
-			r.xfocusline(x);
+			ro.focusline=pcr;
+			ro.xfocusline(x);
 		}
 		if(lino.isEmpty())return;
 		src.focusline=lino.get(pcr);
@@ -351,11 +351,11 @@ final public class zn extends a{
 			if(dt==0)dt=1;
 			sts.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
 			if(x==null)return;
-			x.xu(sts).xu(regs).xu(c).xu(l);
-			r.xfocusline(x);
+			x.xu(sts).xu(re).xu(ca).xu(lo);
+			ro.xfocusline(x);
 			x.flush();
 			if((dispbits&1)==1&&mode==0){
-				rm.x_rfh(x,s);
+				ra.x_rfh(x,s);
 			}
 		}
 	}
@@ -380,16 +380,16 @@ final public class zn extends a{
 			running=false;
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=mtrinstr-instr0;
-			final int l=lino.get(r.focusline);
+			final int l=lino.get(ro.focusline);
 			sts.set(dinstr+" instr, "+dt+" ms, "+l);
 			if(x==null)return;
 			x.xu(sts);
-			x.xu(sys);
-			x.xu(regs);
-			x.xu(c);
-			x.xu(this.l);
+			x.xu(sy);
+			x.xu(re);
+			x.xu(ca);
+			x.xu(this.lo);
 			xfocusline(x);
-			rm.x_rfh(x,s);
+			ra.x_rfh(x,s);
 		}
 	}
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
@@ -413,9 +413,9 @@ final public class zn extends a{
 		}
 		if(x==null)return;
 		xfocusline(x);
-		x.xu(sts).xu(sys).xu(regs).xu(c).xu(l);
+		x.xu(sts).xu(sy).xu(re).xu(ca).xu(lo);
 		if((dispbits&1)==1&&mode==0){
-			rm.x_rfh(x,s);
+			ra.x_rfh(x,s);
 		}
 	}
 	
@@ -425,7 +425,7 @@ final public class zn extends a{
 		int k=0;
 		for(int i=0;i<ram.height;i++){
 			for(int j=0;j<ram.width;j++){
-				final int d=rm.get(k++);
+				final int d=ra.get(k++);
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
 				final int r=((d>>8)&0xf)*0xf;
@@ -442,8 +442,8 @@ final public class zn extends a{
 	}
 	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
 		if(x!=null)x.xu(sts.set("compiling")).flush();
-		rm.rst();;
-		r.rst();
+		ra.rst();;
+		ro.rst();
 		callmap.clear();
 		labels.clear();
 		lino.clear();
@@ -770,9 +770,9 @@ final public class zn extends a{
 				throw new Error("line "+ln+"  not found in lino");
 			if(n==null)
 				throw new Error("line "+lino.get(ln)+": label not found '"+lbl+"'");
-			int instr=r.get(ln);
+			int instr=ro.get(ln);
 			int instr1=instr+(n<<6);//znxr ci.. .... ....
-			r.set(ln,instr1);
+			ro.set(ln,instr1);
 		}
 		//link imm loads
 		for(Iterator<Map.Entry<Integer,String>>i=loadlabelmap.entrySet().iterator();i.hasNext();){
@@ -782,7 +782,7 @@ final public class zn extends a{
 			final Integer n=labels.get(lbl);
 			if(n==null)
 				throw new Error("linker: can not find label '"+lbl+"' load");
-			r.set(ln,n);
+			ro.set(ln,n);
 		}
 		//link skips
 		for(Iterator<Map.Entry<Integer,String>>i=skplabelmap.entrySet().iterator();i.hasNext();){
@@ -792,19 +792,19 @@ final public class zn extends a{
 			final Integer n=labels.get(lbl);
 			if(n==null)
 				throw new Error("linker: can not find label '"+lbl+"' for skp");
-			final int i0=r.get(ln);
+			final int i0=ro.get(ln);
 			final int skp=n-ln;
 			final int i1=i0+(skp<<8);//znxr ci.. .... ....
-			r.set(ln,i1);
+			ro.set(ln,i1);
 		}
 		sts.set(lno+" x 16b ops");
 		if(x==null)return;
 		x.xu(sts);
 		x.flush();
-		x.xuo(r);
+		x.xuo(ro);
 	}		
 	private void romwrite(final int i){
-		r.set(lno,i);
+		ro.set(lno,i);
 		lino.put(lno,lnosrc);
 		lno++;
 	}
@@ -830,7 +830,7 @@ final public class zn extends a{
 //		ir.set(rom.get(pcr.toint()));
 //		rom.focusline=pcr;
 		if(loadreg!=-1){
-			regs.setr(loadreg,ir);
+			re.setr(loadreg,ir);
 			loadreg=-1;
 			setpcr(pcr+1);
 			return;
@@ -860,30 +860,30 @@ final public class zn extends a{
 			final int znx=zn+((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(pcr+1);
 			setpcr(imm10);
-			c.push(stkentry);
+			ca.push(stkentry);
 			return;			
 		}
 		boolean isnxt=false;
 		boolean ispcrset=false;
 		if((xr&1)==1){// nxt
 			isnxt=true;
-			if(l.nxt()){
-				l.pop();
+			if(lo.nxt()){
+				lo.pop();
 			}else{
-				setpcr(l.adr());
+				setpcr(lo.adr());
 				ispcrset=true;
 			}
 		}
 		boolean isret=false;
 		if(!rcinvalid&&!ispcrset&&(xr&2)==2){// ret after loop complete
-			final int stkentry=c.pop();
+			final int stkentry=ca.pop();
 			final int ipc=stkentry&0xfff;
 			final int znx=(stkentry>>12);
 			if((znx&4)==4){// nxt after previous call
-				if(l.nxt()){
-					l.pop();
+				if(lo.nxt()){
+					lo.pop();
 				}else{
-					setpcr(l.adr());
+					setpcr(lo.adr());
 					ispcrset=true;
 				}				
 			}
@@ -905,16 +905,16 @@ final public class zn extends a{
 				if(rai!=0){//branch
 					if(rai==1){//lp
 						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
-						final int d=regs.get(rdi);
-						l.push(pcr+1,d);	
+						final int d=re.get(rdi);
+						lo.push(pcr+1,d);	
 					}else if(rai==2){//inc
-						regs.inc(rdi);	
+						re.inc(rdi);	
 					}else if(rai==3){//neg
-						final int d=regs.get(rdi);
+						final int d=re.get(rdi);
 						final int r=-d;
-						regs.setr(rdi,r);
+						re.setr(rdi,r);
 					}else if(rai==4){//dac
-						final int d=regs.get(rdi);
+						final int d=re.get(rdi);
 						try{
 							ev(null,this,new Integer(d));
 						}catch(final Throwable t){
@@ -931,30 +931,30 @@ final public class zn extends a{
 					loadreg=rdi;
 				}
 			}else if(op==1){// sub
-				final int a=regs.get(rai);
-				final int d=regs.get(rdi);
+				final int a=re.get(rai);
+				final int d=re.get(rdi);
 				final int r=a-d;
 				zneval(r);
-				regs.setr(rai,r);
+				re.setr(rai,r);
 			}else if(op==2){//stc
-				final int d=regs.get(rdi);
-				final int a=regs.getinc(rai);
-				rm.set(a,d);
+				final int d=re.get(rdi);
+				final int a=re.getinc(rai);
+				ra.set(a,d);
 				mtrstc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not
-					final int d=regs.get(rdi);
+					final int d=re.get(rdi);
 					final int r=~d;
-					regs.setr(rdi,r);
+					re.setr(rdi,r);
 				}else{//shf
 //					if(rai==0)throw new Error("unimplmented op");
 					final int a=rai>7?rai-16:rai;
 					final int r;
 					if(a<0)
-						r=regs.get(rdi)<<-a;
+						r=re.get(rdi)<<-a;
 					else
-						r=regs.get(rdi)>>a;
-					regs.setr(rdi,r);
+						r=re.get(rdi)>>a;
+					re.setr(rdi,r);
 					zneval(r);
 				}
 			}else if(op==4){//skp
@@ -963,20 +963,20 @@ final public class zn extends a{
 				setpcr(pcr+imm8);
 				ispcrset=true;
 			}else if(op==5){//add
-				{final int a=regs.get(rai);
-				final int d=regs.get(rdi);
+				{final int a=re.get(rai);
+				final int d=re.get(rdi);
 				final int r=a+d;
 				zneval(r);
-				regs.setr(rai,r);}
+				re.setr(rai,r);}
 			}else if(op==6){//ldc
-				final int a=regs.getinc(rai);
-				final int d=rm.get(a);
-				regs.setr(rdi,d);
+				final int a=re.getinc(rai);
+				final int d=ra.get(a);
+				re.setr(rdi,d);
 				zneval(d);
 				mtrldc++;
 			}else if(op==7){//tx
-				{final int a=regs.get(rai);
-				regs.setr(rdi,a);}
+				{final int a=re.get(rai);
+				re.setr(rdi,a);}
 			}
 		}else{
 			if(op==0){//free
@@ -1001,14 +1001,14 @@ final public class zn extends a{
 			}else if(op==4){// free  
 			}else if(op==5){// sub
 			}else if(op==6){// st
-				final int d=regs.get(rdi);
-				final int a=regs.get(rai);
-				rm.set(a,d);
+				final int d=re.get(rdi);
+				final int a=re.get(rai);
+				ra.set(a,d);
 				mtrstc++;
 			}else if(op==7){// ld
-				final int a=regs.get(rai);
-				final int d=rm.get(a);
-				regs.setr(rdi,d);
+				final int a=re.get(rai);
+				final int d=ra.get(a);
+				re.setr(rdi,d);
 				zneval(d);
 				mtrldc++;
 			}else throw new Error();
@@ -1018,7 +1018,7 @@ final public class zn extends a{
 	}
 	private void setpcr(final int i){
 		pcr=i;
-		ir=r.get(i);
+		ir=ro.get(i);
 	}
 //	private String tknsnxtret(final int i){
 //		final StringBuilder sb=new StringBuilder();
