@@ -21,11 +21,15 @@ final public class zn extends a{
 		for(int k=0;k<48;k++)x.p('-');x.nl();
 		x.pl(" pczero "+strdatasize(ram.size));
 		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl("   "+re.size+" x 32b regs");
-		x.pl("   "+strdatasize(ram.size)+" x 32b ram in "+ram.width+"x"+ram.height+" display");
-		x.pl("   "+strdatasize2(rom.size)+" x 16b code cache");
+		x.pl("   16b instructions");
+		x.pl("   "+re.size+" 20b registers");
+		x.pl("   "+strdatasize(ram.size)+" 20b ram");
+		x.pl("   "+strdatasize2(rom.size)+" 16b code cache");
 		x.pl("   "+loops.size+" loops stack");
 		x.pl("   "+calls.size+" calls stack");
+		x.pl("   "+scr_wi+" x "+scr_hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
+		x.pl("   12b rgb color in 20b pixel");
+		x.pl("   256 sprites collision detection");
 		x.pl("");
 		prambleops(x);
 	}
@@ -235,7 +239,7 @@ final public class zn extends a{
 		x.flush();
 		if((dispbits&1)==1&&mode==0){
 			x.xu(sts.set("refreshing display")).flush();
-			ra.x_rfh(x,s);
+			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 		x.xu(sts.set("reseted"));
 	}
@@ -321,7 +325,7 @@ final public class zn extends a{
 			ro.xfocusline(x);
 			x.flush();
 			if((dispbits&1)==1&&mode==0){
-				ra.x_rfh(x,s);
+				ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 			}
 		}
 	}
@@ -355,9 +359,10 @@ final public class zn extends a{
 			x.xu(ca);
 			x.xu(this.lo);
 			xfocusline(x);
-			ra.x_rfh(x,s);
+			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
+	/**step frame*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
 		if(running)throw new Error("already running");
 		if(x!=null)x.xu(sts.set("running frame")).flush();
@@ -381,16 +386,15 @@ final public class zn extends a{
 		xfocusline(x);
 		x.xu(sts).xu(sy).xu(re).xu(ca).xu(lo);
 		if((dispbits&1)==1&&mode==0){
-			ra.x_rfh(x,s);
+			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
-	
-//	private int snapshotn;
+	final static int scr_wi=256,scr_hi=128;
 	public void snapshot(final OutputStream os)throws IOException{
-		final BufferedImage bi=new BufferedImage(ram.width,ram.height,BufferedImage.TYPE_INT_ARGB);
+		final BufferedImage bi=new BufferedImage(scr_wi,scr_hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
-		for(int i=0;i<ram.height;i++){
-			for(int j=0;j<ram.width;j++){
+		for(int i=0;i<scr_hi;i++){
+			for(int j=0;j<scr_wi;j++){
 				final int d=ra.get(k++);
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
