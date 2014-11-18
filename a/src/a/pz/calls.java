@@ -1,11 +1,7 @@
 package a.pz;
 import b.a;
 import b.xwriter;
-public class calls extends a{
-	static final long serialVersionUID=1;
-	final int size=8;
-	private int[]stk=new int[size];
-	private int ix=0;
+final public class calls extends a{
 	public void to(final xwriter x){
 		x.el(this);
 		x.p("call stack:").p(Integer.toHexString(ix)).nl();
@@ -24,8 +20,17 @@ public class calls extends a{
 		ix--;
 		return stk[ix];
 	}
-	public void rst(){ix=0;for(int i=0;i<stk.length;i++){
-		stk[i]=0;
-	}}
-	public int top(){return stk[ix-1];}
+	public void rst(){
+		ix=0;
+		for(int i=0;i<stk.length;i++){
+			stk[i]=0;
+		}
+	}
+	public int top(){
+		return stk[ix-1];
+	}
+	final int size=8;
+	private int[]stk=new int[size];
+	private int ix=0;
+	private static final long serialVersionUID=1;
 }
