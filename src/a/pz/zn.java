@@ -38,15 +38,14 @@ final public class zn extends a{
 		x.pl("     \\o       l             ");
 	}
 	public void pramble_to(final xwriter x){
-		x.pl("16b instructions");
-		x.pl(re.size+" 20b registers");
 		x.pl(strdatasize(ram.size)+" 20b ram");
-		x.pl(strdatasize2(rom.size)+" 16b code cache");
-		x.pl(loops.size+" loops stack");
-		x.pl(calls.size+" calls stack");
+		x.pl(re.size+" 20b registers");
 		x.pl(scr_wi+" x "+scr_hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
+		x.pl(strdatasize2(rom.size)+" 16b instructions");
+		x.pl(loops.size+" loops stack");
+		x.pl(calls.size+" calls stack");
 	}
 	public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
@@ -135,7 +134,7 @@ final public class zn extends a{
 		private static final long serialVersionUID=1;
 	}
 	public metrics me;
-	public a bits;{bits.set(0b11111);}
+	public a bits;{bits.set(0b11111111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
@@ -175,11 +174,16 @@ final public class zn extends a{
 		if((b&32)==32){//disp pramble
 			logo_to(x);
 			copyright_to(x);
-			x.nl(4);
+		}
+		if((b&64)==64){//disp pramble
 			schematics_to(x);
+		}
+		if((b&128)==128){//disp brochure lines
 			x.nl();
 			pramble_to(x);
 			x.nl();
+		}
+		if((b&256)==256){//disp manual
 			instructions_table_to(x);
 		}
 		if((b&1)==1)x.r(ra);//disp ram
@@ -393,7 +397,7 @@ final public class zn extends a{
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
-	final static int scr_wi=256,scr_hi=128;
+	final static int scr_wi=128,scr_hi=256;
 	public void snapshot_png_to(final OutputStream os)throws IOException{
 		final BufferedImage bi=new BufferedImage(scr_wi,scr_hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;

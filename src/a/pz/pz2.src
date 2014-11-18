@@ -1,17 +1,14 @@
 p++ // frame
 a=0300
-*a=p
+stc a p
 
-b=:blits // address of tag
-b++ // skip size
-c=*b // load blit[0].pos
-
-d=1 // step size
-k=7fff // keyb addr
-ld k e // load
-ifp c+=d // if e>0
-ifz c-=d // if e==0
-*b=c // store
+b=:blits
+b++ // skip len
+ldc b c // first
+c++ // inc
+b=:blits //
+b++ // skip len
+stc b c // store
 
 m=100 // dispwidth
 
@@ -54,7 +51,7 @@ lp c
   g=*f++ // yyxx
   h=*f++ // argb
   g+=a
-  *g++=h nxt ret
+  stc g h nxt ret
 
 ..
 typewriter:
@@ -74,7 +71,7 @@ type:
 lp c
   lp c
     d<<=1
-    ifn *a++=j
+    ifn stc a j
     ifp a++
     ifz a++
     j++ nxt
@@ -93,7 +90,7 @@ lp c
   g-=f // inca
   lp e
     lp f
-      *a++=d nxt
+      stc a d nxt
     a+=g nxt
   nxt ret
 ..
@@ -111,8 +108,8 @@ lp j
     lp i
       d=*b++
       ifz a++ nxt
-      ifp *a++=d nxt
-      ifn *a++=d nxt
+      ifp stc a d nxt
+      ifn stc a d nxt
     b+=e
     a+=e nxt
   nxt ret
@@ -145,9 +142,9 @@ rects:
 . 100c 0ccc 0008 0008
 
 blits:
-. 10
+. 1
 //yyxx adr  wi   hi
-. 1030 0000 0020 0020
+. 3830 0000 0020 0020
 . 2080 0000 0020 0020
 . 4080 0000 0020 0020
 . 6080 0000 0020 0020

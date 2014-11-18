@@ -8,20 +8,21 @@ import b.a;
 import b.xwriter;
 final public class ram extends a{
 	static final long serialVersionUID=1;
-	public final static int width=256*2;
-	public final static int height=128*2;	
-	public final static int size=width*height;
-	final private int scl=2;
+	public final static int width=128;
+	public final static int height=256*16;	
+	public final static int size=height*width;
 	private int[]ram=new int[size];
+	final private int scl=2;
 	public ram(){rst();}
 //	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
+	final int wi=128,hi=256;
 	public void to(final xwriter x)throws Throwable{
-		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(256*scl).p(" height=").p(128*scl).p("></canvas>");
+		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 	}
 	public void x_rfh(final xwriter x,final String s,final int width,final int height,final int offset,final int nl)throws Throwable{// refresh ram ui
-		final int size_of_short_in_bytes=2;
-		final ByteArrayOutputStream baos=new ByteArrayOutputStream(ram.length*size_of_short_in_bytes);
+		final int pixel_size_in_bytes=4;
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream(width*height*pixel_size_in_bytes);
 		final BufferedImage bi=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
 		for(int i=0;i<height;i++){
