@@ -17,7 +17,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		final byte cmd=bb.get();
 		if(cmd==0){//key
 			final byte key=bb.get();
-			v.rm.set(0x0080*0x0100-1,key);
+			v.ra.set(0x0080*0x0100-1,key);
 		}else if(cmd==49){//compile
 //			System.out.println(cmd);
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
