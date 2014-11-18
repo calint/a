@@ -114,7 +114,7 @@ final public class zn extends a{
 	/**coreid*/public a co;
 	/**sourcecode*/public ed sr;
 //	public int mode;//1:multicore
-	final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
+	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
 	private int lno;
 	private int lnosrc;
 	private final Map<Integer,String>callmap=new HashMap<Integer,String>();
@@ -123,10 +123,10 @@ final public class zn extends a{
 	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
 	private final List<String>srclines=new ArrayList<String>(32);
 	private int loadreg=-1;
-	long mtrinstr;
-	long mtrframes;
-	long mtrldc;
-	long mtrstc;
+	private long mtrinstr;
+	private long mtrframes;
+	private long mtrldc;
+	private long mtrstc;
 	public a bits;{bits.set(0b111111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
@@ -199,7 +199,7 @@ final public class zn extends a{
 	synchronized public void x_(xwriter x,String s)throws Throwable{}
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
 //	synchronized public void x_i(xwriter x,String s)throws Throwable{ir=ro.get(pc);}
-	boolean running;
+	private boolean running;
 	/**stoprunning*/
 	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	boolean stopped;
@@ -249,9 +249,7 @@ final public class zn extends a{
 			st.set("loaded default");
 		}
 		if(x==null)return;
-		x.xuo(sr);
-		x.xu(st);
-		x.xuo(ro);
+		x.xuo(sr).xu(st).xuo(ro);
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
@@ -277,7 +275,7 @@ final public class zn extends a{
 			Thread.sleep(500);
 		}
 	}
-	public void xfocusline(xwriter x){
+	private void xfocusline(xwriter x){
 		final int b=bits.toint();
 		final boolean disprom=(b&4)==4;
 		if(disprom){
@@ -301,7 +299,7 @@ final public class zn extends a{
 			step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(wasrerun)
+			if(last_instruction_was_end_of_frame)
 				ev(null,this);//refresh display
 			if(dt>runms)
 				break;
@@ -365,8 +363,8 @@ final public class zn extends a{
 		final long t0=System.currentTimeMillis();
 		while(running){
 			step();
-			if(wasrerun){
-				wasrerun=false;
+			if(last_instruction_was_end_of_frame){
+				last_instruction_was_end_of_frame=false;
 				break;
 			}
 		}
@@ -780,9 +778,9 @@ final public class zn extends a{
 		if(i>15)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");		
 		return i;
 	}
-	boolean wait;
-	boolean notify;
-	void step(){
+	private boolean wait;
+	private boolean notify;
+	private void step(){
 		if(wait){
 			if(notify){
 				synchronized(this){wait=notify=false;}
@@ -802,7 +800,7 @@ final public class zn extends a{
 			return;
 		}
 		if(ir==0xffff){//? move
-			wasrerun=true;
+			last_instruction_was_end_of_frame=true;
 			setpcr(0);
 			mtrframes++;
 			try{ev(null,this,null);}catch(Throwable t){throw new Error(t);}
@@ -986,25 +984,11 @@ final public class zn extends a{
 		pc=i;
 		ir=ro.get(i);
 	}
-//	private String tknsnxtret(final int i){
-//		final StringBuilder sb=new StringBuilder();
-//		if((i&4)==4)sb.append(" nxt");
-//		if((i&8)==8)sb.append(" ret");
-//		return sb.toString();
-//	}
-	private void zneval(int i){
+	private void zneval(final int i){
 		if(i==0){zn=1;return;}
 		if(i<0){zn=2;return;}
 		zn=3;
 	}
-	String zntkns(){
-		if(zn==0){return "";}
-		if(zn==1){return "z";}
-		if(zn==2){return "n";}
-		if(zn==3){return "p";}
-		throw new Error();
-	}
-//	private String regnm(final int ri){return ""+(char)('a'+ri);}
 	public final static String fld(final String def,final String s){
 		final String s1=s.length()>def.length()?s.substring(s.length()-def.length()):s;
 		final int a=def.length()-s1.length();
@@ -1068,5 +1052,5 @@ final public class zn extends a{
 		}
 		return sb.toString();
 	}
-	boolean wasrerun;
+	private boolean last_instruction_was_end_of_frame;
 }
