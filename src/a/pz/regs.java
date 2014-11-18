@@ -6,7 +6,7 @@ final public class regs extends a{
 	final public int size=16;
 	private int[]r=new int[size];
 	public void to(final xwriter x){
-		x.div(this,"border");
+		x.div(this);
 		x.p("registers:").nl();
 		final String pad="0000";
 		for(int i=0;i<r.length;){
