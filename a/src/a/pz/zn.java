@@ -125,57 +125,24 @@ final public class zn extends a{
 	public int dispbits=-1;
 	public void setpth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
-		if(pt()==null)x.title("pczero - 16 bits vintage edition");
-		if(mode==1){
-			x.el(this);
-//			x.p(coreid);
-			rendpanel(x);
-			src.to(x);
-			x.el_();
-			return;
+		x.el(this,"width:768px;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+		final String id=id();
+		try(final jskeys jskeys=new jskeys(x)){
+			jskeys.add("cS","$x('"+id+" s')");
+			jskeys.add("cL","$x('"+id+" l')");
+			jskeys.add("cT","$x('"+id+" n')");
+			jskeys.add("cR","$x('"+id+" r')");
+			jskeys.add("cF","$x('"+id+" i')");
+			jskeys.add("cG","$x('"+id+" g')");
+			jskeys.add("cU","$x('"+id+" u')");
+			jskeys.add("cO","$x('"+id+" c')");
+			jskeys.add("cF","$x('"+id+" f')");
+			jskeys.add("cD","$x('"+ra.id()+" rfh')");
+			jskeys.add("cB","$x('"+id+" b')");
+			jskeys.add("cK","alert('info')");
 		}
-		if(pt()==null){
-			x.el(this,"width:768px;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
-			final String id=id();
-			try(final jskeys jskeys=new jskeys(x)){
-				jskeys.add("cS","$x('"+id+" s')");
-				jskeys.add("cL","$x('"+id+" l')");
-				jskeys.add("cT","$x('"+id+" n')");
-				jskeys.add("cR","$x('"+id+" r')");
-				jskeys.add("cF","$x('"+id+" i')");
-				jskeys.add("cG","$x('"+id+" g')");
-				jskeys.add("cU","$x('"+id+" u')");
-				jskeys.add("cO","$x('"+id+" c')");
-				jskeys.add("cF","$x('"+id+" f')");
-				jskeys.add("cD","$x('"+ra.id()+" rfh')");
-				jskeys.add("cB","$x('"+id+" b')");
-				jskeys.add("cK","alert('info')");
-			}
-			x.nl().style();
-			x.nl().css(this,"text-align:center");
-//			x.nl().cssfont("tini","/ttf/tini.ttf");
-//			x.nl().css("*","white-space:pre");
-//			x.nl().css("*","-webkit-transition: all .4s ease-in-out;");
-//			x.nl().css("*","-moz-transition: all .4s ease-in-out;");
-//			x.nl().css("*","-o-transition: all .4s ease-in-out;");
-//			x.nl().css("*","transition: all .4s ease-in-out;");
-//			x.nl().css("a","color:blue");
-//			x.nl().css("a:focus,a:hover,a:active","color:red;text-shadow:0 0 .1em rgba(0,0,0,.5);");
-			x.nl().style_();
-//			src.libgbrkpt="#8a8";
-//			src.libgstep="#c88";
-//			src.libghvr="#898";
-			ro.libgstp="#c88";
-//			x.style(this,"ol li.stp","cursor:pointer;background-color:#c88");
-		}else
-			x.el(this,"display:inline-block");
-				
-		if(mode==1){
-			rendpanel(x);
-			src.to(x);
-			x.el_();
-			return;
-		}
+		x.nl().style(this,"text-align:center");
+		ro.libgstp="#c88";
 		final boolean dispramble=(dispbits&8)==8;
 		if(dispramble){
 			x.pre();
@@ -212,8 +179,7 @@ final public class zn extends a{
 			x.table("d");
 			x.nl().tr().td();
 		}
-		if(mode==1)x.el("display:table;margin-left:auto;margin-right:auto");
-		if(mode==0)x.el("display:table;margin-left:auto;text-align:right;margin-right:1em");
+		x.el("display:table;margin-left:auto;text-align:right;margin-right:1em");
 		rendpanel(x);
 		if(disprom){
 			x.nl().td();
