@@ -17,16 +17,16 @@ import b.path;
 import b.xwriter;
 final public class zn extends a{
 	private static final long serialVersionUID=1;
-	public void stream_logo(final xwriter x){
+	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 		x.pl("clare "+strdatasize(ram.size));
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
-	public void stream_copyright(final xwriter x){
+	public void copyright_to(final xwriter x){
 //		x.pl("(c) 1984 some rights reserved ltd");
 	}
-	public void stream_schematics(final xwriter x){
+	public void schematics_to(final xwriter x){
 		x.pl("|_______|______|____|____|  ");
 		x.pl("|z n x r|c i 00|0000|0000|  ");
 		x.pl("|_______|______|____|____|  ");
@@ -37,7 +37,7 @@ final public class zn extends a{
 		x.pl("    \\r g   t l m            ");
 		x.pl("     \\o       l             ");
 	}
-	public void stream_pramble(final xwriter x){
+	public void pramble_to(final xwriter x){
 		x.pl("16b instructions");
 		x.pl(re.size+" 20b registers");
 		x.pl(strdatasize(ram.size)+" 20b ram");
@@ -48,7 +48,7 @@ final public class zn extends a{
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
 	}
-	public void stream_instruction_table(final xwriter x){
+	public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
@@ -104,9 +104,9 @@ final public class zn extends a{
 	public rom ro;
 	public ram ra;
 	public sys sy;
-	int pc;
-	int ir;
-	int zn;
+	private int pc;
+	private int ir;
+	private int zn;
 	public regs re;
 	public calls ca;
 	public loops lo;
@@ -123,10 +123,14 @@ final public class zn extends a{
 	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
 	private final List<String>srclines=new ArrayList<String>(32);
 	private int loadreg=-1;
-	private long mtrinstr;
-	private long mtrframes;
-	private long mtrldc;
-	private long mtrstc;
+	private static class metrics{
+		long instr;
+		long frames;
+		long ldc;
+		long stc;
+		public void rst(){instr=frames=ldc=stc=0;}
+	}
+	private metrics m;
 	public a bits;{bits.set(0b111111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
@@ -161,14 +165,14 @@ final public class zn extends a{
 		}
 		final int b=bits.toint();
 		if((b&32)==32){//disp pramble
-			stream_logo(x);
-			stream_copyright(x);
+			logo_to(x);
+			copyright_to(x);
 			x.nl(4);
-			stream_schematics(x);
+			schematics_to(x);
 			x.nl();
-			stream_pramble(x);
+			pramble_to(x);
 			x.nl();
-			stream_instruction_table(x);
+			instructions_table_to(x);
 		}
 		if((b&1)==1)x.r(ra);//disp ram
 		if((b&2)==2){
@@ -196,12 +200,12 @@ final public class zn extends a{
 		x.div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		x.div_();
 	}
-	synchronized public void x_(xwriter x,String s)throws Throwable{}
+//	synchronized public void x_(xwriter x,String s)throws Throwable{}
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
 //	synchronized public void x_i(xwriter x,String s)throws Throwable{ir=ro.get(pc);}
 	private boolean running;
-	/**stoprunning*/
-	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
+//	/**stoprunning*/
+//	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	boolean stopped;
 	public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
@@ -215,7 +219,7 @@ final public class zn extends a{
 		lo.rst();
 		re.rst();
 		ra.rst();
-		mtrinstr=mtrframes=mtrldc=mtrstc=0;
+		m.rst();
 		for(int i=0;i<rom.size;i++)
 			ra.set(i,ro.get(i));
 		ev(null,this);
@@ -292,8 +296,8 @@ final public class zn extends a{
 		running=true;
 		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
-		final long minstr=mtrinstr;
-		final long mframes=mtrframes;
+		final long minstr=m.instr;
+		final long mframes=m.frames;
 		long dt=0;
 		while(running){
 			step();
@@ -306,8 +310,8 @@ final public class zn extends a{
 		}
 		if(running){
 			running=false;
-			final long dminstr=mtrinstr-minstr;
-			final long dmframes=mtrframes-mframes;
+			final long dminstr=m.instr-minstr;
+			final long dmframes=m.frames-mframes;
 			if(dt==0)dt=1;
 			st.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
 			if(x==null)return;
@@ -326,7 +330,7 @@ final public class zn extends a{
 		running=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 		final long t0=System.currentTimeMillis();
-		final long instr0=mtrinstr;
+		final long instr0=m.instr;
 		st.clr();
 		while(running){
 			boolean go=true;
@@ -341,7 +345,7 @@ final public class zn extends a{
 		if(running){
 			running=false;
 			final long dt=System.currentTimeMillis()-t0;
-			final long dinstr=mtrinstr-instr0;
+			final long dinstr=m.instr-instr0;
 			final int l=lino.get(ro.focusline);
 			st.set(dinstr+" instr, "+dt+" ms, "+l);
 			if(x==null)return;
@@ -359,7 +363,7 @@ final public class zn extends a{
 		if(running)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
 		running=true;
-		final long instr0=mtrinstr;
+		final long instr0=m.instr;
 		final long t0=System.currentTimeMillis();
 		while(running){
 			step();
@@ -370,8 +374,8 @@ final public class zn extends a{
 		}
 		if(running){
 			final long dt=System.currentTimeMillis()-t0;
-			final long dinstr=mtrinstr-instr0;
-			st.set("#"+mtrframes+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
+			final long dinstr=m.instr-instr0;
+			st.set("#"+m.frames+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
 			running=false;
 		}
 		if(x==null)return;
@@ -383,7 +387,7 @@ final public class zn extends a{
 		}
 	}
 	final static int scr_wi=256,scr_hi=128;
-	public void stream_snapshot(final OutputStream os)throws IOException{
+	public void snapshot_png_to(final OutputStream os)throws IOException{
 		final BufferedImage bi=new BufferedImage(scr_wi,scr_hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
 		for(int i=0;i<scr_hi;i++){
@@ -789,7 +793,7 @@ final public class zn extends a{
 				return;
 			}
 		}
-		mtrinstr++;
+		m.instr++;
 //		if(pcr>=rom.size)throw new Error("program out of bounds");
 //		ir.set(rom.get(pcr.toint()));
 //		rom.focusline=pcr;
@@ -802,8 +806,8 @@ final public class zn extends a{
 		if(ir==0xffff){//? move
 			last_instruction_was_end_of_frame=true;
 			setpcr(0);
-			mtrframes++;
-			try{ev(null,this,null);}catch(Throwable t){throw new Error(t);}
+			m.frames++;
+			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
 		}
 		
@@ -904,7 +908,7 @@ final public class zn extends a{
 				final int d=re.get(rdi);
 				final int a=re.getinc(rai);
 				ra.set(a,d);
-				mtrstc++;
+				m.stc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not
 					final int d=re.get(rdi);
@@ -937,7 +941,7 @@ final public class zn extends a{
 				final int d=ra.get(a);
 				re.setr(rdi,d);
 				zneval(d);
-				mtrldc++;
+				m.ldc++;
 			}else if(op==7){//tx
 				{final int a=re.get(rai);
 				re.setr(rdi,a);}
@@ -968,13 +972,13 @@ final public class zn extends a{
 				final int d=re.get(rdi);
 				final int a=re.get(rai);
 				ra.set(a,d);
-				mtrstc++;
+				m.stc++;
 			}else if(op==7){// ld
 				final int a=re.get(rai);
 				final int d=ra.get(a);
 				re.setr(rdi,d);
 				zneval(d);
-				mtrldc++;
+				m.ldc++;
 			}else throw new Error();
 		}
 		if(!ispcrset)
@@ -1053,4 +1057,21 @@ final public class zn extends a{
 		return sb.toString();
 	}
 	private boolean last_instruction_was_end_of_frame;
+	
+	public static class sys extends a{
+		public void to(final xwriter x)throws Throwable{
+			final zn c=(zn)pt(zn.class);
+			x.div(this)
+				.p(zntkns(c.zn)).spc().p("[").p(fld("000",Integer.toHexString(c.pc))).p("]:").p(fld("0000",Integer.toHexString(c.ir)))
+			.div_();
+		}
+		private static String zntkns(final int zn){
+			if(zn==0){return "";}
+			if(zn==1){return "z";}
+			if(zn==2){return "n";}
+			if(zn==3){return "p";}
+			throw new Error();
+		}
+		private static final long serialVersionUID=1;
+	}
 }
