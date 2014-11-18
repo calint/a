@@ -6,7 +6,7 @@ final public class calls extends a{
 		x.el(this);
 		x.p("call stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<stk.length;){
-			x.p(vintage.fld("0000",Integer.toHexString(stk[i++]))).spc();
+			x.p(zn.fld("0000",Integer.toHexString(stk[i++]))).spc();
 			if((i%4)==0)
 				x.nl();
 		}
@@ -29,7 +29,7 @@ final public class calls extends a{
 	public int top(){
 		return stk[ix-1];
 	}
-	final int size=8;
+	final public static int size=8;
 	private int[]stk=new int[size];
 	private int ix=0;
 	private static final long serialVersionUID=1;

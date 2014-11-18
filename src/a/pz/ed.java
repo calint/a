@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import b.a;
 import b.xwriter;
-final public class srcviwr extends a{
+final public class ed extends a{
 	static final long serialVersionUID=11;
 	public boolean edit=false;
 	int focusline;
