@@ -1065,7 +1065,7 @@ final public class zn extends a{
 		public void to(final xwriter x)throws Throwable{
 			final zn c=(zn)pt(zn.class);
 			x.div(this)
-				.p(zntkns(c.zn)).spc().p("[").p(fld("000",Integer.toHexString(c.pc))).p("]:").p(fld("0000",Integer.toHexString(c.ir)))
+				.p("[").p(fld("000",Integer.toHexString(c.pc))).p("]:").p(fld("0000",Integer.toHexString(c.ir))).spc().p(zntkns(c.zn))
 			.div_();
 		}
 		private static String zntkns(final int zn){
