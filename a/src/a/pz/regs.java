@@ -6,7 +6,7 @@ final public class regs extends a{
 	final public int size=16;
 	private int[]r=new int[size];
 	public void to(final xwriter x){
-		x.el(this);
+		x.div(this,"","border:1px dotted","");
 		x.p("registers:").nl();
 		final String pad="0000";
 		for(int i=0;i<r.length;){
@@ -19,7 +19,7 @@ final public class regs extends a{
 			if((i%4)==0)
 				x.nl();
 		}
-		x.el_();
+		x.div_();
 	}
 	public void rst(){for(int i=0;i<r.length;i++)r[i]=0;}
 	public int getinc(final int ri){return r[ri]++;}

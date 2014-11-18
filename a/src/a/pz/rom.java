@@ -7,9 +7,8 @@ final public class rom extends a{
 	private int disppagenrows=128;
 	private int[]rom=new int[size];
 	public void to(final xwriter x){
-		x.el(this);
+		x.div(this,"","float:left;border:1px dotted","");
 		x.style(this,"ul li.stp","background-color:#c88");
-		x.pre();
 		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
 //		x.style("el.rom el","background:#eea");
@@ -38,8 +37,7 @@ final public class rom extends a{
 				break;
 		}
 		x.ul_();
-		x.pre_();
-		x.el_();
+		x.div_();
 	}
 	int focusline=-1;
 	private int lstfocusline=focusline;

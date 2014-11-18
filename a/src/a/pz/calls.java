@@ -3,14 +3,14 @@ import b.a;
 import b.xwriter;
 final public class calls extends a{
 	public void to(final xwriter x){
-		x.el(this);
+		x.div(this,"","border:1px dotted","");
 		x.p("call stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<stk.length;){
 			x.p(zn.fld("0000",Integer.toHexString(stk[i++]))).spc();
 			if((i%4)==0)
 				x.nl();
 		}
-		x.el_();
+		x.div_();
 	}
 	public void push(final int v){
 		stk[ix]=v;

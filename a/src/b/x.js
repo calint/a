@@ -16,7 +16,7 @@ $s=function(eid,txt){
 			$b(e);
 	}
 }
-$o=function(eid,txt){$(eid).outerHTML=txt;}
+$o=function(eid,txt){var e=$(eid);if(!e)return;e.outerHTML=txt;}
 $p=function(eid,txt){
 	var e=$(eid);
 	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){

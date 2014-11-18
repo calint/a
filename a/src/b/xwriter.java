@@ -56,7 +56,8 @@ public final class xwriter{
 	public xwriter div(){return tag("div");}
 	public xwriter div(final a e){return tago("div").attr("id",e.id()).tagoe();}
 	public xwriter div(final a e,final String cls,final String style,final String intaginline){
-		tago("div").attr("id",e.id());
+		tago("div");
+		if(e!=null)attr("id",e.id());
 		if(!isempty(cls))attr("class",cls);
 		if(!isempty(style))attr("style",style);
 		if(!isempty(intaginline))spc().p(intaginline);

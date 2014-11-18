@@ -127,12 +127,14 @@ final public class zn extends a{
 	long mtrframes;
 	long mtrldc;
 	long mtrstc;
-	int bits=-1;
+	public a bits;{bits.set(0b111111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
-		x.el(this,"text-align:center;line-height:1.5em;width:768px;color:#222;margin-left:auto;margin-right:auto;padding:16em 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+		x.div(this,"","border:1px dotted","");
 		final String id=id();
 		if(pt()==null){
+	//		x.el(this,"text-align:center;line-height:1.5em;width:768px;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+			x.style("body","text-align:center;line-height:1.5em;width:50em;color:#222;margin-left:auto;margin-right:auto;padding-left:8em;padding-top:3em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 			x.style(ajaxsts,"position:fixed;bottom:0;right:0");
 			ajaxsts.to(x);
 			x.style("body","text-align:center");
@@ -152,7 +154,8 @@ final public class zn extends a{
 			}
 			ro.libgstp="#c88";
 		}
-		if((bits&8)==8){//disp pramble
+		final int b=bits.toint();
+		if((b&32)==32){//disp pramble
 			stream_logo(x);
 			stream_copyright(x);
 			x.nl(4);
@@ -162,54 +165,44 @@ final public class zn extends a{
 			x.nl();
 			stream_instruction_table(x);
 		}
-		if((bits&1)==1)x.nl().r(ra).nl();//disp ram
-		if((bits&2)==2){//disp menu
-			x.ax(this,"l"," load");
-			x.ax(this,"c"," compile");
-			x.ax(this,"r"," reset");
-			x.ax(this,"f"," frame");
-			x.ax(this,"n"," step");
-			x.ax(this,"g"," go");
-			x.ax(this,"u"," run");
-			x.ax(this,"s"," save");
-			x.ax(this,"b"," run-to-break-point");
+		if((b&1)==1)x.r(ra);//disp ram
+		if((b&2)==2){
+			x.div(null,"","border:1px dotted","")
+				.ax(this,"l"," load")
+				.ax(this,"c"," compile")
+				.ax(this,"r"," reset")
+				.ax(this,"f"," frame")
+				.ax(this,"n"," step")
+				.ax(this,"g"," go")
+				.ax(this,"u"," run")
+				.ax(this,"s"," save")
+				.ax(this,"b"," run-to-break-point")
+			.div_();
 		}
-		final boolean disprom=(bits&4)==4;
-		if(disprom){
-			x.style("table.d tr td","padding-left:1em;text-align:left");
-			x.style("table.d tr td:first-child","padding-left:0em");
-			x.table("d");
-			x.nl().tr().td();
+		final boolean disprom=(b&4)==4;
+//		if(disprom){
+//			x.style("table.d tr td","padding-left:1em;text-align:left")
+//			.style("table.d tr td:first-child","padding-left:0em")
+//			.table("d").tr().td();
+//		}
+//		x.el("display:table;margin-left:auto;text-align:right;margin-right:1em");
+		if((b&16)==16){
+			x.div(null,"","float:left;border:1px dotted","")
+				.span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo)
+			.div_();
 		}
-		x.el("display:table;margin-left:auto;text-align:right;margin-right:1em");
-		rendpanel(x);
-		if(disprom){
-			x.nl().td();
-			ro.to(x);
-			x.nl().td();
-		}
-		sr.to(x);
-		if(disprom){
-			x.nl().table_();
-		}
-		x.el_();
+//		if(disprom)x.td().r(ro).td();
+		if(disprom)x.r(ro);
+		if((b&8)==8)x.r(sr);
+//		if(disprom)x.nl().table_();
+//		x.el_();
+		x.nl(8);
+		x.div(null,"","border:1px dotted;clear:both","").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
+		x.div_();
 	}
+	synchronized public void x_(xwriter x,String s)throws Throwable{}
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
-	void rendpanel(xwriter x)throws Throwable{
-		x.pre();
-		x.span(st,"font-weight:bold").nl();
-		x.r(sy).nl();
-		x.r(re);
-		x.r(ca);
-		x.r(lo);
-		x.pre_();
-	}
-	void rendrom(xwriter x){
-		ro.to(x);
-	}
-	synchronized public void x_i(xwriter x,String s)throws Throwable{
-		ir=ro.get(pc);
-	}
+	synchronized public void x_i(xwriter x,String s)throws Throwable{ir=ro.get(pc);}
 	boolean running;
 	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	boolean stopped;
@@ -235,7 +228,8 @@ final public class zn extends a{
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
 		x.xu(st.set("refresh display"));
 		x.flush();
-		if((bits&1)==1){
+		final int b=bits.toint();
+		if((b&1)==1){
 			x.xu(st.set("refreshing display")).flush();
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
@@ -286,7 +280,8 @@ final public class zn extends a{
 		}
 	}
 	public void xfocusline(xwriter x){
-		final boolean disprom=(bits&4)==4;
+		final int b=bits.toint();
+		final boolean disprom=(b&4)==4;
 		if(disprom){
 			ro.focusline=pc;
 			ro.xfocusline(x);
@@ -323,7 +318,8 @@ final public class zn extends a{
 			x.xu(st).xu(re).xu(ca).xu(lo);
 			ro.xfocusline(x);
 			x.flush();
-			if((bits&1)==1){
+			final int b=bits.toint();
+			if((b&1)==1){
 				ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 			}
 		}
@@ -384,7 +380,8 @@ final public class zn extends a{
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
-		if((bits&1)==1){
+		final int b=bits.toint();
+		if((b&1)==1){
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
