@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 public class loops extends a{
 	public void to(final xwriter x){
-		x.el(this);
+		x.div(this,"","border:1px dotted","");
 		x.p("loop stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<size;){
 			x.p(zn.fld("0000",Integer.toHexString(stkadr[i]))).p(":");
@@ -12,7 +12,7 @@ public class loops extends a{
 			if((i%2)==0)
 				x.nl();
 		}
-		x.el_();
+		x.div_();
 	}
 	public void push(final int addr,final int counter){
 		stkadr[ix]=addr;

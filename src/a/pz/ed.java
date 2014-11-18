@@ -26,7 +26,7 @@ final public class ed extends a{
 	}
 	public a txt;
 	public void to(final xwriter x)throws Throwable{
-		x.el(this);
+		x.div(this,"","float:left;border:1px dotted;text-align:left","");
 		x.style();
 		x.css(this,"ol li.brk","background:green");
 		x.css(this,"ol li.stp","background:#c88");
@@ -38,7 +38,7 @@ final public class ed extends a{
 			x.nl();
 			x.style(txt,"outline:none;width:20em;height:100%;min-height:128em;resize:none;border-left:0px dotted #333;color:#444;padding:0 1em 0 .5em;line-height:1.5em;background:#fef");
 			x.inptxtarea(txt);
-			x.el_();
+			x.div_();
 			return;
 		}
 		final StringReader sr=new StringReader(txt.toString());
@@ -55,7 +55,7 @@ final public class ed extends a{
 		}
 		x.tage("ol");
 //		x.style("ol li:hover","cursor:pointer;background-color:"+libghvr);
-		x.el_();
+		x.div_();
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
