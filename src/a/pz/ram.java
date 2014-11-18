@@ -14,12 +14,10 @@ final public class ram extends a{
 	final private int scl=2;
 	private int[]ram=new int[size];
 	public ram(){rst();}
-	static String labelrefresh="*";
+//	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
 	public void to(final xwriter x)throws Throwable{
-//		x.div();
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(256*scl).p(" height=").p(128*scl).p("></canvas>");
-//		x.div_();
 	}
 	public void x_rfh(final xwriter x,final String s,final int width,final int height,final int offset,final int nl)throws Throwable{// refresh ram ui
 		final int size_of_short_in_bytes=2;

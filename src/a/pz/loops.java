@@ -36,7 +36,7 @@ final public class loops extends a{
 	public int adr(){
 		return stkadr[ix-1];
 	}
-	final static int size=8;
+	final public static int size=8;
 	private int[]stkctr=new int[size];
 	private int[]stkadr=new int[size];
 	private int ix=0;
