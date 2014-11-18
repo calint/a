@@ -198,8 +198,9 @@ final public class zn extends a{
 	}
 	synchronized public void x_(xwriter x,String s)throws Throwable{}
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
-	synchronized public void x_i(xwriter x,String s)throws Throwable{ir=ro.get(pc);}
+//	synchronized public void x_i(xwriter x,String s)throws Throwable{ir=ro.get(pc);}
 	boolean running;
+	/**stoprunning*/
 	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	boolean stopped;
 	public void x_r(xwriter x,String s)throws Throwable{
@@ -231,6 +232,7 @@ final public class zn extends a{
 		}
 		x.xu(st.set("reseted"));
 	}
+	/**save source*/
 	public void x_s(final xwriter x,final String s)throws Throwable{
 		sr.txt.to(pth);
 		st.set("saved "+pth.name());
@@ -267,7 +269,7 @@ final public class zn extends a{
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
 	}
-	/**step until stopped*/
+	/**go*/
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
 		while(true){
 			x_n(x,s);
@@ -320,6 +322,7 @@ final public class zn extends a{
 			}
 		}
 	}
+	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
 		if(running)throw new Error("already running");
 		running=true;
@@ -353,7 +356,7 @@ final public class zn extends a{
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
-	/**step frame*/
+	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
 		if(running)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
@@ -402,6 +405,7 @@ final public class zn extends a{
 //		
 //		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
 	}
+	/**compile*/
 	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
 		if(x!=null)x.xu(st.set("compiling")).flush();
 		ra.rst();;
