@@ -17,21 +17,22 @@ import b.path;
 import b.xwriter;
 final public class zn extends a{
 	private static final long serialVersionUID=1;
-	private void pramble(final xwriter x){
-		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl(" pczero "+strdatasize(ram.size));
-		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl("   16b instructions");
-		x.pl("   "+re.size+" 20b registers");
-		x.pl("   "+strdatasize(ram.size)+" 20b ram");
-		x.pl("   "+strdatasize2(rom.size)+" 16b code cache");
-		x.pl("   "+loops.size+" loops stack");
-		x.pl("   "+calls.size+" calls stack");
-		x.pl("   "+scr_wi+" x "+scr_hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
-		x.pl("   12b rgb color in 20b pixel");
-		x.pl("   256 sprites collision detection");
-		x.pl("");
-		prambleops(x);
+	private void stream_pramble(final xwriter x){
+		x.pl("16b instructions");
+		x.pl(re.size+" 20b registers");
+		x.pl(strdatasize(ram.size)+" 20b ram");
+		x.pl(strdatasize2(rom.size)+" 16b code cache");
+		x.pl(loops.size+" loops stack");
+		x.pl(calls.size+" calls stack");
+		x.pl(scr_wi+" x "+scr_hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
+		x.pl("12b rgb color in 20b pixel");
+		x.pl("256 sprites collision detection");
+	}
+	private void stream_logo_to(final xwriter x){
+		final int con_wi=64;
+		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
+		x.pl("clare "+strdatasize(ram.size));
+		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
 	private final static int opload=0x000;
 	private final static int oplp=0x100;
@@ -50,21 +51,7 @@ final public class zn extends a{
 	private final static int opcall=0x10;
 	private final static int opst=0x0d8;//?
 	private final static int opld=0x0f8;//?
-	public static void prambleops(final xwriter x){
-//		x.pl("  op format znxrci              ");
-//		x.el("text-align:left;border:1px solid red;display:inline-table");
-		x.pl("pc ir");
-		x.pl("|_______|______|____|____|  ");
-		x.pl("|z n x r|c i 00|0000|0000|  ");
-		x.pl("|_______|______|____|____|  ");
-		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
-		x.pl(" \\    n  \\      \\....\\....  ");
-		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
-		x.pl("   \\e e t e a m             ");
-		x.pl("    \\r g   t l m            ");
-		x.pl("     \\o       l             ");
-//		x.elend();
-		x.nl();
+	private static void stream_instruction_table(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
@@ -96,6 +83,17 @@ final public class zn extends a{
 		x.pl(":notify: "+fld("x000",Integer.toHexString(opnotify))+" : notify               :");
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
+	}
+	private static void stream_schematics(final xwriter x){
+		x.pl("|_______|______|____|____|  ");
+		x.pl("|z n x r|c i 00|0000|0000|  ");
+		x.pl("|_______|______|____|____|  ");
+		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
+		x.pl(" \\    n  \\      \\....\\....  ");
+		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
+		x.pl("   \\e e t e a m             ");
+		x.pl("    \\r g   t l m            ");
+		x.pl("     \\o       l             ");
 	}
 //	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
@@ -129,42 +127,43 @@ final public class zn extends a{
 	public int dispbits=-1;
 	public void setpth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
-		x.el(this,"width:768px;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
+		x.el(this,"text-align:center;line-height:1.5em;width:768px;color:#222;margin-left:auto;margin-right:auto;padding:16em 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 		final String id=id();
-		try(final jskeys jskeys=new jskeys(x)){
-			jskeys.add("cS","$x('"+id+" s')");
-			jskeys.add("cL","$x('"+id+" l')");
-			jskeys.add("cT","$x('"+id+" n')");
-			jskeys.add("cR","$x('"+id+" r')");
-			jskeys.add("cF","$x('"+id+" i')");
-			jskeys.add("cG","$x('"+id+" g')");
-			jskeys.add("cU","$x('"+id+" u')");
-			jskeys.add("cO","$x('"+id+" c')");
-			jskeys.add("cF","$x('"+id+" f')");
-			jskeys.add("cD","$x('"+ra.id()+" rfh')");
-			jskeys.add("cB","$x('"+id+" b')");
-			jskeys.add("cK","alert('info')");
+		if(pt()==null){
+			x.style(ajaxsts,"position:fixed;bottom:0;right:0");
+			ajaxsts.to(x);
+			x.style("body","text-align:center");
+			try(final jskeys jskeys=new jskeys(x)){
+				jskeys.add("cS","$x('"+id+" s')");
+				jskeys.add("cL","$x('"+id+" l')");
+				jskeys.add("cT","$x('"+id+" n')");
+				jskeys.add("cR","$x('"+id+" r')");
+				jskeys.add("cF","$x('"+id+" i')");
+				jskeys.add("cG","$x('"+id+" g')");
+				jskeys.add("cU","$x('"+id+" u')");
+				jskeys.add("cO","$x('"+id+" c')");
+				jskeys.add("cF","$x('"+id+" f')");
+				jskeys.add("cD","$x('"+ra.id()+" rfh')");
+				jskeys.add("cB","$x('"+id+" b')");
+				jskeys.add("cK","alert('info')");
+			}
 		}
-		x.nl().style(this,"text-align:center");
 		ro.libgstp="#c88";
 		final boolean dispramble=(dispbits&8)==8;
 		if(dispramble){
-			x.pre();
-			x.el("display:block;text-align:center");
-			pramble(x);
-			x.el_();
+			stream_logo_to(x);
+			x.nl(4);
+			stream_pramble(x);
+			x.nl(2);
+			stream_schematics(x);
+			x.nl();
+			stream_instruction_table(x);
 		}
 		final boolean dispram=(dispbits&1)==1;
-		if(dispram){
-			if(pt()==null){x.style(ajaxsts,"position:fixed;bottom:0;right:0");ajaxsts.to(x);}
-			x.el("display:block;text-align:center");
-			x.style(ra,"border:1px solid #488");
-			ra.to(x);
-			x.el_().nl();
-		}
+		if(dispram)x.nl().r(ra);
 		final boolean dispmenu=(dispbits&2)==2;
 		if(dispmenu){
-			x.el("display:block;text-align:center");
+			x.nl();
 			x.ax(this,"l"," load");
 			x.ax(this,"c"," compile");
 			x.ax(this,"r"," reset");
@@ -174,7 +173,6 @@ final public class zn extends a{
 			x.ax(this,"u"," run");
 			x.ax(this,"s"," save");
 			x.ax(this,"b"," run-to-break-point");
-			x.el_();
 		}
 		final boolean disprom=(dispbits&4)==4;
 		if(disprom){

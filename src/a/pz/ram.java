@@ -8,8 +8,8 @@ import b.a;
 import b.xwriter;
 final public class ram extends a{
 	static final long serialVersionUID=1;
-	public final static int width=256*4;
-	public final static int height=128*4;	
+	public final static int width=256*2;
+	public final static int height=128*2;	
 	public final static int size=width*height;
 	final private int scl=2;
 	private int[]ram=new int[size];
