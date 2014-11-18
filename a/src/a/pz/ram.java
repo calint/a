@@ -17,7 +17,7 @@ final public class ram extends a{
 	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
 	public void to(final xwriter x)throws Throwable{
-		x.div(null,"","border:1px dotted","");
+		x.div(null,"border");
 		x.p("<canvas id=").p(id()).p(" width=").p(256*scl).p(" height=").p(128*scl).p("></canvas>");
 		x.div_();
 	}
