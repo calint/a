@@ -17,7 +17,24 @@ import b.path;
 import b.xwriter;
 final public class zn extends a{
 	private static final long serialVersionUID=1;
-	private void stream_pramble(final xwriter x){
+	public void stream_logo(final xwriter x){
+		final int con_wi=64;
+		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
+		x.pl("clare "+strdatasize(ram.size));
+		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
+	}
+	public void stream_schematics(final xwriter x){
+		x.pl("|_______|______|____|____|  ");
+		x.pl("|z n x r|c i 00|0000|0000|  ");
+		x.pl("|_______|______|____|____|  ");
+		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
+		x.pl(" \\    n  \\      \\....\\....  ");
+		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
+		x.pl("   \\e e t e a m             ");
+		x.pl("    \\r g   t l m            ");
+		x.pl("     \\o       l             ");
+	}
+	public void stream_pramble(final xwriter x){
 		x.pl("16b instructions");
 		x.pl(re.size+" 20b registers");
 		x.pl(strdatasize(ram.size)+" 20b ram");
@@ -28,30 +45,7 @@ final public class zn extends a{
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
 	}
-	private void stream_logo_to(final xwriter x){
-		final int con_wi=64;
-		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-		x.pl("clare "+strdatasize(ram.size));
-		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-	}
-	private final static int opload=0x000;
-	private final static int oplp=0x100;
-	private final static int opinc=0x200;
-	private final static int opneg=0x300;
-	private final static int opdac=0x400;
-	private final static int opwait=0x058;
-	private final static int opnotify=0x078;
-	private final static int opset=0xe0;
-	private final static int opldc=0xc0;
-	private final static int opadd=0xa0;
-	private final static int opskp=0x80;
-	private final static int opshf=0x60;
-	private final static int opstc=0x40;
-	private final static int opsub=0x20;
-	private final static int opcall=0x10;
-	private final static int opst=0x0d8;//?
-	private final static int opld=0x0f8;//?
-	private static void stream_instruction_table(final xwriter x){
+	public void stream_instruction_table(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
@@ -84,17 +78,23 @@ final public class zn extends a{
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
 	}
-	private static void stream_schematics(final xwriter x){
-		x.pl("|_______|______|____|____|  ");
-		x.pl("|z n x r|c i 00|0000|0000|  ");
-		x.pl("|_______|______|____|____|  ");
-		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
-		x.pl(" \\    n  \\      \\....\\....  ");
-		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
-		x.pl("   \\e e t e a m             ");
-		x.pl("    \\r g   t l m            ");
-		x.pl("     \\o       l             ");
-	}
+	private final static int opload=0x000;
+	private final static int oplp=0x100;
+	private final static int opinc=0x200;
+	private final static int opneg=0x300;
+	private final static int opdac=0x400;
+	private final static int opwait=0x058;
+	private final static int opnotify=0x078;
+	private final static int opset=0xe0;
+	private final static int opldc=0xc0;
+	private final static int opadd=0xa0;
+	private final static int opskp=0x80;
+	private final static int opshf=0x60;
+	private final static int opstc=0x40;
+	private final static int opsub=0x20;
+	private final static int opcall=0x10;
+	private final static int opst=0x0d8;//?
+	private final static int opld=0x0f8;//?
 //	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
 	private path pth;
@@ -110,7 +110,7 @@ final public class zn extends a{
 	public a sts;
 	public a coreid;
 	public ed src;
-	public int mode;//1:multicore
+//	public int mode;//1:multicore
 	public final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
 	private int lno;
 	private int lnosrc;
@@ -151,11 +151,11 @@ final public class zn extends a{
 		ro.libgstp="#c88";
 		final boolean dispramble=(dispbits&8)==8;
 		if(dispramble){
-			stream_logo_to(x);
-			x.nl(4);
-			stream_pramble(x);
-			x.nl(2);
+			stream_logo(x);
+			x.nl();
 			stream_schematics(x);
+			x.nl();
+			stream_pramble(x);
 			x.nl();
 			stream_instruction_table(x);
 		}
@@ -235,7 +235,7 @@ final public class zn extends a{
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
 		x.xu(sts.set("refresh display"));
 		x.flush();
-		if((dispbits&1)==1&&mode==0){
+		if((dispbits&1)==1){
 			x.xu(sts.set("refreshing display")).flush();
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
@@ -322,7 +322,7 @@ final public class zn extends a{
 			x.xu(sts).xu(re).xu(ca).xu(lo);
 			ro.xfocusline(x);
 			x.flush();
-			if((dispbits&1)==1&&mode==0){
+			if((dispbits&1)==1){
 				ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 			}
 		}
@@ -383,7 +383,7 @@ final public class zn extends a{
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sts).xu(sy).xu(re).xu(ca).xu(lo);
-		if((dispbits&1)==1&&mode==0){
+		if((dispbits&1)==1){
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
