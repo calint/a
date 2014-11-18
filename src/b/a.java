@@ -52,6 +52,11 @@ public class a implements Serializable{
 	public final String nm(){return nm;}
 //	public final a nm(final String nm){this.nm=nm;return this;}
 	public final a pt(){return pt;}
+	public final a pt(final Class<? extends a>cls){
+		if(pt==null)return null;
+		if(cls.isAssignableFrom(pt.getClass()))return pt;
+		return pt.pt(cls);
+	}
 //	public final a pt(final a a){pt=a;return this;}
 	public final void attach(final a e,final String fld){e.pt=this;e.nm=fld;try{getClass().getField(fld).set(this,e);}catch(final Throwable t){throw new Error(t);}}
 	final a chld(final String id){try{return (a)getClass().getField(id).get(this);}catch(Throwable e){}return chldq(id);}
