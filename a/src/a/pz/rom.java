@@ -2,10 +2,6 @@ package a.pz;
 import b.a;
 import b.xwriter;
 final public class rom extends a{
-	static final long serialVersionUID=1;
-	public final static int size=1024*8;
-	private int disppagenrows=128;
-	private int[]rom=new int[size];
 	public void to(final xwriter x){
 		x.div(this,"float");
 		x.style(this,"ul li.stp","background-color:#c88");
@@ -91,4 +87,10 @@ final public class rom extends a{
 		lstfocusline=-1;
 		for(int i=0;i<rom.length;i++)rom[i]=0;
 	}
+	
+	
+	final public static int size=1024*8;
+	private int disppagenrows=128;
+	private int[]rom=new int[size];
+	private static final long serialVersionUID=1;
 }
