@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 final public class calls extends a{
 	public void to(final xwriter x){
-		x.div(this,"border");
+		x.div(this);
 		x.p("call stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<stk.length;){
 			x.p(zn.fld("0000",Integer.toHexString(stk[i++]))).spc();
