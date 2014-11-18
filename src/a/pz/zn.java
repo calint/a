@@ -130,8 +130,8 @@ final public class zn extends a{
 		long stc;
 		public void rst(){instr=frames=ldc=stc=0;}
 	}
-	private metrics m;
-	public a bits;{bits.set(0b111111);}
+	private metrics m=new metrics();
+	public a bits;{bits.set(0b11111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);

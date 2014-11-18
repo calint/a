@@ -64,12 +64,12 @@ final public class ram extends a{
 		final int argb=value;
 		final String hex=Integer.toHexString(argb);
 		final String id=id();
-		x.p("{var d2=$('").p(id).p("');if(d2){d2.getContext('2d');");
-		x.p("d2.fillStyle='#"+zn.fld("000",hex)+"';");
+		x.p("{var c=$('").p(id).p("');if(c){var d=c.getContext('2d');");
+		x.p("d.fillStyle='#"+zn.fld("000",hex)+"';");
 		final int yy=a/width;
 		final int xx=a%width;
 		final int scl=2;
-		x.p("d2.fillRect("+xx*scl+","+yy*scl+","+scl+","+scl+");");				
+		x.p("d.fillRect("+xx*scl+","+yy*scl+","+scl+","+scl+");");				
 		x.pl("}}");
 	}
 }
