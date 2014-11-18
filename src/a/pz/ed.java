@@ -26,7 +26,7 @@ final public class ed extends a{
 	}
 	public a txt;
 	public void to(final xwriter x)throws Throwable{
-		x.div(this,"","float:left;border:1px dotted;text-align:left","");
+		x.div(this,"border float textleft");
 		x.style();
 		x.css(this,"ol li.brk","background:green");
 		x.css(this,"ol li.stp","background:#c88");
