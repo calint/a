@@ -123,14 +123,18 @@ final public class zn extends a{
 	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
 	private final List<String>srclines=new ArrayList<String>(32);
 	private int loadreg=-1;
-	private static class metrics{
+	final public static class metrics extends a{
 		long instr;
 		long frames;
 		long ldc;
 		long stc;
 		public void rst(){instr=frames=ldc=stc=0;}
+		@Override public void to(xwriter x) throws Throwable{
+			x.p(instr).spc().p(frames).spc().p(ldc).spc().p(stc);
+		}
+		private static final long serialVersionUID=1;
 	}
-	private metrics m=new metrics();
+	public metrics m;
 	public a bits;{bits.set(0b11111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
