@@ -134,7 +134,7 @@ final public class zn extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public metrics m;
+	public metrics me;
 	public a bits;{bits.set(0b11111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
@@ -223,7 +223,7 @@ final public class zn extends a{
 		lo.rst();
 		re.rst();
 		ra.rst();
-		m.rst();
+		me.rst();
 		for(int i=0;i<rom.size;i++)
 			ra.set(i,ro.get(i));
 		ev(null,this);
@@ -300,8 +300,8 @@ final public class zn extends a{
 		running=true;
 		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
-		final long minstr=m.instr;
-		final long mframes=m.frames;
+		final long minstr=me.instr;
+		final long mframes=me.frames;
 		long dt=0;
 		while(running){
 			step();
@@ -314,8 +314,8 @@ final public class zn extends a{
 		}
 		if(running){
 			running=false;
-			final long dminstr=m.instr-minstr;
-			final long dmframes=m.frames-mframes;
+			final long dminstr=me.instr-minstr;
+			final long dmframes=me.frames-mframes;
 			if(dt==0)dt=1;
 			st.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
 			if(x==null)return;
@@ -334,7 +334,7 @@ final public class zn extends a{
 		running=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 		final long t0=System.currentTimeMillis();
-		final long instr0=m.instr;
+		final long instr0=me.instr;
 		st.clr();
 		while(running){
 			boolean go=true;
@@ -349,7 +349,7 @@ final public class zn extends a{
 		if(running){
 			running=false;
 			final long dt=System.currentTimeMillis()-t0;
-			final long dinstr=m.instr-instr0;
+			final long dinstr=me.instr-instr0;
 			final int l=lino.get(ro.focusline);
 			st.set(dinstr+" instr, "+dt+" ms, "+l);
 			if(x==null)return;
@@ -367,7 +367,7 @@ final public class zn extends a{
 		if(running)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
 		running=true;
-		final long instr0=m.instr;
+		final long instr0=me.instr;
 		final long t0=System.currentTimeMillis();
 		while(running){
 			step();
@@ -378,8 +378,8 @@ final public class zn extends a{
 		}
 		if(running){
 			final long dt=System.currentTimeMillis()-t0;
-			final long dinstr=m.instr-instr0;
-			st.set("#"+m.frames+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
+			final long dinstr=me.instr-instr0;
+			st.set("#"+me.frames+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
 			running=false;
 		}
 		if(x==null)return;
@@ -797,7 +797,7 @@ final public class zn extends a{
 				return;
 			}
 		}
-		m.instr++;
+		me.instr++;
 //		if(pcr>=rom.size)throw new Error("program out of bounds");
 //		ir.set(rom.get(pcr.toint()));
 //		rom.focusline=pcr;
@@ -810,7 +810,7 @@ final public class zn extends a{
 		if(ir==0xffff){//? move
 			last_instruction_was_end_of_frame=true;
 			setpcr(0);
-			m.frames++;
+			me.frames++;
 			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
 		}
@@ -912,7 +912,7 @@ final public class zn extends a{
 				final int d=re.get(rdi);
 				final int a=re.getinc(rai);
 				ra.set(a,d);
-				m.stc++;
+				me.stc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not
 					final int d=re.get(rdi);
@@ -945,7 +945,7 @@ final public class zn extends a{
 				final int d=ra.get(a);
 				re.setr(rdi,d);
 				zneval(d);
-				m.ldc++;
+				me.ldc++;
 			}else if(op==7){//tx
 				{final int a=re.get(rai);
 				re.setr(rdi,a);}
@@ -976,13 +976,13 @@ final public class zn extends a{
 				final int d=re.get(rdi);
 				final int a=re.get(rai);
 				ra.set(a,d);
-				m.stc++;
+				me.stc++;
 			}else if(op==7){// ld
 				final int a=re.get(rai);
 				final int d=ra.get(a);
 				re.setr(rdi,d);
 				zneval(d);
-				m.ldc++;
+				me.ldc++;
 			}else throw new Error();
 		}
 		if(!ispcrset)
