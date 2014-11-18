@@ -3,7 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,39 +15,37 @@ import b.a;
 import b.a_ajaxsts;
 import b.path;
 import b.xwriter;
-final public class vintage extends a{
-	static final long serialVersionUID=1;
-	@SuppressWarnings("static-access")
+final public class zn extends a{
+	private static final long serialVersionUID=1;
 	private void pramble(final xwriter x){
 		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl(" vintage 16 bit computing - znxrcis "+vintage.strdatasize(ram.size));
+		x.pl(" pczero "+strdatasize(ram.size));
 		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl("   "+regs.size+"x16b regs");
-		x.pl("   "+vintage.strdatasize2(rom.size)+" 16b code cache");
-//		x.pl("   "++" x 16b bmp display");
-		x.pl("   "+vintage.strdatasize(ram.size)+" x 16b ram in "+ram.width+"x"+ram.height+" display");
+		x.pl("   "+regs.size+" x 32b regs");
+		x.pl("   "+strdatasize(ram.size)+" x 32b ram in "+ram.width+"x"+ram.height+" display");
+		x.pl("   "+strdatasize2(rom.size)+" x 16b code cache");
 		x.pl("   "+loops.size+" loops stack");
 		x.pl("   "+calls.size+" calls stack");
 		x.pl("");
 		prambleops(x);
 	}
-	private final static short opload=0x000;
-	private final static short oplp=0x100;
-	private final static short opinc=0x200;
-	private final static short opneg=0x300;
-	private final static short opdac=0x400;
-	private final static short opwait=0x058;
-	private final static short opnotify=0x078;
-	private final static short opset=0xe0;
-	private final static short opldc=0xc0;
-	private final static short opadd=0xa0;
-	private final static short opskp=0x80;
-	private final static short opshf=0x60;
-	private final static short opstc=0x40;
-	private final static short opsub=0x20;
-	private final static short opcall=0x10;
-	private final static short opst=0x0d8;//?
-	private final static short opld=0x0f8;//?
+	private final static int opload=0x000;
+	private final static int oplp=0x100;
+	private final static int opinc=0x200;
+	private final static int opneg=0x300;
+	private final static int opdac=0x400;
+	private final static int opwait=0x058;
+	private final static int opnotify=0x078;
+	private final static int opset=0xe0;
+	private final static int opldc=0xc0;
+	private final static int opadd=0xa0;
+	private final static int opskp=0x80;
+	private final static int opshf=0x60;
+	private final static int opstc=0x40;
+	private final static int opsub=0x20;
+	private final static int opcall=0x10;
+	private final static int opst=0x0d8;//?
+	private final static int opld=0x0f8;//?
 	public static void prambleops(final xwriter x){
 //		x.pl("  op format znxrci              ");
 //		x.el("text-align:left;border:1px solid red;display:inline-table");
@@ -96,37 +93,21 @@ final public class vintage extends a{
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
 	}
-	public static void main(final String[]a)throws Throwable{
-		final PrintStream out=System.out;
-		final vintage x1=new vintage();
-		x1.pth=path.get1(a.length>1?a[1]:filenmromsrc);
-		x1.x_l(null,null);
-		out.println(x1.sts);
-		x1.x_c(null,null);
-		out.println(x1.sts);
-		x1.x_r(null,null);
-		out.println(x1.sts);
-		x1.x_u(null,null);
-		out.println(x1.sts);
-//		while(true){
-//			x1.ax_rf(null,null);
-//			out.println(x1.sts);
-//		}
-	}
+//	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
 	private path pth;
-	public rom rom;
-	public ram ram;
+	public rom r;
+	public ram rm;
 	public sys sys;
 	public int pcr;
 	int ir;
 	int zn;
 	public regs regs;
-	public calls calls;
-	public loops loops;
+	public calls c;
+	public loops l;
 	public a sts;
 	public a coreid;
-	public srcviwr src;
+	public ed src;
 	public int mode;//1:multicore
 	public final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
 	private int lno;
@@ -166,7 +147,7 @@ final public class vintage extends a{
 				jskeys.add("cU","$x('"+id+" u')");
 				jskeys.add("cO","$x('"+id+" c')");
 				jskeys.add("cF","$x('"+id+" f')");
-				jskeys.add("cD","$x('"+ram.id()+" rfh')");
+				jskeys.add("cD","$x('"+rm.id()+" rfh')");
 				jskeys.add("cB","$x('"+id+" b')");
 				jskeys.add("cK","alert('info')");
 			}
@@ -184,7 +165,7 @@ final public class vintage extends a{
 //			src.libgbrkpt="#8a8";
 //			src.libgstep="#c88";
 //			src.libghvr="#898";
-			rom.libgstp="#c88";
+			r.libgstp="#c88";
 //			x.style(this,"ol li.stp","cursor:pointer;background-color:#c88");
 		}else
 			x.el(this,"display:inline-block");
@@ -206,8 +187,8 @@ final public class vintage extends a{
 		if(dispram){
 			if(pt()==null){x.style(ajaxsts,"position:fixed;bottom:0;right:0");ajaxsts.to(x);}
 			x.el("display:block;text-align:center");
-			x.style(ram,"border:1px solid #488");
-			ram.to(x);
+			x.style(rm,"border:1px solid #488");
+			rm.to(x);
 			x.el_().nl();
 		}
 		final boolean dispmenu=(dispbits&2)==2;
@@ -236,7 +217,7 @@ final public class vintage extends a{
 		rendpanel(x);
 		if(disprom){
 			x.nl().td();
-			rom.to(x);
+			r.to(x);
 			x.nl().td();
 		}
 		src.to(x);
@@ -251,18 +232,17 @@ final public class vintage extends a{
 		x.span(sts,"font-weight:bold").nl();
 		x.r(sys).nl();
 		x.r(regs);
-		x.r(calls);
-		x.r(loops);
+		x.r(c);
+		x.r(l);
 		x.pre_();
 	}
 	void rendrom(xwriter x){
-		rom.to(x);
+		r.to(x);
 	}
 	synchronized public void x_i(xwriter x,String s)throws Throwable{
-		ir=rom.get(pcr);
+		ir=r.get(pcr);
 	}
 	boolean running;
-	@SuppressWarnings("static-access")
 	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	public boolean stopped;
 	public void x_r(xwriter x,String s)throws Throwable{
@@ -273,23 +253,23 @@ final public class vintage extends a{
 		loadreg=-1;
 //		rom.rst();
 		setpcr(0);
-		calls.rst();
-		loops.rst();
+		c.rst();
+		l.rst();
 		regs.rst();
-		ram.rst();
+		rm.rst();
 		mtrinstr=mtrframes=mtrldc=mtrstc=0;
 		for(int i=0;i<rom.size;i++)
-			ram.set(i,rom.get(i));
+			rm.set(i,r.get(i));
 		ev(null,this);
 		wait=notify=stopped=false;
 		if(x==null)return;
 		xfocusline(x);
-		x.xu(sys).xuo(regs).xuo(calls).xuo(loops);
+		x.xu(sys).xuo(regs).xuo(c).xuo(l);
 		x.xu(sts.set("refresh display"));
 		x.flush();
 		if((dispbits&1)==1&&mode==0){
 			x.xu(sts.set("refreshing display")).flush();
-			ram.x_rfh(x,s);
+			rm.x_rfh(x,s);
 		}
 		x.xu(sts.set("reseted"));
 	}
@@ -311,7 +291,7 @@ final public class vintage extends a{
 		if(x==null)return;
 		x.xuo(src);
 		x.xu(sts);
-		x.xuo(rom);
+		x.xuo(r);
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
@@ -319,14 +299,14 @@ final public class vintage extends a{
 			return;
 		}
 		sts.clr();
-		ram.x=x;
+		rm.x=x;
 		final int srclineno=lino.get(pcr);
 		final String srcline=srclines.get(srclineno-1);
 		step();
-		ram.x=null;
+		rm.x=null;
 		if(x==null)return;
 		x.xu(sts.set(srcline));
-		x.xuo(sys).xuo(regs).xuo(calls).xuo(loops);
+		x.xuo(sys).xuo(regs).xuo(c).xuo(l);
 		xfocusline(x);
 	}
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
@@ -339,8 +319,8 @@ final public class vintage extends a{
 	public void xfocusline(xwriter x){
 		final boolean disprom=(dispbits&4)==4;
 		if(disprom){
-			rom.focusline=pcr;
-			rom.xfocusline(x);
+			r.focusline=pcr;
+			r.xfocusline(x);
 		}
 		if(lino.isEmpty())return;
 		src.focusline=lino.get(pcr);
@@ -371,11 +351,11 @@ final public class vintage extends a{
 			if(dt==0)dt=1;
 			sts.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
 			if(x==null)return;
-			x.xu(sts).xu(regs).xu(calls).xu(loops);
-			rom.xfocusline(x);
+			x.xu(sts).xu(regs).xu(c).xu(l);
+			r.xfocusline(x);
 			x.flush();
 			if((dispbits&1)==1&&mode==0){
-				ram.x_rfh(x,s);
+				rm.x_rfh(x,s);
 			}
 		}
 	}
@@ -400,16 +380,16 @@ final public class vintage extends a{
 			running=false;
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=mtrinstr-instr0;
-			final int l=lino.get(rom.focusline);
+			final int l=lino.get(r.focusline);
 			sts.set(dinstr+" instr, "+dt+" ms, "+l);
 			if(x==null)return;
 			x.xu(sts);
 			x.xu(sys);
 			x.xu(regs);
-			x.xu(calls);
-			x.xu(loops);
+			x.xu(c);
+			x.xu(this.l);
 			xfocusline(x);
-			ram.x_rfh(x,s);
+			rm.x_rfh(x,s);
 		}
 	}
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
@@ -433,9 +413,9 @@ final public class vintage extends a{
 		}
 		if(x==null)return;
 		xfocusline(x);
-		x.xu(sts).xu(sys).xu(regs).xu(calls).xu(loops);
+		x.xu(sts).xu(sys).xu(regs).xu(c).xu(l);
 		if((dispbits&1)==1&&mode==0){
-			ram.x_rfh(x,s);
+			rm.x_rfh(x,s);
 		}
 	}
 	
@@ -445,7 +425,7 @@ final public class vintage extends a{
 		int k=0;
 		for(int i=0;i<ram.height;i++){
 			for(int j=0;j<ram.width;j++){
-				final short d=ram.get(k++);
+				final int d=rm.get(k++);
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
 				final int r=((d>>8)&0xf)*0xf;
@@ -462,8 +442,8 @@ final public class vintage extends a{
 	}
 	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
 		if(x!=null)x.xu(sts.set("compiling")).flush();
-		ram.rst();;
-		rom.rst();
+		rm.rst();;
+		r.rst();
 		callmap.clear();
 		labels.clear();
 		lino.clear();
@@ -790,9 +770,9 @@ final public class vintage extends a{
 				throw new Error("line "+ln+"  not found in lino");
 			if(n==null)
 				throw new Error("line "+lino.get(ln)+": label not found '"+lbl+"'");
-			int instr=rom.get(ln);
+			int instr=r.get(ln);
 			int instr1=instr+(n<<6);//znxr ci.. .... ....
-			rom.set(ln,instr1);
+			r.set(ln,instr1);
 		}
 		//link imm loads
 		for(Iterator<Map.Entry<Integer,String>>i=loadlabelmap.entrySet().iterator();i.hasNext();){
@@ -802,7 +782,7 @@ final public class vintage extends a{
 			final Integer n=labels.get(lbl);
 			if(n==null)
 				throw new Error("linker: can not find label '"+lbl+"' load");
-			rom.set(ln,n);
+			r.set(ln,n);
 		}
 		//link skips
 		for(Iterator<Map.Entry<Integer,String>>i=skplabelmap.entrySet().iterator();i.hasNext();){
@@ -812,19 +792,19 @@ final public class vintage extends a{
 			final Integer n=labels.get(lbl);
 			if(n==null)
 				throw new Error("linker: can not find label '"+lbl+"' for skp");
-			final int i0=rom.get(ln);
+			final int i0=r.get(ln);
 			final int skp=n-ln;
 			final int i1=i0+(skp<<8);//znxr ci.. .... ....
-			rom.set(ln,i1);
+			r.set(ln,i1);
 		}
 		sts.set(lno+" x 16b ops");
 		if(x==null)return;
 		x.xu(sts);
 		x.flush();
-		x.xuo(rom);
+		x.xuo(r);
 	}		
 	private void romwrite(final int i){
-		rom.set(lno,i);
+		r.set(lno,i);
 		lino.put(lno,lnosrc);
 		lno++;
 	}
@@ -850,7 +830,7 @@ final public class vintage extends a{
 //		ir.set(rom.get(pcr.toint()));
 //		rom.focusline=pcr;
 		if(loadreg!=-1){
-			regs.setr(loadreg,(short)ir);
+			regs.setr(loadreg,ir);
 			loadreg=-1;
 			setpcr(pcr+1);
 			return;
@@ -880,30 +860,30 @@ final public class vintage extends a{
 			final int znx=zn+((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(pcr+1);
 			setpcr(imm10);
-			calls.push(stkentry);
+			c.push(stkentry);
 			return;			
 		}
 		boolean isnxt=false;
 		boolean ispcrset=false;
 		if((xr&1)==1){// nxt
 			isnxt=true;
-			if(loops.nxt()){
-				loops.pop();
+			if(l.nxt()){
+				l.pop();
 			}else{
-				setpcr(loops.adr());
+				setpcr(l.adr());
 				ispcrset=true;
 			}
 		}
 		boolean isret=false;
 		if(!rcinvalid&&!ispcrset&&(xr&2)==2){// ret after loop complete
-			final int stkentry=calls.pop();
+			final int stkentry=c.pop();
 			final int ipc=stkentry&0xfff;
 			final int znx=(stkentry>>12);
 			if((znx&4)==4){// nxt after previous call
-				if(loops.nxt()){
-					loops.pop();
+				if(l.nxt()){
+					l.pop();
 				}else{
-					setpcr(loops.adr());
+					setpcr(l.adr());
 					ispcrset=true;
 				}				
 			}
@@ -925,18 +905,18 @@ final public class vintage extends a{
 				if(rai!=0){//branch
 					if(rai==1){//lp
 						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
-						final short d=regs.get(rdi);
-						loops.push(pcr+1,d);	
+						final int d=regs.get(rdi);
+						l.push(pcr+1,d);	
 					}else if(rai==2){//inc
 						regs.inc(rdi);	
 					}else if(rai==3){//neg
 						final int d=regs.get(rdi);
 						final int r=-d;
-						regs.setr(rdi,(short)r);
+						regs.setr(rdi,r);
 					}else if(rai==4){//dac
-						final short d=regs.get(rdi);
+						final int d=regs.get(rdi);
 						try{
-							ev(null,this,new Short(d));
+							ev(null,this,new Integer(d));
 						}catch(final Throwable t){
 							throw new Error(t);
 						}
@@ -955,17 +935,17 @@ final public class vintage extends a{
 				final int d=regs.get(rdi);
 				final int r=a-d;
 				zneval(r);
-				regs.setr(rai,(short)r);
+				regs.setr(rai,r);
 			}else if(op==2){//stc
 				final int d=regs.get(rdi);
 				final int a=regs.getinc(rai);
-				ram.set(a,d);
+				rm.set(a,d);
 				mtrstc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not
-					final short d=regs.get(rdi);
+					final int d=regs.get(rdi);
 					final int r=~d;
-					regs.setr(rdi,(short)r);
+					regs.setr(rdi,r);
 				}else{//shf
 //					if(rai==0)throw new Error("unimplmented op");
 					final int a=rai>7?rai-16:rai;
@@ -974,7 +954,7 @@ final public class vintage extends a{
 						r=regs.get(rdi)<<-a;
 					else
 						r=regs.get(rdi)>>a;
-					regs.setr(rdi,(short)r);
+					regs.setr(rdi,r);
 					zneval(r);
 				}
 			}else if(op==4){//skp
@@ -983,19 +963,19 @@ final public class vintage extends a{
 				setpcr(pcr+imm8);
 				ispcrset=true;
 			}else if(op==5){//add
-				{final short a=regs.get(rai);
-				final short d=regs.get(rdi);
+				{final int a=regs.get(rai);
+				final int d=regs.get(rdi);
 				final int r=a+d;
 				zneval(r);
-				regs.setr(rai,(short)r);}
+				regs.setr(rai,r);}
 			}else if(op==6){//ldc
-				final short a=regs.getinc(rai);
-				final short d=ram.get(a);
+				final int a=regs.getinc(rai);
+				final int d=rm.get(a);
 				regs.setr(rdi,d);
 				zneval(d);
 				mtrldc++;
 			}else if(op==7){//tx
-				{final short a=regs.get(rai);
+				{final int a=regs.get(rai);
 				regs.setr(rdi,a);}
 			}
 		}else{
@@ -1023,11 +1003,11 @@ final public class vintage extends a{
 			}else if(op==6){// st
 				final int d=regs.get(rdi);
 				final int a=regs.get(rai);
-				ram.set(a,d);
+				rm.set(a,d);
 				mtrstc++;
 			}else if(op==7){// ld
-				final short a=regs.get(rai);
-				final short d=ram.get(a);
+				final int a=regs.get(rai);
+				final int d=rm.get(a);
 				regs.setr(rdi,d);
 				zneval(d);
 				mtrldc++;
@@ -1038,7 +1018,7 @@ final public class vintage extends a{
 	}
 	private void setpcr(final int i){
 		pcr=i;
-		ir=rom.get(i);
+		ir=r.get(i);
 	}
 //	private String tknsnxtret(final int i){
 //		final StringBuilder sb=new StringBuilder();

@@ -1,6 +1,6 @@
 <!DOCTYPE html><meta charset="utf-8">
 <style>
-	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
+	html{white-space:pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
 	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	#src{background:#eee;font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
 	#recvsize{color:green}
@@ -197,7 +197,7 @@ function start(){
 	ison=true;
 	$.sts.value="on";
 	frameno=0;
-	ws=new WebSocket("ws://"+location.host+"/pczero.porta");
+	ws=new WebSocket("ws://"+location.host+"/pz.porta");
 	ws.binaryType="arraybuffer";
 	ws.onopen=function(e){p(" porta");ws.send(keys);}
 	ws.onmessage=function(e){

@@ -12,6 +12,6 @@ final public class $ extends a implements cacheable{static final long serialVers
 	public boolean cacheforeachuser(){return false;}
 
 	public void to(final xwriter x)throws Throwable{
-		b.cp(getClass().getResourceAsStream("pco.html"),x.outputstream());
+		b.cp(getClass().getResourceAsStream("index.html"),x.outputstream());
 	}
 }
