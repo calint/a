@@ -67,7 +67,7 @@ lp c
 add a g ret    
 ..
 # clr(a,c,m,d)
-#  c,m,a,d
+#  a,d
 clr:
 lp c
   lp m
