@@ -1,7 +1,7 @@
 <!DOCTYPE html><meta charset="utf-8">
 <style>
 	html{white-space:pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
-	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
+	#scr{outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	#src{background:#eee;font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
 	#recvsize{color:green}
 	#sts{color:brown}
@@ -189,6 +189,7 @@ $=document.all;
 var keys=new Uint8Array([0,0]);
 var ison=false;
 var frameno=0;
+var last_scr_wi=0;
 
 start();
 
@@ -214,6 +215,11 @@ function start(){
 			//img.src=blob;
 			var b64=base64ArrayBuffer(dat);
 			$.scr.src='data:image/png;base64,'+b64;
+//			console.log("scrwi:"+$.scr.width);
+			if(last_scr_wi!=$.scr.width){
+				$.scr.width*=2;
+				last_scr_wi=$.scr.width;
+			}
 		}else if(cmd==49){
 //			console.log('text len: '+e.data.byteLength);
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
