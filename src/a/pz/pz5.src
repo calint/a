@@ -1,0 +1,12 @@
+load a 1000
+load e 10
+load c 200
+load d 400
+call drw
+..
+drw:
+  lp e
+    lp c
+      inc p
+      stc a p nxt
+    add a d nxt ret
