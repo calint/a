@@ -97,7 +97,8 @@ final public class zn extends a{
 			b.b.pl(tk);
 			if(tk.endsWith(":")){
 				labels.put(tk,tk);
-				return null;
+				return new label(tk.substring(0,tk.length()-1));
+//				return read_next_stmt(r,labels);
 			}
 			byte zn=0;
 			switch(tk){
@@ -178,12 +179,17 @@ final public class zn extends a{
 	}
 	public static class call extends stmt{
 		public call(PushbackReader r)throws IOException{
-			super("call "+next_token_on_same_line(r));
+			super(next_token_on_same_line(r));
 		}
 	}
 	public static class data extends stmt{
 		public data(PushbackReader r)throws IOException{
 			super(". "+rest_of_line(r));
+		}
+	}
+	public static class label extends stmt{
+		public label(String nm){
+			super(nm+":");
 		}
 	}
 	private static void skip_whitespace(PushbackReader r)throws IOException{
