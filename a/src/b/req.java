@@ -977,7 +977,7 @@ public final class req{
 	private final static String s_minus="-";
 	private final static String s_range="range";
 	private final static String s_slash="/";
-	private static final byte[]ba_page_header_pre_title="<!doctype html><meta charset=UTF-8><title>".getBytes();
+	private static final byte[]ba_page_header_pre_title="<!doctype html><meta charset=utf-8><title>".getBytes();
 	private static final byte[]ba_page_header_after_title="</title><link rel=stylesheet href=/x.css><script src=/x.js></script>".getBytes();
 	private final static int state_nextreq=0;
 	private final static int state_method=1;
