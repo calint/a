@@ -3,7 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ final public class zn extends a{
 	public void pramble_to(final xwriter x){
 		x.pl(strdatasize(ram.size)+" 20b ram");
 		x.pl(re.size+" 20b registers");
-		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
+		x.pl(ram.wi+" x "+ram.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
 		x.pl(strdatasize2(rom.size)+" 16b instructions");
@@ -233,19 +232,19 @@ final public class zn extends a{
 			return;
 		}
 	}
-	private static String next_token(source_reader r)throws IOException{
-		skip_whitespace(r);
-		final StringBuilder sb=new StringBuilder();
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)break;
-			if(Character.isWhitespace(ch))break;
-			sb.append((char)ch);
-		}
-		skip_whitespace(r);
-		if(sb.length()==0)return null;
-		return sb.toString();
-	}
+//	private static String next_token(source_reader r)throws IOException{
+//		skip_whitespace(r);
+//		final StringBuilder sb=new StringBuilder();
+//		while(true){
+//			final int ch=r.read();
+//			if(ch==-1)break;
+//			if(Character.isWhitespace(ch))break;
+//			sb.append((char)ch);
+//		}
+//		skip_whitespace(r);
+//		if(sb.length()==0)return null;
+//		return sb.toString();
+//	}
 	private static String next_token_on_same_line(source_reader r)throws IOException{
 		skip_whitespace_on_same_line(r);
 		final StringBuilder sb=new StringBuilder();
@@ -368,7 +367,7 @@ final public class zn extends a{
 		private static final long serialVersionUID=1;
 	}
 	public metrics me;
-	public a bits;{bits.set(-1);}
+	public a bits;{bits.set(0b111110000);}
 	public final static int bit_logo=1;
 	public final static int bit_schematics=2;
 	public final static int bit_pramble=4;
@@ -480,10 +479,9 @@ final public class zn extends a{
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
 		x.xu(st.set("refresh display"));
 		x.flush();
-		final int b=bits.toint();
-		if((b&1)==1){
+		if(hasbit(bit_display)){
 			x.xu(st.set("refreshing display")).flush();
-			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
 		}
 		x.xu(st.set("reseted"));
 	}
@@ -571,7 +569,7 @@ final public class zn extends a{
 			x.flush();
 			final int b=bits.toint();
 			if((b&1)==1){
-				ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+				ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
 			}
 		}
 	}
@@ -606,7 +604,7 @@ final public class zn extends a{
 			x.xu(ca);
 			x.xu(this.lo);
 			xfocusline(x);
-			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
 		}
 	}
 	/**stepframe*/
@@ -632,14 +630,13 @@ final public class zn extends a{
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
-		final int b=bits.toint();
-		if((b&1)==1){
-			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+		if(hasbit(bit_display)){
+			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
 		}
 	}
 	public void snapshot_png_to(final OutputStream os)throws IOException{
-		final int wi=ra.wi;
-		final int hi=ra.hi;
+		final int wi=ram.wi;
+		final int hi=ram.hi;
 		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
 		for(int i=0;i<hi;i++){
