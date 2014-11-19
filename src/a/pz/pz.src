@@ -90,8 +90,8 @@ lp c
   add g a
   stc g h nxt ret
 ..
-# drwrects(a,b)
-#  c,a,d,e,f,g
+# drwrects(a,b,g)
+#  b,c,a,d,e,f,g
 drwrects:
 ldc c b
 lp c
@@ -146,6 +146,7 @@ dots:
 
 rects:
 . 5
+# yyxx  rgb   wi   hi
 . 3830 0422 0010 0010
 . 040c 0fff 0008 0008
 . 0400 0eee 0008 0008
