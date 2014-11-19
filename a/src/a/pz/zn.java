@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackReader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +15,6 @@ import javax.imageio.ImageIO;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
-import b.b;
 import b.path;
 import b.xwriter;
 final public class zn extends a{
@@ -64,7 +61,11 @@ final public class zn extends a{
 			}
 		}
 		private List<stmt>s;
-		final public String toString(){return s.toString();}
+		final public String toString(){
+			final StringBuilder sb=new StringBuilder();
+			s.forEach(e->sb.append(e.toString()).append('\n'));
+			return sb.toString();
+		}
 	}
 	public static class stmt{
 		public boolean nxt,ret;
@@ -190,6 +191,14 @@ final public class zn extends a{
 		if(sb.length()==0)return null;
 		return sb.toString();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
@@ -303,7 +312,7 @@ final public class zn extends a{
 				.css(ec,"width:30em;min-width:30em")
 				.css(ec.txt,"width:30em;height:64em;min-height:64em;resize:none")
 				.css(es,"overflow:scroll;width:13em;min-width:13em")
-				.css(es.txt,"outline:none;height:128em;min-height:128em;resize:none")
+				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -400,18 +409,18 @@ final public class zn extends a{
 	}
 	/**save source*/
 	public void x_s(final xwriter x,final String s)throws Throwable{
-		es.txt.to(pth);
+		es.src.to(pth);
 		st.set("saved "+pth.name());
 		if(x==null)return;
 		x.xu(st);
 	}
 	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
 		if(pth!=null&&pth.exists()){
-			es.txt.from(pth);
+			es.src.from(pth);
 			st.set("loaded "+pth.name());
 		}else{
 			final InputStream is=getClass().getResourceAsStream(filenmromsrc);
-			es.txt.from(is);
+			es.src.from(is);
 			st.set("loaded default");
 		}
 		if(x==null)return;
@@ -580,7 +589,7 @@ final public class zn extends a{
 		loadlabelmap.clear();
 		skplabelmap.clear();
 		srclines.clear();
-		final Scanner sc=new Scanner(es.txt.toString());
+		final Scanner sc=new Scanner(es.src.toString());
 		try{
 		lno=0;
 		lnosrc=0;
@@ -1154,6 +1163,12 @@ final public class zn extends a{
 		if(i==0){zn=1;return;}
 		if(i<0){zn=2;return;}
 		zn=3;
+	}
+	@Override protected void ev(xwriter x,a from,Object o) throws Throwable{
+		if(o instanceof program){
+			es.src.set(o.toString());
+			x.xuo(es);
+		}else super.ev(x,from,o);
 	}
 	public final static String fld(final String def,final String s){
 		final String s1=s.length()>def.length()?s.substring(s.length()-def.length()):s;

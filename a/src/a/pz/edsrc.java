@@ -18,7 +18,7 @@ final public class edsrc extends a{
 		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(focusline-1)+"];e._oldcls=e.className;e.className='stp';");
 		lstfocusline=focusline;
 	}
-	public a txt;
+	public a src;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this,"float textleft panel");
 		x.p("source");
@@ -26,11 +26,11 @@ final public class edsrc extends a{
 		x.ax(this,"f2"," view");
 		if(edit){
 			x.nl();
-			x.inptxtarea(txt);
+			x.inptxtarea(src);
 			x.div_();
 			return;
 		}
-		final StringReader sr=new StringReader(txt.toString());
+		final StringReader sr=new StringReader(src.toString());
 		final BufferedReader br=new BufferedReader(sr);
 		x.tag("ol");
 		int lno=1;
@@ -64,7 +64,7 @@ final public class edsrc extends a{
 		if(edit)return;
 		edit=true;
 		x.xuo(this);
-		x.xfocus(txt);
+		x.xfocus(src);
 	}
 	synchronized public void x_f2(xwriter x,String s)throws Throwable{
 		if(!edit)return;

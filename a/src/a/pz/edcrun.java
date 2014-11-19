@@ -78,6 +78,7 @@ final public class edcrun extends a{
 		try(final PushbackReader pr=new PushbackReader(txt.reader())){
 			final program p=new program(pr);
 			b.pl(p.toString());
+			ev(x,this,p);
 		}
 	}
 	private static final long serialVersionUID=11;
