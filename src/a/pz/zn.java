@@ -67,216 +67,211 @@ final public class zn extends a{
 			return sb.toString();
 		}
 		final private Map<String,String>labels=new LinkedHashMap<>();
-	}
-	public static class stmt{
-		public boolean nxt,ret;
-		public byte zn;
 
-		public stmt(String s){this.s=s;}
-		final private String s;
-		public void write_binary_code_to(xwriter x){
-		}
-		
-//		final public void to(xwriter x){x.p(toString());}
-		final public String toString(){
-			final StringBuilder sb=new StringBuilder();
-			switch(zn){
-			case 1:sb.append("ifz ");break;
-			case 2:sb.append("ifn ");break;
-			case 3:sb.append("ifp ");break;
+		public static class stmt{
+			public boolean nxt,ret;
+			public byte zn;
+	
+			public stmt(String s){this.s=s;}
+			final private String s;
+			public void write_binary_code_to(xwriter x){
 			}
-			sb.append(s);
-			if(nxt)sb.append(" nxt");
-			if(ret)sb.append(" ret");
+			
+	//		final public void to(xwriter x){x.p(toString());}
+			final public String toString(){
+				final StringBuilder sb=new StringBuilder();
+				switch(zn){
+				case 1:sb.append("ifz ");break;
+				case 2:sb.append("ifn ");break;
+				case 3:sb.append("ifp ");break;
+				}
+				sb.append(s);
+				if(nxt)sb.append(" nxt");
+				if(ret)sb.append(" ret");
+				return sb.toString();
+			}
+			public static stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
+				skip_whitespace(r);
+				String tk=next_token_on_same_line(r);
+				b.b.pl(tk);
+				if(tk.endsWith(":")){
+					labels.put(tk,tk);
+					return new label(tk.substring(0,tk.length()-1));
+	//				return read_next_stmt(r,labels);
+				}
+				byte zn=0;
+				switch(tk){
+				case"ifz":{zn=1;tk=next_token_on_same_line(r);break;}
+				case"ifn":{zn=2;tk=next_token_on_same_line(r);break;}
+				case"ifp":{zn=3;tk=next_token_on_same_line(r);break;}
+				}
+				if(tk.equals(".."))tk="eof";
+				if(tk.equals("."))tk="data";
+				try{
+					final Class cls=Class.forName(zn.class.getName()+"$"+tk);
+					final Constructor ctor=cls.getConstructor(source_reader.class);
+					final stmt s=(stmt)ctor.newInstance(r);
+					if(!(s instanceof data)){
+						s.zn=zn;
+						while(true){
+							final String t=next_token_on_same_line(r);
+							if(t==null)break;
+							if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
+							if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
+							throw new Error("3 "+t);
+						}
+					}
+					final int eos=r.read();
+					if(eos!='\n'&&eos!=-1)
+						throw new Error("4");
+					return s;
+				}catch(Throwable t){throw new Error(r+" "+t);}
+			}
+		}
+		public static class load extends stmt{
+			public load(source_reader r)throws IOException{
+				super("load "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class inc extends stmt{
+			public inc(source_reader r)throws IOException{
+				super("inc "+next_token_on_same_line(r));
+			}
+		}
+		public static class st extends stmt{
+			public st(source_reader r)throws IOException{
+				super("st "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class eof extends stmt{
+			public eof(source_reader r)throws IOException{
+				super("..");
+			}
+		}
+		public static class nxt extends stmt{
+			public nxt(source_reader r)throws IOException{
+				super("nxt");
+			}
+		}
+		public static class ret extends stmt{
+			public ret(source_reader r)throws IOException{
+				super("ret");
+			}
+		}
+		public static class lp extends stmt{
+			public lp(source_reader r)throws IOException{
+				super("lp "+next_token_on_same_line(r));
+			}
+		}
+		public static class stc extends stmt{
+			public stc(source_reader r)throws IOException{
+				super("stc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class add extends stmt{
+			public add(source_reader r)throws IOException{
+				super("add "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class sub extends stmt{
+			public sub(source_reader r)throws IOException{
+				super("sub "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class call extends stmt{
+			public call(source_reader r)throws IOException{
+				super(next_token_on_same_line(r));
+			}
+		}
+		public static class data extends stmt{
+			public data(source_reader r)throws IOException{
+				super(". "+rest_of_line(r));
+			}
+		}
+		public static class label extends stmt{
+			public label(String nm){
+				super(nm+":");
+			}
+		}
+		public static class ld extends stmt{
+			public ld(source_reader r)throws IOException{
+				super("ld "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class ldc extends stmt{
+			public ldc(source_reader r)throws IOException{
+				super("ldc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class tx extends stmt{
+			public tx(source_reader r)throws IOException{
+				super("tx "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		public static class shf extends stmt{
+			public shf(source_reader r)throws IOException{
+				super("shf "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+			}
+		}
+		private static void skip_whitespace(source_reader r)throws IOException{
+			while(true){
+				final int ch=r.read();
+				if(Character.isWhitespace(ch))continue;
+				if(ch==-1)return;
+				r.unread(ch);
+				return;
+			}
+		}
+		private static void skip_whitespace_on_same_line(source_reader r)throws IOException{
+			while(true){
+				final int ch=r.read();
+				if(ch==-1)return;
+				if(ch=='\n'){r.unread(ch);return;}
+				if(Character.isWhitespace(ch))continue;
+				r.unread(ch);
+				return;
+			}
+		}
+	//	private static String next_token(source_reader r)throws IOException{
+	//		skip_whitespace(r);
+	//		final StringBuilder sb=new StringBuilder();
+	//		while(true){
+	//			final int ch=r.read();
+	//			if(ch==-1)break;
+	//			if(Character.isWhitespace(ch))break;
+	//			sb.append((char)ch);
+	//		}
+	//		skip_whitespace(r);
+	//		if(sb.length()==0)return null;
+	//		return sb.toString();
+	//	}
+		private static String next_token_on_same_line(source_reader r)throws IOException{
+			skip_whitespace_on_same_line(r);
+			final StringBuilder sb=new StringBuilder();
+			while(true){
+				final int ch=r.read();
+				if(ch==-1)break;
+				if(ch=='\n'){r.unread(ch);break;}
+				if(Character.isWhitespace(ch))break;
+				sb.append((char)ch);
+			}
+			skip_whitespace_on_same_line(r);
+			if(sb.length()==0)return null;
 			return sb.toString();
 		}
-		public static stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
-			skip_whitespace(r);
-			String tk=next_token_on_same_line(r);
-			b.b.pl(tk);
-			if(tk.endsWith(":")){
-				labels.put(tk,tk);
-				return new label(tk.substring(0,tk.length()-1));
-//				return read_next_stmt(r,labels);
+		private static String rest_of_line(source_reader r)throws IOException{
+	//		skip_whitespace_on_same_line(r);
+			final StringBuilder sb=new StringBuilder();
+			while(true){
+				final int ch=r.read();
+				if(ch==-1)break;
+				if(ch=='\n'){r.unread(ch);break;}
+				sb.append((char)ch);
 			}
-			byte zn=0;
-			switch(tk){
-			case"ifz":{zn=1;tk=next_token_on_same_line(r);break;}
-			case"ifn":{zn=2;tk=next_token_on_same_line(r);break;}
-			case"ifp":{zn=3;tk=next_token_on_same_line(r);break;}
-			}
-			if(tk.equals(".."))tk="eof";
-			if(tk.equals("."))tk="data";
-			try{
-				final Class cls=Class.forName(zn.class.getName()+"$"+tk);
-				final Constructor ctor=cls.getConstructor(source_reader.class);
-				final stmt s=(stmt)ctor.newInstance(r);
-				if(!(s instanceof data)){
-					s.zn=zn;
-					while(true){
-						final String t=next_token_on_same_line(r);
-						if(t==null)break;
-						if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
-						if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
-						throw new Error("3 "+t);
-					}
-				}
-				final int eos=r.read();
-				if(eos!='\n'&&eos!=-1)
-					throw new Error("4");
-				return s;
-			}catch(Throwable t){throw new Error(r+" "+t);}
+			return sb.toString();
 		}
+
 	}
-	public static class load extends stmt{
-		public load(source_reader r)throws IOException{
-			super("load "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class inc extends stmt{
-		public inc(source_reader r)throws IOException{
-			super("inc "+next_token_on_same_line(r));
-		}
-	}
-	public static class st extends stmt{
-		public st(source_reader r)throws IOException{
-			super("st "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class eof extends stmt{
-		public eof(source_reader r)throws IOException{
-			super("..");
-		}
-	}
-	public static class nxt extends stmt{
-		public nxt(source_reader r)throws IOException{
-			super("nxt");
-		}
-	}
-	public static class ret extends stmt{
-		public ret(source_reader r)throws IOException{
-			super("ret");
-		}
-	}
-	public static class lp extends stmt{
-		public lp(source_reader r)throws IOException{
-			super("lp "+next_token_on_same_line(r));
-		}
-	}
-	public static class stc extends stmt{
-		public stc(source_reader r)throws IOException{
-			super("stc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class add extends stmt{
-		public add(source_reader r)throws IOException{
-			super("add "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class sub extends stmt{
-		public sub(source_reader r)throws IOException{
-			super("sub "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class call extends stmt{
-		public call(source_reader r)throws IOException{
-			super(next_token_on_same_line(r));
-		}
-	}
-	public static class data extends stmt{
-		public data(source_reader r)throws IOException{
-			super(". "+rest_of_line(r));
-		}
-	}
-	public static class label extends stmt{
-		public label(String nm){
-			super(nm+":");
-		}
-	}
-	public static class ld extends stmt{
-		public ld(source_reader r)throws IOException{
-			super("ld "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class ldc extends stmt{
-		public ldc(source_reader r)throws IOException{
-			super("ldc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class tx extends stmt{
-		public tx(source_reader r)throws IOException{
-			super("tx "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	public static class shf extends stmt{
-		public shf(source_reader r)throws IOException{
-			super("shf "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
-		}
-	}
-	private static void skip_whitespace(source_reader r)throws IOException{
-		while(true){
-			final int ch=r.read();
-			if(Character.isWhitespace(ch))continue;
-			if(ch==-1)return;
-			r.unread(ch);
-			return;
-		}
-	}
-	private static void skip_whitespace_on_same_line(source_reader r)throws IOException{
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)return;
-			if(ch=='\n'){r.unread(ch);return;}
-			if(Character.isWhitespace(ch))continue;
-			r.unread(ch);
-			return;
-		}
-	}
-//	private static String next_token(source_reader r)throws IOException{
-//		skip_whitespace(r);
-//		final StringBuilder sb=new StringBuilder();
-//		while(true){
-//			final int ch=r.read();
-//			if(ch==-1)break;
-//			if(Character.isWhitespace(ch))break;
-//			sb.append((char)ch);
-//		}
-//		skip_whitespace(r);
-//		if(sb.length()==0)return null;
-//		return sb.toString();
-//	}
-	private static String next_token_on_same_line(source_reader r)throws IOException{
-		skip_whitespace_on_same_line(r);
-		final StringBuilder sb=new StringBuilder();
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)break;
-			if(ch=='\n'){r.unread(ch);break;}
-			if(Character.isWhitespace(ch))break;
-			sb.append((char)ch);
-		}
-		skip_whitespace_on_same_line(r);
-		if(sb.length()==0)return null;
-		return sb.toString();
-	}
-	private static String rest_of_line(source_reader r)throws IOException{
-//		skip_whitespace_on_same_line(r);
-		final StringBuilder sb=new StringBuilder();
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)break;
-			if(ch=='\n'){r.unread(ch);break;}
-			sb.append((char)ch);
-		}
-		return sb.toString();
-	}
-	
-	
-	
-	
-	
-	
-	
 	
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
