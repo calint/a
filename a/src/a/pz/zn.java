@@ -404,7 +404,7 @@ final public class zn extends a{
 			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
 		}
 	}
-	final static int scr_wi=128,scr_hi=256;
+	final static int scr_wi=320,scr_hi=200;
 	public void snapshot_png_to(final OutputStream os)throws IOException{
 		final BufferedImage bi=new BufferedImage(scr_wi,scr_hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
