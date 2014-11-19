@@ -11,12 +11,12 @@ li d 80
 add d p
 call clr
 
-# drwrects(400,:rects)
+# drwrects(400,rects)
 li a 400
 li b :rects
 call drwrects
 
-# drwblits(400)
+# drwblits(400,blitz)
 li a 400
 li k :blits
 call drwblits
@@ -26,7 +26,7 @@ li a 400
 li b :txt
 call typewriter
 
-# drwdots(400,:dots)
+# drwdots(400,dots)
 li a 400
 li f :dots
 call drwdots
@@ -146,7 +146,7 @@ dots:
 
 rects:
 . 5
-# yyxx  rgb   wi   hi
+# yyxx  rgb  wi   hi 
 . 3830 0422 0010 0010
 . 040c 0fff 0008 0008
 . 0400 0eee 0008 0008
@@ -155,6 +155,7 @@ rects:
 
 blits:
 . 10
+# yyxx from  wi   hi
 . 1030 0000 0020 0020
 . 2080 0000 0020 0020
 . 4080 0000 0020 0020
