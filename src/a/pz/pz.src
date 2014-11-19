@@ -44,7 +44,7 @@ ifp add c d
 ifz sub c d
 st b c
 ..
-# typewriter(a,b)
+# typewriter(scr a,b)
 #  c,j,f,g,i,d,b
 typewriter:
 # var c=4
@@ -68,7 +68,8 @@ lp i      # foreach
   call type nxt # type(a,d,g,j)nxt
 ret
 ..
-# type(a dest w,d charbmp w,c width,g,j rgb w)
+# type(scr a,char d,width c,g,rgb j)
+#  a,d,j
 type:
 lp c
   lp c
