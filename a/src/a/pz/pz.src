@@ -3,11 +3,11 @@ inc p
 li a 300
 st a p
 
-# clr(400,100,70,f00,80+p)
+# clr(400,100,70,f00,080+p)
 li a 400   # yyxx
 li m 100   # line width
 li c 70    # height
-li d 80    # rgb
+li d 080    # rgb
 add d p
 call clr
 
@@ -37,14 +37,18 @@ inc b
 ld c b
 # e=*7ffff
 li k 7fff
-ld e k
-# 
+
+# e=*k
+# switchi{c+=1}{c-=1}{}
 li d 1
+ld e k
 ifp add c d
 ifz sub c d
+# *b=c
 st b c
 ..
-# typewriter(scr a,b)
+
+# typewriter(scr a,str b)
 #  c,j,f,g,i,d,b
 typewriter:
 # var c=4
@@ -68,7 +72,7 @@ lp i      # foreach
   call type nxt # type(a,d,g,j)nxt
 ret
 ..
-# type(scr a,char d,width c,g,rgb j)
+# type(scr a,char d,width c,rgb j,g)
 #  a,d,j
 type:
 lp c
@@ -99,7 +103,7 @@ lp c
   add g a   # offset
   stc g h nxt ret
 ..
-# drwrects(scr a,rects b,scrwi m)
+# drwrects(scr a,linewi m,rects b)
 #  b,c,a,d,e,f,g
 drwrects:
 ldc c b
