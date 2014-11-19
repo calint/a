@@ -215,6 +215,7 @@ final public class zn extends a{
 		if(hasbit(bit_rom))x.r(ro);
 		if(hasbit(bit_edasm))x.r(es);
 		if(hasbit(bit_edcrn))x.r(ec);
+		x.div(null,"floatclear").div_();
 //		x.nl(8).div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		x.div_();
 	}
