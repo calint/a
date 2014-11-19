@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,33 +59,89 @@ final public class zn extends a{
 				final int ch=r.read();
 				if(ch==-1)break;
 				r.unread(ch);
-				final stmt st=stmt.r(r);
+				final stmt st=stmt.read_next_stmt(r);
 				s.add(st);
 			}
 		}
-		public void to(xwriter x){
-			s.stream().forEach(s->{s.to(x);x.nl();});
-		}
 		private List<stmt>s;
+		final public String toString(){return s.toString();}
 	}
 	public static class stmt{
-		public static stmt r(final PushbackReader r)throws IOException{
-			skip_whitespace(r);
-			final String tk=next_token(r);
-			b.pl(tk);
-			switch(tk){
-			case"load":return new load(r);
-			default:throw new Error("2");
-			}
-		}
+		public boolean nxt,ret;
+		public byte zn;
+
 		public stmt(String s){this.s=s;}
 		final private String s;
-		final public void to(xwriter x){x.p(s);}
-		final public String toString(){return s;}
+		public void write_binary_code_to(xwriter x){
+		}
+		
+//		final public void to(xwriter x){x.p(toString());}
+		final public String toString(){
+			final StringBuilder sb=new StringBuilder();
+			switch(zn){
+			case 1:sb.append("ifz ");break;
+			case 2:sb.append("ifn ");break;
+			case 3:sb.append("ifp ");break;
+			}
+			sb.append(s);
+			if(nxt)sb.append(" nxt");
+			if(ret)sb.append(" ret");
+			return sb.toString();
+		}
+		public static stmt read_next_stmt(final PushbackReader r)throws IOException{
+			skip_whitespace(r);
+			String tk=next_token(r);
+			byte zn=0;
+			switch(tk){
+			case"ifz":{zn=1;tk=next_token(r);break;}
+			case"ifn":{zn=2;tk=next_token(r);break;}
+			case"ifp":{zn=3;tk=next_token(r);break;}
+			}
+//			b.pl(tk);
+			try{
+				final Class cls=Class.forName(zn.class.getName()+"$"+tk);
+				final Constructor ctor=cls.getConstructor(PushbackReader.class);
+				final stmt s=(stmt)ctor.newInstance(r);
+				s.zn=zn;
+				while(true){
+					final String t=next_token_on_same_line(r);
+					if(t==null)break;
+					if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
+					if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
+					throw new Error("3 "+t);
+				}
+				return s;
+			}catch(Throwable t){throw new Error(t);}
+		}
 	}
 	public static class load extends stmt{
 		public load(PushbackReader r)throws IOException{
-			super("load "+next_token(r)+" "+next_token(r));
+			super("load "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class inc extends stmt{
+		public inc(PushbackReader r)throws IOException{
+			super("inc "+next_token_on_same_line(r));
+		}
+	}
+	public static class st extends stmt{
+		public st(PushbackReader r)throws IOException{
+			super("st "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class eof extends stmt{
+		public eof(PushbackReader r)throws IOException{
+			super("..");
+		}
+	}
+	public static class nxt extends stmt{
+		public nxt(PushbackReader r)throws IOException{
+			super("nxt");
+		}
+	}
+	public static class ret extends stmt{
+		public ret(PushbackReader r)throws IOException{
+			super("ret");
 		}
 	}
 	private static void skip_whitespace(PushbackReader r)throws IOException{
@@ -90,6 +149,16 @@ final public class zn extends a{
 			final int ch=r.read();
 			if(Character.isWhitespace(ch))continue;
 			if(ch==-1)return;
+			r.unread(ch);
+			return;
+		}
+	}
+	private static void skip_whitespace_on_same_line(PushbackReader r)throws IOException{
+		while(true){
+			final int ch=r.read();
+			if(ch==-1)return;
+			if(ch=='\n'){r.unread(ch);return;}
+			if(Character.isWhitespace(ch))continue;
 			r.unread(ch);
 			return;
 		}
@@ -104,6 +173,20 @@ final public class zn extends a{
 			sb.append((char)ch);
 		}
 		skip_whitespace(r);
+		if(sb.length()==0)return null;
+		return sb.toString();
+	}
+	private static String next_token_on_same_line(PushbackReader r)throws IOException{
+		skip_whitespace_on_same_line(r);
+		final StringBuilder sb=new StringBuilder();
+		while(true){
+			final int ch=r.read();
+			if(ch==-1)break;
+			if(ch=='\n'){r.unread(ch);break;}
+			if(Character.isWhitespace(ch))break;
+			sb.append((char)ch);
+		}
+		skip_whitespace_on_same_line(r);
 		if(sb.length()==0)return null;
 		return sb.toString();
 	}
