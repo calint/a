@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
+import b.b;
 import b.path;
 import b.xwriter;
 final public class zn extends a{
@@ -53,9 +54,9 @@ final public class zn extends a{
 			s=new ArrayList<>();
 			while(true){
 				final int ch=r.read();
-				if(ch==-1)return;
+				if(ch==-1)break;
 				r.unread(ch);
-				final stmt st=new stmt(r);
+				final stmt st=stmt.r(r);
 				s.add(st);
 			}
 		}
@@ -65,21 +66,47 @@ final public class zn extends a{
 		private List<stmt>s;
 	}
 	public static class stmt{
-		public stmt(final PushbackReader r)throws IOException{
-			final StringBuilder sb=new StringBuilder();
-			while(true){
-				final int ch=r.read();
-				if(ch==-1)throw new Error("1");
-				if(ch=='\n')break;
-				sb.append((char)ch);
+		public static stmt r(final PushbackReader r)throws IOException{
+			skip_whitespace(r);
+			final String tk=next_token(r);
+			b.pl(tk);
+			switch(tk){
+			case"load":return new load(r);
+			default:throw new Error("2");
 			}
-			s=sb.toString();
 		}
-		private String s;
-		public void to(xwriter x){x.p(s);}
+		public stmt(String s){this.s=s;}
+		final private String s;
+		final public void to(xwriter x){x.p(s);}
 		final public String toString(){return s;}
 	}
-	
+	public static class load extends stmt{
+		public load(PushbackReader r)throws IOException{
+			super("load "+next_token(r)+" "+next_token(r));
+		}
+	}
+	private static void skip_whitespace(PushbackReader r)throws IOException{
+		while(true){
+			final int ch=r.read();
+			if(Character.isWhitespace(ch))continue;
+			if(ch==-1)return;
+			r.unread(ch);
+			return;
+		}
+	}
+	private static String next_token(PushbackReader r)throws IOException{
+		skip_whitespace(r);
+		final StringBuilder sb=new StringBuilder();
+		while(true){
+			final int ch=r.read();
+			if(ch==-1)break;
+			if(Character.isWhitespace(ch))break;
+			sb.append((char)ch);
+		}
+		skip_whitespace(r);
+		if(sb.length()==0)return null;
+		return sb.toString();
+	}
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
