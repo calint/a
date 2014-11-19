@@ -48,27 +48,18 @@ ifz sub c d
 st b c
 ..
 
-# typewriter(scr a,str b)
+# typewriter(scr a,linewi m,str b)
 #  c,j,f,g,i,d,b
 typewriter:
-# var c=4
-li c 4    # char width
-# var j=f00
-li j f00  # rgb color
-# f=m
-tx f m    # f=line_width_in_pixels-4
-# f-=c
-sub f c   # 
-# g=-400
-li g -400 # g=-400+4
-# g+=c
-add g c   #
-# i=*b++
-ldc i b   # string len
-lp i      # foreach
-  # d=*b++
-  ldc d b # d=*b
-  # type()nxt
+li c 4     # const c=4
+li j f00   # const j=f00
+tx f m     # f=m
+sub f c    # f-=c
+li g -400  # g-=400
+add g c    # g+=c
+ldc i b    # var i=*b++
+lp i       # times i
+  ldc d b  #   d=*b++
   call type nxt # type(a,d,g,j)nxt
 ret
 ..
