@@ -394,22 +394,18 @@ final public class zn extends a{
 			x.style();
 			switch(theme){
 			case 0:x
-//				.css("html","background:#111;color:#080")
-				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
-				.css("a","color:#008")
-//				.css(ec,"width:30em;min-width:30em")
+				//width:50em;
+				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
 				.css(ec.src,"width:12em;min-width:12em;height:256em;min-height:256em;resize:none;line-height:1.4em")
-//				.css(es,"overflow:scroll;width:13em;min-width:13em")
-//				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
 				.css(".floatclear","clear:both")
 				.css(".panel","padding-left:.5em;padding-right:.5em")
-				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				.css(".stp","background-color:#020")
 				.css(".brk","background-color:#060")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
+				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
 				break;
 			case 1:x
