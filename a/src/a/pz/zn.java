@@ -43,7 +43,7 @@ final public class zn extends a{
 	public void pramble_to(final xwriter x){
 		x.pl(strdatasize(ram.size)+" 20b ram");
 		x.pl(re.size+" 20b registers");
-		x.pl(scr_wi+" x "+scr_hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
+		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
 		x.pl(strdatasize2(rom.size)+" 16b instructions");
@@ -455,7 +455,7 @@ final public class zn extends a{
 		final int b=bits.toint();
 		if((b&1)==1){
 			x.xu(st.set("refreshing display")).flush();
-			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
+			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 		x.xu(st.set("reseted"));
 	}
@@ -543,7 +543,7 @@ final public class zn extends a{
 			x.flush();
 			final int b=bits.toint();
 			if((b&1)==1){
-				ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
+				ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 			}
 		}
 	}
@@ -578,7 +578,7 @@ final public class zn extends a{
 			x.xu(ca);
 			x.xu(this.lo);
 			xfocusline(x);
-			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
+			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 	}
 	/**stepframe*/
@@ -606,15 +606,16 @@ final public class zn extends a{
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
 		final int b=bits.toint();
 		if((b&1)==1){
-			ra.x_rfh(x,s,scr_wi,scr_hi,0,0);
+			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 	}
-	final static int scr_wi=320,scr_hi=200;
 	public void snapshot_png_to(final OutputStream os)throws IOException{
-		final BufferedImage bi=new BufferedImage(scr_wi,scr_hi,BufferedImage.TYPE_INT_ARGB);
+		final int wi=ra.wi;
+		final int hi=ra.hi;
+		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
-		for(int i=0;i<scr_hi;i++){
-			for(int j=0;j<scr_wi;j++){
+		for(int i=0;i<hi;i++){
+			for(int j=0;j<wi;j++){
 				final int d=ra.get(k++);
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
@@ -624,6 +625,7 @@ final public class zn extends a{
 				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
 				bi.setRGB(j,i,argb);
 			}
+//			k+=0;//skip
 		}
 		ImageIO.write(bi,"png",os);
 //		

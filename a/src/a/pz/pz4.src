@@ -1,7 +1,7 @@
-load a 300
-load c 100
-load d 200
+load a 1000
 load e 10
+load c 200
+load d 400
 lp e
   lp c
     inc p
