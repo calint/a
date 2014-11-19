@@ -128,21 +128,10 @@ lp j
     add a e nxt
   nxt ret
 ..
-txt:
-. 12
-. 000f 00ff 0fff 0175
-. 0767 0043
-. 0043 0252 0126 ffff
-. ffff ffff ffff ffff
-. ffff ffff ffff ffff
-. ffff ffff ffff ffff
-. ffff ffff ffff ffff
-. ffff ffff ffff ffff
-. ffff ffff ffff ffff
-
 dots:
 . 1
-. 0100 f00 
+# yyxx  rgb
+. 0100 0f00 
 
 rects:
 . 5
@@ -172,3 +161,15 @@ blits:
 . 20e0 0000 0020 0020
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
+
+txt:
+. 12
+. 000f 00ff 0fff 0175
+. 0767 0043
+. 0043 0252 0126 ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
