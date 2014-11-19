@@ -128,6 +128,7 @@ final public class zn extends a{
 						if(t==null)break;
 						if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
 						if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
+						if(t.startsWith("#")){consume_rest_of_line(r);break;}
 						throw new Error("3 "+t);
 					}
 				}
@@ -403,7 +404,7 @@ final public class zn extends a{
 			case 0:x
 				//width:50em;
 				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
-				.css(ec.src,"width:16em;min-width:16em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:32em;min-width:32em;height:256em;min-height:256em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")

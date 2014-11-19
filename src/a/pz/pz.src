@@ -1,19 +1,19 @@
 # *300=p++
-li a 300
 inc p
+li a 300
 st a p
 
-# clr(100,400,70,f00,d+=4)
-li m 100
-li a 400
-li c 70
+# clr(400,100,70,f00,80+p)
+li a 400   # yyxx
+li m 100   # line width
+li c 70    
 li d 80
 add d p
 call clr
 
 # drwrects(400,rects)
-li a 400
-li b :rects
+li a 400     
+li b :rects  
 call drwrects
 
 # drwblits(400,blitz)
@@ -47,20 +47,19 @@ st b c
 # typewriter(a,b)
 #  c,j,f,g,i,d,b
 typewriter:
-li c 4
-li j f00
-tx f m
-sub f c
-li g -400
-add g c
-ldc i b
-lp i
-  ldc d b
-  call type nxt
+li c 4    # char width
+li j f00  # rgb color
+tx f m    # f=line_width_in_pixels-4
+sub f c   # 
+li g -400 # g=-400+4
+add g c   #
+ldc i b   # string len
+lp i      # foreach
+  ldc d b # d=*b
+  call type nxt # type(a,d,g,j)nxt
 ret
 ..
-# type(a,d)
-#  d,a,j
+# type(a dest w,d charbmp w,c width,g,j rgb w)
 type:
 lp c
   lp c
@@ -72,7 +71,7 @@ lp c
   add a f nxt   
 add a g ret    
 ..
-# clr(a,c,m,d)
+# clr(scr a,height c,width m,rgb d)
 #  a,d
 clr:
 lp c
@@ -80,17 +79,17 @@ lp c
     stc a d nxt
     inc d nxt ret
 ..
-# drwdots()
+# drwdots(scr a,dots f)
 #  c,g,h
 drwdots:
 ldc c f
 lp c
-  ldc g f
-  ldc h f
-  add g a
+  ldc g f   # dot addr
+  ldc h f   # dot color
+  add g a   # offset
   stc g h nxt ret
 ..
-# drwrects(a,b,g)
+# drwrects(scr a,rects b,scrwi m)
 #  b,c,a,d,e,f,g
 drwrects:
 ldc c b
@@ -107,7 +106,7 @@ lp c
     add a g nxt
   nxt ret
 ..
-# drwblits(a,k)
+# drwblits(scr a,blits k,scrwi m)
 #  j,a,b,h,i,e,d
 drwblits:
 ldc j k
