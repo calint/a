@@ -16,7 +16,7 @@ final public class ram extends a{
 	public ram(){rst();}
 //	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
-	final int wi=128,hi=256;
+	final int wi=320,hi=200;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 	}
