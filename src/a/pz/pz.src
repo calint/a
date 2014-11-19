@@ -7,7 +7,7 @@ st a p
 li m 100
 li a 400
 li c 70
-li d f00
+li d 080
 add d p
 call clr
 
@@ -19,7 +19,7 @@ call drwrects
 li a 400
 call drwblits
 
-# typewriter(400,:txt)
+# typewriter(400,txt)
 li a 400
 li b :txt
 call typewriter
@@ -38,6 +38,8 @@ ifp add c d
 ifz sub c d
 st b c
 ..
+# typewriter(a,b)
+#  c,j,f,g,i,d,b
 typewriter:
 li c 4
 li j f00
@@ -51,6 +53,8 @@ lp i
   call type nxt
 ret
 ..
+# type(a,d)
+#  d,a,j
 type:
 lp c
   lp c
@@ -62,6 +66,8 @@ lp c
   add a f nxt   
 add a g ret    
 ..
+# clr(a,c,m,d)
+#  c,m,a,d
 clr:
 lp c
   lp m
