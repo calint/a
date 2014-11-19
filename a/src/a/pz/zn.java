@@ -1243,7 +1243,7 @@ final public class zn extends a{
 	}
 	private void zneval(final int i){
 		if(i==0){zn=1;return;}
-		if(i<0){zn=2;return;}
+		if((i&(1<<16))==(1<<16)){zn=2;return;}
 		zn=3;
 	}
 	@Override protected void ev(xwriter x,a from,Object o) throws Throwable{
