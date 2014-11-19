@@ -1,45 +1,45 @@
 inc p
-load a 300
+li a 300
 st a p
 
-load b :blits
+li b :blits
 inc b
 ld b c
 
-load d 1
-load k 7fff
+li d 1
+li k 7fff
 ld k e
 ifp add c d
 ifz sub c d
 st b c
 
-load m 100
+li m 100
 
-load a 0400
-load c 70
-load d 0f00
+li a 0400
+li c 70
+li d 0f00
 add d p
 call clr
 
-load a 400
+li a 400
 call drwrects
 
-load a 400
+li a 400
 call drwblits
 
-load a 400
-load b :txt
+li a 400
+li b :txt
 call typewriter
 
-load a 400
+li a 400
 call drwdots
 ..
 typewriter:
-load c 4
-load j f00
+li c 4
+li j f00
 tx f m
 sub f c
-load g -400
+li g -400
 add g c
 ldc b i
 lp i
@@ -65,7 +65,7 @@ lp c
     inc d nxt ret
 ..
 drwdots:
-load f :dots
+li f :dots
 ldc f c
 lp c
   ldc f g
@@ -74,7 +74,7 @@ lp c
   stc g h nxt ret
 ..
 drwrects:
-load b :rects
+li b :rects
 ldc b c
 lp c
   ldc b a
@@ -90,7 +90,7 @@ lp c
   nxt ret
 ..
 drwblits:
-load k :blits
+li k :blits
 ldc k j
 lp j
   ldc k a
