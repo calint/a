@@ -412,10 +412,7 @@ final public class zn extends a{
 				.css("html","background:#111;color:#080")
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
-//				.css(ec,"width:30em;min-width:30em")
 				.css(ec.src,"width:12em;min-width:12em;height:256em;min-height:256em;resize:none;line-height:1.4em")
-//				.css(es,"overflow:scroll;width:13em;min-width:13em")
-//				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -429,7 +426,6 @@ final public class zn extends a{
 				break;
 			}
 			x.style_();
-//			ro.libgstp="#030";
 			ajaxsts.to(x);
 			try(final jskeys jskeys=new jskeys(x)){
 				jskeys.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
@@ -467,6 +463,7 @@ final public class zn extends a{
 				.ax(this,"n"," step")
 				.ax(this,"g"," go")
 				.ax(this,"u"," run")
+				.ax(this,"be"," bench")
 //				.ax(this,"s"," save")
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
