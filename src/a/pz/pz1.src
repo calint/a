@@ -1,4 +1,4 @@
-load a 300
-load c 888
+load c f00
+load a 4080
 st a c
 ..

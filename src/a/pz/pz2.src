@@ -1,5 +1,5 @@
-load a 300
-load c 100
+load a 4000
+load c a0
 lp c
   inc p
   stc a p nxt

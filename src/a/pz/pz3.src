@@ -1,6 +1,8 @@
-load a 300
+load a 100
+load d 7e
 load c 100
-lp c
+load p 888
+lp d
   lp c
     inc p
     stc a p nxt
