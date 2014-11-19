@@ -34,22 +34,6 @@ call typewriter
 load a 400
 call drwdots
 ..
-..
-clr:
-lp c
-  lp m
-    stc a d nxt
-    inc d nxt ret
-
-drwdots:
-load f :dots
-ldc f c
-lp c
-  ldc f g
-  ldc f h
-  add g a
-  stc g h nxt ret
-..
 typewriter:
 load c 4
 load j f00
@@ -73,6 +57,21 @@ lp c
     inc j nxt
   add a f nxt   
 add a g ret    
+..
+clr:
+lp c
+  lp m
+    stc a d nxt
+    inc d nxt ret
+..
+drwdots:
+load f :dots
+ldc f c
+lp c
+  ldc f g
+  ldc f h
+  add g a
+  stc g h nxt ret
 ..
 drwrects:
 load b :rects
