@@ -4,10 +4,10 @@ st a p
 
 li b :blits
 inc b
-ld b c
+ld c b
 li d 1
 li k 7fff
-ld k e
+ld e k
 ifp add c d
 ifz sub c d
 st b c
@@ -39,9 +39,9 @@ tx f m
 sub f c
 li g -400
 add g c
-ldc b i
+ldc i b
 lp i
-  ldc b d
+  ldc d b
   call type nxt
 ret
 ..
@@ -64,21 +64,21 @@ lp c
 ..
 drwdots:
 li f :dots
-ldc f c
+ldc c f
 lp c
-  ldc f g
-  ldc f h
+  ldc g f
+  ldc h f
   add g a
   stc g h nxt ret
 ..
 drwrects:
 li b :rects
-ldc b c
+ldc c b
 lp c
-  ldc b a
-  ldc b d
-  ldc b e
-  ldc b f
+  ldc a b
+  ldc d b
+  ldc e b
+  ldc f b
   tx g m
   sub g f
   lp e
@@ -89,17 +89,17 @@ lp c
 ..
 drwblits:
 li k :blits
-ldc k j
+ldc j k
 lp j
-  ldc k a
-  ldc k b
-  ldc k h
-  ldc k i
+  ldc a k
+  ldc b k
+  ldc h k
+  ldc i k
   tx e m
   sub e i
   lp h
     lp i
-      ldc b d
+      ldc d b
       ifz inc a nxt
       ifp stc a d nxt
       ifn stc a d nxt
