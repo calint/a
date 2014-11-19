@@ -379,7 +379,7 @@ final public class zn extends a{
 		x.div(this);
 		final String id=id();
 		if(pt()==null){
-			x.tag("style")
+			x.style()
 				.css("html","background:#111;color:#080")
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
