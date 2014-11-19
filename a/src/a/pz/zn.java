@@ -385,7 +385,7 @@ final public class zn extends a{
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
 				.css(ec,"width:30em;min-width:30em")
-				.css(ec.src,"width:30em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:30em;height:256em;min-height:256em;resize:none;line-height:1.4em;border-right:1px dotted")
 //				.css(es,"overflow:scroll;width:13em;min-width:13em")
 //				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
