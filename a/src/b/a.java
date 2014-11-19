@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 public class a implements Serializable{
@@ -113,6 +115,7 @@ public class a implements Serializable{
 	
 	/**implement to provide custom html document title*/
 	public interface titled{void title_to(xwriter x);}
+	final public Reader reader(){return new StringReader(s==null?"":s);}
 	
 	private static final long serialVersionUID=1;
 }

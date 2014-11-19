@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +48,38 @@ final public class zn extends a{
 		x.pl(loops.size+" loops stack");
 		x.pl(calls.size+" calls stack");
 	}
+	public static class program{
+		public program(final PushbackReader r)throws IOException{
+			s=new ArrayList<>();
+			while(true){
+				final int ch=r.read();
+				if(ch==-1)return;
+				r.unread(ch);
+				final stmt st=new stmt(r);
+				s.add(st);
+			}
+		}
+		public void to(xwriter x){
+			s.stream().forEach(s->{s.to(x);x.nl();});
+		}
+		private List<stmt>s;
+	}
+	public static class stmt{
+		public stmt(final PushbackReader r)throws IOException{
+			final StringBuilder sb=new StringBuilder();
+			while(true){
+				final int ch=r.read();
+				if(ch==-1)throw new Error("1");
+				if(ch=='\n')break;
+				sb.append((char)ch);
+			}
+			s=sb.toString();
+		}
+		private String s;
+		public void to(xwriter x){x.p(s);}
+		final public String toString(){return s;}
+	}
+	
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
