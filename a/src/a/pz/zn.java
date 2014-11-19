@@ -119,7 +119,9 @@ final public class zn extends a{
 					if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
 					throw new Error("3 "+t);
 				}
-				if(r.read()!='\n')throw new Error("4");
+				final int eos=r.read();
+				if(eos!='\n'&&eos!=-1)
+					throw new Error("4");
 				return s;
 			}catch(Throwable t){throw new Error(t);}
 		}
@@ -1218,9 +1220,11 @@ final public class zn extends a{
 		if(o instanceof program){
 			es.src.set(o.toString());
 			x.xuo(es);
-			x_c(x,null);
-			x_r(x,null);
-			x_f(x,null);
+			if(from==ec){
+				x_c(x,null);
+				x_r(x,null);
+				x_f(x,null);
+			}
 		}else super.ev(x,from,o);
 	}
 	public final static String fld(final String def,final String s){
