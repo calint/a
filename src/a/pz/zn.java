@@ -339,7 +339,7 @@ final public class zn extends a{
 	/**statusline*/public a st;
 	/**coreid*/public a co;
 //	/**asmsourceeditor*/public edsrc es;
-	/**crunsourceeditor*/public edcrun ec;
+	/**crunsourceeditor*/public edcrun ec;{try{x_l(null,null);}catch(Throwable t){throw new Error(t);}}
 	
 //	public int mode;//1:multicore
 	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
@@ -429,9 +429,9 @@ final public class zn extends a{
 		if(hasbit(bit_display))x.r(ra);
 		if(hasbit(bit_menu))
 			x.div()
-				.ax(this,"l"," load")
-				.ax(this,"c"," compile")
-				.ax(this,"r"," reset")
+//				.ax(this,"l"," load")
+//				.ax(this,"c"," compile")
+//				.ax(this,"r"," reset")
 				.ax(this,"f"," frame")
 				.ax(this,"n"," step")
 				.ax(this,"g"," go")
