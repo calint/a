@@ -20,7 +20,7 @@ final public class edcrun extends a{
 		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(focusline-1)+"];e._oldcls=e.className;e.className='stp';");
 		lstfocusline=focusline;
 	}
-	public a txt;
+	public a src;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this,"float textleft panel");
 		x.p("crun");
@@ -29,11 +29,11 @@ final public class edcrun extends a{
 		x.ax(this,"f3"," try");
 		if(edit){
 			x.nl();
-			x.inptxtarea(txt);
+			x.inptxtarea(src);
 			x.div_();
 			return;
 		}
-		final StringReader sr=new StringReader(txt.toString());
+		final StringReader sr=new StringReader(src.toString());
 		final BufferedReader br=new BufferedReader(sr);
 		x.tag("ol");
 		int lno=1;
@@ -67,7 +67,7 @@ final public class edcrun extends a{
 		if(edit)return;
 		edit=true;
 		x.xuo(this);
-		x.xfocus(txt);
+		x.xfocus(src);
 	}
 	synchronized public void x_f2(xwriter x,String s)throws Throwable{
 		if(!edit)return;
@@ -75,7 +75,7 @@ final public class edcrun extends a{
 		x.xuo(this);
 	}
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
-		try(final source_reader pr=new source_reader(txt.reader())){
+		try(final source_reader pr=new source_reader(src.reader())){
 			final program p=new program(pr);
 			b.pl(p.toString());
 			ev(x,this,p);
