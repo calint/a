@@ -111,8 +111,8 @@ final public class zn extends a{
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	/**asmsourcecode*/public ed sr;
-	/**crunsourceeditor*/public cruned cr;
+	/**asmsourceeditor*/public edsrc es;
+	/**crunsourceeditor*/public edcrun ec;
 	
 //	public int mode;//1:multicore
 	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
@@ -146,10 +146,10 @@ final public class zn extends a{
 				.css("html","background:#111;color:#080")
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
-				.css(cr,"width:30em;min-width:30em")
-				.css(cr.txt,"width:30em;height:64em;min-height:64em;resize:none")
-				.css(sr,"overflow:scroll;width:13em;min-width:13em")
-				.css(sr.txt,"outline:none;height:128em;min-height:128em;resize:none")
+				.css(ec,"width:30em;min-width:30em")
+				.css(ec.txt,"width:30em;height:64em;min-height:64em;resize:none")
+				.css(es,"overflow:scroll;width:13em;min-width:13em")
+				.css(es.txt,"outline:none;height:128em;min-height:128em;resize:none")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -212,8 +212,8 @@ final public class zn extends a{
 			.div_();
 		}
 		if((b&4)==4)x.r(ro);
-		if((b&8)==8)x.r(sr);
-		if((b&256)==256)x.r(cr);
+		if((b&8)==8)x.r(es);
+		if((b&256)==256)x.r(ec);
 		x.nl(8);
 		x.div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		x.div_();
@@ -256,22 +256,22 @@ final public class zn extends a{
 	}
 	/**save source*/
 	public void x_s(final xwriter x,final String s)throws Throwable{
-		sr.txt.to(pth);
+		es.txt.to(pth);
 		st.set("saved "+pth.name());
 		if(x==null)return;
 		x.xu(st);
 	}
 	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
 		if(pth!=null&&pth.exists()){
-			sr.txt.from(pth);
+			es.txt.from(pth);
 			st.set("loaded "+pth.name());
 		}else{
 			final InputStream is=getClass().getResourceAsStream(filenmromsrc);
-			sr.txt.from(is);
+			es.txt.from(is);
 			st.set("loaded default");
 		}
 		if(x==null)return;
-		x.xuo(sr).xu(st).xuo(ro);
+		x.xuo(es).xu(st).xuo(ro);
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
@@ -305,8 +305,8 @@ final public class zn extends a{
 			ro.xfocusline(x);
 		}
 		if(lino.isEmpty())return;
-		sr.focusline=lino.get(pc);
-		sr.xfocusline(x);
+		es.focusline=lino.get(pc);
+		es.xfocusline(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
@@ -354,7 +354,7 @@ final public class zn extends a{
 			boolean go=true;
 			step();
 			final int srclno=lino.get(pc);
-			if(sr.isonbrkpt(srclno)){
+			if(es.isonbrkpt(srclno)){
 				st.set("breakpoint @ "+srclno);
 				go=false;
 			}
@@ -436,7 +436,7 @@ final public class zn extends a{
 		loadlabelmap.clear();
 		skplabelmap.clear();
 		srclines.clear();
-		final Scanner sc=new Scanner(sr.txt.toString());
+		final Scanner sc=new Scanner(es.txt.toString());
 		try{
 		lno=0;
 		lnosrc=0;
