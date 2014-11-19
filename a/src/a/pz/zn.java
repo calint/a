@@ -99,6 +99,7 @@ final public class zn extends a{
 			case"ifp":{zn=3;tk=next_token(r);break;}
 			}
 //			b.pl(tk);
+			if(tk.equals(".."))tk="eof";
 			try{
 				final Class cls=Class.forName(zn.class.getName()+"$"+tk);
 				final Constructor ctor=cls.getConstructor(PushbackReader.class);
@@ -143,6 +144,16 @@ final public class zn extends a{
 	public static class ret extends stmt{
 		public ret(PushbackReader r)throws IOException{
 			super("ret");
+		}
+	}
+	public static class lp extends stmt{
+		public lp(PushbackReader r)throws IOException{
+			super("lp "+next_token_on_same_line(r));
+		}
+	}
+	public static class stc extends stmt{
+		public stc(PushbackReader r)throws IOException{
+			super("stc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	private static void skip_whitespace(PushbackReader r)throws IOException{

@@ -1,0 +1,4 @@
+load a 300
+load c 888
+st a c
+..
