@@ -75,14 +75,21 @@ ret
 # type(scr a,char d,width c,rgb j,g)
 #  a,d,j
 type:
+# times c
 lp c
+#  times c
   lp c
+    # d<<=1
     shf d -1
+    # switchi{*a=j}{a++}{a++}
     ifn stc a j
     ifp inc a
     ifz inc a
+    # j++;nxt
     inc j nxt
-  add a f nxt   
+  # a+=f;nxt
+  add a f nxt
+# a+=g;ret   
 add a g ret    
 ..
 # clr(scr a,linewi m,height c,rgb d)
