@@ -129,8 +129,8 @@ final public class zn extends a{
 				}catch(Throwable t){throw new Error(r+" "+t);}
 			}
 		}
-		public static class load extends stmt{
-			public load(source_reader r)throws IOException{
+		public static class li extends stmt{
+			public li(source_reader r)throws IOException{
 				super("load "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 			}
 		}

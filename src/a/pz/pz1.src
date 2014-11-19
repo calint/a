@@ -1,4 +1,4 @@
-load c f00
-load a 4080
+li c f00
+li a 4080
 st a c
 ..
