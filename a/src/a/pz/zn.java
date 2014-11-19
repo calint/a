@@ -146,7 +146,7 @@ final public class zn extends a{
 		}
 		public static class eof extends stmt{
 			public eof(source_reader r)throws IOException{
-				super("..");
+				super(". ffff");
 			}
 		}
 		public static class nxt extends stmt{
