@@ -51,7 +51,7 @@ final public class zn extends a{
 		x.pl(calls.size+" calls stack");
 	}
 	public static class program{
-		public program(final PushbackReader r)throws IOException{
+		public program(final source_reader r)throws IOException{
 			s=new ArrayList<>();
 			while(true){
 				final int ch=r.read();
@@ -91,7 +91,7 @@ final public class zn extends a{
 			if(ret)sb.append(" ret");
 			return sb.toString();
 		}
-		public static stmt read_next_stmt(final PushbackReader r,final Map<String,String>labels)throws IOException{
+		public static stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
 			skip_whitespace(r);
 			String tk=next_token_on_same_line(r);
 			b.b.pl(tk);
@@ -110,80 +110,82 @@ final public class zn extends a{
 			if(tk.equals("."))tk="data";
 			try{
 				final Class cls=Class.forName(zn.class.getName()+"$"+tk);
-				final Constructor ctor=cls.getConstructor(PushbackReader.class);
+				final Constructor ctor=cls.getConstructor(source_reader.class);
 				final stmt s=(stmt)ctor.newInstance(r);
-				s.zn=zn;
-				while(true){
-					final String t=next_token_on_same_line(r);
-					if(t==null)break;
-					if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
-					if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
-					throw new Error("3 "+t);
+				if(!(s instanceof data)){
+					s.zn=zn;
+					while(true){
+						final String t=next_token_on_same_line(r);
+						if(t==null)break;
+						if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
+						if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
+						throw new Error("3 "+t);
+					}
 				}
 				final int eos=r.read();
 				if(eos!='\n'&&eos!=-1)
 					throw new Error("4");
 				return s;
-			}catch(Throwable t){throw new Error(t);}
+			}catch(Throwable t){throw new Error(r+" "+t);}
 		}
 	}
 	public static class load extends stmt{
-		public load(PushbackReader r)throws IOException{
+		public load(source_reader r)throws IOException{
 			super("load "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	public static class inc extends stmt{
-		public inc(PushbackReader r)throws IOException{
+		public inc(source_reader r)throws IOException{
 			super("inc "+next_token_on_same_line(r));
 		}
 	}
 	public static class st extends stmt{
-		public st(PushbackReader r)throws IOException{
+		public st(source_reader r)throws IOException{
 			super("st "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	public static class eof extends stmt{
-		public eof(PushbackReader r)throws IOException{
+		public eof(source_reader r)throws IOException{
 			super("..");
 		}
 	}
 	public static class nxt extends stmt{
-		public nxt(PushbackReader r)throws IOException{
+		public nxt(source_reader r)throws IOException{
 			super("nxt");
 		}
 	}
 	public static class ret extends stmt{
-		public ret(PushbackReader r)throws IOException{
+		public ret(source_reader r)throws IOException{
 			super("ret");
 		}
 	}
 	public static class lp extends stmt{
-		public lp(PushbackReader r)throws IOException{
+		public lp(source_reader r)throws IOException{
 			super("lp "+next_token_on_same_line(r));
 		}
 	}
 	public static class stc extends stmt{
-		public stc(PushbackReader r)throws IOException{
+		public stc(source_reader r)throws IOException{
 			super("stc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	public static class add extends stmt{
-		public add(PushbackReader r)throws IOException{
+		public add(source_reader r)throws IOException{
 			super("add "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	public static class sub extends stmt{
-		public sub(PushbackReader r)throws IOException{
+		public sub(source_reader r)throws IOException{
 			super("sub "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	public static class call extends stmt{
-		public call(PushbackReader r)throws IOException{
+		public call(source_reader r)throws IOException{
 			super(next_token_on_same_line(r));
 		}
 	}
 	public static class data extends stmt{
-		public data(PushbackReader r)throws IOException{
+		public data(source_reader r)throws IOException{
 			super(". "+rest_of_line(r));
 		}
 	}
@@ -192,7 +194,27 @@ final public class zn extends a{
 			super(nm+":");
 		}
 	}
-	private static void skip_whitespace(PushbackReader r)throws IOException{
+	public static class ld extends stmt{
+		public ld(source_reader r)throws IOException{
+			super("ld "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class ldc extends stmt{
+		public ldc(source_reader r)throws IOException{
+			super("ldc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class tx extends stmt{
+		public tx(source_reader r)throws IOException{
+			super("tx "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class shf extends stmt{
+		public shf(source_reader r)throws IOException{
+			super("shf "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	private static void skip_whitespace(source_reader r)throws IOException{
 		while(true){
 			final int ch=r.read();
 			if(Character.isWhitespace(ch))continue;
@@ -201,7 +223,7 @@ final public class zn extends a{
 			return;
 		}
 	}
-	private static void skip_whitespace_on_same_line(PushbackReader r)throws IOException{
+	private static void skip_whitespace_on_same_line(source_reader r)throws IOException{
 		while(true){
 			final int ch=r.read();
 			if(ch==-1)return;
@@ -211,7 +233,7 @@ final public class zn extends a{
 			return;
 		}
 	}
-	private static String next_token(PushbackReader r)throws IOException{
+	private static String next_token(source_reader r)throws IOException{
 		skip_whitespace(r);
 		final StringBuilder sb=new StringBuilder();
 		while(true){
@@ -224,7 +246,7 @@ final public class zn extends a{
 		if(sb.length()==0)return null;
 		return sb.toString();
 	}
-	private static String next_token_on_same_line(PushbackReader r)throws IOException{
+	private static String next_token_on_same_line(source_reader r)throws IOException{
 		skip_whitespace_on_same_line(r);
 		final StringBuilder sb=new StringBuilder();
 		while(true){
@@ -238,13 +260,13 @@ final public class zn extends a{
 		if(sb.length()==0)return null;
 		return sb.toString();
 	}
-	private static String rest_of_line(PushbackReader r)throws IOException{
-		skip_whitespace_on_same_line(r);
+	private static String rest_of_line(source_reader r)throws IOException{
+//		skip_whitespace_on_same_line(r);
 		final StringBuilder sb=new StringBuilder();
 		while(true){
 			final int ch=r.read();
 			if(ch==-1)break;
-			if(ch=='\n')break;
+			if(ch=='\n'){r.unread(ch);break;}
 			sb.append((char)ch);
 		}
 		return sb.toString();

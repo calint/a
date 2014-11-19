@@ -75,7 +75,7 @@ final public class edcrun extends a{
 		x.xuo(this);
 	}
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
-		try(final PushbackReader pr=new PushbackReader(txt.reader())){
+		try(final source_reader pr=new source_reader(txt.reader())){
 			final program p=new program(pr);
 			b.pl(p.toString());
 			ev(x,this,p);
