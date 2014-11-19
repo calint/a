@@ -17,16 +17,16 @@ import b.path;
 import b.xwriter;
 final public class zn extends a{
 	private static final long serialVersionUID=1;
-	public void logo_to(final xwriter x){
+	static public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 		x.pl("clare "+strdatasize(ram.size));
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
-	public void copyright_to(final xwriter x){
+	static public void copyright_to(final xwriter x){
 //		x.pl("(c) 1984 some rights reserved ltd");
 	}
-	public void schematics_to(final xwriter x){
+	static public void schematics_to(final xwriter x){
 		x.pl("|_______|______|____|____|  ");
 		x.pl("|z n x r|c i 00|0000|0000|  ");
 		x.pl("|_______|______|____|____|  ");
@@ -47,7 +47,7 @@ final public class zn extends a{
 		x.pl(loops.size+" loops stack");
 		x.pl(calls.size+" calls stack");
 	}
-	public void instructions_table_to(final xwriter x){
+	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
