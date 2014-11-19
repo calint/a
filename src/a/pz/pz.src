@@ -7,7 +7,7 @@ st a p
 li m 100
 li a 400
 li c 70
-li d 080
+li d 80
 add d p
 call clr
 
