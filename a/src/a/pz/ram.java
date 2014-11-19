@@ -8,15 +8,15 @@ import b.a;
 import b.xwriter;
 final public class ram extends a{
 	static final long serialVersionUID=1;
-	public final static int width=128;
-	public final static int height=256*16;	
+	public final static int width=512;
+	public final static int height=256;	
 	public final static int size=height*width;
 	private int[]ram=new int[size];
 	final private int scl=2;
 	public ram(){rst();}
 //	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
-	final int wi=320,hi=200;
+	final int wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 	}

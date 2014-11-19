@@ -743,7 +743,7 @@ public final class req{
 //				final String str=b.stacktraceline(t.getTargetException());
 				final String str=t.getTargetException().getMessage();
 				b.log(t);
-				x.xalert(str);
+				x.xalert(b.isempty(str,t.toString()));
 			}catch(NoSuchMethodException t){
 				x.xalert("method not found:\n"+e.getClass().getName()+".x_"+axfunc+"(xwriter,String)");
 			}

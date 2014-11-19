@@ -1,0 +1,10 @@
+load a 300
+load c 100
+load d 200
+load e 10
+lp e
+  lp c
+    inc p
+    stc a p nxt
+  add a d nxt
+..

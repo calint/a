@@ -1,0 +1,8 @@
+load a 300
+load c 100
+lp c
+  lp c
+    inc p
+    stc a p nxt
+  nxt
+..
