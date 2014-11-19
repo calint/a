@@ -11,8 +11,9 @@ li d 80
 add d p
 call clr
 
-# drwrects(400)
+# drwrects(400,:rects)
 li a 400
+li b :rects
 call drwrects
 
 # drwblits(400)
@@ -88,10 +89,9 @@ lp c
   add g a
   stc g h nxt ret
 ..
-# drwrects()
+# drwrects(a,b)
 #  b,c,a,d,e,f,g
 drwrects:
-li b :rects
 ldc c b
 lp c
   ldc a b
