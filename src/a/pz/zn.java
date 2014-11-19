@@ -111,7 +111,9 @@ final public class zn extends a{
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	/**sourcecode*/public ed sr;
+	/**asmsourcecode*/public ed sr;
+	/**crunsourceeditor*/public cruned cr;
+	
 //	public int mode;//1:multicore
 	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
 	private int lno;
@@ -134,16 +136,20 @@ final public class zn extends a{
 		private static final long serialVersionUID=1;
 	}
 	public metrics me;
-	public a bits;{bits.set(0b11111111);}
+	public a bits;{bits.set(0b111111111);}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
 		if(pt()==null){
-			x.style()
+			x.tag("style")
 				.css("html","background:#111;color:#080")
-				.css("body","text-align:center;line-height:1.4em;width:50em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
+				.css(cr,"width:30em;min-width:30em")
+				.css(cr.txt,"width:30em;height:64em;min-height:64em;resize:none")
+				.css(sr,"overflow:scroll;width:13em;min-width:13em")
+				.css(sr.txt,"outline:none;height:128em;min-height:128em;resize:none")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -207,6 +213,7 @@ final public class zn extends a{
 		}
 		if((b&4)==4)x.r(ro);
 		if((b&8)==8)x.r(sr);
+		if((b&256)==256)x.r(cr);
 		x.nl(8);
 		x.div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		x.div_();
