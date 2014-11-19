@@ -74,6 +74,8 @@ lp c
     stc a d nxt
     inc d nxt ret
 ..
+# drwdots()
+#  f,c,g,h
 drwdots:
 li f :dots
 ldc c f
