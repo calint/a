@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ final public class zn extends a{
 				if(tk.equals(".."))tk="eof";
 				if(tk.equals("."))tk="data";
 				try{
-					final Class cls=Class.forName(zn.class.getName()+"$"+tk);
+					final Class cls=Class.forName(program.class.getName()+"$"+tk);
 					final Constructor ctor=cls.getConstructor(source_reader.class);
 					final stmt s=(stmt)ctor.newInstance(r);
 					if(!(s instanceof data)){
@@ -337,7 +338,7 @@ final public class zn extends a{
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	/**asmsourceeditor*/public edsrc es;
+//	/**asmsourceeditor*/public edsrc es;
 	/**crunsourceeditor*/public edcrun ec;
 	
 //	public int mode;//1:multicore
@@ -384,9 +385,9 @@ final public class zn extends a{
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
 				.css(ec,"width:30em;min-width:30em")
-				.css(ec.txt,"width:30em;height:256em;min-height:256em;resize:none;line-height:1.4em")
-				.css(es,"overflow:scroll;width:13em;min-width:13em")
-				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:30em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+//				.css(es,"overflow:scroll;width:13em;min-width:13em")
+//				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -439,7 +440,7 @@ final public class zn extends a{
 			.div_();
 		if(hasbit(bit_panels))x.div(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_rom))x.r(ro);
-		if(hasbit(bit_edasm))x.r(es);
+//		if(hasbit(bit_edasm))x.r(es);
 		if(hasbit(bit_edcrn))x.r(ec);
 		x.div(null,"floatclear").div_();
 //		x.nl(8).div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
@@ -482,22 +483,22 @@ final public class zn extends a{
 	}
 	/**save source*/
 	public void x_s(final xwriter x,final String s)throws Throwable{
-		es.src.to(pth);
+		ec.src.to(pth);
 		st.set("saved "+pth.name());
 		if(x==null)return;
 		x.xu(st);
 	}
 	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
 		if(pth!=null&&pth.exists()){
-			es.src.from(pth);
+			ec.src.from(pth);
 			st.set("loaded "+pth.name());
 		}else{
 			final InputStream is=getClass().getResourceAsStream(filenmromsrc);
-			es.src.from(is);
+			ec.src.from(is);
 			st.set("loaded default");
 		}
 		if(x==null)return;
-		x.xuo(es).xu(st).xuo(ro);
+		x.xuo(ec).xu(st).xuo(ro);
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
@@ -531,8 +532,8 @@ final public class zn extends a{
 			ro.xfocusline(x);
 		}
 		if(lino.isEmpty())return;
-		es.focusline=lino.get(pc);
-		es.xfocusline(x);
+		ec.focusline=lino.get(pc);
+		ec.xfocusline(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
@@ -580,7 +581,7 @@ final public class zn extends a{
 			boolean go=true;
 			step();
 			final int srclno=lino.get(pc);
-			if(es.isonbrkpt(srclno)){
+			if(ec.isonbrkpt(srclno)){
 				st.set("breakpoint @ "+srclno);
 				go=false;
 			}
@@ -663,7 +664,7 @@ final public class zn extends a{
 		loadlabelmap.clear();
 		skplabelmap.clear();
 		srclines.clear();
-		final Scanner sc=new Scanner(es.src.toString());
+		final Scanner sc=new Scanner(new StringReader(new program(new source_reader(ec.src.reader())).toString()));
 		try{
 		lno=0;
 		lnosrc=0;
@@ -1241,8 +1242,8 @@ final public class zn extends a{
 	}
 	@Override protected void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
-			es.src.set(o.toString());
-			x.xuo(es);
+//			es.src.set(o.toString());
+//			x.xuo(es);
 			if(from==ec){
 				x_c(x,null);
 				x_r(x,null);
