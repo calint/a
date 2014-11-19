@@ -2,16 +2,6 @@ inc p
 li a 300
 st a p
 
-li b :blits
-inc b
-ld c b
-li d 1
-li k 7fff
-ld e k
-ifp add c d
-ifz sub c d
-st b c
-
 li m 100
 li a 0400
 li c 70
@@ -31,6 +21,16 @@ call typewriter
 
 li a 400
 call drwdots
+
+li b :blits
+inc b
+ld c b
+li d 1
+li k 7fff
+ld e k
+ifp add c d
+ifz sub c d
+st b c
 ..
 typewriter:
 li c 4
