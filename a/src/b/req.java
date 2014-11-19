@@ -760,8 +760,17 @@ public final class req{
 		}
 		final boolean isbin=e instanceof bin;
 		final oschunked os=reply_chunked(h_http200,isbin?((bin)e).contenttype():text_html_utf8,null);
-		if(!isbin)os.write(ba_page_header);
 		final xwriter x=new xwriter(os);
+		if(!isbin){
+			os.write(ba_page_header_pre_title);
+			if(e instanceof a.titled){
+				((a.titled)e).title_to(x);
+			}else{
+				final String cn=e.getClass().getName();
+				x.p(cn.substring(cn.lastIndexOf('.')+1));
+			}
+			os.write(ba_page_header_after_title);
+		}
 		try{e.to(x);}catch(final Throwable t){b.log(t);x.pre().p(b.stacktrace(t));}
 		os.finish();
 	}
@@ -968,7 +977,8 @@ public final class req{
 	private final static String s_minus="-";
 	private final static String s_range="range";
 	private final static String s_slash="/";
-	private static final byte[]ba_page_header="<!doctype html><link rel=stylesheet href=/x.css><script src=/x.js></script>".getBytes();
+	private static final byte[]ba_page_header_pre_title="<!doctype html><meta charset=UTF-8><link rel=stylesheet href=/x.css><script src=/x.js></script><title>".getBytes();
+	private static final byte[]ba_page_header_after_title="</title>".getBytes();
 	private final static int state_nextreq=0;
 	private final static int state_method=1;
 	private final static int state_uri=2;

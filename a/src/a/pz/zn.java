@@ -136,7 +136,18 @@ final public class zn extends a{
 		private static final long serialVersionUID=1;
 	}
 	public metrics me;
-	public a bits;{bits.set(0b111111111);}
+	public a bits;{bits.set(-1);}
+	public final static int bit_logo=1;
+	public final static int bit_schematics=2;
+	public final static int bit_pramble=4;
+	public final static int bit_instructions_table=8;
+	public final static int bit_display=16;
+	public final static int bit_menu=32;
+	public final static int bit_panels=64;
+	public final static int bit_rom=128;
+	public final static int bit_edasm=256;
+	public final static int bit_edcrn=512;
+	public boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 	public void pth(final path p){pth=p;}
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
@@ -176,24 +187,19 @@ final public class zn extends a{
 				jskeys.add("cK","alert('info')");
 			}
 		}
-		final int b=bits.toint();
-		if((b&32)==32){//disp pramble
+		if(hasbit(bit_logo)){
 			logo_to(x);
 			copyright_to(x);
 		}
-		if((b&64)==64){//disp pramble
-			schematics_to(x);
-		}
-		if((b&128)==128){//disp brochure lines
+		if(hasbit(bit_schematics))schematics_to(x);
+		if(hasbit(bit_pramble)){
 			x.nl();
 			pramble_to(x);
 			x.nl();
 		}
-		if((b&256)==256){//disp manual
-			instructions_table_to(x);
-		}
-		if((b&1)==1)x.r(ra);//disp ram
-		if((b&2)==2){//disp menu
+		if(hasbit(bit_instructions_table))instructions_table_to(x);
+		if(hasbit(bit_display))x.r(ra);
+		if(hasbit(bit_menu))
 			x.div()
 				.ax(this,"l"," load")
 				.ax(this,"c"," compile")
@@ -205,17 +211,11 @@ final public class zn extends a{
 				.ax(this,"s"," save")
 				.ax(this,"b"," run-to-break-point")
 			.div_();
-		}
-		if((b&16)==16){//disp panels
-			x.div(null,"float panel")
-				.span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo)
-			.div_();
-		}
-		if((b&4)==4)x.r(ro);
-		if((b&8)==8)x.r(es);
-		if((b&256)==256)x.r(ec);
-		x.nl(8);
-		x.div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
+		if(hasbit(bit_panels))x.div(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
+		if(hasbit(bit_rom))x.r(ro);
+		if(hasbit(bit_edasm))x.r(es);
+		if(hasbit(bit_edcrn))x.r(ec);
+//		x.nl(8).div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		x.div_();
 	}
 //	synchronized public void x_(xwriter x,String s)throws Throwable{}
