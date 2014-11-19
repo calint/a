@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import b.a;
 import b.xwriter;
-final public class cruned extends a{
+final public class edsrc extends a{
+	static final long serialVersionUID=11;
 	public boolean edit=false;
 	int focusline;
 	private int lstfocusline=-1;
@@ -20,7 +21,7 @@ final public class cruned extends a{
 	public a txt;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this,"float textleft panel");
-		x.p("crun");
+		x.p("source");
 		x.ax(this,"f1"," edit");
 		x.ax(this,"f2"," view");
 		if(edit){
@@ -70,5 +71,4 @@ final public class cruned extends a{
 		edit=false;
 		x.xuo(this);
 	}
-	private static final long serialVersionUID=11;
 }

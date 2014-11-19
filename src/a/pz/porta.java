@@ -22,7 +22,7 @@ final public class porta extends websock implements threadedsock{static final lo
 //			System.out.println(cmd);
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
 //			System.out.println(src);
-			v.sr.txt.set(src);
+			v.es.txt.set(src);
 			try{
 				v.x_c(null,null);
 			}catch(final Throwable t){
