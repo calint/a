@@ -386,11 +386,33 @@ final public class zn extends a{
 	public final static int bit_edcrn=512;
 	public boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 	public void pth(final path p){pth=p;}
+	public int theme;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
 		if(pt()==null){
-			x.style()
+			x.style();
+			switch(theme){
+			case 0:x
+//				.css("html","background:#111;color:#080")
+				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("a","color:#008")
+//				.css(ec,"width:30em;min-width:30em")
+				.css(ec.src,"width:12em;min-width:12em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+//				.css(es,"overflow:scroll;width:13em;min-width:13em")
+//				.css(es.src,"outline:none;height:128em;min-height:128em;resize:none;line-height:1.4em")
+				.css(".border","border:1px dotted red")
+				.css(".float","float:left")
+				.css(".textleft","text-align:left")
+				.css(".floatclear","clear:both")
+				.css(".panel","padding-left:.5em;padding-right:.5em")
+				.css(ajaxsts,"position:fixed;bottom:0;right:0")
+				.css(".stp","background-color:#020")
+				.css(".brk","background-color:#060")
+				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
+				;
+				break;
+			case 1:x
 				.css("html","background:#111;color:#080")
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
@@ -407,7 +429,10 @@ final public class zn extends a{
 				.css(".stp","background-color:#020")
 				.css(".brk","background-color:#060")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
-			.style_();
+				;
+				break;
+			}
+			x.style_();
 //			ro.libgstp="#030";
 			ajaxsts.to(x);
 			try(final jskeys jskeys=new jskeys(x)){
