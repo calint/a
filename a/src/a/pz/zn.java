@@ -436,8 +436,8 @@ final public class zn extends a{
 				.ax(this,"n"," step")
 				.ax(this,"g"," go")
 				.ax(this,"u"," run")
-				.ax(this,"s"," save")
-				.ax(this,"b"," run-to-break-point")
+//				.ax(this,"s"," save")
+//				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.div("laycent");
 		if(hasbit(bit_panels))x.div(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
