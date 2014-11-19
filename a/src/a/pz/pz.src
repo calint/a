@@ -1,34 +1,34 @@
+# clr(400,100,70,f00,080+p)
+li a 400   # yyxx
+li m 100   # line width
+li c 70    # nlines
+li d 080   # rgb
+add d p
+call clr
+
 # *300=p++
 inc p
 li a 300
 st a p
 
-# clr(400,100,70,f00,080+p)
-li a 400   # yyxx
-li m 100   # line width
-li c 70    # height
-li d 080    # rgb
-add d p
-call clr
-
 # drwrects(400,rects)
-li a 400     
-li b :rects  
+li a 400     # yyxx
+li b :rects  # list
 call drwrects
 
-# drwblits(400,blitz)
-li a 400
-li k :blits
+# drwblits(400,blits)
+li a 400     # yyxx
+li k :blits  # list
 call drwblits
 
 # typewriter(400,txt)
-li a 400
-li b :txt
+li a 400     # yyxx
+li b :txt    # list
 call typewriter
 
 # drwdots(400,dots)
-li a 400
-li f :dots
+li a 400     # yyxx
+li f :dots   # list
 call drwdots
 
 # c=*b=blits++
@@ -63,7 +63,7 @@ lp i       # times i
   call type nxt # type(a,d,g,j)nxt
 ret
 ..
-# type(scr a,char d,width c,rgb j,g)
+# type(scr a,chbmp d,chwi c,rgb j,g)
 #  a,d,j
 type:
 # times c
