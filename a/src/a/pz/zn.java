@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
+import b.b;
 import b.path;
 import b.xwriter;
 final public class zn extends a{
@@ -92,13 +93,17 @@ final public class zn extends a{
 				return sb.toString();
 			}
 			public static stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
-				skip_whitespace(r);
-				String tk=next_token_on_same_line(r);
-				b.b.pl(tk);
+				String tk="";
+				while(true){
+					skip_whitespace(r);
+					tk=next_token_on_same_line(r);
+					if(!tk.startsWith("#"))
+						break;
+					consume_rest_of_line(r);
+				}
 				if(tk.endsWith(":")){
 					labels.put(tk,tk);
 					return new label(tk.substring(0,tk.length()-1));
-	//				return read_next_stmt(r,labels);
 				}
 				byte zn=0;
 				switch(tk){
@@ -108,25 +113,28 @@ final public class zn extends a{
 				}
 				if(tk.equals(".."))tk="eof";
 				if(tk.equals("."))tk="data";
+				final stmt s;
 				try{
 					final Class cls=Class.forName(program.class.getName()+"$"+tk);
 					final Constructor ctor=cls.getConstructor(source_reader.class);
-					final stmt s=(stmt)ctor.newInstance(r);
-					if(!(s instanceof data)){
-						s.zn=zn;
-						while(true){
-							final String t=next_token_on_same_line(r);
-							if(t==null)break;
-							if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
-							if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
-							throw new Error("3 "+t);
-						}
+					s=(stmt)ctor.newInstance(r);
+				}catch(Throwable t){
+					throw new Error(r+" "+t);
+				}
+				if(!(s instanceof data)){
+					s.zn=zn;
+					while(true){
+						final String t=next_token_on_same_line(r);
+						if(t==null)break;
+						if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
+						if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
+						throw new Error("3 "+t);
 					}
-					final int eos=r.read();
-					if(eos!='\n'&&eos!=-1)
-						throw new Error("4");
-					return s;
-				}catch(Throwable t){throw new Error(r+" "+t);}
+				}
+				final int eos=r.read();
+				if(eos!='\n'&&eos!=-1)
+					throw new Error(r+" expected end of line or end of file");
+				return s;
 			}
 		}
 		public static class li extends stmt{
@@ -186,7 +194,7 @@ final public class zn extends a{
 		}
 		public static class data extends stmt{
 			public data(source_reader r)throws IOException{
-				super(". "+rest_of_line(r));
+				super(". "+consume_rest_of_line(r));
 			}
 		}
 		public static class label extends stmt{
@@ -270,8 +278,7 @@ final public class zn extends a{
 			if(sb.length()==0)return null;
 			return sb.toString();
 		}
-		private static String rest_of_line(source_reader r)throws IOException{
-	//		skip_whitespace_on_same_line(r);
+		private static String consume_rest_of_line(source_reader r)throws IOException{
 			final StringBuilder sb=new StringBuilder();
 			while(true){
 				final int ch=r.read();
@@ -396,7 +403,7 @@ final public class zn extends a{
 			case 0:x
 				//width:50em;
 				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
-				.css(ec.src,"width:12em;min-width:12em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:16em;min-width:16em;height:256em;min-height:256em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")

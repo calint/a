@@ -20,7 +20,7 @@ final public class source_reader extends Reader{
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
 	static String hr_location_string_from_line_and_col(final int ln,final int col) {
-		return "@("+ln+":"+col+")";
+		return ln+":"+col;
 	}
 	@Override public int read()throws IOException{
 		final int ch=source.read();
