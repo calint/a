@@ -367,7 +367,7 @@ final public class zn extends a{
 		private static final long serialVersionUID=1;
 	}
 	public metrics me;
-	public a bits;{bits.set(0b111110000);}
+	public a bits;{bits.set(0b1111110000);}
 	public final static int bit_logo=1;
 	public final static int bit_schematics=2;
 	public final static int bit_pramble=4;
