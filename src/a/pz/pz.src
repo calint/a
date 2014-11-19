@@ -1,24 +1,30 @@
-inc p
+# *300=p++
 li a 300
+inc p
 st a p
 
+# clr(100,400,70,f00,d+=4)
 li m 100
-li a 0400
+li a 400
 li c 70
-li d 0f00
+li d f00
 add d p
 call clr
 
+# drwrects(400)
 li a 400
 call drwrects
 
+# drwblits(400)
 li a 400
 call drwblits
 
+# typewriter(400,:txt)
 li a 400
 li b :txt
 call typewriter
 
+# drwdots(400)
 li a 400
 call drwdots
 
