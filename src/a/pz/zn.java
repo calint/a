@@ -536,7 +536,7 @@ final public class zn extends a{
 		}
 		if(lino.isEmpty())return;
 		ec.focusline=lino.get(pc);
-		ec.xfocusline(x);
+//		ec.xfocusline(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
