@@ -178,23 +178,16 @@ blits:
 . 20e0 0000 0020 0020
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
-
-
 </textarea> 
-
-
-
 <script>
 $=document.all;
 var keys=new Uint8Array([0,0]);
 var ison=false;
 var frameno=0;
 var last_scr_wi=0;
-
 start();
-
 function start(){
-	if(ison){alert("already on");return;}
+	if(ison)return;
 	ison=true;
 	$.sts.value="on";
 	frameno=0;
@@ -208,28 +201,21 @@ function start(){
 		var ua=new DataView(e.data);
 		var cmd=ua.getUint8(0);
 		var dat=e.data.slice(1);
-//		console.log("command: "+cmd);
 		if(cmd==0){
-//			console.log(frameno);
-			//var blob=new Blob([dat],{type:'image/png'});
-			//img.src=blob;
 			var b64=base64ArrayBuffer(dat);
 			$.scr.src='data:image/png;base64,'+b64;
-//			console.log("scrwi:"+$.scr.width);
 			if(last_scr_wi!=$.scr.width){
 				$.scr.width*=2;
 				last_scr_wi=$.scr.width;
 			}
 		}else if(cmd==49){
-//			console.log('text len: '+e.data.byteLength);
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
-//			console.log(str);
 			$.sts.value=str;
 			return;
 		}
 		ws.send(keys);
 	};
-	ws.onerror=function(e){alert("websocket error");};
+	ws.onerror=function(e){alert("websocket error "+e);};
 	$.scr.focus();
 }
 function stop(){
@@ -247,7 +233,6 @@ function p(txt){$.outp.value+=txt;}
 function onframe(){
 	var t=new Date().getTime();
 	var dt=t-onframe.t0;
-//	console.log(dt+"   "+onframe.fps+"    "+onframe.f0+"   "+frameno);
 	if(dt>1000){
 		onframe.t0=t;
 		var df=frameno-onframe.f0;
@@ -258,21 +243,6 @@ function onframe(){
 onframe.t0=0;
 onframe.f0=0;
 onframe.fps=0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
