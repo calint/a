@@ -6,8 +6,8 @@ st a p
 # clr(400,100,70,f00,80+p)
 li a 400   # yyxx
 li m 100   # line width
-li c 70    
-li d 80
+li c 70    # height
+li d 80    # rgb
 add d p
 call clr
 
