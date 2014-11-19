@@ -57,6 +57,10 @@ final public class zn extends a{
 				if(ch==-1)break;
 				r.unread(ch);
 				final stmt st=stmt.read_next_stmt(r);
+				if(st==null){
+					if(r.read()!='\n')throw new Error();
+					continue;
+				}
 				s.add(st);
 			}
 		}
@@ -91,12 +95,14 @@ final public class zn extends a{
 		}
 		public static stmt read_next_stmt(final PushbackReader r)throws IOException{
 			skip_whitespace(r);
-			String tk=next_token(r);
+			String tk=next_token_on_same_line(r);
+			b.b.pl(tk);
+			if(tk==null)return null;
 			byte zn=0;
 			switch(tk){
-			case"ifz":{zn=1;tk=next_token(r);break;}
-			case"ifn":{zn=2;tk=next_token(r);break;}
-			case"ifp":{zn=3;tk=next_token(r);break;}
+			case"ifz":{zn=1;tk=next_token_on_same_line(r);break;}
+			case"ifn":{zn=2;tk=next_token_on_same_line(r);break;}
+			case"ifp":{zn=3;tk=next_token_on_same_line(r);break;}
 			}
 //			b.pl(tk);
 			if(tk.equals(".."))tk="eof";
@@ -112,6 +118,7 @@ final public class zn extends a{
 					if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
 					throw new Error("3 "+t);
 				}
+				if(r.read()!='\n')throw new Error("4");
 				return s;
 			}catch(Throwable t){throw new Error(t);}
 		}
@@ -154,6 +161,11 @@ final public class zn extends a{
 	public static class stc extends stmt{
 		public stc(PushbackReader r)throws IOException{
 			super("stc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class add extends stmt{
+		public add(PushbackReader r)throws IOException{
+			super("add "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
 	private static void skip_whitespace(PushbackReader r)throws IOException{
