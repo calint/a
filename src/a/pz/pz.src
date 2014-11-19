@@ -85,6 +85,8 @@ lp c
   add g a
   stc g h nxt ret
 ..
+# drwrects()
+#  b,c,a,d,e,f,g
 drwrects:
 li b :rects
 ldc c b
@@ -101,6 +103,8 @@ lp c
     add a g nxt
   nxt ret
 ..
+# drwblits()
+#  k,j,a,b,h,i,e,d
 drwblits:
 li k :blits
 ldc j k
