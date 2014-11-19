@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -56,11 +57,7 @@ final public class zn extends a{
 				final int ch=r.read();
 				if(ch==-1)break;
 				r.unread(ch);
-				final stmt st=stmt.read_next_stmt(r);
-				if(st==null){
-					if(r.read()!='\n')throw new Error();
-					continue;
-				}
+				final stmt st=stmt.read_next_stmt(r,labels);
 				s.add(st);
 			}
 		}
@@ -70,6 +67,7 @@ final public class zn extends a{
 			s.forEach(e->sb.append(e.toString()).append('\n'));
 			return sb.toString();
 		}
+		final private Map<String,String>labels=new LinkedHashMap<>();
 	}
 	public static class stmt{
 		public boolean nxt,ret;
@@ -93,19 +91,22 @@ final public class zn extends a{
 			if(ret)sb.append(" ret");
 			return sb.toString();
 		}
-		public static stmt read_next_stmt(final PushbackReader r)throws IOException{
+		public static stmt read_next_stmt(final PushbackReader r,final Map<String,String>labels)throws IOException{
 			skip_whitespace(r);
 			String tk=next_token_on_same_line(r);
 			b.b.pl(tk);
-			if(tk==null)return null;
+			if(tk.endsWith(":")){
+				labels.put(tk,tk);
+				return null;
+			}
 			byte zn=0;
 			switch(tk){
 			case"ifz":{zn=1;tk=next_token_on_same_line(r);break;}
 			case"ifn":{zn=2;tk=next_token_on_same_line(r);break;}
 			case"ifp":{zn=3;tk=next_token_on_same_line(r);break;}
 			}
-//			b.pl(tk);
 			if(tk.equals(".."))tk="eof";
+			if(tk.equals("."))tk="data";
 			try{
 				final Class cls=Class.forName(zn.class.getName()+"$"+tk);
 				final Constructor ctor=cls.getConstructor(PushbackReader.class);
@@ -168,6 +169,21 @@ final public class zn extends a{
 			super("add "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
 		}
 	}
+	public static class sub extends stmt{
+		public sub(PushbackReader r)throws IOException{
+			super("sub "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+		}
+	}
+	public static class call extends stmt{
+		public call(PushbackReader r)throws IOException{
+			super("call "+next_token_on_same_line(r));
+		}
+	}
+	public static class data extends stmt{
+		public data(PushbackReader r)throws IOException{
+			super(". "+rest_of_line(r));
+		}
+	}
 	private static void skip_whitespace(PushbackReader r)throws IOException{
 		while(true){
 			final int ch=r.read();
@@ -212,6 +228,17 @@ final public class zn extends a{
 		}
 		skip_whitespace_on_same_line(r);
 		if(sb.length()==0)return null;
+		return sb.toString();
+	}
+	private static String rest_of_line(PushbackReader r)throws IOException{
+		skip_whitespace_on_same_line(r);
+		final StringBuilder sb=new StringBuilder();
+		while(true){
+			final int ch=r.read();
+			if(ch==-1)break;
+			if(ch=='\n')break;
+			sb.append((char)ch);
+		}
 		return sb.toString();
 	}
 	
@@ -1191,6 +1218,9 @@ final public class zn extends a{
 		if(o instanceof program){
 			es.src.set(o.toString());
 			x.xuo(es);
+			x_c(x,null);
+			x_r(x,null);
+			x_f(x,null);
 		}else super.ev(x,from,o);
 	}
 	public final static String fld(final String def,final String s){
