@@ -18,6 +18,7 @@ call drwrects
 
 # drwblits(400)
 li a 400
+li k :blits
 call drwblits
 
 # typewriter(400,txt)
@@ -25,8 +26,9 @@ li a 400
 li b :txt
 call typewriter
 
-# drwdots(400)
+# drwdots(400,:dots)
 li a 400
+li f :dots
 call drwdots
 
 # c=*b=blits++
@@ -79,9 +81,8 @@ lp c
     inc d nxt ret
 ..
 # drwdots()
-#  f,c,g,h
+#  c,g,h
 drwdots:
-li f :dots
 ldc c f
 lp c
   ldc g f
@@ -90,7 +91,7 @@ lp c
   stc g h nxt ret
 ..
 # drwrects(a,b)
-#  b,c,a,d,e,f,g
+#  c,a,d,e,f,g
 drwrects:
 ldc c b
 lp c
@@ -106,10 +107,9 @@ lp c
     add a g nxt
   nxt ret
 ..
-# drwblits()
+# drwblits(a,k)
 #  k,j,a,b,h,i,e,d
 drwblits:
-li k :blits
 ldc j k
 lp j
   ldc a k
