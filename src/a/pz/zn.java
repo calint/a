@@ -394,7 +394,7 @@ final public class zn extends a{
 	public final static int bit_edcrn=512;
 	public boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 	public void pth(final path p){pth=p;}
-	public int theme;
+	public int theme=1;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
@@ -420,7 +420,7 @@ final public class zn extends a{
 				.css("html","background:#111;color:#080")
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
-				.css(ec.src,"width:12em;min-width:12em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:24em;min-width:24em;height:256em;min-height:256em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
