@@ -196,12 +196,22 @@ final public class zn extends a{
 		}
 		public static class ld extends stmt{
 			public ld(source_reader r)throws IOException{
-				super("ld "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super("ld "+rearrange(r));
+			}
+			private static String rearrange(source_reader r)throws IOException{
+				final String d=next_token_on_same_line(r);
+				final String a=next_token_on_same_line(r);
+				return a+" "+d;
 			}
 		}
 		public static class ldc extends stmt{
 			public ldc(source_reader r)throws IOException{
-				super("ldc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super("ldc "+rearrange(r));
+			}
+			private static String rearrange(source_reader r)throws IOException{
+				final String d=next_token_on_same_line(r);
+				final String a=next_token_on_same_line(r);
+				return a+" "+d;
 			}
 		}
 		public static class tx extends stmt{
