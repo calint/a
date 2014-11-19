@@ -1,9 +1,12 @@
 package a.pz;
 import java.io.BufferedReader;
+import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
+import a.pz.zn.program;
 import b.a;
+import b.b;
 import b.xwriter;
 final public class edcrun extends a{
 	public boolean edit=false;
@@ -23,6 +26,7 @@ final public class edcrun extends a{
 		x.p("crun");
 		x.ax(this,"f1"," edit");
 		x.ax(this,"f2"," view");
+		x.ax(this,"f3"," try");
 		if(edit){
 			x.nl();
 			x.inptxtarea(txt);
@@ -69,6 +73,14 @@ final public class edcrun extends a{
 		if(!edit)return;
 		edit=false;
 		x.xuo(this);
+	}
+	synchronized public void x_f3(xwriter x,String s)throws Throwable{
+		try(final PushbackReader pr=new PushbackReader(txt.reader())){
+			final program p=new program(pr);
+			final xwriter y=new xwriter();
+			p.to(y);
+			b.pl(y.toString());
+		}
 	}
 	private static final long serialVersionUID=11;
 }

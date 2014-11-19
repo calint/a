@@ -34,7 +34,7 @@ final public class clare extends a implements titled{
 		zn.logo_to(x);
 		x.span(ajaxsts).r(z);
 	}
-	public alist<zn>z;
+	/**cores*/public alist<zn>z;
 	/**builtinajaxstatus*/public a ajaxsts;{ajaxsts.set("idle");}
 	private static final long serialVersionUID=1;
 }
