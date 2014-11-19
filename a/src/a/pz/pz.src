@@ -108,7 +108,7 @@ lp c
   nxt ret
 ..
 # drwblits(a,k)
-#  k,j,a,b,h,i,e,d
+#  j,a,b,h,i,e,d
 drwblits:
 ldc j k
 lp j
