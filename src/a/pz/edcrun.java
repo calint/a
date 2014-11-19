@@ -77,9 +77,7 @@ final public class edcrun extends a{
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
 		try(final PushbackReader pr=new PushbackReader(txt.reader())){
 			final program p=new program(pr);
-			final xwriter y=new xwriter();
-			p.to(y);
-			b.pl(y.toString());
+			b.pl(p.toString());
 		}
 	}
 	private static final long serialVersionUID=11;
