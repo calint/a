@@ -10,15 +10,11 @@ import b.xwriter;
 final public class zn extends a{
 	final static String filenmromsrc="pz.src";
 	final public static class core{
-		private boolean running;
-		boolean stopped;
-		int pc;
-		int ir;
-		int zn;
-		private int loadreg=-1;
-		private boolean wait;
-		private boolean notify;
-		private boolean last_instruction_was_end_of_frame;
+		public boolean running,stopped,wait,notify,last_instruction_was_end_of_frame;
+		int pc,ir,zn,loadreg=-1;
+		public regs re;
+		public calls ca;
+		public loops lo;
 	}
 	public rom ro;
 	public ram ra;
