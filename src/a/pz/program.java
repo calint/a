@@ -3,7 +3,6 @@ package a.pz;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -62,9 +61,7 @@ final public class program implements Serializable{
 		if(tk.equals("."))tk="data";
 		final stmt s;
 		try{
-			final Class cls=Class.forName(program.class.getName()+"$"+tk);
-			final Constructor ctor=cls.getConstructor(source_reader.class);
-			s=(stmt)ctor.newInstance(r);
+			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
 		}catch(Throwable t){
 			throw new Error(r+" instruction '"+tk+"' not found");
 		}
