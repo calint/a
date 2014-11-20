@@ -4,11 +4,11 @@ final public class core{
 
 	public boolean running,stopped,wait,notify,last_instruction_was_end_of_frame;
 	public int program_counter,instruction_register,zn_flags,loading_register=-1;
-	public int[]registers=new int[nregs];
+	public int[]register=new int[nregs];
 	public int[]call_stack=new int[ncalls];
 	public int call_stack_index;
-	public int[]loop_stack_addresses=new int[nloops];
-	public int[]loop_stack_counters=new int[nloops];
+	public int[]loop_stack_address=new int[nloops];
+	public int[]loop_stack_counter=new int[nloops];
 	public int loop_stack_index;
 	public int[]ram=new int[nram];
 	public int[]rom=new int[nrom];
@@ -17,29 +17,28 @@ final public class core{
 		running=wait=notify=stopped=false;
 		zn_flags=program_counter=instruction_register=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
-		for(int i=0;i<registers.length;i++)registers[i]=0;
+		for(int i=0;i<register.length;i++)register[i]=0;
 		for(int i=0;i<call_stack.length;i++)call_stack[i]=0;
-		for(int i=0;i<loop_stack_addresses.length;i++)loop_stack_addresses[i]=0;
-		for(int i=0;i<loop_stack_counters.length;i++)loop_stack_counters[i]=0;
+		for(int i=0;i<loop_stack_address.length;i++)loop_stack_address[i]=0;
+		for(int i=0;i<loop_stack_counter.length;i++)loop_stack_counter[i]=0;
 		for(int i=0;i<ram.length;i++)ram[i]=0;
 		for(int i=0;i<rom.length;i++)ram[i]=rom[i];
 	}
-	public void regs_set(final int ri,int d){registers[ri]=d;}
 	public void calls_push(final int v){call_stack[call_stack_index++]=v;}
-	public boolean loops_nxt(){return--loop_stack_counters[loop_stack_index-1]==0;}
+	public boolean loops_nxt(){return--loop_stack_counter[loop_stack_index-1]==0;}
 	public void loops_pop(){loop_stack_index--;}
-	public int loops_address(){return loop_stack_addresses[loop_stack_index-1];}
+	public int loops_address(){return loop_stack_address[loop_stack_index-1];}
 	public int calls_pop(){return call_stack[--call_stack_index];}
 	public void loops_push(final int addr,final int counter){
-		loop_stack_addresses[loop_stack_index]=addr;
-		loop_stack_counters[loop_stack_index]=counter;
+		loop_stack_address[loop_stack_index]=addr;
+		loop_stack_counter[loop_stack_index]=counter;
 		loop_stack_index++;
 	}
 	public void step(){
 		if(wait){
 			if(notify){
 				synchronized(this){wait=notify=false;}
-				setpcr(program_counter+1);
+				program_counter_set(program_counter+1);
 			}else{
 				return;
 			}
@@ -47,14 +46,14 @@ final public class core{
 //		me.instr++;
 //		if(pcr>=rom.size)throw new Error("program out of bounds");
 		if(loading_register!=-1){// load reg 2 instructions command
-			regs_set(loading_register,instruction_register);
+			register[loading_register]=instruction_register;
 			loading_register=-1;
-			setpcr(program_counter+1);
+			program_counter_set(program_counter+1);
 			return;
 		}
 		if(instruction_register==-1){// end of frame
 			last_instruction_was_end_of_frame=true;
-			setpcr(0);
+			program_counter_set(0);
 //			me.frames++;
 //			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
@@ -64,7 +63,7 @@ final public class core{
 		if((izn!=0&&(izn!=zn_flags))){
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
 			final int skp=op==0?2:1;// ifloadopskip2
-			setpcr(program_counter+skp);
+			program_counter_set(program_counter+skp);
 			return;
 		}
 		in>>=2;// xr ci.. .rai .rdi
@@ -74,23 +73,23 @@ final public class core{
 			final int imm10=in>>4;// .. .... ....
 			final int znx=zn_flags|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(program_counter+1);
-			setpcr(imm10);
+			program_counter_set(imm10);
 			calls_push(stkentry);
 			return;
 		}
 		boolean isnxt=false;
-		boolean ispcrset=false;
+		boolean program_counter_has_been_set=false;
 		if((xr&1)==1){// nxt
 			isnxt=true;
 			if(loops_nxt()){
 				loops_pop();
 			}else{
-				setpcr(loops_address());
-				ispcrset=true;
+				program_counter_set(loops_address());
+				program_counter_has_been_set=true;
 			}
 		}
 		boolean isret=false;
-		if(!rcinvalid&&!ispcrset&&(xr&2)==2){// ret after loop complete
+		if(!rcinvalid&&!program_counter_has_been_set&&(xr&2)==2){// ret after loop complete
 			final int stkentry=calls_pop();
 			final int ipc=stkentry&0xfff;
 			final int znx=(stkentry>>12);
@@ -98,13 +97,13 @@ final public class core{
 				if(loops_nxt()){
 					loops_pop();
 				}else{
-					setpcr(loops_address());
-					ispcrset=true;
+					program_counter_set(loops_address());
+					program_counter_has_been_set=true;
 				}
 			}
-			if(!ispcrset){
-				setpcr(ipc);
-				ispcrset=true;
+			if(!program_counter_has_been_set){
+				program_counter_set(ipc);
+				program_counter_has_been_set=true;
 			}
 			isret=true;
 		}
@@ -120,16 +119,16 @@ final public class core{
 				if(rai!=0){//branch
 					if(rai==1){//lp
 						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
-						final int d=registers[rdi];
+						final int d=register[rdi];
 						loops_push(program_counter+1,d);	
 					}else if(rai==2){//inc
-						registers[rdi]++;	
+						register[rdi]++;	
 					}else if(rai==3){//neg
-						final int d=registers[rdi];
+						final int d=register[rdi];
 						final int r=-d;
-						registers[rdi]=r;
+						register[rdi]=r;
 					}else if(rai==4){//dac
-						final int d=registers[rdi];
+						final int d=register[rdi];
 						try{
 							b.b.pl("dav event");
 //							ev(null,this,new Integer(d));// ev(x,this.dac,int)
@@ -139,65 +138,65 @@ final public class core{
 					}else throw new Error("unimplemented ops(x)");
 				}else{
 					if(isret||isnxt){
-						if(!ispcrset){
-							setpcr(program_counter+1);
+						if(!program_counter_has_been_set){
+							program_counter_set(program_counter+1);
 						}
 						return;
 					}
 					loading_register=rdi;
 				}
 			}else if(op==1){// sub
-				final int a=registers[rai];
-				final int d=registers[rdi];
+				final int a=register[rai];
+				final int d=register[rdi];
 				final int r=a-d;
-				zneval(r);
-				registers[rai]=r;
+				evaluate_zn_flags(r);
+				register[rai]=r;
 			}else if(op==2){//stc
-				final int d=registers[rdi];
-				final int a=registers[rai];
-				registers[a]=a;
+				final int d=register[rdi];
+				final int a=register[rai];
+				register[a]=a;
 //				me.stc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not
-					final int d=registers[rdi];
+					final int d=register[rdi];
 					final int r=~d;
-					registers[rdi]=r;
+					register[rdi]=r;
 				}else{//shf
 					final int a=rai>7?rai-16:rai;
 					final int r;
-					if(a<0)r=registers[rdi]<<-a;
-					else r=registers[rdi]>>a;
-					registers[rdi]=r;
-					zneval(r);
+					if(a<0)r=register[rdi]<<-a;
+					else r=register[rdi]>>a;
+					register[rdi]=r;
+					evaluate_zn_flags(r);
 				}
 			}else if(op==4){//skp
 				if(imm8==0)throw new Error("unencoded op (rol x)");
-				if(ispcrset)throw new Error("unimplemented");
-				setpcr(program_counter+imm8);
-				ispcrset=true;
+				if(program_counter_has_been_set)throw new Error("unimplemented");
+				program_counter_set(program_counter+imm8);
+				program_counter_has_been_set=true;
 			}else if(op==5){//add
-				final int a=registers[rai];
-				final int d=registers[rdi];
+				final int a=register[rai];
+				final int d=register[rdi];
 				final int r=a+d;
-				zneval(r);
-				registers[rai]=r;
+				evaluate_zn_flags(r);
+				register[rai]=r;
 			}else if(op==6){//ldc
-				final int a=registers[rai]++;
+				final int a=register[rai]++;
 				final int d=ram[a];
-				registers[rdi]=d;
-				zneval(d);
+				register[rdi]=d;
+				evaluate_zn_flags(d);
 //				me.ldc++;
 			}else if(op==7){//tx
-				final int a=registers[rai];
-				registers[rdi]=a;
+				final int a=register[rai];
+				register[rdi]=a;
 			}
 		}else{
 			if(op==0){//free
 			}else if(op==1){//skp
 				if(imm8==0)throw new Error("unencoded op (rol x)");
-				if(ispcrset)throw new Error("unimplemented");
-				setpcr(program_counter+imm8);
-				ispcrset=true;
+				if(program_counter_has_been_set)throw new Error("unimplemented");
+				program_counter_set(program_counter+imm8);
+				program_counter_has_been_set=true;
 			}else if(op==2){// wait
 				if(!wait){// first time
 					synchronized(this){// atomic wait mode
@@ -215,28 +214,28 @@ final public class core{
 			}else if(op==4){// free  
 			}else if(op==5){// sub
 			}else if(op==6){// st
-				final int d=registers[rdi];
-				final int a=registers[rai];
+				final int d=register[rdi];
+				final int a=register[rai];
 				ram[a]=d;
 //				me.stc++;
 			}else if(op==7){// ld
-				final int a=registers[rai];
+				final int a=register[rai];
 				final int d=ram[a];
-				registers[rdi]=d;
-				zneval(d);
+				register[rdi]=d;
+				evaluate_zn_flags(d);
 //				me.ldc++;
 			}else throw new Error();
 		}
-		if(!ispcrset)
-			setpcr(program_counter+1);
+		if(!program_counter_has_been_set)
+			program_counter_set(program_counter+1);
 	}
-	private void setpcr(final int i){
-		program_counter=i;
-		instruction_register=rom[i];
+	private void program_counter_set(final int index_in_rom){
+		program_counter=index_in_rom;
+		instruction_register=rom[index_in_rom];
 	}
-	private void zneval(final int i){
-		if(i==0){zn_flags=1;return;}
-		if((i&(1<<16))==(1<<16)){zn_flags=2;return;}//? .
+	private void evaluate_zn_flags(final int number_to_be_evaluated){
+		if(number_to_be_evaluated==0){zn_flags=1;return;}
+		if((number_to_be_evaluated&(1<<16))==(1<<16)){zn_flags=2;return;}//? .
 //		if(i<0){zn=2;return;}
 		zn_flags=3;
 	}
