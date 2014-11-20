@@ -9,73 +9,8 @@ import javax.imageio.ImageIO;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
-import b.path;
 import b.xwriter;
 final public class zn extends a{
-	private static final long serialVersionUID=1;
-	static public void logo_to(final xwriter x){
-		final int con_wi=64;
-		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-		x.pl("clare "+strdatasize(ram.size));
-		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-	}
-	static public void copyright_to(final xwriter x){
-//		x.pl("(c) 1984 some rights reserved ltd");
-	}
-	static public void schematics_to(final xwriter x){
-		x.pl("|_______|______|____|____|  ");
-		x.pl("|z n x r|c i 00|0000|0000|  ");
-		x.pl("|_______|______|____|____|  ");
-		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
-		x.pl(" \\    n  \\      \\....\\....  ");
-		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
-		x.pl("   \\e e t e a m             ");
-		x.pl("    \\r g   t l m            ");
-		x.pl("     \\o       l             ");
-	}
-	public void pramble_to(final xwriter x){
-		x.pl(strdatasize(ram.size)+" 20b ram");
-		x.pl(re.size+" 20b registers");
-		x.pl(ram.wi+" x "+ram.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
-		x.pl("12b rgb color in 20b pixel");
-		x.pl("256 sprites collision detection");
-		x.pl(strdatasize2(rom.size)+" 16b instructions");
-		x.pl(loops.size+" loops stack");
-		x.pl(calls.size+" calls stack");
-	}
-	static public void instructions_table_to(final xwriter x){
-		x.pl(":------:------:----------------------:");
-		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
-		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
-		x.pl(":  skp : "+fld("..00",Integer.toHexString(opskp))+" : pc+=..               :");
-		x.pl(":  stc : "+fld("yx00",Integer.toHexString(opstc))+" : ram[x++]=y           :");
-		x.pl(":   st : "+fld("yx00",Integer.toHexString(opst))+" : ram[x]=y             :");
- 		x.pl(":   lp : "+fld("x000",Integer.toHexString(oplp))+" : loop x               :");
-		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(opldc))+" : y=ram[x++]           :");
-		x.pl(":   ld : "+fld("yx00",Integer.toHexString(opld))+" : y=ram[x]             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]>>=i             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]<<=i             :");
-		x.pl(":  not : "+fld("x000",Integer.toHexString(opshf))+" : r[x]=~r[x]           :");
-		x.pl(":  inc : "+fld("x000",Integer.toHexString(opinc))+" : r[x]++               :");
-		x.pl(":  neg : "+fld("x000",Integer.toHexString(opneg))+" : r[x]=-r[x]           :");
-		x.pl(":  add : "+fld("yx00",Integer.toHexString(opadd))+" : r[y]+=r[x]           :");
-		x.pl(":   tx : "+fld("yx00",Integer.toHexString(opset))+" : r[y]=r[x]            :");
-//		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
-		x.pl(":  sub : "+fld("xy00",Integer.toHexString(opsub))+" : r[y]-=r[x]           :");
-		x.pl(":  dac : "+fld("x000",Integer.toHexString(opdac))+" : sound.add block r[x] :");
-		x.pl(":  ifz : ...1 : if z op              :");
-		x.pl(":  ifn : ...2 : if n op              :");
-		x.pl(":  ifp : ...3 : if p op              :");
-		x.pl(":  nxt : ...4 : op nxt               :");
-		x.pl(":  ret : ...8 : op ret               :");
-		x.pl(":      : ...c : op nxt ret           :");
-		x.pl(":------:------:----------------------:");
-		x.pl(":      : ..18 : cr invalids          :");
-		x.pl(": wait : "+fld("x000",Integer.toHexString(opwait))+" : wait                 :");
-		x.pl(":notify: "+fld("x000",Integer.toHexString(opnotify))+" : notify               :");
-		x.pl(":  rrn : ffff : rerun                :");
-		x.pl(":------:------:----------------------:");
-	}
 	final static int opload=0x000;
 	final static int oplp=0x100;
 	final static int opinc=0x200;
@@ -95,9 +30,8 @@ final public class zn extends a{
 	final static int opld=0x0f8;//?
 	final static int opnxt=4;
 	final static int opret=8;
-//	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
-	private path pth;
+//	private path pth;
 	public rom ro;
 	public ram ra;
 	public sys sy;
@@ -109,7 +43,6 @@ final public class zn extends a{
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-//	/**asmsourceeditor*/public edsrc es;
 	/**crunsourceeditor*/public edcrun ec;{try{x_l(null,null);}catch(Throwable t){throw new Error(t);}}
 	
 //	public int mode;//1:multicore
@@ -135,7 +68,7 @@ final public class zn extends a{
 	public final static int bit_edasm=256;
 	public final static int bit_edcrn=512;
 	public boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
-	public void pth(final path p){pth=p;}
+//	public void pth(final path p){pth=p;}
 	public int theme;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
@@ -262,22 +195,22 @@ final public class zn extends a{
 		}
 		x.xu(st.set("reseted"));
 	}
-	/**save source*/
-	public void x_s(final xwriter x,final String s)throws Throwable{
-		ec.src.to(pth);
-		st.set("saved "+pth.name());
-		if(x==null)return;
-		x.xu(st);
-	}
+//	/**save source*/
+//	public void x_s(final xwriter x,final String s)throws Throwable{
+//		ec.src.to(pth);
+//		st.set("saved "+pth.name());
+//		if(x==null)return;
+//		x.xu(st);
+//	}
 	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
-		if(pth!=null&&pth.exists()){
-			ec.src.from(pth);
-			st.set("loaded "+pth.name());
-		}else{
+//		if(pth!=null&&pth.exists()){
+//			ec.src.from(pth);
+//			st.set("loaded "+pth.name());
+//		}else{
 			final InputStream is=getClass().getResourceAsStream(filenmromsrc);
 			ec.src.from(is);
 			st.set("loaded default");
-		}
+//		}
 		if(x==null)return;
 		x.xuo(ec).xu(st).xuo(ro);
 	}
@@ -1096,5 +1029,70 @@ final public class zn extends a{
 		return sb.toString();
 	}
 	private boolean last_instruction_was_end_of_frame;
+
+	static public void logo_to(final xwriter x){
+		final int con_wi=64;
+		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
+		x.pl("clare "+strdatasize(ram.size));
+		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
+	}
+	static public void copyright_to(final xwriter x){
+//		x.pl("(c) 1984 some rights reserved ltd");
+	}
+	static public void schematics_to(final xwriter x){
+		x.pl("|_______|______|____|____|  ");
+		x.pl("|z n x r|c i 00|0000|0000|  ");
+		x.pl("|_______|______|____|____|  ");
+		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
+		x.pl(" \\    n  \\      \\....\\....  ");
+		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
+		x.pl("   \\e e t e a m             ");
+		x.pl("    \\r g   t l m            ");
+		x.pl("     \\o       l             ");
+	}
+	public void pramble_to(final xwriter x){
+		x.pl(strdatasize(ram.size)+" 20b ram");
+		x.pl(re.size+" 20b registers");
+		x.pl(ram.wi+" x "+ram.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
+		x.pl("12b rgb color in 20b pixel");
+		x.pl("256 sprites collision detection");
+		x.pl(strdatasize2(rom.size)+" 16b instructions");
+		x.pl(loops.size+" loops stack");
+		x.pl(calls.size+" calls stack");
+	}
+	static public void instructions_table_to(final xwriter x){
+		x.pl(":------:------:----------------------:");
+		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
+		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
+		x.pl(":  skp : "+fld("..00",Integer.toHexString(opskp))+" : pc+=..               :");
+		x.pl(":  stc : "+fld("yx00",Integer.toHexString(opstc))+" : ram[x++]=y           :");
+		x.pl(":   st : "+fld("yx00",Integer.toHexString(opst))+" : ram[x]=y             :");
+ 		x.pl(":   lp : "+fld("x000",Integer.toHexString(oplp))+" : loop x               :");
+		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(opldc))+" : y=ram[x++]           :");
+		x.pl(":   ld : "+fld("yx00",Integer.toHexString(opld))+" : y=ram[x]             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]>>=i             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]<<=i             :");
+		x.pl(":  not : "+fld("x000",Integer.toHexString(opshf))+" : r[x]=~r[x]           :");
+		x.pl(":  inc : "+fld("x000",Integer.toHexString(opinc))+" : r[x]++               :");
+		x.pl(":  neg : "+fld("x000",Integer.toHexString(opneg))+" : r[x]=-r[x]           :");
+		x.pl(":  add : "+fld("yx00",Integer.toHexString(opadd))+" : r[y]+=r[x]           :");
+		x.pl(":   tx : "+fld("yx00",Integer.toHexString(opset))+" : r[y]=r[x]            :");
+//		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
+		x.pl(":  sub : "+fld("xy00",Integer.toHexString(opsub))+" : r[y]-=r[x]           :");
+		x.pl(":  dac : "+fld("x000",Integer.toHexString(opdac))+" : sound.add block r[x] :");
+		x.pl(":  ifz : ...1 : if z op              :");
+		x.pl(":  ifn : ...2 : if n op              :");
+		x.pl(":  ifp : ...3 : if p op              :");
+		x.pl(":  nxt : ...4 : op nxt               :");
+		x.pl(":  ret : ...8 : op ret               :");
+		x.pl(":      : ...c : op nxt ret           :");
+		x.pl(":------:------:----------------------:");
+		x.pl(":      : ..18 : cr invalids          :");
+		x.pl(": wait : "+fld("x000",Integer.toHexString(opwait))+" : wait                 :");
+		x.pl(":notify: "+fld("x000",Integer.toHexString(opnotify))+" : notify               :");
+		x.pl(":  rrn : ffff : rerun                :");
+		x.pl(":------:------:----------------------:");
+	}
 	
+	private static final long serialVersionUID=1;
 }
