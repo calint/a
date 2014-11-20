@@ -9,6 +9,7 @@ import b.a_ajaxsts;
 import b.xwriter;
 final public class zn extends a{
 	final static String filenmromsrc="pz.src";
+	public core c=new core(16,8,8,64*1024,64*1024);
 	public rom ro;
 	public ram ra;
 	public sys sy;
@@ -33,16 +34,15 @@ final public class zn extends a{
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
 	public metrics me;
 
-	private boolean running;
-	boolean stopped;
-	int pc;
-	int ir;
-	int zn;
-	private int loadreg=-1;
-	private boolean wait;
-	private boolean notify;
-	private boolean last_instruction_was_end_of_frame;
-
+//	private boolean running;
+//	boolean stopped;
+//	int pc;
+//	int ir;
+//	int zn;
+//	private int loadreg=-1;
+//	private boolean wait;
+//	private boolean notify;
+//	private boolean last_instruction_was_end_of_frame;
 	final static int opload=0x000;
 	final static int oplp=0x100;
 	final static int opinc=0x200;
@@ -63,22 +63,22 @@ final public class zn extends a{
 	final static int opnxt=4;
 	final static int opret=8;
 	
-	private void reset(){
-		running=false;
-		zn=0;
-		loadreg=-1;
-		setpcr(0);
-		ca.rst();
-		lo.rst();
-		re.rst();
-		ra.rst();
-		me.rst();
-		wait=notify=stopped=false;
-	}
-	private void copy_rom_to_ram(){
-		for(int i=0;i<rom.size;i++)
-			ra.set(i,ro.get(i));
-	}
+//	private void reset(){
+//		running=false;
+//		zn=0;
+//		loadreg=-1;
+//		setpcr(0);
+//		ca.rst();
+//		lo.rst();
+//		re.rst();
+//		ra.rst();
+//		me.rst();
+//		wait=notify=stopped=false;
+//	}
+//	private void copy_rom_to_ram(){
+//		for(int i=0;i<rom.size;i++)
+//			ra.set(i,ro.get(i));
+//	}
 	public void snapshot_png_to(final OutputStream os)throws IOException{
 		final int wi=ram.wi;
 		final int hi=ram.hi;
@@ -86,7 +86,7 @@ final public class zn extends a{
 		int k=0;
 		for(int i=0;i<hi;i++){
 			for(int j=0;j<wi;j++){
-				final int d=ra.get(k++);
+				final int d=c.ram[k++];
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
 				final int r=((d>>8)&0xf)*0xf;
@@ -102,217 +102,217 @@ final public class zn extends a{
 //		
 //		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
 	}
-	private void step(){
-		if(wait){
-			if(notify){
-				synchronized(this){wait=notify=false;}
-				setpcr(pc+1);
-			}else{
-				return;
-			}
-		}
-		me.instr++;
-//		if(pcr>=rom.size)throw new Error("program out of bounds");
-		if(loadreg!=-1){// load reg 2 instructions command
-			re.setr(loadreg,ir);
-			loadreg=-1;
-			setpcr(pc+1);
-			return;
-		}
-		if(ir==-1){// end of frame
-			last_instruction_was_end_of_frame=true;
-			setpcr(0);
-			me.frames++;
-			try{ev(null);}catch(Throwable t){throw new Error(t);}
-			return;
-		}
-		int in=ir;// znxr ci.. .rai .rdi
-		final int izn=in&3;
-		if((izn!=0&&(izn!=zn))){
-			final int op=(in>>5)&127;//? &7 //i.. .... ....
-			final int skp=op==0?2:1;// ifloadopskip2
-			setpcr(pc+skp);
-			return;
-		}
-		in>>=2;// xr ci.. .rai .rdi
-		final int xr=in&0x3;
-		final boolean rcinvalid=(in&6)==6;
-		if(!rcinvalid&&(in&4)==4){//call
-			final int imm10=in>>4;// .. .... ....
-			final int znx=zn|((xr&1)<<2);// nxt after ret
-			final int stkentry=(znx<<12)|(pc+1);
-			setpcr(imm10);
-			ca.push(stkentry);
-			return;
-		}
-		boolean isnxt=false;
-		boolean ispcrset=false;
-		if((xr&1)==1){// nxt
-			isnxt=true;
-			if(lo.nxt()){
-				lo.pop();
-			}else{
-				setpcr(lo.adr());
-				ispcrset=true;
-			}
-		}
-		boolean isret=false;
-		if(!rcinvalid&&!ispcrset&&(xr&2)==2){// ret after loop complete
-			final int stkentry=ca.pop();
-			final int ipc=stkentry&0xfff;
-			final int znx=(stkentry>>12);
-			if((znx&4)==4){// nxt after previous call
-				if(lo.nxt()){
-					lo.pop();
-				}else{
-					setpcr(lo.adr());
-					ispcrset=true;
-				}
-			}
-			if(!ispcrset){
-				setpcr(ipc);
-				ispcrset=true;
-			}
-			isret=true;
-		}
-		in>>=3;// i.. .rai .rdi
-		final int op=in&7;
-		in>>=3;// .rai .rdi
-		final int imm8=in;
-		final int rai=in&0xf;
-		in>>=4;// .rdi
-		final int rdi=in&0xf;
-		if(!rcinvalid){
-			if(op==0){//load
-				if(rai!=0){//branch
-					if(rai==1){//lp
-						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
-						final int d=re.get(rdi);
-						lo.push(pc+1,d);	
-					}else if(rai==2){//inc
-						re.inc(rdi);	
-					}else if(rai==3){//neg
-						final int d=re.get(rdi);
-						final int r=-d;
-						re.setr(rdi,r);
-					}else if(rai==4){//dac
-						final int d=re.get(rdi);
-						try{
-							ev(null,this,new Integer(d));// ev(x,this.dac,int)
-						}catch(final Throwable t){
-							throw new Error(t);
-						}
-					}else throw new Error("unimplemented ops(x)");
-				}else{
-					if(isret||isnxt){
-						if(!ispcrset){
-							setpcr(pc+1);
-						}
-						return;
-					}
-					loadreg=rdi;
-				}
-			}else if(op==1){// sub
-				final int a=re.get(rai);
-				final int d=re.get(rdi);
-				final int r=a-d;
-				zneval(r);
-				re.setr(rai,r);
-			}else if(op==2){//stc
-				final int d=re.get(rdi);
-				final int a=re.getinc(rai);
-				ra.set(a,d);
-				me.stc++;
-			}else if(op==3){//shf and not
-				if(rai==0){//not
-					final int d=re.get(rdi);
-					final int r=~d;
-					re.setr(rdi,r);
-				}else{//shf
-					final int a=rai>7?rai-16:rai;
-					final int r;
-					if(a<0)r=re.get(rdi)<<-a;
-					else r=re.get(rdi)>>a;
-					re.setr(rdi,r);
-					zneval(r);
-				}
-			}else if(op==4){//skp
-				if(imm8==0)throw new Error("unencoded op (rol x)");
-				if(ispcrset)throw new Error("unimplemented");
-				setpcr(pc+imm8);
-				ispcrset=true;
-			}else if(op==5){//add
-				{final int a=re.get(rai);
-				final int d=re.get(rdi);
-				final int r=a+d;
-				zneval(r);
-				re.setr(rai,r);}
-			}else if(op==6){//ldc
-				final int a=re.getinc(rai);
-				final int d=ra.get(a);
-				re.setr(rdi,d);
-				zneval(d);
-				me.ldc++;
-			}else if(op==7){//tx
-				final int a=re.get(rai);
-				re.setr(rdi,a);
-			}
-		}else{
-			if(op==0){//free
-			}else if(op==1){//skp
-				if(imm8==0)throw new Error("unencoded op (rol x)");
-				if(ispcrset)throw new Error("unimplemented");
-				setpcr(pc+imm8);
-				ispcrset=true;
-			}else if(op==2){// wait
-				if(!wait){// first time
-					synchronized(this){// atomic wait mode
-						wait=true;
-						notify=false;
-					}
-					return;
-				}
-				// after notify
-				synchronized(this){wait=notify=false;}
-			}else if(op==3){// notify
-				final int imm4=(ir>>12);
-				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
-			}else if(op==4){// free  
-			}else if(op==5){// sub
-			}else if(op==6){// st
-				final int d=re.get(rdi);
-				final int a=re.get(rai);
-				ra.set(a,d);
-				me.stc++;
-			}else if(op==7){// ld
-				final int a=re.get(rai);
-				final int d=ra.get(a);
-				re.setr(rdi,d);
-				zneval(d);
-				me.ldc++;
-			}else throw new Error();
-		}
-		if(!ispcrset)
-			setpcr(pc+1);
-	}
-	private void setpcr(final int i){
-		pc=i;
-		ir=ro.get(i);
-	}
-	private void zneval(final int i){
-		if(i==0){zn=1;return;}
-		if((i&(1<<16))==(1<<16)){zn=2;return;}//? .
-//		if(i<0){zn=2;return;}
-		zn=3;
-	}
+//	private void step(){
+//		if(wait){
+//			if(notify){
+//				synchronized(this){wait=notify=false;}
+//				setpcr(pc+1);
+//			}else{
+//				return;
+//			}
+//		}
+//		me.instr++;
+////		if(pcr>=rom.size)throw new Error("program out of bounds");
+//		if(loadreg!=-1){// load reg 2 instructions command
+//			re.setr(loadreg,ir);
+//			loadreg=-1;
+//			setpcr(pc+1);
+//			return;
+//		}
+//		if(ir==-1){// end of frame
+//			last_instruction_was_end_of_frame=true;
+//			setpcr(0);
+//			me.frames++;
+//			try{ev(null);}catch(Throwable t){throw new Error(t);}
+//			return;
+//		}
+//		int in=ir;// znxr ci.. .rai .rdi
+//		final int izn=in&3;
+//		if((izn!=0&&(izn!=zn))){
+//			final int op=(in>>5)&127;//? &7 //i.. .... ....
+//			final int skp=op==0?2:1;// ifloadopskip2
+//			setpcr(pc+skp);
+//			return;
+//		}
+//		in>>=2;// xr ci.. .rai .rdi
+//		final int xr=in&0x3;
+//		final boolean rcinvalid=(in&6)==6;
+//		if(!rcinvalid&&(in&4)==4){//call
+//			final int imm10=in>>4;// .. .... ....
+//			final int znx=zn|((xr&1)<<2);// nxt after ret
+//			final int stkentry=(znx<<12)|(pc+1);
+//			setpcr(imm10);
+//			ca.push(stkentry);
+//			return;
+//		}
+//		boolean isnxt=false;
+//		boolean ispcrset=false;
+//		if((xr&1)==1){// nxt
+//			isnxt=true;
+//			if(lo.nxt()){
+//				lo.pop();
+//			}else{
+//				setpcr(lo.adr());
+//				ispcrset=true;
+//			}
+//		}
+//		boolean isret=false;
+//		if(!rcinvalid&&!ispcrset&&(xr&2)==2){// ret after loop complete
+//			final int stkentry=ca.pop();
+//			final int ipc=stkentry&0xfff;
+//			final int znx=(stkentry>>12);
+//			if((znx&4)==4){// nxt after previous call
+//				if(lo.nxt()){
+//					lo.pop();
+//				}else{
+//					setpcr(lo.adr());
+//					ispcrset=true;
+//				}
+//			}
+//			if(!ispcrset){
+//				setpcr(ipc);
+//				ispcrset=true;
+//			}
+//			isret=true;
+//		}
+//		in>>=3;// i.. .rai .rdi
+//		final int op=in&7;
+//		in>>=3;// .rai .rdi
+//		final int imm8=in;
+//		final int rai=in&0xf;
+//		in>>=4;// .rdi
+//		final int rdi=in&0xf;
+//		if(!rcinvalid){
+//			if(op==0){//load
+//				if(rai!=0){//branch
+//					if(rai==1){//lp
+//						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
+//						final int d=re.get(rdi);
+//						lo.push(pc+1,d);	
+//					}else if(rai==2){//inc
+//						re.inc(rdi);	
+//					}else if(rai==3){//neg
+//						final int d=re.get(rdi);
+//						final int r=-d;
+//						re.setr(rdi,r);
+//					}else if(rai==4){//dac
+//						final int d=re.get(rdi);
+//						try{
+//							ev(null,this,new Integer(d));// ev(x,this.dac,int)
+//						}catch(final Throwable t){
+//							throw new Error(t);
+//						}
+//					}else throw new Error("unimplemented ops(x)");
+//				}else{
+//					if(isret||isnxt){
+//						if(!ispcrset){
+//							setpcr(pc+1);
+//						}
+//						return;
+//					}
+//					loadreg=rdi;
+//				}
+//			}else if(op==1){// sub
+//				final int a=re.get(rai);
+//				final int d=re.get(rdi);
+//				final int r=a-d;
+//				zneval(r);
+//				re.setr(rai,r);
+//			}else if(op==2){//stc
+//				final int d=re.get(rdi);
+//				final int a=re.getinc(rai);
+//				ra.set(a,d);
+//				me.stc++;
+//			}else if(op==3){//shf and not
+//				if(rai==0){//not
+//					final int d=re.get(rdi);
+//					final int r=~d;
+//					re.setr(rdi,r);
+//				}else{//shf
+//					final int a=rai>7?rai-16:rai;
+//					final int r;
+//					if(a<0)r=re.get(rdi)<<-a;
+//					else r=re.get(rdi)>>a;
+//					re.setr(rdi,r);
+//					zneval(r);
+//				}
+//			}else if(op==4){//skp
+//				if(imm8==0)throw new Error("unencoded op (rol x)");
+//				if(ispcrset)throw new Error("unimplemented");
+//				setpcr(pc+imm8);
+//				ispcrset=true;
+//			}else if(op==5){//add
+//				{final int a=re.get(rai);
+//				final int d=re.get(rdi);
+//				final int r=a+d;
+//				zneval(r);
+//				re.setr(rai,r);}
+//			}else if(op==6){//ldc
+//				final int a=re.getinc(rai);
+//				final int d=ra.get(a);
+//				re.setr(rdi,d);
+//				zneval(d);
+//				me.ldc++;
+//			}else if(op==7){//tx
+//				final int a=re.get(rai);
+//				re.setr(rdi,a);
+//			}
+//		}else{
+//			if(op==0){//free
+//			}else if(op==1){//skp
+//				if(imm8==0)throw new Error("unencoded op (rol x)");
+//				if(ispcrset)throw new Error("unimplemented");
+//				setpcr(pc+imm8);
+//				ispcrset=true;
+//			}else if(op==2){// wait
+//				if(!wait){// first time
+//					synchronized(this){// atomic wait mode
+//						wait=true;
+//						notify=false;
+//					}
+//					return;
+//				}
+//				// after notify
+//				synchronized(this){wait=notify=false;}
+//			}else if(op==3){// notify
+//				final int imm4=(ir>>12);
+//				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
+//			}else if(op==4){// free  
+//			}else if(op==5){// sub
+//			}else if(op==6){// st
+//				final int d=re.get(rdi);
+//				final int a=re.get(rai);
+//				ra.set(a,d);
+//				me.stc++;
+//			}else if(op==7){// ld
+//				final int a=re.get(rai);
+//				final int d=ra.get(a);
+//				re.setr(rdi,d);
+//				zneval(d);
+//				me.ldc++;
+//			}else throw new Error();
+//		}
+//		if(!ispcrset)
+//			setpcr(pc+1);
+//	}
+//	private void setpcr(final int i){
+//		pc=i;
+//		ir=ro.get(i);
+//	}
+//	private void zneval(final int i){
+//		if(i==0){zn=1;return;}
+//		if((i&(1<<16))==(1<<16)){zn=2;return;}//? .
+////		if(i<0){zn=2;return;}
+//		zn=3;
+//	}
 
 
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
 			final program p=(program)o;
 			p.write_to(ro);
+			c.reset();
 			x.xuo(ro);
-			x_r(x,null);
 			x_f(x,null);
 		}else super.ev(x,from,o);
 	}
@@ -321,6 +321,10 @@ final public class zn extends a{
 		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
 		ajaxsts.set("idle");
 		bits.set(0b1111110000);
+		ro.bits=c.rom;
+		ra.bits=c.ram;
+		re.bits=c.register;
+		lo.core=c;
 	}
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
@@ -412,8 +416,8 @@ final public class zn extends a{
 	boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 	synchronized public void x_(xwriter x,String s)throws Throwable{x.xuo(this);}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
-		reset();
-		copy_rom_to_ram();
+		c.reset();
+//		c.copy_rom_to_ram();
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
@@ -426,10 +430,10 @@ final public class zn extends a{
 		x.xu(st.set("reseted"));
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
-		if(running){running=false;return;}
+		if(c.running){c.running=false;return;}
 		st.clr();
 		ra.x=x;
-		step();
+		c.step();
 		if(x==null)return;
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
@@ -444,29 +448,29 @@ final public class zn extends a{
 	}
 	private void xfocusline(xwriter x){
 		if(!hasbit(bit_rom))return;
-		ro.focusline=pc;
+		ro.focusline=c.program_counter;
 		ro.xfocusline(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
-		if(running)throw new Error("already running");
-		running=true;
+		if(c.running)throw new Error("already running");
+		c.running=true;
 		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		final long minstr=me.instr;
 		final long mframes=me.frames;
 		long dt=0;
-		while(running){
-			step();
+		while(c.running){
+			c.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(last_instruction_was_end_of_frame)
+			if(c.last_instruction_was_end_of_frame)
 				ev(null,this);//refresh display
 			if(dt>runms)
 				break;
 		}
-		if(running){
-			running=false;
+		if(c.running){
+			c.running=false;
 			final long dminstr=me.instr-minstr;
 			final long dmframes=me.frames-mframes;
 			if(dt==0)dt=1;
@@ -483,15 +487,15 @@ final public class zn extends a{
 	}
 	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
-		if(running)throw new Error("already running");
-		running=true;
+		if(c.running)throw new Error("already running");
+		c.running=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 //		final long t0=System.currentTimeMillis();
 //		final long instr0=me.instr;
 		st.clr();
-		while(running){
+		while(c.running){
 			boolean go=true;
-			step();
+			c.step();
 //			final int srclno=lino.get(pc);
 //			if(ec.isonbrkpt(srclno)){
 //				st.set("breakpoint @ "+srclno);
@@ -499,8 +503,8 @@ final public class zn extends a{
 //			}
 			if(!go)break;
 		}
-		if(running){
-			running=false;
+		if(c.running){
+			c.running=false;
 //			final long dt=System.currentTimeMillis()-t0;
 //			final long dinstr=me.instr-instr0;
 //			final int l=lino.get(ro.focusline);
@@ -517,23 +521,23 @@ final public class zn extends a{
 	}
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
-		if(running)throw new Error("already running");
+		if(c.running)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
-		running=true;
+		c.running=true;
 		final long instr0=me.instr;
 		final long t0=System.currentTimeMillis();
-		while(running){
-			step();
-			if(last_instruction_was_end_of_frame){
-				last_instruction_was_end_of_frame=false;
+		while(c.running){
+			c.step();
+			if(c.last_instruction_was_end_of_frame){
+				c.last_instruction_was_end_of_frame=false;
 				break;
 			}
 		}
-		if(running){
+		if(c.running){
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=me.instr-instr0;
 			st.set("#"+me.frames+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
-			running=false;
+			c.running=false;
 		}
 		if(x==null)return;
 		xfocusline(x);
@@ -542,10 +546,10 @@ final public class zn extends a{
 			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
 		}
 	}
-	static public void logo_to(final xwriter x){
+	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-		x.pl("clare "+strdatasize(ram.size));
+		x.pl("clare "+strdatasize(c.ram.length));
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
 	static public void copyright_to(final xwriter x){
@@ -563,13 +567,13 @@ final public class zn extends a{
 		x.pl("     \\o       l             ");
 	}
 	public void pramble_to(final xwriter x){
-		x.pl(strdatasize(ram.size)+" 20b ram");
-		x.pl(re.size+" 20b registers");
+		x.pl(strdatasize(c.ram.length)+" 20b ram");
+		x.pl(re.bits.length+" 20b registers");
 		x.pl(ram.wi+" x "+ram.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
-		x.pl(strdatasize2(rom.size)+" 16b instructions");
-		x.pl(loops.size+" loops stack");
+		x.pl(strdatasize2(c.rom.length)+" 16b instructions");
+		x.pl(c.loop_stack_address.length+" loops stack");
 		x.pl(calls.size+" calls stack");
 	}
 	static public void instructions_table_to(final xwriter x){

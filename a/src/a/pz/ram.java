@@ -7,14 +7,14 @@ import javax.imageio.ImageIO;
 import b.a;
 import b.xwriter;
 final public class ram extends a{
-	static final long serialVersionUID=1;
-	public final static int width=512;
-	public final static int height=256;	
-	public final static int size=height*width;
-	private int[]ram=new int[size];
-	final private int scl=2;
-	public ram(){rst();}
-	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
+	private static final long serialVersionUID=1;
+//	public final static int width=512;
+//	public final static int height=256;	
+//	public final static int size=height*width;
+//	private int[]ram=new int[size];
+	public int[]bits;
+	public int scl=2;
+//	public void rst(){x=null;for(int i=0;i<bits.length;i++)bits[i]=0;}
 	final static int wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
@@ -26,7 +26,7 @@ final public class ram extends a{
 		int k=0;
 		for(int i=0;i<height;i++){
 			for(int j=0;j<width;j++){
-				final int d=get(k++);
+				final int d=bits[k++];
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
 				final int r=((d>>8)&0xf)*0xf;
@@ -42,14 +42,14 @@ final public class ram extends a{
 		final String str_png_base64=new String(bb_png_base64.array(),bb_png_base64.position(),bb_png_base64.limit());
 		x.p("var c=$('").p(id()).p("');if(c){var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,").p(str_png_base64).p("';}");
 	}
-	public int get(final int addr){
-		final int a;
-//		if(addr>=ram.length){
-//			a=addr%ram.length;
-//		}else
-			a=addr;
-		return ram[a];
-	}
+//	public int get(final int addr){
+//		final int a;
+////		if(addr>=ram.length){
+////			a=addr%ram.length;
+////		}else
+//			a=addr;
+//		return bits[a];
+//	}
 	xwriter x;// if set updates to ram display are written as js
 	public void set(final int addr,final int value){
 		final int a;
@@ -57,15 +57,15 @@ final public class ram extends a{
 //			a=addr%ram.length;
 //		}else
 			a=addr;
-		ram[a]=value;
+		bits[a]=value;
 		if(x==null)return;
 		final int argb=value;
 		final String hex=Integer.toHexString(argb);
 		final String id=id();
 		x.p("{var c=$('").p(id).p("');if(c){var d=c.getContext('2d');");
 		x.p("d.fillStyle='#"+zn.fld("000",hex)+"';");
-		final int yy=a/width;
-		final int xx=a%width;
+		final int yy=a/wi;
+		final int xx=a%wi;
 		final int scl=2;
 		x.p("d.fillRect("+xx*scl+","+yy*scl+","+scl+","+scl+");");				
 		x.pl("}}");
