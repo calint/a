@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 final public class core implements Serializable{
 	public int id;
-	public boolean running,stopped,wait,notify,last_instruction_was_end_of_frame;
+	public boolean running,idle,wait,notify;
 	public int program_counter,instruction_register,zn_flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]register,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	
@@ -18,7 +18,7 @@ final public class core implements Serializable{
 		rom=new int[nrom];
 	}
 	public void reset(){
-		running=wait=notify=stopped=false;
+		running=wait=notify=idle=false;
 		zn_flags=program_counter=instruction_register=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
 		for(int i=0;i<register.length;i++)register[i]=0;
@@ -42,10 +42,7 @@ final public class core implements Serializable{
 	public void step_frame(){
 		while(true){
 			step();
-			if(last_instruction_was_end_of_frame){
-				last_instruction_was_end_of_frame=false;
-				return;
-			}
+			if(instruction_register==-1)return;
 		}
 	}
 	public void step(){
@@ -66,7 +63,7 @@ final public class core implements Serializable{
 			return;
 		}
 		if(instruction_register==-1){// end of frame
-			last_instruction_was_end_of_frame=true;
+//			last_instruction_was_end_of_frame=true;
 			program_counter_set(0);
 //			me.frames++;
 //			try{ev(null);}catch(Throwable t){throw new Error(t);}

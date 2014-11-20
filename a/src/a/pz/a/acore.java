@@ -191,7 +191,7 @@ final public class acore extends a{
 			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(cor.last_instruction_was_end_of_frame)
+			if(cor.instruction_register==-1)
 				ev(null,this);//refresh display
 			if(dt>runms)
 				break;
@@ -253,13 +253,7 @@ final public class acore extends a{
 		cor.running=true;
 		final long instr0=me.instr;
 		final long t0=System.currentTimeMillis();
-		while(cor.running){
-			cor.step();
-			if(cor.last_instruction_was_end_of_frame){
-				cor.last_instruction_was_end_of_frame=false;
-				break;
-			}
-		}
+		cor.step_frame();
 		if(cor.running){
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=me.instr-instr0;
@@ -269,9 +263,7 @@ final public class acore extends a{
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
-		if(hasbit(bit_display)){
-			ra.xupd(x);
-		}
+		if(hasbit(bit_display))ra.xupd(x);
 	}
 	
 	public void snapshot_png_to(final OutputStream os)throws IOException{
