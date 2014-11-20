@@ -113,7 +113,7 @@ final public class program{
 	public static class li extends program.stmt{
 		private String data;
 		public li(source_reader r)throws IOException{
-			super(zn.opload,0,ri(next_token_in_line(r)));
+			super(acore.opload,0,ri(next_token_in_line(r)));
 			data=next_token_in_line(r);
 		}
 		@Override public void write_to(compiler c){
@@ -129,7 +129,7 @@ final public class program{
 	}
 	public static class inc extends program.stmt{
 		public inc(source_reader r)throws IOException{
-			super(zn.opinc,0,ri(next_token_in_line(r)));
+			super(acore.opinc,0,ri(next_token_in_line(r)));
 		}
 	}
 	final private static int ri(String s){
@@ -139,7 +139,7 @@ final public class program{
 	}
 	public static class st extends program.stmt{
 		public st(source_reader r)throws IOException{
-			super(zn.opst,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(acore.opst,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
 	}
 	public static class eof extends program.stmt{
@@ -150,38 +150,38 @@ final public class program{
 	}
 	public static class nxt extends program.stmt{
 		public nxt(source_reader r)throws IOException{
-			super(zn.opnxt,0,0);
+			super(acore.opnxt,0,0);
 		}
 	}
 	public static class ret extends program.stmt{
 		public ret(source_reader r)throws IOException{
-			super(zn.opret,0,0);
+			super(acore.opret,0,0);
 		}
 	}
 	public static class lp extends program.stmt{
 		public lp(source_reader r)throws IOException{
-			super(zn.oplp,0,ri(next_token_in_line(r)));
+			super(acore.oplp,0,ri(next_token_in_line(r)));
 		}
 	}
 	public static class stc extends program.stmt{
 		public stc(source_reader r)throws IOException{
-			super(zn.opstc,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(acore.opstc,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
 	}
 	public static class add extends program.stmt{
 		public add(source_reader r)throws IOException{
-			super(zn.opadd,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(acore.opadd,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
 	}
 	public static class sub extends program.stmt{
 		public sub(source_reader r)throws IOException{
-			super(zn.opsub,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(acore.opsub,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
 	}
 	public static class call extends program.stmt{
 		String to;
 		public call(source_reader r)throws IOException{
-			super(zn.opcall,0,0);
+			super(acore.opcall,0,0);
 			to=next_token_in_line(r);
 		}
 		@Override public void write_to(compiler c){
@@ -213,22 +213,22 @@ final public class program{
 	}
 	public static class ld extends program.stmt{
 		public ld(source_reader r)throws IOException{
-			super(zn.opld,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(acore.opld,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 		}
 	}
 	public static class ldc extends program.stmt{
 		public ldc(source_reader r)throws IOException{
-			super(zn.opldc,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(acore.opldc,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 		}
 	}
 	public static class tx extends program.stmt{
 		public tx(source_reader r)throws IOException{
-			super(zn.opset,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(acore.opset,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 		}
 	}
 	public static class shf extends program.stmt{
 		public shf(source_reader r)throws IOException{
-			super(zn.opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
+			super(acore.opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
 		}
 	}
 	private static void skip_whitespace(source_reader r)throws IOException{

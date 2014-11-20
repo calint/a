@@ -7,8 +7,8 @@ final public class clare extends a implements titled{
 	@Override public void title_to(xwriter x){x.p("clare 1m");}
 	final public int ncores=4;
 	public clare()throws Throwable{
-		for(int i=0;i<ncores;i++)z.add(new zn());// ncores times z add new zn
-		z.stream().forEach(z->z.bits.set(zn.bit_panels));
+		for(int i=0;i<ncores;i++)z.add(new acore());// ncores times z add new zn
+		z.stream().forEach(z->z.bits.set(acore.bit_panels));
 		z.rend_dut=false;
 	}
 	@Override public void to(xwriter x)throws Throwable{
@@ -34,7 +34,7 @@ final public class clare extends a implements titled{
 		z.get_first().logo_to(x);
 		x.span(ajaxsts).r(z);
 	}
-	/**cores*/public alist<zn>z;
+	/**cores*/public alist<acore>z;
 	/**builtinajaxstatus*/public a ajaxsts;{ajaxsts.set("idle");}
 	private static final long serialVersionUID=1;
 }
