@@ -1,13 +1,11 @@
 package a.pz;
-
 import java.io.Serializable;
-
 final public class core implements Serializable{
 	public int id;
-	public boolean running,idle,wait,notify;
+	public boolean running,idle,waiting_for_notify,notify;
 	public int program_counter,instruction_register,zn_flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]register,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
-	
+	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public core(){}
 	public core(int nregs,int ncalls,int nloops,int nram,int nrom){
 		register=new int[nregs];
@@ -17,8 +15,9 @@ final public class core implements Serializable{
 		ram=new int[nram];
 		rom=new int[nrom];
 	}
+	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public void reset(){
-		running=wait=notify=idle=false;
+		running=waiting_for_notify=notify=idle=false;
 		zn_flags=program_counter=instruction_register=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
 		for(int i=0;i<register.length;i++)register[i]=0;
@@ -46,9 +45,9 @@ final public class core implements Serializable{
 		}
 	}
 	public void step(){
-		if(wait){
+		if(waiting_for_notify){
 			if(notify){
-				synchronized(this){wait=notify=false;}
+				synchronized(this){waiting_for_notify=notify=false;}
 				program_counter_set(program_counter+1);
 			}else{
 				return;
@@ -209,15 +208,15 @@ final public class core implements Serializable{
 				program_counter_set(program_counter+imm8);
 				program_counter_has_been_set=true;
 			}else if(op==2){// wait
-				if(!wait){// first time
+				if(!waiting_for_notify){// first time
 					synchronized(this){// atomic wait mode
-						wait=true;
+						waiting_for_notify=true;
 						notify=false;
 					}
 					return;
 				}
 				// after notify
-				synchronized(this){wait=notify=false;}
+				synchronized(this){waiting_for_notify=notify=false;}
 			}else if(op==3){// notify
 				final int imm4=(instruction_register>>12);
 				b.b.pl("notify "+imm4);
