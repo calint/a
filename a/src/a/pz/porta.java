@@ -6,7 +6,10 @@ import java.util.Date;
 import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
-	final private zn v=new zn();
+	final private zn v;
+	public porta()throws Throwable{
+		v=new zn();
+	}
 	final protected void onopened()throws Throwable{
 		session().put(getClass().getName(),v);
 //		v.x_l(null,null);

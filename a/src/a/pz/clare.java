@@ -6,7 +6,7 @@ import b.a.titled;
 final public class clare extends a implements titled{
 	@Override public void title_to(xwriter x){x.p("clare 1m");}
 	final public int ncores=4;
-	public clare(){
+	public clare()throws Throwable{
 		for(int i=0;i<ncores;i++)z.add(new zn());// ncores times z add new zn
 		z.stream().forEach(z->z.bits.set(zn.bit_panels));
 		z.rend_dut=false;
