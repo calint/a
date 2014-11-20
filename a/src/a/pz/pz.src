@@ -1,17 +1,13 @@
 # clr(400,100,70,f00,080+p)
+li m 100     # line width
 li a 400   # yyxx
-li m 100   # line width
 li c 70    # nlines
 li d 080   # rgb
 add d p
 call clr
 
-# *300=p++
-inc p
-li a 300
-st a p
-
-# drwrects(400,rects)
+# drwrects(400,100,rects)
+#li m 100     # line width
 li a 400     # yyxx
 li b :rects  # list
 call drwrects
@@ -31,6 +27,11 @@ li a 400     # yyxx
 li f :dots   # list
 call drwdots
 
+# *300=p++
+inc p
+li a 300
+st a p
+
 # c=*b=blits++
 li b :blits
 inc b
@@ -47,7 +48,14 @@ ifz sub c d
 # *b=c
 st b c
 ..
-
+# clr(scr a,linewi m,height c,rgb d)
+#  a,d
+clr:
+lp c
+  lp m
+    stc a d nxt
+    inc d nxt ret
+..
 # typewriter(scr a,linewi m,str b)
 #  c,j,f,g,i,d,b
 typewriter:
@@ -83,14 +91,6 @@ lp c
 # a+=g;ret   
 add a g ret    
 ..
-# clr(scr a,linewi m,height c,rgb d)
-#  a,d
-clr:
-lp c
-  lp m
-    stc a d nxt
-    inc d nxt ret
-..
 # drwdots(scr a,dots f)
 #  c,g,h
 drwdots:
@@ -100,6 +100,19 @@ lp c
   ldc h f   # dot color
   add g a   # offset
   stc g h nxt ret
+..
+dots:
+. 1
+# yyxx  rgb
+. 0100 0f00 
+rects:
+. 5
+# yyxx  rgb  wi   hi 
+. 3830 0422 0010 0010
+. 040c 0fff 0008 0008
+. 0400 0eee 0008 0008
+. 1000 0ddd 0008 0008
+. 100c 0ccc 0008 0008
 ..
 # drwrects(scr a,linewi m,rects b)
 #  b,c,a,d,e,f,g
@@ -123,14 +136,14 @@ lp c
 drwblits:
 ldc j k
 lp j
-  ldc a k
-  ldc b k
-  ldc h k
-  ldc i k
-  tx e m
-  sub e i
-  lp h
-    lp i
+  ldc a k  # yyxx
+  ldc b k  # from
+  ldc h k  # wi
+  ldc i k  # hi
+  tx e m   # e=m-h
+  sub e h  #
+  lp i
+    lp h
       ldc d b
       ifz inc a nxt
       ifp stc a d nxt
@@ -139,20 +152,6 @@ lp j
     add a e nxt
   nxt ret
 ..
-dots:
-. 1
-# yyxx  rgb
-. 0100 0f00 
-
-rects:
-. 5
-# yyxx  rgb  wi   hi 
-. 3830 0422 0010 0010
-. 040c 0fff 0008 0008
-. 0400 0eee 0008 0008
-. 1000 0ddd 0008 0008
-. 100c 0ccc 0008 0008
-
 blits:
 . 10
 # yyxx from  wi   hi
