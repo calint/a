@@ -167,9 +167,8 @@ final public class zn extends a{
 //	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	boolean stopped;
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
-		running=false;
-		st.set("reseting");
-		if(x!=null)x.xu(st).flush();
+//		st.set("reseting");
+//		if(x!=null)x.xu(st).flush();
 		reset();
 		copy_rom_to_ram();
 //		ev(x,this,"reset");
@@ -185,6 +184,7 @@ final public class zn extends a{
 		x.xu(st.set("reseted"));
 	}
 	private void reset(){
+		running=false;
 		zn=0;
 		loadreg=-1;
 		setpcr(0);
@@ -193,7 +193,6 @@ final public class zn extends a{
 		re.rst();
 		ra.rst();
 		me.rst();
-		copy_rom_to_ram();
 		wait=notify=stopped=false;
 	}
 	private void copy_rom_to_ram(){
