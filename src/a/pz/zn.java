@@ -166,23 +166,13 @@ final public class zn extends a{
 //	/**stoprunning*/
 //	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
 	boolean stopped;
-	public void x_r(xwriter x,String s)throws Throwable{
+	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
 		running=false;
 		st.set("reseting");
 		if(x!=null)x.xu(st).flush();
-		zn=0;
-		loadreg=-1;
-//		rom.rst();
-		setpcr(0);
-		ca.rst();
-		lo.rst();
-		re.rst();
-		ra.rst();
-		me.rst();
-		for(int i=0;i<rom.size;i++)
-			ra.set(i,ro.get(i));
-		ev(null,this);
-		wait=notify=stopped=false;
+		reset();
+		copy_rom_to_ram();
+//		ev(x,this,"reset");
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
@@ -193,6 +183,22 @@ final public class zn extends a{
 			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
 		}
 		x.xu(st.set("reseted"));
+	}
+	private void reset(){
+		zn=0;
+		loadreg=-1;
+		setpcr(0);
+		ca.rst();
+		lo.rst();
+		re.rst();
+		ra.rst();
+		me.rst();
+		copy_rom_to_ram();
+		wait=notify=stopped=false;
+	}
+	private void copy_rom_to_ram(){
+		for(int i=0;i<rom.size;i++)
+			ra.set(i,ro.get(i));
 	}
 //	/**save source*/
 //	public void x_s(final xwriter x,final String s)throws Throwable{
