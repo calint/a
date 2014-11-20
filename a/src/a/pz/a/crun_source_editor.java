@@ -1,8 +1,8 @@
 package a.pz.a;
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
 import a.pz.program;
-import a.pz.source_reader;
 import b.a;
 import b.xwriter;
 final public class crun_source_editor extends a{
@@ -35,7 +35,7 @@ final public class crun_source_editor extends a{
 //		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 //	}
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
-		try(final source_reader pr=new source_reader(src.reader())){
+		try(final Reader pr=src.reader()){
 			final program p=new program(pr);
 			ev(x,this,p);
 		}

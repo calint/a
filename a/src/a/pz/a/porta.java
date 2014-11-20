@@ -9,7 +9,6 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 import a.pz.core;
 import a.pz.program;
-import a.pz.source_reader;
 import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
@@ -29,7 +28,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		}else if(cmd==49){//compile
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
 			try{
-				new program(new source_reader(new StringReader(src))).write_to(co.rom);
+				new program(new StringReader(src)).write_to(co.rom);
 			}catch(final Throwable t){
 				final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+b.b.stacktrace(t)));
 				endpoint_recv(bbe,false);
