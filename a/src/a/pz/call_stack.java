@@ -1,7 +1,7 @@
 package a.pz;
 import b.a;
 import b.xwriter;
-final public class calls extends a{
+final public class call_stack extends a{
 	public void to(final xwriter x){
 		x.div(this);
 		x.p("call stack:").p(Integer.toHexString(ix)).nl();

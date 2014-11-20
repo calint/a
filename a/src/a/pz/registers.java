@@ -1,7 +1,7 @@
 package a.pz;
 import b.a;
 import b.xwriter;
-final public class regs extends a{
+final public class registers extends a{
 	public int[]bits;
 	public void to(final xwriter x){
 		x.div(this);
