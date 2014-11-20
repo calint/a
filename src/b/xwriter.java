@@ -131,15 +131,17 @@ public final class xwriter{
 	public xwriter code_(){return tage("code");}
 //	public xwriter rend(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
 	public xwriter inptxt(final a e){return inp(e,"text",null,null,null,null,null,null,null);}
+	public xwriter inptxt(final a e,final a axonreturn){return inp(e,"text",null,null,axonreturn,null,null,null,null);}
 	public xwriter inptxt(final a e,final String stylecls,final a axonreturn,final String axp){return inp(e,"text",null,stylecls,axonreturn,axp,null,null,null);}
 	public xwriter inptxt(final a e,final a axonreturn,final String axp){return inp(e,"text",null,null,axonreturn,axp,null,null,null);}
 	public xwriter inptxt(final a e,final String stylecls,final a axonreturn,final String axp,final String txt){return inp(e,"text",null,stylecls,axonreturn,axp,txt,null,null);}
 	public xwriter inpcolr(final a e){return inp(e,"color",null,null,null,null,null,null,null);}
 	public xwriter inp(final a e,final String type,final String style,final String stylecls,final a on_enter_ajax_elem,final String on_enter_ajax_param,final String txt,final a on_change_ajax_elem,final String on_change_ajax_param){
 		final String value=txt==null?e.toString():txt;
-		tago("input").attr("value",value).attrdef(e).attr("type",type);
-		if(stylecls!=null)attr("class",stylecls);
-		if(style!=null)attr("style",style);
+		tago("input").attr("value",value).attrdef(e);
+		if(!isempty(type))attr("type",type);
+		if(!isempty(stylecls))attr("class",stylecls);
+		if(!isempty(style))attr("style",style);
 		if(on_enter_ajax_elem!=null){
 			final String ax=on_enter_ajax_elem.id()+(on_enter_ajax_param!=null?(" "+on_enter_ajax_param):"");
 			attr("onkeypress","return $r(event,this,'"+ax+"')");

@@ -66,15 +66,15 @@ final public class zn extends a{
 	public final static int bit_rom=128;
 	public final static int bit_edasm=256;
 	public final static int bit_edcrn=512;
-	public boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
+	boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 //	public void pth(final path p){pth=p;}
-	public int theme;
+	/**theme*/public a th;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
 		if(pt()==null){
 			x.style();
-			switch(theme){
+			switch(th.toint()){
 			case 0:x
 				//width:50em;
 				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
@@ -157,7 +157,11 @@ final public class zn extends a{
 		x.div_();
 		x.div(null,"floatclear").div_();
 //		x.nl(8).div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
+		if(pt()==null)x.p("theme: ").inptxt(th,this);
 		x.div_();
+	}
+	synchronized public void x_(xwriter x,String s)throws Throwable{
+		x.xuo(this);
 	}
 //	synchronized public void x_(xwriter x,String s)throws Throwable{}
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
@@ -759,28 +763,24 @@ final public class zn extends a{
 		}
 		me.instr++;
 //		if(pcr>=rom.size)throw new Error("program out of bounds");
-//		ir.set(rom.get(pcr.toint()));
-//		rom.focusline=pcr;
-		if(loadreg!=-1){
+		if(loadreg!=-1){// load reg 2 instructions command
 			re.setr(loadreg,ir);
 			loadreg=-1;
 			setpcr(pc+1);
 			return;
 		}
-		if(ir==-1){//? move
+		if(ir==-1){// end of frame
 			last_instruction_was_end_of_frame=true;
 			setpcr(0);
 			me.frames++;
 			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
 		}
-		
 		int in=ir;// znxr ci.. .rai .rdi
 		final int izn=in&3;
 		if((izn!=0&&(izn!=zn))){
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
 			final int skp=op==0?2:1;// ifloadopskip2
-//			if(skp!=1)throw new Error();
 			setpcr(pc+skp);
 			return;
 		}
@@ -817,7 +817,7 @@ final public class zn extends a{
 				}else{
 					setpcr(lo.adr());
 					ispcrset=true;
-				}				
+				}
 			}
 			if(!ispcrset){
 				setpcr(ipc);
@@ -848,7 +848,7 @@ final public class zn extends a{
 					}else if(rai==4){//dac
 						final int d=re.get(rdi);
 						try{
-							ev(null,this,new Integer(d));
+							ev(null,this,new Integer(d));// ev(x,this.dac,int)
 						}catch(final Throwable t){
 							throw new Error(t);
 						}
@@ -879,13 +879,10 @@ final public class zn extends a{
 					final int r=~d;
 					re.setr(rdi,r);
 				}else{//shf
-//					if(rai==0)throw new Error("unimplmented op");
 					final int a=rai>7?rai-16:rai;
 					final int r;
-					if(a<0)
-						r=re.get(rdi)<<-a;
-					else
-						r=re.get(rdi)>>a;
+					if(a<0)r=re.get(rdi)<<-a;
+					else r=re.get(rdi)>>a;
 					re.setr(rdi,r);
 					zneval(r);
 				}
@@ -907,8 +904,8 @@ final public class zn extends a{
 				zneval(d);
 				me.ldc++;
 			}else if(op==7){//tx
-				{final int a=re.get(rai);
-				re.setr(rdi,a);}
+				final int a=re.get(rai);
+				re.setr(rdi,a);
 			}
 		}else{
 			if(op==0){//free
@@ -954,19 +951,17 @@ final public class zn extends a{
 	}
 	private void zneval(final int i){
 		if(i==0){zn=1;return;}
-		if((i&(1<<16))==(1<<16)){zn=2;return;}//?
+		if((i&(1<<16))==(1<<16)){zn=2;return;}//? .
 //		if(i<0){zn=2;return;}
 		zn=3;
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
-			if(from==ec){
-				final program p=(program)o;
-				p.write_to(ro);
-				x.xuo(ro);
-				x_r(x,null);
-				x_f(x,null);
-			}
+			final program p=(program)o;
+			p.write_to(ro);
+			x.xuo(ro);
+			x_r(x,null);
+			x_f(x,null);
 		}else super.ev(x,from,o);
 	}
 	public final static String fld(final String def,final String s){
