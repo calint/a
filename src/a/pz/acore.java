@@ -321,9 +321,9 @@ final public class acore extends a{
 		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
 		ajaxsts.set("idle");
 		bits.set(0b1111110000);
-		ro.bits=c.rom;
-		ra.bits=c.ram;
-		re.bits=c.register;
+		ro.ints=c.rom;
+		ra.ints=c.ram;
+		re.ints=c.register;
 		lo.core=c;
 	}
 	public void to(final xwriter x)throws Throwable{
@@ -568,7 +568,7 @@ final public class acore extends a{
 	}
 	public void pramble_to(final xwriter x){
 		x.pl(strdatasize(c.ram.length)+" 20b ram");
-		x.pl(re.bits.length+" 20b registers");
+		x.pl(re.ints.length+" 20b registers");
 		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
