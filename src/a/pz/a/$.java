@@ -1,4 +1,4 @@
-package a.pz;
+package a.pz.a;
 import b.a;
 import b.b;
 import b.cacheable;

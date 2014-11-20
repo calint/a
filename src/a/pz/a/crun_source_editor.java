@@ -1,8 +1,9 @@
-package a.pz;
+package a.pz.a;
 import java.util.HashSet;
 import java.util.Set;
+import a.pz.program;
+import a.pz.source_reader;
 import b.a;
-import b.b;
 import b.xwriter;
 final public class crun_source_editor extends a{
 	int focusline;
@@ -36,7 +37,6 @@ final public class crun_source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
 		try(final source_reader pr=new source_reader(src.reader())){
 			final program p=new program(pr);
-			b.pl(p.toString());
 			ev(x,this,p);
 		}
 	}

@@ -1,4 +1,4 @@
-package a.pz;
+package a.pz.a;
 import java.util.*;
 import java.util.stream.*;
 import b.*;
