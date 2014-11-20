@@ -2,6 +2,7 @@ package a.pz;
 final public class core{
 	final public int K=1024,nregs=16,ncalls=8,nloops=8,nram=64*K,nrom=2*K;
 
+	public int id;
 	public boolean running,stopped,wait,notify,last_instruction_was_end_of_frame;
 	public int program_counter,instruction_register,zn_flags,loading_register=-1;
 	public int[]register=new int[nregs];
