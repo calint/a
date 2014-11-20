@@ -43,25 +43,25 @@ final public class acore extends a{
 //	private boolean wait;
 //	private boolean notify;
 //	private boolean last_instruction_was_end_of_frame;
-	final static int opload=0x000;
-	final static int oplp=0x100;
-	final static int opinc=0x200;
-	final static int opneg=0x300;
-	final static int opdac=0x400;
-	final static int opwait=0x058;
-	final static int opnotify=0x078;
-	final static int opset=0xe0;
-	final static int opldc=0xc0;
-	final static int opadd=0xa0;
-	final static int opskp=0x80;
-	final static int opshf=0x60;
-	final static int opstc=0x40;
-	final static int opsub=0x20;
-	final static int opcall=0x10;
-	final static int opst=0x0d8;//?
-	final static int opld=0x0f8;//?
-	final static int opnxt=4;
-	final static int opret=8;
+//	final static int opload=0x000;
+//	final static int oplp=0x100;
+//	final static int opinc=0x200;
+//	final static int opneg=0x300;
+//	final static int opdac=0x400;
+//	final static int opwait=0x058;
+//	final static int opnotify=0x078;
+//	final static int opset=0xe0;
+//	final static int opldc=0xc0;
+//	final static int opadd=0xa0;
+//	final static int opskp=0x80;
+//	final static int opshf=0x60;
+//	final static int opstc=0x40;
+//	final static int opsub=0x20;
+//	final static int opcall=0x10;
+//	final static int opst=0x0d8;//?
+//	final static int opld=0x0f8;//?
+//	final static int opnxt=4;
+//	final static int opret=8;
 	
 //	private void reset(){
 //		running=false;
@@ -578,24 +578,24 @@ final public class acore extends a{
 	}
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
-		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
-		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
-		x.pl(":  skp : "+fld("..00",Integer.toHexString(opskp))+" : pc+=..               :");
-		x.pl(":  stc : "+fld("yx00",Integer.toHexString(opstc))+" : ram[x++]=y           :");
-		x.pl(":   st : "+fld("yx00",Integer.toHexString(opst))+" : ram[x]=y             :");
- 		x.pl(":   lp : "+fld("x000",Integer.toHexString(oplp))+" : loop x               :");
-		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(opldc))+" : y=ram[x++]           :");
-		x.pl(":   ld : "+fld("yx00",Integer.toHexString(opld))+" : y=ram[x]             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]>>=i             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(opshf))+" : r[x]<<=i             :");
-		x.pl(":  not : "+fld("x000",Integer.toHexString(opshf))+" : r[x]=~r[x]           :");
-		x.pl(":  inc : "+fld("x000",Integer.toHexString(opinc))+" : r[x]++               :");
-		x.pl(":  neg : "+fld("x000",Integer.toHexString(opneg))+" : r[x]=-r[x]           :");
-		x.pl(":  add : "+fld("yx00",Integer.toHexString(opadd))+" : r[y]+=r[x]           :");
-		x.pl(":   tx : "+fld("yx00",Integer.toHexString(opset))+" : r[y]=r[x]            :");
+		x.pl(": load : "+fld("x000",Integer.toHexString(program.opload))+" : next instr to reg[x] :");
+		x.pl(": call : "+fld("..00",Integer.toHexString(program.opcall))+" : 2b + ..              :");
+		x.pl(":  skp : "+fld("..00",Integer.toHexString(program.opskp))+" : pc+=..               :");
+		x.pl(":  stc : "+fld("yx00",Integer.toHexString(program.opstc))+" : ram[x++]=y           :");
+		x.pl(":   st : "+fld("yx00",Integer.toHexString(program.opst))+" : ram[x]=y             :");
+ 		x.pl(":   lp : "+fld("x000",Integer.toHexString(program.oplp))+" : loop x               :");
+		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(program.opldc))+" : y=ram[x++]           :");
+		x.pl(":   ld : "+fld("yx00",Integer.toHexString(program.opld))+" : y=ram[x]             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(program.opshf))+" : r[x]>>=i             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(program.opshf))+" : r[x]<<=i             :");
+		x.pl(":  not : "+fld("x000",Integer.toHexString(program.opshf))+" : r[x]=~r[x]           :");
+		x.pl(":  inc : "+fld("x000",Integer.toHexString(program.opinc))+" : r[x]++               :");
+		x.pl(":  neg : "+fld("x000",Integer.toHexString(program.opneg))+" : r[x]=-r[x]           :");
+		x.pl(":  add : "+fld("yx00",Integer.toHexString(program.opadd))+" : r[y]+=r[x]           :");
+		x.pl(":   tx : "+fld("yx00",Integer.toHexString(program.opset))+" : r[y]=r[x]            :");
 //		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
-		x.pl(":  sub : "+fld("xy00",Integer.toHexString(opsub))+" : r[y]-=r[x]           :");
-		x.pl(":  dac : "+fld("x000",Integer.toHexString(opdac))+" : sound.add block r[x] :");
+		x.pl(":  sub : "+fld("xy00",Integer.toHexString(program.opsub))+" : r[y]-=r[x]           :");
+		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : sound.add block r[x] :");
 		x.pl(":  ifz : ...1 : if z op              :");
 		x.pl(":  ifn : ...2 : if n op              :");
 		x.pl(":  ifp : ...3 : if p op              :");
@@ -604,8 +604,8 @@ final public class acore extends a{
 		x.pl(":      : ...c : op nxt ret           :");
 		x.pl(":------:------:----------------------:");
 		x.pl(":      : ..18 : cr invalids          :");
-		x.pl(": wait : "+fld("x000",Integer.toHexString(opwait))+" : wait                 :");
-		x.pl(":notify: "+fld("x000",Integer.toHexString(opnotify))+" : notify               :");
+		x.pl(": wait : "+fld("x000",Integer.toHexString(program.opwait))+" : wait                 :");
+		x.pl(":notify: "+fld("x000",Integer.toHexString(program.opnotify))+" : notify               :");
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
 	}
