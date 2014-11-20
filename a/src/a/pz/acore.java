@@ -9,7 +9,7 @@ import b.a_ajaxsts;
 import b.xwriter;
 final public class acore extends a{
 	final static String filenmromsrc="pz.src";
-	public core c=new core(16,8,8,64*1024,64*1024);
+	public core c=new core(16,8,8,32*1024,1*1024);
 	public rom ro;
 	public ram ra;
 	public sys sy;
@@ -555,7 +555,7 @@ final public class acore extends a{
 	static public void copyright_to(final xwriter x){
 //		x.pl("(c) 1984 some rights reserved ltd");
 	}
-	static public void schematics_to(final xwriter x){
+	public void schematics_to(final xwriter x){
 		x.pl("|_______|______|____|____|  ");
 		x.pl("|z n x r|c i 00|0000|0000|  ");
 		x.pl("|_______|______|____|____|  ");
