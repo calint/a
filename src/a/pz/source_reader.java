@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
-final public class source_reader extends Reader{
+final class source_reader extends Reader{
 	public source_reader(final Reader source){
 		this.source=new PushbackReader(source,1);
 	}

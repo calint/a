@@ -1,12 +1,12 @@
 package a.pz;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import a.pz.a.rom;
 
 final public class program implements Serializable{
 	final public static int     opli=0x0000;
@@ -29,7 +29,8 @@ final public class program implements Serializable{
 	final public static int   opwait=0x0058;
 	final public static int opnotify=0x0078;
 
-	public program(final source_reader r)throws IOException{
+	public program(final Reader rr)throws IOException{
+		final source_reader r=new source_reader(rr);
 		s=new ArrayList<>();
 		while(true){
 			final int ch=r.read();
