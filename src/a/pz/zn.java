@@ -3,8 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 import javax.imageio.ImageIO;
 import a.x.jskeys;
 import b.a;
@@ -35,27 +33,15 @@ final public class zn extends a{
 	public rom ro;
 	public ram ra;
 	public sys sy;
-	int pc;
-	int ir;
-	int zn;
 	public regs re;
 	public calls ca;
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	public edcrun ec;{try{x_l(null,null);}catch(Throwable t){throw new Error(t);}}
-//	public int mode;//1:multicore
-//	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
-//	private int lno;
-//	private int lnosrc;
-//	private final Map<Integer,String>callmap=new HashMap<Integer,String>();
-//	private final Map<String,Integer>labels=new HashMap<String,Integer>();
-//	private final Map<Integer,String>loadlabelmap=new HashMap<Integer,String>();
-//	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
-//	private final List<String>srclines=new ArrayList<String>(32);
-	private int loadreg=-1;
-	public metrics me;
+	public edcrun ec;
+	/**theme*/public a th;
 	public a bits;{bits.set(0b1111110000);}
+	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
 	public final static int bit_logo=1;
 	public final static int bit_schematics=2;
 	public final static int bit_pramble=4;
@@ -66,9 +52,18 @@ final public class zn extends a{
 	public final static int bit_rom=128;
 	public final static int bit_edasm=256;
 	public final static int bit_edcrn=512;
-	boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
-//	public void pth(final path p){pth=p;}
-	/**theme*/public a th;
+	public metrics me;
+
+	private boolean running;
+	boolean stopped;
+	int pc;
+	int ir;
+	int zn;
+	private int loadreg=-1;
+	
+	public zn()throws Throwable{
+		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
+	}
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
@@ -138,44 +133,31 @@ final public class zn extends a{
 		if(hasbit(bit_display))x.r(ra);
 		if(hasbit(bit_menu))
 			x.div()
-//				.ax(this,"l"," load")
-//				.ax(this,"c"," compile")
 				.ax(this,"r"," reset")
 				.ax(this,"f"," frame")
 				.ax(this,"n"," step")
 				.ax(this,"g"," go")
-				.ax(this,"u"," run")
-				.ax(this,"be"," bench")
+				.ax(this,"u"," bench")
+//				.ax(this,"be"," bench")
 //				.ax(this,"s"," save")
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.div("laycent");
 		if(hasbit(bit_panels))x.div(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_rom))x.r(ro);
-//		if(hasbit(bit_edasm))x.r(es);
 		if(hasbit(bit_edcrn))x.r(ec);
 		x.div_();
 		x.div(null,"floatclear").div_();
-//		x.nl(8).div(null,"floatclear").p("bits:").inpint(bits).ajx(this).p("::").ajx_().div_();
 		if(pt()==null)x.p("theme: ").inptxt(th,this);
 		x.div_();
 	}
+	boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 	synchronized public void x_(xwriter x,String s)throws Throwable{
 		x.xuo(this);
 	}
-//	synchronized public void x_(xwriter x,String s)throws Throwable{}
-	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;{ajaxsts.set("idle");}
-//	synchronized public void x_i(xwriter x,String s)throws Throwable{ir=ro.get(pc);}
-	private boolean running;
-//	/**stoprunning*/
-//	public void x_stop(final xwriter x,final String s)throws Throwable{running=false;stopped=true;}
-	boolean stopped;
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
-//		st.set("reseting");
-//		if(x!=null)x.xu(st).flush();
 		reset();
 		copy_rom_to_ram();
-//		ev(x,this,"reset");
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
@@ -203,25 +185,13 @@ final public class zn extends a{
 		for(int i=0;i<rom.size;i++)
 			ra.set(i,ro.get(i));
 	}
-//	/**save source*/
-//	public void x_s(final xwriter x,final String s)throws Throwable{
-//		ec.src.to(pth);
-//		st.set("saved "+pth.name());
+//	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
+//		final InputStream is=getClass().getResourceAsStream(filenmromsrc);
+//		ec.src.from(is);
+//		st.set("loaded default");
 //		if(x==null)return;
-//		x.xu(st);
+//		x.xuo(ec).xu(st).xuo(ro);
 //	}
-	synchronized public void x_l(final xwriter x,final String s)throws Throwable{
-//		if(pth!=null&&pth.exists()){
-//			ec.src.from(pth);
-//			st.set("loaded "+pth.name());
-//		}else{
-			final InputStream is=getClass().getResourceAsStream(filenmromsrc);
-			ec.src.from(is);
-			st.set("loaded default");
-//		}
-		if(x==null)return;
-		x.xuo(ec).xu(st).xuo(ro);
-	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
 		if(running){
 			running=false;
