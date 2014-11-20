@@ -7,15 +7,8 @@ import javax.imageio.ImageIO;
 import b.a;
 import b.xwriter;
 final public class ram extends a{
-	private static final long serialVersionUID=1;
-//	public final static int width=512;
-//	public final static int height=256;	
-//	public final static int size=height*width;
-//	private int[]ram=new int[size];
 	public int[]bits;
-	public int scl=2;
-//	public void rst(){x=null;for(int i=0;i<bits.length;i++)bits[i]=0;}
-	final static int wi=256,hi=128;
+	public int scl=2,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 	}
@@ -63,11 +56,13 @@ final public class ram extends a{
 		final String hex=Integer.toHexString(argb);
 		final String id=id();
 		x.p("{var c=$('").p(id).p("');if(c){var d=c.getContext('2d');");
-		x.p("d.fillStyle='#"+zn.fld("000",hex)+"';");
+		x.p("d.fillStyle='#"+acore.fld("000",hex)+"';");
 		final int yy=a/wi;
 		final int xx=a%wi;
 		final int scl=2;
 		x.p("d.fillRect("+xx*scl+","+yy*scl+","+scl+","+scl+");");				
 		x.pl("}}");
 	}
+
+	private static final long serialVersionUID=1;
 }

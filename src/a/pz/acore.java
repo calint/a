@@ -7,7 +7,7 @@ import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
 import b.xwriter;
-final public class zn extends a{
+final public class acore extends a{
 	final static String filenmromsrc="pz.src";
 	public core c=new core(16,8,8,64*1024,64*1024);
 	public rom ro;
@@ -80,8 +80,8 @@ final public class zn extends a{
 //			ra.set(i,ro.get(i));
 //	}
 	public void snapshot_png_to(final OutputStream os)throws IOException{
-		final int wi=ram.wi;
-		final int hi=ram.hi;
+		final int wi=ra.wi;
+		final int hi=ra.hi;
 		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
 		for(int i=0;i<hi;i++){
@@ -317,7 +317,7 @@ final public class zn extends a{
 		}else super.ev(x,from,o);
 	}
 	
-	public zn()throws Throwable{
+	public acore()throws Throwable{
 		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
 		ajaxsts.set("idle");
 		bits.set(0b1111110000);
@@ -425,7 +425,7 @@ final public class zn extends a{
 		x.flush();
 		if(hasbit(bit_display)){
 			x.xu(st.set("refreshing display")).flush();
-			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
+			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 		x.xu(st.set("reseted"));
 	}
@@ -481,7 +481,7 @@ final public class zn extends a{
 			x.flush();
 			final int b=bits.toint();
 			if((b&1)==1){
-				ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
+				ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 			}
 		}
 	}
@@ -516,7 +516,7 @@ final public class zn extends a{
 			x.xu(ca);
 			x.xu(this.lo);
 			xfocusline(x);
-			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
+			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 	}
 	/**stepframe*/
@@ -543,7 +543,7 @@ final public class zn extends a{
 		xfocusline(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
 		if(hasbit(bit_display)){
-			ra.x_rfh(x,s,ram.wi,ram.hi,0,0);
+			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 	}
 	public void logo_to(final xwriter x){
@@ -569,7 +569,7 @@ final public class zn extends a{
 	public void pramble_to(final xwriter x){
 		x.pl(strdatasize(c.ram.length)+" 20b ram");
 		x.pl(re.bits.length+" 20b registers");
-		x.pl(ram.wi+" x "+ram.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
+		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
 		x.pl(strdatasize2(c.rom.length)+" 16b instructions");
