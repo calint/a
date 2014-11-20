@@ -13,10 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
+import a.pz.zn.program.call;
+import a.pz.zn.program.li;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
-import b.b;
 import b.path;
 import b.xwriter;
 final public class zn extends a{
@@ -51,6 +52,52 @@ final public class zn extends a{
 		x.pl(loops.size+" loops stack");
 		x.pl(calls.size+" calls stack");
 	}
+	private final static class compiler{
+		private rom r;
+		private int i;
+		public compiler(rom r){this.r=r;}
+		public void write(int instruction){r.set(i++,instruction);}
+		public void add_label(String name,String location_in_source){
+			if(labels.containsKey(name))throw new Error("label '"+name+"' already declared. "+labels.get(name));
+			final label_link m=new label_link();
+			m.binloc=i;
+			m.srcloc=location_in_source;
+			m.link_to=name;
+			labels.put(name,m);
+		}
+		private final static class label_link{
+			String link_to;
+			String srcloc;
+			int binloc;
+			public String toString(){return srcloc+" ["+Integer.toHexString(binloc)+"]";}
+		}
+		private final Map<String,label_link>labels=new LinkedHashMap<>();
+		public void add_link(String to_label,String location_in_source){
+			final label_link m=new label_link();
+			m.binloc=i;
+			m.srcloc=location_in_source;
+			m.link_to=to_label;
+			links.add(m);
+		}
+		private final List<label_link>links=new ArrayList<>();
+		public void finish(){
+			links.forEach(e->{
+				final label_link ll;
+				if(e.link_to.startsWith(":"))ll=labels.get(e.link_to.substring(1));
+				else ll=labels.get(e.link_to);
+				if(ll==null)throw new Error(e.srcloc+" '"+e.link_to+"' not found");
+				final int a=ll.binloc;
+				final int d=r.get(e.binloc);
+				final int c;
+				if((d&0b010000)==0b010000){//? hackish
+					c=d|(a<<6);
+				}else{//? assuming data
+					c=a;
+				}
+				r.set(e.binloc,c);
+			});
+		}
+	}
 	public static class program{
 		public program(final source_reader r)throws IOException{
 			s=new ArrayList<>();
@@ -62,6 +109,11 @@ final public class zn extends a{
 				s.add(st);
 			}
 		}
+		final public void write_to(rom r){
+			final compiler c=new compiler(r);
+			s.forEach(e->e.write_to(c));
+			c.finish();
+		}
 		private List<stmt>s;
 		final public String toString(){
 			final StringBuilder sb=new StringBuilder();
@@ -71,32 +123,43 @@ final public class zn extends a{
 		final private Map<String,String>labels=new LinkedHashMap<>();
 
 		public static class stmt{
-			public boolean nxt,ret;
-			public byte zn;
-	
-			public stmt(String s){this.s=s;}
-			final private String s;
-			public void write_binary_code_to(xwriter x){
+			/**znxr*/public int znxr;
+			/**opcode*/public int op;
+			/**register a*/public int ra;
+			/**register b*/public int rd;
+//			/**nxt ret bits*/public boolean nxt,ret;
+			public stmt(String s){this.txt=s;}
+			protected stmt(int op,int ra,int rd){
+				this.op=op;this.ra=ra;this.rd=rd;
 			}
-			
-	//		final public void to(xwriter x){x.p(toString());}
-			final public String toString(){
+			protected stmt(int op,int ra,int rd,boolean flip_ra_rd){
+				this.op=op;this.ra=rd;this.rd=ra;
+			}
+			protected String txt;
+			public String toString(){
 				final StringBuilder sb=new StringBuilder();
-				switch(zn){
-				case 1:sb.append("ifz ");break;
-				case 2:sb.append("ifn ");break;
-				case 3:sb.append("ifp ");break;
+				if(txt==null){
+					final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
+					sb.append(". ").append(Integer.toHexString(ir));
+					return sb.toString();
 				}
-				sb.append(s);
-				if(nxt)sb.append(" nxt");
-				if(ret)sb.append(" ret");
+				if((znxr&3)==1)sb.append("ifz ");
+				if((znxr&3)==2)sb.append("ifn ");
+				if((znxr&3)==3)sb.append("ifp ");
+				sb.append(txt);
+				if((znxr&4)==4)sb.append(" nxt");
+				if((znxr&8)==8)sb.append(" ret");
 				return sb.toString();
+			}
+			public void write_to(compiler c){
+				final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
+				c.write(ir);
 			}
 			public static stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
 				String tk="";
 				while(true){
 					skip_whitespace(r);
-					tk=next_token_on_same_line(r);
+					tk=next_token_in_line(r);
 					if(!tk.startsWith("#"))
 						break;
 					consume_rest_of_line(r);
@@ -105,11 +168,11 @@ final public class zn extends a{
 					labels.put(tk,tk);
 					return new label(tk.substring(0,tk.length()-1));
 				}
-				byte zn=0;
+				int znxr=0;
 				switch(tk){
-				case"ifz":{zn=1;tk=next_token_on_same_line(r);break;}
-				case"ifn":{zn=2;tk=next_token_on_same_line(r);break;}
-				case"ifp":{zn=3;tk=next_token_on_same_line(r);break;}
+				case"ifz":{znxr=1;tk=next_token_in_line(r);break;}
+				case"ifn":{znxr=2;tk=next_token_in_line(r);break;}
+				case"ifp":{znxr=3;tk=next_token_in_line(r);break;}
 				}
 				if(tk.equals(".."))tk="eof";
 				if(tk.equals("."))tk="data";
@@ -122,15 +185,15 @@ final public class zn extends a{
 					throw new Error(r+" "+t);
 				}
 				if(!(s instanceof data)){
-					s.zn=zn;
 					while(true){
-						final String t=next_token_on_same_line(r);
+						final String t=next_token_in_line(r);
 						if(t==null)break;
-						if("nxt".equalsIgnoreCase(t)){s.nxt=true;continue;}
-						if("ret".equalsIgnoreCase(t)){s.ret=true;continue;}
+						if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
+						if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
 						if(t.startsWith("#")){consume_rest_of_line(r);break;}
 						throw new Error("3 "+t);
 					}
+					s.znxr=znxr;
 				}
 				final int eos=r.read();
 				if(eos!='\n'&&eos!=-1)
@@ -139,98 +202,124 @@ final public class zn extends a{
 			}
 		}
 		public static class li extends stmt{
+			private String data;
 			public li(source_reader r)throws IOException{
-				super("load "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opload,0,ri(next_token_in_line(r)));
+				data=next_token_in_line(r);
+			}
+			@Override public void write_to(compiler c){
+				super.write_to(c);
+				if(data.startsWith(":")){
+					c.add_link(data,"?");
+					c.write(0);
+				}else{
+					c.write(Integer.parseInt(data,16));
+				}
+				
 			}
 		}
 		public static class inc extends stmt{
 			public inc(source_reader r)throws IOException{
-				super("inc "+next_token_on_same_line(r));
+				super(opinc,0,ri(next_token_in_line(r)));
 			}
+		}
+		final private static int ri(String s){
+			final char first_char=s.charAt(0);
+			final int reg=first_char-'a';
+			return reg;
 		}
 		public static class st extends stmt{
 			public st(source_reader r)throws IOException{
-				super("st "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opst,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 			}
 		}
 		public static class eof extends stmt{
 			public eof(source_reader r)throws IOException{
 				super(". ffff");
 			}
+			@Override public void write_to(compiler c){c.write(-1);}
 		}
 		public static class nxt extends stmt{
 			public nxt(source_reader r)throws IOException{
-				super("nxt");
+				super(opnxt,0,0);
 			}
 		}
 		public static class ret extends stmt{
 			public ret(source_reader r)throws IOException{
-				super("ret");
+				super(opret,0,0);
 			}
 		}
 		public static class lp extends stmt{
 			public lp(source_reader r)throws IOException{
-				super("lp "+next_token_on_same_line(r));
+				super(oplp,0,ri(next_token_in_line(r)));
 			}
 		}
 		public static class stc extends stmt{
 			public stc(source_reader r)throws IOException{
-				super("stc "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opstc,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 			}
 		}
 		public static class add extends stmt{
 			public add(source_reader r)throws IOException{
-				super("add "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opadd,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 			}
 		}
 		public static class sub extends stmt{
 			public sub(source_reader r)throws IOException{
-				super("sub "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opsub,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 			}
 		}
 		public static class call extends stmt{
+			String to;
 			public call(source_reader r)throws IOException{
-				super(next_token_on_same_line(r));
+				super(opcall,0,0);
+				to=next_token_in_line(r);
+			}
+			@Override public void write_to(compiler c){
+				c.add_link(to,"?");
+				super.write_to(c);
 			}
 		}
 		public static class data extends stmt{
 			public data(source_reader r)throws IOException{
-				super(". "+consume_rest_of_line(r));
+				super(consume_rest_of_line(r));
+			}
+			@Override public void write_to(compiler c){
+				try(final Scanner s=new Scanner(txt)){
+					while(s.hasNext()){
+						final String ss=s.next();
+						final int d=Integer.parseInt(ss,16);
+						c.write(d);
+					}
+				}
 			}
 		}
 		public static class label extends stmt{
 			public label(String nm){
-				super(nm+":");
+				super(nm);
+			}
+			@Override public void write_to(compiler c){
+				c.add_label(toString(),"?");
 			}
 		}
 		public static class ld extends stmt{
 			public ld(source_reader r)throws IOException{
-				super("ld "+rearrange(r));
-			}
-			private static String rearrange(source_reader r)throws IOException{
-				final String d=next_token_on_same_line(r);
-				final String a=next_token_on_same_line(r);
-				return a+" "+d;
+				super(opld,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 			}
 		}
 		public static class ldc extends stmt{
 			public ldc(source_reader r)throws IOException{
-				super("ldc "+rearrange(r));
-			}
-			private static String rearrange(source_reader r)throws IOException{
-				final String d=next_token_on_same_line(r);
-				final String a=next_token_on_same_line(r);
-				return a+" "+d;
+				super(opldc,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 			}
 		}
 		public static class tx extends stmt{
 			public tx(source_reader r)throws IOException{
-				super("tx "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opset,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 			}
 		}
 		public static class shf extends stmt{
 			public shf(source_reader r)throws IOException{
-				super("shf "+next_token_on_same_line(r)+" "+next_token_on_same_line(r));
+				super(opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
 			}
 		}
 		private static void skip_whitespace(source_reader r)throws IOException{
@@ -265,7 +354,7 @@ final public class zn extends a{
 	//		if(sb.length()==0)return null;
 	//		return sb.toString();
 	//	}
-		private static String next_token_on_same_line(source_reader r)throws IOException{
+		private static String next_token_in_line(source_reader r)throws IOException{
 			skip_whitespace_on_same_line(r);
 			final StringBuilder sb=new StringBuilder();
 			while(true){
@@ -325,9 +414,9 @@ final public class zn extends a{
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
 	}
-	private final static int opload=0x000;
+	public final static int opload=0x000;
 	private final static int oplp=0x100;
-	private final static int opinc=0x200;
+	public final static int opinc=0x200;
 	private final static int opneg=0x300;
 	private final static int opdac=0x400;
 	private final static int opwait=0x058;
@@ -342,6 +431,8 @@ final public class zn extends a{
 	private final static int opcall=0x10;
 	private final static int opst=0x0d8;//?
 	private final static int opld=0x0f8;//?
+	private final static int opnxt=4;
+	private final static int opret=8;
 //	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
 	private path pth;
@@ -466,7 +557,7 @@ final public class zn extends a{
 			x.div()
 //				.ax(this,"l"," load")
 //				.ax(this,"c"," compile")
-//				.ax(this,"r"," reset")
+				.ax(this,"r"," reset")
 				.ax(this,"f"," frame")
 				.ax(this,"n"," step")
 				.ax(this,"g"," go")
@@ -546,12 +637,12 @@ final public class zn extends a{
 		}
 		st.clr();
 		ra.x=x;
-		final int srclineno=lino.get(pc);
-		final String srcline=srclines.get(srclineno-1);
+//		final int srclineno=lino.get(pc);
+//		final String srcline=srclines.get(srclineno-1);
 		step();
 		ra.x=null;
 		if(x==null)return;
-		x.xu(st.set(srcline));
+//		x.xu(st.set(srcline));
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
 	}
@@ -1088,7 +1179,7 @@ final public class zn extends a{
 			setpcr(pc+1);
 			return;
 		}
-		if(ir==0xffff){//? move
+		if(ir==-1){//? move
 			last_instruction_was_end_of_frame=true;
 			setpcr(0);
 			me.frames++;
@@ -1110,11 +1201,11 @@ final public class zn extends a{
 		final boolean rcinvalid=(in&6)==6;
 		if(!rcinvalid&&(in&4)==4){//call
 			final int imm10=in>>4;// .. .... ....
-			final int znx=zn+((xr&1)<<2);// nxt after ret
+			final int znx=zn|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(pc+1);
 			setpcr(imm10);
 			ca.push(stkentry);
-			return;			
+			return;
 		}
 		boolean isnxt=false;
 		boolean ispcrset=false;
@@ -1279,12 +1370,12 @@ final public class zn extends a{
 //		if(i<0){zn=2;return;}
 		zn=3;
 	}
-	@Override protected void ev(xwriter x,a from,Object o) throws Throwable{
+	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
-//			es.src.set(o.toString());
-//			x.xuo(es);
 			if(from==ec){
-				x_c(x,null);
+				final program p=(program)o;
+				p.write_to(ro);
+				x.xuo(ro);
 				x_r(x,null);
 				x_f(x,null);
 			}
@@ -1363,10 +1454,10 @@ final public class zn extends a{
 			.div_();
 		}
 		private static String zntkns(final int zn){
-			if(zn==0){return "";}
-			if(zn==1){return "z";}
-			if(zn==2){return "n";}
-			if(zn==3){return "p";}
+			if(zn==0){return"";}
+			if(zn==1){return"z";}
+			if(zn==2){return"n";}
+			if(zn==3){return"p";}
 			throw new Error();
 		}
 		private static final long serialVersionUID=1;
