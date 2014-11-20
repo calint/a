@@ -39,6 +39,15 @@ final public class core implements Serializable{
 		loop_stack_counter[loop_stack_index]=counter;
 		loop_stack_index++;
 	}
+	public void step_frame(){
+		while(true){
+			step();
+			if(last_instruction_was_end_of_frame){
+				last_instruction_was_end_of_frame=false;
+				return;
+			}
+		}
+	}
 	public void step(){
 		if(wait){
 			if(notify){

@@ -1,33 +1,33 @@
 package a.pz;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+import a.pz.a.rom;
 
-final public class program{
-	final static int opload=0x000;
-	final static int oplp=0x100;
-	final static int opinc=0x200;
-	final static int opneg=0x300;
-	final static int opdac=0x400;
-	final static int opwait=0x058;
-	final static int opnotify=0x078;
-	final static int opset=0xe0;
-	final static int opldc=0xc0;
-	final static int opadd=0xa0;
-	final static int opskp=0x80;
-	final static int opshf=0x60;
-	final static int opstc=0x40;
-	final static int opsub=0x20;
-	final static int opcall=0x10;
-	final static int opst=0x0d8;//?
-	final static int opld=0x0f8;//?
-	final static int opnxt=4;
-	final static int opret=8;
+final public class program implements Serializable{
+	final public static int     opli=0x0000;
+	final public static int     oplp=0x0100;
+	final public static int    opinc=0x0200;
+	final public static int    opneg=0x0300;
+	final public static int     optx=0x00e0;
+	final public static int    opldc=0x00c0;
+	final public static int    opadd=0x00a0;
+	final public static int    opskp=0x0080;
+	final public static int    opshf=0x0060;
+	final public static int    opstc=0x0040;
+	final public static int    opsub=0x0020;
+	final public static int   opcall=0x0010;
+	final public static int     opst=0x00d8;
+	final public static int     opld=0x00f8;
+	final public static int    opnxt=0x0004;
+	final public static int    opret=0x0008;
+	final public static int    opdac=0x0400;
+	final public static int   opwait=0x0058;
+	final public static int opnotify=0x0078;
 
 	public program(final source_reader r)throws IOException{
 		s=new ArrayList<>();
@@ -35,108 +35,83 @@ final public class program{
 			final int ch=r.read();
 			if(ch==-1)break;
 			r.unread(ch);
-			final program.stmt st=stmt.read_next_stmt(r,labels);
+			final stmt st=program.read_next_from(r);
 			s.add(st);
 		}
 	}
-	final public void write_to(rom r){
-		final compiler c=new compiler(r);
+	private static stmt read_next_from(final source_reader r)throws IOException{
+		String tk="";
+		while(true){
+			skip_whitespace(r);
+			tk=next_token_in_line(r);
+			if(!tk.startsWith("#"))break;
+			consume_rest_of_line(r);
+		}
+		if(tk.endsWith(":")){
+			b.b.pl("label["+tk);
+			return new label(tk.substring(0,tk.length()-1));
+		}
+		int znxr=0;
+		switch(tk){
+		case"ifz":{znxr=1;tk=next_token_in_line(r);break;}
+		case"ifn":{znxr=2;tk=next_token_in_line(r);break;}
+		case"ifp":{znxr=3;tk=next_token_in_line(r);break;}
+		}
+		if(tk.equals(".."))tk="eof";
+		if(tk.equals("."))tk="data";
+		final stmt s;
+		try{
+			final Class cls=Class.forName(program.class.getName()+"$"+tk);
+			final Constructor ctor=cls.getConstructor(source_reader.class);
+			s=(stmt)ctor.newInstance(r);
+		}catch(Throwable t){
+			throw new Error(r+" instruction '"+tk+"' not found");
+		}
+		if(!(s instanceof data)){
+			while(true){
+				final String t=next_token_in_line(r);
+				if(t==null)break;
+				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
+				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
+				if(t.startsWith("#")){consume_rest_of_line(r);break;}
+				throw new Error("3 "+t);
+			}
+			s.znxr=znxr;
+		}
+		final int eos=r.read();
+		if(eos!='\n'&&eos!=-1)throw new Error(r+" expected end of line or end of file");
+		return s;
+	}
+	final public void write_to(int[]ints){
+		final rom_writer c=new rom_writer(ints);
 		s.forEach(e->e.write_to(c));
 		c.finish();
 	}
-	private List<program.stmt>s;
-	final public String toString(){
-		final StringBuilder sb=new StringBuilder();
-		s.forEach(e->sb.append(e.toString()).append('\n'));
-		return sb.toString();
-	}
-	final private Map<String,String>labels=new LinkedHashMap<>();
+	private List<stmt>s;
 
-	public static class stmt{
+
+	public static class stmt implements Serializable{
 		/**znxr*/public int znxr;
 		/**opcode*/public int op;
 		/**register a*/public int ra;
 		/**register b*/public int rd;
-//			/**nxt ret bits*/public boolean nxt,ret;
-		public stmt(String s){this.txt=s;}
-		protected stmt(int op,int ra,int rd){
-			this.op=op;this.ra=ra;this.rd=rd;
-		}
-		protected stmt(int op,int ra,int rd,boolean flip_ra_rd){
-			this.op=op;this.ra=rd;this.rd=ra;
-		}
-		protected String txt;
-		public String toString(){
-			final StringBuilder sb=new StringBuilder();
-			if(txt==null){
-				final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
-				sb.append(". ").append(Integer.toHexString(ir));
-				return sb.toString();
-			}
-			if((znxr&3)==1)sb.append("ifz ");
-			if((znxr&3)==2)sb.append("ifn ");
-			if((znxr&3)==3)sb.append("ifp ");
-			sb.append(txt);
-			if((znxr&4)==4)sb.append(" nxt");
-			if((znxr&8)==8)sb.append(" ret");
-			return sb.toString();
-		}
-		public void write_to(compiler c){
+		public stmt(String txt){this.txt=txt;}
+		protected stmt(int op,int ra,int rd){this.op=op;this.ra=ra;this.rd=rd;}
+		protected stmt(int op,int ra,int rd,boolean flip_ra_rd){this.op=op;this.ra=rd;this.rd=ra;}
+		public void write_to(rom_writer c){
 			final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
 			c.write(ir);
 		}
-		public static program.stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
-			String tk="";
-			while(true){
-				skip_whitespace(r);
-				tk=next_token_in_line(r);
-				if(!tk.startsWith("#"))
-					break;
-				consume_rest_of_line(r);
-			}
-			if(tk.endsWith(":")){
-				labels.put(tk,tk);
-				return new label(tk.substring(0,tk.length()-1));
-			}
-			int znxr=0;
-			switch(tk){
-			case"ifz":{znxr=1;tk=next_token_in_line(r);break;}
-			case"ifn":{znxr=2;tk=next_token_in_line(r);break;}
-			case"ifp":{znxr=3;tk=next_token_in_line(r);break;}
-			}
-			if(tk.equals(".."))tk="eof";
-			if(tk.equals("."))tk="data";
-			final program.stmt s;
-			try{
-				final Class cls=Class.forName(program.class.getName()+"$"+tk);
-				final Constructor ctor=cls.getConstructor(source_reader.class);
-				s=(program.stmt)ctor.newInstance(r);
-			}catch(Throwable t){
-				throw new Error(r+" instruction '"+tk+"' not found");
-			}
-			if(!(s instanceof data)){
-				while(true){
-					final String t=next_token_in_line(r);
-					if(t==null)break;
-					if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
-					if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
-					if(t.startsWith("#")){consume_rest_of_line(r);break;}
-					throw new Error("3 "+t);
-				}
-				s.znxr=znxr;
-			}
-			final int eos=r.read();
-			if(eos!='\n'&&eos!=-1)throw new Error(r+" expected end of line or end of file");
-			return s;
-		}
+		protected String txt;
+		private static final long serialVersionUID=1;
 	}
-	public static class li extends program.stmt{
+	public static class li extends stmt{
 		private String data;
 		public li(source_reader r)throws IOException{
-			super(opload,0,ri(next_token_in_line(r)));
+			super(opli,0,ri(next_token_in_line(r)));
 			data=next_token_in_line(r);
 		}
-		@Override public void write_to(compiler c){
+		@Override public void write_to(rom_writer c){
 			super.write_to(c);
 			if(data.startsWith(":")){
 				c.add_link(data,"?");
@@ -146,74 +121,85 @@ final public class program{
 			}
 			
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class inc extends program.stmt{
+	public static class inc extends stmt{
 		public inc(source_reader r)throws IOException{
 			super(opinc,0,ri(next_token_in_line(r)));
 		}
+		private static final long serialVersionUID=1;
 	}
 	final private static int ri(String s){
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
 		return reg;
 	}
-	public static class st extends program.stmt{
+	public static class st extends stmt{
 		public st(source_reader r)throws IOException{
 			super(opst,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class eof extends program.stmt{
+	public static class eof extends stmt{
 		public eof(source_reader r)throws IOException{
 			super(". ffff");
 		}
-		@Override public void write_to(compiler c){c.write(-1);}
+		@Override public void write_to(rom_writer c){c.write(-1);}
+		private static final long serialVersionUID=1;
 	}
-	public static class nxt extends program.stmt{
+	public static class nxt extends stmt{
 		public nxt(source_reader r)throws IOException{
 			super(opnxt,0,0);
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class ret extends program.stmt{
+	public static class ret extends stmt{
 		public ret(source_reader r)throws IOException{
 			super(opret,0,0);
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class lp extends program.stmt{
+	public static class lp extends stmt{
 		public lp(source_reader r)throws IOException{
 			super(oplp,0,ri(next_token_in_line(r)));
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class stc extends program.stmt{
+	public static class stc extends stmt{
 		public stc(source_reader r)throws IOException{
 			super(opstc,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class add extends program.stmt{
+	public static class add extends stmt{
 		public add(source_reader r)throws IOException{
 			super(opadd,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class sub extends program.stmt{
+	public static class sub extends stmt{
 		public sub(source_reader r)throws IOException{
 			super(opsub,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class call extends program.stmt{
+	public static class call extends stmt{
 		String to;
 		public call(source_reader r)throws IOException{
 			super(opcall,0,0);
 			to=next_token_in_line(r);
 		}
-		@Override public void write_to(compiler c){
+		@Override public void write_to(rom_writer c){
 			c.add_link(to,"?");
 			super.write_to(c);
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class data extends program.stmt{
+	public static class data extends stmt{
 		public data(source_reader r)throws IOException{
 			super(consume_rest_of_line(r));
 		}
-		@Override public void write_to(compiler c){
+		@Override public void write_to(rom_writer c){
 			try(final Scanner s=new Scanner(txt)){
 				while(s.hasNext()){
 					final String ss=s.next();
@@ -222,34 +208,40 @@ final public class program{
 				}
 			}
 		}
+		private static final long serialVersionUID=1;
 	}
-	public static class label extends program.stmt{
+	public static class label extends stmt{
 		public label(String nm){
 			super(nm);
 		}
-		@Override public void write_to(compiler c){
-			c.add_label(toString(),"?");
+		@Override public void write_to(rom_writer c){
+			c.add_label(txt,"?");
 		}
+		private static final long serialVersionUID=1;
 	}
 	public static class ld extends program.stmt{
 		public ld(source_reader r)throws IOException{
 			super(opld,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 		}
+		private static final long serialVersionUID=1;
 	}
 	public static class ldc extends program.stmt{
 		public ldc(source_reader r)throws IOException{
 			super(opldc,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 		}
+		private static final long serialVersionUID=1;
 	}
 	public static class tx extends program.stmt{
 		public tx(source_reader r)throws IOException{
-			super(opset,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(optx,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
 		}
+		private static final long serialVersionUID=1;
 	}
 	public static class shf extends program.stmt{
 		public shf(source_reader r)throws IOException{
 			super(opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
 		}
+		private static final long serialVersionUID=1;
 	}
 	private static void skip_whitespace(source_reader r)throws IOException{
 		while(true){
@@ -294,4 +286,6 @@ final public class program{
 		}
 		return sb.toString();
 	}
+	
+	private static final long serialVersionUID=1;
 }

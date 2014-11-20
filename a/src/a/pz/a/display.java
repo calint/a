@@ -1,4 +1,4 @@
-package a.pz;
+package a.pz.a;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -6,19 +6,19 @@ import java.util.Base64;
 import javax.imageio.ImageIO;
 import b.a;
 import b.xwriter;
-final public class ram extends a{
+final public class display extends a{
 	public int[]ints;
 	public int scl=2,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 	}
-	public void x_rfh(final xwriter x,final String s,final int width,final int height,final int offset,final int nl)throws Throwable{// refresh ram ui
-		final int pixel_size_in_bytes=4;
-		final ByteArrayOutputStream baos=new ByteArrayOutputStream(width*height*pixel_size_in_bytes);
-		final BufferedImage bi=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+	public void xupd(final xwriter x)throws Throwable{// refresh ram ui
+		final int bytes_per_pixel=4;
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream(wi*hi*bytes_per_pixel);
+		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;
-		for(int i=0;i<height;i++){
-			for(int j=0;j<width;j++){
+		for(int i=0;i<hi;i++){
+			for(int j=0;j<wi;j++){
 				final int d=ints[k++];
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;

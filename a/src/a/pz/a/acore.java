@@ -1,17 +1,19 @@
-package a.pz;
+package a.pz.a;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.imageio.ImageIO;
+import a.pz.core;
+import a.pz.program;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
 import b.xwriter;
 final public class acore extends a{
 	final static String filenmromsrc="pz.src";
-	public core c=new core(16,8,8,32*1024,1*1024);
+	public core cor=new core(16,8,8,32*1024,1*1024);
 	public rom ro;
-	public ram ra;
+	public display ra;
 	public core_status sy;
 	public registers re;
 	public call_stack ca;
@@ -20,7 +22,7 @@ final public class acore extends a{
 	/**coreid*/public a co;
 	public crun_source_editor ec;
 	/**theme*/public a th;
-	public a bits;
+	public a bi;
 	public final static int bit_logo=1;
 	public final static int bit_schematics=2;
 	public final static int bit_pramble=4;
@@ -37,19 +39,19 @@ final public class acore extends a{
 	public acore()throws Throwable{
 		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
 		ajaxsts.set("idle");
-		bits.set(0b1111110000);
-		ro.ints=c.rom;
-		ra.ints=c.ram;
-		re.ints=c.register;
-		lo.core=c;
+		bi.set(0b1111110000);
+		ro.ints=cor.rom;
+		ra.ints=cor.ram;
+		re.ints=cor.register;
+		lo.core=cor;
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
 			final program p=(program)o;
-			p.write_to(ro);
-			c.reset();
-			x.xuo(ro);
+			p.write_to(cor.rom);
+			cor.reset();
 			x_f(x,null);
+			x.xuo(ro);
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
@@ -136,13 +138,13 @@ final public class acore extends a{
 		if(hasbit(bit_edcrn))x.r(ec);
 		x.div_();
 		x.div(null,"floatclear").div_();
-		if(pt()==null)x.p("theme: ").inptxt(th,this);
+		if(pt()==null)x.p("theme: ").inptxt(th,this).p("  display-bits:").inptxt(bi,this);
 		x.div_();
 	}
-	boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
+	boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
 	synchronized public void x_(xwriter x,String s)throws Throwable{x.xuo(this);}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
-		c.reset();
+		cor.reset();
 //		c.copy_rom_to_ram();
 		if(x==null)return;
 		xfocusline(x);
@@ -151,15 +153,15 @@ final public class acore extends a{
 		x.flush();
 		if(hasbit(bit_display)){
 			x.xu(st.set("refreshing display")).flush();
-			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+			ra.xupd(x);
 		}
 		x.xu(st.set("reseted"));
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
-		if(c.running){c.running=false;return;}
+		if(cor.running){cor.running=false;return;}
 		st.clr();
 		ra.x=x;
-		c.step();
+		cor.step();
 		if(x==null)return;
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
@@ -174,29 +176,29 @@ final public class acore extends a{
 	}
 	private void xfocusline(xwriter x){
 		if(!hasbit(bit_rom))return;
-		ro.focusline=c.program_counter;
+		ro.focusline=cor.program_counter;
 		ro.xfocusline(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
-		if(c.running)throw new Error("already running");
-		c.running=true;
+		if(cor.running)throw new Error("already running");
+		cor.running=true;
 		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		final long minstr=me.instr;
 		final long mframes=me.frames;
 		long dt=0;
-		while(c.running){
-			c.step();
+		while(cor.running){
+			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(c.last_instruction_was_end_of_frame)
+			if(cor.last_instruction_was_end_of_frame)
 				ev(null,this);//refresh display
 			if(dt>runms)
 				break;
 		}
-		if(c.running){
-			c.running=false;
+		if(cor.running){
+			cor.running=false;
 			final long dminstr=me.instr-minstr;
 			final long dmframes=me.frames-mframes;
 			if(dt==0)dt=1;
@@ -205,23 +207,23 @@ final public class acore extends a{
 			x.xu(st).xu(re).xu(ca).xu(lo);
 			ro.xfocusline(x);
 			x.flush();
-			final int b=bits.toint();
+			final int b=bi.toint();
 			if((b&1)==1){
-				ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+				ra.xupd(x);
 			}
 		}
 	}
 	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
-		if(c.running)throw new Error("already running");
-		c.running=true;
+		if(cor.running)throw new Error("already running");
+		cor.running=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 //		final long t0=System.currentTimeMillis();
 //		final long instr0=me.instr;
 		st.clr();
-		while(c.running){
+		while(cor.running){
 			boolean go=true;
-			c.step();
+			cor.step();
 //			final int srclno=lino.get(pc);
 //			if(ec.isonbrkpt(srclno)){
 //				st.set("breakpoint @ "+srclno);
@@ -229,8 +231,8 @@ final public class acore extends a{
 //			}
 			if(!go)break;
 		}
-		if(c.running){
-			c.running=false;
+		if(cor.running){
+			cor.running=false;
 //			final long dt=System.currentTimeMillis()-t0;
 //			final long dinstr=me.instr-instr0;
 //			final int l=lino.get(ro.focusline);
@@ -242,37 +244,36 @@ final public class acore extends a{
 			x.xu(ca);
 			x.xu(this.lo);
 			xfocusline(x);
-			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+			ra.xupd(x);
 		}
 	}
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
-		if(c.running)throw new Error("already running");
+		if(cor.running)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
-		c.running=true;
+		cor.running=true;
 		final long instr0=me.instr;
 		final long t0=System.currentTimeMillis();
-		while(c.running){
-			c.step();
-			if(c.last_instruction_was_end_of_frame){
-				c.last_instruction_was_end_of_frame=false;
+		while(cor.running){
+			cor.step();
+			if(cor.last_instruction_was_end_of_frame){
+				cor.last_instruction_was_end_of_frame=false;
 				break;
 			}
 		}
-		if(c.running){
+		if(cor.running){
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=me.instr-instr0;
 			st.set("#"+me.frames+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
-			c.running=false;
+			cor.running=false;
 		}
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
 		if(hasbit(bit_display)){
-			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
+			ra.xupd(x);
 		}
 	}
-	
 	
 	public void snapshot_png_to(final OutputStream os)throws IOException{
 		final int wi=ra.wi;
@@ -281,7 +282,7 @@ final public class acore extends a{
 		int k=0;
 		for(int i=0;i<hi;i++){
 			for(int j=0;j<wi;j++){
-				final int d=c.ram[k++];
+				final int d=cor.ram[k++];
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
 				final int r=((d>>8)&0xf)*0xf;
@@ -300,7 +301,7 @@ final public class acore extends a{
 	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-		x.pl("clare "+strdatasize(c.ram.length));
+		x.pl("clare "+strdatasize(cor.ram.length));
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
 	static public void copyright_to(final xwriter x){
@@ -318,18 +319,25 @@ final public class acore extends a{
 		x.pl("     \\o       l             ");
 	}
 	public void pramble_to(final xwriter x){
-		x.pl(strdatasize(ra.ints.length)+" 20b ram");
-		x.pl(re.ints.length+" 20b registers");
+//		final int bits_per_data=16;
+		final int bits_per_instruction=16;
+		final int bits_per_register=16;
+		final int bits_per_pixel=16;
+		final int bits_per_pixel_rgb=12;
+		final int nsprites=16;
+		
 		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
-		x.pl("12b rgb color in 20b pixel");
-		x.pl("256 sprites collision detection");
-		x.pl(strdatasize2(ro.ints.length)+" 16b instructions");
-		x.pl(c.loop_stack_address.length+" loops stack");
-		x.pl(call_stack.size+" calls stack");
+		x.pl(bits_per_pixel_rgb+"b rgb color in "+bits_per_pixel+"b pixel");
+		x.pl(nsprites+" sprites onscreen collision detection");
+//		x.pl(strdatasize(c.ram.length)+" "+bits_per_data+"b ram");
+		x.pl(strdatasize2(cor.rom.length)+" "+bits_per_instruction+"b rom");
+		x.pl(cor.register.length+" "+bits_per_register+"b registers");
+		x.pl(cor.call_stack.length+" calls stack");
+		x.pl(cor.loop_stack_address.length+" loops stack");
 	}
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
-		x.pl(": load : "+fld("x000",Integer.toHexString(program.opload))+" : next instr to reg[x] :");
+		x.pl(": load : "+fld("x000",Integer.toHexString(program.opli))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("..00",Integer.toHexString(program.opcall))+" : 2b + ..              :");
 		x.pl(":  skp : "+fld("..00",Integer.toHexString(program.opskp))+" : pc+=..               :");
 		x.pl(":  stc : "+fld("yx00",Integer.toHexString(program.opstc))+" : ram[x++]=y           :");
@@ -343,7 +351,7 @@ final public class acore extends a{
 		x.pl(":  inc : "+fld("x000",Integer.toHexString(program.opinc))+" : r[x]++               :");
 		x.pl(":  neg : "+fld("x000",Integer.toHexString(program.opneg))+" : r[x]=-r[x]           :");
 		x.pl(":  add : "+fld("yx00",Integer.toHexString(program.opadd))+" : r[y]+=r[x]           :");
-		x.pl(":   tx : "+fld("yx00",Integer.toHexString(program.opset))+" : r[y]=r[x]            :");
+		x.pl(":   tx : "+fld("yx00",Integer.toHexString(program.optx))+" : r[y]=r[x]            :");
 //		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
 		x.pl(":  sub : "+fld("xy00",Integer.toHexString(program.opsub))+" : r[y]-=r[x]           :");
 		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : sound.add block r[x] :");

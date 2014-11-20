@@ -1,4 +1,5 @@
-package a.pz;
+package a.pz.a;
+import a.pz.core;
 import b.a;
 import b.xwriter;
 final public class loop_stack extends a{

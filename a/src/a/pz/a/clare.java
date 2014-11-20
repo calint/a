@@ -1,4 +1,4 @@
-package a.pz;
+package a.pz.a;
 import a.x.jskeys;
 import b.a;
 import b.xwriter;
@@ -8,7 +8,7 @@ final public class clare extends a implements titled{
 	final public int ncores=4;
 	public clare()throws Throwable{
 		for(int i=0;i<ncores;i++)z.add(new acore());// ncores times z add new zn
-		z.stream().forEach(z->z.bits.set(acore.bit_panels));
+		z.stream().forEach(z->z.bi.set(acore.bit_panels));
 		z.rend_dut=false;
 	}
 	@Override public void to(xwriter x)throws Throwable{
