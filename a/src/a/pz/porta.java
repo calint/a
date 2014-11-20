@@ -9,8 +9,8 @@ final public class porta extends websock implements threadedsock{static final lo
 	final private zn v=new zn();
 	final protected void onopened()throws Throwable{
 		session().put(getClass().getName(),v);
-		v.x_l(null,null);
-		v.x_c(null,null);
+//		v.x_l(null,null);
+//		v.x_c(null,null);
 		v.x_r(null,null);
 	}
 	protected void onmessage(final ByteBuffer bb) throws Throwable {
@@ -24,7 +24,7 @@ final public class porta extends websock implements threadedsock{static final lo
 //			System.out.println(src);
 			v.ec.src.set(src);
 			try{
-				v.x_c(null,null);
+//				v.x_c(null,null);
 			}catch(final Throwable t){
 				final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+b.b.stacktrace(t)));
 				endpoint_recv(bbe,false);

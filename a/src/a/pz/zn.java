@@ -3,18 +3,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
-import a.pz.zn.program.call;
-import a.pz.zn.program.li;
 import a.x.jskeys;
 import b.a;
 import b.a_ajaxsts;
@@ -52,335 +43,6 @@ final public class zn extends a{
 		x.pl(loops.size+" loops stack");
 		x.pl(calls.size+" calls stack");
 	}
-	private final static class compiler{
-		private rom r;
-		private int i;
-		public compiler(rom r){this.r=r;}
-		public void write(int instruction){r.set(i++,instruction);}
-		public void add_label(String name,String location_in_source){
-			if(labels.containsKey(name))throw new Error("label '"+name+"' already declared. "+labels.get(name));
-			final label_link m=new label_link();
-			m.binloc=i;
-			m.srcloc=location_in_source;
-			m.link_to=name;
-			labels.put(name,m);
-		}
-		private final static class label_link{
-			String link_to;
-			String srcloc;
-			int binloc;
-			public String toString(){return srcloc+" ["+Integer.toHexString(binloc)+"]";}
-		}
-		private final Map<String,label_link>labels=new LinkedHashMap<>();
-		public void add_link(String to_label,String location_in_source){
-			final label_link m=new label_link();
-			m.binloc=i;
-			m.srcloc=location_in_source;
-			m.link_to=to_label;
-			links.add(m);
-		}
-		private final List<label_link>links=new ArrayList<>();
-		public void finish(){
-			links.forEach(e->{
-				final label_link ll;
-				if(e.link_to.startsWith(":"))ll=labels.get(e.link_to.substring(1));
-				else ll=labels.get(e.link_to);
-				if(ll==null)throw new Error(e.srcloc+" '"+e.link_to+"' not found");
-				final int a=ll.binloc;
-				final int d=r.get(e.binloc);
-				final int c;
-				if((d&0b010000)==0b010000){//? hackish
-					c=d|(a<<6);
-				}else{//? assuming data
-					c=a;
-				}
-				r.set(e.binloc,c);
-			});
-		}
-	}
-	public static class program{
-		public program(final source_reader r)throws IOException{
-			s=new ArrayList<>();
-			while(true){
-				final int ch=r.read();
-				if(ch==-1)break;
-				r.unread(ch);
-				final stmt st=stmt.read_next_stmt(r,labels);
-				s.add(st);
-			}
-		}
-		final public void write_to(rom r){
-			final compiler c=new compiler(r);
-			s.forEach(e->e.write_to(c));
-			c.finish();
-		}
-		private List<stmt>s;
-		final public String toString(){
-			final StringBuilder sb=new StringBuilder();
-			s.forEach(e->sb.append(e.toString()).append('\n'));
-			return sb.toString();
-		}
-		final private Map<String,String>labels=new LinkedHashMap<>();
-
-		public static class stmt{
-			/**znxr*/public int znxr;
-			/**opcode*/public int op;
-			/**register a*/public int ra;
-			/**register b*/public int rd;
-//			/**nxt ret bits*/public boolean nxt,ret;
-			public stmt(String s){this.txt=s;}
-			protected stmt(int op,int ra,int rd){
-				this.op=op;this.ra=ra;this.rd=rd;
-			}
-			protected stmt(int op,int ra,int rd,boolean flip_ra_rd){
-				this.op=op;this.ra=rd;this.rd=ra;
-			}
-			protected String txt;
-			public String toString(){
-				final StringBuilder sb=new StringBuilder();
-				if(txt==null){
-					final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
-					sb.append(". ").append(Integer.toHexString(ir));
-					return sb.toString();
-				}
-				if((znxr&3)==1)sb.append("ifz ");
-				if((znxr&3)==2)sb.append("ifn ");
-				if((znxr&3)==3)sb.append("ifp ");
-				sb.append(txt);
-				if((znxr&4)==4)sb.append(" nxt");
-				if((znxr&8)==8)sb.append(" ret");
-				return sb.toString();
-			}
-			public void write_to(compiler c){
-				final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
-				c.write(ir);
-			}
-			public static stmt read_next_stmt(final source_reader r,final Map<String,String>labels)throws IOException{
-				String tk="";
-				while(true){
-					skip_whitespace(r);
-					tk=next_token_in_line(r);
-					if(!tk.startsWith("#"))
-						break;
-					consume_rest_of_line(r);
-				}
-				if(tk.endsWith(":")){
-					labels.put(tk,tk);
-					return new label(tk.substring(0,tk.length()-1));
-				}
-				int znxr=0;
-				switch(tk){
-				case"ifz":{znxr=1;tk=next_token_in_line(r);break;}
-				case"ifn":{znxr=2;tk=next_token_in_line(r);break;}
-				case"ifp":{znxr=3;tk=next_token_in_line(r);break;}
-				}
-				if(tk.equals(".."))tk="eof";
-				if(tk.equals("."))tk="data";
-				final stmt s;
-				try{
-					final Class cls=Class.forName(program.class.getName()+"$"+tk);
-					final Constructor ctor=cls.getConstructor(source_reader.class);
-					s=(stmt)ctor.newInstance(r);
-				}catch(Throwable t){
-					throw new Error(r+" "+t);
-				}
-				if(!(s instanceof data)){
-					while(true){
-						final String t=next_token_in_line(r);
-						if(t==null)break;
-						if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
-						if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
-						if(t.startsWith("#")){consume_rest_of_line(r);break;}
-						throw new Error("3 "+t);
-					}
-					s.znxr=znxr;
-				}
-				final int eos=r.read();
-				if(eos!='\n'&&eos!=-1)
-					throw new Error(r+" expected end of line or end of file");
-				return s;
-			}
-		}
-		public static class li extends stmt{
-			private String data;
-			public li(source_reader r)throws IOException{
-				super(opload,0,ri(next_token_in_line(r)));
-				data=next_token_in_line(r);
-			}
-			@Override public void write_to(compiler c){
-				super.write_to(c);
-				if(data.startsWith(":")){
-					c.add_link(data,"?");
-					c.write(0);
-				}else{
-					c.write(Integer.parseInt(data,16));
-				}
-				
-			}
-		}
-		public static class inc extends stmt{
-			public inc(source_reader r)throws IOException{
-				super(opinc,0,ri(next_token_in_line(r)));
-			}
-		}
-		final private static int ri(String s){
-			final char first_char=s.charAt(0);
-			final int reg=first_char-'a';
-			return reg;
-		}
-		public static class st extends stmt{
-			public st(source_reader r)throws IOException{
-				super(opst,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
-			}
-		}
-		public static class eof extends stmt{
-			public eof(source_reader r)throws IOException{
-				super(". ffff");
-			}
-			@Override public void write_to(compiler c){c.write(-1);}
-		}
-		public static class nxt extends stmt{
-			public nxt(source_reader r)throws IOException{
-				super(opnxt,0,0);
-			}
-		}
-		public static class ret extends stmt{
-			public ret(source_reader r)throws IOException{
-				super(opret,0,0);
-			}
-		}
-		public static class lp extends stmt{
-			public lp(source_reader r)throws IOException{
-				super(oplp,0,ri(next_token_in_line(r)));
-			}
-		}
-		public static class stc extends stmt{
-			public stc(source_reader r)throws IOException{
-				super(opstc,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
-			}
-		}
-		public static class add extends stmt{
-			public add(source_reader r)throws IOException{
-				super(opadd,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
-			}
-		}
-		public static class sub extends stmt{
-			public sub(source_reader r)throws IOException{
-				super(opsub,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
-			}
-		}
-		public static class call extends stmt{
-			String to;
-			public call(source_reader r)throws IOException{
-				super(opcall,0,0);
-				to=next_token_in_line(r);
-			}
-			@Override public void write_to(compiler c){
-				c.add_link(to,"?");
-				super.write_to(c);
-			}
-		}
-		public static class data extends stmt{
-			public data(source_reader r)throws IOException{
-				super(consume_rest_of_line(r));
-			}
-			@Override public void write_to(compiler c){
-				try(final Scanner s=new Scanner(txt)){
-					while(s.hasNext()){
-						final String ss=s.next();
-						final int d=Integer.parseInt(ss,16);
-						c.write(d);
-					}
-				}
-			}
-		}
-		public static class label extends stmt{
-			public label(String nm){
-				super(nm);
-			}
-			@Override public void write_to(compiler c){
-				c.add_label(toString(),"?");
-			}
-		}
-		public static class ld extends stmt{
-			public ld(source_reader r)throws IOException{
-				super(opld,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
-			}
-		}
-		public static class ldc extends stmt{
-			public ldc(source_reader r)throws IOException{
-				super(opldc,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
-			}
-		}
-		public static class tx extends stmt{
-			public tx(source_reader r)throws IOException{
-				super(opset,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
-			}
-		}
-		public static class shf extends stmt{
-			public shf(source_reader r)throws IOException{
-				super(opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
-			}
-		}
-		private static void skip_whitespace(source_reader r)throws IOException{
-			while(true){
-				final int ch=r.read();
-				if(Character.isWhitespace(ch))continue;
-				if(ch==-1)return;
-				r.unread(ch);
-				return;
-			}
-		}
-		private static void skip_whitespace_on_same_line(source_reader r)throws IOException{
-			while(true){
-				final int ch=r.read();
-				if(ch==-1)return;
-				if(ch=='\n'){r.unread(ch);return;}
-				if(Character.isWhitespace(ch))continue;
-				r.unread(ch);
-				return;
-			}
-		}
-	//	private static String next_token(source_reader r)throws IOException{
-	//		skip_whitespace(r);
-	//		final StringBuilder sb=new StringBuilder();
-	//		while(true){
-	//			final int ch=r.read();
-	//			if(ch==-1)break;
-	//			if(Character.isWhitespace(ch))break;
-	//			sb.append((char)ch);
-	//		}
-	//		skip_whitespace(r);
-	//		if(sb.length()==0)return null;
-	//		return sb.toString();
-	//	}
-		private static String next_token_in_line(source_reader r)throws IOException{
-			skip_whitespace_on_same_line(r);
-			final StringBuilder sb=new StringBuilder();
-			while(true){
-				final int ch=r.read();
-				if(ch==-1)break;
-				if(ch=='\n'){r.unread(ch);break;}
-				if(Character.isWhitespace(ch))break;
-				sb.append((char)ch);
-			}
-			skip_whitespace_on_same_line(r);
-			if(sb.length()==0)return null;
-			return sb.toString();
-		}
-		private static String consume_rest_of_line(source_reader r)throws IOException{
-			final StringBuilder sb=new StringBuilder();
-			while(true){
-				final int ch=r.read();
-				if(ch==-1)break;
-				if(ch=='\n'){r.unread(ch);break;}
-				sb.append((char)ch);
-			}
-			return sb.toString();
-		}
-
-	}
-	
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
@@ -414,34 +76,34 @@ final public class zn extends a{
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
 	}
-	public final static int opload=0x000;
-	private final static int oplp=0x100;
-	public final static int opinc=0x200;
-	private final static int opneg=0x300;
-	private final static int opdac=0x400;
-	private final static int opwait=0x058;
-	private final static int opnotify=0x078;
-	private final static int opset=0xe0;
-	private final static int opldc=0xc0;
-	private final static int opadd=0xa0;
-	private final static int opskp=0x80;
-	private final static int opshf=0x60;
-	private final static int opstc=0x40;
-	private final static int opsub=0x20;
-	private final static int opcall=0x10;
-	private final static int opst=0x0d8;//?
-	private final static int opld=0x0f8;//?
-	private final static int opnxt=4;
-	private final static int opret=8;
+	final static int opload=0x000;
+	final static int oplp=0x100;
+	final static int opinc=0x200;
+	final static int opneg=0x300;
+	final static int opdac=0x400;
+	final static int opwait=0x058;
+	final static int opnotify=0x078;
+	final static int opset=0xe0;
+	final static int opldc=0xc0;
+	final static int opadd=0xa0;
+	final static int opskp=0x80;
+	final static int opshf=0x60;
+	final static int opstc=0x40;
+	final static int opsub=0x20;
+	final static int opcall=0x10;
+	final static int opst=0x0d8;//?
+	final static int opld=0x0f8;//?
+	final static int opnxt=4;
+	final static int opret=8;
 //	public static void main(final String[]a)throws Throwable{}
 	static final String filenmromsrc="pz.src";
 	private path pth;
 	public rom ro;
 	public ram ra;
 	public sys sy;
-	private int pc;
-	private int ir;
-	private int zn;
+	int pc;
+	int ir;
+	int zn;
 	public regs re;
 	public calls ca;
 	public loops lo;
@@ -452,25 +114,14 @@ final public class zn extends a{
 	
 //	public int mode;//1:multicore
 	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
-	private int lno;
-	private int lnosrc;
-	private final Map<Integer,String>callmap=new HashMap<Integer,String>();
-	private final Map<String,Integer>labels=new HashMap<String,Integer>();
-	private final Map<Integer,String>loadlabelmap=new HashMap<Integer,String>();
-	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
-	private final List<String>srclines=new ArrayList<String>(32);
+//	private int lno;
+//	private int lnosrc;
+//	private final Map<Integer,String>callmap=new HashMap<Integer,String>();
+//	private final Map<String,Integer>labels=new HashMap<String,Integer>();
+//	private final Map<Integer,String>loadlabelmap=new HashMap<Integer,String>();
+//	private final Map<Integer,String>skplabelmap=new HashMap<Integer,String>();
+//	private final List<String>srclines=new ArrayList<String>(32);
 	private int loadreg=-1;
-	final public static class metrics extends a{
-		long instr;
-		long frames;
-		long ldc;
-		long stc;
-		public void rst(){instr=frames=ldc=stc=0;}
-		@Override public void to(xwriter x) throws Throwable{
-			x.p(instr).spc().p(frames).spc().p(ldc).spc().p(stc);
-		}
-		private static final long serialVersionUID=1;
-	}
 	public metrics me;
 	public a bits;{bits.set(0b1111110000);}
 	public final static int bit_logo=1;
@@ -485,7 +136,7 @@ final public class zn extends a{
 	public final static int bit_edcrn=512;
 	public boolean hasbit(final int bit){return(bits.toint()&bit)==bit;}
 	public void pth(final path p){pth=p;}
-	public int theme=1;
+	public int theme;
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
@@ -495,7 +146,7 @@ final public class zn extends a{
 			case 0:x
 				//width:50em;
 				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
-				.css(ec.src,"width:24em;min-width:24em;height:512em;min-height:512em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:24em;min-width:24em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -511,7 +162,7 @@ final public class zn extends a{
 				.css("html","background:#111;color:#080")
 				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css("a","color:#008")
-				.css(ec.src,"width:24em;min-width:24em;height:256em;min-height:256em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:24em;min-width:24em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -783,381 +434,381 @@ final public class zn extends a{
 //		
 //		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
 	}
-	/**compile*/
-	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
-		if(x!=null)x.xu(st.set("compiling")).flush();
-		ra.rst();;
-		ro.rst();
-		callmap.clear();
-		labels.clear();
-		lino.clear();
-		loadlabelmap.clear();
-		skplabelmap.clear();
-		srclines.clear();
-		final Scanner sc=new Scanner(new StringReader(new program(new source_reader(ec.src.reader())).toString()));
-		try{
-		lno=0;
-		lnosrc=0;
-		lino.clear();
-		while(sc.hasNextLine()){
-			try{
-			String ln=sc.nextLine().trim();
-			lnosrc++;
-			srclines.add(ln);
-			if(ln.startsWith("#")){
-				if(ln.charAt(1)!=co.toString().charAt(0))
-					continue;
-				else
-					ln=ln.substring(2).trim();
-			}
-			{int i=ln.indexOf("//");if(i!=-1)ln=ln.substring(0,i).trim();}
-			if(ln.length()==0)continue;
-			if(ln.startsWith(". ")){
-				final String[]ss=ln.split(" ");
-				for(int i=1;i<ss.length;i++){
-					romwrite(Integer.parseInt(ss[i],16));
-				}
-				continue;
-			}
-			int ir=0;
-			if(ln.startsWith("ifz ")){
-				ir+=1;
-				ln=ln.substring(4).trim();
-			}else if(ln.startsWith("ifn ")){
-				ir+=2;
-				ln=ln.substring(4);
-				ln=ln.trim();
-			}else if(ln.startsWith("ifp ")){
-				ir+=3;
-				ln=ln.substring(4).trim();
-			}
-			boolean more=true;
-			while(more){
-				if(ln.endsWith("ret")){
-					ir+=(1<<3);
-					ln=ln.substring(0,ln.length()-"ret".length()).trim();
-					more=true;
-				}else if(ln.endsWith("nxt")){
-					ir+=(1<<2);
-					ln=ln.substring(0,ln.length()-"nxt".length()).trim();
-					more=true;
-				}else
-					more=false;
-			}
-//			ln=ln.trim();
-			if(ln.length()==0){// nxt ret
-				romwrite(ir);
-				continue;				
-			}
-			if(ln.startsWith("*")){// *f++=a
-				final int i0=ln.indexOf('=');
-				if(i0==-1)throw new Error("line "+lnosrc+": expected the format *f++=a");
-				final String lft=ln.substring(0,i0);
-				final boolean inc;
-				if(!lft.endsWith("++")){
-					inc=false;
-				}else{
-					inc=true;
-				}
-				final String rega;
-				if(inc){
-					rega=lft.substring(1,lft.length()-"++".length());
-				}else{
-					rega=lft.substring(1);					
-				}
-				final String regd=ln.substring(i0+1);
-				final int rai=rifor(rega);
-				final int rdi=rifor(regd);
-				ir+=inc?opstc:opst;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-				romwrite(ir);
-				continue;
-			}
-			{final int i0=ln.indexOf("=*");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0).trim();
-				String tokens=ln.substring(i0+"=*".length()).trim();
-				final boolean inc;
-				if(tokens.endsWith("++")){
-					tokens=tokens.substring(0,tokens.length()-"++".length()).trim();
-					inc=true;
-				}else inc=false;
-				final int rdi=rifor(dest);
-				final int rai=rifor(tokens);
-				ir+=inc?opldc:opld;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-				romwrite(ir);
-				continue;
-			}}
-			{final int i0=ln.indexOf(":=");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0).trim();
-				final String tokens=ln.substring(i0+":=".length()).trim();
-				final int regd=rifor(dest);
-				final int rega=rifor(tokens);
-				ir+=opset;
-				ir+=(rega<<8);
-				ir+=(regd<<12);
-				romwrite(ir);
-				continue;
-			}}
-			{final int i0=ln.indexOf("-=");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0).trim();
-				final String tokens=ln.substring(i0+"-=".length()).trim();
-				final int rega=rifor(dest);
-				final int regd=rifor(tokens);
-				ir+=opsub;
-				ir+=(rega<<8);
-				ir+=(regd<<12);
-				romwrite(ir);
-				continue;
-			}}
-			{final int i0=ln.indexOf("+=");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0).trim();
-				final String tokens=ln.substring(i0+"+=".length()).trim();
-				final int rega=rifor(dest);
-				final int regd=rifor(tokens);
-				ir+=opadd;
-				ir+=(rega<<8);
-				ir+=(regd<<12);
-				romwrite(ir);
-				continue;
-			}}
-			{final int i0=ln.indexOf("++");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0);
-				final int rdi=rifor(dest);
-				ir+=opinc;
-				ir+=(rdi<<12);
-				romwrite(ir);
-				continue;
-			}}
-			{final int i0=ln.indexOf("<<=");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0);
-				final String tokens=ln.substring(i0+"<<=".length()).trim();
-				final int rdi=rifor(dest);
-				int shf=Integer.parseInt(tokens,16);
-				shf=-shf;
-				final int rai=shf&0xf;
-				ir+=opshf;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-				romwrite(ir);
-				continue;
-			}}
-			{final int i0=ln.indexOf(">>=");
-			if(i0!=-1){
-				final String dest=ln.substring(0,i0);
-				final String tokens=ln.substring(i0+">>=".length()).trim();
-				final int rdi=rifor(dest);
-				int shf=Integer.parseInt(tokens,16);
-				final int im4=shf&0xf;
-				ir+=opshf;
-				ir+=(im4<<8);
-				ir+=(rdi<<12);
-				romwrite(ir);
-				continue;
-			}}
-			if(ln.indexOf("..")!=-1){
-				ir+=0xffff;
-				romwrite(ir);
-				continue;
-			}
-			final int i0=ln.indexOf('=');
-			if(i0!=-1){
-				final String regname=ln.substring(0,i0);
-				final int rdi=rifor(regname);
-				final String v=ln.substring(i0+1);
-				ir+=(rdi<<12);
-				romwrite(ir);
-				if(v.startsWith(":")){
-					final String lbl=v.substring(1).trim();
-					loadlabelmap.put(lno,lbl);//. addtoloadls
-					romwrite(0);
-				}else
-					romwrite(Integer.parseInt(v,16));
-				continue;
-			}
-			if(ln.endsWith(":")){//? align(1<<2)
-				final String lbl=ln.substring(0,ln.length()-1).toLowerCase();
-				if(labels.containsKey(lbl))
-					throw new Error("line "+lnosrc+": redefined location of '"+lbl+"' from "+lino.get(labels.get(lbl)));
-				labels.put(lbl,lno);
-				continue;
-			}
-			if(ln.indexOf(' ')==-1){
-				final String lbl=ln.toLowerCase();
-				callmap.put(lno,lbl);
-				ir+=opcall;
-				romwrite(ir);
-				continue;
-			}
-			final String[]tkns=ln.split(" ");
-			int of=0;
-			if("lp".equals(tkns[of])){
-				final int rdi=rifor(tkns[++of]);
-				ir+=oplp;
-				ir+=(rdi<<12);
-			}else if("stc".equals(tkns[of])){
-				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
-				ir+=opstc;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("ldc".equals(tkns[of])){
-				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
-				ir+=opldc;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("st".equals(tkns[of])){
-				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
-				ir+=opst;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("ld".equals(tkns[of])){
-				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
-				ir+=opld;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("inc".equals(tkns[of])){
-				final int rdi=rifor(tkns[++of]);
-				ir+=opinc;
-				ir+=(rdi<<12);
-			}else if("shf".equals(tkns[of])){
-				final int rdi=rifor(tkns[++of]);
-				final int rai=Integer.parseInt(tkns[++of],16)&0xf;
-				ir+=opshf;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("not".equals(tkns[of])){
-				final int rdi=rifor(tkns[++of]);
-				final int rai=0;
-				ir+=opshf;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("add".equals(tkns[of])){
-				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
-				ir+=opadd;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("load".equals(tkns[of])){
-				final int rdi=rifor(tkns[++of]);
-				ir+=opload;
-				ir+=(rdi<<12);
-				romwrite(ir);
-				final String v=tkns[of+1];
-				if(v.startsWith(":")){
-					final String lbl=v.substring(1).trim();
-					loadlabelmap.put(lno,lbl);//. addtoloadls
-					ir=0;
-				}else
-					ir=Integer.parseInt(v,16);
-			}else if("skp".equals(tkns[of])){
-				of++;
-				if(!tkns[of].startsWith(":"))throw new Error("line "+lnosrc+": ie skp :label");
-				final String label=tkns[of].substring(1);
-				ir+=opskp;
-				skplabelmap.put(lno,label);
-			}else if("tx".equals(tkns[of])){
-				final int rdi=rifor(tkns[++of]);
-				final int rai=rifor(tkns[++of]);
-				ir+=opset;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("wait".equals(tkns[of])){
-				ir+=opwait;
-			}else if("notify".equals(tkns[of])){
-				ir+=opnotify;
-				final int rdi=Integer.parseInt(tkns[++of],16);
-				ir+=(rdi<<12);
-			}else if("neg".equals(tkns[of])){
-				ir+=opneg;
-				final int rdi=rifor(tkns[++of]);
-				ir+=(rdi<<12);
-			}else if("sub".equals(tkns[of])){
-				ir+=opsub;
-				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else if("dac".equals(tkns[of])){
-				ir+=opdac;
-//				final int rai=rifor(tkns[++of]);
-				final int rdi=rifor(tkns[++of]);
+//	/**compile*/
+//	synchronized public void x_c(final xwriter x,final String s)throws Throwable{
+//		if(x!=null)x.xu(st.set("compiling")).flush();
+//		ra.rst();;
+//		ro.rst();
+//		callmap.clear();
+//		labels.clear();
+//		lino.clear();
+//		loadlabelmap.clear();
+//		skplabelmap.clear();
+//		srclines.clear();
+//		final Scanner sc=new Scanner(new StringReader(new program(new source_reader(ec.src.reader())).toString()));
+//		try{
+//		lno=0;
+//		lnosrc=0;
+//		lino.clear();
+//		while(sc.hasNextLine()){
+//			try{
+//			String ln=sc.nextLine().trim();
+//			lnosrc++;
+//			srclines.add(ln);
+//			if(ln.startsWith("#")){
+//				if(ln.charAt(1)!=co.toString().charAt(0))
+//					continue;
+//				else
+//					ln=ln.substring(2).trim();
+//			}
+//			{int i=ln.indexOf("//");if(i!=-1)ln=ln.substring(0,i).trim();}
+//			if(ln.length()==0)continue;
+//			if(ln.startsWith(". ")){
+//				final String[]ss=ln.split(" ");
+//				for(int i=1;i<ss.length;i++){
+//					romwrite(Integer.parseInt(ss[i],16));
+//				}
+//				continue;
+//			}
+//			int ir=0;
+//			if(ln.startsWith("ifz ")){
+//				ir+=1;
+//				ln=ln.substring(4).trim();
+//			}else if(ln.startsWith("ifn ")){
+//				ir+=2;
+//				ln=ln.substring(4);
+//				ln=ln.trim();
+//			}else if(ln.startsWith("ifp ")){
+//				ir+=3;
+//				ln=ln.substring(4).trim();
+//			}
+//			boolean more=true;
+//			while(more){
+//				if(ln.endsWith("ret")){
+//					ir+=(1<<3);
+//					ln=ln.substring(0,ln.length()-"ret".length()).trim();
+//					more=true;
+//				}else if(ln.endsWith("nxt")){
+//					ir+=(1<<2);
+//					ln=ln.substring(0,ln.length()-"nxt".length()).trim();
+//					more=true;
+//				}else
+//					more=false;
+//			}
+////			ln=ln.trim();
+//			if(ln.length()==0){// nxt ret
+//				romwrite(ir);
+//				continue;				
+//			}
+//			if(ln.startsWith("*")){// *f++=a
+//				final int i0=ln.indexOf('=');
+//				if(i0==-1)throw new Error("line "+lnosrc+": expected the format *f++=a");
+//				final String lft=ln.substring(0,i0);
+//				final boolean inc;
+//				if(!lft.endsWith("++")){
+//					inc=false;
+//				}else{
+//					inc=true;
+//				}
+//				final String rega;
+//				if(inc){
+//					rega=lft.substring(1,lft.length()-"++".length());
+//				}else{
+//					rega=lft.substring(1);					
+//				}
+//				final String regd=ln.substring(i0+1);
+//				final int rai=rifor(rega);
+//				final int rdi=rifor(regd);
+//				ir+=inc?opstc:opst;
 //				ir+=(rai<<8);
-				ir+=(rdi<<12);
-			}else 
-				throw new Error("line "+lnosrc+": unknown op "+tkns[of]);
-			romwrite(ir);
-		}catch(final Throwable t){
-			throw new Error("line "+lnosrc+": "+t);
-		}
-			//? what is lp x nxt
-		}}finally{sc.close();}
-		//link calls
-		for(Iterator<Map.Entry<Integer,String>>i=callmap.entrySet().iterator();i.hasNext();){
-			final Map.Entry<Integer,String>me=i.next();
-			final Integer ln=me.getKey();
-			final String lbl=me.getValue();
-			final Integer n=labels.get(lbl);
-			final Integer l=lino.get(ln);
-			if(l==null)
-				throw new Error("line "+ln+"  not found in lino");
-			if(n==null)
-				throw new Error("line "+lino.get(ln)+": label not found '"+lbl+"'");
-			int instr=ro.get(ln);
-			int instr1=instr+(n<<6);//znxr ci.. .... ....
-			ro.set(ln,instr1);
-		}
-		//link imm loads
-		for(Iterator<Map.Entry<Integer,String>>i=loadlabelmap.entrySet().iterator();i.hasNext();){
-			final Map.Entry<Integer,String>me=i.next();
-			final Integer ln=me.getKey();
-			final String lbl=me.getValue();
-			final Integer n=labels.get(lbl);
-			if(n==null)
-				throw new Error("linker: can not find label '"+lbl+"' load");
-			ro.set(ln,n);
-		}
-		//link skips
-		for(Iterator<Map.Entry<Integer,String>>i=skplabelmap.entrySet().iterator();i.hasNext();){
-			final Map.Entry<Integer,String>me=i.next();
-			final Integer ln=me.getKey();
-			final String lbl=me.getValue();
-			final Integer n=labels.get(lbl);
-			if(n==null)
-				throw new Error("linker: can not find label '"+lbl+"' for skp");
-			final int i0=ro.get(ln);
-			final int skp=n-ln;
-			final int i1=i0+(skp<<8);//znxr ci.. .... ....
-			ro.set(ln,i1);
-		}
-		st.set(lno+" x 16b ops");
-		if(x==null)return;
-		x.xu(st);
-		x.flush();
-		x.xuo(ro);
-	}		
-	private void romwrite(final int i){
-		ro.set(lno,i);
-		lino.put(lno,lnosrc);
-		lno++;
-	}
-	private int rifor(final String s){
-		if(s.length()>1)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");
-		final int i=s.charAt(0)-'a';
-		if(i>15)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");		
-		return i;
-	}
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				continue;
+//			}
+//			{final int i0=ln.indexOf("=*");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0).trim();
+//				String tokens=ln.substring(i0+"=*".length()).trim();
+//				final boolean inc;
+//				if(tokens.endsWith("++")){
+//					tokens=tokens.substring(0,tokens.length()-"++".length()).trim();
+//					inc=true;
+//				}else inc=false;
+//				final int rdi=rifor(dest);
+//				final int rai=rifor(tokens);
+//				ir+=inc?opldc:opld;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			{final int i0=ln.indexOf(":=");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0).trim();
+//				final String tokens=ln.substring(i0+":=".length()).trim();
+//				final int regd=rifor(dest);
+//				final int rega=rifor(tokens);
+//				ir+=opset;
+//				ir+=(rega<<8);
+//				ir+=(regd<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			{final int i0=ln.indexOf("-=");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0).trim();
+//				final String tokens=ln.substring(i0+"-=".length()).trim();
+//				final int rega=rifor(dest);
+//				final int regd=rifor(tokens);
+//				ir+=opsub;
+//				ir+=(rega<<8);
+//				ir+=(regd<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			{final int i0=ln.indexOf("+=");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0).trim();
+//				final String tokens=ln.substring(i0+"+=".length()).trim();
+//				final int rega=rifor(dest);
+//				final int regd=rifor(tokens);
+//				ir+=opadd;
+//				ir+=(rega<<8);
+//				ir+=(regd<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			{final int i0=ln.indexOf("++");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0);
+//				final int rdi=rifor(dest);
+//				ir+=opinc;
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			{final int i0=ln.indexOf("<<=");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0);
+//				final String tokens=ln.substring(i0+"<<=".length()).trim();
+//				final int rdi=rifor(dest);
+//				int shf=Integer.parseInt(tokens,16);
+//				shf=-shf;
+//				final int rai=shf&0xf;
+//				ir+=opshf;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			{final int i0=ln.indexOf(">>=");
+//			if(i0!=-1){
+//				final String dest=ln.substring(0,i0);
+//				final String tokens=ln.substring(i0+">>=".length()).trim();
+//				final int rdi=rifor(dest);
+//				int shf=Integer.parseInt(tokens,16);
+//				final int im4=shf&0xf;
+//				ir+=opshf;
+//				ir+=(im4<<8);
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				continue;
+//			}}
+//			if(ln.indexOf("..")!=-1){
+//				ir+=0xffff;
+//				romwrite(ir);
+//				continue;
+//			}
+//			final int i0=ln.indexOf('=');
+//			if(i0!=-1){
+//				final String regname=ln.substring(0,i0);
+//				final int rdi=rifor(regname);
+//				final String v=ln.substring(i0+1);
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				if(v.startsWith(":")){
+//					final String lbl=v.substring(1).trim();
+//					loadlabelmap.put(lno,lbl);//. addtoloadls
+//					romwrite(0);
+//				}else
+//					romwrite(Integer.parseInt(v,16));
+//				continue;
+//			}
+//			if(ln.endsWith(":")){//? align(1<<2)
+//				final String lbl=ln.substring(0,ln.length()-1).toLowerCase();
+//				if(labels.containsKey(lbl))
+//					throw new Error("line "+lnosrc+": redefined location of '"+lbl+"' from "+lino.get(labels.get(lbl)));
+//				labels.put(lbl,lno);
+//				continue;
+//			}
+//			if(ln.indexOf(' ')==-1){
+//				final String lbl=ln.toLowerCase();
+//				callmap.put(lno,lbl);
+//				ir+=opcall;
+//				romwrite(ir);
+//				continue;
+//			}
+//			final String[]tkns=ln.split(" ");
+//			int of=0;
+//			if("lp".equals(tkns[of])){
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=oplp;
+//				ir+=(rdi<<12);
+//			}else if("stc".equals(tkns[of])){
+//				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opstc;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("ldc".equals(tkns[of])){
+//				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opldc;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("st".equals(tkns[of])){
+//				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opst;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("ld".equals(tkns[of])){
+//				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opld;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("inc".equals(tkns[of])){
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opinc;
+//				ir+=(rdi<<12);
+//			}else if("shf".equals(tkns[of])){
+//				final int rdi=rifor(tkns[++of]);
+//				final int rai=Integer.parseInt(tkns[++of],16)&0xf;
+//				ir+=opshf;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("not".equals(tkns[of])){
+//				final int rdi=rifor(tkns[++of]);
+//				final int rai=0;
+//				ir+=opshf;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("add".equals(tkns[of])){
+//				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opadd;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("load".equals(tkns[of])){
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=opload;
+//				ir+=(rdi<<12);
+//				romwrite(ir);
+//				final String v=tkns[of+1];
+//				if(v.startsWith(":")){
+//					final String lbl=v.substring(1).trim();
+//					loadlabelmap.put(lno,lbl);//. addtoloadls
+//					ir=0;
+//				}else
+//					ir=Integer.parseInt(v,16);
+//			}else if("skp".equals(tkns[of])){
+//				of++;
+//				if(!tkns[of].startsWith(":"))throw new Error("line "+lnosrc+": ie skp :label");
+//				final String label=tkns[of].substring(1);
+//				ir+=opskp;
+//				skplabelmap.put(lno,label);
+//			}else if("tx".equals(tkns[of])){
+//				final int rdi=rifor(tkns[++of]);
+//				final int rai=rifor(tkns[++of]);
+//				ir+=opset;
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("wait".equals(tkns[of])){
+//				ir+=opwait;
+//			}else if("notify".equals(tkns[of])){
+//				ir+=opnotify;
+//				final int rdi=Integer.parseInt(tkns[++of],16);
+//				ir+=(rdi<<12);
+//			}else if("neg".equals(tkns[of])){
+//				ir+=opneg;
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=(rdi<<12);
+//			}else if("sub".equals(tkns[of])){
+//				ir+=opsub;
+//				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+//				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else if("dac".equals(tkns[of])){
+//				ir+=opdac;
+////				final int rai=rifor(tkns[++of]);
+//				final int rdi=rifor(tkns[++of]);
+////				ir+=(rai<<8);
+//				ir+=(rdi<<12);
+//			}else 
+//				throw new Error("line "+lnosrc+": unknown op "+tkns[of]);
+//			romwrite(ir);
+//		}catch(final Throwable t){
+//			throw new Error("line "+lnosrc+": "+t);
+//		}
+//			//? what is lp x nxt
+//		}}finally{sc.close();}
+//		//link calls
+//		for(Iterator<Map.Entry<Integer,String>>i=callmap.entrySet().iterator();i.hasNext();){
+//			final Map.Entry<Integer,String>me=i.next();
+//			final Integer ln=me.getKey();
+//			final String lbl=me.getValue();
+//			final Integer n=labels.get(lbl);
+//			final Integer l=lino.get(ln);
+//			if(l==null)
+//				throw new Error("line "+ln+"  not found in lino");
+//			if(n==null)
+//				throw new Error("line "+lino.get(ln)+": label not found '"+lbl+"'");
+//			int instr=ro.get(ln);
+//			int instr1=instr+(n<<6);//znxr ci.. .... ....
+//			ro.set(ln,instr1);
+//		}
+//		//link imm loads
+//		for(Iterator<Map.Entry<Integer,String>>i=loadlabelmap.entrySet().iterator();i.hasNext();){
+//			final Map.Entry<Integer,String>me=i.next();
+//			final Integer ln=me.getKey();
+//			final String lbl=me.getValue();
+//			final Integer n=labels.get(lbl);
+//			if(n==null)
+//				throw new Error("linker: can not find label '"+lbl+"' load");
+//			ro.set(ln,n);
+//		}
+//		//link skips
+//		for(Iterator<Map.Entry<Integer,String>>i=skplabelmap.entrySet().iterator();i.hasNext();){
+//			final Map.Entry<Integer,String>me=i.next();
+//			final Integer ln=me.getKey();
+//			final String lbl=me.getValue();
+//			final Integer n=labels.get(lbl);
+//			if(n==null)
+//				throw new Error("linker: can not find label '"+lbl+"' for skp");
+//			final int i0=ro.get(ln);
+//			final int skp=n-ln;
+//			final int i1=i0+(skp<<8);//znxr ci.. .... ....
+//			ro.set(ln,i1);
+//		}
+//		st.set(lno+" x 16b ops");
+//		if(x==null)return;
+//		x.xu(st);
+//		x.flush();
+//		x.xuo(ro);
+//	}		
+//	private void romwrite(final int i){
+//		ro.set(lno,i);
+//		lino.put(lno,lnosrc);
+//		lno++;
+//	}
+//	private int rifor(final String s){
+//		if(s.length()>1)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");
+//		final int i=s.charAt(0)-'a';
+//		if(i>15)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");		
+//		return i;
+//	}
 	private boolean wait;
 	private boolean notify;
 	private void step(){
@@ -1445,22 +1096,5 @@ final public class zn extends a{
 		return sb.toString();
 	}
 	private boolean last_instruction_was_end_of_frame;
-	
-	public static class sys extends a{
-		public void to(final xwriter x)throws Throwable{
-			final zn c=(zn)pt(zn.class);
-			x.div(this)
-				.p("[").p(fld("000",Integer.toHexString(c.pc))).p("]:").p(fld("0000",Integer.toHexString(c.ir))).spc().p(zntkns(c.zn))
-			.div_();
-		}
-		private static String zntkns(final int zn){
-			if(zn==0){return"";}
-			if(zn==1){return"z";}
-			if(zn==2){return"n";}
-			if(zn==3){return"p";}
-			throw new Error();
-		}
-		private static final long serialVersionUID=1;
-	}
 	
 }
