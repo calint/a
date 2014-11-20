@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import b.a;
 import b.xwriter;
 final public class ram extends a{
-	public int[]bits;
+	public int[]ints;
 	public int scl=2,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
@@ -19,7 +19,7 @@ final public class ram extends a{
 		int k=0;
 		for(int i=0;i<height;i++){
 			for(int j=0;j<width;j++){
-				final int d=bits[k++];
+				final int d=ints[k++];
 				final int b= (d    &0xf)*0xf;
 				final int g=((d>>4)&0xf)*0xf;
 				final int r=((d>>8)&0xf)*0xf;
@@ -50,7 +50,7 @@ final public class ram extends a{
 //			a=addr%ram.length;
 //		}else
 			a=addr;
-		bits[a]=value;
+		ints[a]=value;
 		if(x==null)return;
 		final int argb=value;
 		final String hex=Integer.toHexString(argb);

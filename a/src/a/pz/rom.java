@@ -8,7 +8,7 @@ final public class rom extends a{
 		x.ul();
 		int row=0;
 		final String id=id();
-		for(final int d:bits){
+		for(final int d:ints){
 			x.li();
 			x.p(acore.fld("00",Integer.toHexString(row)));
 			x.tag("span",id+"_"+row+"_s").spc().tage("span");
@@ -47,8 +47,8 @@ final public class rom extends a{
 		}
 	}
 	public void x_clr(xwriter x,String s)throws Throwable{
-		for(int i=0;i<bits.length;i++){
-			bits[i]=0;
+		for(int i=0;i<ints.length;i++){
+			ints[i]=0;
 		}
 		x.xuo(this);
 	}
@@ -57,25 +57,25 @@ final public class rom extends a{
 		final int row=Integer.parseInt(a[0]);
 		final int bit=Integer.parseInt(a[1]);
 		final int msk=1<<bit;
-		int v=bits[row];
+		int v=ints[row];
 		final boolean on=(v&msk)==msk;
 		if(on)
 			v=v&~msk;
 		else
 			v|=msk;
-		bits[row]=v;
+		ints[row]=v;
 		x.xu(id()+"_"+row+"$"+bit,on?".":"o");
-		x.xu(id()+"_"+row,acore.fld("0000",Integer.toHexString(bits[row])));
+		x.xu(id()+"_"+row,acore.fld("0000",Integer.toHexString(ints[row])));
 	}
-	public int get(final int row){return bits[row];}
-	public void set(final int row,final int value){bits[row]=value;}
+	public int get(final int row){return ints[row];}
+	public void set(final int row,final int value){ints[row]=value;}
 	public void rst(){
 		lstfocusline=-1;
-		for(int i=0;i<bits.length;i++)bits[i]=0;
+		for(int i=0;i<ints.length;i++)ints[i]=0;
 	}
 	
 	
 	public int disppagenrows=128;
-	public int[]bits;
+	public int[]ints;
 	private static final long serialVersionUID=1;
 }
