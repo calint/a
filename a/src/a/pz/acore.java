@@ -33,289 +33,6 @@ final public class acore extends a{
 	public final static int bit_edcrn=512;
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
 	public metrics me;
-
-//	private boolean running;
-//	boolean stopped;
-//	int pc;
-//	int ir;
-//	int zn;
-//	private int loadreg=-1;
-//	private boolean wait;
-//	private boolean notify;
-//	private boolean last_instruction_was_end_of_frame;
-//	final static int opload=0x000;
-//	final static int oplp=0x100;
-//	final static int opinc=0x200;
-//	final static int opneg=0x300;
-//	final static int opdac=0x400;
-//	final static int opwait=0x058;
-//	final static int opnotify=0x078;
-//	final static int opset=0xe0;
-//	final static int opldc=0xc0;
-//	final static int opadd=0xa0;
-//	final static int opskp=0x80;
-//	final static int opshf=0x60;
-//	final static int opstc=0x40;
-//	final static int opsub=0x20;
-//	final static int opcall=0x10;
-//	final static int opst=0x0d8;//?
-//	final static int opld=0x0f8;//?
-//	final static int opnxt=4;
-//	final static int opret=8;
-	
-//	private void reset(){
-//		running=false;
-//		zn=0;
-//		loadreg=-1;
-//		setpcr(0);
-//		ca.rst();
-//		lo.rst();
-//		re.rst();
-//		ra.rst();
-//		me.rst();
-//		wait=notify=stopped=false;
-//	}
-//	private void copy_rom_to_ram(){
-//		for(int i=0;i<rom.size;i++)
-//			ra.set(i,ro.get(i));
-//	}
-	public void snapshot_png_to(final OutputStream os)throws IOException{
-		final int wi=ra.wi;
-		final int hi=ra.hi;
-		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
-		int k=0;
-		for(int i=0;i<hi;i++){
-			for(int j=0;j<wi;j++){
-				final int d=c.ram[k++];
-				final int b= (d    &0xf)*0xf;
-				final int g=((d>>4)&0xf)*0xf;
-				final int r=((d>>8)&0xf)*0xf;
-//				final int a=(d>>12)&0xf;
-				final int a=0xff;
-				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
-				bi.setRGB(j,i,argb);
-			}
-//			k+=0;//skip
-		}
-		ImageIO.write(bi,"png",os);
-//		
-//		
-//		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
-	}
-//	private void step(){
-//		if(wait){
-//			if(notify){
-//				synchronized(this){wait=notify=false;}
-//				setpcr(pc+1);
-//			}else{
-//				return;
-//			}
-//		}
-//		me.instr++;
-////		if(pcr>=rom.size)throw new Error("program out of bounds");
-//		if(loadreg!=-1){// load reg 2 instructions command
-//			re.setr(loadreg,ir);
-//			loadreg=-1;
-//			setpcr(pc+1);
-//			return;
-//		}
-//		if(ir==-1){// end of frame
-//			last_instruction_was_end_of_frame=true;
-//			setpcr(0);
-//			me.frames++;
-//			try{ev(null);}catch(Throwable t){throw new Error(t);}
-//			return;
-//		}
-//		int in=ir;// znxr ci.. .rai .rdi
-//		final int izn=in&3;
-//		if((izn!=0&&(izn!=zn))){
-//			final int op=(in>>5)&127;//? &7 //i.. .... ....
-//			final int skp=op==0?2:1;// ifloadopskip2
-//			setpcr(pc+skp);
-//			return;
-//		}
-//		in>>=2;// xr ci.. .rai .rdi
-//		final int xr=in&0x3;
-//		final boolean rcinvalid=(in&6)==6;
-//		if(!rcinvalid&&(in&4)==4){//call
-//			final int imm10=in>>4;// .. .... ....
-//			final int znx=zn|((xr&1)<<2);// nxt after ret
-//			final int stkentry=(znx<<12)|(pc+1);
-//			setpcr(imm10);
-//			ca.push(stkentry);
-//			return;
-//		}
-//		boolean isnxt=false;
-//		boolean ispcrset=false;
-//		if((xr&1)==1){// nxt
-//			isnxt=true;
-//			if(lo.nxt()){
-//				lo.pop();
-//			}else{
-//				setpcr(lo.adr());
-//				ispcrset=true;
-//			}
-//		}
-//		boolean isret=false;
-//		if(!rcinvalid&&!ispcrset&&(xr&2)==2){// ret after loop complete
-//			final int stkentry=ca.pop();
-//			final int ipc=stkentry&0xfff;
-//			final int znx=(stkentry>>12);
-//			if((znx&4)==4){// nxt after previous call
-//				if(lo.nxt()){
-//					lo.pop();
-//				}else{
-//					setpcr(lo.adr());
-//					ispcrset=true;
-//				}
-//			}
-//			if(!ispcrset){
-//				setpcr(ipc);
-//				ispcrset=true;
-//			}
-//			isret=true;
-//		}
-//		in>>=3;// i.. .rai .rdi
-//		final int op=in&7;
-//		in>>=3;// .rai .rdi
-//		final int imm8=in;
-//		final int rai=in&0xf;
-//		in>>=4;// .rdi
-//		final int rdi=in&0xf;
-//		if(!rcinvalid){
-//			if(op==0){//load
-//				if(rai!=0){//branch
-//					if(rai==1){//lp
-//						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
-//						final int d=re.get(rdi);
-//						lo.push(pc+1,d);	
-//					}else if(rai==2){//inc
-//						re.inc(rdi);	
-//					}else if(rai==3){//neg
-//						final int d=re.get(rdi);
-//						final int r=-d;
-//						re.setr(rdi,r);
-//					}else if(rai==4){//dac
-//						final int d=re.get(rdi);
-//						try{
-//							ev(null,this,new Integer(d));// ev(x,this.dac,int)
-//						}catch(final Throwable t){
-//							throw new Error(t);
-//						}
-//					}else throw new Error("unimplemented ops(x)");
-//				}else{
-//					if(isret||isnxt){
-//						if(!ispcrset){
-//							setpcr(pc+1);
-//						}
-//						return;
-//					}
-//					loadreg=rdi;
-//				}
-//			}else if(op==1){// sub
-//				final int a=re.get(rai);
-//				final int d=re.get(rdi);
-//				final int r=a-d;
-//				zneval(r);
-//				re.setr(rai,r);
-//			}else if(op==2){//stc
-//				final int d=re.get(rdi);
-//				final int a=re.getinc(rai);
-//				ra.set(a,d);
-//				me.stc++;
-//			}else if(op==3){//shf and not
-//				if(rai==0){//not
-//					final int d=re.get(rdi);
-//					final int r=~d;
-//					re.setr(rdi,r);
-//				}else{//shf
-//					final int a=rai>7?rai-16:rai;
-//					final int r;
-//					if(a<0)r=re.get(rdi)<<-a;
-//					else r=re.get(rdi)>>a;
-//					re.setr(rdi,r);
-//					zneval(r);
-//				}
-//			}else if(op==4){//skp
-//				if(imm8==0)throw new Error("unencoded op (rol x)");
-//				if(ispcrset)throw new Error("unimplemented");
-//				setpcr(pc+imm8);
-//				ispcrset=true;
-//			}else if(op==5){//add
-//				{final int a=re.get(rai);
-//				final int d=re.get(rdi);
-//				final int r=a+d;
-//				zneval(r);
-//				re.setr(rai,r);}
-//			}else if(op==6){//ldc
-//				final int a=re.getinc(rai);
-//				final int d=ra.get(a);
-//				re.setr(rdi,d);
-//				zneval(d);
-//				me.ldc++;
-//			}else if(op==7){//tx
-//				final int a=re.get(rai);
-//				re.setr(rdi,a);
-//			}
-//		}else{
-//			if(op==0){//free
-//			}else if(op==1){//skp
-//				if(imm8==0)throw new Error("unencoded op (rol x)");
-//				if(ispcrset)throw new Error("unimplemented");
-//				setpcr(pc+imm8);
-//				ispcrset=true;
-//			}else if(op==2){// wait
-//				if(!wait){// first time
-//					synchronized(this){// atomic wait mode
-//						wait=true;
-//						notify=false;
-//					}
-//					return;
-//				}
-//				// after notify
-//				synchronized(this){wait=notify=false;}
-//			}else if(op==3){// notify
-//				final int imm4=(ir>>12);
-//				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
-//			}else if(op==4){// free  
-//			}else if(op==5){// sub
-//			}else if(op==6){// st
-//				final int d=re.get(rdi);
-//				final int a=re.get(rai);
-//				ra.set(a,d);
-//				me.stc++;
-//			}else if(op==7){// ld
-//				final int a=re.get(rai);
-//				final int d=ra.get(a);
-//				re.setr(rdi,d);
-//				zneval(d);
-//				me.ldc++;
-//			}else throw new Error();
-//		}
-//		if(!ispcrset)
-//			setpcr(pc+1);
-//	}
-//	private void setpcr(final int i){
-//		pc=i;
-//		ir=ro.get(i);
-//	}
-//	private void zneval(final int i){
-//		if(i==0){zn=1;return;}
-//		if((i&(1<<16))==(1<<16)){zn=2;return;}//? .
-////		if(i<0){zn=2;return;}
-//		zn=3;
-//	}
-
-
-	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
-		if(o instanceof program){
-			final program p=(program)o;
-			p.write_to(ro);
-			c.reset();
-			x.xuo(ro);
-			x_f(x,null);
-		}else super.ev(x,from,o);
-	}
 	
 	public acore()throws Throwable{
 		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
@@ -326,6 +43,15 @@ final public class acore extends a{
 		re.ints=c.register;
 		lo.core=c;
 	}
+	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
+		if(o instanceof program){
+			final program p=(program)o;
+			p.write_to(ro);
+			c.reset();
+			x.xuo(ro);
+			x_f(x,null);
+		}else super.ev(x,from,o);
+	}	
 	public void to(final xwriter x)throws Throwable{
 		x.div(this);
 		final String id=id();
@@ -546,6 +272,31 @@ final public class acore extends a{
 			ra.x_rfh(x,s,ra.wi,ra.hi,0,0);
 		}
 	}
+	
+	
+	public void snapshot_png_to(final OutputStream os)throws IOException{
+		final int wi=ra.wi;
+		final int hi=ra.hi;
+		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
+		int k=0;
+		for(int i=0;i<hi;i++){
+			for(int j=0;j<wi;j++){
+				final int d=c.ram[k++];
+				final int b= (d    &0xf)*0xf;
+				final int g=((d>>4)&0xf)*0xf;
+				final int r=((d>>8)&0xf)*0xf;
+//				final int a=(d>>12)&0xf;
+				final int a=0xff;
+				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
+				bi.setRGB(j,i,argb);
+			}
+//			k+=0;//skip
+		}
+		ImageIO.write(bi,"png",os);
+//		
+//		
+//		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
+	}
 	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
@@ -567,12 +318,12 @@ final public class acore extends a{
 		x.pl("     \\o       l             ");
 	}
 	public void pramble_to(final xwriter x){
-		x.pl(strdatasize(c.ram.length)+" 20b ram");
+		x.pl(strdatasize(ra.ints.length)+" 20b ram");
 		x.pl(re.ints.length+" 20b registers");
 		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl("12b rgb color in 20b pixel");
 		x.pl("256 sprites collision detection");
-		x.pl(strdatasize2(c.rom.length)+" 16b instructions");
+		x.pl(strdatasize2(ro.ints.length)+" 16b instructions");
 		x.pl(c.loop_stack_address.length+" loops stack");
 		x.pl(call_stack.size+" calls stack");
 	}
