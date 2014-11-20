@@ -18,7 +18,7 @@ final public class acore extends a{
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	public edcrun ec;
+	public cred ec;
 	/**theme*/public a th;
 	public a bits;
 	public final static int bit_logo=1;

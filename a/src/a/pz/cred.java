@@ -4,7 +4,7 @@ import java.util.Set;
 import b.a;
 import b.b;
 import b.xwriter;
-final public class edcrun extends a{
+final public class cred extends a{
 	int focusline;
 //	private int lstfocusline=-1;
 //	public a brkpts;
