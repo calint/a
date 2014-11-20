@@ -12,13 +12,13 @@ final public class acore extends a{
 	public core c=new core(16,8,8,32*1024,1*1024);
 	public rom ro;
 	public ram ra;
-	public sys sy;
-	public regs re;
-	public calls ca;
-	public loops lo;
+	public core_status sy;
+	public registers re;
+	public call_stack ca;
+	public loop_stack lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	public cred ec;
+	public crun_source_editor ec;
 	/**theme*/public a th;
 	public a bits;
 	public final static int bit_logo=1;
@@ -574,7 +574,7 @@ final public class acore extends a{
 		x.pl("256 sprites collision detection");
 		x.pl(strdatasize2(c.rom.length)+" 16b instructions");
 		x.pl(c.loop_stack_address.length+" loops stack");
-		x.pl(calls.size+" calls stack");
+		x.pl(call_stack.size+" calls stack");
 	}
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");

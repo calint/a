@@ -1,7 +1,7 @@
 package a.pz;
 import b.a;
 import b.xwriter;
-final public class loops extends a{
+final public class loop_stack extends a{
 	public core core;
 	public void to(final xwriter x){
 		x.div(this);

@@ -3,7 +3,7 @@ package a.pz;
 import b.a;
 import b.xwriter;
 
-public class sys extends a{
+public class core_status extends a{
 	public void to(final xwriter x)throws Throwable{
 		final acore z=(acore)pt(acore.class);
 		x.div(this)
