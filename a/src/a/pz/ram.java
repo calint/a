@@ -14,7 +14,6 @@ final public class ram extends a{
 	private int[]ram=new int[size];
 	final private int scl=2;
 	public ram(){rst();}
-//	static String labelrefresh="*";
 	public void rst(){x=null;for(int i=0;i<ram.length;i++)ram[i]=0;}
 	final static int wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{

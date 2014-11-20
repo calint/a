@@ -6,7 +6,6 @@ final public class rom extends a{
 		x.div(this,"float panel");
 		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
-//		x.style("el.rom el","background:#eea");
 		int row=0;
 		final String id=id();
 		for(final int d:rom){
@@ -47,7 +46,6 @@ final public class rom extends a{
 			x.pl(js);
 		}
 	}
-//	String libgstp="yellow";
 	public void x_clr(xwriter x,String s)throws Throwable{
 		for(int i=0;i<rom.length;i++){
 			rom[i]=0;
@@ -71,17 +69,6 @@ final public class rom extends a{
 	}
 	public int get(final int row){return rom[row];}
 	public void set(final int row,final int value){rom[row]=value;}
-//	public void save(final xwriter x)throws Throwable{
-//		for(int k=0;k<rom.length;k++)
-//			x.p(x1.fld("0000",Integer.toHexString(get(k)))).spc();
-//	}
-//	public void load(final path p)throws Throwable{
-//		final Scanner sc=new Scanner(p.inputstream());
-//		for(int k=0;k<rom.length&&sc.hasNextInt();k++){
-//			rom[k]=sc.nextInt();
-//		}
-//		sc.close();
-//	}
 	public void rst(){
 		lstfocusline=-1;
 		for(int i=0;i<rom.length;i++)rom[i]=0;
