@@ -101,19 +101,6 @@ lp c
   add g a   # offset
   stc g h nxt ret
 ..
-dots:
-. 1
-# yyxx  rgb
-. 0100 0f00 
-rects:
-. 5
-# yyxx  rgb  wi   hi 
-. 3830 0422 0010 0010
-. 040c 0fff 0008 0008
-. 0400 0eee 0008 0008
-. 1000 0ddd 0008 0008
-. 100c 0ccc 0008 0008
-..
 # drwrects(scr a,linewi m,rects b)
 #  b,c,a,d,e,f,g
 drwrects:
@@ -151,6 +138,20 @@ lp j
     add b e
     add a e nxt
   nxt ret
+..
+dots:
+. 1
+# yyxx  rgb
+. 0100 0f00 
+..
+rects:
+. 5
+# yyxx  rgb  wi   hi 
+. 3830 0422 0010 0010
+. 040c 0fff 0008 0008
+. 0400 0eee 0008 0008
+. 1000 0ddd 0008 0008
+. 100c 0ccc 0008 0008
 ..
 blits:
 . 10
