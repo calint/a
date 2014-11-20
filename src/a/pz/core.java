@@ -25,7 +25,7 @@ final public class core{
 		for(int i=0;i<rom.length;i++)ram[i]=rom[i];
 	}
 	public void calls_push(final int v){call_stack[call_stack_index++]=v;}
-	public boolean loops_nxt(){return--loop_stack_counter[loop_stack_index-1]==0;}
+	public boolean loops_loop_is_done(){return--loop_stack_counter[loop_stack_index-1]==0;}
 	public void loops_pop(){loop_stack_index--;}
 	public int loops_address(){return loop_stack_address[loop_stack_index-1];}
 	public int calls_pop(){return call_stack[--call_stack_index];}
@@ -81,7 +81,7 @@ final public class core{
 		boolean program_counter_has_been_set=false;
 		if((xr&1)==1){// nxt
 			isnxt=true;
-			if(loops_nxt()){
+			if(loops_loop_is_done()){
 				loops_pop();
 			}else{
 				program_counter_set(loops_address());
@@ -94,7 +94,7 @@ final public class core{
 			final int ipc=stkentry&0xfff;
 			final int znx=(stkentry>>12);
 			if((znx&4)==4){// nxt after previous call
-				if(loops_nxt()){
+				if(loops_loop_is_done()){
 					loops_pop();
 				}else{
 					program_counter_set(loops_address());
@@ -130,7 +130,7 @@ final public class core{
 					}else if(rai==4){//dac
 						final int d=register[rdi];
 						try{
-							b.b.pl("dav event");
+							b.b.pl("dac "+d);
 //							ev(null,this,new Integer(d));// ev(x,this.dac,int)
 						}catch(final Throwable t){
 							throw new Error(t);
@@ -209,7 +209,7 @@ final public class core{
 				synchronized(this){wait=notify=false;}
 			}else if(op==3){// notify
 				final int imm4=(instruction_register>>12);
-				b.b.pl("core notify "+imm4);
+				b.b.pl("notify "+imm4);
 //				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
 			}else if(op==4){// free  
 			}else if(op==5){// sub
