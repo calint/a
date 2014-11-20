@@ -1,4 +1,4 @@
-<!DOCTYPE html><meta charset="utf-8">
+<!DOCTYPE html><meta charset="utf-8"><title>clare</title>
 <style>
 	html{white-space:pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
 	#scr{outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
@@ -8,9 +8,9 @@
 	a{text-decoration:none;color:blue}
 	t{font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 </style>
-<t><b><a href=zn>clare</a></b> 1m</t>
-<img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"/>
- <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output>
+<!--<t><b><a href=zn>clare</a></b></t>-->
+<img id=scr src="" tabindex=0  onkeydown="$.sts.value=event.keyCode;keys=new Uint8Array([0,event.keyCode]);return false;" onkeyup="$.sts.value='';keys=new Uint8Array([0,0]);return false;">
+ <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output> <output id=sts></output>
  <a href="javascript:compile()">compile</a> <b>source</b>
 <textarea id=src spellcheck=false>
 # clr(400,100,70,f00,080+p)
@@ -238,6 +238,7 @@ function start(){
 			$.sts.value=str;
 			return;
 		}
+		console.log(keys);
 		ws.send(keys);
 	};
 	ws.onerror=function(e){alert("websocket error "+e);};

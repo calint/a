@@ -113,12 +113,11 @@ final public class acore extends a{
 			logo_to(x);
 			copyright_to(x);
 		}
-		if(hasbit(bit_schematics))schematics_to(x);
 		if(hasbit(bit_pramble)){
-			x.nl();
 			pramble_to(x);
 			x.nl();
 		}
+		if(hasbit(bit_schematics))schematics_to(x);
 		if(hasbit(bit_instructions_table))instructions_table_to(x);
 		if(hasbit(bit_display))x.r(ra);
 		if(hasbit(bit_menu))
@@ -314,7 +313,7 @@ final public class acore extends a{
 		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
 		x.pl(" \\    n  \\      \\....\\....  ");
 		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
-		x.pl("   \\e e t e a m             ");
+		x.pl("   \\e e t e\\a m             ");
 		x.pl("    \\r g   t l m            ");
 		x.pl("     \\o       l             ");
 	}
@@ -325,10 +324,12 @@ final public class acore extends a{
 		final int bits_per_pixel=16;
 		final int bits_per_pixel_rgb=12;
 		final int nsprites=16;
+		final int ndacs=8;
 		
 		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
 		x.pl(bits_per_pixel_rgb+"b rgb color in "+bits_per_pixel+"b pixel");
 		x.pl(nsprites+" sprites onscreen collision detection");
+		x.pl(ndacs+" sound tracks");
 //		x.pl(strdatasize(c.ram.length)+" "+bits_per_data+"b ram");
 		x.pl(strdatasize2(cor.rom.length)+" "+bits_per_instruction+"b rom");
 		x.pl(cor.register.length+" "+bits_per_register+"b registers");

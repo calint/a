@@ -2,7 +2,6 @@ package a.pz.a;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
@@ -23,13 +22,12 @@ final public class porta extends websock implements threadedsock{static final lo
 	}
 	protected void onmessage(final ByteBuffer bb) throws Throwable{
 		final byte cmd=bb.get();
-		if(cmd==0){//key
+		if(cmd==0){//keys
 			final byte key=bb.get();
-			co.ram[0x0080*0x0100-1]=key;
+			if(key!=0)b.b.pl("key "+key);
+			co.ram[0x7fff]=key;
 		}else if(cmd==49){//compile
-//			System.out.println(cmd);
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
-//			System.out.println(src);
 			try{
 				new program(new source_reader(new StringReader(src))).write_to(co.rom);
 			}catch(final Throwable t){
@@ -41,15 +39,15 @@ final public class porta extends websock implements threadedsock{static final lo
 			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1ok"));
 			endpoint_recv(bbe,false);
 		}
-//		System.out.println(bb.remaining()+"  "+key);
-		co.step_frame();
 //		final long t0=System.currentTimeMillis();
+		co.step_frame();
+//		final long t1=System.currentTimeMillis();
 		final ByteArrayOutputStream baos=new ByteArrayOutputStream(32*1024);
 		snapshot_png_to(co.ram,256,128,baos);
 		final ByteBuffer[]bbpng=new ByteBuffer[]{ByteBuffer.wrap(new byte[]{0}),ByteBuffer.wrap(baos.toByteArray())};
 //		final long t1=System.currentTimeMillis();
 		while(issending()){
-			System.out.println(new Date()+"\t"+session().id()+"\tstaling");
+			b.b.pl(new Date()+"\t"+session().id()+"\tstaling");
 			try{Thread.sleep(20);}catch(final InterruptedException ignored){}
 		}
 		endpoint_recv(bbpng,false);
