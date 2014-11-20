@@ -1,7 +1,6 @@
 package a.pz;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import javax.imageio.ImageIO;
 import a.x.jskeys;
@@ -41,7 +40,6 @@ final public class zn extends a{
 	public edcrun ec;
 	/**theme*/public a th;
 	public a bits;
-	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
 	public final static int bit_logo=1;
 	public final static int bit_schematics=2;
 	public final static int bit_pramble=4;
@@ -52,6 +50,7 @@ final public class zn extends a{
 	public final static int bit_rom=128;
 	public final static int bit_edasm=256;
 	public final static int bit_edcrn=512;
+	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
 	public metrics me;
 
 	private boolean running;
