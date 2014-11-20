@@ -1,19 +1,19 @@
 package a.pz;
 final public class core{
-	final public int K=1024,nregs=16,ncalls=8,nloops=8,nram=64*K,nrom=2*K;
-
 	public int id;
 	public boolean running,stopped,wait,notify,last_instruction_was_end_of_frame;
-	public int program_counter,instruction_register,zn_flags,loading_register=-1;
-	public int[]register=new int[nregs];
-	public int[]call_stack=new int[ncalls];
-	public int call_stack_index;
-	public int[]loop_stack_address=new int[nloops];
-	public int[]loop_stack_counter=new int[nloops];
-	public int loop_stack_index;
-	public int[]ram=new int[nram];
-	public int[]rom=new int[nrom];
+	public int program_counter,instruction_register,zn_flags,loading_register=-1,call_stack_index,loop_stack_index;
+	public int[]register,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	
+	public core(){}
+	public core(int nregs,int ncalls,int nloops,int nram,int nrom){
+		register=new int[nregs];
+		call_stack=new int[ncalls];
+		loop_stack_address=new int[nloops];
+		loop_stack_counter=new int[nloops];
+		ram=new int[nram];
+		rom=new int[nrom];
+	}
 	public void reset(){
 		running=wait=notify=stopped=false;
 		zn_flags=program_counter=instruction_register=call_stack_index=loop_stack_index=0;
@@ -23,7 +23,8 @@ final public class core{
 		for(int i=0;i<loop_stack_address.length;i++)loop_stack_address[i]=0;
 		for(int i=0;i<loop_stack_counter.length;i++)loop_stack_counter[i]=0;
 		for(int i=0;i<ram.length;i++)ram[i]=0;
-		for(int i=0;i<rom.length;i++)ram[i]=rom[i];
+		for(int i=0;i<rom.length;i++)ram[i]=rom[i];//?
+		if(rom!=null)instruction_register=rom[0];
 	}
 	public void calls_push(final int v){call_stack[call_stack_index++]=v;}
 	public boolean loops_loop_is_done(){return--loop_stack_counter[loop_stack_index-1]==0;}
@@ -69,8 +70,8 @@ final public class core{
 		}
 		in>>=2;// xr ci.. .rai .rdi
 		final int xr=in&0x3;
-		final boolean rcinvalid=(in&6)==6;
-		if(!rcinvalid&&(in&4)==4){//call
+		final boolean invalid_opcode=(in&6)==6;
+		if(!invalid_opcode&&(in&4)==4){//call
 			final int imm10=in>>4;// .. .... ....
 			final int znx=zn_flags|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(program_counter+1);
@@ -90,7 +91,7 @@ final public class core{
 			}
 		}
 		boolean isret=false;
-		if(!rcinvalid&&!program_counter_has_been_set&&(xr&2)==2){// ret after loop complete
+		if(!invalid_opcode&&!program_counter_has_been_set&&(xr&2)==2){// ret after loop complete
 			final int stkentry=calls_pop();
 			final int ipc=stkentry&0xfff;
 			final int znx=(stkentry>>12);
@@ -115,7 +116,7 @@ final public class core{
 		final int rai=in&0xf;
 		in>>=4;// .rdi
 		final int rdi=in&0xf;
-		if(!rcinvalid){
+		if(!invalid_opcode){
 			if(op==0){//load
 				if(rai!=0){//branch
 					if(rai==1){//lp
@@ -153,9 +154,9 @@ final public class core{
 				evaluate_zn_flags(r);
 				register[rai]=r;
 			}else if(op==2){//stc
+				final int a=register[rai]++;
 				final int d=register[rdi];
-				final int a=register[rai];
-				register[a]=a;
+				ram[a]=d;
 //				me.stc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not

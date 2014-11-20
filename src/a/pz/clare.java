@@ -31,7 +31,7 @@ final public class clare extends a implements titled{
 				jskeys.add("cK","alert('info')");
 			}
 		}
-		zn.logo_to(x);
+		z.get_first().logo_to(x);
 		x.span(ajaxsts).r(z);
 	}
 	/**cores*/public alist<zn>z;
