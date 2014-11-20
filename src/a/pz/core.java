@@ -1,5 +1,8 @@
 package a.pz;
-final public class core{
+
+import java.io.Serializable;
+
+final public class core implements Serializable{
 	public int id;
 	public boolean running,stopped,wait,notify,last_instruction_was_end_of_frame;
 	public int program_counter,instruction_register,zn_flags,loading_register=-1,call_stack_index,loop_stack_index;
@@ -241,5 +244,6 @@ final public class core{
 //		if(i<0){zn=2;return;}
 		zn_flags=3;
 	}
-
+	
+	private static final long serialVersionUID=1;
 }
