@@ -30,7 +30,7 @@ final public class zn extends a{
 	final static int opld=0x0f8;//?
 	final static int opnxt=4;
 	final static int opret=8;
-	static final String filenmromsrc="pz.src";
+	final static String filenmromsrc="pz.src";
 //	private path pth;
 	public rom ro;
 	public ram ra;
@@ -43,10 +43,9 @@ final public class zn extends a{
 	public loops lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
-	/**crunsourceeditor*/public edcrun ec;{try{x_l(null,null);}catch(Throwable t){throw new Error(t);}}
-	
+	public edcrun ec;{try{x_l(null,null);}catch(Throwable t){throw new Error(t);}}
 //	public int mode;//1:multicore
-	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
+//	private final Map<Integer,Integer>lino=new HashMap<Integer,Integer>();// bin->src
 //	private int lno;
 //	private int lnosrc;
 //	private final Map<Integer,String>callmap=new HashMap<Integer,String>();
@@ -245,8 +244,8 @@ final public class zn extends a{
 			ro.focusline=pc;
 			ro.xfocusline(x);
 		}
-		if(lino.isEmpty())return;
-		ec.focusline=lino.get(pc);
+//		if(lino.isEmpty())return;
+//		ec.focusline=lino.get(pc);
 //		ec.xfocusline(x);
 	}
 	private long runms=1000;
@@ -288,25 +287,25 @@ final public class zn extends a{
 		if(running)throw new Error("already running");
 		running=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
-		final long t0=System.currentTimeMillis();
-		final long instr0=me.instr;
+//		final long t0=System.currentTimeMillis();
+//		final long instr0=me.instr;
 		st.clr();
 		while(running){
 			boolean go=true;
 			step();
-			final int srclno=lino.get(pc);
-			if(ec.isonbrkpt(srclno)){
-				st.set("breakpoint @ "+srclno);
-				go=false;
-			}
+//			final int srclno=lino.get(pc);
+//			if(ec.isonbrkpt(srclno)){
+//				st.set("breakpoint @ "+srclno);
+//				go=false;
+//			}
 			if(!go)break;
 		}
 		if(running){
 			running=false;
-			final long dt=System.currentTimeMillis()-t0;
-			final long dinstr=me.instr-instr0;
-			final int l=lino.get(ro.focusline);
-			st.set(dinstr+" instr, "+dt+" ms, "+l);
+//			final long dt=System.currentTimeMillis()-t0;
+//			final long dinstr=me.instr-instr0;
+//			final int l=lino.get(ro.focusline);
+//			st.set(dinstr+" instr, "+dt+" ms, "+l);
 			if(x==null)return;
 			x.xu(st);
 			x.xu(sy);
