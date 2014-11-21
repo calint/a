@@ -34,9 +34,10 @@ final public class porta extends websock implements threadedsock{static final lo
 			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1ok"));
 			endpoint_recv(bbe,false);
 		}
-//		final long t0=System.currentTimeMillis();
+		final long t0=System.nanoTime();
 		co.step_frame();
-//		final long t1=System.currentTimeMillis();
+		final long t1=System.nanoTime();
+//		b.b.pl("micro dt: "+(t1-t0)/1000);
 		final ByteArrayOutputStream baos=new ByteArrayOutputStream(32*1024);
 		snapshot_png_to(co.ram,256,128,baos);
 		final ByteBuffer[]bbpng=new ByteBuffer[]{ByteBuffer.wrap(new byte[]{0}),ByteBuffer.wrap(baos.toByteArray())};
