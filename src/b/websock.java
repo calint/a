@@ -190,7 +190,7 @@ public class websock extends a implements sock{static final long serialVersionUI
 		send(bba,false);
 	}
 	final public void send(final ByteBuffer[]bba,final boolean textmode)throws Throwable{
-//		if(bbos!=null)throw new Error("overwrite");//?
+		if(bbos!=null)throw new Error("overwrite");//?
 		int ndata=0;
 		for(final ByteBuffer b:bba)ndata+=b.remaining();
 		bbos=new ByteBuffer[bba.length+1];

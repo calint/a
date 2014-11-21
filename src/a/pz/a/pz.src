@@ -2,6 +2,7 @@
 li m 100     # line width
 li a 400   # yyxx
 
+# if(++nlines>30h)nlines=1
 li f :nlines
 ld c f
 inc c
