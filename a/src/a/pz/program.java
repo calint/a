@@ -64,12 +64,14 @@ final public class program implements Serializable{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
 			s.source_location=r.hrs_location();
 		}catch(InvocationTargetException t){
-			if(t.getCause()instanceof program.error)throw (program.error)t.getCause();
-			throw new program.error(r.hrs_location(),t.getCause().toString());
+			if(t.getCause()instanceof error)throw(error)t.getCause();
+			throw new error(r.hrs_location(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new program.error(r.hrs_location(),t.toString());
+			throw new error(r.hrs_location(),t.toString());
 		}catch(ClassNotFoundException t){
-			throw new program.error(r.hrs_location(),"unknown instruction '"+tk+"'");
+			throw new error(r.hrs_location(),"unknown instruction '"+tk+"'");
+		}catch(Throwable t){
+			throw new error(r.hrs_location(),t.toString());
 		}
 		if(!(s instanceof data)){
 			while(true){
@@ -89,7 +91,7 @@ final public class program implements Serializable{
 	/**writes binary to param*/
 	final public void zap(int[]ints){
 		final rom_writer c=new rom_writer(ints);
-		s.forEach(e->e.write_to(c));
+		s.forEach(e->{try{e.write_to(c);}catch(error ee){throw ee;}catch(Throwable t){throw new error(e.source_location,t.getMessage());}});
 		c.finish();
 	}
 	private List<stmt>s;
@@ -114,7 +116,7 @@ final public class program implements Serializable{
 	public static class li extends stmt{
 		private String data;
 		public li(source_reader r)throws IOException{
-			super(opli,0,ri(next_token_in_line(r)));
+			super(opli,0,reg(r));
 			data=next_token_in_line(r);
 		}
 		@Override public void write_to(rom_writer c){
@@ -123,7 +125,14 @@ final public class program implements Serializable{
 				c.add_link(data,source_location);
 				c.write(0);
 			}else{
-				c.write(Integer.parseInt(data,16));
+				final int i=Integer.parseInt(data,16);
+				if((i&0xffff)!=i&&(i&0xffff0000)!=0xffff0000)throw new error(source_location,"hex '"+data+"' int '"+i+"' is out of 16 bit range");
+//				if((i&0x0fff)!=i&&(i&0xfffff000)!=0xfffff000)throw new error(source_location,"hex '"+data+"' int '"+i+"' is out of 16 bit range");
+//				final int maxi=1<<15-1;
+//				final int mini=-1<<15;
+//				if(i>maxi||i<mini)
+//					throw new error(source_location,"integer '"+data+"' out of range "+mini+" through "+maxi);
+				c.write(i);
 			}
 			
 		}
@@ -138,8 +147,10 @@ final public class program implements Serializable{
 	final private static int reg(source_reader r)throws IOException{
 		final String s=next_token_in_line(r);
 		if(s==null)throw new program.error(r.hrs_location(),"expected register but found end of line");
+		if(s.length()!=1)throw new error(r.hrs_location(),"register name unknown '"+s+"'");
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
+		if(reg>15||reg<0)throw new error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
 	final private static int ri(String s){
