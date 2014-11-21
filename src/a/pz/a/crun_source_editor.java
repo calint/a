@@ -16,7 +16,7 @@ final public class crun_source_editor extends a{
 //	}
 	public a src;
 	public void to(final xwriter x)throws Throwable{
-		x.div(this,"float textleft panel").ax(this,"f3","crun").nl().inptxtarea(src).div_();
+		x.div(this,"float textleft panel").ax(this,"f3","crun").nl().spaned(src).div_();
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
@@ -34,8 +34,12 @@ final public class crun_source_editor extends a{
 //		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 //	}
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
-		final program p=new program(src.str());
-		ev(x,this,p);
+		try{
+			final program p=new program(src.str());
+			ev(x,this,p);
+		}catch(Throwable t){
+			x.xalert(t.toString());
+		}
 	}
 	private static final long serialVersionUID=11;
 }
