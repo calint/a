@@ -88,10 +88,10 @@ final public class program implements Serializable{
 		if(eos!='\n'&&eos!=-1)throw new Error(r+" expected end of line or end of file");
 		return s;
 	}
-	/**writes binary to param*/
-	final public void zap(int[]ints){//? arraycopybinary
-		for(int i=0;i<ints.length;i++)ints[i]=-1;
-		final rom_writer c=new rom_writer(ints);
+	/**writes binary*/
+	final public void zap(int[]rom){//? arraycopybinary
+		for(int i=0;i<rom.length;i++)rom[i]=-1;
+		final rom_writer c=new rom_writer(rom);
 		s.forEach(e->{try{e.write_to(c);}catch(error ee){throw ee;}catch(Throwable t){throw new error(e.source_location,t.getMessage());}});
 		c.finish();
 	}
