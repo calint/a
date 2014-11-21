@@ -149,7 +149,9 @@ final public class program implements Serializable{
 		if(s.length()!=1)throw new error(r.hrs_location(),"register name unknown '"+s+"'");
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
-		if(reg>15||reg<0)throw new error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
+		final int max=(1<<4)-1;
+		final int min=0;
+		if(reg>max||reg<min)throw new error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
 	final private static int num(source_reader r,int bit_width)throws IOException{
@@ -164,15 +166,14 @@ final public class program implements Serializable{
 			return i;
 		}catch(NumberFormatException e){throw new error(r.hrs_location(),"can not translate number '"+s+"'");}
 	}
-	final private static int ri(String s){
-//		if(s==null)throw new error(source_location,message)
-		final char first_char=s.charAt(0);
-		final int reg=first_char-'a';
-		return reg;
-	}
+//	final private static int ri(String s){
+//		final char first_char=s.charAt(0);
+//		final int reg=first_char-'a';
+//		return reg;
+//	}
 	public static class st extends stmt{
 		public st(source_reader r)throws IOException{
-			super(opst,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(opst,reg(r),reg(r));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -197,13 +198,13 @@ final public class program implements Serializable{
 	}
 	public static class lp extends stmt{
 		public lp(source_reader r)throws IOException{
-			super(oplp,0,ri(next_token_in_line(r)));
+			super(oplp,0,reg(r));
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class stc extends stmt{
 		public stc(source_reader r)throws IOException{
-			super(opstc,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(opstc,reg(r),reg(r));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -215,7 +216,7 @@ final public class program implements Serializable{
 	}
 	public static class sub extends stmt{
 		public sub(source_reader r)throws IOException{
-			super(opsub,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(opsub,reg(r),reg(r));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -257,19 +258,19 @@ final public class program implements Serializable{
 	}
 	public static class ld extends program.stmt{
 		public ld(source_reader r)throws IOException{
-			super(opld,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(opld,reg(r),reg(r),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class ldc extends program.stmt{
 		public ldc(source_reader r)throws IOException{
-			super(opldc,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(opldc,reg(r),reg(r),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class tx extends program.stmt{
 		public tx(source_reader r)throws IOException{
-			super(optx,ri(next_token_in_line(r)),ri(next_token_in_line(r)),true);
+			super(optx,reg(r),reg(r),true);
 		}
 		private static final long serialVersionUID=1;
 	}
