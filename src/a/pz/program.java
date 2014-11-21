@@ -3,6 +3,7 @@ package a.pz;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -28,6 +29,7 @@ final public class program implements Serializable{
 	final public static int   opwait=0x0058;
 	final public static int opnotify=0x0078;
 
+	public program(final String cs)throws IOException{this(new StringReader(cs));}
 	public program(final Reader rr)throws IOException{
 		final source_reader r=new source_reader(rr);
 		s=new ArrayList<>();
@@ -80,7 +82,8 @@ final public class program implements Serializable{
 		if(eos!='\n'&&eos!=-1)throw new Error(r+" expected end of line or end of file");
 		return s;
 	}
-	final public void write_to(int[]ints){
+	/**writes binary to param*/
+	final public void zap(int[]ints){
 		final rom_writer c=new rom_writer(ints);
 		s.forEach(e->e.write_to(c));
 		c.finish();

@@ -20,7 +20,7 @@ final public class s extends websock implements threadedsock{static final long s
 			v.snapshot(baos);
 			final ByteBuffer bbpng=ByteBuffer.wrap(baos.toByteArray());
 			final long t1=System.currentTimeMillis();
-			endpoint_recv(bbpng,false);
+			send(bbpng,false);
 			final long t2=System.currentTimeMillis();
 		}
 	}

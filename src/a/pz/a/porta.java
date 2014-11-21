@@ -3,7 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import javax.imageio.ImageIO;
@@ -11,10 +10,11 @@ import a.pz.core;
 import a.pz.program;
 import b.threadedsock;
 import b.websock;
+import static b.b.*;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
 	private core co;
 	final protected void onopened()throws Throwable{
-		co=new core(16,8,8,32*1024,1*1024);
+		co=new core(16,8,8,32*K,1*K);
 		co.reset();
 		session().put(getClass().getName(),co);
 	}
@@ -25,31 +25,41 @@ final public class porta extends websock implements threadedsock{static final lo
 			co.ram[0x7fff]=key;
 		}else if(cmd==49){//compile
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
-			try{new program(new StringReader(src)).write_to(co.rom);}catch(final Throwable t){
-				final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+b.b.stacktrace(t)));
-				endpoint_recv(bbe,false);
+			try{new program(src).zap(co.rom);}catch(final Throwable t){
+//				final ByteBuffer bbe=ByteBuffer.wrap(tobytes("1"+stacktrace(t)));
+//				endpoint_recv(bbe,false);
+				send_binary("1"+stacktrace(t));
 				return;
 			}
 			co.reset();
-			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1ok"));
-			endpoint_recv(bbe,false);
+			send_binary("1ok");
 		}
-		final long t0=System.nanoTime();
+//		final long t0=System.nanoTime();
 		co.step_frame();
-		final long t1=System.nanoTime();
-//		b.b.pl("micro dt: "+(t1-t0)/1000);
-		final ByteArrayOutputStream baos=new ByteArrayOutputStream(32*1024);
-		snapshot_png_to(co.ram,256,128,baos);
-		final ByteBuffer[]bbpng=new ByteBuffer[]{ByteBuffer.wrap(new byte[]{0}),ByteBuffer.wrap(baos.toByteArray())};
-//		final long t1=System.currentTimeMillis();
+//		final long t1=System.nanoTime();
+//		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
+		final int wi=256,hi=128;
+//		final ByteArrayOutputStream baos=new ByteArrayOutputStream(wi*hi*bp);
+		final ByteBuffer png=ByteBuffer.wrap(snapshot_png(co.ram,wi,hi));
+//		final long t2=System.nanoTime();
+//		b.b.pl("snapshot micro dt: "+(t2-t1)/1000);
 		while(issending()){//?
-			b.b.pl(new Date()+"\t"+session().id()+"\tstaling");
-			try{Thread.sleep(20);}catch(final InterruptedException ignored){}
+			pl(new Date()+"\t"+session().id()+"\tstaling");
+			final long stall_ms=20;
+			try{Thread.sleep(stall_ms);}catch(final InterruptedException ignored){}
 		}
-		endpoint_recv(bbpng,false);
-//		final long t2=System.currentTimeMillis();
+		final ByteBuffer b0=ByteBuffer.wrap(new byte[]{0});
+		final ByteBuffer[]refresh_display=new ByteBuffer[]{b0,png};
+		send(refresh_display,false);
+//		final long t3=System.nanoTime();
+//		b.b.pl("send micro dt: "+(t3-t2)/1000);
 	}
-	
+	public static byte[]snapshot_png(final int[]bmp,final int wi,final int hi)throws IOException{
+		final int bytes_per_pixel=2;
+		final ByteArrayOutputStream baos=new ByteArrayOutputStream(wi*hi*bytes_per_pixel);
+		snapshot_png_to(bmp,wi,hi,baos);
+		return baos.toByteArray();
+	}
 	public static void snapshot_png_to(final int[]data,final int wi,final int hi,final OutputStream os)throws IOException{
 		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
 		int k=0;

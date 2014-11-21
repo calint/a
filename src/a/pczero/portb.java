@@ -17,11 +17,11 @@ final public class portb extends websock implements threadedsock{static final lo
 			v.x_c(null,null);
 		}catch(final Throwable t){
 			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes(b.b.stacktrace(t)));
-			endpoint_recv(bbe);
+			send(bbe);
 			return;
 		}
 		final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes(v.sts.toString()));
-		endpoint_recv(bbe);
+		send(bbe);
 		v.x_r(null,null);
 	}
 }

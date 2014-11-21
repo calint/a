@@ -27,11 +27,11 @@ final public class porta extends websock implements threadedsock{static final lo
 				v.x_c(null,null);
 			}catch(final Throwable t){
 				final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+b.b.stacktrace(t)));
-				endpoint_recv(bbe,false);
+				send(bbe,false);
 				return;
 			}
 			final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+v.sts.toString()));
-			endpoint_recv(bbe,false);
+			send(bbe,false);
 			v.x_r(null,null);
 		}
 //		System.out.println(bb.remaining()+"  "+key);
@@ -45,7 +45,7 @@ final public class porta extends websock implements threadedsock{static final lo
 			System.out.println(new Date()+"\t"+session().id()+"\tstaling");
 			try{Thread.sleep(20);}catch(final InterruptedException ignored){}
 		}
-		endpoint_recv(bbpng,false);
+		send(bbpng,false);
 		final long t2=System.currentTimeMillis();
 	}
 }
