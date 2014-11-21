@@ -1,16 +1,17 @@
 package a.pz.a;
+import static b.b.K;
+import static b.b.stacktraceline;
+import static b.b.strenc;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.Date;
 import javax.imageio.ImageIO;
 import a.pz.core;
 import a.pz.program;
 import b.threadedsock;
 import b.websock;
-import static b.b.*;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;
 	private core co;
 	final protected void onopened()throws Throwable{
