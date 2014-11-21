@@ -26,12 +26,13 @@ final public class porta extends websock implements threadedsock{static final lo
 			break;
 		case'1'://compile
 			final String src=tostr(bb);
-			try{new program(src).zap(co.rom);}catch(final Throwable t){
-				send_binary("1",stacktraceline(t));
-				return;
+			try{
+				new program(src).zap(co.rom);
+				co.reset();
+				send_binary("1");
+			}catch(final Throwable t){
+				send_binary("1",t.toString());
 			}
-			co.reset();
-//			send_binary("1ok");
 			break;
 		default:throw new Error();
 		}

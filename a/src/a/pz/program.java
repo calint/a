@@ -37,11 +37,11 @@ final public class program implements Serializable{
 			final int ch=r.read();
 			if(ch==-1)break;
 			r.unread(ch);
-			final stmt st=program.read_next_from(r);
+			final stmt st=program.read_next_statement_from(r);
 			s.add(st);
 		}
 	}
-	private static stmt read_next_from(final source_reader r)throws IOException{
+	private static stmt read_next_statement_from(final source_reader r)throws IOException{
 		String tk="";
 		while(true){
 			skip_whitespace(r);
@@ -61,8 +61,9 @@ final public class program implements Serializable{
 		final stmt s;
 		try{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
+			s.source_location=r.hrs_location();
 		}catch(Throwable t){
-			throw new Error(r+" instruction '"+tk+"' not found");
+			throw new rom_writer.error(r.hrs_location(),"unknown instruction '"+tk+"'");
 		}
 		if(!(s instanceof data)){
 			while(true){
@@ -89,6 +90,7 @@ final public class program implements Serializable{
 
 
 	public static class stmt implements Serializable{
+		public String source_location;
 		/**znxr*/public int znxr;
 		/**opcode*/public int op;
 		/**register a*/public int ra;
@@ -112,7 +114,7 @@ final public class program implements Serializable{
 		@Override public void write_to(rom_writer c){
 			super.write_to(c);
 			if(data.startsWith(":")){
-				c.add_link(data,"?");
+				c.add_link(data,source_location);
 				c.write(0);
 			}else{
 				c.write(Integer.parseInt(data,16));
@@ -188,7 +190,7 @@ final public class program implements Serializable{
 			to=next_token_in_line(r);
 		}
 		@Override public void write_to(rom_writer c){
-			c.add_link(to,"?");
+			c.add_link(to,source_location);
 			super.write_to(c);
 		}
 		private static final long serialVersionUID=1;
@@ -213,7 +215,7 @@ final public class program implements Serializable{
 			super(nm);
 		}
 		@Override public void write_to(rom_writer c){
-			c.add_label(txt,"?");
+			c.add_label(txt,source_location);
 		}
 		private static final long serialVersionUID=1;
 	}
