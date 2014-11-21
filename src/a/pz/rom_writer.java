@@ -40,7 +40,7 @@ final class rom_writer{
 			final rom_writer.label_link ll;
 			if(e.link_to.startsWith(":"))ll=labels.get(e.link_to.substring(1));
 			else ll=labels.get(e.link_to);
-			if(ll==null)throw new error(e.at_source_location,"label '"+e.link_to+"' not found");
+			if(ll==null)throw new program.error(e.at_source_location,"label '"+e.link_to+"' not found");
 			final int a=ll.at_binary_location;
 			final int d=ints[e.at_binary_location];
 			final int c;
@@ -51,11 +51,5 @@ final class rom_writer{
 			}
 			ints[e.at_binary_location]=c;
 		});
-	}
-	public static class error extends RuntimeException{
-		public String source_location;
-		public String message;
-		public error(String source_location,String message){this.source_location=source_location;this.message=message;}
-		@Override public String toString(){return "line "+source_location.split(":")[0]+": "+message;}
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -37,7 +38,7 @@ final public class program implements Serializable{
 			final int ch=r.read();
 			if(ch==-1)break;
 			r.unread(ch);
-			final stmt st=program.read_next_statement_from(r);
+			final stmt st=read_next_statement_from(r);
 			s.add(st);
 		}
 	}
@@ -62,8 +63,13 @@ final public class program implements Serializable{
 		try{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
 			s.source_location=r.hrs_location();
-		}catch(Throwable t){
-			throw new rom_writer.error(r.hrs_location(),"unknown instruction '"+tk+"'");
+		}catch(InvocationTargetException t){
+			if(t.getCause()instanceof program.error)throw (program.error)t.getCause();
+			throw new program.error(r.hrs_location(),t.getCause().toString());
+		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
+			throw new program.error(r.hrs_location(),t.toString());
+		}catch(ClassNotFoundException t){
+			throw new program.error(r.hrs_location(),"unknown instruction '"+tk+"'");
 		}
 		if(!(s instanceof data)){
 			while(true){
@@ -125,11 +131,19 @@ final public class program implements Serializable{
 	}
 	public static class inc extends stmt{
 		public inc(source_reader r)throws IOException{
-			super(opinc,0,ri(next_token_in_line(r)));
+			super(opinc,0,reg(r));
 		}
 		private static final long serialVersionUID=1;
 	}
+	final private static int reg(source_reader r)throws IOException{
+		final String s=next_token_in_line(r);
+		if(s==null)throw new program.error(r.hrs_location(),"expected register but found end of line");
+		final char first_char=s.charAt(0);
+		final int reg=first_char-'a';
+		return reg;
+	}
 	final private static int ri(String s){
+//		if(s==null)throw new error(source_location,message)
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
 		return reg;
@@ -242,6 +256,12 @@ final public class program implements Serializable{
 			super(opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
 		}
 		private static final long serialVersionUID=1;
+	}
+	public static class error extends RuntimeException{
+		public String source_location;
+		public String message;
+		public error(String source_location,String message){this.source_location=source_location;this.message=message;}
+		@Override public String toString(){return "line "+source_location.split(":")[0]+": "+message;}
 	}
 	private static void skip_whitespace(source_reader r)throws IOException{
 		while(true){
