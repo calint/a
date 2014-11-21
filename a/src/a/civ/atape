@@ -1,32 +1,43 @@
 paste~dim
 
 
-medusa~2x2
+medusa~4x2
 ./\.
 /--\
 
-medusa_l~2x2
+medusa_left~4x2
 ./\.
 /| \
 
-medusa_r~2x2
+medusa_right~4x2
 ./\.
 / |\
 
-medusa_rk~2x2
+medusa_right_kick~4x2
 ./\_
 / |\
 
-medusa_lk~2x2
+medusa_left_kick~4x2
 _/\.
 /| \
 
 mountain~2x1
 /\
 
-mountain~2x2
+mountain~4x2
  /\ 
 /  \
+
+mountain~6x3
+  /\  
+ /  \ 
+/    \
+
+mountain~8x4
+   /\   
+  /  \  
+ /    \ 
+/      \
 
 trace2~1x1
 .
