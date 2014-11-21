@@ -25,7 +25,7 @@ final public class o extends websock implements threadedsock{static final long s
 				System.out.println(new Date()+"\t"+session().id()+"\tstaling");
 				try{Thread.sleep(20);}catch(final InterruptedException ignored){}
 			}
-			endpoint_recv(bbpng,false);
+			send(bbpng,false);
 			final long t2=System.currentTimeMillis();
 		}
 	}

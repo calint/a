@@ -158,8 +158,12 @@ public class websock extends a implements sock{static final long serialVersionUI
 		return op.read;
 	}
 	final protected session session(){return session;}
-	final public void endpoint_recv(final ByteBuffer bb)throws Throwable{endpoint_recv(bb,true);}
-	final public void endpoint_recv(final ByteBuffer bb,final boolean textmode)throws Throwable{
+	final public void send_binary(final String s)throws Throwable{
+		final ByteBuffer bb=ByteBuffer.wrap(b.tobytes(s));
+		send(bb,false);
+	}
+	final public void send(final ByteBuffer bb)throws Throwable{send(bb,true);}
+	final public void send(final ByteBuffer bb,final boolean textmode)throws Throwable{
 //		if(bbos!=null)throw new Error("overwrite");//?
 		// rfc6455#section-5.2
 		// Base Framing Protocol
@@ -167,8 +171,9 @@ public class websock extends a implements sock{static final long serialVersionUI
 		bbos=new ByteBuffer[]{hdr(ndata,textmode),bb};
 		if(write()==op.write)so.reqwrite();
 	}
-	final public void endpoint_recv(final ByteBuffer[]bba)throws Throwable{endpoint_recv(bba,true);}
-	final public void endpoint_recv(final ByteBuffer[]bba,final boolean textmode)throws Throwable{
+
+	final public void send(final ByteBuffer[]bba)throws Throwable{send(bba,true);}
+	final public void send(final ByteBuffer[]bba,final boolean textmode)throws Throwable{
 //		if(bbos!=null)throw new Error("overwrite");//?
 		int ndata=0;
 		for(final ByteBuffer b:bba)ndata+=b.remaining();

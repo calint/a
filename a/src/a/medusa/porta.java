@@ -33,10 +33,10 @@ final public class porta extends websock implements threadedsock{static final lo
 		final SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss.sss");
 		final String msg=sdf.format(new Date(timestamp_ms))+"  dt "+String.format("%.3f",dt)+"s  players "+m.players_active_count()+"  frame "+m.tick;
 		final byte[]ba_msg=msg.getBytes();
-		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("1".getBytes()),ByteBuffer.wrap(ba_msg)},true);
+		send(new ByteBuffer[]{ByteBuffer.wrap("1".getBytes()),ByteBuffer.wrap(ba_msg)},true);
 		m.draw(scr,m);
 		scr.bb.rewind();
-		endpoint_recv(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),scr.bb},true);
+		send(new ByteBuffer[]{ByteBuffer.wrap("0".getBytes()),scr.bb},true);
 		if(medusa_loop_sleep_ms!=0)try{Thread.sleep(medusa_loop_sleep_ms);}catch(InterruptedException ignored){}
 	}
 	
