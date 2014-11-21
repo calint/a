@@ -100,15 +100,15 @@ final public class program implements Serializable{
 
 	public static class stmt implements Serializable{
 		public String source_location;
-		/**znxr*/public int znxr;
-		/**opcode*/public int op;
-		/**register a*/public int ra;
-		/**register b*/public int rd;
+		public int znxr;
+		/**opcode*/public int opcode;
+		public int reg_a;
+		public int rd_d;
 		public stmt(String txt){this.txt=txt;}
-		protected stmt(int op,int ra,int rd){this.op=op;this.ra=ra;this.rd=rd;}
-		protected stmt(int op,int ra,int rd,boolean flip_ra_rd){this.op=op;this.ra=rd;this.rd=ra;}
+		protected stmt(int op,int ra,int rd){this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
+		protected stmt(int op,int ra,int rd,boolean flip_ra_rd){this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
 		public void write_to(rom_writer c){
-			final int ir=znxr|op|((ra&15)<<8)|((rd&15)<<12);
+			final int ir=znxr|opcode|((reg_a&15)<<8)|((rd_d&15)<<12);
 			c.write(ir);
 		}
 		protected String txt;
