@@ -89,7 +89,7 @@ final public class program implements Serializable{
 		return s;
 	}
 	/**writes binary to param*/
-	final public void zap(int[]ints){
+	final public void zap(int[]ints){//? arraycopybinary
 		final rom_writer c=new rom_writer(ints);
 		s.forEach(e->{try{e.write_to(c);}catch(error ee){throw ee;}catch(Throwable t){throw new error(e.source_location,t.getMessage());}});
 		c.finish();

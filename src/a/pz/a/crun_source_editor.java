@@ -34,12 +34,10 @@ final public class crun_source_editor extends a{
 //		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 //	}
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
-		try{
-			final program p=new program(src.str());
-			ev(x,this,p);
-		}catch(Throwable t){
-			x.xalert(t.toString());
-		}
+		final program p;
+		try{p=new program(src.str());}catch(Throwable t){
+			x.xalert(t.toString());return;}
+		ev(x,this,p);
 	}
 	private static final long serialVersionUID=11;
 }
