@@ -763,13 +763,13 @@ public final class req{
 		final xwriter x=new xwriter(os);
 		if(!isbin){
 			os.write(ba_page_header_pre_title);
-			if(e instanceof a.titled){
-				((a.titled)e).title_to(x);
-			}else{
-				final String cn=e.getClass().getName();
-				x.p(cn.substring(cn.lastIndexOf('.')+1));
-			}
-			os.write(ba_page_header_after_title);
+//			if(e instanceof a.titled){
+//				((a.titled)e).title_to(x);
+//			}else{
+//				final String cn=e.getClass().getName();
+//				x.p(cn.substring(cn.lastIndexOf('.')+1));
+//			}
+//			os.write(ba_page_header_after_title);
 		}
 		try{e.to(x);}catch(final Throwable t){b.log(t);x.pre().p(b.stacktrace(t));}
 		os.finish();
@@ -977,8 +977,7 @@ public final class req{
 	private final static String s_minus="-";
 	private final static String s_range="range";
 	private final static String s_slash="/";
-	private static final byte[]ba_page_header_pre_title="<!doctype html><meta charset=utf-8><title>".getBytes();
-	private static final byte[]ba_page_header_after_title="</title><link rel=stylesheet href=/x.css><script src=/x.js></script>".getBytes();
+	private static final byte[]ba_page_header_pre_title="<!doctype html><meta charset=utf-8><link rel=stylesheet href=/x.css><script src=/x.js></script>".getBytes();
 	private final static int state_nextreq=0;
 	private final static int state_method=1;
 	private final static int state_uri=2;

@@ -114,7 +114,7 @@ public class a implements Serializable{
 	final public static String field_path_separator="-";
 	
 	/**implement to provide custom html document title*/
-	public interface titled{void title_to(xwriter x);}
+//	public interface titled{void title_to(xwriter x);}
 	final public Reader reader(){return new StringReader(s==null?"":s);}
 	
 	private static final long serialVersionUID=1;
