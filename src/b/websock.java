@@ -2,6 +2,7 @@ package b;
 import java.nio.*;
 import java.security.*;
 import java.util.*;
+import static b.b.*;
 public class websock extends a implements sock{static final long serialVersionUID=1;
 	private sockio so;
 	private ByteBuffer bbi;
@@ -173,6 +174,21 @@ public class websock extends a implements sock{static final long serialVersionUI
 	}
 
 	final public void send(final ByteBuffer[]bba)throws Throwable{send(bba,true);}
+	final public void send_binary(final ByteBuffer...bba)throws Throwable{
+		send(bba,false);
+	}
+	final public void send_binary(final byte[]...bb)throws Throwable{
+		final ByteBuffer[]bba=new ByteBuffer[bb.length];
+		int i=0;
+		for(byte[]ba:bb)bba[i++]=ByteBuffer.wrap(ba);
+		send(bba,false);
+	}
+	final public void send_binary(final String...sa)throws Throwable{
+		final ByteBuffer[]bba=new ByteBuffer[sa.length];
+		int i=0;
+		for(String s:sa)bba[i++]=ByteBuffer.wrap(tobytes(s));
+		send(bba,false);
+	}
 	final public void send(final ByteBuffer[]bba,final boolean textmode)throws Throwable{
 //		if(bbos!=null)throw new Error("overwrite");//?
 		int ndata=0;

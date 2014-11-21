@@ -49,10 +49,7 @@ final public class program implements Serializable{
 			if(!tk.startsWith("#"))break;
 			consume_rest_of_line(r);
 		}
-		if(tk.endsWith(":")){
-			b.b.pl("label["+tk);
-			return new label(tk.substring(0,tk.length()-1));
-		}
+		if(tk.endsWith(":"))return new label(tk.substring(0,tk.length()-1));
 		int znxr=0;
 		switch(tk){
 		case"ifz":{znxr=1;tk=next_token_in_line(r);break;}
