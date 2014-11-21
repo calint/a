@@ -19,39 +19,39 @@ final public class porta extends websock implements threadedsock{static final lo
 	public static String tostr(final ByteBuffer bb){try{return new String(bb.array(),bb.position(),bb.remaining(),strenc);}catch(Throwable t){throw new Error(t);}}
 	protected void onmessage(final ByteBuffer bb) throws Throwable{
 		switch(bb.get()){
-		case 0://keys
+		case'0'://keys
 			final byte key=bb.get();
 			co.ram[0x7fff]=key;
 	//		final long t0=System.nanoTime();
-			try{co.step_frame();}catch(Throwable t){send_binary("1",stacktrace(t));return;}
-	//		final long t1=System.nanoTime();
-	//		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
 			break;
-		case '1'://compile
+		case'1'://compile
 			final String src=tostr(bb);
 			try{new program(src).zap(co.rom);}catch(final Throwable t){
-				send_binary("1",stacktrace(t));
+				send_binary("1",stacktraceline(t));
 				return;
 			}
 			co.reset();
-			send_binary("1ok");
+//			send_binary("1ok");
 			break;
 		default:throw new Error();
 		}
+		try{co.step_frame();}catch(Throwable t){send_binary("2",stacktraceline(t));return;}
+//		final long t1=System.nanoTime();
+//		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
 		final int wi=256,hi=128;
 		final byte[]png=png_from_bitmap(co.ram,wi,hi);
 //		final long t2=System.nanoTime();
 //		b.b.pl("snapshot micro dt: "+(t2-t1)/1000);
-		while(issending()){//?
-			pl(new Date()+"\t"+session().id()+"\tstaling");
-			final long stall_ms=20;
-			try{Thread.sleep(stall_ms);}catch(final InterruptedException ignored){}
-		}
+//			while(issending()){//?
+//				pl(new Date()+"\t"+session().id()+"\tstaling");
+//				final long stall_ms=20;
+//				try{Thread.sleep(stall_ms);}catch(final InterruptedException ignored){}
+//			}
 		send_binary(refresh_display,png);
 //		final long t3=System.nanoTime();
 //		b.b.pl("send micro dt: "+(t3-t2)/1000);
 	}
-	private static final byte[]refresh_display=new byte[]{0};
+	private static final byte[]refresh_display=new byte[]{'0'};
 
 	public static byte[]png_from_bitmap(final int[]bmp,final int wi,final int hi)throws IOException{
 		final int bytes_per_pixel=2;
