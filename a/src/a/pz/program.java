@@ -268,12 +268,6 @@ final public class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class error extends RuntimeException{
-		public String source_location;
-		public String message;
-		public error(String source_location,String message){this.source_location=source_location;this.message=message;}
-		@Override public String toString(){return "line "+source_location.split(":")[0]+": "+message;}
-	}
 	private static void skip_whitespace(source_reader r)throws IOException{
 		while(true){
 			final int ch=r.read();
@@ -317,6 +311,15 @@ final public class program implements Serializable{
 		}
 		return sb.toString();
 	}
+	
+	public static class error extends RuntimeException{
+		public String source_location;
+		public String message;
+		public error(String source_location,String message){this.source_location=source_location;this.message=message;}
+		@Override public String toString(){return "line "+source_location.split(":")[0]+": "+message;}
+		private static final long serialVersionUID=1;
+	}
+
 	
 	private static final long serialVersionUID=1;
 }
