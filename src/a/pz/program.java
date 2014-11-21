@@ -30,8 +30,8 @@ final public class program implements Serializable{
 	final public static int   opwait=0x0058;
 	final public static int opnotify=0x0078;
 
-	public program(final String cs)throws IOException{this(new StringReader(cs));}
-	public program(final Reader rr)throws IOException{
+	public program(final String cs)throws IOException,error{this(new StringReader(cs));}
+	public program(final Reader rr)throws IOException,error{
 		final source_reader r=new source_reader(rr);
 		s=new ArrayList<>();
 		while(true){
@@ -42,7 +42,7 @@ final public class program implements Serializable{
 			s.add(st);
 		}
 	}
-	private static stmt read_next_statement_from(final source_reader r)throws IOException{
+	private static stmt read_next_statement_from(final source_reader r)throws IOException,error{
 		String tk="";
 		while(true){
 			skip_whitespace(r);
@@ -153,6 +153,18 @@ final public class program implements Serializable{
 		if(reg>15||reg<0)throw new error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
+	final private static int num(source_reader r,int bit_width)throws IOException{
+		final String s=next_token_in_line(r);
+		if(s==null)throw new program.error(r.hrs_location(),"expected number but found end of line");
+		try{
+			final int i=Integer.parseInt(s);
+			final int max=(1<<(bit_width-1))-1;
+			final int min=-1<<(bit_width-1);
+			if(i>max)throw new error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			if(i<min)throw new error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			return i;
+		}catch(NumberFormatException e){throw new error(r.hrs_location(),"can not translate number '"+s+"'");}
+	}
 	final private static int ri(String s){
 //		if(s==null)throw new error(source_location,message)
 		final char first_char=s.charAt(0);
@@ -198,7 +210,7 @@ final public class program implements Serializable{
 	}
 	public static class add extends stmt{
 		public add(source_reader r)throws IOException{
-			super(opadd,ri(next_token_in_line(r)),ri(next_token_in_line(r)));
+			super(opadd,reg(r),reg(r));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -264,7 +276,7 @@ final public class program implements Serializable{
 	}
 	public static class shf extends program.stmt{
 		public shf(source_reader r)throws IOException{
-			super(opshf,ri(next_token_in_line(r)),Integer.parseInt(next_token_in_line(r)),true);
+			super(opshf,reg(r),num(r,4),true);
 		}
 		private static final long serialVersionUID=1;
 	}
