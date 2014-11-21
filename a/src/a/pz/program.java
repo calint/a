@@ -125,13 +125,12 @@ final public class program implements Serializable{
 				c.add_link(data,source_location);
 				c.write(0);
 			}else{
+				final int bit_width=16;
 				final int i=Integer.parseInt(data,16);
-				if((i&0xffff)!=i&&(i&0xffff0000)!=0xffff0000)throw new error(source_location,"hex '"+data+"' int '"+i+"' is out of 16 bit range");
-//				if((i&0x0fff)!=i&&(i&0xfffff000)!=0xfffff000)throw new error(source_location,"hex '"+data+"' int '"+i+"' is out of 16 bit range");
-//				final int maxi=1<<15-1;
-//				final int mini=-1<<15;
-//				if(i>maxi||i<mini)
-//					throw new error(source_location,"integer '"+data+"' out of range "+mini+" through "+maxi);
+				final int max=(1<<(bit_width-1))-1;
+				final int min=-1<<(bit_width-1);
+				if(i>max)throw new error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
+				if(i<min)throw new error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
 				c.write(i);
 			}
 			
