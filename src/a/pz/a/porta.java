@@ -15,27 +15,29 @@ final public class porta extends websock implements threadedsock{static final lo
 	private core co;
 	final protected void onopened()throws Throwable{
 		co=new core(16,8,8,32*K,1*K);
-		co.reset();
-		session().put(getClass().getName(),co);
 	}
+	public static String tostr(final ByteBuffer bb){try{return new String(bb.array(),bb.position(),bb.remaining(),strenc);}catch(Throwable t){throw new Error(t);}}
 	protected void onmessage(final ByteBuffer bb) throws Throwable{
-		final byte cmd=bb.get();
-		if(cmd==0){//keys
+		switch(bb.get()){
+		case 0://keys
 			final byte key=bb.get();
 			co.ram[0x7fff]=key;
-		}else if(cmd==49){//compile
-			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
+	//		final long t0=System.nanoTime();
+			try{co.step_frame();}catch(Throwable t){send_binary("1",stacktrace(t));return;}
+	//		final long t1=System.nanoTime();
+	//		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
+			break;
+		case '1'://compile
+			final String src=tostr(bb);
 			try{new program(src).zap(co.rom);}catch(final Throwable t){
 				send_binary("1",stacktrace(t));
 				return;
 			}
 			co.reset();
 			send_binary("1ok");
+			break;
+		default:throw new Error();
 		}
-//		final long t0=System.nanoTime();
-		co.step_frame();
-//		final long t1=System.nanoTime();
-//		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
 		final int wi=256,hi=128;
 		final byte[]png=png_from_bitmap(co.ram,wi,hi);
 //		final long t2=System.nanoTime();
@@ -63,10 +65,10 @@ final public class porta extends websock implements threadedsock{static final lo
 		for(int i=0;i<hi;i++){
 			for(int j=0;j<wi;j++){
 				final int d=bmp[k++];
-				final int b= (d    &0xf)*0xf;
-				final int g=((d>>4)&0xf)*0xf;
-				final int r=((d>>8)&0xf)*0xf;
-//				final int a=(d>>12)&0xf;
+				final int b= (d     &0xf)*0xf;
+				final int g=((d>> 4)&0xf)*0xf;
+				final int r=((d>> 8)&0xf)*0xf;
+//				final int a=((d>>12)&0xf)*0xf;
 				final int a=0xff;
 				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
 				bi.setRGB(j,i,argb);
