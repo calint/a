@@ -238,7 +238,7 @@ function start(){
 			$.sts.value=str;
 			return;
 		}
-		console.log(keys);
+		//console.log(keys);
 		ws.send(keys);
 	};
 	ws.onerror=function(e){alert("websocket error "+e);};

@@ -15,7 +15,6 @@ final public class porta extends websock implements threadedsock{static final lo
 	private core co;
 	final protected void onopened()throws Throwable{
 		co=new core(16,8,8,32*1024,1*1024);
-//		new program(new source_reader(new InputStreamReader(getClass().getResourceAsStream("pz.src")))).write_to(co.rom);
 		co.reset();
 		session().put(getClass().getName(),co);
 	}
@@ -23,13 +22,10 @@ final public class porta extends websock implements threadedsock{static final lo
 		final byte cmd=bb.get();
 		if(cmd==0){//keys
 			final byte key=bb.get();
-			if(key!=0)b.b.pl("key "+key);
 			co.ram[0x7fff]=key;
 		}else if(cmd==49){//compile
 			final String src=new String(bb.array(),bb.position(),bb.remaining(),"utf8");
-			try{
-				new program(new StringReader(src)).write_to(co.rom);
-			}catch(final Throwable t){
+			try{new program(new StringReader(src)).write_to(co.rom);}catch(final Throwable t){
 				final ByteBuffer bbe=ByteBuffer.wrap(b.b.tobytes("1"+b.b.stacktrace(t)));
 				endpoint_recv(bbe,false);
 				return;
@@ -45,7 +41,7 @@ final public class porta extends websock implements threadedsock{static final lo
 		snapshot_png_to(co.ram,256,128,baos);
 		final ByteBuffer[]bbpng=new ByteBuffer[]{ByteBuffer.wrap(new byte[]{0}),ByteBuffer.wrap(baos.toByteArray())};
 //		final long t1=System.currentTimeMillis();
-		while(issending()){
+		while(issending()){//?
 			b.b.pl(new Date()+"\t"+session().id()+"\tstaling");
 			try{Thread.sleep(20);}catch(final InterruptedException ignored){}
 		}
