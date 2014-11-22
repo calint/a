@@ -15,7 +15,7 @@ public class $ extends a{
 		final String[] qs=qdec.toLowerCase().replace(';',' ').replace('&',' ').trim().split("\\?");
 		if(!(qs[0].length()==0))
 			q.set(qs[0]);
-		x.p("<pre>package “").inptxt(q,null,this,"upd").focus(q).p("” ");
+		x.p("<pre>package “").inptxt(q,this,"upd",null).focus(q).p("” ");
 		int i=qs.length>1?Integer.parseInt(qs[1]):0;
 		a[] wta=new a[]{files,requires,info};
 		for(int j=0;j<wta.length;j++){

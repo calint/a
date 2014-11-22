@@ -23,20 +23,20 @@ public class jfld extends a{static final long serialVersionUID=1;
 		}
 		final Class<?>type=f.getType();
 		if(type==String.class){
-			x.inptxt(this,"line",this,null,s);
+			x.inptxt(this,this,null,s,"line");
 		}else if(type==int.class){
-			x.inptxt(this,"line",this,null,s);
+			x.inptxt(this,this,null,s,"line");
 		}else if(type==long.class){
-			x.inptxt(this,"line",this,null,s);
+			x.inptxt(this,this,null,s,"line");
 		}else if(type==boolean.class){
-			x.inptxt(this,"line",this,null,s);
+			x.inptxt(this,this,null,s,"line");
 		}else if(type==Set.class){
 			@SuppressWarnings("unchecked")
 			final Set<String>set=(Set<String>)f.get(null);
 			final xwriter y=new xwriter();
 			for(String ss:set)
 				y.p(ss).p("; ");
-			x.inptxt(this,"line",this,null,y.toString());
+			x.inptxt(this,this,null,y.toString(),"line");
 		}else
 			x.p(s);
 	}

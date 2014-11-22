@@ -6,7 +6,7 @@ final public class clare extends a{
 	final public int ncores=4;
 	public clare()throws Throwable{
 		for(int i=0;i<ncores;i++)z.add(new acore());// ncores times z add new zn
-		z.stream().forEach(z->z.bi.set(acore.bit_panels));
+		z.stream().forEach(z->z.bi.set(acore.bit_show_panel));
 		z.rend_dut=false;
 	}
 	@Override public void to(xwriter x)throws Throwable{

@@ -135,7 +135,7 @@ public abstract class itm extends an implements $.labeled{
 					continue;
 				}
 				if(t==0){
-					x.inptxt(e,"ln",this,"sc");
+					x.inptxt(e,this,"sc","ln");
 					continue;
 				}
 				if(t==1){
@@ -152,7 +152,7 @@ public abstract class itm extends an implements $.labeled{
 					continue;
 				}
 				if(t==5){
-					x.inptxt(e,"nbr",this,"sc");
+					x.inptxt(e,this,"sc","nbr");
 					continue;
 				}
 			}

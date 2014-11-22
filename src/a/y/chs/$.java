@@ -99,7 +99,7 @@ public class $ extends a{
 		x.ax(this,"clr","::clear").p(" ");
 		x.ax(this,"rst","::reset").p(" ");
 		x.ax(this,"flp","::flip").br();
-		x.inptxt(movefld,"movefld",this,"mov");
+		x.inptxt(movefld,this,"mov","movefld");
 		x.focus(movefld);
 		x.ax(this,"mov","::move").p(" ");
 	}

@@ -34,7 +34,7 @@ public class wrds extends a{
 			p(x,k++);
 			x.nl();
 		}
-		x.nl().inptxt(input,null,this,null).nl();
+		x.nl().inptxt(input,this,null,null).nl();
 		x.divo("editor2").output_holder(output).div_();
 		x.script().xfocus(input);
 		x_(x,null);
