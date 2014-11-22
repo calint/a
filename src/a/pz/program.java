@@ -258,7 +258,7 @@ final public class program implements Serializable{
 		public String data;
 		public int value;
 		public li(source_reader r)throws IOException{
-			super(r,opli,0,r.reg());
+			super(r,opli,0,r.next_register_identifier());
 			data=r.next_token_in_line();
 			txt="li "+data;
 		}
@@ -293,7 +293,7 @@ final public class program implements Serializable{
 	}
 	public static class inc extends stmt{
 		public inc(source_reader r)throws IOException{
-			super(r,opinc,0,r.reg());
+			super(r,opinc,0,r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -327,7 +327,7 @@ final public class program implements Serializable{
 //	}
 	public static class st extends stmt{
 		public st(source_reader r)throws IOException{
-			super(r,opst,r.reg(),r.reg());
+			super(r,opst,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -354,25 +354,25 @@ final public class program implements Serializable{
 	}
 	public static class lp extends stmt{
 		public lp(source_reader r)throws IOException{
-			super(r,oplp,0,r.reg());
+			super(r,oplp,0,r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class stc extends stmt{
 		public stc(source_reader r)throws IOException{
-			super(r,opstc,r.reg(),r.reg());
+			super(r,opstc,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class add extends stmt{
 		public add(source_reader r)throws IOException{
-			super(r,opadd,r.reg(),r.reg());
+			super(r,opadd,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class sub extends stmt{
 		public sub(source_reader r)throws IOException{
-			super(r,opsub,r.reg(),r.reg());
+			super(r,opsub,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -428,25 +428,25 @@ final public class program implements Serializable{
 	}
 	public static class ld extends program.stmt{
 		public ld(source_reader r)throws IOException{
-			super(r,opld,r.reg(),r.reg(),true);
+			super(r,opld,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class ldc extends program.stmt{
 		public ldc(source_reader r)throws IOException{
-			super(r,opldc,r.reg(),r.reg(),true);
+			super(r,opldc,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class tx extends program.stmt{
 		public tx(source_reader r)throws IOException{
-			super(r,optx,r.reg(),r.reg(),true);
+			super(r,optx,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class shf extends program.stmt{
 		public shf(source_reader r)throws IOException{
-			super(r,opshf,r.reg(),r.num(4),true);
+			super(r,opshf,r.next_register_identifier(),r.next_int(4),true);
 		}
 		private static final long serialVersionUID=1;
 	}
