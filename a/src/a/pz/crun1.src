@@ -7,7 +7,7 @@ li a pos
 li b hi
 li c wi
 li d colr
-li p skp
+li e skp
 call draw
 ..
 typedef int
@@ -21,5 +21,5 @@ draw:
   lp b
     lp c
       stc a d nxt
-      add a p nxt ret
+      add a e nxt ret
 ..
