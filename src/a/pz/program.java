@@ -51,10 +51,14 @@ final public class program implements Serializable{
 			if(ss.bin!=null)pc+=ss.bin.length;
 		}
 		s.forEach(e->e.generate_code_pass_2(this));
-		disassemble_to(new xwriter(System.out));
 	}
 	public void disassemble_to(xwriter x){
 		s.forEach(e->x.pl(e.toString()));
+	}
+	public String toString(){
+		final xwriter x=new xwriter();
+		disassemble_to(x);
+		return x.toString();
 	}
 
 	final static public class define_const extends stmt{

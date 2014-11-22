@@ -34,6 +34,7 @@ final public class crun_source_editor extends a{
 //		brkpts.set(brkptsset.toString());
 //		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 //	}
+	public final static boolean ommit_compiling_source_from_disassembler=false;
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
 		final program p;
 		try{p=new program(src.str());}catch(Throwable t){
@@ -41,6 +42,14 @@ final public class crun_source_editor extends a{
 			x.xalert(t.toString());
 			return;
 		}
+		if(!ommit_compiling_source_from_disassembler){
+			try{new program(p.toString());}catch(Throwable t){
+				b.b.log(t);
+				x.xalert("reverse compilation failed: "+t.toString());
+				return;
+			}
+		}
+		//? compare-first-frame-ram-for-better-ok
 		ev(x,this,p);
 	}
 	private static final long serialVersionUID=11;
