@@ -2,7 +2,7 @@ package a.pz;
 import java.io.Serializable;
 final public class core implements Serializable{
 	public int id;
-	public boolean on,idle,waiting_for_notify,notify;
+//	public boolean on,idle,waiting_for_notify,notify;
 	public int program_counter,instruction_register,zn_flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]register,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	public long meter_instructions,meter_frames;
@@ -18,7 +18,7 @@ final public class core implements Serializable{
 	}
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public void reset(){
-		on=waiting_for_notify=notify=idle=false;
+//		on=waiting_for_notify=notify=idle=false;
 		zn_flags=program_counter=instruction_register=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
 		for(int i=0;i<register.length;i++)register[i]=0;
@@ -29,32 +29,32 @@ final public class core implements Serializable{
 		for(int i=0;i<rom.length;i++)ram[i]=rom[i];//?
 		if(rom!=null)instruction_register=rom[0];
 	}
-	public void reset_meters(){meter_instructions=meter_frames=0;}
-	public void calls_push(final int v){call_stack[call_stack_index++]=v;}
-	public boolean loops_loop_is_done(){return--loop_stack_counter[loop_stack_index-1]==0;}
-	public void loops_pop(){loop_stack_index--;}
-	public int loops_address(){return loop_stack_address[loop_stack_index-1];}
-	public int calls_pop(){return call_stack[--call_stack_index];}
-	public void loops_push(final int addr,final int counter){
+//	public void meters_reset(){meter_instructions=meter_frames=0;}
+	private void calls_push(final int v){call_stack[call_stack_index++]=v;}
+	private boolean loops_loop_is_done(){return--loop_stack_counter[loop_stack_index-1]==0;}
+	private void loops_pop(){loop_stack_index--;}
+	private int loops_address(){return loop_stack_address[loop_stack_index-1];}
+	private int calls_pop(){return call_stack[--call_stack_index];}
+	private void loops_push(final int addr,final int counter){
 		loop_stack_address[loop_stack_index]=addr;
 		loop_stack_counter[loop_stack_index]=counter;
 		loop_stack_index++;
 	}
-	public void step_frame(){
-		while(on){
-			step();
-			if(instruction_register==-1)return;
-		}
-	}
+//	public void step_frame(){
+//		while(on){
+//			step();
+//			if(instruction_register==-1)return;
+//		}
+//	}
 	public void step(){
-		if(waiting_for_notify){
-			if(notify){
-				synchronized(this){waiting_for_notify=notify=false;}
-				program_counter_set(program_counter+1);
-			}else{
-				return;
-			}
-		}
+//		if(waiting_for_notify){
+//			if(notify){
+//				synchronized(this){waiting_for_notify=notify=false;}
+//				program_counter_set(program_counter+1);
+//			}else{
+//				return;
+//			}
+//		}
 		meter_instructions++;
 //		if(pcr>=rom.size)throw new Error("program out of bounds");
 		if(loading_register!=-1){// load reg 2 instructions command
@@ -209,15 +209,15 @@ final public class core implements Serializable{
 				program_counter_set(program_counter+imm8);
 				program_counter_has_been_set=true;
 			}else if(op==2){// wait
-				if(!waiting_for_notify){// first time
-					synchronized(this){// atomic wait mode
-						waiting_for_notify=true;
-						notify=false;
-					}
-					return;
-				}
-				// after notify
-				synchronized(this){waiting_for_notify=notify=false;}
+//				if(!waiting_for_notify){// first time
+//					synchronized(this){// atomic wait mode
+//						waiting_for_notify=true;
+//						notify=false;
+//					}
+//					return;
+//				}
+//				// after notify
+//				synchronized(this){waiting_for_notify=notify=false;}
 			}else if(op==3){// notify
 				final int imm4=(instruction_register>>12);
 				b.b.pl("notify "+imm4);
