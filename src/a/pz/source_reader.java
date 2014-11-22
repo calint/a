@@ -76,4 +76,20 @@ final class source_reader extends Reader{
 	private PushbackReader source;
 	private final static int newline='\n';
 	public int line_number=1,character_number_in_line;
+	public void skip_whitespace()throws IOException{
+		while(true){
+			final int ch=read();
+			if(Character.isWhitespace(ch))continue;
+			if(ch==-1)return;
+			unread(ch);
+			return;
+		}
+	}
+	public String next_identifier()throws IOException{
+		final String id=next_token_in_line();
+		if(id.length()==0)throw new program.compiler_error(hrs_location(),"expected identifier but got end of line");
+		if(id.length()==0)throw new program.compiler_error(hrs_location(),"identifier is empty");
+		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
+		return id;
+	}
 }

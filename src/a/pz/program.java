@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import com.amazonaws.services.cloudsearchv2.model.DefineSuggesterRequest;
 
 final public class program implements Serializable{
 	final public static int     opli=0x0000;
@@ -60,8 +59,8 @@ final public class program implements Serializable{
 	private stmt read_next_statement_from(final source_reader r)throws IOException,compiler_error{
 		String tk="";
 		while(true){
-			skip_whitespace(r);
-			tk=next_token_in_line(r);
+			r.skip_whitespace();
+			tk=r.next_token_in_line();
 			if(tk.equals("#define")){
 				final pound_define s=new pound_define(r);
 				defines.put(s.def,s);
@@ -79,6 +78,7 @@ final public class program implements Serializable{
 		}
 		if(tk.equals(".."))tk="eof";
 		if(tk.equals("."))tk="data_span";
+		if(tk.equals("int"))tk="data_int";
 		final stmt s;
 		try{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
@@ -95,7 +95,7 @@ final public class program implements Serializable{
 		}
 		if(!(s instanceof data_span)){
 			while(true){
-				final String t=next_token_in_line(r);
+				final String t=r.next_token_in_line();
 				if(t==null)break;
 				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
 				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
@@ -112,7 +112,18 @@ final public class program implements Serializable{
 	final public void zap(int[]rom){//? arraycopybinary
 		for(int i=0;i<rom.length;i++)rom[i]=-1;
 		final linker c=new linker(this,rom);
-		s.forEach(e->{try{e.write_to(c);}catch(compiler_error ee){throw ee;}catch(Throwable t){throw new compiler_error(e.source_location,t.getMessage());}});
+		s.forEach(e->{
+			try{
+				e.write_to(c);
+			}catch(compiler_error ee){
+				throw ee;
+//			}catch(InvocationTargetException ite){
+//				throw new compiler_error(e.source_location,ite.getCause().getMessage());
+			}catch(NumberFormatException t){
+				throw new compiler_error(e.source_location,t.getMessage());
+			}catch(Throwable t){
+				throw new compiler_error(e.source_location,t.getMessage());}
+			});
 		c.finish();
 	}
 	private List<stmt>s;
@@ -140,7 +151,7 @@ final public class program implements Serializable{
 		private String data;
 		public li(source_reader r)throws IOException{
 			super(opli,0,reg(r));
-			data=next_token_in_line(r);
+			data=r.next_token_in_line();
 		}
 		public boolean is_integer(){
 			try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}
@@ -151,8 +162,8 @@ final public class program implements Serializable{
 			if(def!=null){
 				data=def.val;
 			}
-			if(data.startsWith(":")){
-				c.add_link(data,source_location);
+			if(data.startsWith("&")){
+				c.add_link(data.substring(1),source_location);
 				c.write(0);
 			}else{
 				final int bit_width=16;
@@ -174,7 +185,7 @@ final public class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final private static int reg(source_reader r)throws IOException{
-		final String s=next_token_in_line(r);
+		final String s=r.next_token_in_line();
 		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected register but found end of line");
 		if(s.length()!=1)throw new compiler_error(r.hrs_location(),"register name unknown '"+s+"'");
 		final char first_char=s.charAt(0);
@@ -185,7 +196,7 @@ final public class program implements Serializable{
 		return reg;
 	}
 	final private static int num(source_reader r,int bit_width)throws IOException{
-		final String s=next_token_in_line(r);
+		final String s=r.next_token_in_line();
 		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected number but found end of line");
 		try{
 			final int i=Integer.parseInt(s);
@@ -254,7 +265,7 @@ final public class program implements Serializable{
 		String to;
 		public call(source_reader r)throws IOException{
 			super(opcall,0,0);
-			to=next_token_in_line(r);
+			to=r.next_token_in_line();
 		}
 		@Override public void write_to(linker c){
 			c.add_link(to,source_location);
@@ -310,15 +321,34 @@ final public class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	private static void skip_whitespace(source_reader r)throws IOException{
-		while(true){
-			final int ch=r.read();
-			if(Character.isWhitespace(ch))continue;
-			if(ch==-1)return;
-			r.unread(ch);
-			return;
+	
+	
+	public static class data_int extends stmt{
+		public String identifier;
+		public String default_value;
+		public data_int(source_reader r)throws IOException{
+			identifier=r.next_identifier();
+			default_value=r.next_token_in_line();
+			if(default_value==null)default_value="0";
+			txt="int "+identifier+" "+default_value;
 		}
+		@Override public void write_to(linker c){
+			final int d=Integer.parseInt(default_value,16);
+			c.add_label(identifier,source_location);
+			c.write(d);
+		}
+		private static final long serialVersionUID=1;
 	}
+	
+//	private static void skip_whitespace(source_reader r)throws IOException{
+//		while(true){
+//			final int ch=r.read();
+//			if(Character.isWhitespace(ch))continue;
+//			if(ch==-1)return;
+//			r.unread(ch);
+//			return;
+//		}
+//	}
 	private static void skip_whitespace_on_same_line(source_reader r)throws IOException{
 		while(true){
 			final int ch=r.read();
@@ -329,20 +359,20 @@ final public class program implements Serializable{
 			return;
 		}
 	}
-	private static String next_token_in_line(source_reader r)throws IOException{
-		skip_whitespace_on_same_line(r);
-		final StringBuilder sb=new StringBuilder();
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)break;
-			if(ch=='\n'){r.unread(ch);break;}
-			if(Character.isWhitespace(ch))break;
-			sb.append((char)ch);
-		}
-		skip_whitespace_on_same_line(r);
-		if(sb.length()==0)return null;
-		return sb.toString();
-	}
+//	private static String next_token_in_line(source_reader r)throws IOException{
+//		skip_whitespace_on_same_line(r);
+//		final StringBuilder sb=new StringBuilder();
+//		while(true){
+//			final int ch=r.read();
+//			if(ch==-1)break;
+//			if(ch=='\n'){r.unread(ch);break;}
+//			if(Character.isWhitespace(ch))break;
+//			sb.append((char)ch);
+//		}
+//		skip_whitespace_on_same_line(r);
+//		if(sb.length()==0)return null;
+//		return sb.toString();
+//	}
 	private static String consume_rest_of_line(source_reader r)throws IOException{
 		final StringBuilder sb=new StringBuilder();
 		while(true){
@@ -357,7 +387,11 @@ final public class program implements Serializable{
 	public static class compiler_error extends RuntimeException{
 		public String source_location;
 		public String message;
-		public compiler_error(String source_location,String message){this.source_location=source_location;this.message=message;}
+		public compiler_error(String source_location,String message){
+			super(source_location+" "+message);
+			this.source_location=source_location;
+			this.message=message;
+		}
 		@Override public String toString(){return "line "+source_location.split(":")[0]+": "+message;}
 		private static final long serialVersionUID=1;
 	}
