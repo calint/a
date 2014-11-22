@@ -66,7 +66,7 @@ final public class acore extends a{
 				.css(".textleft","text-align:left")
 				.css(".floatclear","clear:both")
 				.css(".panel","padding-left:.5em;padding-right:.5em")
-				.css(".stp","background-color:#020")
+				.css(".stp","background-color:#ee0")
 				.css(".brk","background-color:#060")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
@@ -174,8 +174,8 @@ final public class acore extends a{
 	}
 	private void xfocusline(xwriter x){
 		if(!hasbit(bit_rom))return;
-		ro.focusline=cor.program_counter;
-		ro.xfocusline(x);
+		ro.focus_on_binary_location=cor.program_counter;
+		ro.xfocus(x);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
@@ -198,7 +198,7 @@ final public class acore extends a{
 		st.set(y.toString());
 		if(x==null)return;
 		x.xu(st).xu(re).xu(ca).xu(lo);
-		ro.xfocusline(x);
+		ro.xfocus(x);
 		x.flush();
 		if(hasbit(bit_display))ra.xupd(x);
 	}
