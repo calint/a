@@ -267,7 +267,9 @@ final public class program implements Serializable{
 				if(l==null)throw new compiler_error(this,"label not found",nm);
 				value=l.location_in_binary;
 			}else{
-				value=Integer.parseInt(data,16);
+				try{value=Integer.parseInt(data,16);}catch(NumberFormatException e){
+					throw new compiler_error(this,"cannot parse number '"+data+"'");
+				}
 			}
 			final int bit_width=16;
 //			final int i=Integer.parseInt(data,16);
