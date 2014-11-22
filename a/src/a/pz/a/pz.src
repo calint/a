@@ -4,11 +4,32 @@
 #define skp c0
 #define colr 800
 li a pos
+add a p
+inc p
 li b hi
 li c wi
 li d colr
 li e skp
 call draw
+
+li a pos
+call drawdots
+..
+..
+dots:
+. 2
+. 0800 ffff
+. 1004 ffff
+..
+drawdots:
+// scr a
+  li b &dots
+  ldc c b
+  lp c
+    ldc d b
+    ldc e b 
+    add d a
+    st d e nxt ret
 ..
 typedef int
 int r f00
