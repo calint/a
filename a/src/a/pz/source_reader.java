@@ -118,4 +118,16 @@ final class source_reader extends Reader{
 		if(reg>max||reg<min)throw new compiler_error(hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
+	public int num(int bit_width)throws IOException{
+		final String s=next_token_in_line();
+		if(s==null)throw new program.compiler_error(hrs_location(),"expected number but found end of line");
+		try{
+			final int i=Integer.parseInt(s);
+			final int max=(1<<(bit_width-1))-1;
+			final int min=-1<<(bit_width-1);
+			if(i>max)throw new compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			if(i<min)throw new compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			return i;
+		}catch(NumberFormatException e){throw new compiler_error(hrs_location(),"can not translate number '"+s+"'");}
+	}
 }

@@ -268,18 +268,18 @@ final public class program implements Serializable{
 //		if(reg>max||reg<min)throw new compiler_error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 //		return reg;
 //	}
-	final private static int num(source_reader r,int bit_width)throws IOException{
-		final String s=r.next_token_in_line();
-		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected number but found end of line");
-		try{
-			final int i=Integer.parseInt(s);
-			final int max=(1<<(bit_width-1))-1;
-			final int min=-1<<(bit_width-1);
-			if(i>max)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
-			if(i<min)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
-			return i;
-		}catch(NumberFormatException e){throw new compiler_error(r.hrs_location(),"can not translate number '"+s+"'");}
-	}
+//	final private static int num(source_reader r,int bit_width)throws IOException{
+//		final String s=r.next_token_in_line();
+//		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected number but found end of line");
+//		try{
+//			final int i=Integer.parseInt(s);
+//			final int max=(1<<(bit_width-1))-1;
+//			final int min=-1<<(bit_width-1);
+//			if(i>max)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+//			if(i<min)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+//			return i;
+//		}catch(NumberFormatException e){throw new compiler_error(r.hrs_location(),"can not translate number '"+s+"'");}
+//	}
 //	final private static int ri(String s){
 //		final char first_char=s.charAt(0);
 //		final int reg=first_char-'a';
@@ -393,7 +393,7 @@ final public class program implements Serializable{
 	}
 	public static class shf extends program.stmt{
 		public shf(source_reader r)throws IOException{
-			super(r,opshf,r.reg(),num(r,4),true);
+			super(r,opshf,r.reg(),r.num(4),true);
 		}
 		private static final long serialVersionUID=1;
 	}
