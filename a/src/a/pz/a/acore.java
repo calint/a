@@ -29,7 +29,7 @@ final public class acore extends a{
 	public final static int bit_edasm=256;
 	public final static int bit_edcrn=512;
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
-	public metrics me;
+//	public metrics me;
 	
 	public acore()throws Throwable{
 		ec.src.from(cor.getClass().getResourceAsStream("rom.src"));
@@ -139,6 +139,7 @@ final public class acore extends a{
 	synchronized public void x_(xwriter x,String s)throws Throwable{x.xuo(this);}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
 		cor.reset();
+		cor.meter_frames=cor.meter_instructions=0;
 //		c.copy_rom_to_ram();
 		if(x==null)return;
 		xfocusline(x);
@@ -174,32 +175,28 @@ final public class acore extends a{
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
-		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
+		if(x!=null)x.xu(st.set("benching "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
-		final long minstr=me.instr;
-		final long mframes=me.frames;
+		cor.meter_instructions=0;
+		cor.meter_frames=0;
 		long dt=0;
 		while(true){
 			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(cor.instruction_register==-1)
-				ev(null,this);//refresh display
-			if(dt>runms)
-				break;
+			if(cor.instruction_register==-1)ev(null,this);//refresh display
+			if(dt>runms)break;
 		}
-		final long dminstr=me.instr-minstr;
-		final long dmframes=me.frames-mframes;
 		if(dt==0)dt=1;
-		st.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
+		final xwriter y=new xwriter();
+		y.p_data_size(cor.meter_instructions*1000/dt).p(" ips ")
+			.p_data_size(cor.meter_frames*1000/dt).p(" fps");
+		st.set(y.toString());
 		if(x==null)return;
 		x.xu(st).xu(re).xu(ca).xu(lo);
 		ro.xfocusline(x);
 		x.flush();
-		final int b=bi.toint();
-		if((b&1)==1){
-			ra.xupd(x);
-		}
+		if(hasbit(bit_display))ra.xupd(x);
 	}
 	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
@@ -237,7 +234,7 @@ final public class acore extends a{
 			}
 			final long dt=(System.nanoTime()-t0)/1000;
 			final long dinstr=cor.meter_instructions;
-			st.set("#"+cor.meter_frames+"  "+strdatasize3((int)dinstr)+"i  "+dt+" us");
+			st.set("#"+cor.meter_frames+" "+strdatasize3((int)dinstr)+" "+dt+" us");
 		}catch(Throwable t){
 			st.set(b.b.stacktrace(t));
 		}
@@ -356,17 +353,17 @@ final public class acore extends a{
 		final long megs=(x>>20);
 		if(megs>0){
 			x-=(megs<<20);
-			sb.append(megs).append(" m");
+			sb.append(megs).append("m");
 			return sb.toString();
 		}
 		final long kilos=(x>>10);
 		if(kilos>0){
 			x-=(kilos<<10);
-			sb.append(kilos).append(" k");
+			sb.append(kilos).append("k");
 			return sb.toString();
 		}
 		if(x>0){
-			sb.append(x).append(" ");
+			sb.append(x);
 		}
 		return sb.toString();
 	}

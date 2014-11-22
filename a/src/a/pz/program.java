@@ -65,14 +65,14 @@ final public class program implements Serializable{
 		public String name,type,value;
 		public define_const(final reader r)throws IOException{
 			super(r);
-			type=r.next_token_in_line();
-			final define_typedef t=r.p.typedefs.get(type);
 			name=r.next_token_in_line();
 			final define_const d=r.p.defines.get(name);
 			if(d!=null)throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
+			type=r.next_token_in_line();
+			final define_typedef t=r.p.typedefs.get(type);
 			if(t==null)throw new compiler_error(this,"type not found",type);
 			value=r.next_token_in_line();
-			txt="const "+type+" "+name+" "+value;
+			txt="const "+name+" "+type+" "+value;
 		}
 		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
