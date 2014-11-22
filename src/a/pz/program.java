@@ -147,9 +147,10 @@ final public class program implements Serializable{
 				structs.put(s.name,s);
 				return s;
 			}
-			if(tk.endsWith(":")){
-				final define_label s=new define_label(r,tk.substring(0,tk.length()-1));
+			if(tk.startsWith(":")){
+				final define_label s=new define_label(r,tk.substring(1));
 				labels.put(s.name,s);
+				r.consume_line();
 				return s;
 			}
 			final define_typedef td=typedefs.get(tk);

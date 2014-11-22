@@ -17,20 +17,22 @@ li a pos
 call drawdots
 ..
 ..
-dots:
+:dots
 . 2
 . 0800 ffff
 . 1004 ffff
 ..
-drawdots:
-// scr a
+
+:drawdots a
   li b &dots
   ldc c b
   lp c
     ldc d b
-    ldc e b 
+    ldc e b
     add d a
-    st d e nxt ret
+//bug    st d e nxt ret
+    st d e nxt 
+  ret
 ..
 int r f00
 int g 0f0
@@ -38,7 +40,7 @@ int b 00f
 li c 10
 li a 400
 ..
-draw:
+:draw
   lp b
     lp c
       stc a d nxt
