@@ -49,12 +49,12 @@ li a 400
       add a e nxt ret
 ..
 
-//:sprite medusa 4 4
+//.sprite medusa 4 4
 //./\.
 ///--\
-//:sprite medusa_right 4 4
+//.sprite medusa_right 4 4
 //./\.
 /// |\
-//:sprite medusa_left 4 4
+//.sprite medusa_left 4 4
 //./\.
 ///| \
