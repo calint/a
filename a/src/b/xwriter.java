@@ -270,7 +270,10 @@ public final class xwriter{
 	private final OutputStream os;
 	private static String encquot(final String text){if(text==null)return"";return text.replaceAll("\"","&quot;");}
 	public xwriter spaned(final a e){
-		tago("span").attrdef(e).attr("contenteditable").p(" onkeydown=\"$b(this)\" spellcheck=false").tagoe();
+		tago("span").attrdef(e).attr("contenteditable").p(" onkeydown=\"$b(this)\" spellcheck=false");
+//		p(" oncopy=\"var e=event;e.preventDefault();var r=window.getSelection();e.clipboardData.setData('text/plain',r);\"");
+		p(" onpaste=\"var e=event;e.preventDefault();var t=e.clipboardData.getData('text/plain');document.execCommand('inserttext',false,t);\"");
+		tagoe();
 		try{e.to(new osltgt(os));}catch(Throwable t){throw new Error(t);}
 		return span_();
 	}

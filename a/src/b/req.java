@@ -737,13 +737,10 @@ public final class req{
 				os.finish();
 				return;
 			}
-			try{e.getClass().getMethod("x_"+axfunc,xwriter.class,String.class).invoke(e,x,axarg);
-			}catch(final InvocationTargetException t){
+			try{e.getClass().getMethod("x_"+axfunc,xwriter.class,String.class).invoke(e,x,axarg);}
+			catch(final InvocationTargetException t){
 				b.log(t);
-//				final String str=b.stacktraceline(t.getTargetException());
-				final String str=t.getTargetException().getMessage();
-				b.log(t);
-				x.xalert(b.isempty(str,t.toString()));
+				x.xalert(b.isempty(t.getTargetException().getMessage(),t.toString()));
 			}catch(NoSuchMethodException t){
 				x.xalert("method not found:\n"+e.getClass().getName()+".x_"+axfunc+"(xwriter,String)");
 			}

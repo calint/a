@@ -35,7 +35,8 @@ final public class crun_source_editor extends a{
 //	}
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
 		final program p;
-		try{p=new program(src.str());}catch(Throwable t){
+		try{p=new program(src.str().replaceAll("&amp;","&"));}catch(Throwable t){
+//		try{p=new program(src.str().replaceAll("&amp;","&"));}catch(Throwable t){
 			x.xalert(t.toString());return;}
 		ev(x,this,p);
 	}

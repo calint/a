@@ -1,15 +1,16 @@
 #define line_width 100
 #define scr_addr 0400 // yyxx
+#define lines_to_clear 30
 
-// clr(400,100,70,f00,080+p)
+//clr(400,100,70,f00,080+p)
 li m line_width
 li a scr_addr
 
-// if(++nlines>30h)nlines=1
-li f :nlines
+// if(++*nlines>30h)*nlines=1
+li f &nlines
 ld c f
 inc c
-li n 30
+li n lines_to_clear
 sub n c
 ifn li c 1
 st f c
@@ -21,23 +22,23 @@ call clr
 
 // drwrects(400,100,rects)
 //li m 100     // line width
-li a 400     // yyxx
-li b :rects  // list
+li a scr_addr     // yyxx
+li b &rects  // list
 call drwrects
 
 // drwblits(400,blits)
-li a 400     // yyxx
-li k :blits  // list
+li a scr_addr  // yyxx
+li k &blits  // list
 call drwblits
 
 // typewriter(400,txt)
-li a 400     // yyxx
-li b :txt    // list
+li a scr_addr
+li b &txt    // list
 call typewriter
 
 // drwdots(400,dots)
-li a 400     // yyxx
-li f :dots   // list
+li a scr_addr
+li f &dots   // list
 call drwdots
 
 // *300=p++
@@ -46,7 +47,7 @@ li a 300
 st a p
 
 // c=*b=blits++
-li b :blits
+li b &blits
 inc b
 ld c b
 // e=*7ffff
@@ -61,9 +62,6 @@ ifz sub c d
 // *b=c
 st b c
 ..
-nlines:
-. 30
-
 // clr(scr a,linewi m,height c,rgb d)
 //  a,d
 clr:
@@ -155,11 +153,17 @@ lp j
     add a e nxt
   nxt ret
 ..
+
+
+
+
+int nlines 30
+
 dots:
 . 1
 // yyxx  rgb
 . 0100 0f00 
-..
+
 rects:
 . 5
 // yyxx  rgb  wi   hi 
@@ -168,7 +172,7 @@ rects:
 . 0400 0eee 0008 0008
 . 1000 0ddd 0008 0008
 . 100c 0ccc 0008 0008
-..
+
 blits:
 . 10
 // yyxx from  wi   hi
