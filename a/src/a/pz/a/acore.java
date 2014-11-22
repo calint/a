@@ -292,18 +292,18 @@ final public class acore extends a{
 	}
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
-		x.pl(":  ifz : ...1 : ifz op               :");
-		x.pl(":  ifn : ...2 : ifn op               :");
-		x.pl(":  ifp : ...3 : ifp op               :");
-		x.pl(":  nxt : ...4 : op nxt               :");
-		x.pl(":  ret : ...8 : op ret               :");
-		x.pl(":      : ...c : op nxt ret           :");
+		x.pl(":  ifz : ...1 : ifz ...              :");
+		x.pl(":  ifn : ...2 : ifn ...              :");
+		x.pl(":  ifp : ...3 : ifp ...              :");
+		x.pl(":  nxt : ...4 :     ... nxt          :");
+		x.pl(":  ret : ...8 :     ... ret          :");
+		x.pl(":      : ...d : ifz ... nxt ret      :");
 		x.pl(":   li : "+fld("x000",Integer.toHexString(program.opli))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("ii00",Integer.toHexString(program.opcall))+" : imm6                 :");
 		x.pl(":  skp : "+fld("ii00",Integer.toHexString(program.opskp))+" : pc+=imm6             :");
 		x.pl(":  stc : "+fld("yx00",Integer.toHexString(program.opstc))+" : ram[x++]=y           :");
 		x.pl(":   st : "+fld("yx00",Integer.toHexString(program.opst))+" : ram[x]=y             :");
- 		x.pl(":   lp : "+fld("x000",Integer.toHexString(program.oplp))+" : loop x               :");
+ 		x.pl(":   lp : "+fld("x000",Integer.toHexString(program.oplp))+" : loop r[x] times      :");
 		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(program.opldc))+" : y=ram[x++]           :");
 		x.pl(":   ld : "+fld("yx00",Integer.toHexString(program.opld))+" : y=ram[x]             :");
 		x.pl(":  shf : "+fld("xi00",Integer.toHexString(program.opshf))+" : r[x]>>=i             :");
@@ -315,12 +315,12 @@ final public class acore extends a{
 		x.pl(":   tx : "+fld("yx00",Integer.toHexString(program.optx))+" : r[y]=r[x]            :");
 //		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
 		x.pl(":  sub : "+fld("xy00",Integer.toHexString(program.opsub))+" : r[y]-=r[x]           :");
-		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : sound.add block r[x] :");
+		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : dac=r[x]             :");
+		x.pl(":  eof : ffff : end-of-frame         :");
 		x.pl(":------:------:----------------------:");
 		x.pl(":      : ..18 : cr invalids          :");
 		x.pl(": wait : "+fld("x000",Integer.toHexString(program.opwait))+" : wait                 :");
 		x.pl(":notify: "+fld("x000",Integer.toHexString(program.opnotify))+" : notify               :");
-		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
 	}
 	
