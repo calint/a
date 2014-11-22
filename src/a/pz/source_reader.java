@@ -3,6 +3,7 @@ package a.pz;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import a.pz.program.compiler_error;
 
 final class source_reader extends Reader{
 	public source_reader(final Reader source){
@@ -94,10 +95,10 @@ final class source_reader extends Reader{
 	}
 	public String next_type_identifier()throws IOException{
 		final String id=next_token_in_line();
-		if(id==null)throw new program.compiler_error(hrs_location(),"expected type identifier but got end of line");
-		if(id.length()==0)throw new program.compiler_error(hrs_location(),"type identifier is empty");
+		if(id==null)throw new compiler_error(hrs_location(),"expected type identifier but got end of line");
+		if(id.length()==0)throw new compiler_error(hrs_location(),"type identifier is empty");
 		//is_valid_type_identifier
-		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
+		if(Character.isDigit(id.charAt(0)))	throw new compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
 		return id;
 	}
 	public boolean is_at_end_of_line()throws IOException{
@@ -105,5 +106,16 @@ final class source_reader extends Reader{
 		unread(ch);
 		if(ch=='\n')return true;
 		return false;
+	}
+	public int reg()throws IOException{
+		final String s=next_token_in_line();
+		if(s==null)throw new compiler_error(hrs_location(),"expected register but found end of line");
+		if(s.length()!=1)throw new compiler_error(hrs_location(),"register name unknown '"+s+"'");
+		final char first_char=s.charAt(0);
+		final int reg=first_char-'a';
+		final int max=(1<<4)-1;//? magicnumber
+		final int min=0;
+		if(reg>max||reg<min)throw new compiler_error(hrs_location(),"register '"+s+"' out range 'a' through 'p'");
+		return reg;
 	}
 }
