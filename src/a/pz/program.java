@@ -51,7 +51,12 @@ final public class program implements Serializable{
 			if(ss.bin!=null)pc+=ss.bin.length;
 		}
 		s.forEach(e->e.generate_code_pass_2(this));
+		disassemble_to(new xwriter(System.out));
 	}
+	public void disassemble_to(xwriter x){
+		s.forEach(e->x.pl(e.toString()));
+	}
+
 	final static public class define_const extends stmt{
 		public String name,type,value;
 		public define_const(final reader r)throws IOException{
@@ -79,7 +84,7 @@ final public class program implements Serializable{
 				vars.add(t);
 			}
 			if(vars.isEmpty())throw new compiler_error(this,"expected list of registers after 'var' statement");
-			final xwriter x=new xwriter();
+			final xwriter x=new xwriter().p("var").spc();
 			vars.forEach(e->x.spc().p(e));
 			txt=x.toString();
 		}
@@ -101,7 +106,7 @@ final public class program implements Serializable{
 				fields.add(f);
 			}
 			final xwriter x=new xwriter();
-			x.p("class").spc().p(name);
+			x.p("struct").spc().p(name);
 			fields.forEach(f->x.spc().p(f.toString()));
 			txt=x.toString();
 		}
@@ -266,16 +271,35 @@ final public class program implements Serializable{
 		public int location_in_binary;
 		public int znxr;
 		/**opcode*/public int opcode;
-		public int reg_a;
-		public int rd_d;
+		public int rai;
+		public int rdi;
 		public stmt(final reader r){location_in_source=r.hrs_location();}
-		protected stmt(final reader r,final int op,final int ra,final int rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
-		protected stmt(final reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
+		protected stmt(final reader r,final int op,final int ra,final int rd){
+			location_in_source=r.hrs_location();
+			this.opcode=op;
+			this.rai=ra;
+			this.rdi=rd;
+		}
+		protected stmt(final reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
+			this(r,op,rd,ra);
+		}
 		protected void validate_references_to_labels(program p){}
 		protected void generate_code_pass_1(program p){bin=new int[]{znxr_ci__ra__rd__()};}
 		protected void generate_code_pass_2(program p){}
-		protected int znxr_ci__ra__rd__(){return znxr|opcode|((reg_a&15)<<8)|((rd_d&15)<<12);}
-		final@Override public String toString(){return txt;}
+		protected int znxr_ci__ra__rd__(){return znxr|opcode|((rai&15)<<8)|((rdi&15)<<12);}
+		final@Override public String toString(){
+			if(txt!=null)return txt;
+			final xwriter x=new xwriter();
+			if((znxr&3)==3)x.p("ifp ");
+			else if((znxr&1)==1)x.p("ifz ");
+			else if((znxr&2)==2)x.p("ifn ");
+			source_to(x);
+			x.spc();
+			if((znxr&4)==4)x.p(" nxt");
+			if((znxr&8)==8)x.p(" ret");
+			return x.toString();
+		}
+		public void source_to(xwriter x){}
 		private static final long serialVersionUID=1;
 	}
 	public static class li extends stmt{
@@ -284,7 +308,7 @@ final public class program implements Serializable{
 		public li(reader r)throws IOException{
 			super(r,opli,0,r.next_register_identifier());
 			data=r.next_token_in_line();
-			txt="li "+data;
+			txt="li "+(char)(rdi+'a')+" "+data;
 		}
 		public boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
 		@Override protected void generate_code_pass_1(program p){
@@ -319,46 +343,24 @@ final public class program implements Serializable{
 		public inc(reader r)throws IOException{
 			super(r,opinc,0,r.next_register_identifier());
 		}
+		@Override public void source_to(xwriter x){
+			x.p("inc").spc().p((char)(rdi+'a'));
+		}
 		private static final long serialVersionUID=1;
 	}
-//	final private static int reg(source_reader r)throws IOException{
-//		final String s=r.next_token_in_line();
-//		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected register but found end of line");
-//		if(s.length()!=1)throw new compiler_error(r.hrs_location(),"register name unknown '"+s+"'");
-//		final char first_char=s.charAt(0);
-//		final int reg=first_char-'a';
-//		final int max=(1<<4)-1;
-//		final int min=0;
-//		if(reg>max||reg<min)throw new compiler_error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
-//		return reg;
-//	}
-//	final private static int num(source_reader r,int bit_width)throws IOException{
-//		final String s=r.next_token_in_line();
-//		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected number but found end of line");
-//		try{
-//			final int i=Integer.parseInt(s);
-//			final int max=(1<<(bit_width-1))-1;
-//			final int min=-1<<(bit_width-1);
-//			if(i>max)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
-//			if(i<min)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
-//			return i;
-//		}catch(NumberFormatException e){throw new compiler_error(r.hrs_location(),"can not translate number '"+s+"'");}
-//	}
-//	final private static int ri(String s){
-//		final char first_char=s.charAt(0);
-//		final int reg=first_char-'a';
-//		return reg;
-//	}
 	public static class st extends stmt{
 		public st(reader r)throws IOException{
 			super(r,opst,r.next_register_identifier(),r.next_register_identifier());
+		}
+		@Override public void source_to(xwriter x){
+			x.p("st").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class eof extends stmt{
 		public eof(reader r)throws IOException{
 			super(r);
-			txt=". ffff";
+			txt="..";
 		}
 		@Override protected void generate_code_pass_1(program p){bin=new int[]{-1};}
 		private static final long serialVersionUID=1;
@@ -380,17 +382,26 @@ final public class program implements Serializable{
 		public lp(reader r)throws IOException{
 			super(r,oplp,0,r.next_register_identifier());
 		}
+		@Override public void source_to(xwriter x){
+			x.p("lp").spc().p((char)(rdi+'a'));
+		}
 		private static final long serialVersionUID=1;
 	}
 	public static class stc extends stmt{
 		public stc(reader r)throws IOException{
 			super(r,opstc,r.next_register_identifier(),r.next_register_identifier());
 		}
+		@Override public void source_to(xwriter x){
+			x.p("stc").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
+		}
 		private static final long serialVersionUID=1;
 	}
 	public static class add extends stmt{
 		public add(reader r)throws IOException{
 			super(r,opadd,r.next_register_identifier(),r.next_register_identifier());
+		}
+		@Override public void source_to(xwriter x){
+			x.p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -405,6 +416,7 @@ final public class program implements Serializable{
 		public call(reader r)throws IOException{
 			super(r,opcall,0,0);
 			label=r.next_token_in_line();
+			txt="call "+label;
 		}
 		@Override protected void generate_code_pass_2(program p){
 			define_label l=p.labels.get(label);
@@ -426,7 +438,7 @@ final public class program implements Serializable{
 			}
 			final xwriter x=new xwriter().p(". ");
 			data.forEach(e->x.spc().p(e));
-			txt=x.nl().toString();
+			txt=x.toString();
 		}
 		@Override protected void generate_code_pass_1(program p){
 //			super.generate_code_pass_1(p);
@@ -445,30 +457,33 @@ final public class program implements Serializable{
 			name=nm;
 			final define_label d=r.p.labels.get(name);
 			if(d!=null)throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
-			txt=nm+":";
+			txt=":"+nm;
 		}
 		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
-	public static class ld extends program.stmt{
+	public static class ld extends stmt{
 		public ld(reader r)throws IOException{
 			super(r,opld,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class ldc extends program.stmt{
+	public static class ldc extends stmt{
 		public ldc(reader r)throws IOException{
 			super(r,opldc,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
+		@Override public void source_to(xwriter x){
+			x.p("ldc").spc().p((char)(rdi+'a')).spc().p((char)(rai+'a'));
+		}
 		private static final long serialVersionUID=1;
 	}
-	public static class tx extends program.stmt{
+	public static class tx extends stmt{
 		public tx(reader r)throws IOException{
 			super(r,optx,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class shf extends program.stmt{
+	public static class shf extends stmt{
 		public shf(reader r)throws IOException{
 			super(r,opshf,r.next_register_identifier(),r.next_int(4),true);
 		}

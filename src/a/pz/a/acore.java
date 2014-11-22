@@ -43,6 +43,7 @@ final public class acore extends a{
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
 			final program p=(program)o;
+			p.disassemble_to(new xwriter(System.out));
 			p.zap(cor.rom);
 			cor.reset();
 			x_f(x,null);
@@ -57,7 +58,7 @@ final public class acore extends a{
 			switch(th.toint()){
 			case 0:x
 				//width:50em;
-				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
+				.css("body","width:128em;box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
 				.css(ec.src,"width:40em;min-width:40em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
