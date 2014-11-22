@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
 import b.xwriter;
 
 final public class program implements Serializable{
@@ -157,8 +155,21 @@ final public class program implements Serializable{
 				labels.put(s.name,s);
 				return s;
 			}
-			if(!tk.startsWith("//"))break;
-			consume_rest_of_line(r);
+			if(tk.equals(".")){
+				final define_data s=new define_data(r);
+				r.consume_line();
+				return s;
+			}
+			if(tk.equals("..")){
+				final eof s=new eof(r);
+				r.consume_line();
+				return s;
+			}
+			if(tk.startsWith("//")){
+				r.consume_line();
+				continue;
+			}
+			break;
 		}
 		int znxr=0;
 		switch(tk){
@@ -166,8 +177,6 @@ final public class program implements Serializable{
 		case"ifn":{znxr=2;tk=r.next_token_in_line();break;}
 		case"ifp":{znxr=3;tk=r.next_token_in_line();break;}
 		}
-		if(tk.equals(".."))tk="eof";
-		if(tk.equals("."))tk="data_span";
 		final stmt s;
 		try{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
@@ -187,13 +196,12 @@ final public class program implements Serializable{
 				if(t==null)break;
 				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
 				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
-				if(t.startsWith("//")){consume_rest_of_line(r);break;}
+				if(t.startsWith("//")){r.consume_line();break;}
 				throw new Error("3 "+t);
 			}
 			s.znxr=znxr;
 		}
-		final int eos=r.read();
-		if(eos!='\n'&&eos!=-1)throw new Error(r+" expected end of line or end of file");
+		r.consume_line();
 		return s;
 	}
 	/**writes binary*/
@@ -491,16 +499,16 @@ final public class program implements Serializable{
 //		if(sb.length()==0)return null;
 //		return sb.toString();
 //	}
-	private static String consume_rest_of_line(source_reader r)throws IOException{
-		final StringBuilder sb=new StringBuilder();
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)break;
-			if(ch=='\n'){r.unread(ch);break;}
-			sb.append((char)ch);
-		}
-		return sb.toString();
-	}
+//	private static String consume_rest_of_line(source_reader r)throws IOException{
+//		final StringBuilder sb=new StringBuilder();
+//		while(true){
+//			final int ch=r.read();
+//			if(ch==-1)break;
+//			if(ch=='\n'){r.unread(ch);break;}
+//			sb.append((char)ch);
+//		}
+//		return sb.toString();
+//	}
 	
 	public static class compiler_error extends RuntimeException{
 		public String source_location;
