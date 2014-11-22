@@ -40,7 +40,7 @@ final public class acore extends a{
 		bi.set(0b1111110000);
 		ro.ints=cor.rom;
 		ra.ints=cor.ram;
-		re.ints=cor.register;
+		re.ints=cor.registers;
 		lo.core=cor;
 		ec.x_f3(null,null);
 	}
@@ -152,9 +152,9 @@ final public class acore extends a{
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
 		pl("x_n");
 		final boolean refresh_display=cor.loading_register==-1&&(
-				(cor.instruction_register&program.opst)==program.opst
+				(cor.instruction&program.opst)==program.opst
 				||
-				(cor.instruction_register&program.opstc)==program.opstc
+				(cor.instruction&program.opstc)==program.opstc
 		);
 		st.clr();
 		cor.step();
@@ -192,7 +192,7 @@ final public class acore extends a{
 			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(cor.instruction_register==-1)ev(null,this);//refresh display
+			if(cor.instruction==-1)ev(null,this);//refresh display
 			if(dt>runms)break;
 		}
 		if(dt==0)dt=1;
@@ -240,7 +240,7 @@ final public class acore extends a{
 			while(true){
 				cor.step();
 				if(loop==false)break;
-				if(cor.instruction_register==-1)loop=false;
+				if(cor.instruction==-1)loop=false;
 			}
 			final long dt=(System.nanoTime()-t0)/1000;
 			final long dinstr=cor.meter_instructions;
@@ -286,7 +286,7 @@ final public class acore extends a{
 		x.pl(nsprites+" sprites onscreen collision detection");
 		x.pl(ndacs+" sound tracks");
 		x.pl(strdatasize2(cor.rom.length)+" "+bits_per_instruction+"b rom");
-		x.pl(cor.register.length+" "+bits_per_register+"b registers");
+		x.pl(cor.registers.length+" "+bits_per_register+"b registers");
 		x.pl(cor.call_stack.length+" calls stack");
 		x.pl(cor.loop_stack_address.length+" loops stack");
 	}
