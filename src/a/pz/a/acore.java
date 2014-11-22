@@ -1,5 +1,6 @@
 package a.pz.a;
 import static b.b.pl;
+import static b.b.stacktrace;
 import a.pz.core;
 import a.pz.program;
 import a.x.jskeys;
@@ -140,7 +141,7 @@ final public class acore extends a{
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
 		if(x==null)return;
-		xfocusline(x);
+		xfocus(x);
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
 		x.xu(st.set("refresh display"));
 		x.flush();
@@ -163,7 +164,7 @@ final public class acore extends a{
 		if(x==null)return;
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
-		xfocusline(x);
+		xfocus(x);
 	}
 	private boolean dostep;
 	/**go*/
@@ -173,13 +174,13 @@ final public class acore extends a{
 		int i=0;
 		dostep=true;
 		while(dostep){
-			b.b.pl("x_g "+i++);
+			pl("x_g "+i++);
 			x_n(x,null);
 			x.flush();
 			Thread.sleep(500);
 		}
 	}
-	private void xfocusline(xwriter x){
+	private void xfocus(xwriter x){
 		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 	}
 	private long runms=1000;
@@ -205,7 +206,7 @@ final public class acore extends a{
 		st.set(y.toString());
 		if(x==null)return;
 		x.xu(st).xu(re).xu(ca).xu(lo);
-		xfocusline(x);
+		xfocus(x);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	/**runtobreakpoint*/
@@ -230,7 +231,7 @@ final public class acore extends a{
 		x.xu(re);
 		x.xu(ca);
 		x.xu(this.lo);
-		xfocusline(x);
+		xfocus(x);
 		ra.xupd(x);
 	}
 	/**stepframe*/
@@ -248,10 +249,10 @@ final public class acore extends a{
 			final long dinstr=cor.meter_instructions;
 			st.set("#"+cor.meter_frames+" "+strdatasize3((int)dinstr)+" "+dt+" us");
 		}catch(Throwable t){
-			st.set(b.b.stacktrace(t));
+			st.set(stacktrace(t));
 		}
 		if(x==null)return;
-		xfocusline(x);
+		xfocus(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
