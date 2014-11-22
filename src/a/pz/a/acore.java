@@ -81,31 +81,24 @@ final public class acore extends a{
 				;
 				break;
 			}
-			x.style_();
-			ajaxsts.to(x);
-			try(final jskeys jskeys=new jskeys(x)){
-				jskeys.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
-				jskeys.add("cL","$x('"+id+" l')");
-				jskeys.add("cT","$x('"+id+" n')");
-				jskeys.add("cR","$x('"+id+" r')");
-				jskeys.add("cF","$x('"+id+" i')");
-				jskeys.add("cG","$x('"+id+" g')");
-				jskeys.add("cU","$x('"+id+" u')");
-				jskeys.add("cO","$x('"+id+" c')");
-				jskeys.add("cF","$x('"+id+" f')");
-				jskeys.add("cD","$x('"+ra.id()+" rfh')");
-				jskeys.add("cB","$x('"+id+" b')");
-				jskeys.add("cK","alert('info')");
+			x.style_().r(ajaxsts);
+			try(final jskeys j=new jskeys(x)){
+				j.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
+				j.add("cL","$x('"+id+" l')");
+				j.add("cT","$x('"+id+" n')");
+				j.add("cR","$x('"+id+" r')");
+				j.add("cF","$x('"+id+" i')");
+				j.add("cG","$x('"+id+" g')");
+				j.add("cU","$x('"+id+" u')");
+				j.add("cO","$x('"+id+" c')");
+				j.add("cF","$x('"+id+" f')");
+				j.add("cD","$x('"+ra.id()+" rfh')");
+				j.add("cB","$x('"+id+" b')");
+				j.add("cK","alert('info')");
 			}
 		}
-		if(hasbit(bit_logo)){
-			logo_to(x);
-			copyright_to(x);
-		}
-		if(hasbit(bit_pramble)){
-			pramble_to(x);
-			x.nl();
-		}
+		if(hasbit(bit_logo)){logo_to(x);copyright_to(x);}
+		if(hasbit(bit_pramble)){pramble_to(x);x.nl();}
 		if(hasbit(bit_schematics))schematics_to(x);
 		if(hasbit(bit_instructions_table))instructions_table_to(x);
 		if(hasbit(bit_display))x.r(ra);
@@ -116,8 +109,6 @@ final public class acore extends a{
 				.ax(this,"n"," step")
 				.ax(this,"g"," go")
 				.ax(this,"u"," bench")
-//				.ax(this,"be"," bench")
-//				.ax(this,"s"," save")
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.divo("laycent");
