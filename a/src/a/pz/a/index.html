@@ -72,6 +72,7 @@ function start(){
 		}
 	};
 	ws.onerror=function(e){console.log("websocket error");};
+	compile();
 	$.scr.focus();
 }
 function stop(){
@@ -104,11 +105,11 @@ onload=start;
 </script>
 <textarea id=src spellcheck=false>
 typedef int
-const int pos 1040
-const int hi 30
-const int wi 40
-const int skp c0
-const int colr 800
+const pos int 1040
+const hi int 30
+const wi int 40
+const skp int c0
+const colr int 800
 li a pos
 add a p
 inc p
@@ -119,23 +120,27 @@ li e skp
 call draw
 
 li a pos
-call drawdots
+call dots.draw
 ..
 ..
-dots:
+struct dot yyxx int 0000 rgb int 000
+:dots
 . 2
 . 0800 ffff
 . 1004 ffff
 ..
-drawdots:
-// scr a
+
+:dots.draw a scr 400
+  var b,c,d,e
   li b &dots
   ldc c b
   lp c
     ldc d b
-    ldc e b 
+    ldc e b
     add d a
-    st d e nxt ret
+//bug    st d e nxt ret
+    st d e nxt 
+  ret
 ..
 int r f00
 int g 0f0
@@ -143,12 +148,22 @@ int b 00f
 li c 10
 li a 400
 ..
-draw:
+:draw a scr 400 b height 20 c width 100 d pxl 8888 e skp c0
   lp b
     lp c
       stc a d nxt
       add a e nxt ret
 ..
+
+//:sprite medusa 4 4
+//./\.
+///--\
+//:sprite medusa_right 4 4
+//./\.
+/// |\
+//:sprite medusa_left 4 4
+//./\.
+///| \
 </textarea> 
 
 <script>

@@ -11,6 +11,9 @@ final public class display extends a{
 	public int scl=2,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
+		x.script();
+		xupd(x);
+		x.script_();
 	}
 	public void xupd(final xwriter x)throws Throwable{// refresh ram ui
 		final int bytes_per_pixel=4;

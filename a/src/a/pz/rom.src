@@ -17,7 +17,7 @@ li a pos
 call dots.draw
 ..
 ..
-struct dot int yyxx 0000 int rgb 000
+struct dot yyxx int 0000 rgb int 000
 :dots
 . 2
 . 0800 ffff
@@ -48,3 +48,13 @@ li a 400
       stc a d nxt
       add a e nxt ret
 ..
+
+//:sprite medusa 4 4
+//./\.
+///--\
+//:sprite medusa_right 4 4
+//./\.
+/// |\
+//:sprite medusa_left 4 4
+//./\.
+///| \
