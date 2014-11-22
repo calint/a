@@ -43,7 +43,6 @@ final public class acore extends a{
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
 			final program p=(program)o;
-			p.disassemble_to(new xwriter(System.out));
 			p.zap(cor.rom);
 			cor.reset();
 			x_f(x,null);
