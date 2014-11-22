@@ -68,6 +68,24 @@ final public class program implements Serializable{
 		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
+	final static public class define_var extends stmt{
+		public List<String>vars;
+		public define_var(final reader r)throws IOException{
+			super(r);
+			vars=new ArrayList<>();
+			while(true){
+				final String t=r.next_token_in_line();
+				if(t==null)break;
+				vars.add(t);
+			}
+			if(vars.isEmpty())throw new compiler_error(this,"expected list of registers after 'var' statement");
+			final xwriter x=new xwriter();
+			vars.forEach(e->x.spc().p(e));
+			txt=x.toString();
+		}
+		@Override protected void generate_code_pass_1(program p){}
+		private static final long serialVersionUID=1;
+	}
 	final static public class define_struct extends stmt{
 		public String name;
 		public List<define_struct_member>fields;
@@ -145,6 +163,11 @@ final public class program implements Serializable{
 			if(tk.equals("struct")){
 				final define_struct s=new define_struct(r);
 				structs.put(s.name,s);
+				return s;
+			}
+			if(tk.equals("var")){
+				final define_var s=new define_var(r);
+//				structs.put(s.name,s);
 				return s;
 			}
 			if(tk.startsWith(":")){
