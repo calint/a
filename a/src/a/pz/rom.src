@@ -25,7 +25,7 @@ struct dot yyxx int 0000 rgb int 000
 ..
 
 :dots.draw a scr 400
-  var b,c,d,e
+  var b c d e
   li b &dots
   ldc c b
   lp c
