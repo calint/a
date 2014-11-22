@@ -31,20 +31,19 @@ final public class rom extends a{
 				break;
 		}
 		x.ul_();
+		x.script();
+		xfocus(x);
+		x.script_();
 		x.div_();
 	}
-	int focusline=-1;
-	private int lstfocusline=focusline;
-	void xfocusline(xwriter x){
-		if(lstfocusline!=-1){
-			final String js="var e=$('"+id()+"').getElementsByTagName('li')["+lstfocusline+"];e.className=e._oldcls;";
-			x.pl(js);
-		}
-		if(focusline!=-1){
-			lstfocusline=focusline;
-			final String js="var e=$('"+id()+"').getElementsByTagName('li')["+focusline+"];e._oldcls=e.className;e.className='stp';";
-			x.pl(js);
-		}
+	int focus_on_binary_location=0;
+	private int lstfocusline=focus_on_binary_location;
+	void xfocus(xwriter x){
+		final String js1="var e=$('"+id()+"').getElementsByTagName('li')["+lstfocusline+"];e.className=e._oldcls;";
+		x.p(js1);
+		lstfocusline=focus_on_binary_location;
+		final String js2="var e=$('"+id()+"').getElementsByTagName('li')["+focus_on_binary_location+"];e._oldcls=e.className;e.className='stp';";
+		x.p(js2);
 	}
 	public void x_clr(xwriter x,String s)throws Throwable{
 		for(int i=0;i<ints.length;i++){
