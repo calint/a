@@ -73,7 +73,7 @@ final public class acore extends a{
 				.css(".nbr","width:3em;border:1px dotted;text-align:right")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css(di,"text-align:left;width:12em;line-height:1.4em;margin-right:1em")
-				.css(ec.src,"min-width:40em;min-height:128em;resize:none;line-height:1.4em")
+				.css(ec.src,"min-width:20em;min-height:128em;line-height:1.4em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
 			switch(th.toint()){
