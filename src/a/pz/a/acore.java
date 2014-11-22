@@ -60,7 +60,7 @@ final public class acore extends a{
 		final String id=id();
 		if(pt()==null){
 			x.style()
-				.css("body","padding:3em 4em 0 8em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("body","padding:7em 0 0 7em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
