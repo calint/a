@@ -36,12 +36,12 @@ call dots.draw
 ..
 struct dot yyxx int 0000 rgb int 000
 :dots
-. 2
+. 4
 . 0800 ffff
-. 1004 ffff
+. 0f04 ffff
 . 120a ffff
-. 130e ffff
-. 1218 ffff
+. 130f ffff
+. 121a ffff
 ..
 
 :dots.draw a scr 400
