@@ -42,7 +42,7 @@ int b 00f
 li c 10
 li a 400
 ..
-:draw a scr b height c width d pxl e skp
+:draw a scr 400 b height 20 c width 100 d pxl 8888 e skp c0
   lp b
     lp c
       stc a d nxt
