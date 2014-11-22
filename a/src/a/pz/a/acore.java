@@ -246,30 +246,6 @@ final public class acore extends a{
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
 		if(hasbit(bit_display))ra.xupd(x);
 	}
-	
-//	public void snapshot_png_to(final OutputStream os,final int offset,final int skp)throws IOException{
-//		final int wi=ra.wi;
-//		final int hi=ra.hi;
-//		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
-//		int k=0;
-//		for(int i=0;i<hi;i++){
-//			for(int j=0;j<wi;j++){
-//				final int d=cor.ram[k++];
-//				final int b= (d    &0xf)*0xf;
-//				final int g=((d>>4)&0xf)*0xf;
-//				final int r=((d>>8)&0xf)*0xf;
-////				final int a=(d>>12)&0xf;
-//				final int a=0xff;
-//				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
-//				bi.setRGB(j,i,argb);
-//			}
-////			k+=0;//skip
-//		}
-//		ImageIO.write(bi,"png",os);
-////		
-////		
-////		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
-//	}
 	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
@@ -291,7 +267,6 @@ final public class acore extends a{
 		x.pl("     \\o       l             ");
 	}
 	public void pramble_to(final xwriter x){
-//		final int bits_per_data=16;
 		final int bits_per_instruction=16;
 		final int bits_per_register=16;
 		final int bits_per_pixel=16;
@@ -303,7 +278,6 @@ final public class acore extends a{
 		x.pl(bits_per_pixel_rgb+"b rgb color in "+bits_per_pixel+"b pixel");
 		x.pl(nsprites+" sprites onscreen collision detection");
 		x.pl(ndacs+" sound tracks");
-//		x.pl(strdatasize(c.ram.length)+" "+bits_per_data+"b ram");
 		x.pl(strdatasize2(cor.rom.length)+" "+bits_per_instruction+"b rom");
 		x.pl(cor.register.length+" "+bits_per_register+"b registers");
 		x.pl(cor.call_stack.length+" calls stack");
