@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import b.xwriter;
 
 final public class program implements Serializable{
@@ -35,7 +36,7 @@ final public class program implements Serializable{
 
 	public program(final String cs)throws IOException,compiler_error{this(new StringReader(cs));}
 	public program(final Reader rr)throws IOException,compiler_error{
-		final source_reader r=new source_reader(rr);
+		final source_reader r=new source_reader(rr,this);
 		s=new ArrayList<>();
 		while(true){
 			final int ch=r.read();
@@ -44,17 +45,26 @@ final public class program implements Serializable{
 			final stmt st=read_next_statement_from(r);
 			s.add(st);
 		}
-		s.forEach(e->e.second_pass(this));
+		s.forEach(e->e.validate_references_to_labels(this));
+		s.forEach(e->e.generate_code_pass_1(this));
+		int pc=0;
+		for(final stmt ss:s){
+			ss.location_in_binary=pc;
+			if(ss.bin!=null)pc+=ss.bin.length;
+		}
+		s.forEach(e->e.generate_code_pass_2(this));
 	}
 	final static public class define extends stmt{
-		public String identifier,val,source_loc;
+		public String name,value;
 		public define(final source_reader r)throws IOException{
 			super(r);
-			identifier=r.next_token_in_line();
-			val=r.next_token_in_line();
-			txt="#define "+identifier+" "+val;
+			name=r.next_token_in_line();
+			final define d=r.p.defines.get(name);
+			if(d!=null)throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
+			value=r.next_token_in_line();
+			txt="#define "+name+" "+value;
 		}
-		@Override public void write_to(final linker c){}
+		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_struct extends stmt{
@@ -76,8 +86,8 @@ final public class program implements Serializable{
 			fields.forEach(f->x.spc().p(f.toString()));
 			txt=x.toString();
 		}
-		@Override public void write_to(final linker c){}
-		@Override public void second_pass(program p){fields.forEach(e->e.second_pass(p));}
+		@Override public void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
+		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class define_struct_member extends stmt{
@@ -94,11 +104,10 @@ final public class program implements Serializable{
 			if(default_value!=null)x.spc().p(default_value);
 			txt=x.toString();
 		}
-		@Override public void write_to(linker c){}
-		@Override public void second_pass(program p)throws compiler_error{
+		@Override public void validate_references_to_labels(program p)throws compiler_error{
 			if(!p.typedefs.containsKey(type))throw new compiler_error(this,"type '"+type+"' not found in declared typedefs "+p.typedefs.keySet());
-			super.second_pass(p);
 		}
+		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_typedef extends stmt{
@@ -108,7 +117,7 @@ final public class program implements Serializable{
 			name=r.next_identifier();
 			txt=new xwriter().p("typedef").spc().p(name).toString();
 		}
-		@Override public void write_to(final linker c){}
+		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
 	
@@ -116,6 +125,7 @@ final public class program implements Serializable{
 	final public Map<String,define>defines=new LinkedHashMap<>();
 	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
 	final public Map<String,define_struct>structs=new LinkedHashMap<>();
+	final public Map<String,define_label>labels=new LinkedHashMap<>();
 	private stmt read_next_statement_from(final source_reader r)throws IOException,compiler_error{
 		String tk="";
 		while(true){
@@ -123,7 +133,7 @@ final public class program implements Serializable{
 			tk=r.next_token_in_line();
 			if(tk.equals("#define")){
 				final define s=new define(r);
-				defines.put(s.identifier,s);
+				defines.put(s.name,s);
 				return s;
 			}
 			if(tk.equals("typedef")){
@@ -136,10 +146,20 @@ final public class program implements Serializable{
 				structs.put(s.name,s);
 				return s;
 			}
+			if(tk.endsWith(":")){
+				final define_label s=new define_label(r,tk.substring(0,tk.length()-1));
+				labels.put(s.name,s);
+				return s;
+			}
+			final define_typedef td=typedefs.get(tk);
+			if(td!=null){
+				final define_data_int s=new define_data_int(r);
+				labels.put(s.name,s);
+				return s;
+			}
 			if(!tk.startsWith("//"))break;
 			consume_rest_of_line(r);
 		}
-		if(tk.endsWith(":"))return new source_label(r,tk.substring(0,tk.length()-1));
 		int znxr=0;
 		switch(tk){
 		case"ifz":{znxr=1;tk=r.next_token_in_line();break;}
@@ -148,7 +168,6 @@ final public class program implements Serializable{
 		}
 		if(tk.equals(".."))tk="eof";
 		if(tk.equals("."))tk="data_span";
-		if(tk.equals("int"))tk="data_int";
 		final stmt s;
 		try{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
@@ -162,7 +181,7 @@ final public class program implements Serializable{
 		}catch(Throwable t){
 			throw new compiler_error(r.hrs_location(),t.toString());
 		}
-		if(!(s instanceof data_span)){
+		if(!(s instanceof define_data)){
 			while(true){
 				final String t=r.next_token_in_line();
 				if(t==null)break;
@@ -180,74 +199,83 @@ final public class program implements Serializable{
 	/**writes binary*/
 	final public void zap(int[]rom){//? arraycopybinary
 		for(int i=0;i<rom.length;i++)rom[i]=-1;
-		final linker c=new linker(this,rom);
-		s.forEach(e->{
-			try{
-				e.write_to(c);
-			}catch(compiler_error ee){
-				throw ee;
-//			}catch(InvocationTargetException ite){
-//				throw new compiler_error(e.source_location,ite.getCause().getMessage());
-			}catch(NumberFormatException t){
-				throw new compiler_error(e.source_location,t.getMessage());
-			}catch(Throwable t){
-				throw new compiler_error(e.source_location,t.getMessage());}
-			});
-		c.finish();
+		int pc=0;
+		for(final stmt ss:s){
+			if(ss.bin==null)continue;
+			final int c=ss.bin.length;
+			System.arraycopy(ss.bin,0,rom,pc,c);
+			pc+=c;
+		}
+
+//		final linker c=new linker(this,rom);
+//		s.forEach(e->{
+//			try{
+//				e.write_to(c);
+//			}catch(compiler_error ee){
+//				throw ee;
+////			}catch(InvocationTargetException ite){
+////				throw new compiler_error(e.source_location,ite.getCause().getMessage());
+//			}catch(NumberFormatException t){
+//				throw new compiler_error(e.source_location,t.getMessage());
+//			}catch(Throwable t){
+//				throw new compiler_error(e.source_location,t.getMessage());}
+//			});
+//		c.finish();
 	}
 	private List<stmt>s;
 
 
 	public static class stmt implements Serializable{
-		public String source_location;
+		public String location_in_source;
 		public String txt;
+		public int[]bin;
+		public int location_in_binary;
 		public int znxr;
 		/**opcode*/public int opcode;
 		public int reg_a;
 		public int rd_d;
-		public stmt(final source_reader r){source_location=r.hrs_location();}
-		protected stmt(final source_reader r,final int op,final int ra,final int rd){source_location=r.hrs_location();this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
-		protected stmt(final source_reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){source_location=r.hrs_location();this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
-//		public stmt(){}
-//		public stmt(String txt){this.txt=txt;}
-		public void write_to(linker c){
-			final int ir=znxr|opcode|((reg_a&15)<<8)|((rd_d&15)<<12);
-			c.write(ir);
-		}
-		public void second_pass(program p){
-			b.b.pl(source_location+" "+this);
-		}
+		public stmt(final source_reader r){location_in_source=r.hrs_location();}
+		protected stmt(final source_reader r,final int op,final int ra,final int rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
+		protected stmt(final source_reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
+		protected void validate_references_to_labels(program p){}
+		protected void generate_code_pass_1(program p){bin=new int[]{znxr_ci__ra__rd__()};}
+		protected void generate_code_pass_2(program p){}
+		protected int znxr_ci__ra__rd__(){return znxr|opcode|((reg_a&15)<<8)|((rd_d&15)<<12);}
 		final@Override public String toString(){return txt;}
 		private static final long serialVersionUID=1;
 	}
 	public static class li extends stmt{
-		private String data;
+		public String data;
+		public int value;
 		public li(source_reader r)throws IOException{
 			super(r,opli,0,r.reg());
 			data=r.next_token_in_line();
+			txt="li "+data;
 		}
-		public boolean is_integer(){
-			try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}
+		public boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
+		@Override protected void generate_code_pass_1(program p){
+			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
-		@Override public void write_to(linker c){
-			super.write_to(c);
-			final define def=c.p.defines.get(data);
+		@Override protected void generate_code_pass_2(program p){
+			final define def=p.defines.get(data);
 			if(def!=null){
-				data=def.val;
+				data=def.value;
 			}
 			if(data.startsWith("&")){
-				c.add_link(data.substring(1),source_location);
-				c.write(0);
+				final String nm=data.substring(1);
+				final define_label l=p.labels.get(nm);
+				if(l==null)throw new compiler_error(this,"label not found",nm);
+				value=l.location_in_binary;
 			}else{
-				final int bit_width=16;
-				final int i=Integer.parseInt(data,16);
-				final int max=(1<<(bit_width-1))-1;
-				final int min=-1<<(bit_width-1);
-				if(i>max)throw new compiler_error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
-				if(i<min)throw new compiler_error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
-				c.write(i);
+				value=Integer.parseInt(data,16);
 			}
-			
+			final int bit_width=16;
+//			final int i=Integer.parseInt(data,16);
+			final int max=(1<<(bit_width-1))-1;
+			final int min=-1<<(bit_width-1);
+			if(value>max)throw new compiler_error(location_in_source,"number '"+data+"' out of "+bit_width+" bits range");
+			if(value<min)throw new compiler_error(location_in_source,"number '"+data+"' out of "+bit_width+" bits range");
+			bin=new int[]{bin[0],value};
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -296,7 +324,7 @@ final public class program implements Serializable{
 			super(r);
 			txt=". ffff";
 		}
-		@Override public void write_to(linker c){c.write(-1);}
+		@Override protected void generate_code_pass_1(program p){bin=new int[]{-1};}
 		private static final long serialVersionUID=1;
 	}
 	public static class nxt extends stmt{
@@ -308,6 +336,7 @@ final public class program implements Serializable{
 	public static class ret extends stmt{
 		public ret(source_reader r)throws IOException{
 			super(r,opret,0,0);
+			txt="ret";
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -336,41 +365,53 @@ final public class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class call extends stmt{
-		String to;
+		String label;
 		public call(source_reader r)throws IOException{
 			super(r,opcall,0,0);
-			to=r.next_token_in_line();
+			label=r.next_token_in_line();
 		}
-		@Override public void write_to(linker c){
-			c.add_link(to,source_location);
-			super.write_to(c);
+		@Override protected void generate_code_pass_2(program p){
+			define_label l=p.labels.get(label);
+			if(l==null)throw new compiler_error(this,"label not found",label);
+			final int a=l.location_in_binary;
+			bin[0]|=(a<<6);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class data_span extends stmt{
-		public data_span(source_reader r)throws IOException{
+	public static class define_data extends stmt{
+		public List<String>data;
+		public define_data(source_reader r)throws IOException{
 			super(r);
-			txt=consume_rest_of_line(r);
+			data=new ArrayList<>();
+			while(true){
+				final String t=r.next_token_in_line();
+				if(t==null)break;
+				data.add(t);
+			}
+			final xwriter x=new xwriter().p(". ");
+			data.forEach(e->x.spc().p(e));
+			txt=x.nl().toString();
 		}
-		@Override public void write_to(linker c){
-			try(final Scanner s=new Scanner(txt)){
-				while(s.hasNext()){
-					final String ss=s.next();
-					final int d=Integer.parseInt(ss,16);
-					c.write(d);
-				}
+		@Override protected void generate_code_pass_1(program p){
+//			super.generate_code_pass_1(p);
+			bin=new int[data.size()];
+			int i=0;
+			for(final String s:data){
+				bin[i++]=Integer.parseInt(s,16);
 			}
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class source_label extends stmt{
-		public source_label(source_reader r,String nm){
+	public static class define_label extends stmt{
+		public String name;
+		public define_label(source_reader r,String nm){
 			super(r);
-			txt=nm;
+			name=nm;
+			final define_label d=r.p.labels.get(name);
+			if(d!=null)throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
+			txt=nm+":";
 		}
-		@Override public void write_to(linker c){
-			c.add_label(txt,source_location);
-		}
+		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class ld extends program.stmt{
@@ -399,20 +440,17 @@ final public class program implements Serializable{
 	}
 	
 	
-	public static class data_int extends stmt{
-		public String identifier;
+	public static class define_data_int extends define_label{
 		public String default_value;
-		public data_int(source_reader r)throws IOException{
-			super(r);
-			identifier=r.next_identifier();
+		public define_data_int(source_reader r)throws IOException{
+			super(r,r.next_identifier());
 			default_value=r.next_token_in_line();
 			if(default_value==null)default_value="0";
-			txt="int "+identifier+" "+default_value;
+			txt="int "+name+" "+default_value;
 		}
-		@Override public void write_to(linker c){
+		@Override protected void generate_code_pass_1(program p){
 			final int d=Integer.parseInt(default_value,16);
-			c.add_label(identifier,source_location);
-			c.write(d);
+			bin=new int[]{d};
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -466,7 +504,10 @@ final public class program implements Serializable{
 		public String source_location;
 		public String message;
 		public compiler_error(stmt s,String message){
-			this(s.source_location,message);
+			this(s.location_in_source,message);
+		}
+		public compiler_error(stmt s,String msg,String offender){
+			this(s.location_in_source,msg+": "+offender);
 		}
 		public compiler_error(String source_location,String message){
 			super(source_location+" "+message);

@@ -6,14 +6,16 @@ import java.io.Reader;
 import a.pz.program.compiler_error;
 
 final class source_reader extends Reader{
-	public source_reader(final Reader source){
+	public program p;
+	public source_reader(final Reader source,final program p){
 		this.source=new PushbackReader(source,1);
+		this.p=p;
 	}
-	public source_reader(final Reader source,final int lineno,final int charno){
-		this.source=new PushbackReader(source,1);
-		this.line_number=lineno;
-		this.character_number_in_line=charno;
-	}
+//	public source_reader(final Reader source,final int lineno,final int charno){
+//		this.source=new PushbackReader(source,1);
+//		this.line_number=lineno;
+//		this.character_number_in_line=charno;
+//	}
 	@Override public String toString(){
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
