@@ -3,13 +3,13 @@ import java.io.Serializable;
 final public class core implements Serializable{
 	public int id;
 //	public boolean on,idle,waiting_for_notify,notify;
-	public int program_counter,instruction_register,zn_flags,loading_register=-1,call_stack_index,loop_stack_index;
-	public int[]register,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
+	public int program_counter,instruction,flags,loading_register=-1,call_stack_index,loop_stack_index;
+	public int[]registers,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	public long meter_instructions,meter_frames;
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public core(){}
 	public core(int nregs,int ncalls,int nloops,int nram,int nrom){
-		register=new int[nregs];
+		registers=new int[nregs];
 		call_stack=new int[ncalls];
 		loop_stack_address=new int[nloops];
 		loop_stack_counter=new int[nloops];
@@ -19,15 +19,15 @@ final public class core implements Serializable{
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public void reset(){
 //		on=waiting_for_notify=notify=idle=false;
-		zn_flags=program_counter=instruction_register=call_stack_index=loop_stack_index=0;
+		flags=program_counter=instruction=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
-		for(int i=0;i<register.length;i++)register[i]=0;
+		for(int i=0;i<registers.length;i++)registers[i]=0;
 		for(int i=0;i<call_stack.length;i++)call_stack[i]=0;
 		for(int i=0;i<loop_stack_address.length;i++)loop_stack_address[i]=0;
 		for(int i=0;i<loop_stack_counter.length;i++)loop_stack_counter[i]=0;
 		for(int i=0;i<ram.length;i++)ram[i]=0;
 		for(int i=0;i<rom.length;i++)ram[i]=rom[i];//?
-		if(rom!=null)instruction_register=rom[0];
+		if(rom!=null)instruction=rom[0];
 	}
 //	public void meters_reset(){meter_instructions=meter_frames=0;}
 	private void calls_push(final int v){call_stack[call_stack_index++]=v;}
@@ -58,20 +58,20 @@ final public class core implements Serializable{
 		meter_instructions++;
 //		if(pcr>=rom.size)throw new Error("program out of bounds");
 		if(loading_register!=-1){// load reg 2 instructions command
-			register[loading_register]=instruction_register;
+			registers[loading_register]=instruction;
 			loading_register=-1;
 			program_counter_set(program_counter+1);
 			return;
 		}
-		if(instruction_register==-1){// end of frame
+		if(instruction==-1){// end of frame
 			program_counter_set(0);
 			meter_frames++;
 //			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
 		}
-		int in=instruction_register;// znxr ci.. .rai .rdi
+		int in=instruction;// znxr ci.. .rai .rdi
 		final int izn=in&3;
-		if((izn!=0&&(izn!=zn_flags))){
+		if((izn!=0&&(izn!=flags))){
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
 			final int skp=op==0?2:1;// ifloadopskip2
 			program_counter_set(program_counter+skp);
@@ -82,7 +82,7 @@ final public class core implements Serializable{
 		final boolean invalid_opcode=(in&6)==6;
 		if(!invalid_opcode&&(in&4)==4){//call
 			final int imm10=in>>4;// .. .... ....
-			final int znx=zn_flags|((xr&1)<<2);// nxt after ret
+			final int znx=flags|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(program_counter+1);
 			program_counter_set(imm10);
 			calls_push(stkentry);
@@ -130,16 +130,16 @@ final public class core implements Serializable{
 				if(rai!=0){//branch
 					if(rai==1){//lp
 						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
-						final int d=register[rdi];
+						final int d=registers[rdi];
 						loops_push(program_counter+1,d);	
 					}else if(rai==2){//inc
-						register[rdi]++;	
+						registers[rdi]++;	
 					}else if(rai==3){//neg
-						final int d=register[rdi];
+						final int d=registers[rdi];
 						final int r=-d;
-						register[rdi]=r;
+						registers[rdi]=r;
 					}else if(rai==4){//dac
-						final int d=register[rdi];
+						final int d=registers[rdi];
 						try{
 							b.b.pl("dac "+d);
 //							ev(null,this,new Integer(d));// ev(x,this.dac,int)
@@ -157,27 +157,27 @@ final public class core implements Serializable{
 					loading_register=rdi;
 				}
 			}else if(op==1){// sub
-				final int a=register[rai];
-				final int d=register[rdi];
+				final int a=registers[rai];
+				final int d=registers[rdi];
 				final int r=a-d;
 				evaluate_zn_flags(r);
-				register[rai]=r;
+				registers[rai]=r;
 			}else if(op==2){//stc
-				final int a=register[rai]++;
-				final int d=register[rdi];
+				final int a=registers[rai]++;
+				final int d=registers[rdi];
 				ram[a]=d;
 //				me.stc++;
 			}else if(op==3){//shf and not
 				if(rai==0){//not
-					final int d=register[rdi];
+					final int d=registers[rdi];
 					final int r=~d;
-					register[rdi]=r;
+					registers[rdi]=r;
 				}else{//shf
 					final int a=rai>7?rai-16:rai;
 					final int r;
-					if(a<0)r=register[rdi]<<-a;
-					else r=register[rdi]>>a;
-					register[rdi]=r;
+					if(a<0)r=registers[rdi]<<-a;
+					else r=registers[rdi]>>a;
+					registers[rdi]=r;
 					evaluate_zn_flags(r);
 				}
 			}else if(op==4){//skp
@@ -186,20 +186,20 @@ final public class core implements Serializable{
 				program_counter_set(program_counter+imm8);
 				program_counter_has_been_set=true;
 			}else if(op==5){//add
-				final int a=register[rai];
-				final int d=register[rdi];
+				final int a=registers[rai];
+				final int d=registers[rdi];
 				final int r=a+d;
 				evaluate_zn_flags(r);
-				register[rai]=r;
+				registers[rai]=r;
 			}else if(op==6){//ldc
-				final int a=register[rai]++;
+				final int a=registers[rai]++;
 				final int d=ram[a];
-				register[rdi]=d;
+				registers[rdi]=d;
 				evaluate_zn_flags(d);
 //				me.ldc++;
 			}else if(op==7){//tx
-				final int a=register[rai];
-				register[rdi]=a;
+				final int a=registers[rai];
+				registers[rdi]=a;
 			}
 		}else{
 			if(op==0){//free
@@ -219,20 +219,20 @@ final public class core implements Serializable{
 //				// after notify
 //				synchronized(this){waiting_for_notify=notify=false;}
 			}else if(op==3){// notify
-				final int imm4=(instruction_register>>12);
+				final int imm4=(instruction>>12);
 				b.b.pl("notify "+imm4);
 //				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
 			}else if(op==4){// free  
 			}else if(op==5){// sub
 			}else if(op==6){// st
-				final int d=register[rdi];
-				final int a=register[rai];
+				final int d=registers[rdi];
+				final int a=registers[rai];
 				ram[a]=d;
 //				meters_stc++;
 			}else if(op==7){// ld
-				final int a=register[rai];
+				final int a=registers[rai];
 				final int d=ram[a];
-				register[rdi]=d;
+				registers[rdi]=d;
 				evaluate_zn_flags(d);
 //				meters_ldc++;
 			}else throw new Error();
@@ -242,13 +242,13 @@ final public class core implements Serializable{
 	}
 	private void program_counter_set(final int index_in_rom){
 		program_counter=index_in_rom;
-		instruction_register=rom[index_in_rom];
+		instruction=rom[index_in_rom];
 	}
 	private void evaluate_zn_flags(final int number_to_be_evaluated){
-		if(number_to_be_evaluated==0){zn_flags=1;return;}
-		if((number_to_be_evaluated&(1<<16))==(1<<16)){zn_flags=2;return;}//? .
+		if(number_to_be_evaluated==0){flags=1;return;}
+		if((number_to_be_evaluated&(1<<16))==(1<<16)){flags=2;return;}//? .
 //		if(i<0){zn=2;return;}
-		zn_flags=3;
+		flags=3;
 	}
 	
 	private static final long serialVersionUID=1;

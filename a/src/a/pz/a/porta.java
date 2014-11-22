@@ -37,7 +37,7 @@ final public class porta extends websock implements threadedsock{static final lo
 			break;
 		default:throw new Error();
 		}
-		try{while(co.instruction_register!=-1)
+		try{while(co.instruction!=-1)
 				co.step();
 		}catch(Throwable t){
 			send_binary("2",stacktraceline(t));
