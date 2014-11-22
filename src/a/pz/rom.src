@@ -17,13 +17,15 @@ li a pos
 call dots.draw
 ..
 ..
+struct dot int yyxx 0000 int rgb 000
 :dots
 . 2
 . 0800 ffff
 . 1004 ffff
 ..
 
-:dots.draw a scr
+:dots.draw a scr 400
+  var b,c,d,e
   li b &dots
   ldc c b
   lp c
