@@ -18,6 +18,8 @@ final public class acore extends a{
 	/**coreid*/public a co;
 	public crun_source_editor ec;
 	/**theme*/public a th;
+	/**speakerleft*/public speaker sl;
+	/**speakerright*/public speaker sr;
 	public a bi;
 	public final static int bit_show_logo=1;
 	public final static int bit_show_schematics=2;
@@ -60,7 +62,8 @@ final public class acore extends a{
 		final String id=id();
 		if(pt()==null){
 			x.style()
-				.css("body","padding:7em 0 0 7em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("html","color:#111")
+				.css("body","padding:7em 0 0 11em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -113,7 +116,9 @@ final public class acore extends a{
 		if(hasbit(bit_show_pramble)){pramble_to(x);x.nl();}
 		if(hasbit(bit_show_schematics))schematics_to(x);
 		if(hasbit(bit_show_instructions_table))instructions_table_to(x);
+		x.divh(sl,"panel");
 		if(hasbit(bit_show_screen))x.r(ra);
+		x.divh(sr,"panel");
 		if(hasbit(bit_menu))
 			x.divo()
 				.ax(this,"r"," reset")
