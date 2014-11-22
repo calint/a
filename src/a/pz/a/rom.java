@@ -23,7 +23,7 @@ final public class rom extends a{
 					x.spc();
 			}
 			final String wid=id();
-			final int rowint=get(row);
+			final int rowint=ints[row];
 			final String rowinthex=Integer.toHexString(rowint);
 			x.tago("span").attr("id",wid+"_"+row).tagoe().p(acore.fld("0000",rowinthex)).tage("span").nl();
 			row++;
@@ -55,21 +55,18 @@ final public class rom extends a{
 		final int msk=1<<bit;
 		int v=ints[row];
 		final boolean on=(v&msk)==msk;
-		if(on)
-			v=v&~msk;
-		else
-			v|=msk;
+		if(on)v=v&~msk;
+		else v|=msk;
 		ints[row]=v;
 		x.xu(id()+"_"+row+"$"+bit,on?".":"o");
 		x.xu(id()+"_"+row,acore.fld("0000",Integer.toHexString(ints[row])));
 	}
-	public int get(final int row){return ints[row];}
-	public void set(final int row,final int value){ints[row]=value;}
-	public void rst(){
-		last_focus_on_binary_location=0;
-		for(int i=0;i<ints.length;i++)ints[i]=0;
-	}
-	
+//	public int get(final int row){return ints[row];}
+//	public void set(final int row,final int value){ints[row]=value;}
+//	public void rst(){
+//		last_focus_on_binary_location=0;
+//		for(int i=0;i<ints.length;i++)ints[i]=0;
+//	}	
 	public int disppagenrows=128;
 	public int[]ints;
 	private static final long serialVersionUID=1;
