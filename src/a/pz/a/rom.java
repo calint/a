@@ -32,18 +32,18 @@ final public class rom extends a{
 		}
 		x.ul_();
 		x.script();
-		xfocus(x);
+		xfocus(x,last_focus_on_binary_location);
 		x.script_();
 		x.div_();
 	}
-	int focus_on_binary_location=0;
-	private int lstfocusline=focus_on_binary_location;
-	void xfocus(xwriter x){
-		final String js1="var e=$('"+id()+"').getElementsByTagName('li')["+lstfocusline+"];e.className=e._oldcls;";
-		x.p(js1);
-		lstfocusline=focus_on_binary_location;
-		final String js2="var e=$('"+id()+"').getElementsByTagName('li')["+focus_on_binary_location+"];e._oldcls=e.className;e.className='stp';";
-		x.p(js2);
+	private int last_focus_on_binary_location;
+	void xfocus(xwriter x,final int binary_location){
+		if(binary_location!=last_focus_on_binary_location){
+			x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(last_focus_on_binary_location).p("];e.className=e._oldcls;");
+			last_focus_on_binary_location=binary_location;
+		}
+		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(binary_location).p("];e._oldcls=e.className;e.className='stp';");
+		x.nl();
 	}
 	public void x_clr(xwriter x,String s)throws Throwable{
 		for(int i=0;i<ints.length;i++)ints[i]=0;
@@ -68,10 +68,9 @@ final public class rom extends a{
 	public int get(final int row){return ints[row];}
 	public void set(final int row,final int value){ints[row]=value;}
 	public void rst(){
-		lstfocusline=-1;
+		last_focus_on_binary_location=0;
 		for(int i=0;i<ints.length;i++)ints[i]=0;
 	}
-	
 	
 	public int disppagenrows=128;
 	public int[]ints;

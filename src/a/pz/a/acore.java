@@ -142,9 +142,9 @@ final public class acore extends a{
 		x.xuo(this);
 	}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
+		b.b.pl("x_r");
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
-//		c.copy_rom_to_ram();
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
@@ -156,7 +156,8 @@ final public class acore extends a{
 		}
 		x.xu(st.set("reseted"));
 	}
-	public void x_n(final xwriter x,final String s)throws Throwable{
+	synchronized public void x_n(final xwriter x,final String s)throws Throwable{
+		b.b.pl("x_n");
 		st.clr();
 		ra.x=x;
 		cor.step();
@@ -166,16 +167,21 @@ final public class acore extends a{
 	}
 	/**go*/
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
+		b.b.pl("x_n");
+//		ra.x=null;
+		int i=0;
 		while(true){
-			x_n(x,s);
-			if(x!=null)x.flush();
+			b.b.pl("x_g "+i++);
+			cor.step();
+			if(x==null)continue;
+			x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
+			xfocusline(x);
+			x.flush();
 			Thread.sleep(500);
 		}
 	}
 	private void xfocusline(xwriter x){
-		if(!hasbit(bit_rom))return;
-		ro.focus_on_binary_location=cor.program_counter;
-		ro.xfocus(x);
+		if(hasbit(bit_rom))ro.xfocus(x,cor.program_counter);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
@@ -198,8 +204,7 @@ final public class acore extends a{
 		st.set(y.toString());
 		if(x==null)return;
 		x.xu(st).xu(re).xu(ca).xu(lo);
-		ro.xfocus(x);
-		x.flush();
+		xfocusline(x);
 		if(hasbit(bit_display))ra.xupd(x);
 	}
 	/**runtobreakpoint*/
@@ -229,6 +234,7 @@ final public class acore extends a{
 	}
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
+		b.b.pl("x_f");
 		if(x!=null)x.xu(st.set("running frame")).flush();
 		final long t0=System.nanoTime();
 		try{cor.meter_instructions=0;
