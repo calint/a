@@ -5,7 +5,7 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import a.pz.program.compiler_error;
 
-final class source_reader extends Reader{
+public final class source_reader extends Reader{
 	public program p;
 	public source_reader(final Reader source,final program p){
 		this.source=new PushbackReader(source,1);
@@ -109,7 +109,7 @@ final class source_reader extends Reader{
 		if(ch=='\n')return true;
 		return false;
 	}
-	public int reg()throws IOException{
+	public int next_register_identifier()throws IOException{
 		final String s=next_token_in_line();
 		if(s==null)throw new compiler_error(hrs_location(),"expected register but found end of line");
 		if(s.length()!=1)throw new compiler_error(hrs_location(),"register name unknown '"+s+"'");
@@ -120,7 +120,7 @@ final class source_reader extends Reader{
 		if(reg>max||reg<min)throw new compiler_error(hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
-	public int num(int bit_width)throws IOException{
+	public int next_int(int bit_width)throws IOException{
 		final String s=next_token_in_line();
 		if(s==null)throw new program.compiler_error(hrs_location(),"expected number but found end of line");
 		try{
