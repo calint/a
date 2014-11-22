@@ -277,4 +277,21 @@ public final class xwriter{
 		try{e.to(new osltgt(os));}catch(Throwable t){throw new Error(t);}
 		return span_();
 	}
+	public xwriter p_data_size(final long i){
+		long x=i;
+		final long megs=(x>>20);
+		if(megs>0){
+			x-=(megs<<20);
+			p(megs).p("m");
+			return this;
+		}
+		final long kilos=(x>>10);
+		if(kilos>0){
+			x-=(kilos<<10);
+			p(kilos).p("k");
+			return this;
+		}
+		if(x>0)p(x);
+		return this;
+	}
 }
