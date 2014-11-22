@@ -1,4 +1,5 @@
 package a.pz.a;
+import static b.b.pl;
 import a.pz.core;
 import a.pz.program;
 import a.x.jskeys;
@@ -43,6 +44,7 @@ final public class acore extends a{
 		ec.x_f3(null,null);
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
+		pl("ev");
 		if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			p.zap(cor.rom);
@@ -128,12 +130,13 @@ final public class acore extends a{
 	}
 	boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
 	synchronized public void x_t(xwriter x,String s)throws Throwable{
+		pl("x_t");
 		x.xuo(this);
 		x.xfocus(th);
 	}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
+		pl("x_r");
 		dostep=false;
-		b.b.pl("x_r");
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
 		if(x==null)return;
@@ -148,14 +151,14 @@ final public class acore extends a{
 		x.xu(st.set("reseted"));
 	}
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
-		b.b.pl("x_n");
-		st.clr();
+		pl("x_n");
 		final boolean refresh_display=
 			cor.loading_register==-1&&
 			(
 				(cor.instruction_register&program.opst)==program.opst
 				||(cor.instruction_register&program.opstc)==program.opstc
 			);
+//		st.clr();
 		cor.step();
 		if(x==null)return;
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
@@ -165,7 +168,7 @@ final public class acore extends a{
 	private boolean dostep;
 	/**go*/
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
-		b.b.pl("x_n");
+		pl("x_n");
 //		ra.x=null;
 		int i=0;
 		dostep=true;
@@ -181,7 +184,7 @@ final public class acore extends a{
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
-		b.b.pl("x_n");
+		pl("x_u");
 		dostep=false;
 		if(x!=null)x.xu(st.set("benching "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
@@ -232,7 +235,8 @@ final public class acore extends a{
 	}
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
-		b.b.pl("x_f");
+		pl("x_f");
+		dostep=false;
 		if(x!=null)x.xu(st.set("running frame")).flush();
 		final long t0=System.nanoTime();
 		try{cor.meter_instructions=0;
