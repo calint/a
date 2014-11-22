@@ -132,4 +132,15 @@ final class source_reader extends Reader{
 			return i;
 		}catch(NumberFormatException e){throw new compiler_error(hrs_location(),"can not translate number '"+s+"'");}
 	}
+	public void assert_and_consume_end_of_line()throws IOException{
+		final int eos=read();
+		if(eos!='\n'&&eos!=-1)throw new compiler_error(hrs_location(),"expected end of line or end of file");
+	}
+	public void consume_line()throws IOException{
+		while(true){
+			final int ch=read();
+			if(ch==-1)break;
+			if(ch=='\n')break;
+		}
+	}
 }
