@@ -58,7 +58,7 @@ final public class acore extends a{
 			case 0:x
 				//width:50em;
 				.css("body","box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
-				.css(ec.src,"width:32em;min-width:32em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
+				.css(ec.src,"width:40em;min-width:40em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
