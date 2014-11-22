@@ -44,13 +44,13 @@ final public class program implements Serializable{
 			s.add(st);
 		}
 		s.forEach(e->e.validate_references_to_labels(this));
-		s.forEach(e->e.generate_code_pass_1(this));
+		s.forEach(e->e.compile(this));
 		int pc=0;
 		for(final stmt ss:s){
 			ss.location_in_binary=pc;
 			if(ss.bin!=null)pc+=ss.bin.length;
 		}
-		s.forEach(e->e.generate_code_pass_2(this));
+		s.forEach(e->e.link(this));
 	}
 	public void disassemble_to(xwriter x){
 		s.forEach(e->x.pl(e.toString()));
@@ -74,7 +74,7 @@ final public class program implements Serializable{
 			value=r.next_token_in_line();
 			txt="const "+type+" "+name+" "+value;
 		}
-		@Override protected void generate_code_pass_1(program p){}
+		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_var extends stmt{
@@ -92,7 +92,7 @@ final public class program implements Serializable{
 			vars.forEach(e->x.spc().p(e));
 			txt=x.toString();
 		}
-		@Override protected void generate_code_pass_1(program p){}
+		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_struct extends stmt{
@@ -115,7 +115,7 @@ final public class program implements Serializable{
 			txt=x.toString();
 		}
 		@Override public void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
-		@Override protected void generate_code_pass_1(program p){}
+		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class define_struct_member extends stmt{
@@ -135,7 +135,7 @@ final public class program implements Serializable{
 		@Override public void validate_references_to_labels(program p)throws compiler_error{
 			if(!p.typedefs.containsKey(type))throw new compiler_error(this,"type '"+type+"' not found in declared typedefs "+p.typedefs.keySet());
 		}
-		@Override protected void generate_code_pass_1(program p){}
+		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_typedef extends stmt{
@@ -145,7 +145,7 @@ final public class program implements Serializable{
 			name=r.next_identifier();
 			txt=new xwriter().p("typedef").spc().p(name).toString();
 		}
-		@Override protected void generate_code_pass_1(program p){}
+		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	
@@ -288,8 +288,8 @@ final public class program implements Serializable{
 			this(r,op,rd,ra);
 		}
 		protected void validate_references_to_labels(program p){}
-		protected void generate_code_pass_1(program p){bin=new int[]{znxr_ci__ra__rd__()};}
-		protected void generate_code_pass_2(program p){}
+		protected void compile(program p){bin=new int[]{znxr_ci__ra__rd__()};}
+		protected void link(program p){}
 		protected int znxr_ci__ra__rd__(){return znxr|opcode|((rai&15)<<8)|((rdi&15)<<12);}
 		final@Override public String toString(){
 			if(txt!=null)return txt;
@@ -315,10 +315,10 @@ final public class program implements Serializable{
 			txt="li "+(char)(rdi+'a')+" "+data;
 		}
 		public boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
-		@Override protected void generate_code_pass_1(program p){
+		@Override protected void compile(program p){
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
-		@Override protected void generate_code_pass_2(program p){
+		@Override protected void link(program p){
 			final define_const def=p.defines.get(data);
 			if(def!=null){
 				data=def.value;
@@ -366,7 +366,7 @@ final public class program implements Serializable{
 			super(r);
 			txt="..";
 		}
-		@Override protected void generate_code_pass_1(program p){bin=new int[]{-1};}
+		@Override protected void compile(program p){bin=new int[]{-1};}
 		private static final long serialVersionUID=1;
 	}
 	public static class nxt extends stmt{
@@ -422,7 +422,7 @@ final public class program implements Serializable{
 			label=r.next_token_in_line();
 			txt="call "+label;
 		}
-		@Override protected void generate_code_pass_2(program p){
+		@Override protected void link(program p){
 			define_label l=p.labels.get(label);
 			if(l==null)throw new compiler_error(this,"label not found",label);
 			final int a=l.location_in_binary;
@@ -444,7 +444,7 @@ final public class program implements Serializable{
 			data.forEach(e->x.spc().p(e));
 			txt=x.toString();
 		}
-		@Override protected void generate_code_pass_1(program p){
+		@Override protected void compile(program p){
 //			super.generate_code_pass_1(p);
 			bin=new int[data.size()];
 			int i=0;
@@ -463,7 +463,7 @@ final public class program implements Serializable{
 			if(d!=null)throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
 			txt=":"+nm;
 		}
-		@Override protected void generate_code_pass_1(program p){}
+		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class ld extends stmt{
@@ -503,7 +503,7 @@ final public class program implements Serializable{
 			if(default_value==null)default_value="0";
 			txt="int "+name+" "+default_value;
 		}
-		@Override protected void generate_code_pass_1(program p){
+		@Override protected void compile(program p){
 			final int d=Integer.parseInt(default_value,16);
 			bin=new int[]{d};
 		}
