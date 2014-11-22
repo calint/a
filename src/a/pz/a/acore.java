@@ -147,12 +147,18 @@ final public class acore extends a{
 		}
 		x.xu(st.set("reseted"));
 	}
-	synchronized public void x_n(final xwriter x,final String s)throws Throwable{
+	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
 		b.b.pl("x_n");
 		st.clr();
-		ra.x=x;
+		final boolean refresh_display=
+			cor.loading_register==-1&&
+			(
+				(cor.instruction_register&program.opst)==program.opst
+				||(cor.instruction_register&program.opstc)==program.opstc
+			);
 		cor.step();
 		if(x==null)return;
+		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
 	}
@@ -165,16 +171,13 @@ final public class acore extends a{
 		dostep=true;
 		while(dostep){
 			b.b.pl("x_g "+i++);
-			cor.step();
-			Thread.sleep(500);
-			if(x==null)continue;
-			x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
-			xfocusline(x);
+			x_n(x,null);
 			x.flush();
+			Thread.sleep(500);
 		}
 	}
 	private void xfocusline(xwriter x){
-		if(hasbit(bit_show_rom))ro.xfocus(x,cor.program_counter);
+		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{

@@ -46,26 +46,26 @@ final public class display extends a{
 //			a=addr;
 //		return bits[a];
 //	}
-	xwriter x;// if set updates to ram display are written as js
-	public void set(final int addr,final int value){
-		final int a;
-//		if(addr>=ram.length){
-//			a=addr%ram.length;
-//		}else
-			a=addr;
-		ints[a]=value;
-		if(x==null)return;
-		final int argb=value;
-		final String hex=Integer.toHexString(argb);
-		final String id=id();
-		x.p("{var c=$('").p(id).p("');if(c){var d=c.getContext('2d');");
-		x.p("d.fillStyle='#"+acore.fld("000",hex)+"';");
-		final int yy=a/wi;
-		final int xx=a%wi;
-		final int scl=2;
-		x.p("d.fillRect("+xx*scl+","+yy*scl+","+scl+","+scl+");");				
-		x.pl("}}");
-	}
+//	xwriter x;// if set updates to ram display are written as js
+//	public void set(final int addr,final int value){
+//		final int a;
+////		if(addr>=ram.length){
+////			a=addr%ram.length;
+////		}else
+//			a=addr;
+//		ints[a]=value;
+//		if(x==null)return;
+//		final int argb=value;
+//		final String hex=Integer.toHexString(argb);
+//		final String id=id();
+//		x.p("{var c=$('").p(id).p("');if(c){var d=c.getContext('2d');");
+//		x.p("d.fillStyle='#"+acore.fld("000",hex)+"';");
+//		final int yy=a/wi;
+//		final int xx=a%wi;
+//		final int scl=2;
+//		x.p("d.fillRect("+xx*scl+","+yy*scl+","+scl+","+scl+");");				
+//		x.pl("}}");
+//	}
 
 	private static final long serialVersionUID=1;
 }
