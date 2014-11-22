@@ -9,7 +9,7 @@ final public class t014 extends a{static final long serialVersionUID=1;
 		}
 		x.p(req.get().session().href()).br();
 		x.p("ĸoö: ");
-		x.inptxt(s,null,this,"a").spc().ax(this,"a","post");
+		x.inptxt(s,this,"a",null).spc().ax(this,"a","post");
 	}
 	public void x_a(final xwriter x,final String q)throws Throwable{
 		req.get().session().path("test.txt").append(s.toString(),"\n");

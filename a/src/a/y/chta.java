@@ -39,7 +39,7 @@ public final class chta extends a{
 	private int s=0;
 	private long t=0;
 	public void to(final xwriter x)throws Throwable{
-		x.pre().inptxt(inp,"nbr line",this,"a").spc().ax(this,"b","⊚").ax(this,"c","⊙").nl().span(dsp);
+		x.pre().inptxt(inp,this,"a","nbr line").spc().ax(this,"b","⊚").ax(this,"c","⊙").nl().span(dsp);
 		x.script();
 		x_a(x,null);
 		x.xfocus(inp);

@@ -29,10 +29,10 @@ public class ed extends a{
 				txt=p.readstr();
 		}
 		s.set(txt);
-		x.inptxt(fnm,null,this,"a").nl();
+		x.inptxt(fnm,this,"a",null).nl();
 		x.nl();
 		x.p("      : daily : weekly : mothly : yearly : install : uninstall :").nl();
-		x.p("price : ").inptxt(s,null,this,"a").nl();
+		x.p("price : ").inptxt(s,this,"a",null).nl();
 		x.nl().p("    ").ax(this,"a","save");
 		if(p.exists())
 			x.focus(s);

@@ -18,16 +18,16 @@ final public class acore extends a{
 	public crun_source_editor ec;
 	/**theme*/public a th;
 	public a bi;
-	public final static int bit_logo=1;
-	public final static int bit_schematics=2;
-	public final static int bit_pramble=4;
-	public final static int bit_instructions_table=8;
-	public final static int bit_display=16;
+	public final static int bit_show_logo=1;
+	public final static int bit_show_schematics=2;
+	public final static int bit_show_pramble=4;
+	public final static int bit_show_instructions_table=8;
+	public final static int bit_show_screen=16;
 	public final static int bit_menu=32;
-	public final static int bit_panels=64;
-	public final static int bit_rom=128;
+	public final static int bit_show_panel=64;
+	public final static int bit_show_rom=128;
 	public final static int bit_edasm=256;
-	public final static int bit_edcrn=512;
+	public final static int bit_show_source_editor=512;
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
 	/**disassembled*/public a di;
 //	public metrics me;
@@ -66,6 +66,7 @@ final public class acore extends a{
 				.css(".panel","padding-left:.5em;padding-right:.5em")
 				.css(".stp","background-color:#ee0")
 				.css(".brk","background-color:#ee2")
+				.css(".nbr","width:3em;border:1px dotted;text-align:right")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css(di,"text-align:left;width:12em;line-height:1.4em;margin-right:1em")
 				.css(ec.src,"min-width:40em;min-height:128em;resize:none;line-height:1.4em")
@@ -78,6 +79,13 @@ final public class acore extends a{
 				.css("a","color:#007")
 				.css(".stp","background-color:#020")
 				.css(".brk","background-color:#021")
+				;
+				break;
+			case 2:x
+				.css("html","background:#421;color:#830")
+				.css("a","color:#000")
+				.css(".stp","background-color:#a30")
+				.css(".brk","background-color:#a30")
 				;
 				break;
 			}
@@ -97,11 +105,11 @@ final public class acore extends a{
 				j.add("cK","alert('info')");
 			}
 		}
-		if(hasbit(bit_logo)){logo_to(x);copyright_to(x);}
-		if(hasbit(bit_pramble)){pramble_to(x);x.nl();}
-		if(hasbit(bit_schematics))schematics_to(x);
-		if(hasbit(bit_instructions_table))instructions_table_to(x);
-		if(hasbit(bit_display))x.r(ra);
+		if(hasbit(bit_show_logo)){logo_to(x);copyright_to(x);}
+		if(hasbit(bit_show_pramble)){pramble_to(x);x.nl();}
+		if(hasbit(bit_show_schematics))schematics_to(x);
+		if(hasbit(bit_show_instructions_table))instructions_table_to(x);
+		if(hasbit(bit_show_screen))x.r(ra);
 		if(hasbit(bit_menu))
 			x.divo()
 				.ax(this,"r"," reset")
@@ -112,20 +120,19 @@ final public class acore extends a{
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.divo("laycent");
-		if(hasbit(bit_panels))x.divo(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
-		if(hasbit(bit_rom))x.r(ro);
-		x.divh(di,"float panel");
-		if(hasbit(bit_edcrn))x.r(ec);
-		x.div_();
-		x.divo(null,"floatclear").div_();
-		if(pt()==null)x.p("theme: ").inptxt(th,this).p("  display-bits:").inptxt(bi,this);
+		if(hasbit(bit_show_panel))x.divo(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
+		if(hasbit(bit_show_rom))x.r(ro);
+		if(hasbit(bit_show_source_editor))x.divh(di,"float panel").r(ec).div_();
+		if(pt()==null)x.divo(null,"floatclear").div_().p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this);
 		x.div_();
 	}
 	boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
-	synchronized public void x_(xwriter x,String s)throws Throwable{
+	synchronized public void x_t(xwriter x,String s)throws Throwable{
 		x.xuo(this);
+		x.xfocus(th);
 	}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
+		dostep=false;
 		b.b.pl("x_r");
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
@@ -134,7 +141,7 @@ final public class acore extends a{
 		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
 		x.xu(st.set("refresh display"));
 		x.flush();
-		if(hasbit(bit_display)){
+		if(hasbit(bit_show_screen)){
 			x.xu(st.set("refreshing display")).flush();
 			ra.xupd(x);
 		}
@@ -149,26 +156,30 @@ final public class acore extends a{
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocusline(x);
 	}
+	private boolean dostep;
 	/**go*/
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
 		b.b.pl("x_n");
 //		ra.x=null;
 		int i=0;
-		while(true){
+		dostep=true;
+		while(dostep){
 			b.b.pl("x_g "+i++);
 			cor.step();
+			Thread.sleep(500);
 			if(x==null)continue;
 			x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 			xfocusline(x);
 			x.flush();
-			Thread.sleep(500);
 		}
 	}
 	private void xfocusline(xwriter x){
-		if(hasbit(bit_rom))ro.xfocus(x,cor.program_counter);
+		if(hasbit(bit_show_rom))ro.xfocus(x,cor.program_counter);
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
+		b.b.pl("x_n");
+		dostep=false;
 		if(x!=null)x.xu(st.set("benching "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		cor.meter_instructions=0;
@@ -189,7 +200,7 @@ final public class acore extends a{
 		if(x==null)return;
 		x.xu(st).xu(re).xu(ca).xu(lo);
 		xfocusline(x);
-		if(hasbit(bit_display))ra.xupd(x);
+		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
@@ -235,7 +246,7 @@ final public class acore extends a{
 		if(x==null)return;
 		xfocusline(x);
 		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
-		if(hasbit(bit_display))ra.xupd(x);
+		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	public void logo_to(final xwriter x){
 		final int con_wi=64;

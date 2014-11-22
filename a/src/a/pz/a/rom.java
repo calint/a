@@ -38,10 +38,8 @@ final public class rom extends a{
 	}
 	private int last_focus_on_binary_location;
 	void xfocus(xwriter x,final int binary_location){
-		if(binary_location!=last_focus_on_binary_location){
-			x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(last_focus_on_binary_location).p("];e.className=e._oldcls;");
-			last_focus_on_binary_location=binary_location;
-		}
+		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(last_focus_on_binary_location).p("];e.className=e._oldcls;");
+		last_focus_on_binary_location=binary_location;
 		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(binary_location).p("];e._oldcls=e.className;e.className='stp';");
 		x.nl();
 	}
