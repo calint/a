@@ -65,6 +65,7 @@ final public class acore extends a{
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
+				.css(".fontbold","font-weight:bold")
 				.css(".floatclear","clear:both")
 				.css(".panel","padding-left:.5em;padding-right:.5em")
 				.css(".stp","background-color:#ee0")
@@ -123,10 +124,12 @@ final public class acore extends a{
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.divo("laycent");
-		if(hasbit(bit_show_panel))x.divo(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
+		if(hasbit(bit_show_panel))x.divo(null,"float panel").spanh(st,"fontbold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_show_rom))x.r(ro);
-		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").r(ec).div_();
-		if(pt()==null)x.divo(null,"floatclear").div_().p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this);
+		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel");
+		if(pt()==null){
+			x.divo(null,"floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this).div_();
+		}
 		x.div_();
 	}
 	boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
@@ -140,26 +143,20 @@ final public class acore extends a{
 		going=false;
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
+		st.set("reseted");
 		if(x==null)return;
 		xfocus(x);
-		x.xu(sy).xuo(re).xuo(ca).xuo(lo);
-		x.xu(st.set("refresh display"));
-		x.flush();
-		if(hasbit(bit_show_screen)){
-			x.xu(st.set("refreshing display")).flush();
-			ra.xupd(x);
-		}
-		x.xu(st.set("reseted"));
+		x.xu(st).xu(sy).xuo(re).xuo(ca).xuo(lo);
+		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
 		pl("x_n");
-		final boolean refresh_display=
-			cor.loading_register==-1&&
-			(
+		final boolean refresh_display=cor.loading_register==-1&&(
 				(cor.instruction_register&program.opst)==program.opst
-				||(cor.instruction_register&program.opstc)==program.opstc
-			);
-//		st.clr();
+				||
+				(cor.instruction_register&program.opstc)==program.opstc
+		);
+		st.clr();
 		cor.step();
 		if(x==null)return;
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
@@ -200,8 +197,7 @@ final public class acore extends a{
 		}
 		if(dt==0)dt=1;
 		final xwriter y=new xwriter();
-		y.p_data_size(cor.meter_instructions*1000/dt).p(" ips ")
-			.p_data_size(cor.meter_frames*1000/dt).p(" fps");
+		y.p_data_size(cor.meter_instructions*1000/dt).spc().p("ips").spc().p_data_size(cor.meter_frames*1000/dt).spc().p("fps");
 		st.set(y.toString());
 		if(x==null)return;
 		x.xu(st).xu(re).xu(ca).xu(lo);
@@ -237,16 +233,18 @@ final public class acore extends a{
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
 		pl("x_f");
 		going=false;
-		if(x!=null)x.xu(st.set("running frame")).flush();
+//		if(x!=null)x.xu(st.set("running frame")).flush();
 		final long t0=System.nanoTime();
 		try{cor.meter_instructions=0;
+			boolean loop=true;
 			while(true){
 				cor.step();
-				if(cor.instruction_register==-1)break;
+				if(loop==false)break;
+				if(cor.instruction_register==-1)loop=false;
 			}
 			final long dt=(System.nanoTime()-t0)/1000;
 			final long dinstr=cor.meter_instructions;
-			st.set("#"+cor.meter_frames+" "+strdatasize3((int)dinstr)+" "+dt+" us");
+			st.set(new xwriter().p("#").p(cor.meter_frames).spc().p_data_size(dinstr).spc().p(dt).spc().p("us").toString());
 		}catch(Throwable t){
 			st.set(stacktrace(t));
 		}
