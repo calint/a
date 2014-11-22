@@ -8,25 +8,25 @@ final public class core implements Serializable{
 	public long meter_instructions,meter_frames;
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public core(){}
-	public core(int nregs,int ncalls,int nloops,int nram,int nrom){
-		registers=new int[nregs];
-		call_stack=new int[ncalls];
-		loop_stack_address=new int[nloops];
-		loop_stack_counter=new int[nloops];
-		ram=new int[nram];
-		rom=new int[nrom];
+	public core(int register_array_size,int call_stack_size,int loop_stack_size,int ram_size,int rom_size){
+		registers=new int[register_array_size];
+		call_stack=new int[call_stack_size];
+		loop_stack_address=new int[loop_stack_size];
+		loop_stack_counter=new int[loop_stack_size];
+		ram=new int[ram_size];
+		rom=new int[rom_size];
 	}
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public void reset(){
 //		on=waiting_for_notify=notify=idle=false;
 		flags=program_counter=instruction=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
-		for(int i=0;i<registers.length;i++)registers[i]=0;
-		for(int i=0;i<call_stack.length;i++)call_stack[i]=0;
-		for(int i=0;i<loop_stack_address.length;i++)loop_stack_address[i]=0;
-		for(int i=0;i<loop_stack_counter.length;i++)loop_stack_counter[i]=0;
-		for(int i=0;i<ram.length;i++)ram[i]=0;
-		for(int i=0;i<rom.length;i++)ram[i]=rom[i];//?
+		if(registers!=null)for(int i=0;i<registers.length;i++)registers[i]=0;
+		if(call_stack!=null)for(int i=0;i<call_stack.length;i++)call_stack[i]=0;
+		if(loop_stack_address!=null)for(int i=0;i<loop_stack_address.length;i++)loop_stack_address[i]=0;
+		if(loop_stack_counter!=null)for(int i=0;i<loop_stack_counter.length;i++)loop_stack_counter[i]=0;
+		if(ram!=null)for(int i=0;i<ram.length;i++)ram[i]=0;
+		if(rom!=null)for(int i=0;i<rom.length;i++)ram[i]=rom[i];//?
 		if(rom!=null)instruction=rom[0];
 	}
 //	public void meters_reset(){meter_instructions=meter_frames=0;}
