@@ -65,12 +65,12 @@ public final class xwriter{
 		return tagoe();
 	}
 	public xwriter divh(final a e){return divh(e,null);}
-	public xwriter divh(final a e,final String intaginline){
+	public xwriter divh(final a e,final String cls){
 		tago("div");
 		if(e!=null)attr("id",e.id());
-//		if(!isempty(cls))attr("class",cls);
+		if(!isempty(cls))attr("class",cls);
 //		if(!isempty(style))attr("style",style);
-		if(!isempty(intaginline))spc().p(intaginline);
+//		if(!isempty(intaginline))spc().p(intaginline);
 		tagoe();
 		try{e.to(this);}catch(Throwable t){throw new Error(t);}//? printerror
 		return div_();
