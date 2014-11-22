@@ -159,13 +159,11 @@ lp j
 
 int nlines 30
 
-dots:
-. 1
-// yyxx  rgb
+int dots 1
+// typedef struct{int yyxx,int rgb}dot
 . 0100 0f00 
 
-rects:
-. 5
+int rects 5
 // yyxx  rgb  wi   hi 
 . 3830 0422 0010 0010
 . 040c 0fff 0008 0008
@@ -173,8 +171,7 @@ rects:
 . 1000 0ddd 0008 0008
 . 100c 0ccc 0008 0008
 
-blits:
-. 10
+int blits 10
 // yyxx from  wi   hi
 . 1030 0000 0020 0020
 . 2080 0000 0020 0020
@@ -193,8 +190,7 @@ blits:
 . 40e0 0000 0020 0020
 . 60e0 0000 0020 0020
 
-txt:
-. 12
+int txt 12
 . 000f 00ff 0fff 0175
 . 0767 0043
 . 0043 0252 0126 ffff
