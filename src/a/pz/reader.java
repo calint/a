@@ -5,9 +5,9 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import a.pz.program.compiler_error;
 
-public final class source_reader extends Reader{
+public final class reader extends Reader{
 	public program p;
-	public source_reader(final Reader source,final program p){
+	public reader(final Reader source,final program p){
 		this.source=new PushbackReader(source,1);
 		this.p=p;
 	}

@@ -34,7 +34,7 @@ final public class program implements Serializable{
 
 	public program(final String cs)throws IOException,compiler_error{this(new StringReader(cs));}
 	public program(final Reader rr)throws IOException,compiler_error{
-		final source_reader r=new source_reader(rr,this);
+		final reader r=new reader(rr,this);
 		s=new ArrayList<>();
 		while(true){
 			final int ch=r.read();
@@ -54,7 +54,7 @@ final public class program implements Serializable{
 	}
 	final static public class define_const extends stmt{
 		public String name,type,value;
-		public define_const(final source_reader r)throws IOException{
+		public define_const(final reader r)throws IOException{
 			super(r);
 			type=r.next_token_in_line();
 			final define_typedef t=r.p.typedefs.get(type);
@@ -71,7 +71,7 @@ final public class program implements Serializable{
 	final static public class define_struct extends stmt{
 		public String name;
 		public List<define_struct_member>fields;
-		public define_struct(final source_reader r)throws IOException{
+		public define_struct(final reader r)throws IOException{
 			super(r);
 			name=r.next_identifier();
 			fields=new ArrayList<>();
@@ -95,7 +95,7 @@ final public class program implements Serializable{
 		public String type;
 		public String name;
 		public String default_value;
-		public define_struct_member(source_reader r)throws IOException{
+		public define_struct_member(reader r)throws IOException{
 			super(r);
 			type=r.next_type_identifier();
 			name=r.next_identifier();
@@ -113,7 +113,7 @@ final public class program implements Serializable{
 	}
 	final static public class define_typedef extends stmt{
 		public String name;
-		public define_typedef(final source_reader r)throws IOException{
+		public define_typedef(final reader r)throws IOException{
 			super(r);
 			name=r.next_identifier();
 			txt=new xwriter().p("typedef").spc().p(name).toString();
@@ -127,7 +127,7 @@ final public class program implements Serializable{
 	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
 	final public Map<String,define_struct>structs=new LinkedHashMap<>();
 	final public Map<String,define_label>labels=new LinkedHashMap<>();
-	private stmt read_next_statement_from(final source_reader r)throws IOException,compiler_error{
+	private stmt read_next_statement_from(final reader r)throws IOException,compiler_error{
 		String tk="";
 		while(true){
 			r.skip_whitespace();
@@ -182,7 +182,7 @@ final public class program implements Serializable{
 		}
 		final stmt s;
 		try{
-			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
+			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(reader.class).newInstance(r);
 		}catch(InvocationTargetException t){
 			if(t.getCause()instanceof compiler_error)throw(compiler_error)t.getCause();
 			throw new compiler_error(r.hrs_location(),t.getCause().toString());
@@ -244,9 +244,9 @@ final public class program implements Serializable{
 		/**opcode*/public int opcode;
 		public int reg_a;
 		public int rd_d;
-		public stmt(final source_reader r){location_in_source=r.hrs_location();}
-		protected stmt(final source_reader r,final int op,final int ra,final int rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
-		protected stmt(final source_reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
+		public stmt(final reader r){location_in_source=r.hrs_location();}
+		protected stmt(final reader r,final int op,final int ra,final int rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
+		protected stmt(final reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){location_in_source=r.hrs_location();this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
 		protected void validate_references_to_labels(program p){}
 		protected void generate_code_pass_1(program p){bin=new int[]{znxr_ci__ra__rd__()};}
 		protected void generate_code_pass_2(program p){}
@@ -257,7 +257,7 @@ final public class program implements Serializable{
 	public static class li extends stmt{
 		public String data;
 		public int value;
-		public li(source_reader r)throws IOException{
+		public li(reader r)throws IOException{
 			super(r,opli,0,r.next_register_identifier());
 			data=r.next_token_in_line();
 			txt="li "+data;
@@ -292,7 +292,7 @@ final public class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class inc extends stmt{
-		public inc(source_reader r)throws IOException{
+		public inc(reader r)throws IOException{
 			super(r,opinc,0,r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
@@ -326,13 +326,13 @@ final public class program implements Serializable{
 //		return reg;
 //	}
 	public static class st extends stmt{
-		public st(source_reader r)throws IOException{
+		public st(reader r)throws IOException{
 			super(r,opst,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class eof extends stmt{
-		public eof(source_reader r)throws IOException{
+		public eof(reader r)throws IOException{
 			super(r);
 			txt=". ffff";
 		}
@@ -340,45 +340,45 @@ final public class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class nxt extends stmt{
-		public nxt(source_reader r)throws IOException{
+		public nxt(reader r)throws IOException{
 			super(r,opnxt,0,0);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class ret extends stmt{
-		public ret(source_reader r)throws IOException{
+		public ret(reader r)throws IOException{
 			super(r,opret,0,0);
 			txt="ret";
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class lp extends stmt{
-		public lp(source_reader r)throws IOException{
+		public lp(reader r)throws IOException{
 			super(r,oplp,0,r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class stc extends stmt{
-		public stc(source_reader r)throws IOException{
+		public stc(reader r)throws IOException{
 			super(r,opstc,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class add extends stmt{
-		public add(source_reader r)throws IOException{
+		public add(reader r)throws IOException{
 			super(r,opadd,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class sub extends stmt{
-		public sub(source_reader r)throws IOException{
+		public sub(reader r)throws IOException{
 			super(r,opsub,r.next_register_identifier(),r.next_register_identifier());
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class call extends stmt{
 		String label;
-		public call(source_reader r)throws IOException{
+		public call(reader r)throws IOException{
 			super(r,opcall,0,0);
 			label=r.next_token_in_line();
 		}
@@ -392,7 +392,7 @@ final public class program implements Serializable{
 	}
 	public static class define_data extends stmt{
 		public List<String>data;
-		public define_data(source_reader r)throws IOException{
+		public define_data(reader r)throws IOException{
 			super(r);
 			data=new ArrayList<>();
 			while(true){
@@ -416,7 +416,7 @@ final public class program implements Serializable{
 	}
 	public static class define_label extends stmt{
 		public String name;
-		public define_label(source_reader r,String nm){
+		public define_label(reader r,String nm){
 			super(r);
 			name=nm;
 			final define_label d=r.p.labels.get(name);
@@ -427,25 +427,25 @@ final public class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class ld extends program.stmt{
-		public ld(source_reader r)throws IOException{
+		public ld(reader r)throws IOException{
 			super(r,opld,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class ldc extends program.stmt{
-		public ldc(source_reader r)throws IOException{
+		public ldc(reader r)throws IOException{
 			super(r,opldc,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class tx extends program.stmt{
-		public tx(source_reader r)throws IOException{
+		public tx(reader r)throws IOException{
 			super(r,optx,r.next_register_identifier(),r.next_register_identifier(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class shf extends program.stmt{
-		public shf(source_reader r)throws IOException{
+		public shf(reader r)throws IOException{
 			super(r,opshf,r.next_register_identifier(),r.next_int(4),true);
 		}
 		private static final long serialVersionUID=1;
@@ -454,7 +454,7 @@ final public class program implements Serializable{
 	
 	public static class define_data_int extends define_label{
 		public String default_value;
-		public define_data_int(source_reader r)throws IOException{
+		public define_data_int(reader r)throws IOException{
 			super(r,r.next_identifier());
 			default_value=r.next_token_in_line();
 			if(default_value==null)default_value="0";
