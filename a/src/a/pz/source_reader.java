@@ -87,9 +87,23 @@ final class source_reader extends Reader{
 	}
 	public String next_identifier()throws IOException{
 		final String id=next_token_in_line();
-		if(id.length()==0)throw new program.compiler_error(hrs_location(),"expected identifier but got end of line");
+		if(id==null)throw new program.compiler_error(hrs_location(),"expected identifier but got end of line");
 		if(id.length()==0)throw new program.compiler_error(hrs_location(),"identifier is empty");
 		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
 		return id;
+	}
+	public String next_type_identifier()throws IOException{
+		final String id=next_token_in_line();
+		if(id==null)throw new program.compiler_error(hrs_location(),"expected type identifier but got end of line");
+		if(id.length()==0)throw new program.compiler_error(hrs_location(),"type identifier is empty");
+		//is_valid_type_identifier
+		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
+		return id;
+	}
+	public boolean is_at_end_of_line()throws IOException{
+		final int ch=read();
+		unread(ch);
+		if(ch=='\n')return true;
+		return false;
 	}
 }

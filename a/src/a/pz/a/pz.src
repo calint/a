@@ -1,3 +1,4 @@
+struct dot int yyxx 0 int rgb 0
 #define line_width 100
 #define scr_addr 0400 // yyxx
 #define lines_to_clear 30
@@ -159,6 +160,10 @@ lp j
 
 int nlines 30
 
+//typedef struct{int yyxx,int rgb}dot
+//class dot{int yyxx,int rgb}
+//list<dot>dots;
+//dots.foreach({})
 int dots 1
 // typedef struct{int yyxx,int rgb}dot
 . 0100 0f00 

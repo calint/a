@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import b.xwriter;
 
 final public class program implements Serializable{
 	final public static int     opli=0x0000;
@@ -44,26 +45,69 @@ final public class program implements Serializable{
 			s.add(st);
 		}
 	}
-	final static public class pound_define extends stmt{
-		public String def,val,source_loc;
-		public pound_define(final source_reader r)throws IOException{
-			source_loc=r.hrs_location();
-			def=r.next_token_in_line();
+	final static public class define extends stmt{
+		public String identifier,val,source_loc;
+		public define(final source_reader r)throws IOException{
+			identifier=r.next_token_in_line();
 			val=r.next_token_in_line();
-			txt="#define "+def+" "+val;
+			txt="#define "+identifier+" "+val;
 		}
 		@Override public void write_to(final linker c){}
 		private static final long serialVersionUID=1;
 	}
-	final public Map<String,pound_define>defines=new LinkedHashMap<>();
+	final static public class define_struct extends stmt{
+		public String name;
+		public List<define_struct_member>fields;
+		public define_struct(final source_reader r)throws IOException{
+			name=r.next_identifier();
+			fields=new ArrayList<>();
+			while(true){
+				r.skip_whitespace_on_same_line();
+				if(r.is_at_end_of_line())
+					break;
+				final define_struct_member f=new define_struct_member(r);
+				fields.add(f);
+			}
+			final xwriter x=new xwriter();
+			x.p("class").spc().p(name);
+			fields.forEach(f->x.spc().p(f.toString()));
+			txt=x.toString();
+		}
+		@Override public void write_to(final linker c){}
+		private static final long serialVersionUID=1;
+	}
+	
+	public static class define_struct_member extends stmt{
+		public String type;
+		public String name;
+		public String default_value;
+		public define_struct_member(source_reader r)throws IOException{
+			type=r.next_type_identifier();
+			name=r.next_identifier();
+			default_value=r.next_token_in_line();
+			final xwriter x=new xwriter();
+			x.p(type).spc().p(name);
+			if(default_value!=null)x.spc().p(default_value);
+			txt=x.toString();
+		}
+		@Override public void write_to(linker c){}
+		private static final long serialVersionUID=1;
+	}
+	final public Map<String,define>defines=new LinkedHashMap<>();
+	final public Map<String,define_struct>structs=new LinkedHashMap<>();
 	private stmt read_next_statement_from(final source_reader r)throws IOException,compiler_error{
 		String tk="";
 		while(true){
 			r.skip_whitespace();
 			tk=r.next_token_in_line();
 			if(tk.equals("#define")){
-				final pound_define s=new pound_define(r);
-				defines.put(s.def,s);
+				final define s=new define(r);
+				defines.put(s.identifier,s);
+				return s;
+			}
+			if(tk.equals("struct")){
+				final define_struct s=new define_struct(r);
+				structs.put(s.name,s);
 				return s;
 			}
 			if(!tk.startsWith("//"))break;
@@ -158,7 +202,7 @@ final public class program implements Serializable{
 		}
 		@Override public void write_to(linker c){
 			super.write_to(c);
-			final pound_define def=c.p.defines.get(data);
+			final define def=c.p.defines.get(data);
 			if(def!=null){
 				data=def.val;
 			}
@@ -339,6 +383,7 @@ final public class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
+
 	
 //	private static void skip_whitespace(source_reader r)throws IOException{
 //		while(true){
