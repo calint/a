@@ -10,7 +10,7 @@ public class map extends a{
 //	\__/..\__/
 //     \__/   
 	public void to(xwriter x)throws Throwable{
-		x.div(this);
+		x.divo(this);
 		final boolean rend_col_letters=true;
 		x.p("  ");
 		for(int j=0;j<wi;j+=2){

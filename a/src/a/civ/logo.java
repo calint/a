@@ -2,7 +2,7 @@ package a.civ;
 import b.*;
 public class logo extends a{
 	public void to(final xwriter x)throws Throwable{
-		x.div(this);
+		x.divo(this);
 		x.pl(".._..___..||\\\\.||..__.__._...._.");
 		x.pl("//..||.||.||.\\\\||.//..||.\\\\..//.");
 		x.pl("||..||.||.||...||.||..||..\\.//..");

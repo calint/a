@@ -40,7 +40,7 @@ public class c extends a {
 			//p.assureacess
 		}
 		x.script_();
-		x.div("editor2");
+		x.divo("editor2");
 		if(p.isfile())try{
 			final Map<String,Object>ctx=new HashMap<String,Object>();
 			ctx.put("blank","blank••");

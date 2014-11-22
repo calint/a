@@ -53,7 +53,7 @@ public class atape extends a{
 		x.ax(this,"ls"," :: list");
 		x.ax(this,"d"," :: print");
 		x.nl();
-		x.divr(d);
+		x.divh(d);
 	}
 	/**display*/public a d;
 //	synchronized public void x_rst(xwriter x,String s){reset();}

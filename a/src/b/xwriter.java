@@ -52,11 +52,11 @@ public final class xwriter{
 	public xwriter ajx(final a e){return tago("a").attr("href","javascript:$x('"+e.id()+"')").tagoe();}
 	public xwriter ajx_(){return tage("a");}
 	public xwriter br(){return tag("br");}
-	public xwriter div(final String cls){return tago("div").attr("class",cls).tagoe();}
-	public xwriter div(){return tag("div");}
-	public xwriter div(final a e){return tago("div").attr("id",e.id()).tagoe();}
-	public xwriter div(final a e,final String cls){return div(e,cls,"","");}
-	public xwriter div(final a e,final String cls,final String style,final String intaginline){
+	public xwriter divo(final String cls){return tago("div").attr("class",cls).tagoe();}
+	public xwriter divo(){return tag("div");}
+	public xwriter divo(final a e){return tago("div").attr("id",e.id()).tagoe();}
+	public xwriter divo(final a e,final String cls){return divo(e,cls,"","");}
+	public xwriter divo(final a e,final String cls,final String style,final String intaginline){
 		tago("div");
 		if(e!=null)attr("id",e.id());
 		if(!isempty(cls))attr("class",cls);
@@ -64,9 +64,10 @@ public final class xwriter{
 		if(!isempty(intaginline))spc().p(intaginline);
 		return tagoe();
 	}
-	public xwriter divr(final a e){return divr(e,null);}
-	public xwriter divr(final a e,final String intaginline){
-		tago("div").attr("id",e.id());
+	public xwriter divh(final a e){return divh(e,null);}
+	public xwriter divh(final a e,final String intaginline){
+		tago("div");
+		if(e!=null)attr("id",e.id());
 //		if(!isempty(cls))attr("class",cls);
 //		if(!isempty(style))attr("style",style);
 		if(!isempty(intaginline))spc().p(intaginline);

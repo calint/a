@@ -29,6 +29,7 @@ final public class acore extends a{
 	public final static int bit_edasm=256;
 	public final static int bit_edcrn=512;
 	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
+	/**disassembled*/public a di;
 //	public metrics me;
 	
 	public acore()throws Throwable{
@@ -52,7 +53,7 @@ final public class acore extends a{
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
-		x.div(this);
+		x.divo(this);
 		final String id=id();
 		if(pt()==null){
 			x.style();
@@ -118,7 +119,7 @@ final public class acore extends a{
 		if(hasbit(bit_instructions_table))instructions_table_to(x);
 		if(hasbit(bit_display))x.r(ra);
 		if(hasbit(bit_menu))
-			x.div()
+			x.divo()
 				.ax(this,"r"," reset")
 				.ax(this,"f"," frame")
 				.ax(this,"n"," step")
@@ -128,12 +129,13 @@ final public class acore extends a{
 //				.ax(this,"s"," save")
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
-		x.div("laycent");
-		if(hasbit(bit_panels))x.div(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
+		x.divo("laycent");
+		if(hasbit(bit_panels))x.divo(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_rom))x.r(ro);
+		x.divo(di,"float panel");
 		if(hasbit(bit_edcrn))x.r(ec);
 		x.div_();
-		x.div(null,"floatclear").div_();
+		x.divo(null,"floatclear").div_();
 		if(pt()==null)x.p("theme: ").inptxt(th,this).p("  display-bits:").inptxt(bi,this);
 		x.div_();
 	}

@@ -101,7 +101,7 @@ public class list extends a{
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	
 	synchronized final public void to(final xwriter x) throws Throwable{
-		x.div(this);
+		x.divo(this);
 		x.style();
 		x.css("table.f","margin-left:auto;margin-right:auto");
 		x.css("table.f tr:first-child","border:0;border-bottom:1px solid green;border-top:1px solid #070");
@@ -170,7 +170,7 @@ public class list extends a{
 			};
 		}catch(Throwable t){exception=t;}
 		x.nl().nl();
-		x.div();
+		x.divo();
 		x.style(sts,"position:fixed;left:0;top:0");
 		sts.to(x);
 		x.div_();

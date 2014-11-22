@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 public class techs extends a{
 	public void to(xwriter x)throws Throwable{
-		x.div(this);
+		x.divo(this);
 		x.pl("discovered technologies:");
 //		x.pl("bombin");
 //		x.pl("shootin");
