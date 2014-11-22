@@ -279,7 +279,7 @@ final public class program implements Serializable{
 		public int rdi;
 		public stmt(final reader r){location_in_source=r.hrs_location();}
 		protected stmt(final reader r,final int op,final int ra,final int rd){
-			location_in_source=r.hrs_location();
+			this(r);
 			this.opcode=op;
 			this.rai=ra;
 			this.rdi=rd;
