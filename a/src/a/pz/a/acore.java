@@ -59,8 +59,6 @@ final public class acore extends a{
 		if(pt()==null){
 			x.style()
 				.css("body","padding:3em 4em 0 8em;width:128em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
-				.css(di,"text-align:left;width:12em;line-height:1.4em;margin-right:1em")
-				.css(ec.src,"min-width:40em;min-height:128em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -69,6 +67,8 @@ final public class acore extends a{
 				.css(".stp","background-color:#ee0")
 				.css(".brk","background-color:#ee2")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
+				.css(di,"text-align:left;width:12em;line-height:1.4em;margin-right:1em")
+				.css(ec.src,"min-width:40em;min-height:128em;resize:none;line-height:1.4em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
 			switch(th.toint()){
