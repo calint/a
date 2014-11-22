@@ -101,7 +101,16 @@ public final class xwriter{
 		try{e.to(new osltgt(os));}catch(Throwable t){throw new Error(t);}
 		return span_();
 	}
-	public xwriter spanh(final a e){tago("span").attr("id",e.id()).tagoe();try{e.to(os);}catch(Throwable t){throw new Error(t);}return span_();}
+	public xwriter spanh(final a e){return spanh(e,null,null);}
+	public xwriter spanh(final a e,final String cls){return spanh(e,cls,null);}
+	public xwriter spanh(final a e,final String cls,final String style){
+		tago("span").attr("id",e.id());
+		if(cls!=null)attr("class",cls);
+		if(style!=null)attr("style",style);
+		tagoe();
+		try{e.to(os);}catch(Throwable t){throw new Error(t);}
+		return span_();
+	}
 	public xwriter span_(){return tage("span");}
 	public xwriter table(){return tag("table");}
 	public xwriter table(final String cls){return tago("table").attr("class",cls).tagoe();}

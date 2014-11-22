@@ -17,7 +17,7 @@ final public class crun_source_editor extends a{
 	public a src;
 	public a sts;
 	public void to(final xwriter x)throws Throwable{
-		x.divo(this,"float textleft panel").ax(this,"f3","crun ").span(sts).nl().inptxtarea(src).div_();
+		x.ax(this,"f3","crun ").span(sts).nl().inptxtarea(src);
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
