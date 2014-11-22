@@ -124,12 +124,11 @@ final public class program implements Serializable{
 		public String default_value;
 		public define_struct_member(reader r)throws IOException{
 			super(r);
-			type=r.next_type_identifier();
 			name=r.next_identifier();
+			type=r.next_type_identifier();
 			default_value=r.next_token_in_line();
 			final xwriter x=new xwriter();
-			x.p(type).spc().p(name);
-			if(default_value!=null)x.spc().p(default_value);
+			x.p(name).spc().p(type).spc().p(default_value);
 			txt=x.toString();
 		}
 		@Override public void validate_references_to_labels(program p)throws compiler_error{
@@ -159,6 +158,7 @@ final public class program implements Serializable{
 		while(true){
 			r.skip_whitespace();
 			tk=r.next_token_in_line();
+			if(tk==null)return new eof(r);
 			if(tk.equals("const")){
 				final define_const s=new define_const(r);
 				defines.put(s.name,s);

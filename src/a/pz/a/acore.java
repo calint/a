@@ -39,6 +39,7 @@ final public class acore extends a{
 		ra.ints=cor.ram;
 		re.ints=cor.register;
 		lo.core=cor;
+		ec.x_f3(null,null);
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
@@ -46,6 +47,7 @@ final public class acore extends a{
 			p.zap(cor.rom);
 			cor.reset();
 			x_f(x,null);
+			if(x==null)return;
 			x.xuo(ro);
 		}else super.ev(x,from,o);
 	}	
@@ -136,7 +138,9 @@ final public class acore extends a{
 		x.div_();
 	}
 	boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
-	synchronized public void x_(xwriter x,String s)throws Throwable{x.xuo(this);}
+	synchronized public void x_(xwriter x,String s)throws Throwable{
+		x.xuo(this);
+	}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
