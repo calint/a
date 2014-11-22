@@ -1,8 +1,4 @@
 package a.pz.a;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.imageio.ImageIO;
 import a.pz.core;
 import a.pz.program;
 import a.x.jskeys;
@@ -156,7 +152,7 @@ final public class acore extends a{
 		x.xu(st.set("reseted"));
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
-		if(cor.running){cor.running=false;return;}
+		if(cor.on){cor.on=false;return;}
 		st.clr();
 		ra.x=x;
 		cor.step();
@@ -179,14 +175,14 @@ final public class acore extends a{
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
-		if(cor.running)throw new Error("already running");
-		cor.running=true;
+		if(cor.on)throw new Error("already running");
+		cor.on=true;
 		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		final long minstr=me.instr;
 		final long mframes=me.frames;
 		long dt=0;
-		while(cor.running){
+		while(cor.on){
 			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
@@ -195,8 +191,8 @@ final public class acore extends a{
 			if(dt>runms)
 				break;
 		}
-		if(cor.running){
-			cor.running=false;
+		if(cor.on){
+			cor.on=false;
 			final long dminstr=me.instr-minstr;
 			final long dmframes=me.frames-mframes;
 			if(dt==0)dt=1;
@@ -213,13 +209,13 @@ final public class acore extends a{
 	}
 	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
-		if(cor.running)throw new Error("already running");
-		cor.running=true;
+		if(cor.on)throw new Error("already running");
+		cor.on=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 //		final long t0=System.currentTimeMillis();
 //		final long instr0=me.instr;
 		st.clr();
-		while(cor.running){
+		while(cor.on){
 			boolean go=true;
 			cor.step();
 //			final int srclno=lino.get(pc);
@@ -229,8 +225,8 @@ final public class acore extends a{
 //			}
 			if(!go)break;
 		}
-		if(cor.running){
-			cor.running=false;
+		if(cor.on){
+			cor.on=false;
 //			final long dt=System.currentTimeMillis()-t0;
 //			final long dinstr=me.instr-instr0;
 //			final int l=lino.get(ro.focusline);
@@ -247,17 +243,22 @@ final public class acore extends a{
 	}
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
-		if(cor.running)throw new Error("already running");
+		if(cor.on)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
-		cor.running=true;
-		final long instr0=me.instr;
-		final long t0=System.currentTimeMillis();
-		try{cor.step_frame();}catch(Throwable t){st.set(t.toString());}
-		if(cor.running){
-			final long dt=System.currentTimeMillis()-t0;
-			final long dinstr=me.instr-instr0;
-			st.set("#"+me.frames+", "+strdatasize3((int)dinstr)+"i, "+dt+" ms");
-			cor.running=false;
+		cor.on=true;
+//		final long instr0=me.instr;
+		final long t0=System.nanoTime();
+		try{cor.meter_instructions=0;
+			cor.step_frame();
+			if(cor.on){
+				final long dt=(System.nanoTime()-t0)/1000;
+				final long dinstr=cor.meter_instructions;
+				st.set("#"+cor.meter_frames+"  "+strdatasize3((int)dinstr)+"i  "+dt+" us");
+				cor.on=false;
+			}
+		}catch(Throwable t){
+			st.set(b.b.stacktrace(t));
+			cor.on=false;
 		}
 		if(x==null)return;
 		xfocusline(x);
@@ -265,29 +266,29 @@ final public class acore extends a{
 		if(hasbit(bit_display))ra.xupd(x);
 	}
 	
-	public void snapshot_png_to(final OutputStream os)throws IOException{
-		final int wi=ra.wi;
-		final int hi=ra.hi;
-		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
-		int k=0;
-		for(int i=0;i<hi;i++){
-			for(int j=0;j<wi;j++){
-				final int d=cor.ram[k++];
-				final int b= (d    &0xf)*0xf;
-				final int g=((d>>4)&0xf)*0xf;
-				final int r=((d>>8)&0xf)*0xf;
-//				final int a=(d>>12)&0xf;
-				final int a=0xff;
-				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
-				bi.setRGB(j,i,argb);
-			}
-//			k+=0;//skip
-		}
-		ImageIO.write(bi,"png",os);
-//		
-//		
-//		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
-	}
+//	public void snapshot_png_to(final OutputStream os,final int offset,final int skp)throws IOException{
+//		final int wi=ra.wi;
+//		final int hi=ra.hi;
+//		final BufferedImage bi=new BufferedImage(wi,hi,BufferedImage.TYPE_INT_ARGB);
+//		int k=0;
+//		for(int i=0;i<hi;i++){
+//			for(int j=0;j<wi;j++){
+//				final int d=cor.ram[k++];
+//				final int b= (d    &0xf)*0xf;
+//				final int g=((d>>4)&0xf)*0xf;
+//				final int r=((d>>8)&0xf)*0xf;
+////				final int a=(d>>12)&0xf;
+//				final int a=0xff;
+//				final int argb=(a<<24)+(r<<16)+(g<<8)+b;
+//				bi.setRGB(j,i,argb);
+//			}
+////			k+=0;//skip
+//		}
+//		ImageIO.write(bi,"png",os);
+////		
+////		
+////		final byte[]pixels=((DataBufferByte)bi.getRaster().getDataBuffer()).getData();
+//	}
 	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
