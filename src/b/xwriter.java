@@ -64,12 +64,13 @@ public final class xwriter{
 		if(!isempty(intaginline))spc().p(intaginline);
 		return tagoe();
 	}
-	public xwriter divh(final a e){return divh(e,null);}
-	public xwriter divh(final a e,final String cls){
+	public xwriter divh(final a e){return divh(e,null,null);}
+	public xwriter divh(final a e,final String cls){return divh(e,cls,null);}
+	public xwriter divh(final a e,final String cls,final String style){
 		tago("div");
 		if(e!=null)attr("id",e.id());
 		if(!isempty(cls))attr("class",cls);
-//		if(!isempty(style))attr("style",style);
+		if(!isempty(style))attr("style",style);
 //		if(!isempty(intaginline))spc().p(intaginline);
 		tagoe();
 		try{e.to(this);}catch(Throwable t){throw new Error(t);}//? printerror

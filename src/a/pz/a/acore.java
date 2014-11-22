@@ -125,7 +125,7 @@ final public class acore extends a{
 		x.divo("laycent");
 		if(hasbit(bit_show_panel))x.divo(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_show_rom))x.r(ro);
-		if(hasbit(bit_show_source_editor))x.divh(di,"float panel").r(ec).div_();
+		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").r(ec).div_();
 		if(pt()==null)x.divo(null,"floatclear").div_().p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this);
 		x.div_();
 	}
