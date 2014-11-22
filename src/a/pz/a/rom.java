@@ -46,9 +46,8 @@ final public class rom extends a{
 		x.p(js2);
 	}
 	public void x_clr(xwriter x,String s)throws Throwable{
-		for(int i=0;i<ints.length;i++){
-			ints[i]=0;
-		}
+		for(int i=0;i<ints.length;i++)ints[i]=0;
+		if(x==null)return;
 		x.xuo(this);
 	}
 	public void x_(xwriter x,String s){
