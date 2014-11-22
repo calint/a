@@ -52,15 +52,18 @@ final public class program implements Serializable{
 		}
 		s.forEach(e->e.generate_code_pass_2(this));
 	}
-	final static public class define extends stmt{
-		public String name,value;
-		public define(final source_reader r)throws IOException{
+	final static public class define_const extends stmt{
+		public String name,type,value;
+		public define_const(final source_reader r)throws IOException{
 			super(r);
+			type=r.next_token_in_line();
+			final define_typedef t=r.p.typedefs.get(type);
 			name=r.next_token_in_line();
-			final define d=r.p.defines.get(name);
+			final define_const d=r.p.defines.get(name);
 			if(d!=null)throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
+			if(t==null)throw new compiler_error(this,"type not found",type);
 			value=r.next_token_in_line();
-			txt="#define "+name+" "+value;
+			txt="const "+type+" "+name+" "+value;
 		}
 		@Override protected void generate_code_pass_1(program p){}
 		private static final long serialVersionUID=1;
@@ -120,7 +123,7 @@ final public class program implements Serializable{
 	}
 	
 	
-	final public Map<String,define>defines=new LinkedHashMap<>();
+	final public Map<String,define_const>defines=new LinkedHashMap<>();
 	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
 	final public Map<String,define_struct>structs=new LinkedHashMap<>();
 	final public Map<String,define_label>labels=new LinkedHashMap<>();
@@ -129,8 +132,8 @@ final public class program implements Serializable{
 		while(true){
 			r.skip_whitespace();
 			tk=r.next_token_in_line();
-			if(tk.equals("#define")){
-				final define s=new define(r);
+			if(tk.equals("const")){
+				final define_const s=new define_const(r);
 				defines.put(s.name,s);
 				return s;
 			}
@@ -265,7 +268,7 @@ final public class program implements Serializable{
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
 		@Override protected void generate_code_pass_2(program p){
-			final define def=p.defines.get(data);
+			final define_const def=p.defines.get(data);
 			if(def!=null){
 				data=def.value;
 			}

@@ -10,7 +10,6 @@ import b.a;
 import b.a_ajaxsts;
 import b.xwriter;
 final public class acore extends a{
-	final static String filenmromsrc="pz.src";
 	public core cor=new core(16,8,8,32*1024,1*1024);
 	public rom ro;
 	public display ra;
@@ -37,7 +36,7 @@ final public class acore extends a{
 	public metrics me;
 	
 	public acore()throws Throwable{
-		ec.src.from(getClass().getResourceAsStream(filenmromsrc));
+		ec.src.from(cor.getClass().getResourceAsStream("rom.src"));
 		ajaxsts.set("idle");
 		bi.set(0b1111110000);
 		ro.ints=cor.rom;

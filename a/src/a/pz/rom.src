@@ -1,8 +1,9 @@
-#define pos 1040
-#define hi 30
-#define wi 40
-#define skp c0
-#define colr 800
+typedef int
+const int pos 1040
+const int hi 30
+const int wi 40
+const int skp c0
+const int colr 800
 li a pos
 add a p
 inc p
@@ -31,7 +32,6 @@ drawdots:
     add d a
     st d e nxt ret
 ..
-typedef int
 int r f00
 int g 0f0
 int b 00f
