@@ -233,8 +233,7 @@ final public class program implements Serializable{
 //			});
 //		c.finish();
 	}
-	private List<stmt>s;
-
+	public List<stmt>s;
 
 	public static class stmt implements Serializable{
 		public String location_in_source;
