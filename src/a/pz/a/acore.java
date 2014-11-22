@@ -152,7 +152,6 @@ final public class acore extends a{
 		x.xu(st.set("reseted"));
 	}
 	public void x_n(final xwriter x,final String s)throws Throwable{
-		if(cor.on){cor.on=false;return;}
 		st.clr();
 		ra.x=x;
 		cor.step();
@@ -175,14 +174,12 @@ final public class acore extends a{
 	}
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
-		if(cor.on)throw new Error("already running");
-		cor.on=true;
 		if(x!=null)x.xu(st.set("running "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		final long minstr=me.instr;
 		final long mframes=me.frames;
 		long dt=0;
-		while(cor.on){
+		while(true){
 			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
@@ -191,31 +188,26 @@ final public class acore extends a{
 			if(dt>runms)
 				break;
 		}
-		if(cor.on){
-			cor.on=false;
-			final long dminstr=me.instr-minstr;
-			final long dmframes=me.frames-mframes;
-			if(dt==0)dt=1;
-			st.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
-			if(x==null)return;
-			x.xu(st).xu(re).xu(ca).xu(lo);
-			ro.xfocusline(x);
-			x.flush();
-			final int b=bi.toint();
-			if((b&1)==1){
-				ra.xupd(x);
-			}
+		final long dminstr=me.instr-minstr;
+		final long dmframes=me.frames-mframes;
+		if(dt==0)dt=1;
+		st.set(strdatasize3((long)dminstr*1000/dt)+"ips, "+strdatasize3((long)dmframes*1000/dt)+"fps");
+		if(x==null)return;
+		x.xu(st).xu(re).xu(ca).xu(lo);
+		ro.xfocusline(x);
+		x.flush();
+		final int b=bi.toint();
+		if((b&1)==1){
+			ra.xupd(x);
 		}
 	}
 	/**runtobreakpoint*/
 	synchronized public void x_b(xwriter x,String s)throws Throwable{//? doesnotstopafterconnectionclose
-		if(cor.on)throw new Error("already running");
-		cor.on=true;
 		if(x!=null)x.xu(st.set("running to breakpoint")).flush();
 //		final long t0=System.currentTimeMillis();
 //		final long instr0=me.instr;
 		st.clr();
-		while(cor.on){
+		while(true){
 			boolean go=true;
 			cor.step();
 //			final int srclno=lino.get(pc);
@@ -225,40 +217,29 @@ final public class acore extends a{
 //			}
 			if(!go)break;
 		}
-		if(cor.on){
-			cor.on=false;
-//			final long dt=System.currentTimeMillis()-t0;
-//			final long dinstr=me.instr-instr0;
-//			final int l=lino.get(ro.focusline);
-//			st.set(dinstr+" instr, "+dt+" ms, "+l);
-			if(x==null)return;
-			x.xu(st);
-			x.xu(sy);
-			x.xu(re);
-			x.xu(ca);
-			x.xu(this.lo);
-			xfocusline(x);
-			ra.xupd(x);
-		}
+		if(x==null)return;
+		x.xu(st);
+		x.xu(sy);
+		x.xu(re);
+		x.xu(ca);
+		x.xu(this.lo);
+		xfocusline(x);
+		ra.xupd(x);
 	}
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
-		if(cor.on)throw new Error("already running");
 		if(x!=null)x.xu(st.set("running frame")).flush();
-		cor.on=true;
-//		final long instr0=me.instr;
 		final long t0=System.nanoTime();
 		try{cor.meter_instructions=0;
-			cor.step_frame();
-			if(cor.on){
-				final long dt=(System.nanoTime()-t0)/1000;
-				final long dinstr=cor.meter_instructions;
-				st.set("#"+cor.meter_frames+"  "+strdatasize3((int)dinstr)+"i  "+dt+" us");
-				cor.on=false;
+			while(true){
+				cor.step();
+				if(cor.instruction_register==-1)break;
 			}
+			final long dt=(System.nanoTime()-t0)/1000;
+			final long dinstr=cor.meter_instructions;
+			st.set("#"+cor.meter_frames+"  "+strdatasize3((int)dinstr)+"i  "+dt+" us");
 		}catch(Throwable t){
 			st.set(b.b.stacktrace(t));
-			cor.on=false;
 		}
 		if(x==null)return;
 		xfocusline(x);

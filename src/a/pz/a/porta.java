@@ -37,7 +37,12 @@ final public class porta extends websock implements threadedsock{static final lo
 			break;
 		default:throw new Error();
 		}
-		try{co.step_frame();}catch(Throwable t){send_binary("2",stacktraceline(t));return;}
+		try{while(co.instruction_register!=-1)
+				co.step();
+		}catch(Throwable t){
+			send_binary("2",stacktraceline(t));
+			return;
+		}
 //		final long t1=System.nanoTime();
 //		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
 		final int wi=256,hi=128;
