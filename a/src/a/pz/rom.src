@@ -23,7 +23,7 @@ call dots.draw
 . 1004 ffff
 ..
 
-:dots.draw a
+:dots.draw a scr
   li b &dots
   ldc c b
   lp c
@@ -40,7 +40,7 @@ int b 00f
 li c 10
 li a 400
 ..
-:draw
+:draw a scr b height c width d pxl e skp
   lp b
     lp c
       stc a d nxt
