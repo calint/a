@@ -20,7 +20,7 @@ public class typealine extends a{
 		x.css(".box","text-align:center;border:1px dotted blue;padding:7px;");
 		x.css(".line","width:250px;");
 		x.style_();
-		x.div("box");
+		x.divo("box");
 		x.span(q).inptxt(s,"line",this,"a").focus(s).p(" ").ajx(this,"a").span(b).ajx_();
 		x.div_();//? verbose
 		x.el_();

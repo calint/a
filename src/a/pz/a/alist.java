@@ -8,7 +8,7 @@ final public class alist<T extends a>extends a{
 	public void mode_view_all(){mode=0;}
 	public boolean rend_dut=true;
 	@Override public void to(xwriter x)throws Throwable{
-		x.div(this);
+		x.divo(this);
 		if(mode==1){
 			ls.get(focus).to(x);
 			x.el_();

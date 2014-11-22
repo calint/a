@@ -2,7 +2,7 @@ package a.civ;
 import b.*;
 final public class ui extends a{
 	public void to(final xwriter x)throws Throwable{
-		x.r(g.m).divr(s).r(g.p).divr(ajaxsts).r(h).r(l).r(t);
+		x.r(g.m).divh(s).r(g.p).divh(ajaxsts).r(h).r(l).r(t);
 	}
 	public synchronized void x_(final xwriter x,final String a)throws Throwable{
 		upd();

@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 final public class rom extends a{
 	public void to(final xwriter x){
-		x.div(this,"float panel");
+		x.divo(this,"float panel");
 		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
 		int row=0;

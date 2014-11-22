@@ -2,7 +2,7 @@ package a.civ;
 import b.*;
 public class hud extends a{
 	public void to(final xwriter x)throws Throwable{
-		x.div(this);
+		x.divo(this);
 		x.pl("    __    ");
 		x.pl(" __/w \\__ ");
 		x.pl("/q \\__/e \\");

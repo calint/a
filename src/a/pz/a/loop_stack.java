@@ -5,7 +5,7 @@ import b.xwriter;
 final public class loop_stack extends a{
 	public core core;
 	public void to(final xwriter x){
-		x.div(this);
+		x.divo(this);
 		final int ix=core.loop_stack_index;
 		x.p("loop stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<core.loop_stack_address.length;){

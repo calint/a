@@ -4,7 +4,7 @@ import b.xwriter;
 final public class registers extends a{
 	public int[]ints;
 	public void to(final xwriter x){
-		x.div(this);
+		x.divo(this);
 		x.p("registers:").nl();
 		final String pad="0000";
 		for(int i=0;i<ints.length;){
