@@ -23,6 +23,7 @@ struct dot yyxx int 0000 rgb int 000
 . 0800 ffff
 . 1004 ffff
 . 120a ffff
+. 140c ffff
 ..
 
 :dots.draw a scr 400
