@@ -4,6 +4,23 @@ const hi int 30
 const wi int 40
 const skp int c0
 const colr int 800
+const linewi int 100
+
+//var a p b c d e
+//a=pos
+//a+=p
+//p++
+//b=hi
+//c=wi
+//d=colr
+//e=skp
+////e=linewi-wi
+//draw()
+
+
+
+
+
 li a pos
 add a p
 inc p
