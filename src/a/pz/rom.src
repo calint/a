@@ -14,7 +14,7 @@ li e skp
 call draw
 
 li a pos
-call drawdots
+call dots.draw
 ..
 ..
 :dots
@@ -23,7 +23,7 @@ call drawdots
 . 1004 ffff
 ..
 
-:drawdots a
+:dots.draw a
   li b &dots
   ldc c b
   lp c
