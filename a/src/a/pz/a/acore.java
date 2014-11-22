@@ -137,7 +137,7 @@ final public class acore extends a{
 	}
 	/**reset*/public void x_r(xwriter x,String s)throws Throwable{
 		pl("x_r");
-		dostep=false;
+		going=false;
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
 		if(x==null)return;
@@ -166,14 +166,13 @@ final public class acore extends a{
 		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
 		xfocus(x);
 	}
-	private boolean dostep;
+	private boolean going;
 	/**go*/
 	synchronized public void x_g(final xwriter x,final String s)throws Throwable{
 		pl("x_n");
-//		ra.x=null;
 		int i=0;
-		dostep=true;
-		while(dostep){
+		going=true;
+		while(going){
 			pl("x_g "+i++);
 			x_n(x,null);
 			x.flush();
@@ -186,7 +185,7 @@ final public class acore extends a{
 	private long runms=1000;
 	synchronized public void x_u(final xwriter x,final String s)throws Throwable{
 		pl("x_u");
-		dostep=false;
+		going=false;
 		if(x!=null)x.xu(st.set("benching "+runms+" ms")).flush();
 		long t0=System.currentTimeMillis();
 		cor.meter_instructions=0;
@@ -237,7 +236,7 @@ final public class acore extends a{
 	/**stepframe*/
 	synchronized public void x_f(final xwriter x,final String s)throws Throwable{
 		pl("x_f");
-		dostep=false;
+		going=false;
 		if(x!=null)x.xu(st.set("running frame")).flush();
 		final long t0=System.nanoTime();
 		try{cor.meter_instructions=0;
