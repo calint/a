@@ -44,49 +44,40 @@ final public class acore extends a{
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		if(o instanceof program){
-			final program p=(program)o;
+			final program p=(program)o;//? oishereinstanceofprogram
 			p.zap(cor.rom);
+			di.set(p.toString());
 			cor.reset();
 			x_f(x,null);
 			if(x==null)return;
-			x.xuo(ro);
+			x.xuo(ro).xu(di);
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
 		x.divo(this);
 		final String id=id();
 		if(pt()==null){
-			x.style();
-			switch(th.toint()){
-			case 0:x
-				//width:50em;
-				.css("body","width:128em;box-shadow:0 0 17px rgba(0,0,0,.5);text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em")
-				.css(ec.src,"width:40em;min-width:40em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
+			x.style()
+				.css("body","padding:3em 4em 0 8em;width:128em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css(di,"text-align:left;width:12em;line-height:1.4em;margin-right:1em")
+				.css(ec.src,"min-width:40em;min-height:128em;resize:none;line-height:1.4em")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
 				.css(".floatclear","clear:both")
 				.css(".panel","padding-left:.5em;padding-right:.5em")
 				.css(".stp","background-color:#ee0")
-				.css(".brk","background-color:#060")
+				.css(".brk","background-color:#ee2")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
-				break;
+			switch(th.toint()){
+			case 0:;break;
 			case 1:x
-				.css("html","background:#111;color:#080")
-				.css("body","text-align:center;line-height:1.4em;width:80em;margin-left:auto;margin-right:auto;padding:3em 4em 0 8em;display:block;box-shadow:0 0 17px rgba(0,0,0,.5)")
-				.css("a","color:#008")
-				.css(ec.src,"width:24em;min-width:24em;height:1024em;min-height:1024em;resize:none;line-height:1.4em")
-				.css(".border","border:1px dotted red")
-				.css(".float","float:left")
-				.css(".textleft","text-align:left")
-				.css(".floatclear","clear:both")
-				.css(".panel","padding-left:.5em;padding-right:.5em")
-				.css(ajaxsts,"position:fixed;bottom:0;right:0")
+				.css("html","background:#111;color:#060")
+				.css("a","color:#007")
 				.css(".stp","background-color:#020")
-				.css(".brk","background-color:#060")
-				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
+				.css(".brk","background-color:#021")
 				;
 				break;
 			}
@@ -132,7 +123,7 @@ final public class acore extends a{
 		x.divo("laycent");
 		if(hasbit(bit_panels))x.divo(null,"float panel").span(st,"font-weight:bold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_rom))x.r(ro);
-		x.divo(di,"float panel");
+		x.divh(di,"float panel");
 		if(hasbit(bit_edcrn))x.r(ec);
 		x.div_();
 		x.divo(null,"floatclear").div_();
