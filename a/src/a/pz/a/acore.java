@@ -253,7 +253,7 @@ final public class acore extends a{
 		cor.running=true;
 		final long instr0=me.instr;
 		final long t0=System.currentTimeMillis();
-		cor.step_frame();
+		try{cor.step_frame();}catch(Throwable t){st.set(t.toString());}
 		if(cor.running){
 			final long dt=System.currentTimeMillis()-t0;
 			final long dinstr=me.instr-instr0;

@@ -1,0 +1,25 @@
+#define pos 1040
+#define hi 30
+#define wi 40
+#define skp c0
+#define colr 800
+li a pos
+li b hi
+li c wi
+li d colr
+li p skp
+call draw
+..
+typedef int
+int r f00
+int g 0f0
+int b 00f
+li c 10
+li a 400
+..
+draw:
+  lp b
+    lp c
+      stc a d nxt
+      add a p nxt ret
+..
