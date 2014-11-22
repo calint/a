@@ -47,6 +47,32 @@ final class source_reader extends Reader{
 			if(line_number==0)throw new Error();
 		}
 	}
+	public final String next_token_in_line()throws IOException{
+		skip_whitespace_on_same_line();
+		final StringBuilder sb=new StringBuilder();
+		while(true){
+			final int ch=read();
+			if(ch==-1)break;
+			if(ch=='\n'){unread(ch);break;}
+			if(Character.isWhitespace(ch))break;
+			sb.append((char)ch);
+		}
+		skip_whitespace_on_same_line();
+		if(sb.length()==0)return null;
+		return sb.toString();
+	}
+	public final void skip_whitespace_on_same_line()throws IOException{
+		while(true){
+			final int ch=read();
+			if(ch==-1)return;
+			if(ch=='\n'){unread(ch);return;}
+			if(Character.isWhitespace(ch))continue;
+			unread(ch);
+			return;
+		}
+	}
+	
+	
 	private PushbackReader source;
 	private final static int newline='\n';
 	public int line_number=1,character_number_in_line;

@@ -6,8 +6,11 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import com.amazonaws.services.cloudsearchv2.model.DefineSuggesterRequest;
 
 final public class program implements Serializable{
 	final public static int     opli=0x0000;
@@ -30,8 +33,8 @@ final public class program implements Serializable{
 	final public static int   opwait=0x0058;
 	final public static int opnotify=0x0078;
 
-	public program(final String cs)throws IOException,error{this(new StringReader(cs));}
-	public program(final Reader rr)throws IOException,error{
+	public program(final String cs)throws IOException,compiler_error{this(new StringReader(cs));}
+	public program(final Reader rr)throws IOException,compiler_error{
 		final source_reader r=new source_reader(rr);
 		s=new ArrayList<>();
 		while(true){
@@ -42,44 +45,61 @@ final public class program implements Serializable{
 			s.add(st);
 		}
 	}
-	private static stmt read_next_statement_from(final source_reader r)throws IOException,error{
+	final static public class pound_define extends stmt{
+		public String def,val,source_loc;
+		public pound_define(final source_reader r)throws IOException{
+			source_loc=r.hrs_location();
+			def=r.next_token_in_line();
+			val=r.next_token_in_line();
+			txt="#define "+def+" "+val;
+		}
+		@Override public void write_to(final linker c){}
+		private static final long serialVersionUID=1;
+	}
+	final public Map<String,pound_define>defines=new LinkedHashMap<>();
+	private stmt read_next_statement_from(final source_reader r)throws IOException,compiler_error{
 		String tk="";
 		while(true){
 			skip_whitespace(r);
 			tk=next_token_in_line(r);
-			if(!tk.startsWith("#"))break;
+			if(tk.equals("#define")){
+				final pound_define s=new pound_define(r);
+				defines.put(s.def,s);
+				return s;
+			}
+			if(!tk.startsWith("//"))break;
 			consume_rest_of_line(r);
 		}
-		if(tk.endsWith(":"))return new label(tk.substring(0,tk.length()-1));
+		if(tk.endsWith(":"))return new source_label(tk.substring(0,tk.length()-1));
 		int znxr=0;
 		switch(tk){
-		case"ifz":{znxr=1;tk=next_token_in_line(r);break;}
-		case"ifn":{znxr=2;tk=next_token_in_line(r);break;}
-		case"ifp":{znxr=3;tk=next_token_in_line(r);break;}
+		case"ifz":{znxr=1;tk=r.next_token_in_line();break;}
+		case"ifn":{znxr=2;tk=r.next_token_in_line();break;}
+		case"ifp":{znxr=3;tk=r.next_token_in_line();break;}
 		}
 		if(tk.equals(".."))tk="eof";
-		if(tk.equals("."))tk="data";
+		if(tk.equals("."))tk="data_span";
 		final stmt s;
 		try{
 			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(source_reader.class).newInstance(r);
 			s.source_location=r.hrs_location();
 		}catch(InvocationTargetException t){
-			if(t.getCause()instanceof error)throw(error)t.getCause();
-			throw new error(r.hrs_location(),t.getCause().toString());
+			if(t.getCause()instanceof compiler_error)throw(compiler_error)t.getCause();
+			throw new compiler_error(r.hrs_location(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new error(r.hrs_location(),t.toString());
+			throw new compiler_error(r.hrs_location(),t.toString());
 		}catch(ClassNotFoundException t){
-			throw new error(r.hrs_location(),"unknown instruction '"+tk+"'");
+			throw new compiler_error(r.hrs_location(),"unknown instruction '"+tk+"'");
 		}catch(Throwable t){
-			throw new error(r.hrs_location(),t.toString());
+			throw new compiler_error(r.hrs_location(),t.toString());
 		}
-		if(!(s instanceof data)){
+		if(!(s instanceof data_span)){
 			while(true){
 				final String t=next_token_in_line(r);
 				if(t==null)break;
 				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
 				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
-				if(t.startsWith("#")){consume_rest_of_line(r);break;}
+				if(t.startsWith("//")){consume_rest_of_line(r);break;}
 				throw new Error("3 "+t);
 			}
 			s.znxr=znxr;
@@ -91,8 +111,8 @@ final public class program implements Serializable{
 	/**writes binary*/
 	final public void zap(int[]rom){//? arraycopybinary
 		for(int i=0;i<rom.length;i++)rom[i]=-1;
-		final rom_writer c=new rom_writer(rom);
-		s.forEach(e->{try{e.write_to(c);}catch(error ee){throw ee;}catch(Throwable t){throw new error(e.source_location,t.getMessage());}});
+		final linker c=new linker(this,rom);
+		s.forEach(e->{try{e.write_to(c);}catch(compiler_error ee){throw ee;}catch(Throwable t){throw new compiler_error(e.source_location,t.getMessage());}});
 		c.finish();
 	}
 	private List<stmt>s;
@@ -100,18 +120,20 @@ final public class program implements Serializable{
 
 	public static class stmt implements Serializable{
 		public String source_location;
+		public String txt;
 		public int znxr;
 		/**opcode*/public int opcode;
 		public int reg_a;
 		public int rd_d;
+		public stmt(){}
 		public stmt(String txt){this.txt=txt;}
 		protected stmt(int op,int ra,int rd){this.opcode=op;this.reg_a=ra;this.rd_d=rd;}
 		protected stmt(int op,int ra,int rd,boolean flip_ra_rd){this.opcode=op;this.reg_a=rd;this.rd_d=ra;}
-		public void write_to(rom_writer c){
+		public void write_to(linker c){
 			final int ir=znxr|opcode|((reg_a&15)<<8)|((rd_d&15)<<12);
 			c.write(ir);
 		}
-		protected String txt;
+		final@Override public String toString(){return txt;}
 		private static final long serialVersionUID=1;
 	}
 	public static class li extends stmt{
@@ -120,8 +142,15 @@ final public class program implements Serializable{
 			super(opli,0,reg(r));
 			data=next_token_in_line(r);
 		}
-		@Override public void write_to(rom_writer c){
+		public boolean is_integer(){
+			try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}
+		}
+		@Override public void write_to(linker c){
 			super.write_to(c);
+			final pound_define def=c.p.defines.get(data);
+			if(def!=null){
+				data=def.val;
+			}
 			if(data.startsWith(":")){
 				c.add_link(data,source_location);
 				c.write(0);
@@ -130,8 +159,8 @@ final public class program implements Serializable{
 				final int i=Integer.parseInt(data,16);
 				final int max=(1<<(bit_width-1))-1;
 				final int min=-1<<(bit_width-1);
-				if(i>max)throw new error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
-				if(i<min)throw new error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
+				if(i>max)throw new compiler_error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
+				if(i<min)throw new compiler_error(source_location,"number '"+data+"' out of "+bit_width+" bits range");
 				c.write(i);
 			}
 			
@@ -146,26 +175,26 @@ final public class program implements Serializable{
 	}
 	final private static int reg(source_reader r)throws IOException{
 		final String s=next_token_in_line(r);
-		if(s==null)throw new program.error(r.hrs_location(),"expected register but found end of line");
-		if(s.length()!=1)throw new error(r.hrs_location(),"register name unknown '"+s+"'");
+		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected register but found end of line");
+		if(s.length()!=1)throw new compiler_error(r.hrs_location(),"register name unknown '"+s+"'");
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
 		final int max=(1<<4)-1;
 		final int min=0;
-		if(reg>max||reg<min)throw new error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
+		if(reg>max||reg<min)throw new compiler_error(r.hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
 	final private static int num(source_reader r,int bit_width)throws IOException{
 		final String s=next_token_in_line(r);
-		if(s==null)throw new program.error(r.hrs_location(),"expected number but found end of line");
+		if(s==null)throw new program.compiler_error(r.hrs_location(),"expected number but found end of line");
 		try{
 			final int i=Integer.parseInt(s);
 			final int max=(1<<(bit_width-1))-1;
 			final int min=-1<<(bit_width-1);
-			if(i>max)throw new error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
-			if(i<min)throw new error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			if(i>max)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			if(i<min)throw new compiler_error(r.hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
 			return i;
-		}catch(NumberFormatException e){throw new error(r.hrs_location(),"can not translate number '"+s+"'");}
+		}catch(NumberFormatException e){throw new compiler_error(r.hrs_location(),"can not translate number '"+s+"'");}
 	}
 //	final private static int ri(String s){
 //		final char first_char=s.charAt(0);
@@ -182,7 +211,7 @@ final public class program implements Serializable{
 		public eof(source_reader r)throws IOException{
 			super(". ffff");
 		}
-		@Override public void write_to(rom_writer c){c.write(-1);}
+		@Override public void write_to(linker c){c.write(-1);}
 		private static final long serialVersionUID=1;
 	}
 	public static class nxt extends stmt{
@@ -227,17 +256,17 @@ final public class program implements Serializable{
 			super(opcall,0,0);
 			to=next_token_in_line(r);
 		}
-		@Override public void write_to(rom_writer c){
+		@Override public void write_to(linker c){
 			c.add_link(to,source_location);
 			super.write_to(c);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class data extends stmt{
-		public data(source_reader r)throws IOException{
+	public static class data_span extends stmt{
+		public data_span(source_reader r)throws IOException{
 			super(consume_rest_of_line(r));
 		}
-		@Override public void write_to(rom_writer c){
+		@Override public void write_to(linker c){
 			try(final Scanner s=new Scanner(txt)){
 				while(s.hasNext()){
 					final String ss=s.next();
@@ -248,11 +277,11 @@ final public class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class label extends stmt{
-		public label(String nm){
+	public static class source_label extends stmt{
+		public source_label(String nm){
 			super(nm);
 		}
-		@Override public void write_to(rom_writer c){
+		@Override public void write_to(linker c){
 			c.add_label(txt,source_location);
 		}
 		private static final long serialVersionUID=1;
@@ -325,10 +354,10 @@ final public class program implements Serializable{
 		return sb.toString();
 	}
 	
-	public static class error extends RuntimeException{
+	public static class compiler_error extends RuntimeException{
 		public String source_location;
 		public String message;
-		public error(String source_location,String message){this.source_location=source_location;this.message=message;}
+		public compiler_error(String source_location,String message){this.source_location=source_location;this.message=message;}
 		@Override public String toString(){return "line "+source_location.split(":")[0]+": "+message;}
 		private static final long serialVersionUID=1;
 	}

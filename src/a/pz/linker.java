@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import a.pz.program.error;
+import a.pz.program.compiler_error;
 
-final class rom_writer{
+final class linker{
 	private int[]ints;
 	private int i;
-	public rom_writer(int[]ints){this.ints=ints;}
+	final program p;
+	public linker(program p,int[]ints){this.p=p;this.ints=ints;}
 	public void write(int instruction){
 		ints[i++]=instruction;
 	}
 	public void add_label(String name,String location_in_source){
 		if(labels.containsKey(name))throw new Error("label '"+name+"' already declared. "+labels.get(name));
-		final rom_writer.label_link m=new label_link();
+		final linker.label_link m=new label_link();
 		m.at_binary_location=i;
 		m.at_source_location=location_in_source;
 		m.link_to=name;
@@ -27,21 +28,21 @@ final class rom_writer{
 		int at_binary_location;
 		public String toString(){return at_source_location+" ["+Integer.toHexString(at_binary_location)+"]";}
 	}
-	private final Map<String,rom_writer.label_link>labels=new LinkedHashMap<>();
+	private final Map<String,linker.label_link>labels=new LinkedHashMap<>();
 	public void add_link(String to_label,String location_in_source){
-		final rom_writer.label_link m=new label_link();
+		final linker.label_link m=new label_link();
 		m.at_binary_location=i;
 		m.at_source_location=location_in_source;
 		m.link_to=to_label;
 		links.add(m);
 	}
-	private final List<rom_writer.label_link>links=new ArrayList<>();
-	public void finish()throws error{
+	private final List<linker.label_link>links=new ArrayList<>();
+	public void finish()throws compiler_error{
 		links.forEach(e->{
-			final rom_writer.label_link ll;
+			final linker.label_link ll;
 			if(e.link_to.startsWith(":"))ll=labels.get(e.link_to.substring(1));
 			else ll=labels.get(e.link_to);
-			if(ll==null)throw new error(e.at_source_location,"label '"+e.link_to+"' not found");
+			if(ll==null)throw new compiler_error(e.at_source_location,"label '"+e.link_to+"' not found");
 			final int a=ll.at_binary_location;
 			final int d=ints[e.at_binary_location];
 			final int c;
