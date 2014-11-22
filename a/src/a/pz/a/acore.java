@@ -5,7 +5,6 @@ import a.pz.core;
 import a.pz.program;
 import a.x.jskeys;
 import b.a;
-import b.a_ajaxsts;
 import b.xwriter;
 final public class acore extends a{
 	public core cor=new core(16,8,8,32*1024,1*1024);
@@ -30,7 +29,7 @@ final public class acore extends a{
 	public final static int bit_show_rom=128;
 	public final static int bit_edasm=256;
 	public final static int bit_show_source_editor=512;
-	/**builtinajaxstatus*/public a_ajaxsts ajaxsts;
+	/**builtinajaxstatus*/public a ajaxsts;
 	/**disassembled*/public a di;
 //	public metrics me;
 	
@@ -61,7 +60,7 @@ final public class acore extends a{
 		final String id=id();
 		if(pt()==null){
 			x.style()
-				.css("body","padding:3em 4em 0 8em;width:128em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("body","padding:3em 4em 0 8em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -72,7 +71,8 @@ final public class acore extends a{
 				.css(".brk","background-color:#ee2")
 				.css(".nbr","width:3em;border:1px dotted;text-align:right")
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
-				.css(di,"text-align:left;width:12em;line-height:1.4em;margin-right:1em")
+				.css("textarea","line-height:1.4em")
+				.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
 				.css(ec.src,"min-width:20em;min-height:128em;line-height:1.4em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
@@ -93,7 +93,7 @@ final public class acore extends a{
 				;
 				break;
 			}
-			x.style_().r(ajaxsts);
+			x.style_().spanh(ajaxsts);
 			try(final jskeys j=new jskeys(x)){
 				j.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
 				j.add("cL","$x('"+id+" l')");
