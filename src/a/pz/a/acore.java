@@ -128,7 +128,7 @@ final public class acore extends a{
 		if(hasbit(bit_show_rom))x.r(ro);
 		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel");
 		if(pt()==null){
-			x.divo(null,"floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this).div_();
+			x.divo(null,"floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
 		}
 		x.div_();
 	}
@@ -256,7 +256,7 @@ final public class acore extends a{
 	public void logo_to(final xwriter x){
 		final int con_wi=64;
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
-		x.pl("clare "+strdatasize(cor.ram.length));
+		x.p("clare").spc().p_data_size(cor.ram.length).nl();
 		for(int k=0;k<con_wi;k++)x.p(Math.random()>.5?'-':' ');x.nl();
 	}
 	static public void copyright_to(final xwriter x){
@@ -281,20 +281,26 @@ final public class acore extends a{
 		final int nsprites=16;
 		final int ndacs=8;
 		
-		x.pl(ra.wi+" x "+ra.hi+" pixels display");//\n  12 bit rgb\n  20 bit free");
-		x.pl(bits_per_pixel_rgb+"b rgb color in "+bits_per_pixel+"b pixel");
-		x.pl(nsprites+" sprites onscreen collision detection");
-		x.pl(ndacs+" sound tracks");
-		x.pl(strdatasize2(cor.rom.length)+" "+bits_per_instruction+"b rom");
-		x.pl(cor.registers.length+" "+bits_per_register+"b registers");
-		x.pl(cor.call_stack.length+" calls stack");
-		x.pl(cor.loop_stack_address.length+" loops stack");
+		x.p(ra.wi).spc().p("x").spc().p(ra.hi).spc().p("pixels display").nl();//\n  12 bit rgb\n  20 bit free");
+		x.p(bits_per_pixel_rgb).p("b").spc().p("rgb color in").spc().p(bits_per_pixel).p("b").spc().p("pixel").nl();
+		x.p(nsprites).spc().p("sprites onscreen collision detection").nl();
+		x.p(ndacs).spc().p("sound tracks").nl();
+		x.p_data_size(cor.rom.length).spc().p(bits_per_instruction).p("b").spc().p("rom").nl();
+		x.p(cor.registers.length).spc().p(bits_per_register).p("b").spc().p("registers").nl();
+		x.p(cor.call_stack.length).spc().p("calls stack").nl();
+		x.p(cor.loop_stack_address.length).spc().p("loops stack");
 	}
 	static public void instructions_table_to(final xwriter x){
 		x.pl(":------:------:----------------------:");
-		x.pl(": load : "+fld("x000",Integer.toHexString(program.opli))+" : next instr to reg[x] :");
-		x.pl(": call : "+fld("..00",Integer.toHexString(program.opcall))+" : 2b + ..              :");
-		x.pl(":  skp : "+fld("..00",Integer.toHexString(program.opskp))+" : pc+=..               :");
+		x.pl(":  ifz : ...1 : ifz op               :");
+		x.pl(":  ifn : ...2 : ifn op               :");
+		x.pl(":  ifp : ...3 : ifp op               :");
+		x.pl(":  nxt : ...4 : op nxt               :");
+		x.pl(":  ret : ...8 : op ret               :");
+		x.pl(":      : ...c : op nxt ret           :");
+		x.pl(":   li : "+fld("x000",Integer.toHexString(program.opli))+" : next instr to reg[x] :");
+		x.pl(": call : "+fld("ii00",Integer.toHexString(program.opcall))+" : imm6                 :");
+		x.pl(":  skp : "+fld("ii00",Integer.toHexString(program.opskp))+" : pc+=imm6             :");
 		x.pl(":  stc : "+fld("yx00",Integer.toHexString(program.opstc))+" : ram[x++]=y           :");
 		x.pl(":   st : "+fld("yx00",Integer.toHexString(program.opst))+" : ram[x]=y             :");
  		x.pl(":   lp : "+fld("x000",Integer.toHexString(program.oplp))+" : loop x               :");
@@ -310,12 +316,6 @@ final public class acore extends a{
 //		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
 		x.pl(":  sub : "+fld("xy00",Integer.toHexString(program.opsub))+" : r[y]-=r[x]           :");
 		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : sound.add block r[x] :");
-		x.pl(":  ifz : ...1 : if z op              :");
-		x.pl(":  ifn : ...2 : if n op              :");
-		x.pl(":  ifp : ...3 : if p op              :");
-		x.pl(":  nxt : ...4 : op nxt               :");
-		x.pl(":  ret : ...8 : op ret               :");
-		x.pl(":      : ...c : op nxt ret           :");
 		x.pl(":------:------:----------------------:");
 		x.pl(":      : ..18 : cr invalids          :");
 		x.pl(": wait : "+fld("x000",Integer.toHexString(program.opwait))+" : wait                 :");
@@ -332,67 +332,67 @@ final public class acore extends a{
 
 
 
-	public final static String fld(final String def,final String s){
+	final static String fld(final String def,final String s){
 		final String s1=s.length()>def.length()?s.substring(s.length()-def.length()):s;
 		final int a=def.length()-s1.length();
 		if(a<0)return s1;
 		final String s2=def.substring(0,a)+s1;
 		return s2;
 	}
-	private static String strdatasize2(final int i){
-		final StringBuilder sb=new StringBuilder();//! final StringBuilder sb=;
-		int x=i;
-		final int megs=(x>>20);
-		if(megs>0){
-			x-=(megs<<20);
-			sb.append(megs).append("m");			
-		}
-		final int kilos=(x>>10);
-		if(kilos>0){
-			x-=(kilos<<10);
-			sb.append(kilos).append("k");
-		}
-		if(x>0){
-			sb.append(x);
-		}
-		return sb.toString();
-	}
-	public static String strdatasize3(final long i){
-		final StringBuilder sb=new StringBuilder();//! final StringBuilder sb=;
-		long x=i;
-		final long megs=(x>>20);
-		if(megs>0){
-			x-=(megs<<20);
-			sb.append(megs).append("m");
-			return sb.toString();
-		}
-		final long kilos=(x>>10);
-		if(kilos>0){
-			x-=(kilos<<10);
-			sb.append(kilos).append("k");
-			return sb.toString();
-		}
-		if(x>0){
-			sb.append(x);
-		}
-		return sb.toString();
-	}
-	public static String strdatasize(final int i){
-		final StringBuilder sb=new StringBuilder();//! final StringBuilder sb=;
-		int x=i;
-		final int megs=(x>>20);
-		if(megs>0){
-			x-=(megs<<20);
-			sb.append(megs).append("m");			
-		}
-		final int kilos=(x>>10);
-		if(kilos>0){
-			x-=(kilos<<10);
-			sb.append(kilos).append("k");
-		}
-		if(x>0){
-			sb.append(x).append("b");
-		}
-		return sb.toString();
-	}
+//	private static String strdatasize2(final int i){
+//		final StringBuilder sb=new StringBuilder();//! final StringBuilder sb=;
+//		int x=i;
+//		final int megs=(x>>20);
+//		if(megs>0){
+//			x-=(megs<<20);
+//			sb.append(megs).append("m");			
+//		}
+//		final int kilos=(x>>10);
+//		if(kilos>0){
+//			x-=(kilos<<10);
+//			sb.append(kilos).append("k");
+//		}
+//		if(x>0){
+//			sb.append(x);
+//		}
+//		return sb.toString();
+//	}
+//	public static String strdatasize3(final long i){
+//		final StringBuilder sb=new StringBuilder();//! final StringBuilder sb=;
+//		long x=i;
+//		final long megs=(x>>20);
+//		if(megs>0){
+//			x-=(megs<<20);
+//			sb.append(megs).append("m");
+//			return sb.toString();
+//		}
+//		final long kilos=(x>>10);
+//		if(kilos>0){
+//			x-=(kilos<<10);
+//			sb.append(kilos).append("k");
+//			return sb.toString();
+//		}
+//		if(x>0){
+//			sb.append(x);
+//		}
+//		return sb.toString();
+//	}
+//	public static String strdatasize(final int i){
+//		final StringBuilder sb=new StringBuilder();//! final StringBuilder sb=;
+//		int x=i;
+//		final int megs=(x>>20);
+//		if(megs>0){
+//			x-=(megs<<20);
+//			sb.append(megs).append("m");			
+//		}
+//		final int kilos=(x>>10);
+//		if(kilos>0){
+//			x-=(kilos<<10);
+//			sb.append(kilos).append("k");
+//		}
+//		if(x>0){
+//			sb.append(x).append("b");
+//		}
+//		return sb.toString();
+//	}
 }
