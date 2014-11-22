@@ -1,14 +1,13 @@
 package a.pz;
 import java.io.Serializable;
 final public class core implements Serializable{
-	public int id;
 //	public boolean on,idle,waiting_for_notify,notify;
-	public int program_counter,instruction,flags,loading_register=-1,call_stack_index,loop_stack_index;
+	public int core_id,program_counter,instruction,flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]registers,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	public long meter_instructions,meter_frames;
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public core(){}
-	public core(int register_array_size,int call_stack_size,int loop_stack_size,int ram_size,int rom_size){
+	public core(final int register_array_size,final int call_stack_size,final int loop_stack_size,final int ram_size,final int rom_size){
 		registers=new int[register_array_size];
 		call_stack=new int[call_stack_size];
 		loop_stack_address=new int[loop_stack_size];
