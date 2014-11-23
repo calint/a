@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Map;
 import b.xwriter;
 
-public final class program extends Reader implements AutoCloseable{
+public final class program implements Serializable{
 public static class add extends program.stmt{
+		final public static int    opadd=0x00a0;
 		public add(program r)throws IOException{
-			super(r,program.opadd,r.next_register_identifier(),r.next_register_identifier());
+			super(r,add.opadd,r.next_register_identifier(),r.next_register_identifier());
 		}
 		@Override public void source_to(xwriter x){
 			x.p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
@@ -149,8 +150,9 @@ public static class stmt implements Serializable{
 public static class li extends stmt{
 		public String data;
 		public int value;
+		final public static int     opli=0x0000;
 		public li(program r)throws IOException{
-			super(r,program.opli,0,r.next_register_identifier());
+			super(r,li.opli,0,r.next_register_identifier());
 			data=r.next_token_in_line();
 			txt="li "+(char)(rdi+'a')+" "+data;
 		}
@@ -184,8 +186,9 @@ public static class li extends stmt{
 		private static final long serialVersionUID=1;
 	}
 public static class inc extends stmt{
+	final public static int    opinc=0x0200;
 	public inc(program r)throws IOException{
-		super(r,program.opinc,0,r.next_register_identifier());
+		super(r,inc.opinc,0,r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("inc").spc().p((char)(rdi+'a'));
@@ -193,8 +196,9 @@ public static class inc extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class st extends stmt{
+	final public static int     opst=0x00d8;
 	public st(program r)throws IOException{
-		super(r,program.opst,r.next_register_identifier(),r.next_register_identifier());
+		super(r,st.opst,r.next_register_identifier(),r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("st").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
@@ -210,21 +214,24 @@ public static class eof extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class nxt extends stmt{
+	final public static int    opnxt=0x0004;
 	public nxt(program r)throws IOException{
-		super(r,program.opnxt,0,0);
+		super(r,nxt.opnxt,0,0);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class ret extends stmt{
+	final public static int    opret=0x0008;
 	public ret(program r)throws IOException{
-		super(r,program.opret,0,0);
+		super(r,ret.opret,0,0);
 		txt="ret";
 	}
 	private static final long serialVersionUID=1;
 }
 public static class lp extends stmt{
+	final public static int     oplp=0x0100;
 	public lp(program r)throws IOException{
-		super(r,program.oplp,0,r.next_register_identifier());
+		super(r,lp.oplp,0,r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("lp").spc().p((char)(rdi+'a'));
@@ -232,8 +239,9 @@ public static class lp extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class stc extends stmt{
+	final public static int    opstc=0x0040;
 	public stc(program r)throws IOException{
-		super(r,program.opstc,r.next_register_identifier(),r.next_register_identifier());
+		super(r,stc.opstc,r.next_register_identifier(),r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("stc").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
@@ -241,15 +249,17 @@ public static class stc extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class sub extends stmt{
+	final public static int    opsub=0x0020;
 	public sub(program r)throws IOException{
-		super(r,program.opsub,r.next_register_identifier(),r.next_register_identifier());
+		super(r,sub.opsub,r.next_register_identifier(),r.next_register_identifier());
 	}
 	private static final long serialVersionUID=1;
 }
 public static class call extends stmt{
 	String label;
+	final public static int   opcall=0x0010;
 	public call(program r)throws IOException{
-		super(r,program.opcall,0,0);
+		super(r,call.opcall,0,0);
 		label=r.next_token_in_line();
 		txt="call "+label;
 	}
@@ -298,14 +308,16 @@ public static class define_label extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class ld extends stmt{
+	final public static int     opld=0x00f8;
 	public ld(program r)throws IOException{
-		super(r,program.opld,r.next_register_identifier(),r.next_register_identifier(),true);
+		super(r,ld.opld,r.next_register_identifier(),r.next_register_identifier(),true);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class ldc extends stmt{
+	final public static int    opldc=0x00c0;
 	public ldc(program r)throws IOException{
-		super(r,program.opldc,r.next_register_identifier(),r.next_register_identifier(),true);
+		super(r,ldc.opldc,r.next_register_identifier(),r.next_register_identifier(),true);
 	}
 	@Override public void source_to(xwriter x){
 		x.p("ldc").spc().p((char)(rdi+'a')).spc().p((char)(rai+'a'));
@@ -313,14 +325,16 @@ public static class ldc extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class tx extends stmt{
+	final public static int     optx=0x00e0;
 	public tx(program r)throws IOException{
-		super(r,program.optx,r.next_register_identifier(),r.next_register_identifier(),true);
+		super(r,tx.optx,r.next_register_identifier(),r.next_register_identifier(),true);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class shf extends stmt{
+	final public static int    opshf=0x0060;
 	public shf(program r)throws IOException{
-		super(r,program.opshf,r.next_register_identifier(),r.next_int(4),true);
+		super(r,shf.opshf,r.next_register_identifier(),r.next_int(4),true);
 	}
 	private static final long serialVersionUID=1;
 }
@@ -355,35 +369,32 @@ public static class compiler_error extends RuntimeException{
 	@Override public String toString(){return new xwriter().p("line ").p(source_location).spc().p(message).toString();}
 	private static final long serialVersionUID=1;
 }
-	//	public program p;
-	public List<program.stmt>s;
-	final public Map<String,program.define_const>defines=new LinkedHashMap<>();
-	final public Map<String,program.define_typedef>typedefs=new LinkedHashMap<>();
-	final public Map<String,program.define_struct>structs=new LinkedHashMap<>();
-	final public Map<String,program.define_label>labels=new LinkedHashMap<>();
+	final public List<stmt>statements=new ArrayList<>();
+	final public Map<String,define_const>defines=new LinkedHashMap<>();
+	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
+	final public Map<String,define_struct>structs=new LinkedHashMap<>();
+	final public Map<String,define_label>labels=new LinkedHashMap<>();
 
 	public program(final String source)throws IOException{
 		this(new StringReader(source));
 	}
 	public program(final Reader source)throws IOException{
 		this.source=new PushbackReader(source,1);
-//		this.p=p;
-		s=new ArrayList<>();
 		while(true){
 			final int ch=read();
 			if(ch==-1)break;
 			unread(ch);
 			final program.stmt st=read_next_statement_from(this);
-			s.add(st);
+			statements.add(st);
 		}
-		s.forEach(e->e.validate_references_to_labels(this));
-		s.forEach(e->e.compile(this));
+		statements.forEach(e->e.validate_references_to_labels(this));
+		statements.forEach(e->e.compile(this));
 		int pc=0;
-		for(final program.stmt ss:s){
+		for(final program.stmt ss:statements){
 			ss.location_in_binary=pc;
 			if(ss.bin!=null)pc+=ss.bin.length;
 		}
-		s.forEach(e->e.link(this));
+		statements.forEach(e->e.link(this));
 	}
 	private program.stmt read_next_statement_from(final program r)throws IOException,program.compiler_error{
 		String tk="";
@@ -473,7 +484,7 @@ public static class compiler_error extends RuntimeException{
 		return s;
 	}
 	protected void disassemble_to(xwriter x){
-		s.forEach(e->x.pl(e.toString()));
+		statements.forEach(e->x.pl(e.toString()));
 	}
 //	public source_reader(final Reader source,final int lineno,final int charno){
 //		this.source=new PushbackReader(source,1);
@@ -487,7 +498,7 @@ public static class compiler_error extends RuntimeException{
 	final public void zap(int[]rom){//? arraycopybinary
 		for(int i=0;i<rom.length;i++)rom[i]=-1;
 		int pc=0;
-		for(final program.stmt ss:s){
+		for(final program.stmt ss:statements){
 			if(ss.bin==null)continue;
 			final int c=ss.bin.length;
 			System.arraycopy(ss.bin,0,rom,pc,c);
@@ -500,13 +511,13 @@ public static class compiler_error extends RuntimeException{
 	static String hr_location_string_from_line_and_col(final int ln,final int col) {
 		return ln+":"+col;
 	}
-	@Override public int read()throws IOException{
+	protected int read()throws IOException{
 		final int ch=source.read();
 		character_number_in_line++;
 		if(ch==newline){line_number++;character_number_in_line=0;}
 		return ch;
 	}
-	@Override public int read(final char[]cbuf,int off,int len)throws IOException{
+	protected int read(final char[]cbuf,int off,int len)throws IOException{
 		final int i=source.read(cbuf,off,len);
 		while(len-->0){
 			final int ch=cbuf[off++];
@@ -515,8 +526,8 @@ public static class compiler_error extends RuntimeException{
 		}
 		return i;
 	}
-	@Override public void close()throws IOException{}
-	final public void unread(int c)throws IOException{
+//	protected void close()throws IOException{}
+	protected void unread(int c)throws IOException{
 		source.unread(c);
 		character_number_in_line--;
 		if(character_number_in_line<0){
@@ -551,25 +562,11 @@ public static class compiler_error extends RuntimeException{
 	}
 	
 	
-	private PushbackReader source;
-	private final static int newline='\n';
-	public int line_number=1,character_number_in_line;
-	final public static int     opli=0x0000;
-	final public static int     oplp=0x0100;
-	final public static int    opinc=0x0200;
+	protected PushbackReader source;
+	protected final static int newline='\n';
+	protected int line_number=1,character_number_in_line;
 	final public static int    opneg=0x0300;
-	final public static int     optx=0x00e0;
-	final public static int    opldc=0x00c0;
-	final public static int    opadd=0x00a0;
 	final public static int    opskp=0x0080;
-	final public static int    opshf=0x0060;
-	final public static int    opstc=0x0040;
-	final public static int    opsub=0x0020;
-	final public static int   opcall=0x0010;
-	final public static int     opst=0x00d8;
-	final public static int     opld=0x00f8;
-	final public static int    opnxt=0x0004;
-	final public static int    opret=0x0008;
 	final public static int    opdac=0x0400;
 	final public static int   opwait=0x0058;
 	final public static int opnotify=0x0078;
@@ -642,5 +639,6 @@ public static class compiler_error extends RuntimeException{
 		disassemble_to(x);
 		return x.toString();
 	}
-
+	
+	private static final long serialVersionUID=1;
 }
