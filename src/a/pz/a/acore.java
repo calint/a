@@ -121,11 +121,11 @@ final public class acore extends a{
 //		x.divh(sr,"panel");
 		if(hasbit(bit_menu))
 			x.divo()
-				.ax(this,"r"," reset")
-				.ax(this,"f"," frame")
-				.ax(this,"n"," step")
-				.ax(this,"g"," go")
-				.ax(this,"u"," bench")
+				.ax(this,"r",""," reset","r")
+				.ax(this,"f",""," frame","f")
+				.ax(this,"n",""," step","s")
+				.ax(this,"g",""," go","g")
+				.ax(this,"u",""," bench","b")
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.divo("laycent");
