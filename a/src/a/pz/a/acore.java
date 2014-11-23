@@ -97,20 +97,20 @@ final public class acore extends a{
 				break;
 			}
 			x.style_().spanh(ajaxsts);
-			try(final jskeys j=new jskeys(x)){
-				j.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
-				j.add("cL","$x('"+id+" l')");
-				j.add("cT","$x('"+id+" n')");
-				j.add("cR","$x('"+id+" r')");
-				j.add("cF","$x('"+id+" i')");
-				j.add("cG","$x('"+id+" g')");
-				j.add("cU","$x('"+id+" u')");
-				j.add("cO","$x('"+id+" c')");
-				j.add("cF","$x('"+id+" f')");
-				j.add("cD","$x('"+ra.id()+" rfh')");
-				j.add("cB","$x('"+id+" b')");
-				j.add("cK","alert('info')");
-			}
+//			try(final jskeys j=new jskeys(x)){
+//				j.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
+//				j.add("cL","$x('"+id+" l')");
+//				j.add("cT","$x('"+id+" n')");
+//				j.add("cR","$x('"+id+" r')");
+//				j.add("cF","$x('"+id+" i')");
+//				j.add("cG","$x('"+id+" g')");
+//				j.add("cU","$x('"+id+" u')");
+//				j.add("cO","$x('"+id+" c')");
+//				j.add("cF","$x('"+id+" f')");
+//				j.add("cD","$x('"+ra.id()+" rfh')");
+//				j.add("cB","$x('"+id+" b')");
+//				j.add("cK","alert('info')");
+//			}
 		}
 		if(hasbit(bit_show_logo)){logo_to(x);copyright_to(x);}
 		if(hasbit(bit_show_pramble)){pramble_to(x);x.nl();}
