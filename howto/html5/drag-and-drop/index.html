@@ -29,7 +29,25 @@
 		bottom:0;
 		height:100%;
 		width:8em;
-		background-color:#fee;
+		background-color:#ff0;
+	}
+	#pending{
+		position:fixed;
+		text-align:left;
+		right:16em;
+		bottom:0;
+		width:20em;
+		height:11em;
+		background-color:#fc0;
+	}
+	#ongoing{
+		position:fixed;
+		text-align:left;
+		bottom:0;
+		left:16em;
+		width:20em;
+		height:7em;
+		background-color:#cc0;
 	}
 	#outbox{
 		position:fixed;
@@ -38,42 +56,55 @@
 		bottom:0;
 		height:100%;
 		width:8em;
-		background-color:#e80;
+		background-color:#cc0;
 	}
 </style>
 <script>
 function dragStart(ev){
 	console.log("drag_start "+ev.target.id);
-	ev.dataTransfer.effectAllowed='move';
-	ev.dataTransfer.setData("id",ev.target.getAttribute('id'));
-	ev.dataTransfer.setDragImage(ev.target,0,0);
+//	ev.dataTransfer.effectAllowed='move';
+	ev.dataTransfer.setData("id",ev.target.id);
+//	ev.dataTransfer.setDragImage(ev.target,0,0);
 	return true;
 }
 function dragEnter(ev){
 	console.log("drag_enter "+ev.target.id);
-	event.preventDefault();
+//	event.preventDefault();
 	return true;
 }
 function dragOver(ev){
-	console.log("drag_over "+ev.target.id);
+//	console.log("drag_over "+ev.target.id);
 	return false;
 }
 function dragDrop(ev) {
-	var src=ev.dataTransfer.getData("id");
-	console.log("drop_on "+ev.target.id+" ["+src+"]");
-	ev.target.appendChild(document.getElementById(src));
-	ev.stopPropagation();
+//	ev.stopPropagation();
+	var id=ev.dataTransfer.getData("id");
+	var e=document.getElementById(id);
+	console.log("drop "+e.className+"["+e.id+"] on "+ev.target.className+"["+ev.target.id+"]");
+	console.log(" : "+ev.target.className+" "+ev.target.id);
+	if(ev.target.className=="el")return false;
+	ev.target.appendChild(e);
 	return false;
 }
+function new_postit(){
+	var a=document.getElementById("desktop");
+	var b=a.getElementsByTagName('div')[0];
+//	console.log("new postit clone "+b);
+	var c=b.cloneNode(true);
+	c.id="~"+Math.random();
+	a.appendChild(c);
+	console.log("new postit "+c.className+"["+c.id+"]="+c.innerHTML);
+}
 </script>
+<a href="javascript:new_postit()" style="display:block;text-align:center">:: new</a>
 <div id=desktop ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">
-	<div class=el id=a draggable=true ondragstart="return dragStart(event)">
+	<div class=el id=a draggable=true ondragstart="return dragStart(event)"><div contenteditable>
      to: tudor@tudorials.com
 subject: drag-and-drop
 
 oo
 ---
-	</div>
+</div></div>
 	<div class=el id=c draggable=true ondragstart="return dragStart(event)">
      to: tudor@tudorials.com
 subject: drag-and-drop-move
@@ -85,4 +116,6 @@ subject: drag-and-drop-move
 </div>
 <div id=inbox ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">inbox..</div>
 <div id=outbox ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">..outbox</div>
+<div id=ongoing ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">ongoing</div>
+<div id=pending ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">pending</div>
 <!-- http://www.tutorialspoint.com/html5/html5_drag_drop.htm -->
