@@ -137,7 +137,7 @@ public static class stmt implements Serializable{
 		if((znxr&3)==3)x.p("ifp ");
 		else if((znxr&1)==1)x.p("ifz ");
 		else if((znxr&2)==2)x.p("ifn ");
-		source_to(x);
+		x.p(txt);
 		x.spc();
 		if((znxr&4)==4)x.p(" nxt");
 		if((znxr&8)==8)x.p(" ret");
