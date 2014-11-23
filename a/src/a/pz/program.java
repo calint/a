@@ -59,16 +59,16 @@ final static public class define_var extends stmt{
 }
 final static public class define_struct extends stmt{
 	public String name;
-	public List<define_struct_member>fields;
-	public define_struct(final program r)throws IOException{
-		super(r);
-		name=r.next_identifier();
+	public List<member>fields;
+	public define_struct(final program p)throws IOException{
+		super(p);
+		name=p.next_identifier();
 		fields=new ArrayList<>();
 		while(true){
-			r.skip_whitespace_on_same_line();
-			if(r.is_at_end_of_line())
+			p.skip_whitespace_on_same_line();
+			if(p.is_at_end_of_line())
 				break;
-			final define_struct_member f=new define_struct_member(r);
+			final member f=new member(p);
 			fields.add(f);
 		}
 		final xwriter x=new xwriter();
@@ -79,16 +79,15 @@ final static public class define_struct extends stmt{
 	@Override public void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
 	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
-}
-public static class define_struct_member extends stmt{
+public static class member extends stmt{
 	public String type;
 	public String name;
 	public String default_value;
-	public define_struct_member(program r)throws IOException{
-		super(r);
-		name=r.next_identifier();
-		type=r.next_type_identifier();
-		default_value=r.next_token_in_line();
+	public member(program p)throws IOException{
+		super(p);
+		name=p.next_identifier();
+		type=p.next_type_identifier();
+		default_value=p.next_token_in_line();
 		final xwriter x=new xwriter();
 		x.p(name).spc().p(type).spc().p(default_value);
 		txt=x.toString();
@@ -98,6 +97,8 @@ public static class define_struct_member extends stmt{
 	}
 	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
+}
+
 }
 final static public class define_typedef extends stmt{
 	public String name;

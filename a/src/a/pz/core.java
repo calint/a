@@ -59,11 +59,12 @@ final public class core implements Serializable{
 		if(loading_register!=-1){// load reg 2 instructions command
 			registers[loading_register]=instruction;
 			loading_register=-1;
-			program_counter_set(program_counter+1);
+			instruction=rom[++program_counter];
 			return;
 		}
 		if(instruction==-1){// end of frame
-			program_counter_set(0);
+			program_counter=0;
+			instruction=rom[0];
 			meter_frames++;
 //			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
@@ -72,8 +73,9 @@ final public class core implements Serializable{
 		final int izn=in&3;
 		if((izn!=0&&(izn!=flags))){
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
-			final int skp=op==0?2:1;// ifloadopskip2
-			program_counter_set(program_counter+skp);
+			final int skp=op==0?2:1;
+			program_counter+=skp;
+			instruction=rom[program_counter];
 			return;
 		}
 		in>>=2;// xr ci.. .rai .rdi
@@ -83,7 +85,8 @@ final public class core implements Serializable{
 			final int imm10=in>>4;// .. .... ....
 			final int znx=flags|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(program_counter+1);
-			program_counter_set(imm10);
+			program_counter=imm10;
+			instruction=rom[imm10];
 			calls_push(stkentry);
 			return;
 		}
@@ -94,7 +97,9 @@ final public class core implements Serializable{
 			if(loops_loop_is_done()){
 				loops_pop();
 			}else{
-				program_counter_set(loops_address());
+				final int index_in_rom=loops_address();
+				program_counter=index_in_rom;
+				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
 			}
 		}
@@ -107,12 +112,15 @@ final public class core implements Serializable{
 				if(loops_loop_is_done()){
 					loops_pop();
 				}else{
-					program_counter_set(loops_address());
+					final int index_in_rom=loops_address();
+					program_counter=index_in_rom;
+					instruction=rom[index_in_rom];
 					program_counter_has_been_set=true;
 				}
 			}
 			if(!program_counter_has_been_set){
-				program_counter_set(ipc);
+				program_counter=ipc;
+				instruction=rom[ipc];
 				program_counter_has_been_set=true;
 			}
 			isret=true;
@@ -149,7 +157,7 @@ final public class core implements Serializable{
 				}else{
 					if(isret||isnxt){
 						if(!program_counter_has_been_set){
-							program_counter_set(program_counter+1);
+							instruction=rom[++program_counter];
 						}
 						return;
 					}
@@ -182,7 +190,9 @@ final public class core implements Serializable{
 			}else if(op==4){//skp
 				if(imm8==0)throw new Error("unencoded op (rol x)");
 				if(program_counter_has_been_set)throw new Error("unimplemented");
-				program_counter_set(program_counter+imm8);
+				final int index_in_rom=program_counter+imm8;
+				program_counter=index_in_rom;
+				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
 			}else if(op==5){//add
 				final int a=registers[rai];
@@ -205,7 +215,9 @@ final public class core implements Serializable{
 			}else if(op==1){//skp
 				if(imm8==0)throw new Error("unencoded op (rol x)");
 				if(program_counter_has_been_set)throw new Error("unimplemented");
-				program_counter_set(program_counter+imm8);
+				final int index_in_rom=program_counter+imm8;
+				program_counter=index_in_rom;
+				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
 			}else if(op==2){// wait
 //				if(!waiting_for_notify){// first time
@@ -236,13 +248,16 @@ final public class core implements Serializable{
 //				meters_ldc++;
 			}else throw new Error();
 		}
-		if(!program_counter_has_been_set)
-			program_counter_set(program_counter+1);
+		if(!program_counter_has_been_set){
+			final int index_in_rom=program_counter+1;
+			program_counter=index_in_rom;
+			instruction=rom[index_in_rom];
+		}
 	}
-	private void program_counter_set(final int index_in_rom){
-		program_counter=index_in_rom;
-		instruction=rom[index_in_rom];
-	}
+//	private void program_counter_set(final int index_in_rom){
+//		program_counter=index_in_rom;
+//		instruction=rom[index_in_rom];
+//	}
 	private void evaluate_zn_flags(final int number_to_be_evaluated){
 		if(number_to_be_evaluated==0){flags=1;return;}
 		if((number_to_be_evaluated&(1<<16))==(1<<16)){flags=2;return;}//? .
