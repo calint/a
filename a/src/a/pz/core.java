@@ -73,7 +73,7 @@ final public class core implements Serializable{
 		final int izn=in&3;
 		if((izn!=0&&(izn!=flags))){
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
-			final int skp=op==0?2:1;
+			final int skp=op==0?2:1;//skp 2 for li
 			program_counter+=skp;
 			instruction=rom[program_counter];
 			return;
