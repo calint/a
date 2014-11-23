@@ -1,0 +1,42 @@
+<html onmousemove="dax=event.clientX/10000;day=event.clientY/10000;">
+<pre><a href="javascript:stop()">start</a> <a href="javascript:start()">stop</a>
+   sample rate: <output id=sr></output>
+        buffer: <output id=bufsize></output> bytes
+           lag: <output id=pbt></output>
+         frame: <output id=frm></output>
+          time: <output id=tim></output>
+   frequencies: [<output id=frq1></output>] [<output id=frq2></output>] deg/s
+<script>
+$=document.all;
+var context;
+try{window.AudioContext=window.AudioContext||window.webkitAudioContext;context=new AudioContext();}catch(e){alert('Web Audio API is not supported in this browser');}
+$.sr.value=context.sampleRate;
+var bufferSize=512;
+var proc=context.createScriptProcessor(bufferSize,1,1);
+var dax=.004;
+var day=.002;
+var ax=0;
+var ay=0;
+var mute=false;
+proc.onaudioprocess=function(e){
+//	console.log(e);
+	var output=e.outputBuffer.getChannelData(0);
+	$.frm.value++;
+	$.tim.value=context.currentTime;
+	$.bufsize.value=output.length;
+	$.pbt.value=e.playbackTime-context.currentTime;
+	for(var i=0;i<output.length;i++) {
+		if(mute){output[i]=0;continue;}
+		output[i]=((Math.sin(ax)*2-1)+(Math.sin(ay)*2-1))/2;
+		ax+=dax;
+		ay+=day;
+	}
+	$.frq1.value=dax*180/Math.PI;
+	$.frq2.value=day*180/Math.PI;
+}
+proc.connect(context.destination);
+function start(){mute=false;}
+function stop(){mute=true;}
+function onmousemove(ev){dax=ev.clientX/10000;day=ev.clientY/10000;}
+</script>
+
