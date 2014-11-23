@@ -2,7 +2,7 @@ package a.pz.a;
 import static b.b.log;
 import java.util.HashSet;
 import java.util.Set;
-import a.pz.prog;
+import a.pz.program;
 import b.a;
 import b.xwriter;
 final public class crun_source_editor extends a{
@@ -37,14 +37,14 @@ final public class crun_source_editor extends a{
 //	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
 	synchronized public void x_f3(xwriter x,String s)throws Throwable{
-		final prog p;
-		try{p=new prog(src.str());}catch(Throwable t){
+		final program p;
+		try{p=new program(src.str());}catch(Throwable t){
 			log(t);
 			x.xalert(t.toString());
 			return;
 		}
 		if(!ommit_compiling_source_from_disassembler){
-			try{new prog(p.toString());}catch(Throwable t){
+			try{new program(p.toString());}catch(Throwable t){
 				log(t);
 				x.xalert("reverse compilation failed: "+t.toString());
 				return;
