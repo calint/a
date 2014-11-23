@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import b.xwriter;
 
 final public class program implements Serializable{
@@ -32,49 +29,49 @@ final public class program implements Serializable{
 	final public static int   opwait=0x0058;
 	final public static int opnotify=0x0078;
 
-	public program(final String cs)throws IOException,compiler_error{this(new StringReader(cs));}
-	public program(final Reader rr)throws IOException,compiler_error{
-		final reader r=new reader(rr,this);
-		s=new ArrayList<>();
-		while(true){
-			final int ch=r.read();
-			if(ch==-1)break;
-			r.unread(ch);
-			final stmt st=read_next_statement_from(r);
-			s.add(st);
-		}
-		s.forEach(e->e.validate_references_to_labels(this));
-		s.forEach(e->e.compile(this));
-		int pc=0;
-		for(final stmt ss:s){
-			ss.location_in_binary=pc;
-			if(ss.bin!=null)pc+=ss.bin.length;
-		}
-		s.forEach(e->e.link(this));
-	}
-	public void disassemble_to(xwriter x){
-		s.forEach(e->x.pl(e.toString()));
-	}
-	public String toString(){
-		final xwriter x=new xwriter();
-		disassemble_to(x);
-		return x.toString();
-	}
+//	public program(final String cs)throws IOException,compiler_error{this(new StringReader(cs));}
+//	public program(final Reader rr)throws IOException,compiler_error{
+//		new reader(rr,this);
+//		s=new ArrayList<>();
+//		while(true){
+//			final int ch=r.read();
+//			if(ch==-1)break;
+//			r.unread(ch);
+//			final stmt st=read_next_statement_from(r);
+//			s.add(st);
+//		}
+//		s.forEach(e->e.validate_references_to_labels(this));
+//		s.forEach(e->e.compile(this));
+//		int pc=0;
+//		for(final stmt ss:s){
+//			ss.location_in_binary=pc;
+//			if(ss.bin!=null)pc+=ss.bin.length;
+//		}
+//		s.forEach(e->e.link(this));
+//	}
+//	public void disassemble_to(xwriter x){
+//		s.forEach(e->x.pl(e.toString()));
+//	}
+//	public String toString(){
+//		final xwriter x=new xwriter();
+//		disassemble_to(x);
+//		return x.toString();
+//	}
 
 	final static public class define_const extends stmt{
 		public String name,type,value;
 		public define_const(final reader r)throws IOException{
 			super(r);
 			name=r.next_token_in_line();
-			final define_const d=r.p.defines.get(name);
+			final define_const d=r.defines.get(name);
 			if(d!=null)throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
 			type=r.next_token_in_line();
-			final define_typedef t=r.p.typedefs.get(type);
+			final define_typedef t=r.typedefs.get(type);
 			if(t==null)throw new compiler_error(this,"type not found",type);
 			value=r.next_token_in_line();
 			txt="const "+name+" "+type+" "+value;
 		}
-		@Override protected void compile(program p){}
+		@Override protected void compile(reader p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_var extends stmt{
@@ -92,7 +89,7 @@ final public class program implements Serializable{
 			vars.forEach(e->x.spc().p(e));
 			txt=x.toString();
 		}
-		@Override protected void compile(program p){}
+		@Override protected void compile(reader p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_struct extends stmt{
@@ -114,8 +111,8 @@ final public class program implements Serializable{
 			fields.forEach(f->x.spc().p(f.toString()));
 			txt=x.toString();
 		}
-		@Override public void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
-		@Override protected void compile(program p){}
+		@Override public void validate_references_to_labels(reader p){fields.forEach(e->e.validate_references_to_labels(p));}
+		@Override protected void compile(reader p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class define_struct_member extends stmt{
@@ -131,10 +128,10 @@ final public class program implements Serializable{
 			x.p(name).spc().p(type).spc().p(default_value);
 			txt=x.toString();
 		}
-		@Override public void validate_references_to_labels(program p)throws compiler_error{
+		@Override public void validate_references_to_labels(reader p)throws compiler_error{
 			if(!p.typedefs.containsKey(type))throw new compiler_error(this,"type '"+type+"' not found in declared typedefs "+p.typedefs.keySet());
 		}
-		@Override protected void compile(program p){}
+		@Override protected void compile(reader p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_typedef extends stmt{
@@ -144,112 +141,112 @@ final public class program implements Serializable{
 			name=r.next_identifier();
 			txt=new xwriter().p("typedef").spc().p(name).toString();
 		}
-		@Override protected void compile(program p){}
+		@Override protected void compile(reader p){}
 		private static final long serialVersionUID=1;
 	}
 	
 	
-	final public Map<String,define_const>defines=new LinkedHashMap<>();
-	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
-	final public Map<String,define_struct>structs=new LinkedHashMap<>();
-	final public Map<String,define_label>labels=new LinkedHashMap<>();
-	private stmt read_next_statement_from(final reader r)throws IOException,compiler_error{
-		String tk="";
-		while(true){
-			r.skip_whitespace();
-			tk=r.next_token_in_line();
-			if(tk==null)return new eof(r);
-			if(tk.equals("const")){
-				final define_const s=new define_const(r);
-				defines.put(s.name,s);
-				return s;
-			}
-			if(tk.equals("typedef")){
-				final define_typedef s=new define_typedef(r);
-				typedefs.put(s.name,s);
-				return s;
-			}
-			if(tk.equals("struct")){
-				final define_struct s=new define_struct(r);
-				structs.put(s.name,s);
-				return s;
-			}
-			if(tk.equals("var")){
-				final define_var s=new define_var(r);
+//	final public Map<String,define_const>defines=new LinkedHashMap<>();
+//	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
+//	final public Map<String,define_struct>structs=new LinkedHashMap<>();
+//	final public Map<String,define_label>labels=new LinkedHashMap<>();
+//	private stmt read_next_statement_from(final reader r)throws IOException,compiler_error{
+//		String tk="";
+//		while(true){
+//			r.skip_whitespace();
+//			tk=r.next_token_in_line();
+//			if(tk==null)return new eof(r);
+//			if(tk.equals("const")){
+//				final define_const s=new define_const(r);
+//				defines.put(s.name,s);
+//				return s;
+//			}
+//			if(tk.equals("typedef")){
+//				final define_typedef s=new define_typedef(r);
+//				typedefs.put(s.name,s);
+//				return s;
+//			}
+//			if(tk.equals("struct")){
+//				final define_struct s=new define_struct(r);
 //				structs.put(s.name,s);
-				return s;
-			}
-			if(tk.startsWith(":")){
-				final define_label s=new define_label(r,tk.substring(1));
-				labels.put(s.name,s);
-				r.consume_line();
-				return s;
-			}
-			final define_typedef td=typedefs.get(tk);
-			if(td!=null){
-				final define_data_int s=new define_data_int(r);
-				labels.put(s.name,s);
-				return s;
-			}
-			if(tk.equals(".")){
-				final define_data s=new define_data(r);
-				r.consume_line();
-				return s;
-			}
-			if(tk.equals("..")){
-				final eof s=new eof(r);
-				r.consume_line();
-				return s;
-			}
-			if(tk.startsWith("//")){
-				r.consume_line();
-				continue;
-			}
-			break;
-		}
-		int znxr=0;
-		switch(tk){
-		case"ifz":{znxr=1;tk=r.next_token_in_line();break;}
-		case"ifn":{znxr=2;tk=r.next_token_in_line();break;}
-		case"ifp":{znxr=3;tk=r.next_token_in_line();break;}
-		}
-		final stmt s;
-		try{
-			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(reader.class).newInstance(r);
-		}catch(InvocationTargetException t){
-			if(t.getCause()instanceof compiler_error)throw(compiler_error)t.getCause();
-			throw new compiler_error(r.hrs_location(),t.getCause().toString());
-		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new compiler_error(r.hrs_location(),t.toString());
-		}catch(ClassNotFoundException t){
-			throw new compiler_error(r.hrs_location(),"unknown instruction '"+tk+"'");
-		}catch(Throwable t){
-			throw new compiler_error(r.hrs_location(),t.toString());
-		}
-		if(!(s instanceof define_data)){
-			while(true){
-				final String t=r.next_token_in_line();
-				if(t==null)break;
-				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
-				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
-				if(t.startsWith("//")){r.consume_line();break;}
-				throw new Error("3 "+t);
-			}
-			s.znxr=znxr;
-		}
-		r.consume_line();
-		return s;
-	}
-	/**writes binary*/
-	final public void zap(int[]rom){//? arraycopybinary
-		for(int i=0;i<rom.length;i++)rom[i]=-1;
-		int pc=0;
-		for(final stmt ss:s){
-			if(ss.bin==null)continue;
-			final int c=ss.bin.length;
-			System.arraycopy(ss.bin,0,rom,pc,c);
-			pc+=c;
-		}
+//				return s;
+//			}
+//			if(tk.equals("var")){
+//				final define_var s=new define_var(r);
+////				structs.put(s.name,s);
+//				return s;
+//			}
+//			if(tk.startsWith(":")){
+//				final define_label s=new define_label(r,tk.substring(1));
+//				labels.put(s.name,s);
+//				r.consume_line();
+//				return s;
+//			}
+//			final define_typedef td=typedefs.get(tk);
+//			if(td!=null){
+//				final define_data_int s=new define_data_int(r);
+//				labels.put(s.name,s);
+//				return s;
+//			}
+//			if(tk.equals(".")){
+//				final define_data s=new define_data(r);
+//				r.consume_line();
+//				return s;
+//			}
+//			if(tk.equals("..")){
+//				final eof s=new eof(r);
+//				r.consume_line();
+//				return s;
+//			}
+//			if(tk.startsWith("//")){
+//				r.consume_line();
+//				continue;
+//			}
+//			break;
+//		}
+//		int znxr=0;
+//		switch(tk){
+//		case"ifz":{znxr=1;tk=r.next_token_in_line();break;}
+//		case"ifn":{znxr=2;tk=r.next_token_in_line();break;}
+//		case"ifp":{znxr=3;tk=r.next_token_in_line();break;}
+//		}
+//		final stmt s;
+//		try{
+//			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(reader.class).newInstance(r);
+//		}catch(InvocationTargetException t){
+//			if(t.getCause()instanceof compiler_error)throw(compiler_error)t.getCause();
+//			throw new compiler_error(r.hrs_location(),t.getCause().toString());
+//		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
+//			throw new compiler_error(r.hrs_location(),t.toString());
+//		}catch(ClassNotFoundException t){
+//			throw new compiler_error(r.hrs_location(),"unknown instruction '"+tk+"'");
+//		}catch(Throwable t){
+//			throw new compiler_error(r.hrs_location(),t.toString());
+//		}
+//		if(!(s instanceof define_data)){
+//			while(true){
+//				final String t=r.next_token_in_line();
+//				if(t==null)break;
+//				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
+//				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
+//				if(t.startsWith("//")){r.consume_line();break;}
+//				throw new Error("3 "+t);
+//			}
+//			s.znxr=znxr;
+//		}
+//		r.consume_line();
+//		return s;
+//	}
+//	/**writes binary*/
+//	final public void zap(int[]rom){//? arraycopybinary
+//		for(int i=0;i<rom.length;i++)rom[i]=-1;
+//		int pc=0;
+//		for(final stmt ss:s){
+//			if(ss.bin==null)continue;
+//			final int c=ss.bin.length;
+//			System.arraycopy(ss.bin,0,rom,pc,c);
+//			pc+=c;
+//		}
 
 //		final linker c=new linker(this,rom);
 //		s.forEach(e->{
@@ -265,8 +262,8 @@ final public class program implements Serializable{
 //				throw new compiler_error(e.source_location,t.getMessage());}
 //			});
 //		c.finish();
-	}
-	public List<stmt>s;
+//	}
+//	public List<stmt>s;
 
 	public static class stmt implements Serializable{
 		public String location_in_source;
@@ -287,9 +284,9 @@ final public class program implements Serializable{
 		protected stmt(final reader r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
 			this(r,op,rd,ra);
 		}
-		protected void validate_references_to_labels(program p){}
-		protected void compile(program p){bin=new int[]{znxr_ci__ra__rd__()};}
-		protected void link(program p){}
+		protected void validate_references_to_labels(reader r){}
+		protected void compile(reader r){bin=new int[]{znxr_ci__ra__rd__()};}
+		protected void link(reader p){}
 		protected int znxr_ci__ra__rd__(){return znxr|opcode|((rai&15)<<8)|((rdi&15)<<12);}
 		final@Override public String toString(){
 			if(txt!=null)return txt;
@@ -315,10 +312,10 @@ final public class program implements Serializable{
 			txt="li "+(char)(rdi+'a')+" "+data;
 		}
 		public boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
-		@Override protected void compile(program p){
+		@Override protected void compile(reader p){
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
-		@Override protected void link(program p){
+		@Override protected void link(reader p){
 			final define_const def=p.defines.get(data);
 			if(def!=null){
 				data=def.value;
@@ -366,7 +363,7 @@ final public class program implements Serializable{
 			super(r);
 			txt="..";
 		}
-		@Override protected void compile(program p){bin=new int[]{-1};}
+		@Override protected void compile(reader p){bin=new int[]{-1};}
 		private static final long serialVersionUID=1;
 	}
 	public static class nxt extends stmt{
@@ -422,7 +419,7 @@ final public class program implements Serializable{
 			label=r.next_token_in_line();
 			txt="call "+label;
 		}
-		@Override protected void link(program p){
+		@Override protected void link(reader p){
 			define_label l=p.labels.get(label);
 			if(l==null)throw new compiler_error(this,"label not found",label);
 			final int a=l.location_in_binary;
@@ -444,7 +441,7 @@ final public class program implements Serializable{
 			data.forEach(e->x.spc().p(e));
 			txt=x.toString();
 		}
-		@Override protected void compile(program p){
+		@Override protected void compile(reader p){
 //			super.generate_code_pass_1(p);
 			bin=new int[data.size()];
 			int i=0;
@@ -459,11 +456,11 @@ final public class program implements Serializable{
 		public define_label(reader r,String nm){
 			super(r);
 			name=nm;
-			final define_label d=r.p.labels.get(name);
+			final define_label d=r.labels.get(name);
 			if(d!=null)throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
 			txt=":"+nm;
 		}
-		@Override protected void compile(program p){}
+		@Override protected void compile(reader p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class ld extends stmt{
@@ -503,7 +500,7 @@ final public class program implements Serializable{
 			if(default_value==null)default_value="0";
 			txt="int "+name+" "+default_value;
 		}
-		@Override protected void compile(program p){
+		@Override protected void compile(reader p){
 			final int d=Integer.parseInt(default_value,16);
 			bin=new int[]{d};
 		}
