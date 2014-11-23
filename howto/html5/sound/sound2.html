@@ -18,6 +18,7 @@ var day=.002;
 var ax=0;
 var ay=0;
 var mute=false;
+var buffers=[];
 proc.onaudioprocess=function(e){
 //	console.log(e);
 	var output=e.outputBuffer.getChannelData(0);
