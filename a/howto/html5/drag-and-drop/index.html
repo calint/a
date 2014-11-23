@@ -1,48 +1,88 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<style type="text/css">
-#boxA, #boxB {
-   float:left;padding:10px;margin:10px;-moz-user-select:none;
-}
-#boxA { background-color: #6633FF; width:75px; height:75px;  }
-#boxB { background-color: #FF6699; width:150px; height:150px; }
+<!DOCTYPE HTML><title>drage-and-drop</title>
+<style>
+	html{font-size:1em;font-family:monospace;margin:0;padding:0}
+	.el{
+		white-space:pre;
+		float:left;
+		width:16em;
+		height:16em;
+		padding:0 2em 0 1em;
+		margin:1em;
+		background-color:#ee0;
+		border-radius:2em;
+		text-align:left;
+		-moz-user-select:none;
+	}
+	#desktop{
+		background:#ae3;
+		display:table;
+		margin-top:4em;
+		margin-left:auto;
+		margin-right:auto;
+		width:80em;
+		height:40em;
+	}
+	#inbox{
+		position:fixed;
+		text-align:right;
+		left:0;
+		bottom:0;
+		height:100%;
+		width:8em;
+		background-color:#fee;
+	}
+	#outbox{
+		position:fixed;
+		text-align:left;
+		right:0;
+		bottom:0;
+		height:100%;
+		width:8em;
+		background-color:#e80;
+	}
 </style>
-<script type="text/javascript">
-function dragStart(ev) {
-   ev.dataTransfer.effectAllowed='move';
-   ev.dataTransfer.setData("Text", ev.target.getAttribute('id'));
-   ev.dataTransfer.setDragImage(ev.target,0,0);
-   return true;
+<script>
+function dragStart(ev){
+	console.log(ev);
+	ev.dataTransfer.effectAllowed='move';
+	ev.dataTransfer.setData("Text",ev.target.getAttribute('id'));
+	ev.dataTransfer.setDragImage(ev.target,0,0);
+	return true;
 }
-function dragEnter(ev) {
-   event.preventDefault();
-   return true;
+function dragEnter(ev){
+	console.log(ev);
+	event.preventDefault();
+	return true;
 }
-function dragOver(ev) {
-    return false;
+function dragOver(ev){
+	console.log(ev);
+	return false;
 }
 function dragDrop(ev) {
-   var src = ev.dataTransfer.getData("Text");
-   ev.target.appendChild(document.getElementById(src));
-   ev.stopPropagation();
-   return false;
+	console.log(ev);
+	var src=ev.dataTransfer.getData("Text");
+	ev.target.appendChild(document.getElementById(src));
+	ev.stopPropagation();
+	return false;
 }
 </script>
-</head>
-<body>
-<center>
-<h2>Drag and drop HTML5 demo</h2>
-<div>Try to move the purple box into the pink box.</div>
+<div id=desktop ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">
+	<div class=el id=a draggable=true ondragstart="return dragStart(event)">
+     to: tudor@tudorials.com
+subject: drag-and-drop
 
-<div id="boxA" draggable="true" 
-     ondragstart="return dragStart(event)">
-   <p>Drag Me</p>
+oo
+---
+	</div>
+	<div class=el id=c draggable=true ondragstart="return dragStart(event)">
+     to: tudor@tudorials.com
+subject: drag-and-drop-move
+
+..
+.o.
+..
+	</div>
 </div>
-<div id="boxB" ondragenter="return dragEnter(event)" 
-     ondrop="return dragDrop(event)" 
-     ondragover="return dragOver(event)">Dustbin</div>
-</center>
-</body>
-</html>
+<div id=inbox ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">inbox..</div>
+<div id=outbox ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">..outbox</div>
 <!-- http://www.tutorialspoint.com/html5/html5_drag_drop.htm -->
