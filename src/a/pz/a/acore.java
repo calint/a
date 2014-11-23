@@ -3,7 +3,6 @@ import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
 import a.pz.program;
-import a.x.jskeys;
 import b.a;
 import b.xwriter;
 final public class acore extends a{
@@ -59,7 +58,7 @@ final public class acore extends a{
 	}	
 	public void to(final xwriter x)throws Throwable{
 		x.divo(this);
-		final String id=id();
+//		final String id=id();
 		if(pt()==null){
 			x.style()
 				.css("html","color:#111")
