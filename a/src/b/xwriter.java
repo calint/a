@@ -42,6 +42,13 @@ public final class xwriter{
 		p("<a href=\"javascript:").axjs(wid,func,param).p("\">").p(html).p("</a>");
 		return this;
 	}
+	public xwriter ax(final a e,final String func,final String param,final String html,final String accesskey){
+		final String wid=e.id();
+		p("<a");
+		if(accesskey!=null)spc().p("accesskey=").p(accesskey);
+		p(" href=\"javascript:").axjs(wid,func,param).p("\">").p(html).p("</a>");
+		return this;
+	}
 	public xwriter axjs(final String eid,final String func,final String param){
 		p("$x('").p(eid);
 		if(!isempty(func))p(" ").p(func);
