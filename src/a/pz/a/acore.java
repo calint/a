@@ -2,7 +2,6 @@ package a.pz.a;
 import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
-import a.pz.program;
 import a.pz.reader;
 import b.a;
 import b.xwriter;
@@ -158,9 +157,9 @@ final public class acore extends a{
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
 		pl("x_n");
 		final boolean refresh_display=cor.loading_register==-1&&(
-				(cor.instruction&program.opst)==program.opst
+				(cor.instruction&reader.opst)==reader.opst
 				||
-				(cor.instruction&program.opstc)==program.opstc
+				(cor.instruction&reader.opstc)==reader.opstc
 		);
 		st.clr();
 		cor.step();
@@ -304,29 +303,29 @@ final public class acore extends a{
 		x.pl(":  nxt : ...4 :     ... nxt          :");
 		x.pl(":  ret : ...8 :     ... ret          :");
 		x.pl(":      : ...d : ifz ... nxt ret      :");
-		x.pl(":   li : "+fld("x000",Integer.toHexString(program.opli))+" : next instr to reg[x] :");
-		x.pl(": call : "+fld("ii00",Integer.toHexString(program.opcall))+" : imm6                 :");
-		x.pl(":  skp : "+fld("ii00",Integer.toHexString(program.opskp))+" : pc+=imm6             :");
-		x.pl(":  stc : "+fld("yx00",Integer.toHexString(program.opstc))+" : ram[x++]=y           :");
-		x.pl(":   st : "+fld("yx00",Integer.toHexString(program.opst))+" : ram[x]=y             :");
- 		x.pl(":   lp : "+fld("x000",Integer.toHexString(program.oplp))+" : loop r[x] times      :");
-		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(program.opldc))+" : y=ram[x++]           :");
-		x.pl(":   ld : "+fld("yx00",Integer.toHexString(program.opld))+" : y=ram[x]             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(program.opshf))+" : r[x]>>=i             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(program.opshf))+" : r[x]<<=i             :");
-		x.pl(":  not : "+fld("x000",Integer.toHexString(program.opshf))+" : r[x]=~r[x]           :");
-		x.pl(":  inc : "+fld("x000",Integer.toHexString(program.opinc))+" : r[x]++               :");
-		x.pl(":  neg : "+fld("x000",Integer.toHexString(program.opneg))+" : r[x]=-r[x]           :");
-		x.pl(":  add : "+fld("yx00",Integer.toHexString(program.opadd))+" : r[y]+=r[x]           :");
-		x.pl(":   tx : "+fld("yx00",Integer.toHexString(program.optx))+" : r[y]=r[x]            :");
+		x.pl(":   li : "+fld("x000",Integer.toHexString(reader.opli))+" : next instr to reg[x] :");
+		x.pl(": call : "+fld("ii00",Integer.toHexString(reader.opcall))+" : imm6                 :");
+		x.pl(":  skp : "+fld("ii00",Integer.toHexString(reader.opskp))+" : pc+=imm6             :");
+		x.pl(":  stc : "+fld("yx00",Integer.toHexString(reader.opstc))+" : ram[x++]=y           :");
+		x.pl(":   st : "+fld("yx00",Integer.toHexString(reader.opst))+" : ram[x]=y             :");
+ 		x.pl(":   lp : "+fld("x000",Integer.toHexString(reader.oplp))+" : loop r[x] times      :");
+		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(reader.opldc))+" : y=ram[x++]           :");
+		x.pl(":   ld : "+fld("yx00",Integer.toHexString(reader.opld))+" : y=ram[x]             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(reader.opshf))+" : r[x]>>=i             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(reader.opshf))+" : r[x]<<=i             :");
+		x.pl(":  not : "+fld("x000",Integer.toHexString(reader.opshf))+" : r[x]=~r[x]           :");
+		x.pl(":  inc : "+fld("x000",Integer.toHexString(reader.opinc))+" : r[x]++               :");
+		x.pl(":  neg : "+fld("x000",Integer.toHexString(reader.opneg))+" : r[x]=-r[x]           :");
+		x.pl(":  add : "+fld("yx00",Integer.toHexString(reader.opadd))+" : r[y]+=r[x]           :");
+		x.pl(":   tx : "+fld("yx00",Integer.toHexString(reader.optx))+" : r[y]=r[x]            :");
 //		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
-		x.pl(":  sub : "+fld("xy00",Integer.toHexString(program.opsub))+" : r[y]-=r[x]           :");
-		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : dac=r[x]             :");
+		x.pl(":  sub : "+fld("xy00",Integer.toHexString(reader.opsub))+" : r[y]-=r[x]           :");
+		x.pl(":  dac : "+fld("x000",Integer.toHexString(reader.opdac))+" : dac=r[x]             :");
 		x.pl(":  eof : ffff : end-of-frame         :");
 		x.pl(":------:------:----------------------:");
 		x.pl(":      : ..18 : cr invalids          :");
-		x.pl(": wait : "+fld("x000",Integer.toHexString(program.opwait))+" : wait                 :");
-		x.pl(":notify: "+fld("x000",Integer.toHexString(program.opnotify))+" : notify               :");
+		x.pl(": wait : "+fld("x000",Integer.toHexString(reader.opwait))+" : wait                 :");
+		x.pl(":notify: "+fld("x000",Integer.toHexString(reader.opnotify))+" : notify               :");
 		x.pl(":------:------:----------------------:");
 	}
 	
