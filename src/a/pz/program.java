@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 import b.xwriter;
 
-public final class prog extends Reader implements AutoCloseable{
-public static class add extends prog.stmt{
-		public add(prog r)throws IOException{
-			super(r,prog.opadd,r.next_register_identifier(),r.next_register_identifier());
+public final class program extends Reader implements AutoCloseable{
+public static class add extends program.stmt{
+		public add(program r)throws IOException{
+			super(r,program.opadd,r.next_register_identifier(),r.next_register_identifier());
 		}
 		@Override public void source_to(xwriter x){
 			x.p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
@@ -24,7 +24,7 @@ public static class add extends prog.stmt{
 	}
 	final static public class define_const extends stmt{
 	public String name,type,value;
-	public define_const(final prog r)throws IOException{
+	public define_const(final program r)throws IOException{
 		super(r);
 		name=r.next_token_in_line();
 		final define_const d=r.defines.get(name);
@@ -35,12 +35,12 @@ public static class add extends prog.stmt{
 		value=r.next_token_in_line();
 		txt="const "+name+" "+type+" "+value;
 	}
-	@Override protected void compile(prog p){}
+	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
 final static public class define_var extends stmt{
 	public List<String>vars;
-	public define_var(final prog r)throws IOException{
+	public define_var(final program r)throws IOException{
 		super(r);
 		vars=new ArrayList<>();
 		while(true){
@@ -53,13 +53,13 @@ final static public class define_var extends stmt{
 		vars.forEach(e->x.spc().p(e));
 		txt=x.toString();
 	}
-	@Override protected void compile(prog p){}
+	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
 final static public class define_struct extends stmt{
 	public String name;
 	public List<define_struct_member>fields;
-	public define_struct(final prog r)throws IOException{
+	public define_struct(final program r)throws IOException{
 		super(r);
 		name=r.next_identifier();
 		fields=new ArrayList<>();
@@ -75,15 +75,15 @@ final static public class define_struct extends stmt{
 		fields.forEach(f->x.spc().p(f.toString()));
 		txt=x.toString();
 	}
-	@Override public void validate_references_to_labels(prog p){fields.forEach(e->e.validate_references_to_labels(p));}
-	@Override protected void compile(prog p){}
+	@Override public void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
+	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
 public static class define_struct_member extends stmt{
 	public String type;
 	public String name;
 	public String default_value;
-	public define_struct_member(prog r)throws IOException{
+	public define_struct_member(program r)throws IOException{
 		super(r);
 		name=r.next_identifier();
 		type=r.next_type_identifier();
@@ -92,20 +92,20 @@ public static class define_struct_member extends stmt{
 		x.p(name).spc().p(type).spc().p(default_value);
 		txt=x.toString();
 	}
-	@Override public void validate_references_to_labels(prog p)throws compiler_error{
+	@Override public void validate_references_to_labels(program p)throws compiler_error{
 		if(!p.typedefs.containsKey(type))throw new compiler_error(this,"type '"+type+"' not found in declared typedefs "+p.typedefs.keySet());
 	}
-	@Override protected void compile(prog p){}
+	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
 final static public class define_typedef extends stmt{
 	public String name;
-	public define_typedef(final prog r)throws IOException{
+	public define_typedef(final program r)throws IOException{
 		super(r);
 		name=r.next_identifier();
 		txt=new xwriter().p("typedef").spc().p(name).toString();
 	}
-	@Override protected void compile(prog p){}
+	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
 public static class stmt implements Serializable{
@@ -117,19 +117,19 @@ public static class stmt implements Serializable{
 	/**opcode*/public int opcode;
 	public int rai;
 	public int rdi;
-	public stmt(final prog r){location_in_source=r.hrs_location();}
-	protected stmt(final prog r,final int op,final int ra,final int rd){
+	public stmt(final program r){location_in_source=r.hrs_location();}
+	protected stmt(final program r,final int op,final int ra,final int rd){
 		this(r);
 		this.opcode=op;
 		this.rai=ra;
 		this.rdi=rd;
 	}
-	protected stmt(final prog r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
+	protected stmt(final program r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
 		this(r,op,rd,ra);
 	}
-	protected void validate_references_to_labels(prog r){}
-	protected void compile(prog r){bin=new int[]{znxr_ci__ra__rd__()};}
-	protected void link(prog p){}
+	protected void validate_references_to_labels(program r){}
+	protected void compile(program r){bin=new int[]{znxr_ci__ra__rd__()};}
+	protected void link(program p){}
 	protected int znxr_ci__ra__rd__(){return znxr|opcode|((rai&15)<<8)|((rdi&15)<<12);}
 	final@Override public String toString(){
 		if(txt!=null)return txt;
@@ -149,16 +149,16 @@ public static class stmt implements Serializable{
 public static class li extends stmt{
 		public String data;
 		public int value;
-		public li(prog r)throws IOException{
-			super(r,prog.opli,0,r.next_register_identifier());
+		public li(program r)throws IOException{
+			super(r,program.opli,0,r.next_register_identifier());
 			data=r.next_token_in_line();
 			txt="li "+(char)(rdi+'a')+" "+data;
 		}
 		public boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
-		@Override protected void compile(prog p){
+		@Override protected void compile(program p){
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
-		@Override protected void link(prog p){
+		@Override protected void link(program p){
 			final define_const def=p.defines.get(data);
 			if(def!=null){
 				data=def.value;
@@ -184,8 +184,8 @@ public static class li extends stmt{
 		private static final long serialVersionUID=1;
 	}
 public static class inc extends stmt{
-	public inc(prog r)throws IOException{
-		super(r,prog.opinc,0,r.next_register_identifier());
+	public inc(program r)throws IOException{
+		super(r,program.opinc,0,r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("inc").spc().p((char)(rdi+'a'));
@@ -193,8 +193,8 @@ public static class inc extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class st extends stmt{
-	public st(prog r)throws IOException{
-		super(r,prog.opst,r.next_register_identifier(),r.next_register_identifier());
+	public st(program r)throws IOException{
+		super(r,program.opst,r.next_register_identifier(),r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("st").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
@@ -202,29 +202,29 @@ public static class st extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class eof extends stmt{
-	public eof(prog r)throws IOException{
+	public eof(program r)throws IOException{
 		super(r);
 		txt="..";
 	}
-	@Override protected void compile(prog p){bin=new int[]{-1};}
+	@Override protected void compile(program p){bin=new int[]{-1};}
 	private static final long serialVersionUID=1;
 }
 public static class nxt extends stmt{
-	public nxt(prog r)throws IOException{
-		super(r,prog.opnxt,0,0);
+	public nxt(program r)throws IOException{
+		super(r,program.opnxt,0,0);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class ret extends stmt{
-	public ret(prog r)throws IOException{
-		super(r,prog.opret,0,0);
+	public ret(program r)throws IOException{
+		super(r,program.opret,0,0);
 		txt="ret";
 	}
 	private static final long serialVersionUID=1;
 }
 public static class lp extends stmt{
-	public lp(prog r)throws IOException{
-		super(r,prog.oplp,0,r.next_register_identifier());
+	public lp(program r)throws IOException{
+		super(r,program.oplp,0,r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("lp").spc().p((char)(rdi+'a'));
@@ -232,8 +232,8 @@ public static class lp extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class stc extends stmt{
-	public stc(prog r)throws IOException{
-		super(r,prog.opstc,r.next_register_identifier(),r.next_register_identifier());
+	public stc(program r)throws IOException{
+		super(r,program.opstc,r.next_register_identifier(),r.next_register_identifier());
 	}
 	@Override public void source_to(xwriter x){
 		x.p("stc").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
@@ -241,19 +241,19 @@ public static class stc extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class sub extends stmt{
-	public sub(prog r)throws IOException{
-		super(r,prog.opsub,r.next_register_identifier(),r.next_register_identifier());
+	public sub(program r)throws IOException{
+		super(r,program.opsub,r.next_register_identifier(),r.next_register_identifier());
 	}
 	private static final long serialVersionUID=1;
 }
 public static class call extends stmt{
 	String label;
-	public call(prog r)throws IOException{
-		super(r,prog.opcall,0,0);
+	public call(program r)throws IOException{
+		super(r,program.opcall,0,0);
 		label=r.next_token_in_line();
 		txt="call "+label;
 	}
-	@Override protected void link(prog p){
+	@Override protected void link(program p){
 		define_label l=p.labels.get(label);
 		if(l==null)throw new compiler_error(this,"label not found",label);
 		final int a=l.location_in_binary;
@@ -263,7 +263,7 @@ public static class call extends stmt{
 }
 public static class define_data extends stmt{
 		public List<String>data;
-		public define_data(prog r)throws IOException{
+		public define_data(program r)throws IOException{
 			super(r);
 			data=new ArrayList<>();
 			while(true){
@@ -275,7 +275,7 @@ public static class define_data extends stmt{
 			data.forEach(e->x.spc().p(e));
 			txt=x.toString();
 		}
-		@Override protected void compile(prog p){
+		@Override protected void compile(program p){
 //			super.generate_code_pass_1(p);
 			bin=new int[data.size()];
 			int i=0;
@@ -287,25 +287,25 @@ public static class define_data extends stmt{
 	}
 public static class define_label extends stmt{
 	public String name;
-	public define_label(prog r,String nm){
+	public define_label(program r,String nm){
 		super(r);
 		name=nm;
 		final define_label d=r.labels.get(name);
 		if(d!=null)throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
 		txt=":"+nm;
 	}
-	@Override protected void compile(prog p){}
+	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
 public static class ld extends stmt{
-	public ld(prog r)throws IOException{
-		super(r,prog.opld,r.next_register_identifier(),r.next_register_identifier(),true);
+	public ld(program r)throws IOException{
+		super(r,program.opld,r.next_register_identifier(),r.next_register_identifier(),true);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class ldc extends stmt{
-	public ldc(prog r)throws IOException{
-		super(r,prog.opldc,r.next_register_identifier(),r.next_register_identifier(),true);
+	public ldc(program r)throws IOException{
+		super(r,program.opldc,r.next_register_identifier(),r.next_register_identifier(),true);
 	}
 	@Override public void source_to(xwriter x){
 		x.p("ldc").spc().p((char)(rdi+'a')).spc().p((char)(rai+'a'));
@@ -313,26 +313,26 @@ public static class ldc extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class tx extends stmt{
-	public tx(prog r)throws IOException{
-		super(r,prog.optx,r.next_register_identifier(),r.next_register_identifier(),true);
+	public tx(program r)throws IOException{
+		super(r,program.optx,r.next_register_identifier(),r.next_register_identifier(),true);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class shf extends stmt{
-	public shf(prog r)throws IOException{
-		super(r,prog.opshf,r.next_register_identifier(),r.next_int(4),true);
+	public shf(program r)throws IOException{
+		super(r,program.opshf,r.next_register_identifier(),r.next_int(4),true);
 	}
 	private static final long serialVersionUID=1;
 }
 public static class define_data_int extends define_label{
 	public String default_value;
-	public define_data_int(prog r)throws IOException{
+	public define_data_int(program r)throws IOException{
 		super(r,r.next_identifier());
 		default_value=r.next_token_in_line();
 		if(default_value==null)default_value="0";
 		txt="int "+name+" "+default_value;
 	}
-	@Override protected void compile(prog p){
+	@Override protected void compile(program p){
 		final int d=Integer.parseInt(default_value,16);
 		bin=new int[]{d};
 	}
@@ -356,16 +356,16 @@ public static class compiler_error extends RuntimeException{
 	private static final long serialVersionUID=1;
 }
 	//	public program p;
-	public List<prog.stmt>s;
-	final public Map<String,prog.define_const>defines=new LinkedHashMap<>();
-	final public Map<String,prog.define_typedef>typedefs=new LinkedHashMap<>();
-	final public Map<String,prog.define_struct>structs=new LinkedHashMap<>();
-	final public Map<String,prog.define_label>labels=new LinkedHashMap<>();
+	public List<program.stmt>s;
+	final public Map<String,program.define_const>defines=new LinkedHashMap<>();
+	final public Map<String,program.define_typedef>typedefs=new LinkedHashMap<>();
+	final public Map<String,program.define_struct>structs=new LinkedHashMap<>();
+	final public Map<String,program.define_label>labels=new LinkedHashMap<>();
 
-	public prog(final String source)throws IOException{
+	public program(final String source)throws IOException{
 		this(new StringReader(source));
 	}
-	public prog(final Reader source)throws IOException{
+	public program(final Reader source)throws IOException{
 		this.source=new PushbackReader(source,1);
 //		this.p=p;
 		s=new ArrayList<>();
@@ -373,63 +373,63 @@ public static class compiler_error extends RuntimeException{
 			final int ch=read();
 			if(ch==-1)break;
 			unread(ch);
-			final prog.stmt st=read_next_statement_from(this);
+			final program.stmt st=read_next_statement_from(this);
 			s.add(st);
 		}
 		s.forEach(e->e.validate_references_to_labels(this));
 		s.forEach(e->e.compile(this));
 		int pc=0;
-		for(final prog.stmt ss:s){
+		for(final program.stmt ss:s){
 			ss.location_in_binary=pc;
 			if(ss.bin!=null)pc+=ss.bin.length;
 		}
 		s.forEach(e->e.link(this));
 	}
-	private prog.stmt read_next_statement_from(final prog r)throws IOException,prog.compiler_error{
+	private program.stmt read_next_statement_from(final program r)throws IOException,program.compiler_error{
 		String tk="";
 		while(true){
 			r.skip_whitespace();
 			tk=r.next_token_in_line();
-			if(tk==null)return new prog.eof(r);
+			if(tk==null)return new program.eof(r);
 			if(tk.equals("const")){
-				final prog.define_const s=new prog.define_const(r);
+				final program.define_const s=new program.define_const(r);
 				defines.put(s.name,s);
 				return s;
 			}
 			if(tk.equals("typedef")){
-				final prog.define_typedef s=new prog.define_typedef(r);
+				final program.define_typedef s=new program.define_typedef(r);
 				typedefs.put(s.name,s);
 				return s;
 			}
 			if(tk.equals("struct")){
-				final prog.define_struct s=new prog.define_struct(r);
+				final program.define_struct s=new program.define_struct(r);
 				structs.put(s.name,s);
 				return s;
 			}
 			if(tk.equals("var")){
-				final prog.define_var s=new prog.define_var(r);
+				final program.define_var s=new program.define_var(r);
 //				structs.put(s.name,s);
 				return s;
 			}
 			if(tk.startsWith(":")){
-				final prog.define_label s=new prog.define_label(r,tk.substring(1));
+				final program.define_label s=new program.define_label(r,tk.substring(1));
 				labels.put(s.name,s);
 				r.consume_line();
 				return s;
 			}
-			final prog.define_typedef td=typedefs.get(tk);
+			final program.define_typedef td=typedefs.get(tk);
 			if(td!=null){
-				final prog.define_data_int s=new prog.define_data_int(r);
+				final program.define_data_int s=new program.define_data_int(r);
 				labels.put(s.name,s);
 				return s;
 			}
 			if(tk.equals(".")){
-				final prog.define_data s=new prog.define_data(r);
+				final program.define_data s=new program.define_data(r);
 				r.consume_line();
 				return s;
 			}
 			if(tk.equals("..")){
-				final prog.eof s=new prog.eof(r);
+				final program.eof s=new program.eof(r);
 				r.consume_line();
 				return s;
 			}
@@ -445,20 +445,20 @@ public static class compiler_error extends RuntimeException{
 		case"ifn":{znxr=2;tk=r.next_token_in_line();break;}
 		case"ifp":{znxr=3;tk=r.next_token_in_line();break;}
 		}
-		final prog.stmt s;
+		final program.stmt s;
 		try{
-			s=(prog.stmt)Class.forName(getClass().getName()+"$"+tk).getConstructor(prog.class).newInstance(r);
+			s=(program.stmt)Class.forName(getClass().getName()+"$"+tk).getConstructor(program.class).newInstance(r);
 		}catch(InvocationTargetException t){
-			if(t.getCause()instanceof prog.compiler_error)throw(prog.compiler_error)t.getCause();
-			throw new prog.compiler_error(r.hrs_location(),t.getCause().toString());
+			if(t.getCause()instanceof program.compiler_error)throw(program.compiler_error)t.getCause();
+			throw new program.compiler_error(r.hrs_location(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new prog.compiler_error(r.hrs_location(),t.toString());
+			throw new program.compiler_error(r.hrs_location(),t.toString());
 		}catch(ClassNotFoundException t){
-			throw new prog.compiler_error(r.hrs_location(),"unknown instruction '"+tk+"'");
+			throw new program.compiler_error(r.hrs_location(),"unknown instruction '"+tk+"'");
 		}catch(Throwable t){
-			throw new prog.compiler_error(r.hrs_location(),t.toString());
+			throw new program.compiler_error(r.hrs_location(),t.toString());
 		}
-		if(!(s instanceof prog.define_data)){
+		if(!(s instanceof program.define_data)){
 			while(true){
 				final String t=r.next_token_in_line();
 				if(t==null)break;
@@ -487,7 +487,7 @@ public static class compiler_error extends RuntimeException{
 	final public void zap(int[]rom){//? arraycopybinary
 		for(int i=0;i<rom.length;i++)rom[i]=-1;
 		int pc=0;
-		for(final prog.stmt ss:s){
+		for(final program.stmt ss:s){
 			if(ss.bin==null)continue;
 			final int c=ss.bin.length;
 			System.arraycopy(ss.bin,0,rom,pc,c);
@@ -584,17 +584,17 @@ public static class compiler_error extends RuntimeException{
 	}
 	protected String next_identifier()throws IOException{
 		final String id=next_token_in_line();
-		if(id==null)throw new prog.compiler_error(hrs_location(),"expected identifier but got end of line");
-		if(id.length()==0)throw new prog.compiler_error(hrs_location(),"identifier is empty");
-		if(Character.isDigit(id.charAt(0)))	throw new prog.compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
+		if(id==null)throw new program.compiler_error(hrs_location(),"expected identifier but got end of line");
+		if(id.length()==0)throw new program.compiler_error(hrs_location(),"identifier is empty");
+		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
 		return id;
 	}
 	protected String next_type_identifier()throws IOException{
 		final String id=next_token_in_line();
-		if(id==null)throw new prog.compiler_error(hrs_location(),"expected type identifier but got end of line");
-		if(id.length()==0)throw new prog.compiler_error(hrs_location(),"type identifier is empty");
+		if(id==null)throw new program.compiler_error(hrs_location(),"expected type identifier but got end of line");
+		if(id.length()==0)throw new program.compiler_error(hrs_location(),"type identifier is empty");
 		//is_valid_type_identifier
-		if(Character.isDigit(id.charAt(0)))	throw new prog.compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
+		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
 		return id;
 	}
 	protected boolean is_at_end_of_line()throws IOException{
@@ -605,30 +605,30 @@ public static class compiler_error extends RuntimeException{
 	}
 	protected int next_register_identifier()throws IOException{
 		final String s=next_token_in_line();
-		if(s==null)throw new prog.compiler_error(hrs_location(),"expected register but found end of line");
-		if(s.length()!=1)throw new prog.compiler_error(hrs_location(),"register name unknown '"+s+"'");
+		if(s==null)throw new program.compiler_error(hrs_location(),"expected register but found end of line");
+		if(s.length()!=1)throw new program.compiler_error(hrs_location(),"register name unknown '"+s+"'");
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
 		final int max=(1<<4)-1;//? magicnumber
 		final int min=0;
-		if(reg>max||reg<min)throw new prog.compiler_error(hrs_location(),"register '"+s+"' out range 'a' through 'p'");
+		if(reg>max||reg<min)throw new program.compiler_error(hrs_location(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
 	protected int next_int(int bit_width)throws IOException{
 		final String s=next_token_in_line();
-		if(s==null)throw new prog.compiler_error(hrs_location(),"expected number but found end of line");
+		if(s==null)throw new program.compiler_error(hrs_location(),"expected number but found end of line");
 		try{
 			final int i=Integer.parseInt(s);
 			final int max=(1<<(bit_width-1))-1;
 			final int min=-1<<(bit_width-1);
-			if(i>max)throw new prog.compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
-			if(i<min)throw new prog.compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			if(i>max)throw new program.compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+			if(i<min)throw new program.compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
 			return i;
-		}catch(NumberFormatException e){throw new prog.compiler_error(hrs_location(),"can not translate number '"+s+"'");}
+		}catch(NumberFormatException e){throw new program.compiler_error(hrs_location(),"can not translate number '"+s+"'");}
 	}
 	protected void assert_and_consume_end_of_line()throws IOException{
 		final int eos=read();
-		if(eos!='\n'&&eos!=-1)throw new prog.compiler_error(hrs_location(),"expected end of line or end of file");
+		if(eos!='\n'&&eos!=-1)throw new program.compiler_error(hrs_location(),"expected end of line or end of file");
 	}
 	protected void consume_line()throws IOException{
 		while(true){
