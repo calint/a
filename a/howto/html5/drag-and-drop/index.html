@@ -1,7 +1,7 @@
 <!DOCTYPE HTML><title>drage-and-drop</title>
 <style>
 	html{font-size:1em;font-family:monospace;margin:0;padding:0}
-	.el{
+	el{	display:block;
 		white-space:pre;
 		float:left;
 		width:16em;
@@ -60,35 +60,42 @@
 	}
 </style>
 <script>
-function dragStart(ev){
-	console.log("drag_start "+ev.target.id);
-//	ev.dataTransfer.effectAllowed='move';
-	ev.dataTransfer.setData("id",ev.target.id);
-//	ev.dataTransfer.setDragImage(ev.target,0,0);
+function eid(e){return e.nodeName+"["+e.id+"]";}
+function dragStart(e){
+	console.log("drag_start "+eid(e.target)+" "+e.dataTransfer.getData("id"));
+	e.dataTransfer.setData("id",e.target.id);
 	return true;
 }
-function dragEnter(ev){
-	console.log("drag_enter "+ev.target.id);
+function dragEnter(e){
+	console.log("drag_enter "+eid(e.target)+" "+e.dataTransfer.getData("id"));
 //	event.preventDefault();
-	return true;
+//	return true;
 }
-function dragOver(ev){
-//	console.log("drag_over "+ev.target.id);
+function dragOver(e){
+	console.log("drag_over "+eid(e.target)+" "+e.dataTransfer.getData("id"));
+	if(e.preventDefault)e.preventDefault();
+	e.dataTransfer.dropEffect='move';
 	return false;
 }
-function dragDrop(ev) {
-//	ev.stopPropagation();
-	var id=ev.dataTransfer.getData("id");
-	var e=document.getElementById(id);
-	console.log("drop "+e.className+"["+e.id+"] on "+ev.target.className+"["+ev.target.id+"]");
-	console.log(" : "+ev.target.className+" "+ev.target.id);
-	if(ev.target.className=="el")return false;
-	ev.target.appendChild(e);
+function dragLeave(e){
+	console.log("drag_leave "+eid(e.target)+" "+e.dataTransfer.getData("id"));
+//	event.preventDefault();
+//	return true;
+}
+function dragDrop(e){
+	console.log("drag_drop "+eid(e.target)+" "+e.dataTransfer.getData("id"));
+	if(e.target.nodeName=="EL")return false;
+	var id=e.dataTransfer.getData("id");
+	var ee=document.getElementById(id);
+	e.target.appendChild(ee);
 	return false;
+}
+function dragEnd(e){
+	console.log("drag_end "+eid(e.target)+" "+e.dataTransfer.getData("id"));
 }
 function new_postit(){
 	var a=document.getElementById("desktop");
-	var b=a.getElementsByTagName('div')[0];
+	var b=a.getElementsByTagName('el')[0];
 //	console.log("new postit clone "+b);
 	var c=b.cloneNode(true);
 	c.id="~"+Math.random();
@@ -97,23 +104,28 @@ function new_postit(){
 }
 </script>
 <a href="javascript:new_postit()" style="display:block;text-align:center">:: new</a>
-<div id=desktop ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">
-	<div class=el id=a draggable=true ondragstart="return dragStart(event)"><div contenteditable>
+<div id=desktop ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)" ondragleave="return dragLeave(event)" ondragend="return dragEnd(event)">
+
+<el id=a draggable=true ondragstart="return dragStart(event)">
      to: tudor@tudorials.com
 subject: drag-and-drop
 
 oo
 ---
-</div></div>
-	<div class=el id=c draggable=true ondragstart="return dragStart(event)">
+</el>
+
+<el id=c draggable=true ondragstart="return dragStart(event)">
      to: tudor@tudorials.com
 subject: drag-and-drop-move
 
 ..
 .o.
 ..
-	</div>
+</el>
+
 </div>
+
+
 <div id=inbox ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">inbox..</div>
 <div id=outbox ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">..outbox</div>
 <div id=ongoing ondragenter="return dragEnter(event)" ondrop="return dragDrop(event)" ondragover="return dragOver(event)">ongoing</div>
