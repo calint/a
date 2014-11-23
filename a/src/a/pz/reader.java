@@ -3,22 +3,164 @@ package a.pz;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import a.pz.program.compiler_error;
+import a.pz.program.define_const;
+import a.pz.program.define_data;
+import a.pz.program.define_data_int;
+import a.pz.program.define_label;
+import a.pz.program.define_struct;
+import a.pz.program.define_typedef;
+import a.pz.program.define_var;
+import a.pz.program.eof;
+import a.pz.program.stmt;
+import b.xwriter;
 
-public final class reader extends Reader{
-	public program p;
-	public reader(final Reader source,final program p){
+public final class reader extends Reader implements AutoCloseable{
+//	public program p;
+	public List<stmt>s;
+	final public Map<String,define_const>defines=new LinkedHashMap<>();
+	final public Map<String,define_typedef>typedefs=new LinkedHashMap<>();
+	final public Map<String,define_struct>structs=new LinkedHashMap<>();
+	final public Map<String,define_label>labels=new LinkedHashMap<>();
+
+	public reader(final String source)throws IOException{
+		this(new StringReader(source));
+	}
+	public reader(final Reader source)throws IOException{
 		this.source=new PushbackReader(source,1);
-		this.p=p;
+//		this.p=p;
+		s=new ArrayList<>();
+		while(true){
+			final int ch=read();
+			if(ch==-1)break;
+			unread(ch);
+			final stmt st=read_next_statement_from(this);
+			s.add(st);
+		}
+		s.forEach(e->e.validate_references_to_labels(this));
+		s.forEach(e->e.compile(this));
+		int pc=0;
+		for(final stmt ss:s){
+			ss.location_in_binary=pc;
+			if(ss.bin!=null)pc+=ss.bin.length;
+		}
+		s.forEach(e->e.link(this));
+	}
+	private stmt read_next_statement_from(final reader r)throws IOException,compiler_error{
+		String tk="";
+		while(true){
+			r.skip_whitespace();
+			tk=r.next_token_in_line();
+			if(tk==null)return new eof(r);
+			if(tk.equals("const")){
+				final define_const s=new define_const(r);
+				defines.put(s.name,s);
+				return s;
+			}
+			if(tk.equals("typedef")){
+				final define_typedef s=new define_typedef(r);
+				typedefs.put(s.name,s);
+				return s;
+			}
+			if(tk.equals("struct")){
+				final define_struct s=new define_struct(r);
+				structs.put(s.name,s);
+				return s;
+			}
+			if(tk.equals("var")){
+				final define_var s=new define_var(r);
+//				structs.put(s.name,s);
+				return s;
+			}
+			if(tk.startsWith(":")){
+				final define_label s=new define_label(r,tk.substring(1));
+				labels.put(s.name,s);
+				r.consume_line();
+				return s;
+			}
+			final define_typedef td=typedefs.get(tk);
+			if(td!=null){
+				final define_data_int s=new define_data_int(r);
+				labels.put(s.name,s);
+				return s;
+			}
+			if(tk.equals(".")){
+				final define_data s=new define_data(r);
+				r.consume_line();
+				return s;
+			}
+			if(tk.equals("..")){
+				final eof s=new eof(r);
+				r.consume_line();
+				return s;
+			}
+			if(tk.startsWith("//")){
+				r.consume_line();
+				continue;
+			}
+			break;
+		}
+		int znxr=0;
+		switch(tk){
+		case"ifz":{znxr=1;tk=r.next_token_in_line();break;}
+		case"ifn":{znxr=2;tk=r.next_token_in_line();break;}
+		case"ifp":{znxr=3;tk=r.next_token_in_line();break;}
+		}
+		final stmt s;
+		try{
+			s=(stmt)Class.forName(program.class.getName()+"$"+tk).getConstructor(reader.class).newInstance(r);
+		}catch(InvocationTargetException t){
+			if(t.getCause()instanceof compiler_error)throw(compiler_error)t.getCause();
+			throw new compiler_error(r.hrs_location(),t.getCause().toString());
+		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
+			throw new compiler_error(r.hrs_location(),t.toString());
+		}catch(ClassNotFoundException t){
+			throw new compiler_error(r.hrs_location(),"unknown instruction '"+tk+"'");
+		}catch(Throwable t){
+			throw new compiler_error(r.hrs_location(),t.toString());
+		}
+		if(!(s instanceof define_data)){
+			while(true){
+				final String t=r.next_token_in_line();
+				if(t==null)break;
+				if("nxt".equalsIgnoreCase(t)){znxr|=4;continue;}
+				if("ret".equalsIgnoreCase(t)){znxr|=8;continue;}
+				if(t.startsWith("//")){r.consume_line();break;}
+				throw new Error("3 "+t);
+			}
+			s.znxr=znxr;
+		}
+		r.consume_line();
+		return s;
+	}
+	public void disassemble_to(xwriter x){
+		s.forEach(e->x.pl(e.toString()));
 	}
 //	public source_reader(final Reader source,final int lineno,final int charno){
 //		this.source=new PushbackReader(source,1);
 //		this.line_number=lineno;
 //		this.character_number_in_line=charno;
 //	}
-	@Override public String toString(){
-		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
-	}
+//	@Override public String toString(){
+//		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
+//	}
+	/**writes binary*/
+	final public void zap(int[]rom){//? arraycopybinary
+		for(int i=0;i<rom.length;i++)rom[i]=-1;
+		int pc=0;
+		for(final stmt ss:s){
+			if(ss.bin==null)continue;
+			final int c=ss.bin.length;
+			System.arraycopy(ss.bin,0,rom,pc,c);
+			pc+=c;
+		}
+	}	
 	public String hrs_location(){
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
@@ -90,9 +232,9 @@ public final class reader extends Reader{
 	}
 	public String next_identifier()throws IOException{
 		final String id=next_token_in_line();
-		if(id==null)throw new program.compiler_error(hrs_location(),"expected identifier but got end of line");
-		if(id.length()==0)throw new program.compiler_error(hrs_location(),"identifier is empty");
-		if(Character.isDigit(id.charAt(0)))	throw new program.compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
+		if(id==null)throw new compiler_error(hrs_location(),"expected identifier but got end of line");
+		if(id.length()==0)throw new compiler_error(hrs_location(),"identifier is empty");
+		if(Character.isDigit(id.charAt(0)))	throw new compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
 		return id;
 	}
 	public String next_type_identifier()throws IOException{
@@ -122,7 +264,7 @@ public final class reader extends Reader{
 	}
 	public int next_int(int bit_width)throws IOException{
 		final String s=next_token_in_line();
-		if(s==null)throw new program.compiler_error(hrs_location(),"expected number but found end of line");
+		if(s==null)throw new compiler_error(hrs_location(),"expected number but found end of line");
 		try{
 			final int i=Integer.parseInt(s);
 			final int max=(1<<(bit_width-1))-1;
@@ -143,4 +285,10 @@ public final class reader extends Reader{
 			if(ch=='\n')break;
 		}
 	}
+	public String toString(){
+		final xwriter x=new xwriter();
+		disassemble_to(x);
+		return x.toString();
+	}
+
 }

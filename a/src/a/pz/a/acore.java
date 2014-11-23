@@ -3,6 +3,7 @@ import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
 import a.pz.program;
+import a.pz.reader;
 import b.a;
 import b.xwriter;
 final public class acore extends a{
@@ -46,8 +47,8 @@ final public class acore extends a{
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
-		if(o instanceof program){
-			final program p=(program)o;//? oishereinstanceofprogram
+		if(o instanceof reader){
+			final reader p=(reader)o;//? oishereinstanceofprogram
 			p.zap(cor.rom);
 			di.set(p.toString());
 			cor.reset();
@@ -57,10 +58,10 @@ final public class acore extends a{
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
-		x.divo(this);
 //		final String id=id();
 		if(pt()==null){
-			x.style()
+			x.title("clare")
+			.style()
 				.css("html","color:#111")
 				.css("body","padding:7em 0 0 11em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css(".border","border:1px dotted red")
@@ -111,6 +112,7 @@ final public class acore extends a{
 //				j.add("cK","alert('info')");
 //			}
 		}
+		x.divo(this);
 		if(hasbit(bit_show_logo)){logo_to(x);copyright_to(x);}
 		if(hasbit(bit_show_pramble)){pramble_to(x);x.nl();}
 		if(hasbit(bit_show_schematics))schematics_to(x);
