@@ -1,5 +1,6 @@
 package a.pz.a;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import b.threadedsock;
 import b.websock;
 final public class tinitus extends websock implements threadedsock{
@@ -8,15 +9,23 @@ final public class tinitus extends websock implements threadedsock{
 //		send_binary(refresh_display,png);
 	}
 	protected void onmessage(final ByteBuffer bb) throws Throwable{
-		switch(bb.get()){
-		case'f'://faster
-			break;
-		case's'://slower
-			break;
-		case'o'://ok
-			break;
-		default:throw new Error();
+		final ByteBuffer bo=ByteBuffer.allocate(1024*4);
+		final FloatBuffer fb=bo.asFloatBuffer();
+		int n=1024;
+		while(n--!=0){
+			fb.put((float)Math.random());
 		}
+		fb.flip();
+		send_binary(bo);
+//		switch(bb.get()){
+//		case'f'://faster
+//			break;
+//		case's'://slower
+//			break;
+//		case'o'://ok
+//			break;
+//		default:throw new Error();
+//		}
 	}
 //	private static final byte[]refresh_display=new byte[]{'0'};
 //	public static String tostr(final ByteBuffer bb){try{return new String(bb.array(),bb.position(),bb.remaining(),strenc);}catch(Throwable t){throw new Error(t);}}

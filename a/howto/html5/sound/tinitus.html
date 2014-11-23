@@ -1,0 +1,81 @@
+<html onmousemove="dax=event.clientX/10000;day=event.clientY/10000;">
+<pre><a href="javascript:stop()">start</a> <a href="javascript:start()">stop</a>
+   sample rate: <output id=sr></output>
+        buffer: <output id=bufsize></output> bytes
+           lag: <output id=pbt></output>
+         frame: <output id=frm></output>
+          time: <output id=tim></output>
+   frequencies: [<output id=frq1></output>] [<output id=frq2></output>] deg/s
+
+        tinitus: <output id=sts></output>
+           recv: <output id=recvsize></output>
+         output: <output id=outp></output>
+        
+
+
+<script>
+$=document.all;
+var context;
+try{window.AudioContext=window.AudioContext||window.webkitAudioContext;context=new AudioContext();}catch(e){alert('Web Audio API is not supported in this browser');}
+$.sr.value=context.sampleRate;
+var bufferSize=512;
+var proc=context.createScriptProcessor(bufferSize,1,1);
+var dax=.004;
+var day=.002;
+var ax=0;
+var ay=0;
+var mute=false;
+var buffers=[];
+var frameno=0;
+$.sts.value="on";
+ws=new WebSocket("ws://"+location.host+"/pz.a.tinitus");
+ws.binaryType="arraybuffer";
+ws.onopen=function(e){
+	p(" porta");
+	ws.send([]);
+}
+ws.onmessage=function(e){
+	onframe();
+	frameno++;
+	$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps buffers "+buffers.length+"  "+e.data.byteLength+"  "+onframe.fps;
+	buffers[buffers.length]=e.data;
+	ws.send([]);
+};
+ws.onerror=function(e){console.log("websocket error");};
+function p(txt){$.outp.value+=txt;}
+function onframe(){
+	var t=new Date().getTime();
+	var dt=t-onframe.t0;
+	if(dt>1000){
+		onframe.t0=t;
+		var df=frameno-onframe.f0;
+		onframe.f0=frameno;
+		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
+	}
+}
+onframe.t0=0;
+onframe.f0=0;
+onframe.fps=0;
+
+proc.onaudioprocess=function(e){
+//	console.log(e);
+	var output=e.outputBuffer.getChannelData(0);
+	$.frm.value++;
+	$.tim.value=context.currentTime;
+	$.bufsize.value=output.length;
+	$.pbt.value=e.playbackTime-context.currentTime;
+	for(var i=0;i<output.length;i++) {
+		if(mute){output[i]=0;continue;}
+		output[i]=((Math.sin(ax)*2-1)+(Math.sin(ay)*2-1))/2;
+		ax+=dax;
+		ay+=day;
+	}
+	$.frq1.value=dax*180/Math.PI;
+	$.frq2.value=day*180/Math.PI;
+}
+proc.connect(context.destination);
+function start(){mute=false;}
+function stop(){mute=true;}
+function onmousemove(ev){dax=ev.clientX/10000;day=ev.clientY/10000;}
+</script>
+
