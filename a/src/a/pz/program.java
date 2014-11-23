@@ -17,14 +17,12 @@ public static class add extends program.stmt{
 		final public static int    op=0x00a0;
 		public add(program r)throws IOException{
 			super(r,op,r.next_register_identifier(),r.next_register_identifier());
-		}
-		@Override public void source_to(xwriter x){
-			x.p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
+			txt=new xwriter().p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class define_const extends stmt{
-	public String name,type,value;
+	private String name,type,value;
 	public define_const(final program r)throws IOException{
 		super(r);
 		name=r.next_token_in_line();
@@ -40,7 +38,7 @@ public static class add extends program.stmt{
 	private static final long serialVersionUID=1;
 }
 final static public class define_var extends stmt{
-	public List<String>vars;
+	private List<String>vars;
 	public define_var(final program r)throws IOException{
 		super(r);
 		vars=new ArrayList<>();
@@ -58,8 +56,8 @@ final static public class define_var extends stmt{
 	private static final long serialVersionUID=1;
 }
 final static public class define_struct extends stmt{
-	public String name;
-	public List<member>fields;
+	private String name;
+	private List<member>fields;
 	public define_struct(final program p)throws IOException{
 		super(p);
 		name=p.next_identifier();
@@ -76,13 +74,13 @@ final static public class define_struct extends stmt{
 		fields.forEach(f->x.spc().p(f.toString()));
 		txt=x.toString();
 	}
-	@Override public void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
+	@Override protected void validate_references_to_labels(program p){fields.forEach(e->e.validate_references_to_labels(p));}
 	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 public static class member extends stmt{
-	public String type;
-	public String name;
-	public String default_value;
+	private String type;
+	private String name;
+	private String default_value;
 	public member(program p)throws IOException{
 		super(p);
 		name=p.next_identifier();
@@ -92,7 +90,7 @@ public static class member extends stmt{
 		x.p(name).spc().p(type).spc().p(default_value);
 		txt=x.toString();
 	}
-	@Override public void validate_references_to_labels(program p)throws error{
+	@Override protected void validate_references_to_labels(program p)throws error{
 		if(!p.typedefs.containsKey(type))throw new error(this,"type '"+type+"' not found in declared typedefs "+p.typedefs.keySet());
 	}
 	@Override protected void compile(program p){}
@@ -101,7 +99,7 @@ public static class member extends stmt{
 
 }
 final static public class define_typedef extends stmt{
-	public String name;
+	private String name;
 	public define_typedef(final program r)throws IOException{
 		super(r);
 		name=r.next_identifier();
@@ -111,14 +109,14 @@ final static public class define_typedef extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class stmt implements Serializable{
-	public String location_in_source;
-	public String txt;
-	public int[]bin;
-	public int location_in_binary;
-	public int znxr;
-	/**opcode*/public int op;
-	public int rai;
-	public int rdi;
+	protected String location_in_source;
+	protected String txt;
+	protected int[]bin;
+	protected int location_in_binary;
+	protected int znxr;
+	protected int op;
+	protected int rai;
+	protected int rdi;
 	public stmt(final program r){location_in_source=r.hrs_location();}
 	protected stmt(final program r,final int op,final int ra,final int rd){
 		this(r);
@@ -149,15 +147,15 @@ public static class stmt implements Serializable{
 	private static final long serialVersionUID=1;
 }
 public static class li extends stmt{
-		public String data;
-		public int value;
+		private String data;
+		private int value;
 		final public static int     op=0x0000;
 		public li(program r)throws IOException{
 			super(r,li.op,0,r.next_register_identifier());
 			data=r.next_token_in_line();
 			txt="li "+(char)(rdi+'a')+" "+data;
 		}
-		public boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
+//		private boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
 		@Override protected void compile(program p){
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
@@ -190,9 +188,7 @@ public static class inc extends stmt{
 	final public static int    op=0x0200;
 	public inc(program r)throws IOException{
 		super(r,op,0,r.next_register_identifier());
-	}
-	@Override public void source_to(xwriter x){
-		x.p("inc").spc().p((char)(rdi+'a'));
+		txt=new xwriter().p("inc").spc().p((char)(rdi+'a')).toString();
 	}
 	private static final long serialVersionUID=1;
 }
@@ -200,9 +196,7 @@ public static class st extends stmt{
 	final public static int     op=0x00d8;
 	public st(program r)throws IOException{
 		super(r,op,r.next_register_identifier(),r.next_register_identifier());
-	}
-	@Override public void source_to(xwriter x){
-		x.p("st").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
+		txt=new xwriter().p("st").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 	}
 	private static final long serialVersionUID=1;
 }
@@ -233,9 +227,7 @@ public static class lp extends stmt{
 	final public static int     op=0x0100;
 	public lp(program r)throws IOException{
 		super(r,lp.op,0,r.next_register_identifier());
-	}
-	@Override public void source_to(xwriter x){
-		x.p("lp").spc().p((char)(rdi+'a'));
+		txt=new xwriter().p("lp").spc().p((char)(rdi+'a')).toString();
 	}
 	private static final long serialVersionUID=1;
 }
@@ -243,9 +235,7 @@ public static class stc extends stmt{
 	final public static int    op=0x0040;
 	public stc(program r)throws IOException{
 		super(r,op,r.next_register_identifier(),r.next_register_identifier());
-	}
-	@Override public void source_to(xwriter x){
-		x.p("stc").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a'));
+		txt=new xwriter().p("stc").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 	}
 	private static final long serialVersionUID=1;
 }
@@ -273,7 +263,7 @@ public static class call extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class define_data extends stmt{
-		public List<String>data;
+		private List<String>data;
 		public define_data(program r)throws IOException{
 			super(r);
 			data=new ArrayList<>();
@@ -297,7 +287,7 @@ public static class define_data extends stmt{
 		private static final long serialVersionUID=1;
 	}
 public static class define_label extends stmt{
-	public String name;
+	protected String name;
 	public define_label(program r,String nm){
 		super(r);
 		name=nm;
@@ -319,9 +309,7 @@ public static class ldc extends stmt{
 	final public static int    op=0x00c0;
 	public ldc(program r)throws IOException{
 		super(r,op,r.next_register_identifier(),r.next_register_identifier(),true);
-	}
-	@Override public void source_to(xwriter x){
-		x.p("ldc").spc().p((char)(rdi+'a')).spc().p((char)(rai+'a'));
+		txt=new xwriter().p("ldc").spc().p((char)(rdi+'a')).spc().p((char)(rai+'a')).toString();
 	}
 	private static final long serialVersionUID=1;
 }
@@ -340,7 +328,7 @@ public static class shf extends stmt{
 	private static final long serialVersionUID=1;
 }
 public static class define_data_int extends define_label{
-	public String default_value;
+	private String default_value;
 	public define_data_int(program r)throws IOException{
 		super(r,r.next_identifier());
 		default_value=r.next_token_in_line();
