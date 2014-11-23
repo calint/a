@@ -116,9 +116,9 @@ final public class acore extends a{
 		if(hasbit(bit_show_pramble)){pramble_to(x);x.nl();}
 		if(hasbit(bit_show_schematics))schematics_to(x);
 		if(hasbit(bit_show_instructions_table))instructions_table_to(x);
-		x.divh(sl,"panel");
+//		x.divh(sl,"panel");
 		if(hasbit(bit_show_screen))x.r(ra);
-		x.divh(sr,"panel");
+//		x.divh(sr,"panel");
 		if(hasbit(bit_menu))
 			x.divo()
 				.ax(this,"r"," reset")
