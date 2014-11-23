@@ -43,24 +43,24 @@
 </style>
 <script>
 function dragStart(ev){
-	console.log(ev);
+	console.log("drag_start "+ev.target.id);
 	ev.dataTransfer.effectAllowed='move';
-	ev.dataTransfer.setData("Text",ev.target.getAttribute('id'));
+	ev.dataTransfer.setData("id",ev.target.getAttribute('id'));
 	ev.dataTransfer.setDragImage(ev.target,0,0);
 	return true;
 }
 function dragEnter(ev){
-	console.log(ev);
+	console.log("drag_enter "+ev.target.id);
 	event.preventDefault();
 	return true;
 }
 function dragOver(ev){
-	console.log(ev);
+	console.log("drag_over "+ev.target.id);
 	return false;
 }
 function dragDrop(ev) {
-	console.log(ev);
-	var src=ev.dataTransfer.getData("Text");
+	var src=ev.dataTransfer.getData("id");
+	console.log("drop_on "+ev.target.id+" ["+src+"]");
 	ev.target.appendChild(document.getElementById(src));
 	ev.stopPropagation();
 	return false;
