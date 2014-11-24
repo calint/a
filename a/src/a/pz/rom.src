@@ -16,9 +16,11 @@ d=colr
 e=skp
 //e=linewi-wi
 draw()
+//draw(pos,a+=++p,hi,wi,colr,linewi-wi)
 
 a=pos
 dots.draw()
+//dots.draw()
 ..
 ..
 struct dot yyxx int 0000 rgb int 000
