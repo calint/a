@@ -15,12 +15,11 @@ b=hi
 c=wi
 d=colr
 e=skp
-////e=linewi-wi
-//draw()
-call draw
+//e=linewi-wi
+draw()
 
 a=pos
-call dots.draw
+dots.draw()
 ..
 ..
 struct dot yyxx int 0000 rgb int 000

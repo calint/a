@@ -494,6 +494,9 @@ public static class compiler_error extends RuntimeException{
 				return st;
 			}
 			throw new Error("expressions not supported yet");
+		case'('://function call
+			final define_call sc=new define_call(this,tk);
+			return sc;
 		default:
 			unread(nxtch);
 		}
@@ -605,6 +608,8 @@ public static class compiler_error extends RuntimeException{
 			if(Character.isWhitespace(ch))break;
 			if(ch=='='){unread(ch);break;}
 			if(ch=='+'){unread(ch);break;}
+			if(ch=='('){unread(ch);break;}
+//			if(ch==')'){unread(ch);break;}
 			sb.append((char)ch);
 		}
 		skip_whitespace_on_same_line();
@@ -688,12 +693,15 @@ public static class compiler_error extends RuntimeException{
 //		final int eos=read();
 //		if(eos!='\n'&&eos!=-1)throw new program.compiler_error(hrs_location(),"expected end of line or end of file");
 //	}
-	private void consume_rest_of_line()throws IOException{
+	private String consume_rest_of_line()throws IOException{
+		final StringBuilder sb=new StringBuilder();
 		while(true){
 			final int ch=read();
 			if(ch==-1)break;
 			if(ch=='\n')break;
+			sb.append((char)ch);
 		}
+		return sb.toString();
 	}
 	public String toString(){
 		final xwriter x=new xwriter();
@@ -728,6 +736,26 @@ final static public class define_add extends stmt{
 		final stmt s=new stmt(p,add.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
 		s.compile(p);
 		bin=s.bin;
+	}
+	private static final long serialVersionUID=1;
+}
+final static public class define_call extends stmt{
+	public String function_name;
+	public String rhs;
+	public define_call(final program p,final String function_name)throws IOException{
+		super(p);
+		this.function_name=function_name;
+		rhs=p.consume_rest_of_line();
+		txt=new xwriter().p(function_name).p("()").toString();
+	}
+	@Override protected void compile(program p){
+		bin=new int[]{call.op,0};
+	}
+	@Override protected void link(program p){
+		define_label l=p.labels.get(function_name);
+		if(l==null)throw new compiler_error(this,"function not found",function_name);
+		final int a=l.location_in_binary;
+		bin[0]|=(a<<6);
 	}
 	private static final long serialVersionUID=1;
 }
