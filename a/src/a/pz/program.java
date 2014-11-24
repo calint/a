@@ -52,7 +52,6 @@ public final class program implements Serializable{
 			value=r.next_token_in_line();
 			txt="const "+type+" "+name+"="+value;
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_var extends expr{
@@ -81,14 +80,14 @@ public final class program implements Serializable{
 				return;
 			final def_const dc=p.defines.get(default_value);
 			if(dc!=null){
-				final program p2=new program("li "+register+" 0",p);
+				final program p2=new program(p,"li "+register+" 0");
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type="int&"
 				return;
 			}
 			if(default_value.startsWith("&")){// li
-				final program p2=new program("li "+register+" 0",p);
+				final program p2=new program(p,"li "+register+" 0");
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type="int&"
@@ -236,7 +235,6 @@ public final class program implements Serializable{
 		@Override protected void validate_references_to_labels(program p){
 			fields.forEach(e->e.validate_references_to_labels(p));
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class def_struct_member extends def{
@@ -256,7 +254,6 @@ public final class program implements Serializable{
 			if(!p.typedefs.containsKey(type))
 				throw new compiler_error(this,"type '"+type+"' not found in declared typedefs "+p.typedefs.keySet());
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_type extends def{
@@ -266,7 +263,6 @@ public final class program implements Serializable{
 			name=r.next_identifier();
 			txt=new xwriter().p("typedef").spc().p(name).toString();
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class stmt implements Serializable{
@@ -479,7 +475,6 @@ public final class program implements Serializable{
 				throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
 			txt=":"+nm;
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class def_comment extends def{
@@ -489,7 +484,6 @@ public final class program implements Serializable{
 			line=p.consume_rest_of_line();
 			txt="//"+line;
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class ld extends instr{
@@ -521,13 +515,12 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class decl_data_int extends def_label{
+	public static class decl_data_int extends stmt{
 		public String name,type,default_value;
 		public decl_data_int(String name,String type,program p) throws IOException{
-			super(p,name);
-			if(p.is_next_char_equals()){//default value
+			super(p);
+			if(p.is_next_char_equals())//default value
 				default_value=p.next_token_in_line();
-			}
 			final xwriter x=new xwriter().p(type).spc().p(name);
 			if(default_value!=null)
 				x.p("=").p(default_value);
@@ -567,41 +560,43 @@ public final class program implements Serializable{
 	final public Map<String,def_struct> structs=new LinkedHashMap<>();
 	final public Map<String,def_label> labels=new LinkedHashMap<>();
 	final public Map<String,def_func> functions=new LinkedHashMap<>();
+	final public Map<String,decl_data_int> data=new LinkedHashMap<>();
 
 	public program(final String source){
 		this(null,new StringReader(source));
 	}
-	public program(final String source,final program context_program){
+	public program(final program context_program,final String source){
 		this(context_program,new StringReader(source));
 	}
-	public boolean is_register_allocated(String register){
-		return allocated_registers.containsKey(register);
+	public program(final program context_program,final Reader source){
+		try{
+			if(context_program!=null){
+				typedefs.putAll(context_program.typedefs);
+				labels.putAll(context_program.labels);
+				defines.putAll(context_program.defines);
+			}
+			this.pr=new PushbackReader(source,1);
+			while(true){
+				final stmt st=next_statement();
+				if(st==null)
+					break;
+				pl(st.toString());
+				statements.add(st);
+			}
+			statements.forEach(e->e.validate_references_to_labels(this));
+			statements.forEach(e->e.compile(this));
+			int pc=0;
+			for(final stmt ss:statements){
+				ss.location_in_binary=pc;
+				if(ss.bin!=null)
+					pc+=ss.bin.length;
+			}
+			statements.forEach(e->e.link(this));
+		}catch(IOException e){
+			throw new Error(e);
+		}
 	}
-	public program(final program context_program,final Reader source){try{
-		if(context_program!=null){
-			typedefs.putAll(context_program.typedefs);
-			labels.putAll(context_program.labels);
-			defines.putAll(context_program.defines);
-		}
-		this.pr=new PushbackReader(source,1);
-		while(true){
-			final stmt st=next_statement();
-			if(st==null)
-				break;
-			pl(st.toString());
-			statements.add(st);
-		}
-		statements.forEach(e->e.validate_references_to_labels(this));
-		statements.forEach(e->e.compile(this));
-		int pc=0;
-		for(final stmt ss:statements){
-			ss.location_in_binary=pc;
-			if(ss.bin!=null)
-				pc+=ss.bin.length;
-		}
-		statements.forEach(e->e.link(this));
-	}catch(IOException e){throw new Error(e);}}
-	private stmt next_statement() throws IOException{
+	stmt next_statement() throws IOException{
 		String tk="";
 		while(true){
 			skip_whitespace();
@@ -653,7 +648,7 @@ public final class program implements Serializable{
 					return df;
 				}
 				final decl_data_int s=new decl_data_int(name,td.name,this);
-				labels.put(s.name,s);
+				data.put(s.name,s);
 				return s;
 			}
 			if(tk.equals(".")){
@@ -741,70 +736,73 @@ public final class program implements Serializable{
 		}
 		return s;
 	}
-	private boolean is_next_char_plus() throws IOException{
+	boolean is_register_allocated(String register){
+		return allocated_registers.containsKey(register);
+	}
+	boolean is_next_char_plus() throws IOException{
 		final int ch=read();
 		if(ch=='+')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_bracket_left() throws IOException{
+	boolean is_next_char_bracket_left() throws IOException{
 		final int ch=read();
 		if(ch=='[')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_paranthesis_left() throws IOException{
+	boolean is_next_char_paranthesis_left() throws IOException{
 		final int ch=read();
 		if(ch=='(')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_paranthesis_right() throws IOException{
+	boolean is_next_char_paranthesis_right() throws IOException{
 		final int ch=read();
 		if(ch==')')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_comma() throws IOException{
+	boolean is_next_char_comma() throws IOException{
 		final int ch=read();
 		if(ch==',')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_star() throws IOException{
+	boolean is_next_char_star() throws IOException{
 		final int ch=read();
 		if(ch=='*')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_slash() throws IOException{
+	boolean is_next_char_slash() throws IOException{
 		final int ch=read();
 		if(ch=='/')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_equals() throws IOException{
+	boolean is_next_char_equals() throws IOException{
 		final int ch=read();
 		if(ch=='=')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean is_next_char_end_of_file() throws IOException{
+	boolean is_next_char_end_of_file() throws IOException{
 		final int ch=read();
 		if(ch==-1)
 			return true;
 		unread(ch);
 		return false;
 	}
-	private void disassemble_to(xwriter x){
+	void disassemble_to(xwriter x){
 		statements.forEach(e->x.pl(e.toString()));
 	}
 	//	public source_reader(final Reader source,final int lineno,final int charno){
@@ -828,7 +826,7 @@ public final class program implements Serializable{
 			pc+=c;
 		}
 	}
-	private String location_in_source(){
+	String location_in_source(){
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
 	private static String hr_location_string_from_line_and_col(final int ln,final int col){
@@ -863,7 +861,7 @@ public final class program implements Serializable{
 				throw new Error();
 		}
 	}
-	private final String next_token_in_line() throws IOException{
+	String next_token_in_line() throws IOException{
 		skip_whitespace_on_same_line();
 		final StringBuilder sb=new StringBuilder();
 		while(true){
@@ -903,7 +901,7 @@ public final class program implements Serializable{
 			return null;
 		return sb.toString();
 	}
-	private final void skip_whitespace_on_same_line() throws IOException{
+	void skip_whitespace_on_same_line() throws IOException{
 		while(true){
 			final int ch=read();
 			if(ch=='\n'){
@@ -927,7 +925,7 @@ public final class program implements Serializable{
 	final public static int opdac=0x0400;
 	final public static int opwait=0x0058;
 	final public static int opnotify=0x0078;
-	private void skip_whitespace() throws IOException{
+	void skip_whitespace() throws IOException{
 		while(true){
 			final int ch=read();
 			if(Character.isWhitespace(ch))
@@ -938,7 +936,7 @@ public final class program implements Serializable{
 			return;
 		}
 	}
-	private String next_identifier() throws IOException{
+	String next_identifier() throws IOException{
 		final String id=next_token_in_line();
 		if(id==null)
 			throw new compiler_error(location_in_source(),"expected identifier but got end of line");
@@ -948,7 +946,7 @@ public final class program implements Serializable{
 			throw new compiler_error(location_in_source(),"identifier '"+id+"' starts with a number");
 		return id;
 	}
-	private String next_type_identifier() throws IOException{
+	String next_type_identifier() throws IOException{
 		final String id=next_token_in_line();
 		if(id==null)
 			throw new program.compiler_error(location_in_source(),"expected type identifier but got end of line");
@@ -959,14 +957,14 @@ public final class program implements Serializable{
 			throw new program.compiler_error(location_in_source(),"type identifier '"+id+"' starts with a number");
 		return id;
 	}
-	private boolean is_next_char_end_of_line() throws IOException{
+	boolean is_next_char_end_of_line() throws IOException{
 		final int ch=read();
 		if(ch=='\n')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private int next_register_identifier() throws IOException{
+	int next_register_identifier() throws IOException{
 		final String s=next_token_in_line();
 		if(s==null)
 			throw new program.compiler_error(location_in_source(),"expected register but found end of line");
@@ -980,7 +978,7 @@ public final class program implements Serializable{
 			throw new program.compiler_error(location_in_source(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
-	private int next_int(int bit_width) throws IOException{
+	int next_int(int bit_width) throws IOException{
 		final String s=next_token_in_line();
 		if(s==null)
 			throw new program.compiler_error(location_in_source(),"expected number but found end of line");
@@ -1001,7 +999,7 @@ public final class program implements Serializable{
 	//		final int eos=read();
 	//		if(eos!='\n'&&eos!=-1)throw new program.compiler_error(hrs_location(),"expected end of line or end of file");
 	//	}
-	private String consume_rest_of_line() throws IOException{
+	String consume_rest_of_line() throws IOException{
 		final StringBuilder sb=new StringBuilder();
 		while(true){
 			final int ch=read();
@@ -1095,6 +1093,7 @@ public final class program implements Serializable{
 		public def(program p){
 			super(p);
 		}
+		final @Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class def_func extends def{
@@ -1124,7 +1123,6 @@ public final class program implements Serializable{
 			x.p(")");
 			txt=x.toString();
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class def_func_arg extends def{
@@ -1147,7 +1145,6 @@ public final class program implements Serializable{
 			x.p(type).spc().p(name).p("=").p(default_value);
 			txt=x.toString();
 		}
-		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_function_call extends expr{
@@ -1220,9 +1217,10 @@ public final class program implements Serializable{
 		allocated_registers.put(regname,e);
 		return;
 	}
-	public String type_for_register(stmt s,String name){
+	String type_for_register(stmt s,String name){
 		final stmt v=allocated_registers.get(name);
-		if(v==null)throw new compiler_error(s,"register not found",name);
+		if(v==null)
+			throw new compiler_error(s,"register not found",name);
 		return v.type;
 	}
 
