@@ -8,9 +8,8 @@ const linewi int 100
 
 //var a p b c d e
 a=pos
-//a+=p
-add a p
-//p++
+a+=p
+p++
 inc p
 b=hi
 c=wi
