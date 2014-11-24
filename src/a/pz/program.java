@@ -55,7 +55,7 @@ final static public class define_var extends stmt{
 	@Override protected void compile(program p){}
 	private static final long serialVersionUID=1;
 }
-final static public class define_assignment extends stmt{
+final static public class define_let extends stmt{
 	public String lhs;
 	public stmt rhs;
 	public String rh;
@@ -64,7 +64,7 @@ final static public class define_assignment extends stmt{
 		final char ch=ref.charAt(0);
 		return ch>='a'&&ch<='p';
 	}
-	public define_assignment(final program p,final String lhs)throws IOException{
+	public define_let(final program p,final String lhs)throws IOException{
 		super(p);
 		this.lhs=lhs;
 		rh=p.next_token_in_line();
@@ -483,11 +483,14 @@ public static class compiler_error extends RuntimeException{
 		final int nxtch=read();
 		switch(nxtch){
 		case'='://assignment
-			final define_assignment s=new define_assignment(this,tk);
+			final define_let s=new define_let(this,tk);
 			return s;
 		case'+'://expression or addstore or inc
 			if(next_char_is_plus()){
 				final define_increment st=new define_increment(this,tk);
+				return st;
+			}else if(next_char_is_equals()){
+				final define_add st=new define_add(this,tk);
 				return st;
 			}
 			throw new Error("expressions not supported yet");
@@ -530,6 +533,12 @@ public static class compiler_error extends RuntimeException{
 	private boolean next_char_is_plus()throws IOException{
 		final int ch=read();
 		if(ch=='+')return true;
+		unread(ch);
+		return false;
+	}
+	private boolean next_char_is_equals()throws IOException{
+		final int ch=read();
+		if(ch=='=')return true;
 		unread(ch);
 		return false;
 	}
@@ -701,6 +710,22 @@ final static public class define_increment extends stmt{
 	}
 	@Override protected void compile(program p){
 		final stmt s=new stmt(p,inc.op,0,lhs.charAt(0)-'a');
+		s.compile(p);
+		bin=s.bin;
+	}
+	private static final long serialVersionUID=1;
+}
+final static public class define_add extends stmt{
+	public String lhs;
+	public String rhs;
+	public define_add(final program p,final String lhs)throws IOException{
+		super(p);
+		this.lhs=lhs;
+		rhs=p.next_token_in_line();
+		txt=new xwriter().p(lhs).p("+=").p(rhs).toString();
+	}
+	@Override protected void compile(program p){
+		final stmt s=new stmt(p,add.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
 		s.compile(p);
 		bin=s.bin;
 	}
