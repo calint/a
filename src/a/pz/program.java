@@ -82,17 +82,18 @@ public final class program implements Serializable{
 					return;
 				}
 				if(default_value.startsWith("&")){// li
-					final li s=new li(new program("li "+register+" 0"));
-					s.compile(p);
+					final program p2=new program("li "+register+" 0",p);
+					final stmt s=p2.statements.get(0);
 					bin=s.bin;
 					return;
 				}
 				if(is_reference_to_register(default_value)){// tx
 					if(!p.is_register_allocated(default_value))
 						throw new compiler_error(this,"var not declared",default_value);
-					final tx t=new tx(new program("tx "+register+" "+default_value));
-					t.compile(p);
-					bin=t.bin;
+					final program p2=new program("tx "+register+" "+default_value);
+					final stmt s=p2.statements.get(0);
+					bin=s.bin;
+					return;
 				}
 			}catch(IOException e){
 				throw new Error(e);
