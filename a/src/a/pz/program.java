@@ -1083,7 +1083,8 @@ public final class program implements Serializable{
 				throw new compiler_error(this,"expected function argument format: int a=2,...");
 			default_value=p.next_token_in_line();
 			final xwriter x=new xwriter();
-			if(is_const)x.p("const").spc();
+			if(is_const)
+				x.p("const").spc();
 			x.p(type).spc().p(name).p("=").p(default_value);
 			txt=x.toString();
 		}
@@ -1092,12 +1093,30 @@ public final class program implements Serializable{
 	}
 	final static public class expr_function_call extends expr{
 		public String function_name;
-		public String rhs;
+		public List<expr_function_call_arg> args=new ArrayList<>();
 		public expr_function_call(final program p,final String function) throws IOException{
 			super(p,function);
 			function_name=function;
-			rhs=p.consume_rest_of_line();
-			txt=new xwriter().p(function).p("()").toString();
+			while(true){
+				if(p.is_next_char_paranthesis_right())
+					break;
+				final expr_function_call_arg a=new expr_function_call_arg(p);
+				args.add(a);
+				if(p.is_next_char_comma())
+					continue;
+			}
+			final xwriter x=new xwriter();
+			x.p(function_name).p("(");
+			final Iterator<expr_function_call_arg> i=args.iterator();
+			while(true){
+				if(!i.hasNext())
+					break;
+				x.p(i.next().toString());
+				if(i.hasNext())
+					x.p(",");
+			}
+			x.p(")");
+			txt=x.toString();
 		}
 		@Override protected void compile(program p){
 			bin=new int[]{call.op};
@@ -1109,6 +1128,17 @@ public final class program implements Serializable{
 			final int a=f.location_in_binary;
 			bin[0]|=(a<<6);
 		}
+		private static final long serialVersionUID=1;
+	}
+	final static public class expr_function_call_arg extends expr{
+		public String arg;
+		public expr_function_call_arg(final program p) throws IOException{
+			super(p,null);
+			arg=p.next_token_in_line();
+			txt=new xwriter().p(arg).toString();
+		}
+		@Override protected void compile(program p){}
+		@Override protected void link(program p){}
 		private static final long serialVersionUID=1;
 	}
 	private static final long serialVersionUID=1;
