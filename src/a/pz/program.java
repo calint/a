@@ -194,6 +194,7 @@ public final class program extends stmt implements Serializable{
 			}
 			throw new Error("3 "+t);
 		}
+		s.mkstr();
 		return s;
 	}
 	boolean is_register_allocated(String register){

@@ -49,22 +49,22 @@ public class stmt implements Serializable{
 				}
 	//			mkstr();
 			}
-	//		private void mkstr(){
-	//			final xwriter x=new xwriter();
-	//			if((znxr&3)==3)
-	//				x.p("ifp ");
-	//			else if((znxr&1)==1)
-	//				x.p("ifz ");
-	//			else if((znxr&2)==2)
-	//				x.p("ifn ");
-	//			x.p(txt);
-	//			x.spc();
-	//			if((znxr&4)==4)
-	//				x.p(" nxt");
-	//			if((znxr&8)==8)
-	//				x.p(" ret");
-	//			txt=x.toString();
-	//		}
+			void mkstr(){
+				final xwriter x=new xwriter();
+				if((znxr&3)==3)
+					x.p("ifp ");
+				else if((znxr&1)==1)
+					x.p("ifz ");
+				else if((znxr&2)==2)
+					x.p("ifn ");
+				x.p(txt);
+				x.spc();
+				if((znxr&4)==4)
+					x.p(" nxt");
+				if((znxr&8)==8)
+					x.p(" ret");
+				txt=x.toString();
+			}
 			//		public instr(final program r,final int op,final int ra,final int rd){
 			//			super(r,op,ra,rd);
 			//		}
@@ -310,7 +310,7 @@ public class stmt implements Serializable{
 		public li(program r) throws IOException{
 			super(r,0,li.op,null,r.next_token_in_line());
 			data=r.next_token_in_line();
-			txt="li "+ra+" "+rd;
+			txt="li "+rd+" "+data;
 		}
 		public li(program r,String reg,String data){
 			super(r,0,li.op,null,reg);
