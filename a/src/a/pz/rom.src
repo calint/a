@@ -30,29 +30,9 @@ draw(a,b,c,d,e)
 //draw(a,b,c,d,e)
 //rel a,b,c,d,e
 
-
 a=pos
 dots.draw(a)
 ..
-//end-of-program
-
-int r=f00
-int g=0f0
-int b=00f
-int d
-c=10
-a=400
-..
-void draw(scr a=400,const height b=20,const width c=100,const skpln d=c0h,const pxl e=fff)
-  lp b
-    lp c
-      *a++=e
-    nxt
-    a+=d
-  nxt 
-ret
-..
-struct dot yyxx int 0000 rgb int 000
 :dots
 . 4
 . 0800 ffff
@@ -61,8 +41,11 @@ struct dot yyxx int 0000 rgb int 000
 . 130f ffff
 . 121a ffff
 ..
-void dots.draw(const scr a=400)
-  b=&dots
+void dots.draw(const scr a=400){
+  var c
+  var d
+  var e
+  var b=&dots
   c=*b++
   lp c
     d=*b++
@@ -70,8 +53,29 @@ void dots.draw(const scr a=400)
     d+=a
     *d=e
   nxt
-ret
+  ret
+}
 ..
+..
+int r=f00
+int g=0f0
+int b=00f
+int d
+c=10
+a=400
+..
+void draw(scr a=400,const height b=20,const width c=100,const skpln d=c0h,const pxl e=fff){
+  lp b
+    lp c
+      *a++=e
+    nxt
+    a+=d
+  nxt
+  ret
+}
+..
+struct dot yyxx int 0000 rgb int 000
+
 // bug    st d e nxt ret
 //    nxt ret
 //    nxt
@@ -86,5 +90,3 @@ ret
 //.sprite medusa_left 4 4
 //./\.
 ///| \
-
-

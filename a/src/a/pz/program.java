@@ -23,23 +23,36 @@ public final class program extends stmt implements Serializable{
 	final public Map<String,stmt.data_int> data=new LinkedHashMap<>();
 
 	public program(final String source){
-		this(null,new StringReader(source));
+		this(null,new StringReader(source),false);
 	}
 	public program(final program context_program,final String source){
-		this(context_program,new StringReader(source));
+		this(context_program,new StringReader(source),false);
 	}
-	public program(final program context_program,final Reader source){
+	public program(final program context_program){
+		this(context_program,(Reader)null,true);
+	}
+	private boolean is_reading_code_block;
+	public program(final program context_program,final Reader source,final boolean is_in_code_block){
 		super(null);
+		is_reading_code_block=is_in_code_block;
 		if(context_program!=null){
 			typedefs.putAll(context_program.typedefs);
 			labels.putAll(context_program.labels);
 			defines.putAll(context_program.defines);
+			if(source==null)
+				pr=context_program.pr;
+			line_number=context_program.line_number;
+			character_number_in_line=context_program.character_number_in_line;
 		}
-		this.pr=new PushbackReader(source,1);
+		if(source!=null)
+			pr=new PushbackReader(source,1);
 		while(true){
 			final stmt s;
 			try{
+				if(is_reading_code_block&&is_next_char_mustache_right())
+					break;
 				s=next_statement();
+				skip_whitespace();
 			}catch(IOException e){
 				throw new Error(e);
 			}
@@ -49,15 +62,44 @@ public final class program extends stmt implements Serializable{
 			statements.add(s);
 		}
 		statements.forEach(e->e.validate_references_to_labels(this));
-		statements.forEach(e->e.compile(this));
+		final xwriter x=new xwriter();
+		for(final stmt s:statements)
+			x.p(s.toString()).nl();
+		txt=x.toString();
+	}
+	public void compile(){
+		compile(this);
+		link(this);
+	}
+	@Override protected void compile(program p){
+		statements.forEach(e->e.compile(p));
 		int pc=0;
 		for(final stmt s:statements){
+			s.link(p);
 			s.location_in_binary=pc;
 			if(s.bin!=null)
 				pc+=s.bin.length;
 		}
 		program_length=pc;
-		statements.forEach(e->e.link(this));
+		bin=new int[program_length];
+		int i=0;
+		for(final stmt s:statements){
+			if(s.bin==null)
+				continue;
+			System.arraycopy(s.bin,0,bin,i,s.bin.length);
+			i+=s.bin.length;
+		}
+	}
+	@Override protected void link(program p){
+		statements.forEach(e->e.link(p));
+		bin=new int[program_length];
+		int i=0;
+		for(final stmt s:statements){
+			if(s.bin==null)
+				continue;
+			System.arraycopy(s.bin,0,bin,i,s.bin.length);
+			i+=s.bin.length;
+		}
 	}
 	public int program_length;
 	stmt next_statement() throws IOException{
@@ -65,6 +107,8 @@ public final class program extends stmt implements Serializable{
 		while(true){
 			skip_whitespace();
 			pl(" line "+location_in_source());
+			//			if(is_reading_code_block&&is_next_char_mustache_right())
+			//				return null;
 			if(is_next_char_end_of_file())
 				return null;
 			if(is_next_char_slash())
@@ -106,7 +150,7 @@ public final class program extends stmt implements Serializable{
 			if(td!=null){// int a=2   int main(int a)
 				final String name=next_token_in_line();
 				if(is_next_char_paranthesis_left()){//  int main(int a)
-					final stmt.def_func df=new stmt.def_func(name,td.name,this);
+					final def_func df=new def_func(name,td.name,this);
 					functions.put(name,df);
 					return df;
 				}
@@ -129,14 +173,14 @@ public final class program extends stmt implements Serializable{
 		final int nxtch=read();
 		switch(nxtch){
 		case '='://assignment
-			final stmt.expr_assign s=new stmt.expr_assign(this,tk);
+			final expr_assign s=new expr_assign(this,tk);
 			return s;
 		case '+'://expression or addstore or inc
 			if(is_next_char_plus()){
-				final stmt.expr_increment st=new stmt.expr_increment(this,tk);
+				final expr_increment st=new expr_increment(this,tk);
 				return st;
 			}else if(is_next_char_equals()){
-				final stmt.expr_add st=new stmt.expr_add(this,tk);
+				final expr_add st=new expr_add(this,tk);
 				return st;
 			}
 			throw new Error("expressions not supported yet");
@@ -265,6 +309,21 @@ public final class program extends stmt implements Serializable{
 		unread(ch);
 		return false;
 	}
+	boolean is_next_char_mustache_left() throws IOException{
+		final int ch=read();
+		if(ch=='{')
+			return true;
+		unread(ch);
+		return false;
+	}
+	boolean is_next_char_mustache_right() throws IOException{
+		final int ch=read();
+		if(ch=='}')
+			return true;
+		unread(ch);
+		return false;
+	}
+
 	void disassemble_to(xwriter x){
 		statements.forEach(e->x.pl(e.toString()));
 	}
@@ -382,7 +441,7 @@ public final class program extends stmt implements Serializable{
 
 	private PushbackReader pr;
 	private final static int newline='\n';
-	private int line_number=1,character_number_in_line;
+	int line_number=1,character_number_in_line;
 	final public static int opneg=0x0300;
 	final public static int opskp=0x0080;
 	final public static int opdac=0x0400;
@@ -474,11 +533,11 @@ public final class program extends stmt implements Serializable{
 		}
 		return sb.toString();
 	}
-	public String toString(){
-		final xwriter x=new xwriter();
-		disassemble_to(x);
-		return x.toString();
-	}
+	//	public String toString(){
+	//		final xwriter x=new xwriter();
+	//		disassemble_to(x);
+	//		return x.toString();
+	//	}
 	int register_index_from_string(String register){
 		if(register.length()!=1)
 			throw new stmt.compiler_error(location_in_source(),"not a register: "+register);
