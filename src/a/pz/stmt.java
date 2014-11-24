@@ -17,66 +17,66 @@ public class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class instr extends stmt{
-			int znxr;
-			int op;
-			String ra;
-			String rd;
-			int rai;
-			int rdi;
-	//		int imm;
-			public instr(program p){
-				super(p);
-			}
-			public instr(final program p,final int znxr,final int op,final String rd){
-				this(p,znxr,op,null,rd);
-			}
-			public instr(final program p,final int znxr,final int op,final String ra,final String rd){
-				super(p);
-				this.znxr=znxr;
-				this.op=op;
-				this.ra=ra;
-				this.rd=rd;
-				rai=ra==null?0:p.register_index_from_string(ra);
-				rdi=rd==null?0:p.register_index_from_string(rd);
-			}
-			public instr(final program p,final int znxr,final int op,final String ra,final String rd,boolean fliprdra){
-				this(p,znxr,op,ra,rd);
-				if(fliprdra){
-					final int i=rai;
-					rai=rdi;
-					rdi=i;
-				}
-			}
-			void mkstr(){
-				final xwriter x=new xwriter();
-				if((znxr&3)==3)
-					x.p("ifp ");
-				else if((znxr&1)==1)
-					x.p("ifz ");
-				else if((znxr&2)==2)
-					x.p("ifn ");
-				x.p(txt);
-				x.spc();
-				if((znxr&4)==4)
-					x.p(" nxt");
-				if((znxr&8)==8)
-					x.p(" ret");
-				txt=x.toString();
-			}
-			//		public instr(final program r,final int op,final int ra,final int rd){
-			//			super(r,op,ra,rd);
-			//		}
-			//		public instr(final program r,final int op,final int ra,final int rd,boolean flip_ra_rd){
-			//			super(r,op,ra,rd,flip_ra_rd);
-			//		}
-			protected int znxr_ci__ra__rd__(){
-				return znxr|op|((rai&15)<<8)|((rdi&15)<<12);
-			}
-			protected void compile(program r){
-				bin=new int[]{znxr_ci__ra__rd__()};
-			}
-			private static final long serialVersionUID=1;
+		int znxr;
+		int op;
+		String ra;
+		String rd;
+		int rai;
+		int rdi;
+		//		int imm;
+		public instr(program p){
+			super(p);
 		}
+		public instr(final program p,final int znxr,final int op,final String rd){
+			this(p,znxr,op,null,rd);
+		}
+		public instr(final program p,final int znxr,final int op,final String ra,final String rd){
+			super(p);
+			this.znxr=znxr;
+			this.op=op;
+			this.ra=ra;
+			this.rd=rd;
+			rai=ra==null?0:p.register_index_from_string(ra);
+			rdi=rd==null?0:p.register_index_from_string(rd);
+		}
+		public instr(final program p,final int znxr,final int op,final String ra,final String rd,boolean fliprdra){
+			this(p,znxr,op,ra,rd);
+			if(fliprdra){
+				final int i=rai;
+				rai=rdi;
+				rdi=i;
+			}
+		}
+		void mkstr(){
+			final xwriter x=new xwriter();
+			if((znxr&3)==3)
+				x.p("ifp ");
+			else if((znxr&1)==1)
+				x.p("ifz ");
+			else if((znxr&2)==2)
+				x.p("ifn ");
+			x.p(txt);
+			x.spc();
+			if((znxr&4)==4)
+				x.p(" nxt");
+			if((znxr&8)==8)
+				x.p(" ret");
+			txt=x.toString();
+		}
+		//		public instr(final program r,final int op,final int ra,final int rd){
+		//			super(r,op,ra,rd);
+		//		}
+		//		public instr(final program r,final int op,final int ra,final int rd,boolean flip_ra_rd){
+		//			super(r,op,ra,rd,flip_ra_rd);
+		//		}
+		protected int znxr_ci__ra__rd__(){
+			return znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+		}
+		protected void compile(program r){
+			bin=new int[]{znxr_ci__ra__rd__()};
+		}
+		private static final long serialVersionUID=1;
+	}
 	final static public class def_const extends def{
 		public String value;
 		public def_const(final program r) throws IOException{
@@ -293,14 +293,14 @@ public class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_type extends def{
-	//		public String name;
-			public def_type(final program r) throws IOException{
-				super(r);
-				name=r.next_identifier();
-				txt=new xwriter().p("typedef").spc().p(name).toString();
-			}
-			private static final long serialVersionUID=1;
+		//		public String name;
+		public def_type(final program r) throws IOException{
+			super(r);
+			name=r.next_identifier();
+			txt=new xwriter().p("typedef").spc().p(name).toString();
 		}
+		private static final long serialVersionUID=1;
+	}
 	public static class li extends instr{
 		private String data;
 		private int value;
@@ -610,36 +610,36 @@ public class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class def_func extends def{
-	//		public String return_type;
-			public List<def_func_arg> args=new ArrayList<>();
-			public def_func(String name,String return_type,program p) throws IOException{
-				super(p);
-				type=return_type;
-				this.name=name;
-	//			this.name=name;
-	//			this.return_type=return_type;
-				if(!p.is_next_char_paranthesis_right()){
-					while(true){
-						final def_func_arg a=new def_func_arg(p);
-						args.add(a);
-						if(p.is_next_char_paranthesis_right())
-							break;
-						if(!p.is_next_char_comma())
-							throw new compiler_error(this,"expected ',' after function argument definition");
-					}
+		//		public String return_type;
+		public List<def_func_arg> args=new ArrayList<>();
+		public def_func(String name,String return_type,program p) throws IOException{
+			super(p);
+			type=return_type;
+			this.name=name;
+			//			this.name=name;
+			//			this.return_type=return_type;
+			if(!p.is_next_char_paranthesis_right()){
+				while(true){
+					final def_func_arg a=new def_func_arg(p);
+					args.add(a);
+					if(p.is_next_char_paranthesis_right())
+						break;
+					if(!p.is_next_char_comma())
+						throw new compiler_error(this,"expected ',' after function argument definition");
 				}
-				final xwriter x=new xwriter().p(return_type).spc().p(name).p("(");
-				for(Iterator<def_func_arg> i=args.iterator();i.hasNext();){
-					final def_func_arg a=i.next();
-					x.p(a.toString());
-					if(i.hasNext())
-						x.p(",");
-				}
-				x.p(")");
-				txt=x.toString();
 			}
-			private static final long serialVersionUID=1;
+			final xwriter x=new xwriter().p(return_type).spc().p(name).p("(");
+			for(Iterator<def_func_arg> i=args.iterator();i.hasNext();){
+				final def_func_arg a=i.next();
+				x.p(a.toString());
+				if(i.hasNext())
+					x.p(",");
+			}
+			x.p(")");
+			txt=x.toString();
 		}
+		private static final long serialVersionUID=1;
+	}
 	public static class def_func_arg extends def{
 		public String type,name,default_value;
 		public boolean is_const;
@@ -728,12 +728,15 @@ public class stmt implements Serializable{
 	protected int[] bin;
 	protected int location_in_binary;
 	public stmt(final program p){
-		if(p!=null)location_in_source=p.location_in_source();
+		if(p!=null)
+			location_in_source=p.location_in_source();
 	}
 	protected void validate_references_to_labels(program r){}
 	protected void compile(program r){}
 	protected void link(program p){}
-	public String toString(){return txt;}
+	public String toString(){
+		return txt;
+	}
 	//		public void source_to(xwriter x){}
 	private static final long serialVersionUID=1;
 }
