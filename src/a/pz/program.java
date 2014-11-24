@@ -111,10 +111,25 @@ public final class program implements Serializable{
 				bin=s.bin;
 				return;
 			}
+			if(rh.startsWith("&")){
+				final stmt s=new stmt(p,li.op,0,lhs.charAt(0)-'a');
+				s.compile(p);
+				bin=new int[]{s.bin[0],0};
+				return;
+			}
 			final stmt s=new stmt(p,li.op,0,lhs.charAt(0)-'a');
 			s.compile(p);
 			bin=new int[]{s.bin[0],Integer.parseInt(rh,16)};
 			return;
+		}
+		@Override protected void link(program p){
+			if(rh.startsWith("&")){
+				final String label_name=rh.substring(1);
+				final def_label lbl=p.labels.get(label_name);
+				if(lbl==null)throw new compiler_error(this,"label not found "+lbl);
+				bin[1]=lbl.location_in_binary;
+				return;
+			}
 		}
 		private static final long serialVersionUID=1;
 	}
