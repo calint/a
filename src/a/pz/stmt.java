@@ -56,7 +56,6 @@ public class stmt implements Serializable{
 			else if((znxr&2)==2)
 				x.p("ifn ");
 			x.p(txt);
-			x.spc();
 			if((znxr&4)==4)
 				x.p(" nxt");
 			if((znxr&8)==8)
