@@ -61,16 +61,14 @@ final public class acore extends a{
 		if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();
-			y.pl("functions:");
-			p.functions.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
-			y.pl("labels:");
+			p.typedefs.values().forEach(e->y.p(e.toString()).nl());
+			p.defines.values().forEach(e->y.p(e.toString()).nl());
+			p.functions.values().forEach(e->y.p(e.toString()).nl());
+			y.nl().nl();
+			y.nl().pl("labels:");
 			p.labels.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
-			y.nl().pl("defines");
-			p.defines.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
 			y.nl().pl("structs");
 			p.structs.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
-			y.nl().pl("typedefs");
-			p.typedefs.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
 			toc.set(y.toString());
 			p.zap(cor.rom);
 			di.set(p.toString());
