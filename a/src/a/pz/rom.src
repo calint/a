@@ -25,7 +25,7 @@ a=400
 ..
 
 typedef void
-void draw(scr a=400,const height b=20,const width c=100,const pxl d=fff,const skpln e=c0h){
+void draw(scr a=400,const height b=20,const width c=100,const pxl d=fff,const skpln e=c0h)
   lp b
     lp c
       *a++=d
@@ -43,7 +43,7 @@ struct dot yyxx int 0000 rgb int 000
 . 130f ffff
 . 121a ffff
 ..
-void dots.draw(a ro scr 400
+void dots.draw(const scr a=400)
   var b c d e
   b=&dots
   c=*b++

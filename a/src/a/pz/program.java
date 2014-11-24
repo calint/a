@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -700,6 +701,20 @@ public final class program implements Serializable{
 		unread(ch);
 		return false;
 	}
+	private boolean is_next_char_paranthesis_right() throws IOException{
+		final int ch=read();
+		if(ch==')')
+			return true;
+		unread(ch);
+		return false;
+	}
+	private boolean is_next_char_comma() throws IOException{
+		final int ch=read();
+		if(ch==',')
+			return true;
+		unread(ch);
+		return false;
+	}
 	private boolean is_next_char_star() throws IOException{
 		final int ch=read();
 		if(ch=='*')
@@ -802,6 +817,14 @@ public final class program implements Serializable{
 				break;
 			}
 			if(ch=='('){
+				unread(ch);
+				break;
+			}
+			if(ch==','){
+				unread(ch);
+				break;
+			}
+			if(ch==')'){
 				unread(ch);
 				break;
 			}
@@ -1008,11 +1031,52 @@ public final class program implements Serializable{
 	}
 	public static class def_func extends def{
 		public String return_type,name;
-		public String args;
-		public def_func(String name,String return_type,program p)throws IOException{
-			super(p);this.name=name;this.return_type=return_type;
-			args=p.consume_rest_of_line();
-			txt=new xwriter().p(return_type).spc().p(name).p("(").p(args).p(")").toString();
+		public List<def_func_arg> args=new ArrayList<>();
+		public def_func(String name,String return_type,program p) throws IOException{
+			super(p);
+			this.name=name;
+			this.return_type=return_type;
+			if(!p.is_next_char_paranthesis_right()){
+				while(true){
+					final def_func_arg a=new def_func_arg(p);
+					args.add(a);
+					if(p.is_next_char_paranthesis_right())
+						break;
+					if(!p.is_next_char_comma())
+						throw new compiler_error(this,"expected ',' after function argument definition");
+				}
+			}
+			final xwriter x=new xwriter().p(return_type).spc().p(name).p("(");
+			for(Iterator<def_func_arg> i=args.iterator();i.hasNext();){
+				final def_func_arg a=i.next();
+				x.p(a.toString());
+				if(i.hasNext())
+					x.p(",");
+			}
+			x.p(")");
+			txt=x.toString();
+		}
+		@Override protected void compile(program p){}
+		private static final long serialVersionUID=1;
+	}
+	public static class def_func_arg extends def{
+		public String type,name,default_value;
+		public boolean is_const;
+		public def_func_arg(program p) throws IOException{
+			super(p);
+			type=p.next_token_in_line();
+			if(type.equals("const")){
+				is_const=true;
+				type=p.next_token_in_line();
+			}
+			name=p.next_token_in_line();
+			if(!p.is_next_char_equals())
+				throw new compiler_error(this,"expected function argument format: int a=2,...");
+			default_value=p.next_token_in_line();
+			final xwriter x=new xwriter();
+			if(is_const)x.p("const").spc();
+			x.p(type).spc().p(name).p("=").p(default_value);
+			txt=x.toString();
 		}
 		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
