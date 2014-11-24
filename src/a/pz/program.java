@@ -90,10 +90,10 @@ public final class program implements Serializable{
 		//		public String lhs;
 		public stmt rhs;
 		public String rh;
-		public expr_let(final program p,final String lhs) throws IOException{
-			super(p,lhs);
+		public expr_let(final program p,final String register) throws IOException{
+			super(p,register);
 			rh=p.next_token_in_line();
-			txt=new xwriter().p(lhs).p("=").p(rh.toString()).toString();
+			txt=new xwriter().p(register).p("=").p(rh.toString()).toString();
 			final def_const c=p.defines.get(rh);
 			if(c!=null){//li
 				rhs=c;
@@ -920,8 +920,18 @@ public final class program implements Serializable{
 	}
 	final static public class expr_store extends expr{
 		public String rhs;
+		public boolean inca;
 		public expr_store(final program p) throws IOException{
 			super(p,p.next_token_in_line());
+			if(p.is_next_char_plus()){
+				if(!p.is_next_char_plus())throw new compiler_error(this,"expected format *a++=d");
+				inca=true;
+				p.skip_whitespace_on_same_line();
+				if(!p.is_next_char_equals())throw new compiler_error(this,"expected format *a++=d");
+				rhs=p.next_token_in_line();
+				txt=new xwriter().p("*").p(register).p("++=").p(rhs).toString();
+				return;
+			}
 			if(!p.is_next_char_equals())
 				throw new compiler_error(this,"expected '=' but found '"+(char)p.read()+"'");
 			rhs=p.next_token_in_line();
@@ -929,8 +939,8 @@ public final class program implements Serializable{
 		}
 		@Override protected void compile(program p){
 			//? ensure lhs,rhs are registers
-			final expr lhse=expr.make_from_source_text(p,register);
-			final stmt s=new stmt(p,st.op,program.register_index_from_string(p,register),rhs.charAt(0)-'a');
+//			final expr lhse=expr.make_from_source_text(p,register);
+			final stmt s=new stmt(p,inca?stc.op:st.op,register_index_from_string(p,register),register_index_from_string(p,rhs));
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -945,11 +955,11 @@ public final class program implements Serializable{
 	final static public class expr_function_call extends expr{
 		public String function_name;
 		public String rhs;
-		public expr_function_call(final program p,final String lhs) throws IOException{
-			super(p,lhs);
-			function_name=lhs;
+		public expr_function_call(final program p,final String function) throws IOException{
+			super(p,function);
+			function_name=function;
 			rhs=p.consume_rest_of_line();
-			txt=new xwriter().p(lhs).p("()").toString();
+			txt=new xwriter().p(function).p("()").toString();
 		}
 		@Override protected void compile(program p){
 			bin=new int[]{call.op};
