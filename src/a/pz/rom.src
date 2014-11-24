@@ -44,7 +44,6 @@ struct dot yyxx int 0000 rgb int 000
 . 121a ffff
 ..
 void dots.draw(const scr a=400)
-  var b c d e
   b=&dots
   c=*b++
   lp c

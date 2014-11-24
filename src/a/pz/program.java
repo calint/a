@@ -56,20 +56,17 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_var extends expr{
-		private List<String> vars;
+		public String default_value;
 		public expr_var(final program r) throws IOException{
-			super(r,"");
-			vars=new ArrayList<>();
-			while(true){
-				final String t=r.next_token_in_line();
-				if(t==null)
-					break;
-				vars.add(t);
-			}
-			if(vars.isEmpty())
-				throw new compiler_error(this,"expected list of registers after 'var' statement");
-			final xwriter x=new xwriter().p("var").spc();
-			vars.forEach(e->x.spc().p(e));
+			super(r,r.next_token_in_line());
+			r.allocate_register(this,register);
+			if(r.is_next_char_equals())
+				default_value=r.next_token_in_line();
+			if(!r.is_next_char_end_of_line())
+				throw new compiler_error(this,"expected end of line");
+			final xwriter x=new xwriter().p("var").spc().p(register);
+			if(default_value!=null)
+				x.p("=").p(default_value);
 			txt=x.toString();
 		}
 		@Override protected void compile(program p){}
@@ -1146,6 +1143,14 @@ public final class program implements Serializable{
 		@Override protected void compile(program p){}
 		@Override protected void link(program p){}
 		private static final long serialVersionUID=1;
+	}
+	final public Map<String,stmt> allocated_registers=new LinkedHashMap<>();
+	void allocate_register(stmt e,String regname){
+		final stmt s=allocated_registers.get(regname);
+		if(s!=null)
+			throw new compiler_error(e,"register '"+regname+"' is already allocated at line "+s.location_in_source);
+		allocated_registers.put(regname,e);
+		return;
 	}
 	private static final long serialVersionUID=1;
 }
