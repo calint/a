@@ -94,6 +94,8 @@ public final class program implements Serializable{
 		public boolean is_ldc;
 		public expr_let(final program p,final String register) throws IOException{
 			super(p,register);
+			if(!p.is_register_allocated(register))
+				throw new compiler_error(this,"var '"+register+"' has not been declared");
 			if(p.is_next_char_star()){// d=*a
 				rh=p.next_token_in_line();
 				if(p.is_next_char_plus()){
@@ -516,6 +518,9 @@ public final class program implements Serializable{
 
 	public program(final String source) throws IOException{
 		this(new StringReader(source));
+	}
+	public boolean is_register_allocated(String register){
+		return allocated_registers.containsKey(register);
 	}
 	private stmt next_expression(){
 		return null;
