@@ -421,7 +421,7 @@ public final class program implements Serializable{
 		public String name;
 		public def_label(program p,String nm){
 			super(p);
-			name=nm;
+			this.name=nm;
 			final def_label d=p.labels.get(name);
 			if(d!=null)
 				throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
@@ -470,18 +470,18 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class decl_data_int extends def_label{
-		private String default_value;
-		public decl_data_int(program r) throws IOException{
-			super(r,r.next_identifier());
-			if(r.is_next_char_equals()){//default value
-				default_value=r.next_token_in_line();
+		public String name,type,default_value;
+		public decl_data_int(String name,String type,program p) throws IOException{
+			super(p,name);
+			if(p.is_next_char_equals()){//default value
+				default_value=p.next_token_in_line();
 			}
-			final xwriter x=new xwriter().p("int ").p(name);
+			final xwriter x=new xwriter().p(type).spc().p(name);
 			if(default_value!=null)
 				x.p("=").p(default_value);
 			txt=x.toString();
 			//			r.skip_whitespace_on_same_line();
-			if(!r.is_next_char_end_of_line())
+			if(!p.is_next_char_end_of_line())
 				throw new compiler_error(this,"expected end of line after: ["+txt+"]");
 		}
 		@Override protected void compile(program p){
@@ -514,6 +514,7 @@ public final class program implements Serializable{
 	final public Map<String,def_type> typedefs=new LinkedHashMap<>();
 	final public Map<String,def_struct> structs=new LinkedHashMap<>();
 	final public Map<String,def_label> labels=new LinkedHashMap<>();
+	final public Map<String,def_func> functions=new LinkedHashMap<>();
 
 	public program(final String source) throws IOException{
 		this(new StringReader(source));
@@ -553,6 +554,8 @@ public final class program implements Serializable{
 			tk=next_token_in_line();
 			if(tk==null)
 				return new eof(this);
+			if(tk.startsWith("//"))
+				return new def_comment(this);
 			if(tk.equals("const")){
 				final def_const s=new def_const(this);
 				defines.put(s.name,s);
@@ -580,8 +583,14 @@ public final class program implements Serializable{
 				return s;
 			}
 			final def_type td=typedefs.get(tk);
-			if(td!=null){
-				final decl_data_int s=new decl_data_int(this);
+			if(td!=null){// int a=2   int main(int a)
+				final String name=next_token_in_line();
+				if(is_next_char_paranthesis_left()){//  int main(int a)
+					final def_func df=new def_func(name,td.name,this);
+					functions.put(name,df);
+					return df;
+				}
+				final decl_data_int s=new decl_data_int(name,td.name,this);
 				labels.put(s.name,s);
 				return s;
 			}
@@ -595,8 +604,6 @@ public final class program implements Serializable{
 				consume_rest_of_line();
 				return s;
 			}
-			if(tk.startsWith("//"))
-				return new def_comment(this);
 			break;
 		}
 		final int nxtch=read();
@@ -682,6 +689,13 @@ public final class program implements Serializable{
 	private boolean is_next_char_bracket_left() throws IOException{
 		final int ch=read();
 		if(ch=='[')
+			return true;
+		unread(ch);
+		return false;
+	}
+	private boolean is_next_char_paranthesis_left() throws IOException{
+		final int ch=read();
+		if(ch=='(')
 			return true;
 		unread(ch);
 		return false;
@@ -992,6 +1006,17 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
+	public static class def_func extends def{
+		public String return_type,name;
+		public String args;
+		public def_func(String name,String return_type,program p)throws IOException{
+			super(p);this.name=name;this.return_type=return_type;
+			args=p.consume_rest_of_line();
+			txt=new xwriter().p(return_type).spc().p(name).p("(").p(args).p(")").toString();
+		}
+		@Override protected void compile(program p){}
+		private static final long serialVersionUID=1;
+	}
 	final static public class expr_function_call extends expr{
 		public String function_name;
 		public String rhs;
@@ -1005,10 +1030,10 @@ public final class program implements Serializable{
 			bin=new int[]{call.op};
 		}
 		@Override protected void link(program p){
-			def_label l=p.labels.get(function_name);
-			if(l==null)
+			final def_func f=p.functions.get(function_name);
+			if(f==null)
 				throw new compiler_error(this,"function not found",function_name);
-			final int a=l.location_in_binary;
+			final int a=f.location_in_binary;
 			bin[0]|=(a<<6);
 		}
 		private static final long serialVersionUID=1;

@@ -23,7 +23,9 @@ int d
 c=10
 a=400
 ..
-:draw(scr a=400,const height b=20,const width c=100,const pxl d=fff,const skpln e=c0h){
+
+typedef void
+void draw(scr a=400,const height b=20,const width c=100,const pxl d=fff,const skpln e=c0h){
   lp b
     lp c
       *a++=d
@@ -41,7 +43,7 @@ struct dot yyxx int 0000 rgb int 000
 . 130f ffff
 . 121a ffff
 ..
-:dots.draw a ro scr 400
+void dots.draw(a ro scr 400
   var b c d e
   b=&dots
   c=*b++
@@ -52,11 +54,12 @@ struct dot yyxx int 0000 rgb int 000
     *d=e
   nxt
 ret
+..
 // bug    st d e nxt ret
 //    nxt ret
 //    nxt
 //  ret
-..
+//..
 //.sprite medusa 4 4
 //./\.
 ///--\
