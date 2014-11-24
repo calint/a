@@ -52,13 +52,13 @@ public final class program extends stmt implements Serializable{
 				if(ss.bin!=null)
 					pc+=ss.bin.length;
 			}
-			program_size=pc;
+			program_length=pc;
 			statements.forEach(e->e.link(this));
 		}catch(IOException e){
 			throw new Error(e);
 		}
 	}
-	public int program_size;
+	public int program_length;
 	stmt next_statement() throws IOException{
 		String tk="";
 		while(true){
@@ -93,12 +93,11 @@ public final class program extends stmt implements Serializable{
 			}
 			if(tk.equals("var")){
 				final stmt.expr_var s=new stmt.expr_var(this);
-				//				structs.put(s.name,s);
 				return s;
 			}
 			if(tk.startsWith(":")){
 				final stmt.def_label s=new stmt.def_label(this,tk.substring(1));
-				consume_rest_of_line();
+				consume_rest_of_line();//? savecomment
 				labels.put(s.name,s);
 				return s;
 			}
