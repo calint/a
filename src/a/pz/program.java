@@ -16,8 +16,17 @@ import b.xwriter;
 
 public final class program implements Serializable{
 	public static class instr extends stmt{
+		int op;
+		int rai;
+		int rdi;
 		public instr(program p){
 			super(p);
+		}
+		public instr(final program r,final int op,final String ra,final String rd){
+			super(r);
+			this.op=op;
+			rai=program.register_index_from_string(r,ra);
+			rdi=program.register_index_from_string(r,rd);
 		}
 		public instr(final program r,final int op,final int ra,final int rd){
 			super(r,op,ra,rd);
@@ -30,7 +39,7 @@ public final class program implements Serializable{
 	public static class add extends instr{
 		final public static int op=0x00a0;
 		public add(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_register_identifier());
+			super(r,op,r.next_token_in_line(),r.next_token_in_line());
 			txt=new xwriter().p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -58,12 +67,12 @@ public final class program implements Serializable{
 		public String default_value;
 		public expr_var(final program r) throws IOException{
 			super(r,r.next_token_in_line());
-			r.allocate_register(this,register);
+			r.allocate_register(this,to_register);
 			if(r.is_next_char_equals())
 				default_value=r.next_token_in_line();
 			if(!r.is_next_char_end_of_line())
 				throw new compiler_error(this,"expected end of line");
-			final xwriter x=new xwriter().p("var").spc().p(register);
+			final xwriter x=new xwriter().p("var").spc().p(to_register);
 			if(default_value!=null)
 				x.p("=").p(default_value);
 			txt=x.toString();
@@ -80,14 +89,14 @@ public final class program implements Serializable{
 				return;
 			final def_const dc=p.defines.get(default_value);
 			if(dc!=null){
-				final program p2=new program(p,"li "+register+" 0");
+				final program p2=new program(p,"li "+to_register+" 0");
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type="int&"
 				return;
 			}
 			if(default_value.startsWith("&")){// li
-				final program p2=new program(p,"li "+register+" 0");
+				final program p2=new program(p,"li "+to_register+" 0");
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type="int&"
@@ -96,7 +105,7 @@ public final class program implements Serializable{
 			if(is_reference_to_register(default_value)){// tx
 				if(!p.is_register_allocated(default_value))
 					throw new compiler_error(this,"var not declared",default_value);
-				final program p2=new program("tx "+register+" "+default_value);
+				final program p2=new program("tx "+to_register+" "+default_value);
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type=p.register(default_value).type
@@ -123,25 +132,18 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class expr extends stmt{
-		//		public String lhs;
-		public String register;
-		public expr(program p,String register){
+		String to_register;
+		public expr(program p,String to_register){
 			super(p);
-			//			this.lhs=lhs;
-			this.register=register;
-		}
-		public static expr make_from_source_text(program p,String src){
-
-			return null;
+			this.to_register=to_register;
 		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_let extends expr{
-		//		public String lhs;
-		public stmt rhs;
-		public String rh;
-		public boolean is_ld;
-		public boolean is_ldc;
+		stmt rhs;
+		String rh;
+		boolean is_ld;
+		boolean is_ldc;
 		public expr_let(final program p,final String register) throws IOException{
 			super(p,register);
 			if(!p.is_register_allocated(register))
@@ -167,38 +169,39 @@ public final class program implements Serializable{
 		}
 		@Override protected void compile(program p){
 			if(is_ld){
-				final stmt s=new stmt(p,ld.op,register_index_from_string(p,rh),register_index_from_string(p,register));
+				final stmt s=new stmt(p,ld.op,register_index_from_string(p,rh),register_index_from_string(p,to_register));
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(is_ldc){
-				final stmt s=new stmt(p,ldc.op,register_index_from_string(p,rh),register_index_from_string(p,register));
+				final stmt s=new stmt(p,ldc.op,register_index_from_string(p,rh),register_index_from_string(p,to_register));
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(rhs instanceof def_const){
-				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
+				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,to_register));
 				s.compile(p);
 				bin=new int[]{s.bin[0],Integer.parseInt(((def_const)rhs).value,16)};
 				return;
 			}
 			if(is_reference_to_register(rh)){
-				final stmt s=new stmt(p,tx.op,register_index_from_string(p,register),register_index_from_string(p,rh));
+				final stmt s=new stmt(p,tx.op,register_index_from_string(p,to_register),register_index_from_string(p,rh));
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(rh.startsWith("&")){
-				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
+				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,to_register));
 				s.compile(p);
 				bin=new int[]{s.bin[0],0};
 				return;
 			}
-			final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
+			// const
+			final li s=new li(p,to_register,rh);
 			s.compile(p);
-			bin=new int[]{s.bin[0],Integer.parseInt(rh,16)};
+			bin=s.bin;
 			return;
 		}
 		@Override protected void link(program p){
@@ -324,6 +327,11 @@ public final class program implements Serializable{
 			super(r,li.op,0,r.next_register_identifier());
 			data=r.next_token_in_line();
 			txt="li "+(char)(rdi+'a')+" "+data;
+		}
+		public li(program r,String reg,String data){
+			super(r,li.op,0,program.register_index_from_string(r,reg));
+			this.data=data;
+			txt="li "+reg+" "+data;
 		}
 		//		private boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
 		@Override protected void compile(program p){
@@ -1039,7 +1047,7 @@ public final class program implements Serializable{
 			txt=new xwriter().p(register).p("++").toString();
 		}
 		@Override protected void compile(program p){
-			final stmt s=new stmt(p,inc.op,0,program.register_index_from_string(p,register));
+			final stmt s=new stmt(p,inc.op,0,program.register_index_from_string(p,to_register));
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -1053,7 +1061,7 @@ public final class program implements Serializable{
 			txt=new xwriter().p(register).p("+=").p(rhs).toString();
 		}
 		@Override protected void compile(program p){
-			final stmt s=new stmt(p,add.op,program.register_index_from_string(p,register),rhs.charAt(0)-'a');
+			final stmt s=new stmt(p,add.op,program.register_index_from_string(p,to_register),rhs.charAt(0)-'a');
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -1072,18 +1080,18 @@ public final class program implements Serializable{
 				if(!p.is_next_char_equals())
 					throw new compiler_error(this,"expected format *a++=d");
 				rhs=p.next_token_in_line();
-				txt=new xwriter().p("*").p(register).p("++=").p(rhs).toString();
+				txt=new xwriter().p("*").p(to_register).p("++=").p(rhs).toString();
 				return;
 			}
 			if(!p.is_next_char_equals())
 				throw new compiler_error(this,"expected '=' but found '"+(char)p.read()+"'");
 			rhs=p.next_token_in_line();
-			txt=new xwriter().p("*").p(register).p("=").p(rhs).toString();
+			txt=new xwriter().p("*").p(to_register).p("=").p(rhs).toString();
 		}
 		@Override protected void compile(program p){
 			//? ensure lhs,rhs are registers
 			//			final expr lhse=expr.make_from_source_text(p,register);
-			final stmt s=new stmt(p,inca?stc.op:st.op,register_index_from_string(p,register),register_index_from_string(p,rhs));
+			final stmt s=new stmt(p,inca?stc.op:st.op,register_index_from_string(p,to_register),register_index_from_string(p,rhs));
 			s.compile(p);
 			bin=s.bin;
 		}
