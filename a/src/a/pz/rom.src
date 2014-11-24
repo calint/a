@@ -32,8 +32,11 @@ a=400
 :draw a scr 400 b height 20 c width 100 d pxl 8888 e skp c0
   lp b
     lp c
-      stc a d nxt
-      add a e nxt ret
+      *a++=d
+    nxt
+    a+=e
+  nxt 
+ret
 ..
 struct dot yyxx int 0000 rgb int 000
 :dots
@@ -48,8 +51,7 @@ struct dot yyxx int 0000 rgb int 000
   var b c d e
   b=&dots
   ldc c b
-// *c++=b
-// [c++]=b
+// c=*b++
   lp c
     ldc d b
     ldc e b
