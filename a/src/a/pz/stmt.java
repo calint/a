@@ -696,8 +696,8 @@ public class stmt implements Serializable{
 			int ii=0;
 			for(expr_func_call_arg e:args){
 				final def_func_arg fa=f.args.get(ii++);
-				if(!e.arg.equals(fa.name))
-					throw new compiler_error(this," argument "+ii+"  expected '"+fa.name+"' but got '"+e.arg+"'\n  "+f);
+				if(!e.txt.equals(fa.name))
+					throw new compiler_error(this," argument "+ii+"  expected '"+fa.name+"' but got '"+e.txt+"'\n  "+f);
 				final String type_in_register=p.type_for_register(this,e.toString());
 				if(!fa.type.equals(type_in_register))
 					throw new compiler_error(this," argument "+ii+"  expected type '"+fa.type+"' but var '"+fa.name+"' is of type '"+type_in_register+"'\n  "+f);
@@ -716,11 +716,9 @@ public class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_func_call_arg extends expr{
-		public String arg;
 		public expr_func_call_arg(final program p) throws IOException{
 			super(p,null);
-			arg=p.next_token_in_line();
-			txt=new xwriter().p(arg).toString();
+			txt=p.next_token_in_line();
 		}
 		@Override protected void compile(program p){}
 		@Override protected void link(program p){}
