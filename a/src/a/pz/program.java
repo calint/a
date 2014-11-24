@@ -209,13 +209,13 @@ public final class program extends stmt implements Serializable{
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_bracket_left() throws IOException{
-		final int ch=read();
-		if(ch=='[')
-			return true;
-		unread(ch);
-		return false;
-	}
+//	boolean is_next_char_bracket_left() throws IOException{
+//		final int ch=read();
+//		if(ch=='[')
+//			return true;
+//		unread(ch);
+//		return false;
+//	}
 	boolean is_next_char_paranthesis_left() throws IOException{
 		final int ch=read();
 		if(ch=='(')
@@ -427,37 +427,37 @@ public final class program extends stmt implements Serializable{
 		unread(ch);
 		return false;
 	}
-	int next_register_identifier() throws IOException{
-		final String s=next_token_in_line();
-		if(s==null)
-			throw new stmt.compiler_error(location_in_source(),"expected register but found end of line");
-		if(s.length()!=1)
-			throw new stmt.compiler_error(location_in_source(),"register name unknown '"+s+"'");
-		final char first_char=s.charAt(0);
-		final int reg=first_char-'a';
-		final int max=(1<<4)-1;//? magicnumber
-		final int min=0;
-		if(reg>max||reg<min)
-			throw new stmt.compiler_error(location_in_source(),"register '"+s+"' out range 'a' through 'p'");
-		return reg;
-	}
-	int next_int(int bit_width) throws IOException{
-		final String s=next_token_in_line();
-		if(s==null)
-			throw new stmt.compiler_error(location_in_source(),"expected number but found end of line");
-		try{
-			final int i=Integer.parseInt(s);
-			final int max=(1<<(bit_width-1))-1;
-			final int min=-1<<(bit_width-1);
-			if(i>max)
-				throw new stmt.compiler_error(location_in_source(),"number '"+s+"' out of "+bit_width+" bits range");
-			if(i<min)
-				throw new stmt.compiler_error(location_in_source(),"number '"+s+"' out of "+bit_width+" bits range");
-			return i;
-		}catch(NumberFormatException e){
-			throw new stmt.compiler_error(location_in_source(),"can not translate number '"+s+"'");
-		}
-	}
+//	int next_register_identifier() throws IOException{
+//		final String s=next_token_in_line();
+//		if(s==null)
+//			throw new stmt.compiler_error(location_in_source(),"expected register but found end of line");
+//		if(s.length()!=1)
+//			throw new stmt.compiler_error(location_in_source(),"register name unknown '"+s+"'");
+//		final char first_char=s.charAt(0);
+//		final int reg=first_char-'a';
+//		final int max=(1<<4)-1;//? magicnumber
+//		final int min=0;
+//		if(reg>max||reg<min)
+//			throw new stmt.compiler_error(location_in_source(),"register '"+s+"' out range 'a' through 'p'");
+//		return reg;
+//	}
+//	int next_int(int bit_width) throws IOException{
+//		final String s=next_token_in_line();
+//		if(s==null)
+//			throw new stmt.compiler_error(location_in_source(),"expected number but found end of line");
+//		try{
+//			final int i=Integer.parseInt(s);
+//			final int max=(1<<(bit_width-1))-1;
+//			final int min=-1<<(bit_width-1);
+//			if(i>max)
+//				throw new stmt.compiler_error(location_in_source(),"number '"+s+"' out of "+bit_width+" bits range");
+//			if(i<min)
+//				throw new stmt.compiler_error(location_in_source(),"number '"+s+"' out of "+bit_width+" bits range");
+//			return i;
+//		}catch(NumberFormatException e){
+//			throw new stmt.compiler_error(location_in_source(),"can not translate number '"+s+"'");
+//		}
+//	}
 	//	private void assert_and_consume_end_of_line()throws IOException{
 	//		final int eos=read();
 	//		if(eos!='\n'&&eos!=-1)throw new program.compiler_error(hrs_location(),"expected end of line or end of file");
