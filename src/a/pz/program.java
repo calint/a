@@ -522,9 +522,6 @@ public final class program implements Serializable{
 	public boolean is_register_allocated(String register){
 		return allocated_registers.containsKey(register);
 	}
-	private stmt next_expression(){
-		return null;
-	}
 	public program(final Reader source) throws IOException{
 		this.pr=new PushbackReader(source,1);
 		while(true){

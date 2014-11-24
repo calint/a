@@ -6,6 +6,11 @@ const int wi=40
 const int skp=c0
 const int colr=800
 const int linewi=100
+var a
+var b
+var c
+var d
+var e
 a=pos
 a+=p
 p++
