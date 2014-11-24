@@ -36,7 +36,7 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_const extends def{
-		public String name,type,value;
+		public String name,value;
 		public def_const(final program r) throws IOException{
 			super(r);
 			type=r.next_token_in_line();
@@ -56,7 +56,6 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_var extends expr{
-		public String type;
 		public String default_value;
 		public expr_var(final program r) throws IOException{
 			super(r,r.next_token_in_line());
@@ -69,39 +68,50 @@ public final class program implements Serializable{
 			if(default_value!=null)
 				x.p("=").p(default_value);
 			txt=x.toString();
+			if(default_value==null)
+				return;
+			final def_const dc=r.defines.get(default_value);
+			if(dc!=null){
+				type=dc.type;
+				return;
+			}
 		}
 		@Override protected void compile(program p){
-			try{
-				if(default_value==null)
-					return;
-				final def_const dc=p.defines.get(default_value);
-				if(dc!=null){// li
-					final program p2=new program("li "+register+" "+dc.name,p);
-					final stmt s=p2.statements.get(0);
-					bin=s.bin;
-					return;
-				}
-				if(default_value.startsWith("&")){// li
-					final program p2=new program("li "+register+" 0",p);
-					final stmt s=p2.statements.get(0);
-					bin=s.bin;
-					return;
-				}
-				if(is_reference_to_register(default_value)){// tx
-					if(!p.is_register_allocated(default_value))
-						throw new compiler_error(this,"var not declared",default_value);
-					final program p2=new program("tx "+register+" "+default_value);
-					final stmt s=p2.statements.get(0);
-					bin=s.bin;
-					return;
-				}
-			}catch(IOException e){
-				throw new Error(e);
+			if(default_value==null)
+				return;
+			final def_const dc=p.defines.get(default_value);
+			if(dc!=null){
+				final program p2=new program("li "+register+" 0",p);
+				final stmt s=p2.statements.get(0);
+				bin=s.bin;
+				//type="int&"
+				return;
+			}
+			if(default_value.startsWith("&")){// li
+				final program p2=new program("li "+register+" 0",p);
+				final stmt s=p2.statements.get(0);
+				bin=s.bin;
+				//type="int&"
+				return;
+			}
+			if(is_reference_to_register(default_value)){// tx
+				if(!p.is_register_allocated(default_value))
+					throw new compiler_error(this,"var not declared",default_value);
+				final program p2=new program("tx "+register+" "+default_value);
+				final stmt s=p2.statements.get(0);
+				bin=s.bin;
+				//type=p.register(default_value).type
+				return;
 			}
 		}
 		@Override protected void link(program p){
 			if(default_value==null)
 				return;
+			final def_const dc=p.defines.get(default_value);
+			if(dc!=null){
+				bin[1]=Integer.parseInt(dc.value,16);
+				return;
+			}
 			if(default_value.startsWith("&")){// li
 				final String nm=default_value.substring(1);
 				final def_label lb=p.labels.get(nm);
@@ -268,6 +278,7 @@ public final class program implements Serializable{
 		protected int op;
 		protected int rai;
 		protected int rdi;
+		protected String type;
 		public stmt(final program r){
 			location_in_source=r.location_in_source();
 		}
@@ -557,16 +568,16 @@ public final class program implements Serializable{
 	final public Map<String,def_label> labels=new LinkedHashMap<>();
 	final public Map<String,def_func> functions=new LinkedHashMap<>();
 
-	public program(final String source) throws IOException{
+	public program(final String source){
 		this(null,new StringReader(source));
 	}
-	public program(final String source,final program context_program) throws IOException{
+	public program(final String source,final program context_program){
 		this(context_program,new StringReader(source));
 	}
 	public boolean is_register_allocated(String register){
 		return allocated_registers.containsKey(register);
 	}
-	public program(final program context_program,final Reader source) throws IOException{
+	public program(final program context_program,final Reader source){try{
 		if(context_program!=null){
 			typedefs.putAll(context_program.typedefs);
 			labels.putAll(context_program.labels);
@@ -589,7 +600,7 @@ public final class program implements Serializable{
 				pc+=ss.bin.length;
 		}
 		statements.forEach(e->e.link(this));
-	}
+	}catch(IOException e){throw new Error(e);}}
 	private stmt next_statement() throws IOException{
 		String tk="";
 		while(true){
@@ -1165,6 +1176,18 @@ public final class program implements Serializable{
 			}
 			x.p(")");
 			txt=x.toString();
+			final def_func f=p.functions.get(function_name);
+			if(f==null)
+				throw new compiler_error(this,"function not found",function_name);
+			int ii=0;
+			for(expr_function_call_arg e:args){
+				final def_func_arg fa=f.args.get(ii++);
+				if(!e.arg.equals(fa.name))
+					throw new compiler_error(this," argument "+ii+"  expected '"+fa.name+"' but got '"+e.arg+"'\n  "+f);
+				final String type_in_register=p.type_for_register(this,e.toString());
+				if(!fa.type.equals(type_in_register))
+					throw new compiler_error(this," argument "+ii+"  expected type '"+fa.type+"' but var '"+fa.name+"' is of type '"+type_in_register+"'\n  "+f);
+			}
 		}
 		@Override protected void compile(program p){
 			bin=new int[]{call.op};
@@ -1175,12 +1198,6 @@ public final class program implements Serializable{
 				throw new compiler_error(this,"function not found",function_name);
 			final int a=f.location_in_binary;
 			bin[0]|=(a<<6);
-			int i=0;
-			for(expr_function_call_arg e:args){
-				final def_func_arg fa=f.args.get(i++);
-				if(!e.arg.equals(fa.name))
-					throw new compiler_error(this," argument "+i+"  expected '"+fa.name+"' but got '"+e.arg+"'\n  "+f);
-			}
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -1203,5 +1220,11 @@ public final class program implements Serializable{
 		allocated_registers.put(regname,e);
 		return;
 	}
+	public String type_for_register(stmt s,String name){
+		final stmt v=allocated_registers.get(name);
+		if(v==null)throw new compiler_error(s,"register not found",name);
+		return v.type;
+	}
+
 	private static final long serialVersionUID=1;
 }

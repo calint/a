@@ -1,19 +1,27 @@
 //comment
+typedef void
 typedef int
-const int pos=1040
-const int hi=30
-const int wi=40
-const int skp=c0
-const int colr=800
+typedef scr
+typedef height
+typedef width
+typedef skpln
+typedef pxl
+const scr pos=1040
+const height hi=30
+const width wi=40
+const skpln skp=c0
+const pxl colr=800
 const int linewi=100
+void draw(scr a=400,const height b=20,const width c=100,const skpln d=c0h,const pxl e=fff)
+void dots.draw(const scr a=400)
 var a=pos
 var b=hi
 var c=wi
-var d=colr
-var e=skp
+var d=skp
+var e=colr
 a+=p
 p++
-draw(a,b,c,e,d)
+draw(a,b,c,d,e)
 a=pos
 dots.draw(a)
 ..
@@ -24,13 +32,12 @@ int d
 c=10
 a=400
 ..
-typedef void
-void draw(scr a=400,const height b=20,const width c=100,const skpln e=c0h,const pxl d=fff)
+void draw(scr a=400,const height b=20,const width c=100,const skpln d=c0h,const pxl e=fff)
   lp b
     lp c
-      *a++=d
+      *a++=e
     nxt
-    a+=e
+    a+=d
   nxt 
 ret
 ..
