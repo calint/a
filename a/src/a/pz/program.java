@@ -166,30 +166,30 @@ public final class program extends stmt implements Serializable{
 			s=(instr)Class.forName(stmt.class.getName()+"$"+tk).getConstructor(program.class).newInstance(this);
 			s.znxr=znxr;
 		}catch(InvocationTargetException t){
-			if(t.getCause() instanceof stmt.compiler_error)
-				throw (stmt.compiler_error)t.getCause();
-			throw new stmt.compiler_error(location_in_source(),t.getCause().toString());
+			if(t.getCause() instanceof compiler_error)
+				throw (compiler_error)t.getCause();
+			throw new compiler_error(location_in_source(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new stmt.compiler_error(location_in_source(),t.toString());
+			throw new compiler_error(location_in_source(),t.toString());
 		}catch(ClassNotFoundException t){
-			throw new stmt.compiler_error(location_in_source(),"unknown instruction '"+tk+"'");
+			throw new compiler_error(location_in_source(),"unknown instruction '"+tk+"'");
 		}catch(Throwable t){
-			throw new stmt.compiler_error(location_in_source(),t.toString());
+			throw new compiler_error(location_in_source(),t.toString());
 		}
-		while(true){
+		while(true){//nxt ret
 			final String t=next_token_in_line();
 			if(t==null)
 				break;
-			if("nxt".equalsIgnoreCase(t)){
+			if("nxt".equals(t)){
 				s.znxr|=4;
 				continue;
 			}
-			if("ret".equalsIgnoreCase(t)){
+			if("ret".equals(t)){
 				s.znxr|=8;
 				continue;
 			}
 			if(t.startsWith("//")){
-				consume_rest_of_line();
+				consume_rest_of_line();//? savecomment
 				break;
 			}
 			throw new Error("3 "+t);
