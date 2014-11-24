@@ -54,7 +54,7 @@ public final class program implements Serializable{
 	final static public class expr_var extends expr{
 		private List<String> vars;
 		public expr_var(final program r) throws IOException{
-			super(r);
+			super(r,"");
 			vars=new ArrayList<>();
 			while(true){
 				final String t=r.next_token_in_line();
@@ -72,24 +72,22 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class expr extends stmt{
-		public expr(program p){
+		public String lhs;
+		public expr(program p,String lhs){
 			super(p);
+			this.lhs=lhs;
+		}
+		public static expr compile(program p,String src){
+			return null;
 		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_let extends expr{
-		public String lhs;
+		//		public String lhs;
 		public stmt rhs;
 		public String rh;
-		private boolean is_reference_to_register(String ref){
-			if(ref.length()!=1)
-				return false;
-			final char ch=ref.charAt(0);
-			return ch>='a'&&ch<='p';
-		}
 		public expr_let(final program p,final String lhs) throws IOException{
-			super(p);
-			this.lhs=lhs;
+			super(p,lhs);
 			rh=p.next_token_in_line();
 			txt=new xwriter().p(lhs).p("=").p(rh.toString()).toString();
 			final def_const c=p.defines.get(rh);
@@ -105,7 +103,7 @@ public final class program implements Serializable{
 				bin=new int[]{s.bin[0],Integer.parseInt(((def_const)rhs).value,16)};
 				return;
 			}
-			if(is_reference_to_register(rh)){
+			if(program.is_reference_to_register(rh)){
 				final stmt s=new stmt(p,tx.op,lhs.charAt(0)-'a',rh.charAt(0)-'a');
 				s.compile(p);
 				bin=s.bin;
@@ -126,7 +124,8 @@ public final class program implements Serializable{
 			if(rh.startsWith("&")){
 				final String label_name=rh.substring(1);
 				final def_label lbl=p.labels.get(label_name);
-				if(lbl==null)throw new compiler_error(this,"label not found "+lbl);
+				if(lbl==null)
+					throw new compiler_error(this,"label not found "+lbl);
 				bin[1]=lbl.location_in_binary;
 				return;
 			}
@@ -363,7 +362,7 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class data extends stmt{
-		private List<String>data;
+		private List<String> data;
 		public data(program r) throws IOException{
 			super(r);
 			data=new ArrayList<>();
@@ -436,7 +435,8 @@ public final class program implements Serializable{
 			}
 			default_value=r.next_token_in_line();
 			final xwriter x=new xwriter().p("int ").p(name);
-			if(default_value!=null)x.p("=").p(default_value);
+			if(default_value!=null)
+				x.p("=").p(default_value);
 			txt=x.toString();
 		}
 		@Override protected void compile(program p){
@@ -473,12 +473,15 @@ public final class program implements Serializable{
 	public program(final String source) throws IOException{
 		this(new StringReader(source));
 	}
-	private stmt next_expression(){return null;}
+	private stmt next_expression(){
+		return null;
+	}
 	public program(final Reader source) throws IOException{
 		this.pr=new PushbackReader(source,1);
 		while(true){
 			final stmt st=next_statement();
-			if(st==null)break;
+			if(st==null)
+				break;
 			statements.add(st);
 		}
 		statements.forEach(e->e.validate_references_to_labels(this));
@@ -595,7 +598,8 @@ public final class program implements Serializable{
 			s=(program.stmt)Class.forName(getClass().getName()+"$"+tk).getConstructor(program.class).newInstance(this);
 			s.znxr=znxr;
 		}catch(InvocationTargetException t){
-			if(t.getCause() instanceof compiler_error)throw (compiler_error)t.getCause();
+			if(t.getCause() instanceof compiler_error)
+				throw (compiler_error)t.getCause();
 			throw new compiler_error(hrs_location(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
 			throw new compiler_error(hrs_location(),t.toString());
@@ -607,16 +611,23 @@ public final class program implements Serializable{
 		if(!(s instanceof data)){
 			while(true){
 				final String t=next_token_in_line();
-				if(t==null)break;
-				if("nxt".equalsIgnoreCase(t)){s.znxr|=4;continue;}
-				if("ret".equalsIgnoreCase(t)){s.znxr|=8;continue;}
+				if(t==null)
+					break;
+				if("nxt".equalsIgnoreCase(t)){
+					s.znxr|=4;
+					continue;
+				}
+				if("ret".equalsIgnoreCase(t)){
+					s.znxr|=8;
+					continue;
+				}
 				if(t.startsWith("//")){
 					consume_rest_of_line();
 					break;
 				}
 				throw new Error("3 "+t);
 			}
-//			s.znxr=znxr;
+			//			s.znxr=znxr;
 		}
 		consume_rest_of_line();
 		return s;
@@ -630,25 +641,29 @@ public final class program implements Serializable{
 	}
 	private boolean is_next_char_bracket_left() throws IOException{
 		final int ch=read();
-		if(ch=='[')return true;
+		if(ch=='[')
+			return true;
 		unread(ch);
 		return false;
 	}
 	private boolean is_next_char_star() throws IOException{
 		final int ch=read();
-		if(ch=='*')return true;
+		if(ch=='*')
+			return true;
 		unread(ch);
 		return false;
 	}
 	private boolean is_next_char_equals() throws IOException{
 		final int ch=read();
-		if(ch=='=')return true;
+		if(ch=='=')
+			return true;
 		unread(ch);
 		return false;
 	}
 	private boolean is_next_char_end_of_file() throws IOException{
 		final int ch=read();
-		if(ch==-1)return true;
+		if(ch==-1)
+			return true;
 		unread(ch);
 		return false;
 	}
@@ -716,12 +731,26 @@ public final class program implements Serializable{
 		final StringBuilder sb=new StringBuilder();
 		while(true){
 			final int ch=read();
-			if(ch==-1)break;
-			if(ch=='\n'){unread(ch);break;}
-			if(Character.isWhitespace(ch))break;
-			if(ch=='='){unread(ch);break;}
-			if(ch=='+'){unread(ch);break;}
-			if(ch=='('){unread(ch);break;}
+			if(ch==-1)
+				break;
+			if(ch=='\n'){
+				unread(ch);
+				break;
+			}
+			if(Character.isWhitespace(ch))
+				break;
+			if(ch=='='){
+				unread(ch);
+				break;
+			}
+			if(ch=='+'){
+				unread(ch);
+				break;
+			}
+			if(ch=='('){
+				unread(ch);
+				break;
+			}
 			sb.append((char)ch);
 		}
 		skip_whitespace_on_same_line();
@@ -766,9 +795,12 @@ public final class program implements Serializable{
 	}
 	private String next_identifier() throws IOException{
 		final String id=next_token_in_line();
-		if(id==null)throw new compiler_error(hrs_location(),"expected identifier but got end of line");
-		if(id.length()==0)throw new compiler_error(hrs_location(),"identifier is empty");
-		if(Character.isDigit(id.charAt(0)))throw new compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
+		if(id==null)
+			throw new compiler_error(hrs_location(),"expected identifier but got end of line");
+		if(id.length()==0)
+			throw new compiler_error(hrs_location(),"identifier is empty");
+		if(Character.isDigit(id.charAt(0)))
+			throw new compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
 		return id;
 	}
 	private String next_type_identifier() throws IOException{
@@ -784,7 +816,8 @@ public final class program implements Serializable{
 	}
 	private boolean is_next_char_end_of_line() throws IOException{
 		final int ch=read();
-		if(ch=='\n')return true;
+		if(ch=='\n')
+			return true;
 		unread(ch);
 		return false;
 	}
@@ -841,11 +874,16 @@ public final class program implements Serializable{
 		return x.toString();
 	}
 
+	static boolean is_reference_to_register(String ref){
+		if(ref.length()!=1)
+			return false;
+		final char ch=ref.charAt(0);
+		return ch>='a'&&ch<='p';
+	}
+
 	final static public class expr_increment extends expr{
-		public String lhs;
 		public expr_increment(final program p,final String lhs) throws IOException{
-			super(p);
-			this.lhs=lhs;
+			super(p,lhs);
 			txt=new xwriter().p(lhs).p("++").toString();
 		}
 		@Override protected void compile(program p){
@@ -856,11 +894,9 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_add extends expr{
-		public String lhs;
 		public String rhs;
 		public expr_add(final program p,final String lhs) throws IOException{
-			super(p);
-			this.lhs=lhs;
+			super(p,lhs);
 			rhs=p.next_token_in_line();
 			txt=new xwriter().p(lhs).p("+=").p(rhs).toString();
 		}
@@ -872,16 +908,17 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_store extends expr{
-		public String lhs,rhs;
+		public String rhs;
 		public expr_store(final program p) throws IOException{
-			super(p);
-			lhs=p.next_token_in_line();
-			if(!p.is_next_char_equals())throw new compiler_error(this,"expected '=' but found '"+(char)p.read()+"'");
+			super(p,p.next_token_in_line());
+			if(!p.is_next_char_equals())
+				throw new compiler_error(this,"expected '=' but found '"+(char)p.read()+"'");
 			rhs=p.next_token_in_line();
 			txt=new xwriter().p("*").p(lhs).p("=").p(rhs).toString();
 		}
 		@Override protected void compile(program p){
 			//? ensure lhs,rhs are registers
+			final expr lhse=expr.compile(p,lhs);
 			final stmt s=new stmt(p,st.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
 			s.compile(p);
 			bin=s.bin;
@@ -897,11 +934,11 @@ public final class program implements Serializable{
 	final static public class expr_function_call extends expr{
 		public String function_name;
 		public String rhs;
-		public expr_function_call(final program p,final String function_name) throws IOException{
-			super(p);
-			this.function_name=function_name;
+		public expr_function_call(final program p,final String lhs) throws IOException{
+			super(p,lhs);
+			function_name=lhs;
 			rhs=p.consume_rest_of_line();
-			txt=new xwriter().p(function_name).p("()").toString();
+			txt=new xwriter().p(lhs).p("()").toString();
 		}
 		@Override protected void compile(program p){
 			bin=new int[]{call.op};
@@ -915,6 +952,5 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-
 	private static final long serialVersionUID=1;
 }

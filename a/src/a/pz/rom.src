@@ -44,7 +44,7 @@ struct dot yyxx int 0000 rgb int 000
 . 130f ffff
 . 121a ffff
 ..
-:dots.draw a scr 400
+:dots.draw a ro scr 400
   var b c d e
   b=&dots
   ldc c b
@@ -59,7 +59,8 @@ struct dot yyxx int 0000 rgb int 000
 ret
 
 // bug    st d e nxt ret
-//  nxt ret
+//    nxt ret
+//    nxt
 //  ret
 ..
 //.sprite medusa 4 4
