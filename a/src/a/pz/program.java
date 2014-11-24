@@ -30,13 +30,13 @@ public final class program extends stmt implements Serializable{
 	}
 	public program(final program context_program,final Reader source){
 		super(null);
+		if(context_program!=null){
+			typedefs.putAll(context_program.typedefs);
+			labels.putAll(context_program.labels);
+			defines.putAll(context_program.defines);
+		}
+		this.pr=new PushbackReader(source,1);
 		try{
-			if(context_program!=null){
-				typedefs.putAll(context_program.typedefs);
-				labels.putAll(context_program.labels);
-				defines.putAll(context_program.defines);
-			}
-			this.pr=new PushbackReader(source,1);
 			while(true){
 				final stmt st=next_statement();
 				if(st==null)
@@ -44,19 +44,19 @@ public final class program extends stmt implements Serializable{
 				pl(st.toString());
 				statements.add(st);
 			}
-			statements.forEach(e->e.validate_references_to_labels(this));
-			statements.forEach(e->e.compile(this));
-			int pc=0;
-			for(final stmt ss:statements){
-				ss.location_in_binary=pc;
-				if(ss.bin!=null)
-					pc+=ss.bin.length;
-			}
-			program_length=pc;
-			statements.forEach(e->e.link(this));
 		}catch(IOException e){
 			throw new Error(e);
 		}
+		statements.forEach(e->e.validate_references_to_labels(this));
+		statements.forEach(e->e.compile(this));
+		int pc=0;
+		for(final stmt s:statements){
+			s.location_in_binary=pc;
+			if(s.bin!=null)
+				pc+=s.bin.length;
+		}
+		program_length=pc;
+		statements.forEach(e->e.link(this));
 	}
 	public int program_length;
 	stmt next_statement() throws IOException{
