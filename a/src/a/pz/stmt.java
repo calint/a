@@ -657,7 +657,7 @@ public class stmt implements Serializable{
 		@Override protected void link(program p){
 			if(code_block!=null){
 				code_block.link(p);
-				bin=code_block.bin;
+//				bin=code_block.bin;
 			}
 		}
 		private static final long serialVersionUID=1;

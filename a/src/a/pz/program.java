@@ -72,29 +72,31 @@ public final class program extends stmt implements Serializable{
 		link(this);
 	}
 	@Override protected void compile(program p){
-		statements.forEach(e->e.compile(p));
+		//		statements.forEach(e->e.compile(p));
 		int pc=0;
 		for(final stmt s:statements){
-			s.link(p);
+			//			s.link(p);
 			s.location_in_binary=pc;
+			s.compile(p);
 			if(s.bin!=null)
 				pc+=s.bin.length;
 		}
 		program_length=pc;
 		bin=new int[program_length];
-		int i=0;
-		for(final stmt s:statements){
-			if(s.bin==null)
-				continue;
-			System.arraycopy(s.bin,0,bin,i,s.bin.length);
-			i+=s.bin.length;
-		}
+		//		int i=0;
+		//		for(final stmt s:statements){
+		//			if(s.bin==null)
+		//				continue;
+		//			System.arraycopy(s.bin,0,bin,i,s.bin.length);
+		//			i+=s.bin.length;
+		//		}
 	}
 	@Override protected void link(program p){
-		statements.forEach(e->e.link(p));
-		bin=new int[program_length];
+		//		statements.forEach(e->e.link(p));
+		//		bin=new int[program_length];
 		int i=0;
 		for(final stmt s:statements){
+			s.link(p);
 			if(s.bin==null)
 				continue;
 			System.arraycopy(s.bin,0,bin,i,s.bin.length);
