@@ -48,7 +48,10 @@ final public class crun_source_editor extends a{
 		}
 		if(!ommit_compiling_source_from_disassembler){
 			try{
-				new program(p.toString());
+				final program p2=new program(p.toString());
+				p2.build();
+				if(!p.is_binary_equal(p2))
+					throw new Error("not binary equivalent");
 			}catch(Throwable t){
 				log(t);
 				if(x!=null)

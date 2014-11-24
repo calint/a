@@ -572,4 +572,12 @@ public final class program extends stmt implements Serializable{
 	}
 
 	private static final long serialVersionUID=1;
+
+	public boolean is_binary_equal(program p){
+		for(int i=0;i<p.bin.length;i++){
+			if(bin[i]!=p.bin[i])
+				return false;
+		}
+		return true;
+	}
 }
