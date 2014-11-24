@@ -56,6 +56,7 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_var extends expr{
+		public String type;
 		public String default_value;
 		public expr_var(final program r) throws IOException{
 			super(r,r.next_token_in_line());
@@ -69,7 +70,46 @@ public final class program implements Serializable{
 				x.p("=").p(default_value);
 			txt=x.toString();
 		}
-		@Override protected void compile(program p){}
+		@Override protected void compile(program p){
+			try{
+				if(default_value==null)
+					return;
+				final def_const dc=p.defines.get(default_value);
+				if(dc!=null){// li
+					final program p2=new program("li "+register+" "+dc.name,p);
+					final stmt s=p2.statements.get(0);
+					bin=s.bin;
+					return;
+				}
+				if(default_value.startsWith("&")){// li
+					final li s=new li(new program("li "+register+" 0"));
+					s.compile(p);
+					bin=s.bin;
+					return;
+				}
+				if(is_reference_to_register(default_value)){// tx
+					if(!p.is_register_allocated(default_value))
+						throw new compiler_error(this,"var not declared",default_value);
+					final tx t=new tx(new program("tx "+register+" "+default_value));
+					t.compile(p);
+					bin=t.bin;
+				}
+			}catch(IOException e){
+				throw new Error(e);
+			}
+		}
+		@Override protected void link(program p){
+			if(default_value==null)
+				return;
+			if(default_value.startsWith("&")){// li
+				final String nm=default_value.substring(1);
+				final def_label lb=p.labels.get(nm);
+				if(lb==null)
+					throw new compiler_error(this,"label not found",nm);
+				bin[1]=lb.location_in_binary;
+				return;
+			}
+		}
 		private static final long serialVersionUID=1;
 	}
 	public static class expr extends stmt{
@@ -517,12 +557,20 @@ public final class program implements Serializable{
 	final public Map<String,def_func> functions=new LinkedHashMap<>();
 
 	public program(final String source) throws IOException{
-		this(new StringReader(source));
+		this(null,new StringReader(source));
+	}
+	public program(final String source,final program context_program) throws IOException{
+		this(context_program,new StringReader(source));
 	}
 	public boolean is_register_allocated(String register){
 		return allocated_registers.containsKey(register);
 	}
-	public program(final Reader source) throws IOException{
+	public program(final program context_program,final Reader source) throws IOException{
+		if(context_program!=null){
+			typedefs.putAll(context_program.typedefs);
+			labels.putAll(context_program.labels);
+			defines.putAll(context_program.defines);
+		}
 		this.pr=new PushbackReader(source,1);
 		while(true){
 			final stmt st=next_statement();
