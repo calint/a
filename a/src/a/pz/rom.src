@@ -54,9 +54,13 @@ struct dot yyxx int 0000 rgb int 000
     ldc d b
     ldc e b
     d+=a
-//bug    st d e nxt ret
-    st d e nxt 
-  ret
+    *d=e
+  nxt
+ret
+
+// bug    st d e nxt ret
+//  nxt ret
+//  ret
 ..
 //.sprite medusa 4 4
 //./\.
