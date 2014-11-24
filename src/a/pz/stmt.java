@@ -122,7 +122,7 @@ public class stmt implements Serializable{
 			final def_const dc=p.defines.get(default_value);
 			if(dc!=null){
 				final program p2=new program(p,"li "+to_register+" 0");
-				p2.compile();
+				p2.build();
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type="int&"
@@ -130,7 +130,7 @@ public class stmt implements Serializable{
 			}
 			if(default_value.startsWith("&")){// li
 				final program p2=new program(p,"li "+to_register+" 0");
-				p2.compile();
+				p2.build();
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type="int&"
@@ -139,12 +139,19 @@ public class stmt implements Serializable{
 			if(program.is_reference_to_register(default_value)){// tx
 				if(!p.is_register_allocated(default_value))
 					throw new compiler_error(this,"var not declared",default_value);
+				//? checktypes
 				final program p2=new program("tx "+to_register+" "+default_value);
+				p2.build();
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
 				//type=p.register(default_value).type
 				return;
 			}
+			// constant
+			final li l=new li(p,to_register,default_value);
+			l.compile(p);
+			l.link(p);
+			bin=l.bin;
 		}
 		@Override protected void link(program p){
 			if(default_value==null)

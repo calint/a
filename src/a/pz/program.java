@@ -67,7 +67,7 @@ public final class program extends stmt implements Serializable{
 			x.p(s.toString()).nl();
 		txt=x.toString();
 	}
-	public void compile(){
+	public void build(){
 		compile(this);
 		link(this);
 	}
