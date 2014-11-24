@@ -61,6 +61,8 @@ final public class acore extends a{
 		if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();
+			y.pl("functions:");
+			p.functions.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
 			y.pl("labels:");
 			p.labels.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
 			y.nl().pl("defines");
@@ -84,7 +86,7 @@ final public class acore extends a{
 			x.title("clare")
 			.style()
 				.css("html","color:#111")
-				.css("body","padding:7em 0 0 11em;width:70em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("body","padding:7em 0 0 11em;width:80em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
@@ -97,7 +99,7 @@ final public class acore extends a{
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css("textarea","line-height:1.4em")
 				.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
-				.css(ec.src,"min-width:20em;min-height:128em;line-height:1.4em")
+				.css(ec.src,"min-width:30em;min-height:128em;line-height:1.4em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
 			switch(th.toint()){
