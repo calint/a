@@ -36,9 +36,8 @@ public class stmt implements Serializable{
 				this.op=op;
 				this.ra=ra;
 				this.rd=rd;
-				rai=ra==null?0:program.register_index_from_string(p,ra);
-				rdi=rd==null?0:program.register_index_from_string(p,rd);
-	//			mkstr();
+				rai=ra==null?0:p.register_index_from_string(ra);
+				rdi=rd==null?0:p.register_index_from_string(rd);
 			}
 			public instr(final program p,final int znxr,final int op,final String ra,final String rd,boolean fliprdra){
 				this(p,znxr,op,ra,rd);
@@ -47,7 +46,6 @@ public class stmt implements Serializable{
 					rai=rdi;
 					rdi=i;
 				}
-	//			mkstr();
 			}
 			void mkstr(){
 				final xwriter x=new xwriter();

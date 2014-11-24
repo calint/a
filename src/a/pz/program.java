@@ -479,14 +479,13 @@ public final class program extends stmt implements Serializable{
 		disassemble_to(x);
 		return x.toString();
 	}
-
-	static int register_index_from_string(program p,String register){
+	int register_index_from_string(String register){
 		if(register.length()!=1)
-			throw new stmt.compiler_error(p.location_in_source(),"not a register: "+register);
+			throw new stmt.compiler_error(location_in_source(),"not a register: "+register);
 		final int i=register.charAt(0)-'a';
 		final int nregs=16;//? magicnumber
 		if(i<0||i>=nregs)
-			throw new stmt.compiler_error(p.location_in_source(),"register not found: "+register);
+			throw new stmt.compiler_error(location_in_source(),"register not found: "+register);
 		return i;
 	}
 	static boolean is_reference_to_register(String ref){
