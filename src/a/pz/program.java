@@ -16,30 +16,65 @@ import b.xwriter;
 
 public final class program implements Serializable{
 	public static class instr extends stmt{
+		int znxr;
 		int op;
 		int rai;
 		int rdi;
+		int imm;
 		public instr(program p){
 			super(p);
 		}
-		public instr(final program r,final int op,final String ra,final String rd){
+		public instr(final program r,final int znxr,final int op,final String ra,final String rd){
 			super(r);
+			this.znxr=znxr;
 			this.op=op;
-			rai=program.register_index_from_string(r,ra);
-			rdi=program.register_index_from_string(r,rd);
+			rai=ra==null?0:program.register_index_from_string(r,ra);
+			rdi=rd==null?0:program.register_index_from_string(r,rd);
+			mkstr();
 		}
-		public instr(final program r,final int op,final int ra,final int rd){
-			super(r,op,ra,rd);
+		public instr(final program r,final int znxr,final int op,final String ra,final String rd,boolean fliprdra){
+			this(r,znxr,op,ra,rd);
+			if(fliprdra){
+				final int i=rai;
+				rai=rdi;
+				rdi=i;
+			}
+			mkstr();
 		}
-		public instr(final program r,final int op,final int ra,final int rd,boolean flip_ra_rd){
-			super(r,op,ra,rd,flip_ra_rd);
+		private void mkstr(){
+			final xwriter x=new xwriter();
+			if((znxr&3)==3)
+				x.p("ifp ");
+			else if((znxr&1)==1)
+				x.p("ifz ");
+			else if((znxr&2)==2)
+				x.p("ifn ");
+			x.p(txt);
+			x.spc();
+			if((znxr&4)==4)
+				x.p(" nxt");
+			if((znxr&8)==8)
+				x.p(" ret");
+			txt=x.toString();
+		}
+		//		public instr(final program r,final int op,final int ra,final int rd){
+		//			super(r,op,ra,rd);
+		//		}
+		//		public instr(final program r,final int op,final int ra,final int rd,boolean flip_ra_rd){
+		//			super(r,op,ra,rd,flip_ra_rd);
+		//		}
+		protected int znxr_ci__ra__rd__(){
+			return znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+		}
+		protected void compile(program r){
+			bin=new int[]{znxr_ci__ra__rd__()};
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class add extends instr{
 		final public static int op=0x00a0;
 		public add(program r) throws IOException{
-			super(r,op,r.next_token_in_line(),r.next_token_in_line());
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line());
 			txt=new xwriter().p("add").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -169,31 +204,31 @@ public final class program implements Serializable{
 		}
 		@Override protected void compile(program p){
 			if(is_ld){
-				final stmt s=new stmt(p,ld.op,register_index_from_string(p,rh),register_index_from_string(p,to_register));
+				final instr s=new instr(p,0,ld.op,rh,to_register);
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(is_ldc){
-				final stmt s=new stmt(p,ldc.op,register_index_from_string(p,rh),register_index_from_string(p,to_register));
+				final instr s=new instr(p,0,ldc.op,rh,to_register);
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(rhs instanceof def_const){
-				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,to_register));
+				final instr s=new instr(p,0,li.op,null,to_register);
 				s.compile(p);
 				bin=new int[]{s.bin[0],Integer.parseInt(((def_const)rhs).value,16)};
 				return;
 			}
 			if(is_reference_to_register(rh)){
-				final stmt s=new stmt(p,tx.op,register_index_from_string(p,to_register),register_index_from_string(p,rh));
+				final instr s=new instr(p,0,tx.op,to_register,rh);
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(rh.startsWith("&")){
-				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,to_register));
+				final instr s=new instr(p,0,li.op,null,to_register);
 				s.compile(p);
 				bin=new int[]{s.bin[0],0};
 				return;
@@ -273,50 +308,30 @@ public final class program implements Serializable{
 		protected String txt;
 		protected int[] bin;
 		protected int location_in_binary;
-		protected int znxr;
-		protected int op;
-		protected int rai;
-		protected int rdi;
+		//		protected int znxr;
+		//		protected int op;
+		//		protected int rai;
+		//		protected int rdi;
 		protected String type;
 		public stmt(final program r){
 			location_in_source=r.location_in_source();
 		}
-		protected stmt(final program r,final int op,final int ra,final int rd){
-			this(r);
-			this.op=op;
-			this.rai=ra;
-			this.rdi=rd;
-		}
-		protected stmt(final program r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
-			this(r,op,rd,ra);
-		}
+		//		protected stmt(final program r,final int op,final int ra,final int rd){
+		//			this(r);
+		//			this.op=op;
+		//			this.rai=ra;
+		//			this.rdi=rd;
+		//		}
+		//		protected stmt(final program r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
+		//			this(r,op,rd,ra);
+		//		}
 		protected void validate_references_to_labels(program r){}
-		protected void compile(program r){
-			bin=new int[]{znxr_ci__ra__rd__()};
-		}
+		protected void compile(program r){}
 		protected void link(program p){}
-		protected int znxr_ci__ra__rd__(){
-			return znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+		final public String toString(){
+			return txt;
 		}
-		final @Override public String toString(){
-			if(txt!=null)
-				return txt;
-			final xwriter x=new xwriter();
-			if((znxr&3)==3)
-				x.p("ifp ");
-			else if((znxr&1)==1)
-				x.p("ifz ");
-			else if((znxr&2)==2)
-				x.p("ifn ");
-			x.p(txt);
-			x.spc();
-			if((znxr&4)==4)
-				x.p(" nxt");
-			if((znxr&8)==8)
-				x.p(" ret");
-			return x.toString();
-		}
-		public void source_to(xwriter x){}
+		//		public void source_to(xwriter x){}
 		private static final long serialVersionUID=1;
 	}
 	public static class li extends instr{
@@ -324,12 +339,12 @@ public final class program implements Serializable{
 		private int value;
 		final public static int op=0x0000;
 		public li(program r) throws IOException{
-			super(r,li.op,0,r.next_register_identifier());
+			super(r,0,li.op,null,r.next_token_in_line());
 			data=r.next_token_in_line();
 			txt="li "+(char)(rdi+'a')+" "+data;
 		}
 		public li(program r,String reg,String data){
-			super(r,li.op,0,program.register_index_from_string(r,reg));
+			super(r,0,li.op,null,reg);
 			this.data=data;
 			txt="li "+reg+" "+data;
 		}
@@ -370,7 +385,7 @@ public final class program implements Serializable{
 	public static class inc extends instr{
 		final public static int op=0x0200;
 		public inc(program r) throws IOException{
-			super(r,op,0,r.next_register_identifier());
+			super(r,0,op,null,r.next_token_in_line());
 			txt=new xwriter().p("inc").spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -378,7 +393,7 @@ public final class program implements Serializable{
 	public static class st extends instr{
 		final public static int op=0x00d8;
 		public st(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_register_identifier());
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line());
 			txt=new xwriter().p("st").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -396,7 +411,7 @@ public final class program implements Serializable{
 	public static class nxt extends instr{
 		final public static int op=0x0004;
 		public nxt(program r) throws IOException{
-			super(r,nxt.op,0,0);
+			super(r,0,nxt.op,null,null);
 			txt="nxt";
 		}
 		private static final long serialVersionUID=1;
@@ -404,7 +419,7 @@ public final class program implements Serializable{
 	public static class ret extends instr{
 		final public static int op=0x0008;
 		public ret(program r) throws IOException{
-			super(r,ret.op,0,0);
+			super(r,0,ret.op,null,null);
 			txt="ret";
 		}
 		private static final long serialVersionUID=1;
@@ -412,7 +427,7 @@ public final class program implements Serializable{
 	public static class lp extends instr{
 		final public static int op=0x0100;
 		public lp(program r) throws IOException{
-			super(r,lp.op,0,r.next_register_identifier());
+			super(r,0,lp.op,null,r.next_token_in_line());
 			txt=new xwriter().p("lp").spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -420,7 +435,7 @@ public final class program implements Serializable{
 	public static class stc extends instr{
 		final public static int op=0x0040;
 		public stc(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_register_identifier());
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line());
 			txt=new xwriter().p("stc").spc().p((char)(rai+'a')).spc().p((char)(rdi+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -428,7 +443,7 @@ public final class program implements Serializable{
 	public static class sub extends instr{
 		final public static int op=0x0020;
 		public sub(program r) throws IOException{
-			super(r,sub.op,r.next_register_identifier(),r.next_register_identifier());
+			super(r,0,sub.op,r.next_token_in_line(),r.next_token_in_line());
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -436,7 +451,7 @@ public final class program implements Serializable{
 		String label;
 		final public static int op=0x0010;
 		public call(program r) throws IOException{
-			super(r,op,0,0);
+			super(r,0,op,null,null);
 			label=r.next_token_in_line();
 			txt="call "+label;
 		}
@@ -497,14 +512,14 @@ public final class program implements Serializable{
 	public static class ld extends instr{
 		final public static int op=0x00f8;
 		public ld(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_register_identifier(),true);
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class ldc extends instr{
 		final public static int op=0x00c0;
 		public ldc(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_register_identifier(),true);
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 			txt=new xwriter().p("ldc").spc().p((char)(rdi+'a')).spc().p((char)(rai+'a')).toString();
 		}
 		private static final long serialVersionUID=1;
@@ -512,14 +527,14 @@ public final class program implements Serializable{
 	public static class tx extends instr{
 		final public static int op=0x00e0;
 		public tx(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_register_identifier(),true);
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class shf extends instr{
 		final public static int op=0x0060;
 		public shf(program r) throws IOException{
-			super(r,op,r.next_register_identifier(),r.next_int(4),true);
+			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -709,9 +724,9 @@ public final class program implements Serializable{
 			break;
 		}
 		}
-		final stmt s;
+		final instr s;
 		try{
-			s=(program.stmt)Class.forName(getClass().getName()+"$"+tk).getConstructor(program.class).newInstance(this);
+			s=(instr)Class.forName(getClass().getName()+"$"+tk).getConstructor(program.class).newInstance(this);
 			s.znxr=znxr;
 		}catch(InvocationTargetException t){
 			if(t.getCause() instanceof compiler_error)
@@ -1047,7 +1062,7 @@ public final class program implements Serializable{
 			txt=new xwriter().p(register).p("++").toString();
 		}
 		@Override protected void compile(program p){
-			final stmt s=new stmt(p,inc.op,0,program.register_index_from_string(p,to_register));
+			final instr s=new instr(p,0,inc.op,null,to_register);
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -1061,7 +1076,7 @@ public final class program implements Serializable{
 			txt=new xwriter().p(register).p("+=").p(rhs).toString();
 		}
 		@Override protected void compile(program p){
-			final stmt s=new stmt(p,add.op,program.register_index_from_string(p,to_register),rhs.charAt(0)-'a');
+			final instr s=new instr(p,0,add.op,to_register,rhs);
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -1091,7 +1106,7 @@ public final class program implements Serializable{
 		@Override protected void compile(program p){
 			//? ensure lhs,rhs are registers
 			//			final expr lhse=expr.make_from_source_text(p,register);
-			final stmt s=new stmt(p,inca?stc.op:st.op,register_index_from_string(p,to_register),register_index_from_string(p,rhs));
+			final instr s=new instr(p,0,inca?stc.op:st.op,to_register,rhs);
 			s.compile(p);
 			bin=s.bin;
 		}
