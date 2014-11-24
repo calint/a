@@ -7,30 +7,20 @@ const colr int 800
 const linewi int 100
 
 //var a p b c d e
-//a=pos
+a=pos
 //a+=p
+add a p
 //p++
-//b=hi
-//c=wi
-//d=colr
-//e=skp
+inc p
+b=hi
+c=wi
+d=colr
+e=skp
 ////e=linewi-wi
 //draw()
-
-
-
-
-
-li a pos
-add a p
-inc p
-li b hi
-li c wi
-li d colr
-li e skp
 call draw
 
-li a pos
+a=pos
 call dots.draw
 ..
 ..

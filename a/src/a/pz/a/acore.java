@@ -43,6 +43,7 @@ final public class acore extends a{
 	public final static int bit_show_source_editor=512;
 	/**builtinajaxstatus*/public a ajaxsts;
 	/**disassembled*/public a di;
+	/**programtoc*/public a toc;
 //	public metrics me;
 	
 	public acore()throws Throwable{
@@ -59,12 +60,22 @@ final public class acore extends a{
 		pl("ev");
 		if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
+			final xwriter y=new xwriter();
+			y.pl("labels:");
+			p.labels.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
+			y.nl().pl("defines");
+			p.defines.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
+			y.nl().pl("structs");
+			p.structs.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
+			y.nl().pl("typedefs");
+			p.typedefs.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
+			toc.set(y.toString());
 			p.zap(cor.rom);
 			di.set(p.toString());
 			cor.reset();
 			x_f(x,null);
 			if(x==null)return;
-			x.xuo(ro).xu(di);
+			x.xuo(ro).xu(di).xu(toc);
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
@@ -142,7 +153,7 @@ final public class acore extends a{
 		x.divo("laycent");
 		if(hasbit(bit_show_panel))x.divo(null,"float panel").spanh(st,"fontbold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_show_rom))x.r(ro);
-		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel");
+		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel").divh(toc,"float textleft panel");
 		if(pt()==null){
 			x.divo(null,"floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
 		}
