@@ -40,13 +40,13 @@ final public class crun_source_editor extends a{
 		final program p;
 		try{p=new program(src.str());}catch(Throwable t){
 			log(t);
-			x.xalert(t.toString());
+			if(x!=null)x.xalert(t.toString());
 			return;
 		}
 		if(!ommit_compiling_source_from_disassembler){
 			try{new program(p.toString());}catch(Throwable t){
 				log(t);
-				x.xalert("reverse compilation failed: "+t.toString());
+				if(x!=null)x.xalert("reverse compilation failed: "+t.toString());
 				return;
 			}
 		}
