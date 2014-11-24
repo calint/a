@@ -25,6 +25,12 @@ var e=colr
 a+=p
 p++
 draw(a,b,c,d,e)
+
+//var a=pos,b=hi,c=wi,d=skp,e=colr
+//draw(a,b,c,d,e)
+//rel a,b,c,d,e
+
+
 a=pos
 dots.draw(a)
 ..
