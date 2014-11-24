@@ -529,6 +529,7 @@ public final class program implements Serializable{
 			final stmt st=next_statement();
 			if(st==null)
 				break;
+			pl(st.toString());
 			statements.add(st);
 		}
 		statements.forEach(e->e.validate_references_to_labels(this));
@@ -546,17 +547,18 @@ public final class program implements Serializable{
 		while(true){
 			skip_whitespace();
 			pl(" line "+location_in_source());
-			if(is_next_char_end_of_file()){
+			if(is_next_char_end_of_file())
 				return null;
-			}
-			if(is_next_char_star()){//st or stc   *a=d   *a++=d   *(a+++b)=d 
+			if(is_next_char_slash())
+				if(is_next_char_slash())
+					return new def_comment(this);
+				else
+					unread('/');
+			if(is_next_char_star())//st or stc   *a=d   *a++=d   *(a+++b)=d 
 				return new expr_store(this);
-			}
 			tk=next_token_in_line();
 			if(tk==null)
 				return new eof(this);
-			if(tk.startsWith("//"))
-				return new def_comment(this);
 			if(tk.equals("const")){
 				final def_const s=new def_const(this);
 				defines.put(s.name,s);
@@ -718,6 +720,13 @@ public final class program implements Serializable{
 	private boolean is_next_char_star() throws IOException{
 		final int ch=read();
 		if(ch=='*')
+			return true;
+		unread(ch);
+		return false;
+	}
+	private boolean is_next_char_slash() throws IOException{
+		final int ch=read();
+		if(ch=='/')
 			return true;
 		unread(ch);
 		return false;
