@@ -142,7 +142,7 @@ public final class program implements Serializable{
 			fields=new ArrayList<>();
 			while(true){
 				p.skip_whitespace_on_same_line();
-				if(p.is_at_end_of_line())
+				if(p.is_next_char_end_of_line())
 					break;
 				final def_struct_member f=new def_struct_member(p);
 				fields.add(f);
@@ -432,7 +432,7 @@ public final class program implements Serializable{
 		private String default_value;
 		public decl_data_int(program r) throws IOException{
 			super(r,r.next_identifier());
-			if(r.next_char_is_equals()){//default value
+			if(r.is_next_char_equals()){//default value
 			}
 			default_value=r.next_token_in_line();
 			final xwriter x=new xwriter().p("int ").p(name);
@@ -477,11 +477,8 @@ public final class program implements Serializable{
 	public program(final Reader source) throws IOException{
 		this.pr=new PushbackReader(source,1);
 		while(true){
-			final int ch=read();
-			if(ch==-1)
-				break;
-			unread(ch);
 			final stmt st=next_statement();
+			if(st==null)break;
 			statements.add(st);
 		}
 		statements.forEach(e->e.validate_references_to_labels(this));
@@ -498,6 +495,12 @@ public final class program implements Serializable{
 		String tk="";
 		while(true){
 			skip_whitespace();
+			if(is_next_char_end_of_file()){
+				return null;
+			}
+			if(is_next_char_bracket_left()){//st or stc
+				
+			}
 			tk=next_token_in_line();
 			if(tk==null)
 				return new eof(this);
@@ -555,10 +558,10 @@ public final class program implements Serializable{
 			final expr_let s=new expr_let(this,tk);
 			return s;
 		case '+'://expression or addstore or inc
-			if(next_char_is_plus()){
+			if(is_next_char_plus()){
 				final expr_increment st=new expr_increment(this,tk);
 				return st;
-			}else if(next_char_is_equals()){
+			}else if(is_next_char_equals()){
 				final expr_add st=new expr_add(this,tk);
 				return st;
 			}
@@ -587,54 +590,59 @@ public final class program implements Serializable{
 			break;
 		}
 		}
-		final program.stmt s;
+		final stmt s;
 		try{
 			s=(program.stmt)Class.forName(getClass().getName()+"$"+tk).getConstructor(program.class).newInstance(this);
+			s.znxr=znxr;
 		}catch(InvocationTargetException t){
-			if(t.getCause() instanceof program.compiler_error)
-				throw (program.compiler_error)t.getCause();
-			throw new program.compiler_error(hrs_location(),t.getCause().toString());
+			if(t.getCause() instanceof compiler_error)throw (compiler_error)t.getCause();
+			throw new compiler_error(hrs_location(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new program.compiler_error(hrs_location(),t.toString());
+			throw new compiler_error(hrs_location(),t.toString());
 		}catch(ClassNotFoundException t){
-			throw new program.compiler_error(hrs_location(),"unknown instruction '"+tk+"'");
+			throw new compiler_error(hrs_location(),"unknown instruction '"+tk+"'");
 		}catch(Throwable t){
-			throw new program.compiler_error(hrs_location(),t.toString());
+			throw new compiler_error(hrs_location(),t.toString());
 		}
 		if(!(s instanceof data)){
 			while(true){
 				final String t=next_token_in_line();
-				if(t==null)
-					break;
-				if("nxt".equalsIgnoreCase(t)){
-					znxr|=4;
-					continue;
-				}
-				if("ret".equalsIgnoreCase(t)){
-					znxr|=8;
-					continue;
-				}
+				if(t==null)break;
+				if("nxt".equalsIgnoreCase(t)){s.znxr|=4;continue;}
+				if("ret".equalsIgnoreCase(t)){s.znxr|=8;continue;}
 				if(t.startsWith("//")){
 					consume_rest_of_line();
 					break;
 				}
 				throw new Error("3 "+t);
 			}
-			s.znxr=znxr;
+//			s.znxr=znxr;
 		}
 		consume_rest_of_line();
 		return s;
 	}
-	private boolean next_char_is_plus() throws IOException{
+	private boolean is_next_char_plus() throws IOException{
 		final int ch=read();
 		if(ch=='+')
 			return true;
 		unread(ch);
 		return false;
 	}
-	private boolean next_char_is_equals() throws IOException{
+	private boolean is_next_char_bracket_left() throws IOException{
+		final int ch=read();
+		if(ch=='[')return true;
+		unread(ch);
+		return false;
+	}
+	private boolean is_next_char_equals() throws IOException{
 		final int ch=read();
 		if(ch=='=')return true;
+		unread(ch);
+		return false;
+	}
+	private boolean is_next_char_end_of_file() throws IOException{
+		final int ch=read();
+		if(ch==-1)return true;
 		unread(ch);
 		return false;
 	}
@@ -768,11 +776,10 @@ public final class program implements Serializable{
 			throw new program.compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
 		return id;
 	}
-	private boolean is_at_end_of_line() throws IOException{
+	private boolean is_next_char_end_of_line() throws IOException{
 		final int ch=read();
+		if(ch=='\n')return true;
 		unread(ch);
-		if(ch=='\n')
-			return true;
 		return false;
 	}
 	private int next_register_identifier() throws IOException{
