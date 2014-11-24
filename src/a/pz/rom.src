@@ -52,7 +52,6 @@ struct dot yyxx int 0000 rgb int 000
     *d=e
   nxt
 ret
-
 // bug    st d e nxt ret
 //    nxt ret
 //    nxt
