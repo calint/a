@@ -314,6 +314,7 @@ public final class program implements Serializable{
 		final public static int op=0x0004;
 		public nxt(program r) throws IOException{
 			super(r,nxt.op,0,0);
+			txt="nxt";
 		}
 		private static final long serialVersionUID=1;
 	}
