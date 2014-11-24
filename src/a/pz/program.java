@@ -72,12 +72,16 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class expr extends stmt{
-		public String lhs;
-		public expr(program p,String lhs){
+//		public String lhs;
+		public String register;
+		public expr(program p,String register){
 			super(p);
-			this.lhs=lhs;
+//			this.lhs=lhs;
+			this.register=register;
 		}
-		public static expr compile(program p,String src){
+		public static expr make_from_source_text(program p,String src){
+			
+			
 			return null;
 		}
 		private static final long serialVersionUID=1;
@@ -98,27 +102,34 @@ public final class program implements Serializable{
 		}
 		@Override protected void compile(program p){
 			if(rhs instanceof def_const){
-				final stmt s=new stmt(p,li.op,0,lhs.charAt(0)-'a');
+				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
 				s.compile(p);
 				bin=new int[]{s.bin[0],Integer.parseInt(((def_const)rhs).value,16)};
 				return;
 			}
 			if(program.is_reference_to_register(rh)){
-				final stmt s=new stmt(p,tx.op,lhs.charAt(0)-'a',rh.charAt(0)-'a');
+				final stmt s=new stmt(p,tx.op,register_index_from_string(p,register),rh.charAt(0)-'a');
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(rh.startsWith("&")){
-				final stmt s=new stmt(p,li.op,0,lhs.charAt(0)-'a');
+				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
 				s.compile(p);
 				bin=new int[]{s.bin[0],0};
 				return;
 			}
-			final stmt s=new stmt(p,li.op,0,lhs.charAt(0)-'a');
+			final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
 			s.compile(p);
 			bin=new int[]{s.bin[0],Integer.parseInt(rh,16)};
 			return;
+		}
+		private static int register_index_from_string(program p,String register){
+			if(register.length()!=1)throw new compiler_error(p.hrs_location(),"not a register: "+register);
+			final int i=register.charAt(0)-'a';
+			final int nregs=16;//? magicnumber
+			if(i<0||i>=nregs)throw new compiler_error(p.hrs_location(),"register not found: "+register);
+			return i;
 		}
 		@Override protected void link(program p){
 			if(rh.startsWith("&")){
@@ -882,12 +893,12 @@ public final class program implements Serializable{
 	}
 
 	final static public class expr_increment extends expr{
-		public expr_increment(final program p,final String lhs) throws IOException{
-			super(p,lhs);
-			txt=new xwriter().p(lhs).p("++").toString();
+		public expr_increment(final program p,final String register) throws IOException{
+			super(p,register);
+			txt=new xwriter().p(register).p("++").toString();
 		}
 		@Override protected void compile(program p){
-			final stmt s=new stmt(p,inc.op,0,lhs.charAt(0)-'a');
+			final stmt s=new stmt(p,inc.op,0,expr_let.register_index_from_string(p,register));
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -895,13 +906,13 @@ public final class program implements Serializable{
 	}
 	final static public class expr_add extends expr{
 		public String rhs;
-		public expr_add(final program p,final String lhs) throws IOException{
-			super(p,lhs);
+		public expr_add(final program p,final String register) throws IOException{
+			super(p,register);
 			rhs=p.next_token_in_line();
-			txt=new xwriter().p(lhs).p("+=").p(rhs).toString();
+			txt=new xwriter().p(register).p("+=").p(rhs).toString();
 		}
 		@Override protected void compile(program p){
-			final stmt s=new stmt(p,add.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
+			final stmt s=new stmt(p,add.op,expr_let.register_index_from_string(p,register),rhs.charAt(0)-'a');
 			s.compile(p);
 			bin=s.bin;
 		}
@@ -914,12 +925,12 @@ public final class program implements Serializable{
 			if(!p.is_next_char_equals())
 				throw new compiler_error(this,"expected '=' but found '"+(char)p.read()+"'");
 			rhs=p.next_token_in_line();
-			txt=new xwriter().p("*").p(lhs).p("=").p(rhs).toString();
+			txt=new xwriter().p("*").p(register).p("=").p(rhs).toString();
 		}
 		@Override protected void compile(program p){
 			//? ensure lhs,rhs are registers
-			final expr lhse=expr.compile(p,lhs);
-			final stmt s=new stmt(p,st.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
+			final expr lhse=expr.make_from_source_text(p,register);
+			final stmt s=new stmt(p,st.op,expr_let.register_index_from_string(p,register),rhs.charAt(0)-'a');
 			s.compile(p);
 			bin=s.bin;
 		}
