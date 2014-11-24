@@ -228,7 +228,7 @@ public final class program implements Serializable{
 		protected int rai;
 		protected int rdi;
 		public stmt(final program r){
-			location_in_source=r.hrs_location();
+			location_in_source=r.location_in_source();
 		}
 		protected stmt(final program r,final int op,final int ra,final int rd){
 			this(r);
@@ -430,6 +430,16 @@ public final class program implements Serializable{
 		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
 	}
+	public static class def_comment extends def{
+		public String line;
+		public def_comment(program p) throws IOException{
+			super(p);
+			line=p.consume_rest_of_line();
+			txt="//"+line;
+		}
+		@Override protected void compile(program p){}
+		private static final long serialVersionUID=1;
+	}
 	public static class ld extends instr{
 		final public static int op=0x00f8;
 		public ld(program r) throws IOException{
@@ -470,7 +480,7 @@ public final class program implements Serializable{
 			if(default_value!=null)
 				x.p("=").p(default_value);
 			txt=x.toString();
-//			r.skip_whitespace_on_same_line();
+			//			r.skip_whitespace_on_same_line();
 			if(!r.is_next_char_end_of_line())
 				throw new compiler_error(this,"expected end of line after: ["+txt+"]");
 		}
@@ -533,7 +543,7 @@ public final class program implements Serializable{
 		String tk="";
 		while(true){
 			skip_whitespace();
-			pl(" line "+hrs_location());
+			pl(" line "+location_in_source());
 			if(is_next_char_end_of_file()){
 				return null;
 			}
@@ -585,10 +595,8 @@ public final class program implements Serializable{
 				consume_rest_of_line();
 				return s;
 			}
-			if(tk.startsWith("//")){
-				consume_rest_of_line();
-				continue;
-			}
+			if(tk.startsWith("//"))
+				return new def_comment(this);
 			break;
 		}
 		final int nxtch=read();
@@ -636,13 +644,13 @@ public final class program implements Serializable{
 		}catch(InvocationTargetException t){
 			if(t.getCause() instanceof compiler_error)
 				throw (compiler_error)t.getCause();
-			throw new compiler_error(hrs_location(),t.getCause().toString());
+			throw new compiler_error(location_in_source(),t.getCause().toString());
 		}catch(InstantiationException|IllegalAccessException|NoSuchMethodException t){
-			throw new compiler_error(hrs_location(),t.toString());
+			throw new compiler_error(location_in_source(),t.toString());
 		}catch(ClassNotFoundException t){
-			throw new compiler_error(hrs_location(),"unknown instruction '"+tk+"'");
+			throw new compiler_error(location_in_source(),"unknown instruction '"+tk+"'");
 		}catch(Throwable t){
-			throw new compiler_error(hrs_location(),t.toString());
+			throw new compiler_error(location_in_source(),t.toString());
 		}
 		while(true){
 			final String t=next_token_in_line();
@@ -723,7 +731,7 @@ public final class program implements Serializable{
 			pc+=c;
 		}
 	}
-	private String hrs_location(){
+	private String location_in_source(){
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
 	private static String hr_location_string_from_line_and_col(final int ln,final int col){
@@ -828,22 +836,22 @@ public final class program implements Serializable{
 	private String next_identifier() throws IOException{
 		final String id=next_token_in_line();
 		if(id==null)
-			throw new compiler_error(hrs_location(),"expected identifier but got end of line");
+			throw new compiler_error(location_in_source(),"expected identifier but got end of line");
 		if(id.length()==0)
-			throw new compiler_error(hrs_location(),"identifier is empty");
+			throw new compiler_error(location_in_source(),"identifier is empty");
 		if(Character.isDigit(id.charAt(0)))
-			throw new compiler_error(hrs_location(),"identifier '"+id+"' starts with a number");
+			throw new compiler_error(location_in_source(),"identifier '"+id+"' starts with a number");
 		return id;
 	}
 	private String next_type_identifier() throws IOException{
 		final String id=next_token_in_line();
 		if(id==null)
-			throw new program.compiler_error(hrs_location(),"expected type identifier but got end of line");
+			throw new program.compiler_error(location_in_source(),"expected type identifier but got end of line");
 		if(id.length()==0)
-			throw new program.compiler_error(hrs_location(),"type identifier is empty");
+			throw new program.compiler_error(location_in_source(),"type identifier is empty");
 		//is_valid_type_identifier
 		if(Character.isDigit(id.charAt(0)))
-			throw new program.compiler_error(hrs_location(),"type identifier '"+id+"' starts with a number");
+			throw new program.compiler_error(location_in_source(),"type identifier '"+id+"' starts with a number");
 		return id;
 	}
 	private boolean is_next_char_end_of_line() throws IOException{
@@ -856,32 +864,32 @@ public final class program implements Serializable{
 	private int next_register_identifier() throws IOException{
 		final String s=next_token_in_line();
 		if(s==null)
-			throw new program.compiler_error(hrs_location(),"expected register but found end of line");
+			throw new program.compiler_error(location_in_source(),"expected register but found end of line");
 		if(s.length()!=1)
-			throw new program.compiler_error(hrs_location(),"register name unknown '"+s+"'");
+			throw new program.compiler_error(location_in_source(),"register name unknown '"+s+"'");
 		final char first_char=s.charAt(0);
 		final int reg=first_char-'a';
 		final int max=(1<<4)-1;//? magicnumber
 		final int min=0;
 		if(reg>max||reg<min)
-			throw new program.compiler_error(hrs_location(),"register '"+s+"' out range 'a' through 'p'");
+			throw new program.compiler_error(location_in_source(),"register '"+s+"' out range 'a' through 'p'");
 		return reg;
 	}
 	private int next_int(int bit_width) throws IOException{
 		final String s=next_token_in_line();
 		if(s==null)
-			throw new program.compiler_error(hrs_location(),"expected number but found end of line");
+			throw new program.compiler_error(location_in_source(),"expected number but found end of line");
 		try{
 			final int i=Integer.parseInt(s);
 			final int max=(1<<(bit_width-1))-1;
 			final int min=-1<<(bit_width-1);
 			if(i>max)
-				throw new program.compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+				throw new program.compiler_error(location_in_source(),"number '"+s+"' out of "+bit_width+" bits range");
 			if(i<min)
-				throw new program.compiler_error(hrs_location(),"number '"+s+"' out of "+bit_width+" bits range");
+				throw new program.compiler_error(location_in_source(),"number '"+s+"' out of "+bit_width+" bits range");
 			return i;
 		}catch(NumberFormatException e){
-			throw new program.compiler_error(hrs_location(),"can not translate number '"+s+"'");
+			throw new program.compiler_error(location_in_source(),"can not translate number '"+s+"'");
 		}
 	}
 	//	private void assert_and_consume_end_of_line()throws IOException{
@@ -908,11 +916,11 @@ public final class program implements Serializable{
 
 	static int register_index_from_string(program p,String register){
 		if(register.length()!=1)
-			throw new compiler_error(p.hrs_location(),"not a register: "+register);
+			throw new compiler_error(p.location_in_source(),"not a register: "+register);
 		final int i=register.charAt(0)-'a';
 		final int nregs=16;//? magicnumber
 		if(i<0||i>=nregs)
-			throw new compiler_error(p.hrs_location(),"register not found: "+register);
+			throw new compiler_error(p.location_in_source(),"register not found: "+register);
 		return i;
 	}
 	static boolean is_reference_to_register(String ref){
