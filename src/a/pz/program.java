@@ -52,11 +52,13 @@ public final class program extends stmt implements Serializable{
 				if(ss.bin!=null)
 					pc+=ss.bin.length;
 			}
+			program_size=pc;
 			statements.forEach(e->e.link(this));
 		}catch(IOException e){
 			throw new Error(e);
 		}
 	}
+	public int program_size;
 	stmt next_statement() throws IOException{
 		String tk="";
 		while(true){
