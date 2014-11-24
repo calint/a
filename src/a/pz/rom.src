@@ -13,9 +13,9 @@ b=hi
 c=wi
 d=colr
 e=skp
-draw()
+draw(pos,hi,wi,skp,colr)
 a=pos
-dots.draw()
+dots.draw(a)
 ..
 int r=f00
 int g=0f0
@@ -25,7 +25,7 @@ c=10
 a=400
 ..
 typedef void
-void draw(scr a=400,const height b=20,const width c=100,const pxl d=fff,const skpln e=c0h)
+void draw(scr a=400,const height b=20,const width c=100,const skpln e=c0h,const pxl d=fff)
   lp b
     lp c
       *a++=d
@@ -69,6 +69,5 @@ ret
 //.sprite medusa_left 4 4
 //./\.
 ///| \
-
 
 

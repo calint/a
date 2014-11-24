@@ -1127,6 +1127,11 @@ public final class program implements Serializable{
 				throw new compiler_error(this,"function not found",function_name);
 			final int a=f.location_in_binary;
 			bin[0]|=(a<<6);
+			int i=0;
+			for(expr_function_call_arg e:args){
+				
+				i++;
+			}
 		}
 		private static final long serialVersionUID=1;
 	}
