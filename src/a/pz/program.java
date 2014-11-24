@@ -181,12 +181,12 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final static public class expr_let extends expr{
+	final static public class expr_assign extends expr{
 		stmt rhs;
 		String rh;
 		boolean is_ld;
 		boolean is_ldc;
-		public expr_let(final program p,final String register) throws IOException{
+		public expr_assign(final program p,final String register) throws IOException{
 			super(p,register);
 			if(!p.is_register_allocated(register))
 				throw new compiler_error(this,"var '"+register+"' has not been declared");
@@ -532,9 +532,9 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class decl_data_int extends stmt{
+	public static class data_int extends stmt{
 		public String name,type,default_value;
-		public decl_data_int(String name,String type,program p) throws IOException{
+		public data_int(String name,String type,program p) throws IOException{
 			super(p);
 			if(p.is_next_char_equals())//default value
 				default_value=p.next_token_in_line();
@@ -577,7 +577,7 @@ public final class program implements Serializable{
 	final public Map<String,def_struct> structs=new LinkedHashMap<>();
 	final public Map<String,def_label> labels=new LinkedHashMap<>();
 	final public Map<String,def_func> functions=new LinkedHashMap<>();
-	final public Map<String,decl_data_int> data=new LinkedHashMap<>();
+	final public Map<String,data_int> data=new LinkedHashMap<>();
 
 	public program(final String source){
 		this(null,new StringReader(source));
@@ -664,7 +664,7 @@ public final class program implements Serializable{
 					functions.put(name,df);
 					return df;
 				}
-				final decl_data_int s=new decl_data_int(name,td.name,this);
+				final data_int s=new data_int(name,td.name,this);
 				data.put(s.name,s);
 				return s;
 			}
@@ -683,7 +683,7 @@ public final class program implements Serializable{
 		final int nxtch=read();
 		switch(nxtch){
 		case '='://assignment
-			final expr_let s=new expr_let(this,tk);
+			final expr_assign s=new expr_assign(this,tk);
 			return s;
 		case '+'://expression or addstore or inc
 			if(is_next_char_plus()){
@@ -695,7 +695,7 @@ public final class program implements Serializable{
 			}
 			throw new Error("expressions not supported yet");
 		case '('://function call
-			final expr_function_call sc=new expr_function_call(this,tk);
+			final expr_func_call sc=new expr_func_call(this,tk);
 			return sc;
 		default:
 			unread(nxtch);
@@ -1168,23 +1168,23 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final static public class expr_function_call extends expr{
+	final static public class expr_func_call extends expr{
 		public String function_name;
-		public List<expr_function_call_arg> args=new ArrayList<>();
-		public expr_function_call(final program p,final String function) throws IOException{
+		public List<expr_func_call_arg> args=new ArrayList<>();
+		public expr_func_call(final program p,final String function) throws IOException{
 			super(p,function);
 			function_name=function;
 			while(true){
 				if(p.is_next_char_paranthesis_right())
 					break;
-				final expr_function_call_arg a=new expr_function_call_arg(p);
+				final expr_func_call_arg a=new expr_func_call_arg(p);
 				args.add(a);
 				if(p.is_next_char_comma())
 					continue;
 			}
 			final xwriter x=new xwriter();
 			x.p(function_name).p("(");
-			final Iterator<expr_function_call_arg> i=args.iterator();
+			final Iterator<expr_func_call_arg> i=args.iterator();
 			while(true){
 				if(!i.hasNext())
 					break;
@@ -1198,7 +1198,7 @@ public final class program implements Serializable{
 			if(f==null)
 				throw new compiler_error(this,"function not found",function_name);
 			int ii=0;
-			for(expr_function_call_arg e:args){
+			for(expr_func_call_arg e:args){
 				final def_func_arg fa=f.args.get(ii++);
 				if(!e.arg.equals(fa.name))
 					throw new compiler_error(this," argument "+ii+"  expected '"+fa.name+"' but got '"+e.arg+"'\n  "+f);
@@ -1219,9 +1219,9 @@ public final class program implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final static public class expr_function_call_arg extends expr{
+	final static public class expr_func_call_arg extends expr{
 		public String arg;
-		public expr_function_call_arg(final program p) throws IOException{
+		public expr_func_call_arg(final program p) throws IOException{
 			super(p,null);
 			arg=p.next_token_in_line();
 			txt=new xwriter().p(arg).toString();
