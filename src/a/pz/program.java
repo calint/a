@@ -14,23 +14,6 @@ import java.util.List;
 import java.util.Map;
 import b.xwriter;
 
-class stmt implements Serializable{
-	protected String location_in_source;
-	protected String txt;
-	protected String type;
-	protected int[] bin;
-	protected int location_in_binary;
-	public stmt(final program p){
-		if(p!=null)location_in_source=p.location_in_source();
-	}
-	protected void validate_references_to_labels(program r){}
-	protected void compile(program r){}
-	protected void link(program p){}
-	public String toString(){return txt;}
-	//		public void source_to(xwriter x){}
-	private static final long serialVersionUID=1;
-}
-
 public final class program extends stmt implements Serializable{
 	public static class instr extends stmt{
 		int znxr;
