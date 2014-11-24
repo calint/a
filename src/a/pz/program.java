@@ -498,8 +498,8 @@ public final class program implements Serializable{
 			if(is_next_char_end_of_file()){
 				return null;
 			}
-			if(is_next_char_bracket_left()){//st or stc
-				
+			if(is_next_char_star()){//st or stc   *a=d   *a++=d   *(a+++b)=d 
+				return new expr_store(this);
 			}
 			tk=next_token_in_line();
 			if(tk==null)
@@ -631,6 +631,12 @@ public final class program implements Serializable{
 	private boolean is_next_char_bracket_left() throws IOException{
 		final int ch=read();
 		if(ch=='[')return true;
+		unread(ch);
+		return false;
+	}
+	private boolean is_next_char_star() throws IOException{
+		final int ch=read();
+		if(ch=='*')return true;
 		unread(ch);
 		return false;
 	}
@@ -860,6 +866,23 @@ public final class program implements Serializable{
 		}
 		@Override protected void compile(program p){
 			final stmt s=new stmt(p,add.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
+			s.compile(p);
+			bin=s.bin;
+		}
+		private static final long serialVersionUID=1;
+	}
+	final static public class expr_store extends expr{
+		public String lhs,rhs;
+		public expr_store(final program p) throws IOException{
+			super(p);
+			lhs=p.next_token_in_line();
+			if(!p.is_next_char_equals())throw new compiler_error(this,"expected '=' but found '"+(char)p.read()+"'");
+			rhs=p.next_token_in_line();
+			txt=new xwriter().p("*").p(lhs).p("=").p(rhs).toString();
+		}
+		@Override protected void compile(program p){
+			//? ensure lhs,rhs are registers
+			final stmt s=new stmt(p,st.op,lhs.charAt(0)-'a',rhs.charAt(0)-'a');
 			s.compile(p);
 			bin=s.bin;
 		}
