@@ -10,7 +10,6 @@ const linewi int 100
 a=pos
 a+=p
 p++
-inc p
 b=hi
 c=wi
 d=colr
