@@ -1,5 +1,6 @@
 package a.pz;
 
+import static b.b.pl;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
@@ -37,16 +38,18 @@ public final class program implements Serializable{
 		public String name,type,value;
 		public def_const(final program r) throws IOException{
 			super(r);
-			name=r.next_token_in_line();
-			final def_const d=r.defines.get(name);
-			if(d!=null)
-				throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
 			type=r.next_token_in_line();
 			final def_type t=r.typedefs.get(type);
 			if(t==null)
 				throw new compiler_error(this,"type not found",type);
+			name=r.next_token_in_line();
+			final def_const d=r.defines.get(name);
+			if(d!=null)
+				throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
+			if(!r.is_next_char_equals())
+				throw new compiler_error(this,"expected format:  const int a=1");
 			value=r.next_token_in_line();
-			txt="const "+name+" "+type+" "+value;
+			txt="const "+type+" "+name+"="+value;
 		}
 		@Override protected void compile(program p){}
 		private static final long serialVersionUID=1;
@@ -131,19 +134,19 @@ public final class program implements Serializable{
 				bin=new int[]{s.bin[0],Integer.parseInt(((def_const)rhs).value,16)};
 				return;
 			}
-			if(program.is_reference_to_register(rh)){
+			if(is_reference_to_register(rh)){
 				final stmt s=new stmt(p,tx.op,register_index_from_string(p,register),register_index_from_string(p,rh));
 				s.compile(p);
 				bin=s.bin;
 				return;
 			}
 			if(rh.startsWith("&")){
-				final stmt s=new stmt(p,li.op,0,program.register_index_from_string(p,register));
+				final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
 				s.compile(p);
 				bin=new int[]{s.bin[0],0};
 				return;
 			}
-			final stmt s=new stmt(p,li.op,0,program.register_index_from_string(p,register));
+			final stmt s=new stmt(p,li.op,0,register_index_from_string(p,register));
 			s.compile(p);
 			bin=new int[]{s.bin[0],Integer.parseInt(rh,16)};
 			return;
@@ -461,12 +464,15 @@ public final class program implements Serializable{
 		public decl_data_int(program r) throws IOException{
 			super(r,r.next_identifier());
 			if(r.is_next_char_equals()){//default value
+				default_value=r.next_token_in_line();
 			}
-			default_value=r.next_token_in_line();
 			final xwriter x=new xwriter().p("int ").p(name);
 			if(default_value!=null)
 				x.p("=").p(default_value);
 			txt=x.toString();
+//			r.skip_whitespace_on_same_line();
+			if(!r.is_next_char_end_of_line())
+				throw new compiler_error(this,"expected end of line after: ["+txt+"]");
 		}
 		@Override protected void compile(program p){
 			final int d=Integer.parseInt(default_value==null?"0":default_value,16);
@@ -527,6 +533,7 @@ public final class program implements Serializable{
 		String tk="";
 		while(true){
 			skip_whitespace();
+			pl(" line "+hrs_location());
 			if(is_next_char_end_of_file()){
 				return null;
 			}
@@ -558,8 +565,8 @@ public final class program implements Serializable{
 			}
 			if(tk.startsWith(":")){
 				final def_label s=new def_label(this,tk.substring(1));
-				labels.put(s.name,s);
 				consume_rest_of_line();
+				labels.put(s.name,s);
 				return s;
 			}
 			final def_type td=typedefs.get(tk);
@@ -637,28 +644,24 @@ public final class program implements Serializable{
 		}catch(Throwable t){
 			throw new compiler_error(hrs_location(),t.toString());
 		}
-		if(!(s instanceof data)){
-			while(true){
-				final String t=next_token_in_line();
-				if(t==null)
-					break;
-				if("nxt".equalsIgnoreCase(t)){
-					s.znxr|=4;
-					continue;
-				}
-				if("ret".equalsIgnoreCase(t)){
-					s.znxr|=8;
-					continue;
-				}
-				if(t.startsWith("//")){
-					consume_rest_of_line();
-					break;
-				}
-				throw new Error("3 "+t);
+		while(true){
+			final String t=next_token_in_line();
+			if(t==null)
+				break;
+			if("nxt".equalsIgnoreCase(t)){
+				s.znxr|=4;
+				continue;
 			}
-			//			s.znxr=znxr;
+			if("ret".equalsIgnoreCase(t)){
+				s.znxr|=8;
+				continue;
+			}
+			if(t.startsWith("//")){
+				consume_rest_of_line();
+				break;
+			}
+			throw new Error("3 "+t);
 		}
-		consume_rest_of_line();
 		return s;
 	}
 	private boolean is_next_char_plus() throws IOException{
@@ -724,7 +727,7 @@ public final class program implements Serializable{
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
 	private static String hr_location_string_from_line_and_col(final int ln,final int col){
-		return ln+":"+col;
+		return ln+":"+(col+1);
 	}
 	private int read() throws IOException{
 		final int ch=pr.read();
@@ -790,14 +793,14 @@ public final class program implements Serializable{
 	private final void skip_whitespace_on_same_line() throws IOException{
 		while(true){
 			final int ch=read();
-			if(ch==-1)
-				return;
 			if(ch=='\n'){
 				unread(ch);
 				return;
 			}
 			if(Character.isWhitespace(ch))
 				continue;
+			if(ch==-1)
+				return;
 			unread(ch);
 			return;
 		}
