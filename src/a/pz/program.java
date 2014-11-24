@@ -683,7 +683,7 @@ public final class program implements Serializable{
 		for(int i=0;i<rom.length;i++)
 			rom[i]=-1;
 		int pc=0;
-		for(final program.stmt ss:statements){
+		for(final stmt ss:statements){
 			if(ss.bin==null)
 				continue;
 			final int c=ss.bin.length;
