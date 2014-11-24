@@ -26,41 +26,44 @@ public final class program implements Serializable{
 		public instr(program p){
 			super(p);
 		}
-		public instr(final program r,final int znxr,final int op,final String ra,final String rd){
-			super(r);
+		public instr(final program p,final int znxr,final int op,final String rd){
+			this(p,znxr,op,null,rd);
+		}
+		public instr(final program p,final int znxr,final int op,final String ra,final String rd){
+			super(p);
 			this.znxr=znxr;
 			this.op=op;
 			this.ra=ra;
 			this.rd=rd;
-			rai=ra==null?0:program.register_index_from_string(r,ra);
-			rdi=rd==null?0:program.register_index_from_string(r,rd);
-			mkstr();
+			rai=ra==null?0:program.register_index_from_string(p,ra);
+			rdi=rd==null?0:program.register_index_from_string(p,rd);
+//			mkstr();
 		}
-		public instr(final program r,final int znxr,final int op,final String ra,final String rd,boolean fliprdra){
-			this(r,znxr,op,ra,rd);
+		public instr(final program p,final int znxr,final int op,final String ra,final String rd,boolean fliprdra){
+			this(p,znxr,op,ra,rd);
 			if(fliprdra){
 				final int i=rai;
 				rai=rdi;
 				rdi=i;
 			}
-			mkstr();
+//			mkstr();
 		}
-		private void mkstr(){
-			final xwriter x=new xwriter();
-			if((znxr&3)==3)
-				x.p("ifp ");
-			else if((znxr&1)==1)
-				x.p("ifz ");
-			else if((znxr&2)==2)
-				x.p("ifn ");
-			x.p(txt);
-			x.spc();
-			if((znxr&4)==4)
-				x.p(" nxt");
-			if((znxr&8)==8)
-				x.p(" ret");
-			txt=x.toString();
-		}
+//		private void mkstr(){
+//			final xwriter x=new xwriter();
+//			if((znxr&3)==3)
+//				x.p("ifp ");
+//			else if((znxr&1)==1)
+//				x.p("ifz ");
+//			else if((znxr&2)==2)
+//				x.p("ifn ");
+//			x.p(txt);
+//			x.spc();
+//			if((znxr&4)==4)
+//				x.p(" nxt");
+//			if((znxr&8)==8)
+//				x.p(" ret");
+//			txt=x.toString();
+//		}
 		//		public instr(final program r,final int op,final int ra,final int rd){
 		//			super(r,op,ra,rd);
 		//		}
@@ -84,7 +87,7 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_const extends def{
-		public String name,value;
+		public String value;
 		public def_const(final program r) throws IOException{
 			super(r);
 			type=r.next_token_in_line();
@@ -299,7 +302,7 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_type extends def{
-		public String name;
+//		public String name;
 		public def_type(final program r) throws IOException{
 			super(r);
 			name=r.next_identifier();
@@ -310,25 +313,12 @@ public final class program implements Serializable{
 	public static class stmt implements Serializable{
 		public String location_in_source;
 		protected String txt;
+		protected String type;
 		protected int[] bin;
 		protected int location_in_binary;
-		//		protected int znxr;
-		//		protected int op;
-		//		protected int rai;
-		//		protected int rdi;
-		protected String type;
 		public stmt(final program r){
 			location_in_source=r.location_in_source();
 		}
-		//		protected stmt(final program r,final int op,final int ra,final int rd){
-		//			this(r);
-		//			this.op=op;
-		//			this.rai=ra;
-		//			this.rdi=rd;
-		//		}
-		//		protected stmt(final program r,final int op,final int ra,final int rd,final boolean flip_ra_rd){
-		//			this(r,op,rd,ra);
-		//		}
 		protected void validate_references_to_labels(program r){}
 		protected void compile(program r){}
 		protected void link(program p){}
@@ -345,7 +335,7 @@ public final class program implements Serializable{
 		public li(program r) throws IOException{
 			super(r,0,li.op,null,r.next_token_in_line());
 			data=r.next_token_in_line();
-			txt="li "+(char)(rdi+'a')+" "+data;
+			txt="li "+ra+" "+rd;
 		}
 		public li(program r,String reg,String data){
 			super(r,0,li.op,null,reg);
@@ -1117,19 +1107,23 @@ public final class program implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	public static class def extends stmt{
+		String name,type;
 		public def(program p){
 			super(p);
 		}
 		final @Override protected void compile(program p){}
+		final @Override protected void link(program p){}
 		private static final long serialVersionUID=1;
 	}
 	public static class def_func extends def{
-		public String return_type,name;
+//		public String return_type;
 		public List<def_func_arg> args=new ArrayList<>();
 		public def_func(String name,String return_type,program p) throws IOException{
 			super(p);
+			type=return_type;
 			this.name=name;
-			this.return_type=return_type;
+//			this.name=name;
+//			this.return_type=return_type;
 			if(!p.is_next_char_paranthesis_right()){
 				while(true){
 					final def_func_arg a=new def_func_arg(p);
