@@ -39,7 +39,7 @@ final public class crun_source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final program p=new program(src.str());
 		try{
-			p.compile();
+			p.build();
 		}catch(Throwable t){
 			log(t);
 			if(x!=null)
