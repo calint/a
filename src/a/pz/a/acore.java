@@ -66,9 +66,9 @@ final public class acore extends a{
 			p.functions.values().forEach(e->y.p(e.toString()).nl());
 			y.nl().nl();
 			y.nl().pl("labels:");
-			p.labels.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
+			p.labels.values().forEach(e->y.p(e.toString()).nl());
 			y.nl().pl("structs");
-			p.structs.values().forEach(e->y.p(e.name).spc().p(e.location_in_source).nl());
+			p.structs.values().forEach(e->y.p(e.toString()).nl());
 			toc.set(y.toString());
 			p.zap(cor.rom);
 			di.set(p.toString());
