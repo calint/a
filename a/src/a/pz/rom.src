@@ -13,7 +13,7 @@ b=hi
 c=wi
 d=colr
 e=skp
-draw(pos,hi,wi,skp,colr)
+draw(a,b,c,e,d)
 a=pos
 dots.draw(a)
 ..

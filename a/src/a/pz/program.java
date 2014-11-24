@@ -1129,8 +1129,9 @@ public final class program implements Serializable{
 			bin[0]|=(a<<6);
 			int i=0;
 			for(expr_function_call_arg e:args){
-				
-				i++;
+				final def_func_arg fa=f.args.get(i++);
+				if(!e.arg.equals(fa.name))
+					throw new compiler_error(this," argument "+i+"  expected '"+fa.name+"' but got '"+e.arg+"'\n  "+f);
 			}
 		}
 		private static final long serialVersionUID=1;
