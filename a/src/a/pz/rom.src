@@ -6,7 +6,8 @@ const skp int c0
 const colr int 800
 const linewi int 100
 
-//var a p b c d e
+//var a p
+//draw(pos,a+=++p,hi,wi,colr,linewi-wi)
 a=pos
 a+=p
 p++
@@ -16,11 +17,17 @@ d=colr
 e=skp
 //e=linewi-wi
 draw()
-//draw(pos,a+=++p,hi,wi,colr,linewi-wi)
 
 a=pos
 dots.draw()
 //dots.draw()
+..
+int r=f00
+int g=0f0
+int b=00f
+int d
+c=10
+a=400
 ..
 ..
 struct dot yyxx int 0000 rgb int 000
@@ -44,12 +51,6 @@ struct dot yyxx int 0000 rgb int 000
 //bug    st d e nxt ret
     st d e nxt 
   ret
-..
-int r f00
-int g 0f0
-int b 00f
-li c 10
-li a 400
 ..
 :draw a scr 400 b height 20 c width 100 d pxl 8888 e skp c0
   lp b
