@@ -6,14 +6,17 @@ typedef height
 typedef width
 typedef skpln
 typedef pxl
+
 const scr pos=1040
 const height hi=30
 const width wi=40
 const skpln skp=c0
 const pxl colr=800
 const int linewi=100
+
 void draw(scr a=400,const height b=20,const width c=100,const skpln d=c0h,const pxl e=fff)
 void dots.draw(const scr a=400)
+
 var a=pos
 var b=hi
 var c=wi
@@ -25,6 +28,8 @@ draw(a,b,c,d,e)
 a=pos
 dots.draw(a)
 ..
+//end-of-program
+
 int r=f00
 int g=0f0
 int b=00f
