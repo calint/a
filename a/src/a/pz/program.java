@@ -146,25 +146,24 @@ public final class program extends stmt implements Serializable{
 		}
 		int znxr=0;
 		switch(tk){
-		case "ifz":{
+		case "ifz":
 			znxr=1;
 			tk=next_token_in_line();
 			break;
-		}
-		case "ifn":{
+		case "ifn":
 			znxr=2;
 			tk=next_token_in_line();
 			break;
-		}
-		case "ifp":{
+		case "ifp":
 			znxr=3;
 			tk=next_token_in_line();
 			break;
 		}
-		}
 		final instr s;
+//		switch(tk){
+//		}
 		try{
-			s=(stmt.instr)Class.forName(stmt.class.getName()+"$"+tk).getConstructor(program.class).newInstance(this);
+			s=(instr)Class.forName(stmt.class.getName()+"$"+tk).getConstructor(program.class).newInstance(this);
 			s.znxr=znxr;
 		}catch(InvocationTargetException t){
 			if(t.getCause() instanceof stmt.compiler_error)
