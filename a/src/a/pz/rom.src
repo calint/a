@@ -44,11 +44,10 @@ struct dot yyxx int 0000 rgb int 000
 :dots.draw a ro scr 400
   var b c d e
   b=&dots
-  ldc c b
-// c=*b++
+  c=*b++
   lp c
-    ldc d b
-    ldc e b
+    d=*b++
+    e=*b++
     d+=a
     *d=e
   nxt
