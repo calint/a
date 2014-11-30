@@ -93,33 +93,36 @@ public abstract class stmt implements Serializable{
 			value=r.next_token_in_line();
 			txt="const "+type+" "+name+"="+value;
 		}
+		public int toInt(program p){
+			return Integer.parseInt(value,16);
+		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_var extends expr{
-		public String default_value;
-		public expr_var(final program r) throws IOException{
-			super(r,r.next_token_in_line());
-			r.allocate_register(this,to_register);
-			if(r.is_next_char_equals())
-				default_value=r.next_token_in_line();
-			if(!r.is_next_char_end_of_line())
+		public String rh;
+		public expr_var(final program p) throws IOException{
+			super(p,p.next_token_in_line());
+			p.allocate_register(this,to_register);
+			if(p.is_next_char_equals())
+				rh=p.next_token_in_line();
+			if(!p.is_next_char_end_of_line())
 				throw new compiler_error(this,"expected end of line");
 			final xwriter x=new xwriter().p("var").spc().p(to_register);
-			if(default_value!=null)
-				x.p("=").p(default_value);
+			if(rh!=null)
+				x.p("=").p(rh.toString());
 			txt=x.toString();
-			if(default_value==null)
+			if(rh==null)
 				return;
-			final def_const dc=r.defines.get(default_value);
+			final def_const dc=p.defines.get(rh);
 			if(dc!=null){
 				type=dc.type;
 				return;
 			}
 		}
 		@Override protected void compile(program p){
-			if(default_value==null)
+			if(rh==null)
 				return;
-			final def_const dc=p.defines.get(default_value);
+			final def_const dc=p.defines.get(rh);
 			if(dc!=null){
 				final program p2=new program(p,"li "+to_register+" 0");
 				p2.build();
@@ -128,7 +131,7 @@ public abstract class stmt implements Serializable{
 				//type="int&"
 				return;
 			}
-			if(default_value.startsWith("&")){// li
+			if(rh.startsWith("&")){// li
 				final program p2=new program(p,"li "+to_register+" 0");
 				p2.build();
 				final stmt s=p2.statements.get(0);
@@ -136,11 +139,11 @@ public abstract class stmt implements Serializable{
 				//type="int&"
 				return;
 			}
-			if(program.is_reference_to_register(default_value)){// tx
-				if(!p.is_register_allocated(default_value))
-					throw new compiler_error(this,"var not declared",default_value);
+			if(program.is_reference_to_register(rh)){// tx
+				if(!p.is_register_allocated(rh))
+					throw new compiler_error(this,"var not declared",rh);
 				//? checktypes
-				final program p2=new program("tx "+to_register+" "+default_value);
+				final program p2=new program("tx "+to_register+" "+rh);
 				p2.build();
 				final stmt s=p2.statements.get(0);
 				bin=s.bin;
@@ -148,21 +151,23 @@ public abstract class stmt implements Serializable{
 				return;
 			}
 			// constant
-			final li l=new li(p,to_register,default_value);
+			final li l=new li(p,to_register,new constexpr(p,rh));
 			l.compile(p);
 			l.link(p);
 			bin=l.bin;
 		}
 		@Override protected void link(program p){
-			if(default_value==null)
+			if(rh==null)
 				return;
-			final def_const dc=p.defines.get(default_value);
+			final def_const dc=p.defines.get(rh);
 			if(dc!=null){
-				bin[1]=Integer.parseInt(dc.value,16);
+				final constexpr ce=new constexpr(p,dc.value);
+				final int i=ce.calc(p);
+				bin[1]=i;
 				return;
 			}
-			if(default_value.startsWith("&")){// li
-				final String nm=default_value.substring(1);
+			if(rh.startsWith("&")){// li
+				final String nm=rh.substring(1);
 				final def_label lb=p.labels.get(nm);
 				if(lb==null)
 					throw new compiler_error(this,"label not found",nm);
@@ -186,12 +191,58 @@ public abstract class stmt implements Serializable{
 //		}
 //		private static final long serialVersionUID=1;
 //	}
-	abstract public static class constexpr extends stmt{
-		public constexpr(program p){super(p);}
+	public static class constexpr extends stmt{
+		private String expr;
+		public constexpr(final program p){super(p);}
+		public int calc(final program p){
+			// &dots
+			if(expr.startsWith("&"))
+				return p.labels.get(expr.substring(1)).location_in_binary;
+				
+			// linewi
+			final def_const dc=p.defines.get(expr);
+			if(dc!=null)
+				return dc.toInt(p);
+			
+			try{return Integer.parseInt(expr,16);}catch(Throwable t){
+			
+			//linewi-wi
+			final int i=expr.indexOf('-');
+			if(i!=-1){
+				final constexpr_minus minus=new constexpr_minus(p,expr.substring(0,i),expr.substring(i+1));
+				return minus.calc(p);
+			}
+			
+			throw new Error();
+			//linewi+wi
+			}
+		}
+		public constexpr(program p,String expr){
+			super(p);this.expr=expr;
+//			if(expr.startsWith("&")){
+//			}
+//			boolean is_int=true;
+//			try{expr_int=Integer.parseInt(expr);}catch(Throwable t){is_int=false;}
+//			if(is_int)
+//				txt=
+		}
+		public String toString(){
+			return expr;
+		}
 		private static final long serialVersionUID=1;
 	}
 	public final static class constexpr_minus extends constexpr{
-		public constexpr_minus(program p,String lhs){super(p);}
+		private String lhs,rhs;
+		public constexpr_minus(program p,String lhs,String rhs){
+			super(p);this.lhs=lhs;this.rhs=rhs;
+		}
+		@Override public int calc(program p){
+			final constexpr lh=new constexpr(p,lhs);
+			final constexpr rh=new constexpr(p,rhs);
+			final int lhi=lh.calc(p);
+			final int rhi=rh.calc(p);
+			return lhi-rhi;
+		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_assign extends expr{
@@ -254,7 +305,7 @@ public abstract class stmt implements Serializable{
 				return;
 			}
 			// const
-			final li s=new li(p,to_register,rh);
+			final li s=new li(p,to_register,new constexpr(p,rh));
 			s.compile(p);
 			bin=s.bin;
 			return;
@@ -326,16 +377,22 @@ public abstract class stmt implements Serializable{
 	final public static class li extends instr{
 		private String data;
 		private int value;
+		private constexpr ce;
 		final public static int op=0x0000;
 		public li(program r) throws IOException{
 			super(r,0,li.op,null,r.next_token_in_line());
 			data=r.next_token_in_line();
 			txt="li "+rd+" "+data;
 		}
-		public li(program r,String reg,String data){
+//		public li(program r,String reg,String data){
+//			super(r,0,li.op,null,reg);
+//			this.data=data;
+//			txt="li "+reg+" "+data;
+//		}
+		public li(program r,String reg,constexpr ce){
 			super(r,0,li.op,null,reg);
-			this.data=data;
-			txt="li "+reg+" "+data;
+			this.ce=ce;
+			txt="li "+reg+" "+ce;
 		}
 		//		private boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
 		@Override protected void compile(program p){
