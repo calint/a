@@ -141,7 +141,7 @@ final public class acore extends a{
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.divo("laycent");
-		if(hasbit(bit_show_panel))x.divo("float panel").spanh(st,"fontbold").r(sy).r(re).r(ca).r(lo).div_();
+		if(hasbit(bit_show_panel))x.divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
 		if(hasbit(bit_show_rom))x.r(ro);
 		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel").divh(toc,"float textleft panel");
 		if(pt()==null){
@@ -163,7 +163,7 @@ final public class acore extends a{
 		st.set("reseted");
 		if(x==null)return;
 		xfocus(x);
-		x.xu(st).xu(sy).xuo(re).xuo(ca).xuo(lo);
+		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
@@ -177,7 +177,7 @@ final public class acore extends a{
 		cor.step();
 		if(x==null)return;
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
-		x.xuo(sy).xuo(re).xuo(ca).xuo(lo);
+		x.xu(sy).xu(re).xu(ca).xu(lo);
 		xfocus(x);
 	}
 	private boolean going;

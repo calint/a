@@ -4,7 +4,6 @@ import b.xwriter;
 final public class registers extends a{
 	public int[]ints;
 	public void to(final xwriter x){
-		x.divo(this);
 		x.p("registers:").nl();
 		final String pad="0000";
 		for(int i=0;i<ints.length;){
@@ -17,7 +16,6 @@ final public class registers extends a{
 			if((i%4)==0)
 				x.nl();
 		}
-		x.div_();
 	}
 	private static final long serialVersionUID=1;
 }

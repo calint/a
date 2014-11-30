@@ -264,6 +264,18 @@ public final class xwriter{
 	public xwriter el(final a e,final String style){return p("<span id=").p(e.id()).p(" style=\"").p(style).p("\">");}
 	public xwriter el_(){return p("</span>");}
 	public xwriter r(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
+	public xwriter rel(final a e)throws Throwable{
+		if(e==null)return this;
+		el(e);
+		e.to(this);
+		return el_();
+	}
+	public xwriter rdiv(final a e)throws Throwable{
+		if(e==null)return this;
+		divo(e);
+		e.to(this);
+		return div_();
+	}
 	public xwriter td(final int colspan){return p("<td colspan=").p(colspan).p(">");}
 	public xwriter style(final a e,final String style){return style().css(e,style).style_();}
 	public xwriter style(final a e,final String selector,final String style){return style().css(e,selector,style).style_();}
