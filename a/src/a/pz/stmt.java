@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import b.xwriter;
 
-public class stmt implements Serializable{
-	public static class add extends stmt.instr{
+public abstract class stmt implements Serializable{
+	final public static class add extends stmt.instr{
 		final public static int op=0x00a0;
 		public add(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line());
@@ -172,12 +172,26 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class expr extends stmt{
+	abstract public static class expr extends stmt{
 		String to_register;
 		public expr(program p,String to_register){
 			super(p);
 			this.to_register=to_register;
 		}
+		private static final long serialVersionUID=1;
+	}
+	public final static class expr_plus extends expr{
+		public expr_plus(program p,String lhs,String to_register){
+			super(p,to_register);
+		}
+		private static final long serialVersionUID=1;
+	}
+	abstract public static class constexpr extends stmt{
+		public constexpr(program p){super(p);}
+		private static final long serialVersionUID=1;
+	}
+	public final static class constexpr_minus extends constexpr{
+		public constexpr_minus(program p,String lhs){super(p);}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_assign extends expr{
@@ -281,7 +295,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_struct_member extends def{
+	final public static class def_struct_member extends def{
 		private String type;
 		private String name;
 		private String default_value;
@@ -309,7 +323,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class li extends instr{
+	final public static class li extends instr{
 		private String data;
 		private int value;
 		final public static int op=0x0000;
@@ -357,7 +371,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class inc extends instr{
+	final public static class inc extends instr{
 		final public static int op=0x0200;
 		public inc(program r) throws IOException{
 			super(r,0,op,null,r.next_token_in_line());
@@ -365,7 +379,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class st extends instr{
+	final public static class st extends instr{
 		final public static int op=0x00d8;
 		public st(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line());
@@ -373,7 +387,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class eof extends instr{
+	final public static class eof extends instr{
 		public eof(program r) throws IOException{
 			super(r);
 			txt="..";
@@ -383,7 +397,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class nxt extends instr{
+	final public static class nxt extends instr{
 		final public static int op=0x0004;
 		public nxt(program r) throws IOException{
 			super(r,0,nxt.op,null,null);
@@ -391,7 +405,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class ret extends instr{
+	final public static class ret extends instr{
 		final public static int op=0x0008;
 		public ret(program r) throws IOException{
 			super(r,0,ret.op,null,null);
@@ -399,7 +413,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class lp extends instr{
+	final public static class lp extends instr{
 		final public static int op=0x0100;
 		public lp(program r) throws IOException{
 			super(r,0,lp.op,null,r.next_token_in_line());
@@ -407,7 +421,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class stc extends instr{
+	final public static class stc extends instr{
 		final public static int op=0x0040;
 		public stc(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line());
@@ -415,14 +429,14 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class sub extends instr{
+	final public static class sub extends instr{
 		final public static int op=0x0020;
 		public sub(program r) throws IOException{
 			super(r,0,sub.op,r.next_token_in_line(),r.next_token_in_line());
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class call extends instr{
+	final public static class call extends instr{
 		String label;
 		final public static int op=0x0010;
 		public call(program r) throws IOException{
@@ -439,7 +453,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class data extends stmt{
+	final public static class data extends stmt{
 		private List<String> data;
 		public data(program r) throws IOException{
 			super(r);
@@ -463,7 +477,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_label extends def{
+	final public static class def_label extends def{
 		public String name;
 		public def_label(program p,String nm){
 			super(p);
@@ -475,7 +489,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_comment extends def{
+	final public static class def_comment extends def{
 		public String line;
 		public def_comment(program p) throws IOException{
 			super(p);
@@ -484,14 +498,14 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class ld extends instr{
+	final public static class ld extends instr{
 		final public static int op=0x00f8;
 		public ld(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class ldc extends instr{
+	final public static class ldc extends instr{
 		final public static int op=0x00c0;
 		public ldc(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
@@ -499,21 +513,21 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class tx extends instr{
+	final public static class tx extends instr{
 		final public static int op=0x00e0;
 		public tx(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class shf extends instr{
+	final public static class shf extends instr{
 		final public static int op=0x0060;
 		public shf(program r) throws IOException{
 			super(r,0,op,r.next_token_in_line(),r.next_token_in_line(),true);
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class data_int extends stmt{
+	final public static class data_int extends stmt{
 		public String name,type,default_value;
 		public data_int(String name,String type,program p) throws IOException{
 			super(p);
@@ -533,7 +547,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class compiler_error extends RuntimeException{
+	final public static class compiler_error extends RuntimeException{
 		public String source_location;
 		public String message;
 		public compiler_error(stmt s,String message){
@@ -611,7 +625,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def extends stmt{
+	abstract public static class def extends stmt{
 		String name,type;
 		public def(program p){
 			super(p);
@@ -625,7 +639,7 @@ public class stmt implements Serializable{
 		@Override protected void link(program p){}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_func extends def{
+	final public static class def_func extends def{
 		public List<def_func_arg> args=new ArrayList<>();
 		public program code_block;
 		public def_func(String name,String return_type,program p) throws IOException{
@@ -672,7 +686,7 @@ public class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_func_arg extends def{
+	final public static class def_func_arg extends def{
 		public String type,name,default_value;
 		public boolean is_const;
 		public def_func_arg(program p) throws IOException{
