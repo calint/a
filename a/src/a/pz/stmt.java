@@ -180,12 +180,12 @@ public abstract class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public final static class expr_plus extends expr{
-		public expr_plus(program p,String lhs,String to_register){
-			super(p,to_register);
-		}
-		private static final long serialVersionUID=1;
-	}
+//	public final static class expr_plus extends expr{
+//		public expr_plus(program p,String lhs,String to_register){
+//			super(p,to_register);
+//		}
+//		private static final long serialVersionUID=1;
+//	}
 	abstract public static class constexpr extends stmt{
 		public constexpr(program p){super(p);}
 		private static final long serialVersionUID=1;
