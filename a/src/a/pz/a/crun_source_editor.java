@@ -3,6 +3,7 @@ import static b.b.log;
 import java.util.HashSet;
 import java.util.Set;
 import a.pz.program;
+import a.pz.stmt.compiler_error;
 import b.a;
 import b.xwriter;
 final public class crun_source_editor extends a{
@@ -16,9 +17,29 @@ final public class crun_source_editor extends a{
 	//		lstfocusline=focusline;
 	//	}
 	public a src;
-	//	public a sts;
+	public a sts;
+	public static class line_numbers extends a{
+		public int focus_line=0;
+		@Override public void to(xwriter x) throws Throwable{
+			for(int i=1;i<100;i++)
+				if(i==focus_line)
+					x.divo("","color:#800;font-weight:bold;background:yellow").p(Integer.toString(i)).div_();
+				else
+					x.pl(Integer.toString(i));
+		}
+		
+		private static final long serialVersionUID=1;
+	}
+	public line_numbers ln;
 	public void to(final xwriter x) throws Throwable{
-		x.ax(this,"f3","crun ").nl().inptxtarea(src);
+		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3","crun ").nl();
+		x.table().tr().td("","text-align:right;padding-right:.5em");
+		x.el(ln);
+		ln.to(x);
+		x.el_();
+		x.td();
+		x.inptxtarea(src);
+		x.table_();
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
@@ -37,13 +58,24 @@ final public class crun_source_editor extends a{
 	//	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
-		final program p=new program(src.str());
+		final program p;
 		try{
+			p=new program(src.str());
 			p.build();
+			sts.set(p.program_length+" ");
+			final int prev_focus_line=ln.focus_line;
+			ln.focus_line=0;
+			if(x!=null){
+				if(prev_focus_line!=ln.focus_line)
+					x.xu(ln);
+				x.xu(sts);
+			}
 		}catch(Throwable t){
 			log(t);
-			if(x!=null)
-				x.xalert(t.toString());
+			sts.set(t.toString()+"\n");
+			if(t instanceof compiler_error)
+				ln.focus_line=((compiler_error)t).source_location_line();
+			if(x!=null)x.xu(ln).xu(sts);
 			return;
 		}
 		if(!ommit_compiling_source_from_disassembler){
