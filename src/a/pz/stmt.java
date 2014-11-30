@@ -90,7 +90,7 @@ public abstract class stmt implements Serializable{
 				throw new compiler_error(this,"define '"+name+"' already declared at "+d.location_in_source);
 			if(!r.is_next_char_equals())
 				throw new compiler_error(this,"expected format:  const int a=1");
-			value=r.next_token_in_line();
+			value=r.consume_rest_of_line();
 			txt="const "+type+" "+name+"="+value;
 		}
 		public int toInt(program p){
@@ -151,7 +151,7 @@ public abstract class stmt implements Serializable{
 				return;
 			}
 			// constant
-			final li l=new li(p,to_register,new constexpr(p,rh));
+			final li l=new li(p,to_register,constexpr.from(p,rh));
 			l.compile(p);
 			l.link(p);
 			bin=l.bin;
@@ -159,21 +159,27 @@ public abstract class stmt implements Serializable{
 		@Override protected void link(program p){
 			if(rh==null)
 				return;
+
 			final def_const dc=p.defines.get(rh);
 			if(dc!=null){
-				final constexpr ce=new constexpr(p,dc.value);
+				final constexpr ce=constexpr.from(p,dc.value);
 				final int i=ce.calc(p);
 				bin[1]=i;
 				return;
 			}
-			if(rh.startsWith("&")){// li
-				final String nm=rh.substring(1);
-				final def_label lb=p.labels.get(nm);
-				if(lb==null)
-					throw new compiler_error(this,"label not found",nm);
-				bin[1]=lb.location_in_binary;
-				return;
-			}
+			final constexpr ce=constexpr.from(p,rh);
+			final int i=ce.calc(p);
+			bin[1]=i;
+			return;
+			
+//			if(rh.startsWith("&")){// li
+//				final String nm=rh.substring(1);
+//				final def_label lb=p.labels.get(nm);
+//				if(lb==null)
+//					throw new compiler_error(this,"label not found",nm);
+//				bin[1]=lb.location_in_binary;
+//				return;
+//			}
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -191,32 +197,35 @@ public abstract class stmt implements Serializable{
 //		}
 //		private static final long serialVersionUID=1;
 //	}
-	public static class constexpr extends stmt{
-		private String expr;
-		public constexpr(final program p){super(p);}
-		public int calc(final program p){
+	abstract public static class constexpr extends stmt{
+		static constexpr from(program p,String expr){
 			// &dots
-			if(expr.startsWith("&"))
-				return p.labels.get(expr.substring(1)).location_in_binary;
+			if(expr.startsWith("&")){
+				final def_label dl=p.labels.get(expr.substring(1));
+				final int i=dl.location_in_binary;
+				return new constexpr_int(p,i);
+			}
 				
 			// linewi
 			final def_const dc=p.defines.get(expr);
 			if(dc!=null)
-				return dc.toInt(p);
-			
-			try{return Integer.parseInt(expr,16);}catch(Throwable t){
+				return new constexpr_int(p,dc.toInt(p));
 			
 			//linewi-wi
-			final int i=expr.indexOf('-');
-			if(i!=-1){
-				final constexpr_minus minus=new constexpr_minus(p,expr.substring(0,i),expr.substring(i+1));
-				return minus.calc(p);
-			}
-			
-			throw new Error();
-			//linewi+wi
-			}
+			final int i1=expr.indexOf('-');
+			if(i1!=-1)
+				return new constexpr_minus(p,expr.substring(0,i1),expr.substring(i1+1));
+				
+			//wi+1
+			final int i2=expr.indexOf('+');
+			if(i2!=-1)
+				return new constexpr_plus(p,expr.substring(0,i2),expr.substring(i2+1));
+				
+			try{return new constexpr_int(p,Integer.parseInt(expr,16));}catch(Throwable t){throw new compiler_error("","not a hex: "+expr);}
 		}
+		private String expr;
+		public constexpr(final program p){super(p);}
+		abstract public int calc(final program p);
 		public constexpr(program p,String expr){
 			super(p);this.expr=expr;
 //			if(expr.startsWith("&")){
@@ -237,16 +246,40 @@ public abstract class stmt implements Serializable{
 			super(p);this.lhs=lhs;this.rhs=rhs;
 		}
 		@Override public int calc(program p){
-			final constexpr lh=new constexpr(p,lhs);
-			final constexpr rh=new constexpr(p,rhs);
+			final constexpr lh=from(p,lhs);
+			final constexpr rh=from(p,rhs);
 			final int lhi=lh.calc(p);
 			final int rhi=rh.calc(p);
-			return lhi-rhi;
+			return lhi-rhi;//? bug const int skp=linewi-wi-1-1
+		}
+		private static final long serialVersionUID=1;
+	}
+	public final static class constexpr_plus extends constexpr{
+		private String lhs,rhs;
+		public constexpr_plus(program p,String lhs,String rhs){
+			super(p);this.lhs=lhs;this.rhs=rhs;
+		}
+		@Override public int calc(program p){
+			final constexpr lh=from(p,lhs);
+			final constexpr rh=from(p,rhs);
+			final int lhi=lh.calc(p);
+			final int rhi=rh.calc(p);
+			return lhi+rhi;
+		}
+		private static final long serialVersionUID=1;
+	}
+	public final static class constexpr_int extends constexpr{
+		private int i;
+		public constexpr_int(program p,int i){
+			super(p);this.i=i;
+		}
+		@Override public int calc(program p){
+			return i;
 		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_assign extends expr{
-		stmt rhs;
+//		stmt rhs;
 		String rh;
 		boolean is_ld;
 		boolean is_ldc;
@@ -267,11 +300,11 @@ public abstract class stmt implements Serializable{
 			}
 			rh=p.next_token_in_line();
 			txt=new xwriter().p(register).p("=").p(rh.toString()).toString();
-			final def_const c=p.defines.get(rh);
-			if(c!=null){//li
-				rhs=c;
-				return;
-			}
+//			final def_const c=p.defines.get(rh);
+//			if(c!=null){//li
+//				rhs=c;
+//				return;
+//			}
 		}
 		@Override protected void compile(program p){
 			if(is_ld){
@@ -286,12 +319,13 @@ public abstract class stmt implements Serializable{
 				bin=s.bin;
 				return;
 			}
-			if(rhs instanceof def_const){
-				final instr s=new instr(p,0,li.op,null,to_register);
-				s.compile(p);
-				bin=new int[]{s.bin[0],Integer.parseInt(((def_const)rhs).value,16)};
-				return;
-			}
+//			if(rhs instanceof def_const){
+//				final instr s=new instr(p,0,li.op,null,to_register);
+//				s.compile(p);
+//				final int i=new constexpr(p,((def_const)rhs).value).calc(p);
+//				bin=new int[]{s.bin[0],i};
+//				return;
+//			}
 			if(program.is_reference_to_register(rh)){
 				final instr s=new instr(p,0,tx.op,to_register,rh);
 				s.compile(p);
@@ -305,7 +339,7 @@ public abstract class stmt implements Serializable{
 				return;
 			}
 			// const
-			final li s=new li(p,to_register,new constexpr(p,rh));
+			final li s=new li(p,to_register,constexpr.from(p,rh));
 			s.compile(p);
 			bin=s.bin;
 			return;
@@ -319,6 +353,10 @@ public abstract class stmt implements Serializable{
 				bin[1]=lbl.location_in_binary;
 				return;
 			}
+			if(is_ld||is_ldc)
+				return;
+			final int i=constexpr.from(p,rh).calc(p);
+			bin[1]=i;
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -399,6 +437,11 @@ public abstract class stmt implements Serializable{
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
 		@Override protected void link(program p){
+			if(ce!=null){
+				final int i=ce.calc(p);
+				bin[1]=i;
+				return;
+			}
 			final def_const def=p.defines.get(data);
 			if(def!=null){
 				data=def.value;

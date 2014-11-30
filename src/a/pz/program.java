@@ -122,9 +122,9 @@ public final class program extends stmt implements Serializable{
 				return new stmt.expr_store(this);
 			tk=next_token_in_line();
 			if(tk==null)
-				return new stmt.eof(this);
+				throw new Error();
 			if(tk.equals("const")){
-				final stmt.def_const s=new stmt.def_const(this);
+				final def_const s=new def_const(this);
 				defines.put(s.name,s);
 				return s;
 			}
