@@ -10,7 +10,6 @@ typedef pxl
 const scr pos=1040
 const height hi=30
 const width wi=40
-//const skpln skp=c0
 const skpln skp=linewi-wi
 const pxl colr=800
 const int linewi=100
