@@ -3,9 +3,10 @@ ui.is_dbg=true;
 ui.axconwait=false;
 $=function(eid){return document.getElementById(eid);}
 $d=function(v){console.log(v);}
+debug_set=true;
 $s=function(eid,txt){
 	var e=$(eid);
-	$d(eid+'  '+txt);
+	if(debug_set)$d(eid+'{'+txt+'}');
 	if(!e){$d(eid+' notfound');return;}
 	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
 		e.value=txt;
@@ -46,6 +47,7 @@ ui.onkey=function(ev){
 	var cmd=ui.keys[ui._hashKey(ev)];
 	if(cmd)eval(cmd);
 }
+debug_js=false;
 ui._onreadystatechange=function(){
 	$d(" * stage "+this.readyState);
 	switch(this.readyState){
@@ -61,20 +63,20 @@ ui._onreadystatechange=function(){
 	case 2:// Sent
 		var dt=new Date().getTime()-this._t0;
 //		$d(dt+" * sending done");
-		$s('-ajaxsts','&nbsp;sent '+this._pd.length+' in '+dt+' ms');
+		$s('-ajaxsts','sent '+this._pd.length+' in '+dt+' ms');
 		break;
 	case 3:// Receiving
 		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
 		$s('-ajaxsts','receiving '+this.responseText.length+' text');
-		console.log('receiving '+this.responseText.length+' text');
+//		console.log('receiving '+this.responseText.length+' text');
 		if(s!='\n'){
 			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
 			break;
 		}
 		var jscode=this.responseText.substring(this._jscodeoffset);
 		$d(new Date().getTime()-this._t0+" * run "+jscode.length+" bytes");
-		$d(jscode);
+		if(debug_js)$d(jscode);
 		this._jscodeoffset+=jscode.length;
 		eval(jscode);
 		break;
@@ -98,8 +100,9 @@ ui._onreadystatechange=function(){
 	}
 }
 ui._pbls=[];
+debug_qpb=true;
 ui.qpb=function(e){
-	$d('qpb '+e.id);
+	if(debug_qpb)$d('qpb '+e.id);
 	if(ui.qpbhas(e.id))return;
 	ui._pbls[e.id]=e.id;
 }

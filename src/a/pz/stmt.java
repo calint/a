@@ -550,6 +550,9 @@ public class stmt implements Serializable{
 		@Override public String toString(){
 			return new xwriter().p("line ").p(source_location).spc().p(message).toString();
 		}
+		public int source_location_line(){
+			return Integer.parseInt(source_location.split(":")[0]);
+		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_increment extends expr{

@@ -59,16 +59,18 @@ public final class xwriter{
 	public xwriter ajx(final a e){return tago("a").attr("href","javascript:$x('"+e.id()+"')").tagoe();}
 	public xwriter ajx_(){return tage("a");}
 	public xwriter br(){return tag("br");}
-	public xwriter divo(final String cls){return tago("div").attr("class",cls).tagoe();}
+//	public xwriter divo(final String cls){return tago("div").attr("class",cls).tagoe();}
 	public xwriter divo(){return tag("div");}
 	public xwriter divo(final a e){return tago("div").attr("id",e.id()).tagoe();}
-	public xwriter divo(final a e,final String cls){return divo(e,cls,"","");}
-	public xwriter divo(final a e,final String cls,final String style,final String intaginline){
+	public xwriter divo(final a e,final String cls){return divo(e,cls,"");}
+	public xwriter divo(final String cls,final String style){return divo(null,cls,style);}
+	public xwriter divo(final String cls){return divo(null,cls,null);}
+	public xwriter divo(final a e,final String cls,final String style){
 		tago("div");
 		if(e!=null)attr("id",e.id());
 		if(!isempty(cls))attr("class",cls);
 		if(!isempty(style))attr("style",style);
-		if(!isempty(intaginline))spc().p(intaginline);
+//		if(!isempty(intaginline))spc().p(intaginline);
 		return tagoe();
 	}
 	public xwriter divh(final a e){return divh(e,null,null);}
@@ -132,7 +134,15 @@ public final class xwriter{
 	public xwriter style(){return p("<style scoped>");}
 	public xwriter style_(){return tage("style");}
 	public xwriter td(){return tag("td");}
-	public xwriter td(final String cls){if(cls==null||cls.length()==0) return td();return tago("td").attr("class",cls).tagoe();}
+	public xwriter td(final String cls){return td(cls,"");}
+	public xwriter td(final String cls,final String style){
+		tago("td");
+		if(cls==null||cls.length()==0)
+			attr("class",cls);
+		if(style!=null&&!style.isEmpty())
+			attr("style",style);
+		return tagoe();
+	}
 	public xwriter td_(){return tage("td");}
 	public xwriter th(){return tag("th");}
 	public xwriter th(final int colspan){return tago("th").attr("colspan",colspan).tagoe();}
@@ -283,7 +293,15 @@ public final class xwriter{
 	public xwriter ol(){return tag("ol");}
 	public xwriter ol_(){return tage("ol");}
 	public xwriter xlocation(final String uri){return p("location='").p(uri).pl("';");}
-	public xwriter span(final String style){return tago("span").attr("style",style).tagoe();}
+	public xwriter span(final String style){
+		return span("",style);
+	}
+	public xwriter span(final String cls,final String style){
+		tago("span");
+		if(!isempty(cls))attr("class",cls);
+		if(!isempty(style))attr("style",style);
+		return tagoe();
+	}
 	public xwriter nbsp(){return p("&nbsp;");}
 	private final OutputStream os;
 	private static String encquot(final String text){if(text==null)return"";return text.replaceAll("\"","&quot;");}

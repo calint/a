@@ -141,11 +141,11 @@ final public class acore extends a{
 //				.ax(this,"b"," run-to-break-point")
 			.div_();
 		x.divo("laycent");
-		if(hasbit(bit_show_panel))x.divo(null,"float panel").spanh(st,"fontbold").r(sy).r(re).r(ca).r(lo).div_();
+		if(hasbit(bit_show_panel))x.divo("float panel").spanh(st,"fontbold").r(sy).r(re).r(ca).r(lo).div_();
 		if(hasbit(bit_show_rom))x.r(ro);
 		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel").divh(toc,"float textleft panel");
 		if(pt()==null){
-			x.divo(null,"floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
+			x.divo("floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
 		}
 		x.div_();
 	}
