@@ -17,7 +17,10 @@ $s=function(eid,txt){
 			$b(e);
 	}
 }
-$o=function(eid,txt){var e=$(eid);if(!e)return;e.outerHTML=txt;}
+$o=function(eid,txt){
+	if(debug_set)$d(eid+'={'+txt+'}');
+	var e=$(eid);if(!e)return;e.outerHTML=txt;
+}
 $p=function(eid,txt){
 	var e=$(eid);
 	if(e.nodeName=="INPUT"||e.nodeName=="TEXTAREA"||e.nodeName=="OUTPUT"){
@@ -48,12 +51,13 @@ ui.onkey=function(ev){
 	if(cmd)eval(cmd);
 }
 debug_js=false;
+debug_verbose=false;
 ui._onreadystatechange=function(){
-	$d(" * stage "+this.readyState);
+//	$d(" * stage "+this.readyState);
 	switch(this.readyState){
 	case 1:// Open
 		if(this._hasopened)break;this._hasopened=true;//? firefox quirkfix1
-		$d(new Date().getTime()-this._t0+" * sending");
+		if(debug_verbose)$d(new Date().getTime()-this._t0+" * sending");
 		$s('-ajaxsts','sending '+this._pd.length+' text');
 		this.setRequestHeader('Content-Type','text/plain; charset=utf-8');
 		$d(this._pd);
@@ -66,16 +70,16 @@ ui._onreadystatechange=function(){
 		$s('-ajaxsts','sent '+this._pd.length+' in '+dt+' ms');
 		break;
 	case 3:// Receiving
-		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
+//		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
 		$s('-ajaxsts','receiving '+this.responseText.length+' text');
 //		console.log('receiving '+this.responseText.length+' text');
 		if(s!='\n'){
-			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
+//			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
 			break;
 		}
 		var jscode=this.responseText.substring(this._jscodeoffset);
-		$d(new Date().getTime()-this._t0+" * run "+jscode.length+" bytes");
+		if(debug_js)$d(new Date().getTime()-this._t0+" * run "+jscode.length+" bytes");
 		if(debug_js)$d(jscode);
 		this._jscodeoffset+=jscode.length;
 		eval(jscode);
@@ -87,15 +91,15 @@ ui._onreadystatechange=function(){
 
 		var jscode=this.responseText.substring(this._jscodeoffset);
 		if(jscode.length>0){
-			$d(new Date().getTime()-this._t0+" * run "+jscode.length+" bytes");
-			$d(jscode);
+			if(debug_js)$d(new Date().getTime()-this._t0+" * run "+jscode.length+" bytes");
+			if(debug_js)$d(jscode);
 			this._jscodeoffset+=jscode.length;
 			eval(jscode);
 		}
 		this._dt=new Date().getTime()-this._t0;//? var _dt
-		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
-		$d("done in "+this._dt+" ms");
 		$s('-ajaxsts',this._dt+' ms, '+this.responseText.length+' chars');
+		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
+//		$d("done in "+this._dt+" ms");
 		break;		
 	}
 }
@@ -129,9 +133,9 @@ $x=function(pb){
 		ui.req=new XMLHttpRequest();
 		ui.req.onreadystatechange=ui._onreadystatechange;
 		ui.req.onerror=function(){$s('-ajaxsts','connection to server lost. try reload or wait and re-try.');}
-		$d(" * new connection");
+		$s('-ajaxsts'," * new connection");
 	}else{
-		$d(" * reusing connection");
+		$s('-ajaxsts'," * reusing connection");
 		var count=0;
 		while(ui.req.readyState==1||ui.req.readyState==2||ui.req.readyState==3){
 			if(ui.axconwait){
