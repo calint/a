@@ -212,15 +212,12 @@ public abstract class stmt implements Serializable{
 				return new constexpr_int(p,dc.toInt(p));
 			
 			//linewi-wi
-			final int i1=expr.indexOf('-');
-			if(i1!=-1)
-				return new constexpr_minus(p,expr.substring(0,i1),expr.substring(i1+1));
-				
-			//wi+1
-			final int i2=expr.indexOf('+');
-			if(i2!=-1)
-				return new constexpr_plus(p,expr.substring(0,i2),expr.substring(i2+1));
-				
+			final int i1=expr.lastIndexOf('-');
+			final int i2=expr.lastIndexOf('+');
+			if(i1!=-1&&i2==-1       )return new constexpr_add(p,expr.substring(0,i1),expr.substring(i1+1),true);
+			if(i1!=-1&&i2!=-1&&i1>i2)return new constexpr_add(p,expr.substring(0,i1),expr.substring(i1+1),true);
+			if(i2!=-1&&i1==-1       )return new constexpr_add(p,expr.substring(0,i2),expr.substring(i2+1),false);
+			if(i2!=-1&&i1!=-1&&i2>i1)return new constexpr_add(p,expr.substring(0,i2),expr.substring(i2+1),false);
 			try{return new constexpr_int(p,Integer.parseInt(expr,16));}catch(Throwable t){throw new compiler_error("","not a hex: "+expr);}
 		}
 		private String expr;
@@ -240,31 +237,35 @@ public abstract class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public final static class constexpr_minus extends constexpr{
+//	public final static class constexpr_minus extends constexpr{
+//		private String lhs,rhs;
+//		public constexpr_minus(program p,String lhs,String rhs){
+//			super(p);this.lhs=lhs;this.rhs=rhs;
+//		}
+//		@Override public int calc(program p){
+//			final constexpr lh=from(p,lhs);
+//			final constexpr rh=from(p,rhs);
+//			final int lhi=lh.calc(p);
+//			final int rhi=rh.calc(p);
+//			return lhi-rhi;//? bug const int skp=linewi-wi-1-1  => linewi-(wi-(1-1))
+//			//? skp=((linewi)+((-wi)+((-1)+(-1))))
+//		}
+//		private static final long serialVersionUID=1;
+//	}
+	public final static class constexpr_add extends constexpr{
 		private String lhs,rhs;
-		public constexpr_minus(program p,String lhs,String rhs){
-			super(p);this.lhs=lhs;this.rhs=rhs;
+		private boolean neg;
+		public constexpr_add(program p,String lhs,String rhs,boolean neg){
+			super(p);this.lhs=lhs;this.rhs=rhs;this.neg=neg;
+			txt=lhs+(neg?"-":"")+rhs;
 		}
 		@Override public int calc(program p){
 			final constexpr lh=from(p,lhs);
 			final constexpr rh=from(p,rhs);
 			final int lhi=lh.calc(p);
 			final int rhi=rh.calc(p);
-			return lhi-rhi;//? bug const int skp=linewi-wi-1-1  => linewi-(wi-(1-1))
-			//? skp=((linewi)+((-wi)+((-1)+(-1))))
-		}
-		private static final long serialVersionUID=1;
-	}
-	public final static class constexpr_plus extends constexpr{
-		private String lhs,rhs;
-		public constexpr_plus(program p,String lhs,String rhs){
-			super(p);this.lhs=lhs;this.rhs=rhs;
-		}
-		@Override public int calc(program p){
-			final constexpr lh=from(p,lhs);
-			final constexpr rh=from(p,rhs);
-			final int lhi=lh.calc(p);
-			final int rhi=rh.calc(p);
+			if(neg)
+				return lhi-rhi;
 			return lhi+rhi;
 		}
 		private static final long serialVersionUID=1;
