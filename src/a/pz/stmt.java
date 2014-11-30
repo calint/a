@@ -250,7 +250,7 @@ public abstract class stmt implements Serializable{
 			final constexpr rh=from(p,rhs);
 			final int lhi=lh.calc(p);
 			final int rhi=rh.calc(p);
-			return lhi-rhi;//? bug const int skp=linewi-wi-1-1
+			return lhi-rhi;//? bug const int skp=linewi-wi-1-1  => linewi-(wi-(1-1))
 		}
 		private static final long serialVersionUID=1;
 	}
