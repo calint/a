@@ -194,7 +194,10 @@ public final class xwriter{
 	}
 	public xwriter inptxtarea(final a e){return inptxtarea(e,null);}
 	public xwriter inptxtarea(final a e,final String cls){
-		tago("textarea").attrdef(e).attr("onchange","$b(this);return true;");
+		tago("textarea").attrdef(e)
+			.attr("onchange","$b(this);return true;")
+			.attr("onkeypress","$b(this);return true;");
+			
 		if(cls!=null)attr("class",cls);
 		attr("wrap","off").attr("spellcheck","false").tagoe();
 		try{e.to(new osltgt(outputstream()));}catch(final Throwable t){b.log(t);p(b.stacktrace(t));}

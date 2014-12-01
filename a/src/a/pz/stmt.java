@@ -94,7 +94,9 @@ public abstract class stmt implements Serializable{
 			txt="const "+type+" "+name+"="+value;
 		}
 		public int toInt(program p){
-			return Integer.parseInt(value,16);
+			final constexpr ce=constexpr.from(p,value);
+			return ce.calc(p);
+//			return Integer.parseInt(value,16);
 		}
 		private static final long serialVersionUID=1;
 	}
