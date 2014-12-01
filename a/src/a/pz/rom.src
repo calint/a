@@ -14,9 +14,6 @@ const skpln skp=linewi-wi
 const pxl colr=800
 const int linewi=100
 
-void draw(scr a=400,const height b=20,const width c=100,const skpln d=c0h,const pxl e=fff)
-void dots.draw(const scr a=400)
-
 var a=pos
 var b=hi
 var c=wi
