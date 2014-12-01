@@ -196,7 +196,7 @@ public final class xwriter{
 	public xwriter inptxtarea(final a e,final String cls){
 		tago("textarea").attrdef(e)
 			.attr("onchange","$b(this);return true;")
-			.attr("onkeypress","$b(this);return true;");
+			.attr("onkeydown","$b(this);return true;");
 			
 		if(cls!=null)attr("class",cls);
 		attr("wrap","off").attr("spellcheck","false").tagoe();

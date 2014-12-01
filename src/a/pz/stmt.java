@@ -8,6 +8,9 @@ import java.util.List;
 import b.xwriter;
 
 public abstract class stmt implements Serializable{
+	protected String to_register;
+
+
 	final public static class add extends stmt.instr{
 		final public static int op=0x00a0;
 		public add(program r) throws IOException{
@@ -101,7 +104,7 @@ public abstract class stmt implements Serializable{
 			p.allocate_register(this,to_register);
 			if(p.is_next_char_equals())
 				rh=p.next_token_in_line();
-			if(!p.is_next_char_end_of_line())
+			if(!p.is_next_char_end_of_line()&&!p.is_next_char_end_of_file())
 				throw new compiler_error(this,"expected end of line");
 			final xwriter x=new xwriter().p("var").spc().p(to_register);
 			if(rh!=null)
@@ -162,7 +165,6 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	abstract public static class expr extends stmt{
-		String to_register;
 		public expr(program p,String to_register){
 			super(p);
 			this.to_register=to_register;
@@ -729,21 +731,21 @@ public abstract class stmt implements Serializable{
 	}
 	final static public class expr_func_call extends expr{
 		public String function_name;
-		public List<expr_func_call_arg> args=new ArrayList<>();
+		public List<stmt> args=new ArrayList<>();
 		public expr_func_call(final program p,final String function) throws IOException{
 			super(p,function);
 			function_name=function;
 			while(true){
 				if(p.is_next_char_paranthesis_right())
 					break;
-				final expr_func_call_arg a=new expr_func_call_arg(p);
+				final stmt a=p.next_statement(false);
 				args.add(a);
 				if(p.is_next_char_comma())
 					continue;
 			}
 			final xwriter x=new xwriter();
 			x.p(function_name).p("(");
-			final Iterator<expr_func_call_arg> i=args.iterator();
+			final Iterator<stmt> i=args.iterator();
 			while(true){
 				if(!i.hasNext())
 					break;
@@ -759,37 +761,75 @@ public abstract class stmt implements Serializable{
 			if(f==null)
 				throw new compiler_error(this,"function not found",function_name);
 			int ii=0;
-			for(expr_func_call_arg e:args){
+			int instructions_count=0;
+			for(stmt e:args){
 				final def_func_arg fa=f.args.get(ii++);
-				if(!e.txt.equals(fa.name))
-					throw new compiler_error(this," argument "+ii+"  expected '"+fa.name+"' but got '"+e.txt+"'\n  "+f);
-				final String type_in_register=p.type_for_register(this,e.toString());
-				if(!fa.type.equals(type_in_register))
-					throw new compiler_error(this," argument "+ii+"  expected type '"+fa.type+"' but var '"+fa.name+"' is of type '"+type_in_register+"'\n  "+f);
+				// alloc to_register
+				e.to_register=fa.name;
+				if(!fa.name.equals(e.txt)){
+//					p.allocate_register(this,e.to_register);
+					final String insert_source="var "+e.to_register+"="+e.txt();
+					final program pp=new program(insert_source);
+					pp.compile(pp);
+					e.bin=pp.bin;
+					instructions_count+=pp.bin.length;
+				}else{
+//				final String type_in_register=p.type_for_register(this,e.toString());
+//				if(!fa.type.equals(type_in_register))
+//					throw new compiler_error(this," argument "+ii+"  expected type '"+fa.type+"' but var '"+fa.name+"' is of type '"+type_in_register+"'\n  "+f);
+					e.compile(p);
+					if(e.bin!=null){
+						instructions_count+=e.bin.length;
+					}
+				}
 			}
-			bin=new int[]{call.op};
+			instructions_count++;
+			// + release allocated registers
+			bin=new int[instructions_count];
 		}
 		@Override protected void link(program p){
 			final def_func f=p.functions.get(function_name);
+			final ArrayList<Integer>b=new ArrayList<>();
+			int ii=0;
+			for(stmt e:args){
+				final def_func_arg fa=f.args.get(ii++);
+				if(!fa.name.equals(e.txt)){
+					final program pp=new program("var "+e.to_register+"="+e.txt());
+					pp.build();
+					e.bin=pp.bin;
+				}else{
+					e.link(p);
+				}
+				if(e.bin!=null){
+					for(int i:e.bin)
+						b.add(i);
+				}
+			}
 //			if(f==null)
 //				throw new compiler_error(this,"function not found",function_name);
 			final int a=f.location_in_binary;
-			bin[0]|=(a<<6);
+			b.add(call.op);
+			bin=new int[b.size()];int ix=0;for(int i:b)bin[ix++]=i;
+			bin[bin.length-1]|=(a<<6);
 		}
 		private static final long serialVersionUID=1;
 	}
-	final static public class expr_func_call_arg extends expr{
-		stmt st;
-		public expr_func_call_arg(final program p) throws IOException{
-			super(p,null);
-			st=p.next_statement();
-			txt=st.toString();
-//			txt=p.next_token_in_line();
-		}
-		@Override protected void compile(program p){}
-		@Override protected void link(program p){}
-		private static final long serialVersionUID=1;
-	}
+//	final static public class expr_func_call_arg extends expr{
+//		stmt st;
+//		public expr_func_call_arg(final program p) throws IOException{
+//			super(p,null);
+//			st=p.next_statement(false);
+//			txt=st.toString();
+////			txt=p.next_token_in_line();
+//		}
+//		@Override protected void compile(program p){
+//			st.compile(p);
+//		}
+//		@Override protected void link(program p){
+//			st.link(p);
+//		}
+//		private static final long serialVersionUID=1;
+//	}
 	protected String location_in_source;
 	final public String source_location(){return location_in_source;}
 	final public String source_location_line(){return location_in_source.split(":")[0];}
