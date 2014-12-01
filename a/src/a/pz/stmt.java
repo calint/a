@@ -341,7 +341,7 @@ public abstract class stmt implements Serializable{
 	}
 	final public static class li extends instr{
 		private String data;
-		private int value;
+//		private int value;
 		private constexpr ce;
 		final public static int op=0x0000;
 		public li(program r) throws IOException{
@@ -359,36 +359,37 @@ public abstract class stmt implements Serializable{
 		}
 		@Override protected void link(program p){
 			if(ce!=null){
-				final int i=ce.eval(p);
-				bin[1]=i;
+				bin[1]=ce.eval(p);
 				return;
 			}
-			final def_const def=p.defines.get(data);
-			if(def!=null){
-				data=def.value;
-			}
-			if(data.startsWith("&")){
-				final String nm=data.substring(1);
-				final def_label l=p.labels.get(nm);
-				if(l==null)
-					throw new compiler_error(this,"label not found",nm);
-				value=l.location_in_binary;
-			}else{
-				try{
-					value=Integer.parseInt(data,16);
-				}catch(NumberFormatException e){
-					throw new compiler_error(this,"cannot parse number '"+data+"'");
-				}
-			}
-			final int bit_width=16;
-			//			final int i=Integer.parseInt(data,16);
-			final int max=(1<<(bit_width-1))-1;
-			final int min=-1<<(bit_width-1);
-			if(value>max)
-				throw new compiler_error(location_in_source,"number '"+data+"' out of "+bit_width+" bits range");
-			if(value<min)
-				throw new compiler_error(location_in_source,"number '"+data+"' out of "+bit_width+" bits range");
-			bin=new int[]{bin[0],value};
+			bin[1]=constexpr.from(p,data).eval(p);
+//			
+//			final def_const def=p.defines.get(data);
+//			if(def!=null){
+//				data=def.value;
+//			}
+//			if(data.startsWith("&")){
+//				final String nm=data.substring(1);
+//				final def_label l=p.labels.get(nm);
+//				if(l==null)
+//					throw new compiler_error(this,"label not found",nm);
+//				value=l.location_in_binary;
+//			}else{
+//				try{
+//					value=Integer.parseInt(data,16);
+//				}catch(NumberFormatException e){
+//					throw new compiler_error(this,"cannot parse number '"+data+"'");
+//				}
+//			}
+//			final int bit_width=16;
+//			//			final int i=Integer.parseInt(data,16);
+//			final int max=(1<<(bit_width-1))-1;
+//			final int min=-1<<(bit_width-1);
+//			if(value>max)
+//				throw new compiler_error(location_in_source,"number '"+data+"' out of "+bit_width+" bits range");
+//			if(value<min)
+//				throw new compiler_error(location_in_source,"number '"+data+"' out of "+bit_width+" bits range");
+//			bin=new int[]{bin[0],value};
 		}
 		private static final long serialVersionUID=1;
 	}
