@@ -1,7 +1,5 @@
 package a.pz.bas;
 
-import a.pz.program;
-import a.pz.stmt;
 
 abstract public class def extends stmt{
 	protected String name;

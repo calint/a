@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import a.pz.call;
-import a.pz.compiler_error;
-import a.pz.program;
-import a.pz.stmt;
 import b.xwriter;
 
 final public class expr_func_call extends expr{

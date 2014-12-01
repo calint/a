@@ -1,11 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.compiler_error;
-import a.pz.instr;
-import a.pz.program;
-import a.pz.st;
-import a.pz.stc;
 import b.xwriter;
 
 final public class expr_store extends expr{

@@ -2,8 +2,8 @@ package a.pz.a;
 import static b.b.log;
 import java.util.HashSet;
 import java.util.Set;
-import a.pz.program;
-import a.pz.compiler_error;
+import a.pz.bas.compiler_error;
+import a.pz.bas.program;
 import b.a;
 import b.xwriter;
 final public class crun_source_editor extends a{

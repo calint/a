@@ -1,8 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.compiler_error;
-import a.pz.program;
 
 final public class def_const extends def{
 		public String value;

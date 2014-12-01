@@ -1,13 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.compiler_error;
-import a.pz.instr;
-import a.pz.ld;
-import a.pz.ldc;
-import a.pz.li;
-import a.pz.program;
-import a.pz.tx;
 import b.xwriter;
 
 final public class expr_assign extends expr{

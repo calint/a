@@ -1,4 +1,4 @@
-package a.pz;
+package a.pz.bas;
 
 import java.io.IOException;
 import java.util.ArrayList;
