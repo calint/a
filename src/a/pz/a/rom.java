@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 final public class rom extends a{
 	public void to(final xwriter x){
-		x.divo(this,"float panel");
+//		x.divo(this,"float panel");
 		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
 		int row=0;
@@ -11,7 +11,7 @@ final public class rom extends a{
 		for(final int d:ints){
 			x.li();
 			x.p(acore.fld("00",Integer.toHexString(row)));
-			x.tag("span",id+"_"+row+"_s").spc().tage("span");
+			x.tag("span",id+"-"+row+"-s").spc().tage("span");
 			for(int k=0,bit=1;k<16;bit<<=1){
 				x.p("<a href=\"javascript:$x('").p(id).p("  ").p(row).p(" ").p(k).p("')\" id=").p(id).p("-").p(row).p("-").p(k).p(">");
 				if((d&bit)==bit)
@@ -34,7 +34,7 @@ final public class rom extends a{
 		x.script();
 		xfocus_on_binary_location(x,last_focus_on_binary_location);
 		x.script_();
-		x.div_();
+//		x.div_();
 	}
 	private int last_focus_on_binary_location;
 	void xfocus_on_binary_location(xwriter x,final int binary_location){
@@ -46,7 +46,7 @@ final public class rom extends a{
 	public void x_clr(xwriter x,String s)throws Throwable{
 		for(int i=0;i<ints.length;i++)ints[i]=0;
 		if(x==null)return;
-		x.xuo(this);
+		x.xu(this);
 	}
 	public void x_(xwriter x,String s){
 		final String[]a=s.split(" ");

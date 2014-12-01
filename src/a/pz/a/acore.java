@@ -51,21 +51,17 @@ final public class acore extends a{
 		if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();
-			p.typedefs.values().forEach(e->y.p(e.name()).nl());
-			p.defines.values().forEach(e->y.p(e.name()).nl());
-//			p.functions.values().forEach(e->y.p(e.toString()).nl());
-			y.nl().nl();
-			y.nl().pl("labels:");
-			p.labels.values().forEach(e->y.p(e.name()).nl());
-			y.nl().pl("structs");
-			p.structs.values().forEach(e->y.p(e.name()).nl());
+			p.typedefs.values().forEach(e->y.p(e.name()).spc().p(e.source_line()).nl());
+			p.defines.values().forEach(e->y.p(e.name()).spc().p(e.source_line()).nl());
+			p.labels.values().forEach(e->y.p(e.name()).spc().p(e.source_line()).nl());
+			p.structs.values().forEach(e->y.p(e.name()).spc().p(e.source_line()).nl());
 			toc.set(y.toString());
 			p.zap(cor.rom);
 			di.set(p.toString());
 			cor.reset();
 			x_f(x,null);
 			if(x==null)return;
-			x.xuo(ro).xu(di).xu(toc);
+			x.xu(ro).xu(di).xu(toc);
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
@@ -142,8 +138,8 @@ final public class acore extends a{
 			.div_();
 		x.divo("laycent");
 		if(hasbit(bit_show_panel))x.divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
-		if(hasbit(bit_show_rom))x.r(ro);
-		if(hasbit(bit_show_source_editor))x.divh(di,"float panel","padding-top:1em").divh(ec,"float textleft panel").divh(toc,"float textleft panel");
+		if(hasbit(bit_show_rom))x.divo(ro,"float panel").r(ro).div_();
+		if(hasbit(bit_show_source_editor))x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
 		if(pt()==null){
 			x.divo("floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
 		}
