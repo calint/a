@@ -169,37 +169,32 @@ public abstract class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-	abstract public static class constexpr extends stmt{
-		static constexpr from(program p,String expr){
+	public abstract static class constexpr extends stmt{
+//		public constexpr(final program p){super(p);}
+		public constexpr(program p,String txt){super(p);this.txt=txt;}
+		public abstract int eval(final program p);
+
+		public static constexpr from(program p,String src){
 			// &dots
-			if(expr.startsWith("&")){
-				final def_label dl=p.labels.get(expr.substring(1));
+			if(src.startsWith("&")){
+				final def_label dl=p.labels.get(src.substring(1));
 				final int i=dl.location_in_binary;
 				return new constexpr_int(p,i);
 			}
 				
 			// linewi
-			final def_const dc=p.defines.get(expr);
+			final def_const dc=p.defines.get(src);
 			if(dc!=null)
 				return constexpr.from(p,dc.value);
 			
 			// linewi-wi
-			final int i1=expr.lastIndexOf('-');
-			final int i2=expr.lastIndexOf('+');
-			if(i1!=-1&&i2==-1       )return new constexpr_add(p,expr.substring(0,i1),expr.substring(i1+1),true);
-			if(i1!=-1&&i2!=-1&&i1>i2)return new constexpr_add(p,expr.substring(0,i1),expr.substring(i1+1),true);
-			if(i2!=-1&&i1==-1       )return new constexpr_add(p,expr.substring(0,i2),expr.substring(i2+1),false);
-			if(i2!=-1&&i1!=-1&&i2>i1)return new constexpr_add(p,expr.substring(0,i2),expr.substring(i2+1),false);
-			try{return new constexpr_int(p,Integer.parseInt(expr,16));}catch(Throwable t){throw new compiler_error("","not a hex: "+expr);}
-		}
-		private String expr;
-		public constexpr(final program p){super(p);}
-		abstract public int eval(final program p);
-		public constexpr(program p,String expr){
-			super(p);this.expr=expr;
-		}
-		public String toString(){
-			return expr;
+			final int i1=src.lastIndexOf('-');
+			final int i2=src.lastIndexOf('+');
+			if(i1!=-1&&i2==-1       )return new constexpr_add(p,src.substring(0,i1),src.substring(i1+1),true);
+			if(i1!=-1&&i2!=-1&&i1>i2)return new constexpr_add(p,src.substring(0,i1),src.substring(i1+1),true);
+			if(i2!=-1&&i1==-1       )return new constexpr_add(p,src.substring(0,i2),src.substring(i2+1),false);
+			if(i2!=-1&&i1!=-1&&i2>i1)return new constexpr_add(p,src.substring(0,i2),src.substring(i2+1),false);
+			try{return new constexpr_int(p,Integer.parseInt(src,16));}catch(Throwable t){throw new compiler_error("","not a hex: "+src);}
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -207,8 +202,8 @@ public abstract class stmt implements Serializable{
 		private String lhs,rhs;
 		private boolean neg;
 		public constexpr_add(program p,String lhs,String rhs,boolean neg){
-			super(p);this.lhs=lhs;this.rhs=rhs;this.neg=neg;
-			txt=lhs+(neg?"-":"")+rhs;
+			super(p,lhs+(neg?"-":"")+rhs);this.lhs=lhs;this.rhs=rhs;this.neg=neg;
+//			txt=lhs+(neg?"-":"")+rhs;
 		}
 		@Override public int eval(program p){
 			final constexpr lh=from(p,lhs);
@@ -223,12 +218,8 @@ public abstract class stmt implements Serializable{
 	}
 	public final static class constexpr_int extends constexpr{
 		private int i;
-		public constexpr_int(program p,int i){
-			super(p);this.i=i;
-		}
-		@Override public int eval(program p){
-			return i;
-		}
+		public constexpr_int(program p,int i){super(p,Integer.toHexString(i));this.i=i;}
+		@Override public int eval(program p){return i;}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_assign extends expr{
