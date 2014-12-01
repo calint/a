@@ -51,14 +51,14 @@ final public class acore extends a{
 		if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();
-			p.typedefs.values().forEach(e->y.p(e.toString()).nl());
-			p.defines.values().forEach(e->y.p(e.toString()).nl());
-			p.functions.values().forEach(e->y.p(e.toString()).nl());
+			p.typedefs.values().forEach(e->y.p(e.name()).nl());
+			p.defines.values().forEach(e->y.p(e.name()).nl());
+//			p.functions.values().forEach(e->y.p(e.toString()).nl());
 			y.nl().nl();
 			y.nl().pl("labels:");
-			p.labels.values().forEach(e->y.p(e.toString()).nl());
+			p.labels.values().forEach(e->y.p(e.name()).nl());
 			y.nl().pl("structs");
-			p.structs.values().forEach(e->y.p(e.toString()).nl());
+			p.structs.values().forEach(e->y.p(e.name()).nl());
 			toc.set(y.toString());
 			p.zap(cor.rom);
 			di.set(p.toString());
@@ -74,7 +74,7 @@ final public class acore extends a{
 			x.title("clare")
 			.style()
 				.css("html","color:#111")
-				.css("body","padding:7em 0 0 11em;width:80em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+				.css("body","padding:7em 0 0 11em;width:200em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 				.css(".border","border:1px dotted red")
 				.css(".float","float:left")
 				.css(".textleft","text-align:left")
