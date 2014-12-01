@@ -246,6 +246,12 @@ public final class xwriter{
 	public xwriter xub(final a e,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('").p(e.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
 	public xwriter xube(){return pl("');");}
 	public xwriter xu(final a e)throws Throwable{e.to(xub(e,true,false));return xube();}
+	public xwriter xu(final a...es)throws Throwable{
+		for(a e:es){
+			e.to(xub(e,true,false));xube();
+		}
+		return this;
+	}
 	public xwriter xu(final a e,final boolean escltgt)throws Throwable{e.to(xub(e,true,escltgt));return xube();}
 	public xwriter xuo(final a e)throws Throwable{e.to(xub(e,false,false));return xube();}
 	public xwriter xinterval(final a e,final String ax,final int ms){return p("setInterval(\"$x('").p(e.id()).p(" ").p(ax).p("')\",").p(ms).pl(");");}
