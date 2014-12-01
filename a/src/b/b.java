@@ -95,6 +95,7 @@ final public class b{
 	public static @conf boolean acl_on=true;
 	public static @conf boolean firewall_on=true;
 	public static @conf boolean firewall_paths_on=true;
+	public static @conf boolean log_client_disconnects=false;
 	
 	public static @conf @unit(name="tms")long timeatload=System.currentTimeMillis();
 	public static @conf String timeatloadstrhtp=tolastmodstr(timeatload);
@@ -235,14 +236,16 @@ final public class b{
 		Throwable e=t;
 		if(t instanceof InvocationTargetException)e=t.getCause();
 		while(e.getCause()!=null)e=e.getCause();
-		if(e instanceof java.nio.channels.CancelledKeyException)return;
-		if(e instanceof java.nio.channels.ClosedChannelException)return;
-		if(e instanceof java.io.IOException){
-			if("Broken pipe".equals(e.getMessage()))return;
-			if("Connection reset by peer".equals(e.getMessage()))return;
-			if("An existing connection was forcibly closed by the remote host".equals(e.getMessage()))return;
+		if(!log_client_disconnects){
+			if(e instanceof java.nio.channels.CancelledKeyException)return;
+			if(e instanceof java.nio.channels.ClosedChannelException)return;
+			if(e instanceof java.io.IOException){
+				if("Broken pipe".equals(e.getMessage()))return;
+				if("Connection reset by peer".equals(e.getMessage()))return;
+				if("An existing connection was forcibly closed by the remote host".equals(e.getMessage()))return;
+			}
 		}
-		b.err.println("\n\n"+b.stacktraceline(e));
+		err.println("\n\n"+b.stacktraceline(e));
 	}
 	public static path path(){
 		return new path(new File(root_dir),true);
@@ -251,7 +254,7 @@ final public class b{
 		ensure_path_ok(path);
 		final path p=new path(new File(root_dir,path));//? dont inst path yet
 		final String uri=p.uri();
-		if(b.firewall_paths_on)firewall_ensure_path_access(uri);
+		if(firewall_paths_on)firewall_ensure_path_access(uri);
 		return p;
 	}
 	static void firewall_ensure_path_access(final String uri){
@@ -453,8 +456,8 @@ final public class b{
 		final Class<? extends a>cls=e.getClass();
 		if(cls.equals(a.class))return;
 		final String clsnm=cls.getName();
-		final int i=clsnm.lastIndexOf('.');
-		final String pkgnm=i==-1?"":clsnm.substring(0,i);
+//		final int i=clsnm.lastIndexOf('.');
+//		final String pkgnm=i==-1?"":clsnm.substring(0,i);
 //		if(pkgnm.endsWith(".a")&&!req.get().session().bits_hasall(2))throw new Error("firewalled1");
 		if(clsnm.startsWith("a.localhost.")&&!req.get().ip().toString().equals("/0:0:0:0:0:0:0:1"))throw new Error("firewalled2");
 	}
