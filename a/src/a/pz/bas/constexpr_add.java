@@ -1,6 +1,5 @@
 package a.pz.bas;
 
-import a.pz.program;
 
 public final class constexpr_add extends constexpr{
 		private String lhs,rhs;

@@ -1,7 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.program;
 
 final public class def_comment extends def{
 	protected String line;

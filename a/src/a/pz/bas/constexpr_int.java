@@ -1,6 +1,5 @@
 package a.pz.bas;
 
-import a.pz.program;
 
 public final class constexpr_int extends constexpr{
 	private int i;

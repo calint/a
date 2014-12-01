@@ -1,9 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.inc;
-import a.pz.instr;
-import a.pz.program;
 import b.xwriter;
 
 final public class expr_increment extends expr{

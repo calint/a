@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 import a.pz.core;
-import a.pz.program;
+import a.pz.bas.program;
 import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{static final long serialVersionUID=1;

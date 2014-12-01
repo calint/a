@@ -1,8 +1,5 @@
 package a.pz.bas;
 
-import a.pz.compiler_error;
-import a.pz.program;
-import a.pz.stmt;
 
 public abstract class constexpr extends stmt{
 //		public constexpr(final program p){super(p);}

@@ -1,7 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.program;
 import b.xwriter;
 
 final public class def_type extends def{

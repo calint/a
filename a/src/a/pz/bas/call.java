@@ -1,7 +1,6 @@
-package a.pz;
+package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.bas.def_label;
 
 final public class call extends instr{
 	String label;

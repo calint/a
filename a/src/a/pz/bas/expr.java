@@ -1,7 +1,5 @@
 package a.pz.bas;
 
-import a.pz.program;
-import a.pz.stmt;
 
 abstract public class expr extends stmt{
 	public expr(program p,String to_register){

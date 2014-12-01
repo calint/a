@@ -1,4 +1,4 @@
-package a.pz;
+package a.pz.bas;
 
 import static b.b.pl;
 import java.io.IOException;
@@ -11,19 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import a.pz.bas.constexpr;
-import a.pz.bas.def_comment;
-import a.pz.bas.def_const;
-import a.pz.bas.def_func;
-import a.pz.bas.def_label;
-import a.pz.bas.def_struct;
-import a.pz.bas.def_type;
-import a.pz.bas.expr_add;
-import a.pz.bas.expr_assign;
-import a.pz.bas.expr_func_call;
-import a.pz.bas.expr_increment;
-import a.pz.bas.expr_store;
-import a.pz.bas.expr_var;
 import b.xwriter;
 
 public final class program extends stmt implements Serializable{

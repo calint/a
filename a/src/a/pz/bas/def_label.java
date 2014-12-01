@@ -1,7 +1,5 @@
 package a.pz.bas;
 
-import a.pz.compiler_error;
-import a.pz.program;
 
 final public class def_label extends def{
 	public def_label(program p,String nm){

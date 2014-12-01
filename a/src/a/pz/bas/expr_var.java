@@ -1,10 +1,6 @@
 package a.pz.bas;
 
 import java.io.IOException;
-import a.pz.compiler_error;
-import a.pz.li;
-import a.pz.program;
-import a.pz.stmt;
 import b.xwriter;
 
 final public class expr_var extends expr{
