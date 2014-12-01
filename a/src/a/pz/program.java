@@ -51,7 +51,7 @@ public final class program extends stmt implements Serializable{
 			try{
 				if(is_reading_code_block&&is_next_char_mustache_right())
 					break;
-				s=next_statement();
+				s=next_statement(true);
 				skip_whitespace();
 			}catch(IOException e){
 				throw new Error(e);
@@ -104,7 +104,7 @@ public final class program extends stmt implements Serializable{
 		}
 	}
 	public int program_length;
-	stmt next_statement() throws IOException{
+	stmt next_statement(boolean allow_instr) throws IOException{
 		String tk="";
 		while(true){
 			skip_whitespace();
@@ -197,6 +197,10 @@ public final class program extends stmt implements Serializable{
 			return new reg_ref(tk,this);
 		}
 		
+		if(!allow_instr){
+			final constexpr ce=constexpr.from(this,tk);
+			return ce;
+		}
 		// machine code instruction
 		int znxr=0;
 		switch(tk){
@@ -312,7 +316,7 @@ public final class program extends stmt implements Serializable{
 	}
 	boolean is_next_char_end_of_file() throws IOException{
 		final int ch=read();
-		if(ch==-1)
+		if(ch==-1||ch==65536)
 			return true;
 		unread(ch);
 		return false;
@@ -489,7 +493,7 @@ public final class program extends stmt implements Serializable{
 	}
 	boolean is_next_char_end_of_line() throws IOException{
 		final int ch=read();
-		if(ch=='\n')
+		if(ch=='\n'||ch==-1)
 			return true;
 		unread(ch);
 		return false;
