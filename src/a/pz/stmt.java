@@ -62,13 +62,7 @@ public abstract class stmt implements Serializable{
 				x.p(" ret");
 			txt=x.toString();
 		}
-		//		public instr(final program r,final int op,final int ra,final int rd){
-		//			super(r,op,ra,rd);
-		//		}
-		//		public instr(final program r,final int op,final int ra,final int rd,boolean flip_ra_rd){
-		//			super(r,op,ra,rd,flip_ra_rd);
-		//		}
-		protected int znxr_ci__ra__rd__(){
+		public int znxr_ci__ra__rd__(){
 			return znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		}
 		protected void compile(program r){
@@ -161,27 +155,9 @@ public abstract class stmt implements Serializable{
 		@Override protected void link(program p){
 			if(rh==null)
 				return;
-
-//			final def_const dc=p.defines.get(rh);
-//			if(dc!=null){
-//				final constexpr ce=constexpr.from(p,dc.value);
-//				final int i=ce.calc(p);
-//				bin[1]=i;
-//				return;
-//			}
 			final constexpr ce=constexpr.from(p,rh);
 			final int i=ce.calc(p);
 			bin[1]=i;
-			return;
-			
-//			if(rh.startsWith("&")){// li
-//				final String nm=rh.substring(1);
-//				final def_label lb=p.labels.get(nm);
-//				if(lb==null)
-//					throw new compiler_error(this,"label not found",nm);
-//				bin[1]=lb.location_in_binary;
-//				return;
-//			}
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -193,12 +169,6 @@ public abstract class stmt implements Serializable{
 		}
 		private static final long serialVersionUID=1;
 	}
-//	public final static class expr_plus extends expr{
-//		public expr_plus(program p,String lhs,String to_register){
-//			super(p,to_register);
-//		}
-//		private static final long serialVersionUID=1;
-//	}
 	abstract public static class constexpr extends stmt{
 		static constexpr from(program p,String expr){
 			// &dots
@@ -227,33 +197,12 @@ public abstract class stmt implements Serializable{
 		abstract public int calc(final program p);
 		public constexpr(program p,String expr){
 			super(p);this.expr=expr;
-//			if(expr.startsWith("&")){
-//			}
-//			boolean is_int=true;
-//			try{expr_int=Integer.parseInt(expr);}catch(Throwable t){is_int=false;}
-//			if(is_int)
-//				txt=
 		}
 		public String toString(){
 			return expr;
 		}
 		private static final long serialVersionUID=1;
 	}
-//	public final static class constexpr_minus extends constexpr{
-//		private String lhs,rhs;
-//		public constexpr_minus(program p,String lhs,String rhs){
-//			super(p);this.lhs=lhs;this.rhs=rhs;
-//		}
-//		@Override public int calc(program p){
-//			final constexpr lh=from(p,lhs);
-//			final constexpr rh=from(p,rhs);
-//			final int lhi=lh.calc(p);
-//			final int rhi=rh.calc(p);
-//			return lhi-rhi;//? bug const int skp=linewi-wi-1-1  => linewi-(wi-(1-1))
-//			//? skp=((linewi)+((-wi)+((-1)+(-1))))
-//		}
-//		private static final long serialVersionUID=1;
-//	}
 	public final static class constexpr_add extends constexpr{
 		private String lhs,rhs;
 		private boolean neg;
@@ -283,7 +232,6 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_assign extends expr{
-//		stmt rhs;
 		String rh;
 		boolean is_ld;
 		boolean is_ldc;
@@ -304,11 +252,6 @@ public abstract class stmt implements Serializable{
 			}
 			rh=p.next_token_in_line();
 			txt=new xwriter().p(register).p("=").p(rh.toString()).toString();
-//			final def_const c=p.defines.get(rh);
-//			if(c!=null){//li
-//				rhs=c;
-//				return;
-//			}
 		}
 		@Override protected void compile(program p){
 			if(is_ld){
@@ -323,13 +266,6 @@ public abstract class stmt implements Serializable{
 				bin=s.bin;
 				return;
 			}
-//			if(rhs instanceof def_const){
-//				final instr s=new instr(p,0,li.op,null,to_register);
-//				s.compile(p);
-//				final int i=new constexpr(p,((def_const)rhs).value).calc(p);
-//				bin=new int[]{s.bin[0],i};
-//				return;
-//			}
 			if(program.is_reference_to_register(rh)){
 				final instr s=new instr(p,0,tx.op,to_register,rh);
 				s.compile(p);
@@ -365,7 +301,6 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_struct extends def{
-//		protected String name;
 		private List<def_struct_member> fields;
 		public def_struct(final program p) throws IOException{
 			super(p);
@@ -389,8 +324,6 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_struct_member extends def{
-//		private String type;
-//		private String name;
 		private String default_value;
 		public def_struct_member(program p) throws IOException{
 			super(p);
@@ -408,7 +341,6 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_type extends def{
-		//		public String name;
 		public def_type(final program r) throws IOException{
 			super(r);
 			name=r.next_identifier();
@@ -426,17 +358,11 @@ public abstract class stmt implements Serializable{
 			data=r.next_token_in_line();
 			txt="li "+rd+" "+data;
 		}
-//		public li(program r,String reg,String data){
-//			super(r,0,li.op,null,reg);
-//			this.data=data;
-//			txt="li "+reg+" "+data;
-//		}
 		public li(program r,String reg,constexpr ce){
 			super(r,0,li.op,null,reg);
 			this.ce=ce;
 			txt="li "+reg+" "+ce;
 		}
-		//		private boolean is_integer(){try{Integer.parseInt(data);return true;}catch(Throwable t){return false;}}
 		@Override protected void compile(program p){
 			bin=new int[]{znxr_ci__ra__rd__(),0};
 		}
@@ -582,7 +508,6 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_label extends def{
-//		protected String name;
 		public def_label(program p,String nm){
 			super(p);
 			name=nm;
@@ -731,14 +656,8 @@ public abstract class stmt implements Serializable{
 	}
 	abstract public static class def extends stmt{
 		protected String name,type;
-		public def(program p){
-			super(p);
-		}
-		public def(program p,String type,String name){
-			super(p);
-			this.type=type;
-			this.name=name;
-		}
+		public def(program p){super(p);}
+		public def(program p,String type,String name){super(p);this.type=type;this.name=name;}
 		final public String name(){return name;}
 		@Override protected void compile(program p){}
 		@Override protected void link(program p){}
