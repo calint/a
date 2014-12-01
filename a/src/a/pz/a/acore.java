@@ -159,7 +159,7 @@ final public class acore extends a{
 		cor.meter_frames=cor.meter_instructions=0;
 		st.set("reseted");
 		if(x==null)return;
-		xfocus(x);
+		xupd_focus(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
@@ -175,7 +175,7 @@ final public class acore extends a{
 		if(x==null)return;
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
 		x.xu(sy,re,ca,lo);
-		xfocus(x);
+		xupd_focus(x);
 	}
 	private boolean going;
 	/**go*/
@@ -190,7 +190,7 @@ final public class acore extends a{
 			Thread.sleep(500);
 		}
 	}
-	private void xfocus(xwriter x){
+	private void xupd_focus(xwriter x){
 		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 	}
 	private long runms=1000;
@@ -215,7 +215,7 @@ final public class acore extends a{
 		st.set(y.toString());
 		if(x==null)return;
 		x.xu(st,re,ca,lo);
-		xfocus(x);
+		xupd_focus(x);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	/**runtobreakpoint*/
@@ -236,7 +236,7 @@ final public class acore extends a{
 		}
 		if(x==null)return;
 		x.xu(st,sy,re,ca,lo);
-		xfocus(x);
+		xupd_focus(x);
 		ra.xupd(x);
 	}
 	/**stepframe*/
@@ -259,7 +259,7 @@ final public class acore extends a{
 			st.set(stacktrace(t));
 		}
 		if(x==null)return;
-		xfocus(x);
+		xupd_focus(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
