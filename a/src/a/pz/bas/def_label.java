@@ -1,6 +1,7 @@
 package a.pz.bas;
 
 
+
 final public class def_label extends def{
 	public def_label(program p,String nm){
 		super(p);

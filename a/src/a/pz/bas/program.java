@@ -221,7 +221,7 @@ public final class program extends stmt implements Serializable{
 		//		switch(tk){
 		//		}
 		try{
-			s=(instr)Class.forName(getClass().getPackage().getName()+"."+tk).getConstructor(program.class).newInstance(this);
+			s=(instr)Class.forName(getClass().getPackage().getName()+".assembly."+tk).getConstructor(program.class).newInstance(this);
 			s.znxr=znxr;
 		}catch(InvocationTargetException t){
 			if(t.getCause() instanceof compiler_error)

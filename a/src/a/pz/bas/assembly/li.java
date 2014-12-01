@@ -1,6 +1,9 @@
-package a.pz.bas;
+package a.pz.bas.assembly;
 
 import java.io.IOException;
+import a.pz.bas.constexpr;
+import a.pz.bas.instr;
+import a.pz.bas.program;
 
 final public class li extends instr{
 		private String data;

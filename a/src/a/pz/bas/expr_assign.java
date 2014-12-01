@@ -1,6 +1,10 @@
 package a.pz.bas;
 
 import java.io.IOException;
+import a.pz.bas.assembly.ld;
+import a.pz.bas.assembly.ldc;
+import a.pz.bas.assembly.li;
+import a.pz.bas.assembly.tx;
 import b.xwriter;
 
 final public class expr_assign extends expr{

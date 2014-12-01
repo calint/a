@@ -5,10 +5,10 @@ import b.xwriter;
 public class instr extends stmt{
 	int znxr;
 	int op;
-	String ra;
-	String rd;
-	int rai;
-	int rdi;
+	protected String ra;
+	protected String rd;
+	protected int rai;
+	protected int rdi;
 	//		int imm;
 	public instr(program p){
 		super(p);
