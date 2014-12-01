@@ -62,7 +62,7 @@ final public class acore extends a{
 			cor.reset();
 			x_f(x,null);
 			if(x==null)return;
-			x.xu(ro).xu(di).xu(toc);
+			x.xu(ro,di,toc);
 		}else super.ev(x,from,o);
 	}	
 	public void to(final xwriter x)throws Throwable{
@@ -160,7 +160,7 @@ final public class acore extends a{
 		st.set("reseted");
 		if(x==null)return;
 		xfocus(x);
-		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
+		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
@@ -174,7 +174,7 @@ final public class acore extends a{
 		cor.step();
 		if(x==null)return;
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
-		x.xu(sy).xu(re).xu(ca).xu(lo);
+		x.xu(sy,re,ca,lo);
 		xfocus(x);
 	}
 	private boolean going;
@@ -214,7 +214,7 @@ final public class acore extends a{
 		y.p_data_size(cor.meter_instructions*1000/dt).spc().p("ips").spc().p_data_size(cor.meter_frames*1000/dt).spc().p("fps");
 		st.set(y.toString());
 		if(x==null)return;
-		x.xu(st).xu(re).xu(ca).xu(lo);
+		x.xu(st,re,ca,lo);
 		xfocus(x);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
@@ -235,11 +235,7 @@ final public class acore extends a{
 			if(!go)break;
 		}
 		if(x==null)return;
-		x.xu(st);
-		x.xu(sy);
-		x.xu(re);
-		x.xu(ca);
-		x.xu(this.lo);
+		x.xu(st,sy,re,ca,lo);
 		xfocus(x);
 		ra.xupd(x);
 	}
@@ -264,7 +260,7 @@ final public class acore extends a{
 		}
 		if(x==null)return;
 		xfocus(x);
-		x.xu(st).xu(sy).xu(re).xu(ca).xu(lo);
+		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}
 	public void logo_to(final xwriter x){
