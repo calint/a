@@ -1,6 +1,7 @@
 package a.pz.bas;
 
 
+
 abstract public class def extends stmt{
 	protected String name;
 	public String type;

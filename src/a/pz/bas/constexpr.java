@@ -1,6 +1,7 @@
 package a.pz.bas;
 
 
+
 public abstract class constexpr extends stmt{
 //		public constexpr(final program p){super(p);}
 		public constexpr(program p,String txt){super(p);this.txt=txt;}

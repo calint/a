@@ -1,6 +1,8 @@
-package a.pz.bas;
+package a.pz.bas.assembly;
 
 import java.io.IOException;
+import a.pz.bas.instr;
+import a.pz.bas.program;
 import b.xwriter;
 
 final public class lp extends instr{
