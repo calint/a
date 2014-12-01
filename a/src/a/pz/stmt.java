@@ -875,7 +875,7 @@ public abstract class stmt implements Serializable{
 	}
 	protected String location_in_source;
 	final public String source_location(){return location_in_source;}
-	final public String source_line(){return location_in_source.split(":")[0];}
+	final public String source_location_line(){return location_in_source.split(":")[0];}
 	protected String txt;
 	protected String type;
 	protected int[] bin;
