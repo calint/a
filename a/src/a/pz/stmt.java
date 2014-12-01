@@ -782,9 +782,9 @@ public abstract class stmt implements Serializable{
 		stmt st;
 		public expr_func_call_arg(final program p) throws IOException{
 			super(p,null);
-//			st=p.next_statement();
-//			txt=st.toString();
-			txt=p.next_token_in_line();
+			st=p.next_statement();
+			txt=st.toString();
+//			txt=p.next_token_in_line();
 		}
 		@Override protected void compile(program p){}
 		@Override protected void link(program p){}
@@ -801,12 +801,14 @@ public abstract class stmt implements Serializable{
 		if(p!=null)
 			location_in_source=p.location_in_source();
 	}
+	public stmt(final program p,final String txt){
+		this(p);this.txt=txt;
+	}
 	protected void validate_references_to_labels(program r){}
 	protected void compile(program r){}
 	protected void link(program p){}
-	public String toString(){
-		return txt;
-	}
+	public String toString(){return txt;}
+	final public String txt(){return txt;}
 	//		public void source_to(xwriter x){}
 	private static final long serialVersionUID=1;
 }
