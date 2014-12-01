@@ -162,13 +162,13 @@ public abstract class stmt implements Serializable{
 			if(rh==null)
 				return;
 
-			final def_const dc=p.defines.get(rh);
-			if(dc!=null){
-				final constexpr ce=constexpr.from(p,dc.value);
-				final int i=ce.calc(p);
-				bin[1]=i;
-				return;
-			}
+//			final def_const dc=p.defines.get(rh);
+//			if(dc!=null){
+//				final constexpr ce=constexpr.from(p,dc.value);
+//				final int i=ce.calc(p);
+//				bin[1]=i;
+//				return;
+//			}
 			final constexpr ce=constexpr.from(p,rh);
 			final int i=ce.calc(p);
 			bin[1]=i;
@@ -213,7 +213,7 @@ public abstract class stmt implements Serializable{
 			if(dc!=null)
 				return new constexpr_int(p,dc.toInt(p));
 			
-			//linewi-wi
+			// linewi-wi
 			final int i1=expr.lastIndexOf('-');
 			final int i2=expr.lastIndexOf('+');
 			if(i1!=-1&&i2==-1       )return new constexpr_add(p,expr.substring(0,i1),expr.substring(i1+1),true);
