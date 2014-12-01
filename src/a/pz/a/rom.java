@@ -13,7 +13,7 @@ final public class rom extends a{
 			x.p(acore.fld("00",Integer.toHexString(row)));
 			x.tag("span",id+"_"+row+"_s").spc().tage("span");
 			for(int k=0,bit=1;k<16;bit<<=1){
-				x.p("<a href=\"javascript:$x('").p(id).p("  ").p(row).p(" ").p(k).p("')\" id=").p(id).p("_").p(row).p("$").p(k).p(">");
+				x.p("<a href=\"javascript:$x('").p(id).p("  ").p(row).p(" ").p(k).p("')\" id=").p(id).p("-").p(row).p("-").p(k).p(">");
 				if((d&bit)==bit)
 					x.p("o");
 				else
@@ -25,7 +25,7 @@ final public class rom extends a{
 			final String wid=id();
 			final int rowint=ints[row];
 			final String rowinthex=Integer.toHexString(rowint);
-			x.tago("span").attr("id",wid+"_"+row).tagoe().p(acore.fld("0000",rowinthex)).tage("span").nl();
+			x.tago("span").attr("id",wid+"-"+row).tagoe().p(acore.fld("0000",rowinthex)).tage("span").nl();
 			row++;
 			if(row>=disppagenrows)
 				break;
@@ -58,8 +58,8 @@ final public class rom extends a{
 		if(on)v=v&~msk;
 		else v|=msk;
 		ints[row]=v;
-		x.xu(id()+"_"+row+"$"+bit,on?".":"o");
-		x.xu(id()+"_"+row,acore.fld("0000",Integer.toHexString(ints[row])));
+		x.xu(id()+"-"+row+"-"+bit,on?".":"o");
+		x.xu(id()+"-"+row,acore.fld("0000",Integer.toHexString(ints[row])));
 	}
 //	public int get(final int row){return ints[row];}
 //	public void set(final int row,final int value){ints[row]=value;}
