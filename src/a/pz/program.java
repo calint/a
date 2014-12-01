@@ -192,6 +192,12 @@ public final class program extends stmt implements Serializable{
 		default:
 			unread(nxtch);
 		}
+		
+		if(is_reference_to_register(tk)){
+			return new reg_ref(tk,this);
+		}
+		
+		// machine code instruction
 		int znxr=0;
 		switch(tk){
 		case "ifz":
@@ -579,5 +585,12 @@ public final class program extends stmt implements Serializable{
 				return false;
 		}
 		return true;
+	}
+	
+	final static class reg_ref extends stmt{
+		public reg_ref(String tk,program p){
+			super(p,tk);
+		}
+		private static final long serialVersionUID=1;
 	}
 }
