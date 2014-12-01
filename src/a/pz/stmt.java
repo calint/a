@@ -177,7 +177,10 @@ public abstract class stmt implements Serializable{
 		public static constexpr from(program p,String src){
 			// &dots
 			if(src.startsWith("&")){
-				final def_label dl=p.labels.get(src.substring(1));
+				final String nm=src.substring(1);
+				final def_label dl=p.labels.get(nm);
+				if(dl==null)
+					throw new compiler_error(p.location_in_source(),"label not found: "+nm);
 				final int i=dl.location_in_binary;
 				return new constexpr_int(p,i);
 			}
@@ -345,12 +348,12 @@ public abstract class stmt implements Serializable{
 		private constexpr ce;
 		final public static int op=0x0000;
 		public li(program r) throws IOException{
-			super(r,0,li.op,null,r.next_token_in_line());
+			super(r,0,op,null,r.next_token_in_line());
 			data=r.next_token_in_line();
 			txt="li "+rd+" "+data;
 		}
 		public li(program r,String reg,constexpr ce){
-			super(r,0,li.op,null,reg);
+			super(r,0,op,null,reg);
 			this.ce=ce;
 			txt="li "+reg+" "+ce;
 		}
@@ -750,6 +753,8 @@ public abstract class stmt implements Serializable{
 			}
 			x.p(")");
 			txt=x.toString();
+		}
+		@Override protected void compile(program p){
 			final def_func f=p.functions.get(function_name);
 			if(f==null)
 				throw new compiler_error(this,"function not found",function_name);
@@ -762,8 +767,6 @@ public abstract class stmt implements Serializable{
 				if(!fa.type.equals(type_in_register))
 					throw new compiler_error(this," argument "+ii+"  expected type '"+fa.type+"' but var '"+fa.name+"' is of type '"+type_in_register+"'\n  "+f);
 			}
-		}
-		@Override protected void compile(program p){
 			bin=new int[]{call.op};
 		}
 		@Override protected void link(program p){
