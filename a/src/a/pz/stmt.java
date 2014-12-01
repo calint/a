@@ -77,7 +77,7 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_const extends def{
-		public String value;
+		protected String value;
 		public def_const(final program r) throws IOException{
 			super(r);
 			type=r.next_token_in_line();
@@ -365,7 +365,7 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final static public class def_struct extends def{
-		public String name;
+//		protected String name;
 		private List<def_struct_member> fields;
 		public def_struct(final program p) throws IOException{
 			super(p);
@@ -389,8 +389,8 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_struct_member extends def{
-		private String type;
-		private String name;
+//		private String type;
+//		private String name;
 		private String default_value;
 		public def_struct_member(program p) throws IOException{
 			super(p);
@@ -582,10 +582,10 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_label extends def{
-		public String name;
+//		protected String name;
 		public def_label(program p,String nm){
 			super(p);
-			this.name=nm;
+			name=nm;
 			final def_label d=p.labels.get(name);
 			if(d!=null)
 				throw new compiler_error(this,"label '"+name+"' already declared at "+d.location_in_source);
@@ -594,7 +594,7 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_comment extends def{
-		public String line;
+		protected String line;
 		public def_comment(program p) throws IOException{
 			super(p);
 			line=p.consume_rest_of_line();
@@ -730,7 +730,7 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	abstract public static class def extends stmt{
-		String name,type;
+		protected String name,type;
 		public def(program p){
 			super(p);
 		}
@@ -739,13 +739,14 @@ public abstract class stmt implements Serializable{
 			this.type=type;
 			this.name=name;
 		}
+		final public String name(){return name;}
 		@Override protected void compile(program p){}
 		@Override protected void link(program p){}
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_func extends def{
-		public List<def_func_arg> args=new ArrayList<>();
-		public program code_block;
+		protected List<def_func_arg> args=new ArrayList<>();
+		protected program code_block;
 		public def_func(String name,String return_type,program p) throws IOException{
 			super(p,return_type,name);
 			if(!p.is_next_char_paranthesis_right()){
@@ -791,8 +792,8 @@ public abstract class stmt implements Serializable{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_func_arg extends def{
-		public String type,name,default_value;
-		public boolean is_const;
+		protected String default_value;
+		protected boolean is_const;
 		public def_func_arg(program p) throws IOException{
 			super(p);
 			type=p.next_token_in_line();
