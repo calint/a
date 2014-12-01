@@ -145,7 +145,7 @@ final public class acore extends a{
 		}
 		x.div_();
 	}
-	boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
+	public boolean hasbit(final int bit){return(bi.toint()&bit)==bit;}
 	synchronized public void x_t(xwriter x,String s)throws Throwable{
 		pl("x_t");
 		x.xuo(this);
