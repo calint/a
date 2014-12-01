@@ -47,7 +47,7 @@ final public class acore extends a{
 //	public metrics me;
 	
 	public acore()throws Throwable{
-		ec.src.from(cor.getClass().getResourceAsStream("rom.src"));
+		ec.src.from(getClass().getResourceAsStream("../bas/rom.src"));
 		ajaxsts.set("idle");
 		bi.set(0b1111110000);
 		ro.ints=cor.rom;
