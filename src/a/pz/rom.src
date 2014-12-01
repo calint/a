@@ -4,31 +4,19 @@ typedef int
 typedef scr
 typedef height
 typedef width
-typedef skpln
 typedef pxl
 
 const scr pos=1040
 const height hi=30
 const width wi=40
-const skpln skp=linewi-wi
 const pxl colr=800
 const int linewi=100
 
 var a=pos
-var b=hi
-var c=wi
-var d=skp
-var e=colr
 a+=p
 p++
-draw(a,b,c,d,e)
-
-//var a=pos,b=hi,c=wi,d=skp,e=colr
-//draw(a,b,c,d,e)
-//rel a,b,c,d,e
-
-a=pos
-dots.draw(a)
+draw(a,hi,wi,linewi-wi,colr)
+dots.draw(pos)
 ..
 :dots
 . 4

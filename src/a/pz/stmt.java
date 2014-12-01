@@ -233,8 +233,8 @@ public abstract class stmt implements Serializable{
 		boolean is_ldc;
 		public expr_assign(final program p,final String register) throws IOException{
 			super(p,register);
-			if(!p.is_register_allocated(register))
-				throw new compiler_error(this,"var '"+register+"' has not been declared");
+//			if(!p.is_register_allocated(register))
+//				throw new compiler_error(this,"var '"+register+"' has not been declared");
 			if(p.is_next_char_star()){// d=*a
 				rh=p.next_token_in_line();
 				if(p.is_next_char_plus()){
@@ -768,7 +768,14 @@ public abstract class stmt implements Serializable{
 				e.to_register=fa.name;
 				if(!fa.name.equals(e.txt)){
 //					p.allocate_register(this,e.to_register);
-					final String insert_source="var "+e.to_register+"="+e.txt();
+					final xwriter x=new xwriter();
+					x.p("var").spc().p(e.to_register).p("=");
+					if(e instanceof constexpr){
+						x.p(Integer.toString(((constexpr)e).eval(p),16));
+					}else{
+						x.p(e.txt());
+					}
+					final String insert_source=x.toString();
 					final program pp=new program(insert_source);
 					pp.compile(pp);
 					e.bin=pp.bin;
@@ -794,7 +801,15 @@ public abstract class stmt implements Serializable{
 			for(stmt e:args){
 				final def_func_arg fa=f.args.get(ii++);
 				if(!fa.name.equals(e.txt)){
-					final program pp=new program("var "+e.to_register+"="+e.txt());
+					final xwriter x=new xwriter();
+					x.p("var").spc().p(e.to_register).p("=");
+					if(e instanceof constexpr){
+						x.p(Integer.toString(((constexpr)e).eval(p),16));
+					}else{
+						x.p(e.txt());
+					}
+					final String insert_source=x.toString();
+					final program pp=new program(insert_source);
 					pp.build();
 					e.bin=pp.bin;
 				}else{
