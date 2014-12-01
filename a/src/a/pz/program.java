@@ -11,16 +11,29 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import a.pz.bas.constexpr;
+import a.pz.bas.def_comment;
+import a.pz.bas.def_const;
+import a.pz.bas.def_func;
+import a.pz.bas.def_label;
+import a.pz.bas.def_struct;
+import a.pz.bas.def_type;
+import a.pz.bas.expr_add;
+import a.pz.bas.expr_assign;
+import a.pz.bas.expr_func_call;
+import a.pz.bas.expr_increment;
+import a.pz.bas.expr_store;
+import a.pz.bas.expr_var;
 import b.xwriter;
 
 public final class program extends stmt implements Serializable{
 	final public List<stmt> statements=new ArrayList<>();
-	final public Map<String,stmt.def_const> defines=new LinkedHashMap<>();
-	final public Map<String,stmt.def_type> typedefs=new LinkedHashMap<>();
-	final public Map<String,stmt.def_struct> structs=new LinkedHashMap<>();
-	final public Map<String,stmt.def_label> labels=new LinkedHashMap<>();
-	final public Map<String,stmt.def_func> functions=new LinkedHashMap<>();
-	final public Map<String,stmt.data_int> data=new LinkedHashMap<>();
+	final public Map<String,def_const> defines=new LinkedHashMap<>();
+	final public Map<String,def_type> typedefs=new LinkedHashMap<>();
+	final public Map<String,def_struct> structs=new LinkedHashMap<>();
+	final public Map<String,def_label> labels=new LinkedHashMap<>();
+	final public Map<String,def_func> functions=new LinkedHashMap<>();
+	final public Map<String,data_int> data=new LinkedHashMap<>();
 
 	public program(final String source){
 		this(null,new StringReader(source),false);
@@ -71,7 +84,7 @@ public final class program extends stmt implements Serializable{
 		compile(this);
 		link(this);
 	}
-	@Override protected void compile(program p){
+	@Override public void compile(program p){
 		//		statements.forEach(e->e.compile(p));
 		int pc=0;
 		for(final stmt s:statements){
@@ -91,7 +104,7 @@ public final class program extends stmt implements Serializable{
 		//			i+=s.bin.length;
 		//		}
 	}
-	@Override protected void link(program p){
+	@Override public void link(program p){
 		//		statements.forEach(e->e.link(p));
 		//		bin=new int[program_length];
 		int i=0;
@@ -104,7 +117,7 @@ public final class program extends stmt implements Serializable{
 		}
 	}
 	public int program_length;
-	stmt next_statement(boolean allow_instr) throws IOException{
+	public stmt next_statement(boolean allow_instr) throws IOException{
 		String tk="";
 		while(true){
 			skip_whitespace();
@@ -115,58 +128,58 @@ public final class program extends stmt implements Serializable{
 				return null;
 			if(is_next_char_slash())
 				if(is_next_char_slash())
-					return new stmt.def_comment(this);
+					return new def_comment(this);
 				else
 					unread('/');
 			if(is_next_char_star())//st or stc   *a=d   *a++=d   *(a+++b)=d 
-				return new stmt.expr_store(this);
+				return new expr_store(this);
 			tk=next_token_in_line();
 			if(tk==null)
 				throw new Error();
 			if(tk.equals("const")){
 				final def_const s=new def_const(this);
-				defines.put(s.name,s);
+				defines.put(s.name(),s);
 				return s;
 			}
 			if(tk.equals("typedef")){
-				final stmt.def_type s=new stmt.def_type(this);
-				typedefs.put(s.name,s);
+				final def_type s=new def_type(this);
+				typedefs.put(s.name(),s);
 				return s;
 			}
 			if(tk.equals("struct")){
-				final stmt.def_struct s=new stmt.def_struct(this);
-				structs.put(s.name,s);
+				final def_struct s=new def_struct(this);
+				structs.put(s.name(),s);
 				return s;
 			}
 			if(tk.equals("var")){
-				final stmt.expr_var s=new stmt.expr_var(this);
+				final expr_var s=new expr_var(this);
 				return s;
 			}
 			if(tk.startsWith(":")){
-				final stmt.def_label s=new stmt.def_label(this,tk.substring(1));
+				final def_label s=new def_label(this,tk.substring(1));
 				consume_rest_of_line();//? savecomment
-				labels.put(s.name,s);
+				labels.put(s.name(),s);
 				return s;
 			}
-			final stmt.def_type td=typedefs.get(tk);
+			final def_type td=typedefs.get(tk);
 			if(td!=null){// int a=2   int main(int a)
 				final String name=next_token_in_line();
 				if(is_next_char_paranthesis_left()){//  int main(int a)
-					final def_func df=new def_func(name,td.name,this);
+					final def_func df=new def_func(name,td.name(),this);
 					functions.put(name,df);
 					return df;
 				}
-				final stmt.data_int s=new stmt.data_int(name,td.name,this);
+				final data_int s=new data_int(name,td.name(),this);
 				data.put(s.name,s);
 				return s;
 			}
 			if(tk.equals(".")){
-				final stmt.data s=new stmt.data(this);
+				final data s=new data(this);
 				consume_rest_of_line();
 				return s;
 			}
 			if(tk.equals("..")){
-				final stmt.eof s=new stmt.eof(this);
+				final eof s=new eof(this);
 				consume_rest_of_line();
 				return s;
 			}
@@ -187,7 +200,7 @@ public final class program extends stmt implements Serializable{
 			}
 			throw new Error("expressions not supported yet");
 		case '('://function call
-			final stmt.expr_func_call sc=new stmt.expr_func_call(this,tk);
+			final expr_func_call sc=new expr_func_call(this,tk);
 			return sc;
 		default:
 			unread(nxtch);
@@ -221,7 +234,7 @@ public final class program extends stmt implements Serializable{
 		//		switch(tk){
 		//		}
 		try{
-			s=(instr)Class.forName(stmt.class.getName()+"$"+tk).getConstructor(program.class).newInstance(this);
+			s=(instr)Class.forName(getClass().getPackage().getName()+"."+tk).getConstructor(program.class).newInstance(this);
 			s.znxr=znxr;
 		}catch(InvocationTargetException t){
 			if(t.getCause() instanceof compiler_error)
@@ -255,10 +268,10 @@ public final class program extends stmt implements Serializable{
 		s.mkstr();
 		return s;
 	}
-	boolean is_register_allocated(String register){
+	public boolean is_register_allocated(String register){
 		return allocated_registers.containsKey(register);
 	}
-	boolean is_next_char_plus() throws IOException{
+	public boolean is_next_char_plus() throws IOException{
 		final int ch=read();
 		if(ch=='+')
 			return true;
@@ -279,21 +292,21 @@ public final class program extends stmt implements Serializable{
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_paranthesis_right() throws IOException{
+	public boolean is_next_char_paranthesis_right() throws IOException{
 		final int ch=read();
 		if(ch==')')
 			return true;
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_comma() throws IOException{
+	public boolean is_next_char_comma() throws IOException{
 		final int ch=read();
 		if(ch==',')
 			return true;
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_star() throws IOException{
+	public boolean is_next_char_star() throws IOException{
 		final int ch=read();
 		if(ch=='*')
 			return true;
@@ -307,21 +320,21 @@ public final class program extends stmt implements Serializable{
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_equals() throws IOException{
+	public boolean is_next_char_equals() throws IOException{
 		final int ch=read();
 		if(ch=='=')
 			return true;
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_end_of_file() throws IOException{
+	public boolean is_next_char_end_of_file() throws IOException{
 		final int ch=read();
 		if(ch==-1||ch==65536)
 			return true;
 		unread(ch);
 		return false;
 	}
-	boolean is_next_char_mustache_left() throws IOException{
+	public boolean is_next_char_mustache_left() throws IOException{
 		final int ch=read();
 		if(ch=='{')
 			return true;
@@ -360,7 +373,7 @@ public final class program extends stmt implements Serializable{
 			pc+=c;
 		}
 	}
-	String location_in_source(){
+	public String location_in_source(){
 		return hr_location_string_from_line_and_col(line_number,character_number_in_line);
 	}
 	private static String hr_location_string_from_line_and_col(final int ln,final int col){
@@ -395,7 +408,7 @@ public final class program extends stmt implements Serializable{
 				throw new Error();
 		}
 	}
-	String next_token_in_line() throws IOException{
+	public String next_token_in_line() throws IOException{
 		skip_whitespace_on_same_line();
 		final StringBuilder sb=new StringBuilder();
 		while(true){
@@ -435,7 +448,7 @@ public final class program extends stmt implements Serializable{
 			return null;
 		return sb.toString();
 	}
-	void skip_whitespace_on_same_line() throws IOException{
+	public void skip_whitespace_on_same_line() throws IOException{
 		while(true){
 			final int ch=read();
 			if(ch=='\n'){
@@ -453,7 +466,8 @@ public final class program extends stmt implements Serializable{
 
 	private PushbackReader pr;
 	private final static int newline='\n';
-	int line_number=1,character_number_in_line;
+	public int line_number=1;
+	public int character_number_in_line;
 	final public static int opneg=0x0300;
 	final public static int opskp=0x0080;
 	final public static int opdac=0x0400;
@@ -470,28 +484,28 @@ public final class program extends stmt implements Serializable{
 			return;
 		}
 	}
-	String next_identifier() throws IOException{
+	public String next_identifier() throws IOException{
 		final String id=next_token_in_line();
 		if(id==null)
-			throw new stmt.compiler_error(location_in_source(),"expected identifier but got end of line");
+			throw new compiler_error(location_in_source(),"expected identifier but got end of line");
 		if(id.length()==0)
-			throw new stmt.compiler_error(location_in_source(),"identifier is empty");
+			throw new compiler_error(location_in_source(),"identifier is empty");
 		if(Character.isDigit(id.charAt(0)))
-			throw new stmt.compiler_error(location_in_source(),"identifier '"+id+"' starts with a number");
+			throw new compiler_error(location_in_source(),"identifier '"+id+"' starts with a number");
 		return id;
 	}
-	String next_type_identifier() throws IOException{
+	public String next_type_identifier() throws IOException{
 		final String id=next_token_in_line();
 		if(id==null)
-			throw new stmt.compiler_error(location_in_source(),"expected type identifier but got end of line");
+			throw new compiler_error(location_in_source(),"expected type identifier but got end of line");
 		if(id.length()==0)
-			throw new stmt.compiler_error(location_in_source(),"type identifier is empty");
+			throw new compiler_error(location_in_source(),"type identifier is empty");
 		//is_valid_type_identifier
 		if(Character.isDigit(id.charAt(0)))
-			throw new stmt.compiler_error(location_in_source(),"type identifier '"+id+"' starts with a number");
+			throw new compiler_error(location_in_source(),"type identifier '"+id+"' starts with a number");
 		return id;
 	}
-	boolean is_next_char_end_of_line() throws IOException{
+	public boolean is_next_char_end_of_line() throws IOException{
 		final int ch=read();
 		if(ch=='\n'||ch==-1)
 			return true;
@@ -533,7 +547,7 @@ public final class program extends stmt implements Serializable{
 	//		final int eos=read();
 	//		if(eos!='\n'&&eos!=-1)throw new program.compiler_error(hrs_location(),"expected end of line or end of file");
 	//	}
-	String consume_rest_of_line() throws IOException{
+	public String consume_rest_of_line() throws IOException{
 		final StringBuilder sb=new StringBuilder();
 		while(true){
 			final int ch=read();
@@ -552,14 +566,14 @@ public final class program extends stmt implements Serializable{
 	//	}
 	int register_index_from_string(String register){
 		if(register.length()!=1)
-			throw new stmt.compiler_error(location_in_source(),"not a register: "+register);
+			throw new compiler_error(location_in_source(),"not a register: "+register);
 		final int i=register.charAt(0)-'a';
 		final int nregs=16;//? magicnumber
 		if(i<0||i>=nregs)
-			throw new stmt.compiler_error(location_in_source(),"register not found: "+register);
+			throw new compiler_error(location_in_source(),"register not found: "+register);
 		return i;
 	}
-	static boolean is_reference_to_register(String ref){
+	public static boolean is_reference_to_register(String ref){
 		if(ref.length()!=1)
 			return false;
 		final char ch=ref.charAt(0);
@@ -567,17 +581,17 @@ public final class program extends stmt implements Serializable{
 	}
 
 	final public Map<String,stmt> allocated_registers=new LinkedHashMap<>();
-	void allocate_register(stmt e,String regname){
+	public void allocate_register(stmt e,String regname){
 		final stmt s=allocated_registers.get(regname);
 		if(s!=null)
-			throw new stmt.compiler_error(e,"register '"+regname+"' is already allocated at line "+s.location_in_source);
+			throw new compiler_error(e,"register '"+regname+"' is already allocated at line "+s.location_in_source);
 		allocated_registers.put(regname,e);
 		return;
 	}
 	String type_for_register(stmt s,String name){
 		final stmt v=allocated_registers.get(name);
 		if(v==null)
-			throw new stmt.compiler_error(s,"register not found",name);
+			throw new compiler_error(s,"register not found",name);
 		return v.type;
 	}
 

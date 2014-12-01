@@ -3,7 +3,7 @@ import static b.b.log;
 import java.util.HashSet;
 import java.util.Set;
 import a.pz.program;
-import a.pz.stmt.compiler_error;
+import a.pz.compiler_error;
 import b.a;
 import b.xwriter;
 final public class crun_source_editor extends a{
