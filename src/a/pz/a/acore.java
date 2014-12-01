@@ -1,9 +1,19 @@
 package a.pz.a;
 import static b.b.pl;
 import static b.b.stacktrace;
+import a.pz.add;
+import a.pz.call;
 import a.pz.core;
 import a.pz.program;
-import a.pz.stmt;
+import a.pz.stc;
+import a.pz.sub;
+import a.pz.tx;
+import a.pz.inc;
+import a.pz.ld;
+import a.pz.ldc;
+import a.pz.li;
+import a.pz.lp;
+import a.pz.shf;
 import b.a;
 import b.xwriter;
 final public class acore extends a{
@@ -166,9 +176,9 @@ final public class acore extends a{
 	/**step*/synchronized public void x_n(final xwriter x,final String s)throws Throwable{
 		pl("x_n");
 		final boolean refresh_display=cor.loading_register==-1&&(
-				(cor.instruction&stmt.st.op)==stmt.st.op
+				(cor.instruction&0x00d8)==0x00d8
 				||
-				(cor.instruction&stmt.stc.op)==stmt.stc.op
+				(cor.instruction&stc.op)==stc.op
 		);
 		st.clr();
 		cor.step();
@@ -308,23 +318,23 @@ final public class acore extends a{
 		x.pl(":  nxt : ...4 :     ... nxt          :");
 		x.pl(":  ret : ...8 :     ... ret          :");
 		x.pl(":      : ...d : ifz ... nxt ret      :");
-		x.pl(":   li : "+fld("x000",Integer.toHexString(stmt.li.op))+" : next instr to reg[x] :");
-		x.pl(": call : "+fld("ii00",Integer.toHexString(stmt.call.op))+" : imm6                 :");
+		x.pl(":   li : "+fld("x000",Integer.toHexString(li.op))+" : next instr to reg[x] :");
+		x.pl(": call : "+fld("ii00",Integer.toHexString(call.op))+" : imm6                 :");
 		x.pl(":  skp : "+fld("ii00",Integer.toHexString(program.opskp))+" : pc+=imm6             :");
-		x.pl(":  stc : "+fld("yx00",Integer.toHexString(stmt.stc.op))+" : ram[x++]=y           :");
-		x.pl(":   st : "+fld("yx00",Integer.toHexString(stmt.st.op))+" : ram[x]=y             :");
- 		x.pl(":   lp : "+fld("x000",Integer.toHexString(stmt.lp.op))+" : loop r[x] times      :");
-		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(stmt.ldc.op))+" : y=ram[x++]           :");
-		x.pl(":   ld : "+fld("yx00",Integer.toHexString(stmt.ld.op))+" : y=ram[x]             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(stmt.shf.op))+" : r[x]>>=i             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(stmt.shf.op))+" : r[x]<<=i             :");
-		x.pl(":  not : "+fld("x000",Integer.toHexString(stmt.shf.op))+" : r[x]=~r[x]           :");
-		x.pl(":  inc : "+fld("x000",Integer.toHexString(stmt.inc.op))+" : r[x]++               :");
+		x.pl(":  stc : "+fld("yx00",Integer.toHexString(stc.op))+" : ram[x++]=y           :");
+		x.pl(":   st : "+fld("yx00",Integer.toHexString(0x00d8))+" : ram[x]=y             :");
+ 		x.pl(":   lp : "+fld("x000",Integer.toHexString(lp.op))+" : loop r[x] times      :");
+		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(ldc.op))+" : y=ram[x++]           :");
+		x.pl(":   ld : "+fld("yx00",Integer.toHexString(ld.op))+" : y=ram[x]             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(shf.op))+" : r[x]>>=i             :");
+		x.pl(":  shf : "+fld("xi00",Integer.toHexString(shf.op))+" : r[x]<<=i             :");
+		x.pl(":  not : "+fld("x000",Integer.toHexString(shf.op))+" : r[x]=~r[x]           :");
+		x.pl(":  inc : "+fld("x000",Integer.toHexString(inc.op))+" : r[x]++               :");
 		x.pl(":  neg : "+fld("x000",Integer.toHexString(program.opneg))+" : r[x]=-r[x]           :");
-		x.pl(":  add : "+fld("yx00",Integer.toHexString(stmt.add.op))+" : r[y]+=r[x]           :");
-		x.pl(":   tx : "+fld("yx00",Integer.toHexString(stmt.tx.op))+" : r[y]=r[x]            :");
+		x.pl(":  add : "+fld("yx00",Integer.toHexString(add.op))+" : r[y]+=r[x]           :");
+		x.pl(":   tx : "+fld("yx00",Integer.toHexString(tx.op))+" : r[y]=r[x]            :");
 //		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
-		x.pl(":  sub : "+fld("xy00",Integer.toHexString(stmt.sub.op))+" : r[y]-=r[x]           :");
+		x.pl(":  sub : "+fld("xy00",Integer.toHexString(sub.op))+" : r[y]-=r[x]           :");
 		x.pl(":  dac : "+fld("x000",Integer.toHexString(program.opdac))+" : dac=r[x]             :");
 		x.pl(":  eof : ffff : end-of-frame         :");
 		x.pl(":------:------:----------------------:");
