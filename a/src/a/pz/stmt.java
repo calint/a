@@ -771,16 +771,19 @@ public abstract class stmt implements Serializable{
 		}
 		@Override protected void link(program p){
 			final def_func f=p.functions.get(function_name);
-			if(f==null)
-				throw new compiler_error(this,"function not found",function_name);
+//			if(f==null)
+//				throw new compiler_error(this,"function not found",function_name);
 			final int a=f.location_in_binary;
 			bin[0]|=(a<<6);
 		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_func_call_arg extends expr{
+		stmt st;
 		public expr_func_call_arg(final program p) throws IOException{
 			super(p,null);
+//			st=p.next_statement();
+//			txt=st.toString();
 			txt=p.next_token_in_line();
 		}
 		@Override protected void compile(program p){}
