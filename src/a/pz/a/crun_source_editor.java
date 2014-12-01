@@ -32,7 +32,7 @@ final public class crun_source_editor extends a{
 	}
 	public line_numbers ln;
 	public void to(final xwriter x) throws Throwable{
-		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3","crun ").nl();
+		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3","","crun ","a").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
 		ln.to(x);
