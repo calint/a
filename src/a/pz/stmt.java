@@ -87,11 +87,11 @@ public abstract class stmt implements Serializable{
 			value=r.consume_rest_of_line();
 			txt="const "+type+" "+name+"="+value;
 		}
-		public int toInt(program p){
-			final constexpr ce=constexpr.from(p,value);
-			return ce.calc(p);
-//			return Integer.parseInt(value,16);
-		}
+//		public int toInt(program p){
+//			final constexpr ce=constexpr.from(p,value);
+//			return ce.calc(p);
+////			return Integer.parseInt(value,16);
+//		}
 		private static final long serialVersionUID=1;
 	}
 	final static public class expr_var extends expr{
@@ -156,7 +156,7 @@ public abstract class stmt implements Serializable{
 			if(rh==null)
 				return;
 			final constexpr ce=constexpr.from(p,rh);
-			final int i=ce.calc(p);
+			final int i=ce.eval(p);
 			bin[1]=i;
 		}
 		private static final long serialVersionUID=1;
@@ -181,7 +181,7 @@ public abstract class stmt implements Serializable{
 			// linewi
 			final def_const dc=p.defines.get(expr);
 			if(dc!=null)
-				return new constexpr_int(p,dc.toInt(p));
+				return constexpr.from(p,dc.value);
 			
 			// linewi-wi
 			final int i1=expr.lastIndexOf('-');
@@ -194,7 +194,7 @@ public abstract class stmt implements Serializable{
 		}
 		private String expr;
 		public constexpr(final program p){super(p);}
-		abstract public int calc(final program p);
+		abstract public int eval(final program p);
 		public constexpr(program p,String expr){
 			super(p);this.expr=expr;
 		}
@@ -210,11 +210,11 @@ public abstract class stmt implements Serializable{
 			super(p);this.lhs=lhs;this.rhs=rhs;this.neg=neg;
 			txt=lhs+(neg?"-":"")+rhs;
 		}
-		@Override public int calc(program p){
+		@Override public int eval(program p){
 			final constexpr lh=from(p,lhs);
 			final constexpr rh=from(p,rhs);
-			final int lhi=lh.calc(p);
-			final int rhi=rh.calc(p);
+			final int lhi=lh.eval(p);
+			final int rhi=rh.eval(p);
 			if(neg)
 				return lhi-rhi;
 			return lhi+rhi;
@@ -226,7 +226,7 @@ public abstract class stmt implements Serializable{
 		public constexpr_int(program p,int i){
 			super(p);this.i=i;
 		}
-		@Override public int calc(program p){
+		@Override public int eval(program p){
 			return i;
 		}
 		private static final long serialVersionUID=1;
@@ -295,7 +295,7 @@ public abstract class stmt implements Serializable{
 			}
 			if(is_ld||is_ldc)
 				return;
-			final int i=constexpr.from(p,rh).calc(p);
+			final int i=constexpr.from(p,rh).eval(p);
 			bin[1]=i;
 		}
 		private static final long serialVersionUID=1;
@@ -368,7 +368,7 @@ public abstract class stmt implements Serializable{
 		}
 		@Override protected void link(program p){
 			if(ce!=null){
-				final int i=ce.calc(p);
+				final int i=ce.eval(p);
 				bin[1]=i;
 				return;
 			}
