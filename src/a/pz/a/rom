@@ -1,16 +1,18 @@
 {
-
   dots()
 
   0xffff
 
+def screen 0x1000
+def red 0xf00
 def dots(){
-  li(a 0x1000)
-  li(b 0xf0)
+  li(a screen)
+  li(b red)
   st(a b)
   li(a 0x4080)
   li(b 0xfff)
   st(a b)   
 }
+
 
 }
