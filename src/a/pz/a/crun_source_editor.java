@@ -3,7 +3,6 @@ import static b.b.pl;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -299,11 +298,11 @@ final public class crun_source_editor extends a{
 				expr=new def(this,"e",r);
 			}else if(r.is_next_char_expression_open()){
 				if("li".equals(src)){
-					expr=new instruction_li(this,"e",r);
+					expr=new func_li(this,"e",r);
 				}else if("st".equals(src)){
-					expr=new instruction_st(this,"e",r);
+					expr=new func_st(this,"e",r);
 				}else{
-					expr=new function_call(this,"e",src,r);
+					expr=new call(this,"e",src,r);
 				}
 			}else if(src.startsWith("0x")){
 				try{
@@ -350,10 +349,10 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class function_call extends el{
+	public static class call extends el{
 		private String name,ws_after;
 		protected ArrayList<expression> arguments;
-		public function_call(a pt,String nm,String name,reader r){
+		public call(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
 			ws_after=r.next_empty_space();
@@ -448,8 +447,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class instruction_li extends function_call{
-		public instruction_li(a pt,String nm,reader r){
+	public static class func_li extends call{
+		public func_li(a pt,String nm,reader r){
 			super(pt,nm,"li",r);
 		}
 		@Override public void binary_to(xbin x){
@@ -464,8 +463,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class instruction_st extends function_call{
-		public instruction_st(a pt,String nm,reader r){
+	public static class func_st extends call{
+		public func_st(a pt,String nm,reader r){
 			super(pt,nm,"st",r);
 		}
 		@Override public void binary_to(xbin x){
