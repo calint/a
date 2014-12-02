@@ -161,7 +161,7 @@ final public class crun_source_editor extends a{
 			final xwriter x=new xwriter();
 			while(true){
 				final int ch=read();
-				if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'){
+				if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'){
 					unread(ch);
 					break;
 				}
@@ -178,6 +178,18 @@ final public class crun_source_editor extends a{
 		public boolean is_next_char_block_close(){
 			final int ch=read();
 			if(ch=='}') return true;
+			unread(ch);
+			return false;
+		}
+		public boolean is_next_char_expression_open(){
+			final int ch=read();
+			if(ch=='(') return true;
+			unread(ch);
+			return false;
+		}
+		public boolean is_next_char_expression_close(){
+			final int ch=read();
+			if(ch==')') return true;
 			unread(ch);
 			return false;
 		}
@@ -249,6 +261,8 @@ final public class crun_source_editor extends a{
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			src=r.next_token();
+			if(r.is_next_char_expression_open())
+				;
 			if(src.startsWith("0x")){
 				try{
 					i=Integer.parseInt(src.substring(2),16);

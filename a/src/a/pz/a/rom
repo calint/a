@@ -1,1 +1,10 @@
-  { ff }
+{
+  0 1 2 0b0 0b1
+  0b10 0b100 0b110
+  0xff a0h
+  0xffff
+
+  li(a 0x1000)
+  li(b 0xf0)
+  st(a b)
+}
