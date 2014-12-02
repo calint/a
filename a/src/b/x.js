@@ -1,9 +1,13 @@
+debug_set=false;
+debug_js=true;
+debug_verbose=false;
+
+
 ui={}
 ui.is_dbg=true;
 ui.axconwait=false;
 $=function(eid){return document.getElementById(eid);}
 $d=function(v){console.log(v);}
-debug_set=true;
 $s=function(eid,txt){
 	var e=$(eid);
 	if(debug_set)$d(eid+'{'+txt+'}');
@@ -50,8 +54,6 @@ ui.onkey=function(ev){
 	var cmd=ui.keys[ui._hashKey(ev)];
 	if(cmd)eval(cmd);
 }
-debug_js=false;
-debug_verbose=false;
 ui._onreadystatechange=function(){
 //	$d(" * stage "+this.readyState);
 	switch(this.readyState){

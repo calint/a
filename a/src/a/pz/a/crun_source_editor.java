@@ -264,7 +264,13 @@ final public class crun_source_editor extends a{
 			super(pt,nm,r);
 			src=r.next_token();
 			if(r.is_next_char_expression_open()){
-				expr=new function_call(pt,nm+"-e",src,r);
+				if("li".equals(src)){
+					expr=new instruction_li(pt,nm+"-e",r);
+				}else if("st".equals(src)){
+					expr=new instruction_st(pt,nm+"-e",r);
+				}else{
+					expr=new function_call(pt,nm+"-e",src,r);
+				}
 			}else if(src.startsWith("0x")){
 				try{
 					i=Integer.parseInt(src.substring(2),16);
@@ -312,7 +318,7 @@ final public class crun_source_editor extends a{
 	}
 	public static class function_call extends el{
 		private String name,ws_after;
-		private ArrayList<expression> arguments;
+		protected ArrayList<expression> arguments;
 		public function_call(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
@@ -329,9 +335,44 @@ final public class crun_source_editor extends a{
 			x.p(name).p("(").p(ws_after);
 			arguments.forEach(e->{
 				e.source_to(x);
-//				x.spc();
-			});
+				//				x.spc();
+				});
 			x.p(")");
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class instruction_li extends function_call{
+		public instruction_li(a pt,String nm,reader r){
+			super(pt,nm,"li",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression rd=arguments.get(0);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			final int i=rdi<<12;
+			x.write(i);
+			final expression imm=arguments.get(1);
+			x.write(imm.eval());
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class instruction_st extends function_call{
+		public instruction_st(a pt,String nm,reader r){
+			super(pt,nm,"st",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression ra=arguments.get(0);
+			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			final int rai=ra.src.charAt(0)-'a';
+			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			final expression rd=arguments.get(1);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			final int i=0x00d8|(rai&15)<<8|(rdi&15)<<12;
+			x.write(i);
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -346,6 +387,33 @@ final public class crun_source_editor extends a{
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			x.p(src).p(ws_after);
+		}
+		public int eval(){
+			if(src.startsWith("0x")){
+				try{
+					return Integer.parseInt(src.substring(2),16);
+				}catch(NumberFormatException e){
+					throw new Error("not a hex: "+src);
+				}
+			}else if(src.startsWith("0b")){
+				try{
+					return Integer.parseInt(src.substring(2),2);
+				}catch(NumberFormatException e){
+					throw new Error("not a binary: "+src);
+				}
+			}else if(src.endsWith("h")){
+				try{
+					return Integer.parseInt(src.substring(0,src.length()-1),16);
+				}catch(NumberFormatException e){
+					throw new Error("not a hex: "+src);
+				}
+			}else{
+				try{
+					return Integer.parseInt(src);
+				}catch(NumberFormatException e){
+					throw new Error("not a number: "+src);
+				}
+			}
 		}
 		private static final long serialVersionUID=1;
 	}
