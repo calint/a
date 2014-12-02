@@ -2,6 +2,9 @@
   li(a 0x1000)
   li(b 0xf0)
   st(a b)
+  li(a 0x4080)
+  li(b 0xfff)
+  st(a b)
 
   0xffff
   0 1 2 0b0 0b1
