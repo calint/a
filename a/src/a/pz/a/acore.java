@@ -2,6 +2,8 @@ package a.pz.a;
 import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
+import a.pz.a.crun_source_editor.block;
+import a.pz.a.crun_source_editor.xbin;
 import a.pz.bas.call;
 import a.pz.bas.program;
 import a.pz.bas.assembly.add;
@@ -47,7 +49,7 @@ final public class acore extends a{
 //	public metrics me;
 	
 	public acore()throws Throwable{
-		ec.src.from(getClass().getResourceAsStream("../bas/rom.src"));
+		ec.src.from(getClass().getResourceAsStream("rom"));
 		ajaxsts.set("idle");
 		bi.set(0b1111110000);
 		ro.ints=cor.rom;
@@ -58,7 +60,14 @@ final public class acore extends a{
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
-		if(o instanceof program){
+		if(o instanceof block){
+			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=0;
+			final xbin b=new xbin(cor.rom);
+			((block)o).binary_to(b);
+			x_r(x,"");
+			if(x==null)return;
+			x.xu(ro);
+		}else if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();
 			p.typedefs.values().forEach(e->y.p(e.name()).spc().p(e.source_location_line()).nl());
