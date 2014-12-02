@@ -65,7 +65,9 @@ final public class acore extends a{
 			final xbin b=new xbin(cor.rom);
 			((block)o).binary_to(b);
 			b.link();
-			x_r(x,"");
+			//x_r(x,"");
+			cor.reset();
+			x_f(x,"");
 			if(x==null)return;
 			x.xu(ro);
 		}else if(o instanceof program){
