@@ -1,6 +1,10 @@
-package a.pz.bas;
+package a.pz.bas.assembly;
 
 import java.io.IOException;
+import a.pz.bas.compiler_error;
+import a.pz.bas.def_label;
+import a.pz.bas.instr;
+import a.pz.bas.program;
 
 final public class call extends instr{
 	String label;

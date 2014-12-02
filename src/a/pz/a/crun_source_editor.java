@@ -3,8 +3,10 @@ import static b.b.pl;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import b.a;
 import b.xwriter;
@@ -202,14 +204,37 @@ final public class crun_source_editor extends a{
 		}
 	}
 	public static final class xbin{
-		private int ix;
-		public int[] data;
 		public xbin(final int[] dest){
 			data=dest;
+			defs=new LinkedHashMap<>();
+			links=new LinkedHashMap<>();
 		}
-		public void write(final int d){
+		public xbin def(final String bm){
+			defs.put(bm,ix);
+			pl("bookmarked "+bm+" at "+ix);
+			return this;
+		} 
+		public xbin write(final int d){
 			data[ix++]=d;
+			return this;
 		}
+		public xbin link_to_def(String name){
+			links.put(ix,name);
+			pl("function call from "+ix+" to "+name);
+			return this;
+		}
+		public void link(){
+			links.entrySet().forEach(me->{
+				pl("link function call at instruction "+me.getKey()+" to "+me.getValue());
+				final int addr=defs.get(me.getValue());
+				if(addr==0)throw new Error("def not found: "+me.getValue());
+				data[me.getKey()]|=(addr<<6);
+			});
+		}
+		private LinkedHashMap<String,Integer>defs;
+		private LinkedHashMap<Integer,String>links;
+		public int[] data;
+		private int ix;
 	}
 	public static class el extends a{
 		private String ws="";
@@ -263,13 +288,15 @@ final public class crun_source_editor extends a{
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			src=r.next_token();
-			if(r.is_next_char_expression_open()){
+			if("def".equals(src)){
+				expr=new def(this,"e",r);
+			}else if(r.is_next_char_expression_open()){
 				if("li".equals(src)){
-					expr=new instruction_li(pt,nm+"-e",r);
+					expr=new instruction_li(this,"e",r);
 				}else if("st".equals(src)){
-					expr=new instruction_st(pt,nm+"-e",r);
+					expr=new instruction_st(this,"e",r);
 				}else{
-					expr=new function_call(pt,nm+"-e",src,r);
+					expr=new function_call(this,"e",src,r);
 				}
 			}else if(src.startsWith("0x")){
 				try{
@@ -338,6 +365,46 @@ final public class crun_source_editor extends a{
 				//				x.spc();
 				});
 			x.p(")");
+		}
+		@Override public void binary_to(xbin x){
+			x.link_to_def(name);
+			x.write(0x0010);//call
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class def extends el{
+		private String name,ws_after_token,ws_after_expr_close;
+		protected ArrayList<expression> arguments;
+		protected block code;
+		public def(a pt,String nm,reader r){
+			super(pt,nm,r);
+			name=r.next_token();
+			ws_after_token=r.next_empty_space();
+			if(!r.is_next_char_expression_open()) throw new Error("expected ( and arguments declaration");
+			arguments=new ArrayList<>();
+			int i=0;
+			while(true){
+				if(r.is_next_char_expression_close()) break;
+				final expression arg=new expression(this,""+i++,r);
+				arguments.add(arg);
+			}
+			ws_after_expr_close=r.next_empty_space();
+//			if(!r.is_next_char_block_open()) throw new Error("expected function code within { ... }");
+			code=new block(this,"b",r);
+		}
+		@Override public void binary_to(xbin x){
+			x.def(name);
+			code.binary_to(x);
+			x.write(8);//ret
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+			x.p("def").spc().p(name).p(ws_after_token).p("(");
+			arguments.forEach(e->{
+				e.source_to(x);
+				});
+			x.p(")").p(ws_after_expr_close);
+			code.source_to(x);
 		}
 		private static final long serialVersionUID=1;
 	}

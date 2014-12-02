@@ -4,9 +4,9 @@ import static b.b.stacktrace;
 import a.pz.core;
 import a.pz.a.crun_source_editor.block;
 import a.pz.a.crun_source_editor.xbin;
-import a.pz.bas.call;
 import a.pz.bas.program;
 import a.pz.bas.assembly.add;
+import a.pz.bas.assembly.call;
 import a.pz.bas.assembly.inc;
 import a.pz.bas.assembly.ld;
 import a.pz.bas.assembly.ldc;
@@ -61,9 +61,10 @@ final public class acore extends a{
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
 		if(o instanceof block){
-			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=0;
+			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=-1;
 			final xbin b=new xbin(cor.rom);
 			((block)o).binary_to(b);
+			b.link();
 			x_r(x,"");
 			if(x==null)return;
 			x.xu(ro);
