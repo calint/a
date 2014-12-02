@@ -208,6 +208,7 @@ final public class crun_source_editor extends a{
 			data=dest;
 			defs=new LinkedHashMap<>();
 			links=new LinkedHashMap<>();
+			constants=new LinkedHashMap<>();
 		}
 		public xbin def(final String bm){
 			defs.put(bm,ix);
@@ -225,14 +226,20 @@ final public class crun_source_editor extends a{
 		}
 		public void link(){
 			links.entrySet().forEach(me->{
+				if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 				final int addr=defs.get(me.getValue());
-				if(addr==0)throw new Error("def not found: "+me.getValue());
 				data[me.getKey()]|=(addr<<6);
 				pl("linked "+me.getKey()+" to "+me.getValue());
 			});
 		}
+		public xbin def_const(String name,def_const constant){
+			pl("constant "+name+" "+constant);
+			constants.put(name,constant);
+			return this;
+		}
 		private LinkedHashMap<String,Integer>defs;
 		private LinkedHashMap<Integer,String>links;
+		private LinkedHashMap<String,def_const>constants;
 		public int[] data;
 		private int ix;
 	}
@@ -373,14 +380,18 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static class def extends el{
-		private String name,ws_after_token,ws_after_expr_close;
+		private String name,ws_after_name,ws_after_expr_close;
 		protected ArrayList<expression> arguments;
-		protected block code;
+		protected block function_code;
+		protected def_const constant;
 		public def(a pt,String nm,reader r){
 			super(pt,nm,r);
 			name=r.next_token();
-			ws_after_token=r.next_empty_space();
-			if(!r.is_next_char_expression_open()) throw new Error("expected ( and arguments declaration");
+			ws_after_name=r.next_empty_space();
+			if(!r.is_next_char_expression_open()){
+				constant=new def_const(this,name,name,r);
+				return;
+			}
 			arguments=new ArrayList<>();
 			int i=0;
 			while(true){
@@ -390,21 +401,50 @@ final public class crun_source_editor extends a{
 			}
 			ws_after_expr_close=r.next_empty_space();
 //			if(!r.is_next_char_block_open()) throw new Error("expected function code within { ... }");
-			code=new block(this,"b",r);
+			function_code=new block(this,"c",r);
 		}
 		@Override public void binary_to(xbin x){
+			if(constant!=null){
+				x.def_const(name,constant);
+				return;
+			}
 			x.def(name);
-			code.binary_to(x);
+			function_code.binary_to(x);
 			x.write(8);//ret
 		}
 		@Override public void source_to(xwriter x){
+			x.p("def");
 			super.source_to(x);
-			x.p("def").spc().p(name).p(ws_after_token).p("(");
+			x.p(name).p(ws_after_name);
+			if(constant!=null){
+				constant.source_to(x);
+				return;
+			}
+			x.p("(");
 			arguments.forEach(e->{
 				e.source_to(x);
 				});
 			x.p(")").p(ws_after_expr_close);
-			code.source_to(x);
+			function_code.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class def_const extends el{
+		private String name,ws_after_expr_close;
+		protected expression expr;
+		public def_const(a pt,String nm,String name,reader r){
+			super(pt,nm,r);
+			this.name=name;
+			expr=new expression(this,"e",r);
+			ws_after_expr_close=r.next_empty_space();
+		}
+		@Override public void binary_to(xbin x){
+			x.def_const(name,this);
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+			expr.source_to(x);
+			x.p(ws_after_expr_close);
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -420,7 +460,7 @@ final public class crun_source_editor extends a{
 			final int i=rdi<<12;
 			x.write(i);
 			final expression imm=arguments.get(1);
-			x.write(imm.eval());
+			x.write(imm.eval(x));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -455,7 +495,11 @@ final public class crun_source_editor extends a{
 			super.source_to(x);
 			x.p(src).p(ws_after);
 		}
-		public int eval(){
+		public int eval(xbin b){
+			final def_const dc=b.constants.get(src);
+			if(dc!=null){
+				return dc.expr.eval(b);
+			}
 			if(src.startsWith("0x")){
 				try{
 					return Integer.parseInt(src.substring(2),16);
