@@ -208,10 +208,12 @@ final public class crun_source_editor extends a{
 			defs=new LinkedHashMap<>();
 			links=new LinkedHashMap<>();
 			constants=new LinkedHashMap<>();
+			functions=new LinkedHashMap<>();
 		}
-		public xbin def(final String bm){
-			defs.put(bm,ix);
-			pl("def "+bm+" at "+ix);
+		public xbin def(final String name,def d){
+			defs.put(name,ix);
+			functions.put(name,d);
+			pl("def "+name+" at "+ix);
 			return this;
 		} 
 		public xbin write(final int d){
@@ -239,6 +241,7 @@ final public class crun_source_editor extends a{
 		private LinkedHashMap<String,Integer>defs;
 		private LinkedHashMap<Integer,String>links;
 		private LinkedHashMap<String,def_const>constants;
+		private LinkedHashMap<String,def>functions;
 		public int[] data;
 		private int ix;
 		public int ix(){
@@ -382,6 +385,15 @@ final public class crun_source_editor extends a{
 			x.p(")");
 		}
 		@Override public void binary_to(xbin x){
+			final def d=x.functions.get(name);
+			int i=0;
+			for(expression e:arguments){
+				final expression a=d.arguments.get(i++);
+				final int rdi=a.src.charAt(0)-'a';
+				final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
+				x.write(in);
+				x.write(e.eval(x));
+			}
 			x.link_to_def(name);
 			x.write(0x0010);//call
 		}
@@ -416,7 +428,7 @@ final public class crun_source_editor extends a{
 				x.def_const(name,constant);
 				return;
 			}
-			x.def(name);
+			x.def(name,this);
 			function_code.binary_to(x);
 			x.write(8);//ret
 		}
