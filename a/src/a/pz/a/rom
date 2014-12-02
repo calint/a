@@ -1,13 +1,9 @@
 {
 main()
-0xffff
 
-def dots(a b){
-  st(a b)
-  li(a 0x4080)
-  li(b 0xfff)
-  st(a b)   
-}
+0xffff
+def dot(a b){st(a b)}
+
 0xffff
 def line(a b c){
   lp(c){
@@ -19,9 +15,12 @@ def line(a b c){
 
 def screen 0x1000
 def red 0xf00
+def screen2 0x4060
+def blue 0xf
 def main(){
   line(screen red 0x60)
-  dots(screen red)
+  dot(screen red)
+  dot(screen2 blue)
 }
 
 }
