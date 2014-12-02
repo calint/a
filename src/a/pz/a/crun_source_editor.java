@@ -64,7 +64,9 @@ final public class crun_source_editor extends a{
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null)return;
-			x.xalert(r.bm_line+"["+r.bm_col+","+r.col+"] "+t.getMessage());
+			x.pl("$('"+src.id()+"').selectionStart="+r.bm_nchar+";");
+			x.pl("$('"+src.id()+"').selectionEnd="+r.nchar+";");
+			x.xalert("@("+r.bm_nchar+","+r.nchar+") "+t.getMessage());
 		}
 		//		final program p;
 		//		try{
@@ -106,13 +108,14 @@ final public class crun_source_editor extends a{
 
 	public static final class reader{
 		private PushbackReader r;
-		public int line=1,col=1,prevcol=1;
+		public int line=1,col=1,prevcol=1,nchar=0;
 		public reader(Reader r){
 			this.r=new PushbackReader(r,1);
 		}
 		private int read(){
 			try{
 				final int ch=r.read();
+				nchar++;
 				if(ch=='\n'){
 					line++;
 					prevcol=col;
@@ -127,6 +130,7 @@ final public class crun_source_editor extends a{
 		}
 		private void unread(final int ch){
 			try{
+				nchar--;
 				if(ch!=-1) r.unread(ch);
 				if(ch=='\n'){
 					line--;
@@ -176,10 +180,11 @@ final public class crun_source_editor extends a{
 			unread(ch);
 			return false;
 		}
-		public int bm_line,bm_col;
+		public int bm_line,bm_col,bm_nchar;
 		public void bm(){
 			bm_line=line;
 			bm_col=col;
+			bm_nchar=nchar;
 		}
 	}
 	public static final class xbin{
