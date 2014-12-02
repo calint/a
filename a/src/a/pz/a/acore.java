@@ -192,6 +192,7 @@ final public class acore extends a{
 		st.clr();
 		cor.step();
 		if(x==null)return;
+		x.xu(st.set(cor.meter_instructions));
 		if(hasbit(bit_show_screen)&&refresh_display)ra.xupd(x);
 		x.xu(sy,re,ca,lo);
 		xupd_focus(x);
