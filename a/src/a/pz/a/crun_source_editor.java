@@ -503,6 +503,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0200|(0&15)<<8|(rdi&15)<<12;
+			//? inc reg imm4
 			x.write(i);
 		}
 		private static final long serialVersionUID=1;
