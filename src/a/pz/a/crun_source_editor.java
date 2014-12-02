@@ -313,6 +313,8 @@ final public class crun_source_editor extends a{
 					expr=new func_lp(this,"e",r);
 				}else if("inc".equals(src)){
 					expr=new func_inc(this,"e",r);
+				}else if("add".equals(src)){
+					expr=new func_add(this,"e",r);
 				}else{
 					expr=new call(this,"e",src,r);
 				}
@@ -385,14 +387,18 @@ final public class crun_source_editor extends a{
 			x.p(")");
 		}
 		@Override public void binary_to(xbin x){
-			final def d=x.functions.get(name);
-			int i=0;
-			for(expression e:arguments){
-				final expression a=d.arguments.get(i++);
-				final int rdi=a.src.charAt(0)-'a';
-				final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
-				x.write(in);
-				x.write(e.eval(x));
+			if(!"main".equals(name)){
+				final def d=x.functions.get(name);
+				if(d==null)throw new Error("function not found: "+name);
+				if(arguments.size()!=d.arguments.size())throw new Error("number of arguments do not match: "+name);
+				int i=0;
+				for(expression e:arguments){
+					final expression a=d.arguments.get(i++);
+					final int rdi=a.src.charAt(0)-'a';
+					final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
+					x.write(in);
+					x.write(e.eval(x));
+				}
 			}
 			x.link_to_def(name);
 			x.write(0x0010);//call
@@ -499,6 +505,25 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00d8|(rai&15)<<8|(rdi&15)<<12;
+			x.write(i);
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class func_add extends call{
+		public func_add(a pt,String nm,reader r){
+			super(pt,nm,"add",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression ra=arguments.get(0);
+			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			final int rai=ra.src.charAt(0)-'a';
+			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			final expression rd=arguments.get(1);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			final int i=0x00a0|(rai&15)<<8|(rdi&15)<<12;
 			x.write(i);
 		}
 		private static final long serialVersionUID=1;

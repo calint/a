@@ -1,24 +1,37 @@
 {
-main()
 
+main()
 0xffff
+
 def dot(a b){st(a b)}
 
 0xffff
 def line(a b c){
   lp(c){
     stc(a b)
-    inc(a)
+    inc(b)
   }
 }
-0xffff
 
+0xffff
+def rect(a b c d e){
+  lp(d){
+    lp(c){
+      stc(a b)
+      inc(b)
+    }
+    add(a e)
+  }
+}
+
+0xffff
 def screen 0x1000
 def red 0xf00
 def screen2 0x4060
 def blue 0xf
 def main(){
-  line(screen red 0x60)
+  line(screen red 0x30)
+  rect(screen red 0x30 0x40 0x20)
   dot(screen red)
   dot(screen2 blue)
 }
