@@ -211,7 +211,7 @@ final public class crun_source_editor extends a{
 		}
 		public xbin def(final String bm){
 			defs.put(bm,ix);
-			pl("bookmarked "+bm+" at "+ix);
+			pl("def "+bm+" at "+ix);
 			return this;
 		} 
 		public xbin write(final int d){
@@ -220,15 +220,15 @@ final public class crun_source_editor extends a{
 		}
 		public xbin link_to_def(String name){
 			links.put(ix,name);
-			pl("function call from "+ix+" to "+name);
+			pl("ref at "+ix+" to "+name);
 			return this;
 		}
 		public void link(){
 			links.entrySet().forEach(me->{
-				pl("link function call at instruction "+me.getKey()+" to "+me.getValue());
 				final int addr=defs.get(me.getValue());
 				if(addr==0)throw new Error("def not found: "+me.getValue());
 				data[me.getKey()]|=(addr<<6);
+				pl("linked "+me.getKey()+" to "+me.getValue());
 			});
 		}
 		private LinkedHashMap<String,Integer>defs;
