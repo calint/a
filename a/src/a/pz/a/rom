@@ -1,6 +1,6 @@
 {
+  line()
   dots()
-
   0xffff
 
 def screen 0x1000
@@ -13,6 +13,14 @@ def dots(){
   li(b 0xfff)
   st(a b)   
 }
-
+0xffff
+def line(){
+  li(a screen)
+  li(b red)
+  li(c 0x80)
+  lp(c){
+    stc(a b)
+  }
+}
 
 }

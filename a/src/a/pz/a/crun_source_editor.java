@@ -301,6 +301,10 @@ final public class crun_source_editor extends a{
 					expr=new func_li(this,"e",r);
 				}else if("st".equals(src)){
 					expr=new func_st(this,"e",r);
+				}else if("stc".equals(src)){
+					expr=new func_stc(this,"e",r);
+				}else if("lp".equals(src)){
+					expr=new func_lp(this,"e",r);
 				}else{
 					expr=new call(this,"e",src,r);
 				}
@@ -482,6 +486,25 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
+	public static class func_stc extends call{
+		public func_stc(a pt,String nm,reader r){
+			super(pt,nm,"stc",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression ra=arguments.get(0);
+			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			final int rai=ra.src.charAt(0)-'a';
+			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			final expression rd=arguments.get(1);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			final int i=0x0040|(rai&15)<<8|(rdi&15)<<12;
+			x.write(i);
+		}
+		private static final long serialVersionUID=1;
+	}
 	public static class expression extends el{
 		private String ws_after;
 		private String src;
@@ -527,4 +550,47 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
+	public static class func_lp extends el{
+		private ArrayList<expression>arguments;
+		private String ws_after_expression_open,ws_after_expression_closed;
+		private block loop_code;
+		public func_lp(a pt,String nm,reader r){
+			super(pt,nm,r);
+			arguments=new ArrayList<>();
+			ws_after_expression_open=r.next_empty_space();
+			int i=0;
+			while(true){
+				if(r.is_next_char_expression_close())break;
+				final expression arg=new expression(this,"e"+i++,r);
+				arguments.add(arg);
+			}
+			ws_after_expression_closed=r.next_empty_space();
+//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
+			loop_code=new block(this,"b",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression rd=arguments.get(0);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			final int rai=0,znxr=0;
+			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
+			x.write(i);
+			loop_code.binary_to(x);
+			x.write(4);//nxt
+		}
+		@Override public void source_to(xwriter x){
+			x.p("lp");
+			super.source_to(x);
+			x.p("(");
+			x.p(ws_after_expression_open);
+			arguments.forEach(e->e.source_to(x));
+			x.p(")");
+			x.p(ws_after_expression_closed);
+			loop_code.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+
 }
