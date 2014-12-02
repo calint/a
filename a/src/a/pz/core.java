@@ -62,7 +62,7 @@ final public class core implements Serializable{
 			instruction=rom[++program_counter];
 			return;
 		}
-		if(instruction==-1){// end of frame
+		if((instruction&0xffff)==0xffff){// end of frame
 			program_counter=0;
 			instruction=rom[0];
 			meter_frames++;

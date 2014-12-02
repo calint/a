@@ -269,7 +269,7 @@ final public class acore extends a{
 			while(true){
 				cor.step();
 				if(loop==false)break;
-				if(cor.instruction==-1)loop=false;
+				if((cor.instruction&0xffff)==0xffff)loop=false;
 			}
 			final long dt=(System.nanoTime()-t0)/1000;
 			final long dinstr=cor.meter_instructions;
