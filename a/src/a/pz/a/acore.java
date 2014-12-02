@@ -65,11 +65,13 @@ final public class acore extends a{
 			final xbin b=new xbin(cor.rom);
 			((block)o).binary_to(b);
 			b.link();
+			ec.sts.set(b.ix());
+			st.set(b.ix());
 			//x_r(x,"");
 			cor.reset();
 			x_f(x,"");
 			if(x==null)return;
-			x.xu(ro);
+			x.xu(ro,st,ec.sts);
 		}else if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();

@@ -241,6 +241,9 @@ final public class crun_source_editor extends a{
 		private LinkedHashMap<String,def_const>constants;
 		public int[] data;
 		private int ix;
+		public int ix(){
+			return ix;
+		}
 	}
 	public static class el extends a{
 		private String ws="";
