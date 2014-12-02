@@ -1,4 +1,5 @@
 package a.pz.a;
+import static b.b.pl;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
@@ -257,13 +258,14 @@ final public class crun_source_editor extends a{
 	public static final class data extends el{
 		private String src;
 		private int i;
-		private String after_ws;
+		private String ws_after;
+		private el expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			src=r.next_token();
-			if(r.is_next_char_expression_open())
-				;
-			if(src.startsWith("0x")){
+			if(r.is_next_char_expression_open()){
+				expr=new function_call(pt,nm+"-e",src,r);
+			}else if(src.startsWith("0x")){
 				try{
 					i=Integer.parseInt(src.substring(2),16);
 				}catch(NumberFormatException e){
@@ -288,14 +290,62 @@ final public class crun_source_editor extends a{
 					throw new Error("not a number: "+src);
 				}
 			}
-			after_ws=r.next_empty_space();
+			ws_after=r.next_empty_space();
 		}
 		@Override public void binary_to(xbin x){
+			if(expr!=null){
+				expr.binary_to(x);
+				return;
+			}
 			x.write(i);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			x.p(src).p(after_ws);
+			if(expr!=null){
+				expr.source_to(x);
+				x.p(ws_after);
+				return;
+			}
+			x.p(src).p(ws_after);
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class function_call extends el{
+		private String name,ws_after;
+		private ArrayList<expression> arguments;
+		public function_call(a pt,String nm,String name,reader r){
+			super(pt,nm,r);
+			this.name=name;
+			ws_after=r.next_empty_space();
+			arguments=new ArrayList<>();
+			while(true){
+				if(r.is_next_char_expression_close()) break;
+				final expression arg=new expression(pt,nm,r);
+				arguments.add(arg);
+			}
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+			x.p(name).p("(").p(ws_after);
+			arguments.forEach(e->{
+				e.source_to(x);
+//				x.spc();
+			});
+			x.p(")");
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class expression extends el{
+		private String ws_after;
+		private String src;
+		public expression(a pt,String nm,reader r){
+			super(pt,nm,r);
+			src=r.next_token();
+			ws_after=r.next_empty_space();
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+			x.p(src).p(ws_after);
 		}
 		private static final long serialVersionUID=1;
 	}
