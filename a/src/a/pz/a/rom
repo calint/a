@@ -20,6 +20,7 @@ def line(){
   li(c 0x80)
   lp(c){
     stc(a b)
+    inc(a)
   }
 }
 
