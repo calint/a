@@ -1,27 +1,27 @@
 {
-  line()
-  dots()
-  0xffff
+main()
+0xffff
 
-def screen 0x1000
-def red 0xf00
-def dots(){
-  li(a screen)
-  li(b red)
+def dots(a b){
   st(a b)
   li(a 0x4080)
   li(b 0xfff)
   st(a b)   
 }
 0xffff
-def line(){
-  li(a screen)
-  li(b red)
-  li(c 0x80)
+def line(a b c){
   lp(c){
     stc(a b)
     inc(a)
   }
+}
+0xffff
+
+def screen 0x1000
+def red 0xf00
+def main(){
+  line(screen red 0x60)
+  dots(screen red)
 }
 
 }
