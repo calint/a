@@ -27,7 +27,7 @@ final public class crun_source_editor extends a{
 	}
 	public line_numbers ln;
 	public void to(final xwriter x) throws Throwable{
-		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3","","crun ","a").nl();
+		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," crun ","a").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
 		ln.to(x);
@@ -58,15 +58,16 @@ final public class crun_source_editor extends a{
 		try{
 			final block el=new block(this,"c",r);
 			if(x==null) return;
+			x.xu(sts.clr());
 			el.source_to(x.xub(resrc,true,true));
 			x.xube();
 			ev(x,this,el);
 		}catch(Throwable t){
 			b.b.log(t);
-			if(x==null)return;
-			x.pl("$('"+src.id()+"').selectionStart="+r.bm_nchar+";");
-			x.pl("$('"+src.id()+"').selectionEnd="+r.nchar+";");
-			x.xalert("@("+r.bm_nchar+","+r.nchar+") "+t.getMessage());
+			if(x==null) return;
+			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+r.bm_nchar+";e.selectionEnd="+r.nchar+";}");
+			x.xu(sts.set(t.getMessage()));
+			//			x.xalert(t.getMessage());
 		}
 		//		final program p;
 		//		try{
@@ -243,20 +244,40 @@ final public class crun_source_editor extends a{
 	}
 	public static final class data extends el{
 		private String src;
-		private int hex;
+		private int i;
 		private String after_ws;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			src=r.next_token();
-			try{
-				hex=Integer.parseInt(src,16);
-			}catch(NumberFormatException e){
-				throw new Error("not a hex: "+src);
+			if(src.startsWith("0x")){
+				try{
+					i=Integer.parseInt(src.substring(2),16);
+				}catch(NumberFormatException e){
+					throw new Error("not a hex: "+src);
+				}
+			}else if(src.startsWith("0b")){
+				try{
+					i=Integer.parseInt(src.substring(2),2);
+				}catch(NumberFormatException e){
+					throw new Error("not a binary: "+src);
+				}
+			}else if(src.endsWith("h")){
+				try{
+					i=Integer.parseInt(src.substring(0,src.length()-1),16);
+				}catch(NumberFormatException e){
+					throw new Error("not a hex: "+src);
+				}
+			}else{
+				try{
+					i=Integer.parseInt(src);
+				}catch(NumberFormatException e){
+					throw new Error("not a number: "+src);
+				}
 			}
 			after_ws=r.next_empty_space();
 		}
 		@Override public void binary_to(xbin x){
-			x.write(hex);
+			x.write(i);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);

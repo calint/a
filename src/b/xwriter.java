@@ -195,8 +195,10 @@ public final class xwriter{
 	public xwriter inptxtarea(final a e){return inptxtarea(e,null);}
 	public xwriter inptxtarea(final a e,final String cls){
 		tago("textarea").attrdef(e)
-			.attr("onchange","$b(this);return true;")
-			.attr("onkeydown","$b(this);return true;");
+			.attr("onchange","$b(this)")
+//			.attr("onkeydown","$b(this);if(event.keyCode==9){console.log(this.id+' '+this.selectionStart);this.value=this.value.substring(0,this.selectionStart)+'   '+this.value.substring(this.selectionStart,this.value.length);console.log(this.selectionStart);this.selectionStart=this.selectionEnd=this.selectionStart-2;return false;}return true;")
+			.attr("onkeydown","$b(this)")
+			;
 			
 		if(cls!=null)attr("class",cls);
 		attr("wrap","off").attr("spellcheck","false").tagoe();
