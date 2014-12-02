@@ -59,7 +59,7 @@ final public class crun_source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
-			final block el=new block(this,"c",r);
+			final block el=new block(this,"b",r);
 			if(x==null) return;
 			x.xu(sts.clr());
 			el.source_to(x.xub(resrc,true,true));
