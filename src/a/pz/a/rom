@@ -3,11 +3,11 @@ line(screen red 0x30)
 rect(screen red 0x30 0x40 0x20)
 dot(screen red)
 dot(screen2 blue)
-0xffff
 
+eof
 def dot(a b){st(a b)}
 
-0xffff
+eof
 def line(a b c){
   lp(c){
     stc(a b)
@@ -15,7 +15,7 @@ def line(a b c){
   }
 }
 
-0xffff
+eof
 def rect(a b c d e){
   lp(d){
     lp(c){
@@ -25,11 +25,11 @@ def rect(a b c d e){
     add(a e)
   }
 }
-0xffff
+eof
 
 def screen 0x1000
 def red 0xf00
 def screen2 0x4060
 def blue 0xf
-
+def eof 0xffff
 }
