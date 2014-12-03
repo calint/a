@@ -57,9 +57,12 @@ final public class crun_source_editor extends a{
 	//	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
 	final public static class prog{
-		final Map<String,el>toc;
+		final Map<String,el> toc;
 		final block code;
-		public prog(Map<String,el>toc,block code){this.toc=toc;this.code=code;}
+		public prog(Map<String,el> toc,block code){
+			this.toc=toc;
+			this.code=code;
+		}
 	}
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
@@ -116,7 +119,7 @@ final public class crun_source_editor extends a{
 	private static final long serialVersionUID=11;
 
 	public static final class reader{
-		final public LinkedHashMap<String,el>toc=new LinkedHashMap<>();
+		final public LinkedHashMap<String,el> toc=new LinkedHashMap<>();
 		private PushbackReader r;
 		public int line=1,col=1,prevcol=1,nchar=0;
 		public reader(Reader r){
@@ -210,20 +213,20 @@ final public class crun_source_editor extends a{
 		}
 	}
 	public static final class xbin{
-		final public Map<String,el>toc;
-		public xbin(Map<String,el>toc,final int[] dest){
+		final public Map<String,el> toc;
+		public xbin(Map<String,el> toc,final int[] dest){
 			this.toc=toc;
 			data=dest;
-//			defs=new LinkedHashMap<>();
-//			links=new LinkedHashMap<>();
-//			constants=new LinkedHashMap<>();
-//			functions=new LinkedHashMap<>();
+			//			defs=new LinkedHashMap<>();
+			//			links=new LinkedHashMap<>();
+			//			constants=new LinkedHashMap<>();
+			//			functions=new LinkedHashMap<>();
 		}
 		public xbin def(final String name,def_func d){
 			defs.put(name,ix);
 			pl("def "+name+" at "+ix);
 			return this;
-		} 
+		}
 		public xbin write(final int d){
 			data[ix++]=d;
 			return this;
@@ -235,21 +238,21 @@ final public class crun_source_editor extends a{
 		}
 		public void link(){
 			links.entrySet().forEach(me->{
-				if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
+				if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
 				final int addr=defs.get(me.getValue());
 				data[me.getKey()]|=(addr<<6);
 				pl("linked "+me.getKey()+" to "+me.getValue());
 			});
 		}
-//		public xbin def_const(String name,def_const constant){
-//			pl("constant "+name+" "+constant);
-//			constants.put(name,constant);
-//			return this;
-//		}
-		private LinkedHashMap<String,Integer>defs=new LinkedHashMap<>();
-		private LinkedHashMap<Integer,String>links=new LinkedHashMap<>();
-//		private LinkedHashMap<String,def_const>constants;
-//		private LinkedHashMap<String,def>functions;
+		//		public xbin def_const(String name,def_const constant){
+		//			pl("constant "+name+" "+constant);
+		//			constants.put(name,constant);
+		//			return this;
+		//		}
+		private LinkedHashMap<String,Integer> defs=new LinkedHashMap<>();
+		private LinkedHashMap<Integer,String> links=new LinkedHashMap<>();
+		//		private LinkedHashMap<String,def_const>constants;
+		//		private LinkedHashMap<String,def>functions;
 		private int[] data;
 		private int ix;
 		public int ix(){
@@ -280,8 +283,7 @@ final public class crun_source_editor extends a{
 			ws_after_open_block=r.next_empty_space();
 			while(true){
 				pl("line :"+i);
-				if(r.next_empty_space().length()!=0)
-					throw new Error();
+				if(r.next_empty_space().length()!=0) throw new Error();
 				if(r.is_next_char_block_close()) break;
 				final data d=new data(this,"i"+i++,r);
 				datas.add(d);
@@ -302,20 +304,17 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static final class data extends el{
-//		final private String src,ws_after;
-//		final private int i;
+		//		final private String src,ws_after;
+		//		final private int i;
 		final private el expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			final String src=r.next_token();
-			pl("data token "+src);
 			if("def".equals(src)){
 				expr=new def(this,"e",r);
-//				i=0;
 				return;
 			}
 			if(r.is_next_char_expression_open()){
-//				i=0;
 				if("li".equals(src)){
 					expr=new func_li(this,"e",r);
 				}else if("st".equals(src)){
@@ -333,60 +332,21 @@ final public class crun_source_editor extends a{
 				}
 				return;
 			}
-			
+
 			expr=new const_int(this,"e",src,r);
-//			else if(src.startsWith("0x")){
-//				expr=null;
-//				try{
-//					i=Integer.parseInt(src.substring(2),16);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a hex: "+src);
-//				}
-//			}else if(src.startsWith("0b")){
-//				expr=null;
-//				try{
-//					i=Integer.parseInt(src.substring(2),2);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a binary: "+src);
-//				}
-//			}else if(src.endsWith("h")){
-//				expr=null;
-//				try{
-//					i=Integer.parseInt(src.substring(0,src.length()-1),16);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a hex: "+src);
-//				}
-//			}else{
-//				expr=null;
-//				try{
-//					i=Integer.parseInt(src);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a number: "+src);
-//				}
-//			}
-//			ws_after=r.next_empty_space();
 		}
 		@Override public void binary_to(xbin x){
-//			if(expr!=null){
-				expr.binary_to(x);
-//				return;
-//			}
-//			x.write(i);
+			expr.binary_to(x);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-//			if(expr!=null){
-				expr.source_to(x);
-//				x.p(ws_after);
-//				return;
-//			}
-//			x.p(src).p(ws_after);
+			expr.source_to(x);
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class const_int extends expression{
 		final private int value;
-		final String ws_after;
+//		final String ws_after;
 		public const_int(a pt,String nm,String src,reader r){
 			super(pt,nm,src,r);
 			if(src.startsWith("0x")){
@@ -414,14 +374,10 @@ final public class crun_source_editor extends a{
 					throw new Error("not a number: "+src);
 				}
 			}
-			ws_after=r.next_empty_space();
+//			ws_after=r.next_empty_space();
 		}
 		@Override public void binary_to(xbin x){
 			x.write(value);
-		}
-		@Override public void source_to(xwriter x){
-			super.source_to(x);
-			x.p(ws_after);
 		}
 		@Override public int eval(xbin b){
 			return value;
@@ -454,8 +410,8 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void binary_to(xbin x){
 			final def_func d=(def_func)x.toc.get("func "+name);
-			if(d==null)throw new Error("function not found: "+name);
-			if(arguments.size()!=d.arguments.size())throw new Error("number of arguments do not match: "+name);
+			if(d==null) throw new Error("function not found: "+name);
+			if(arguments.size()!=d.arguments.size()) throw new Error("number of arguments do not match: "+name);
 			int i=0;
 			for(expression e:arguments){
 				final expression a=d.arguments.get(i++);
@@ -482,7 +438,9 @@ final public class crun_source_editor extends a{
 				e=new def_const(this,name,name,r);
 			}
 		}
-		@Override public void binary_to(xbin x){e.binary_to(x);}
+		@Override public void binary_to(xbin x){
+			e.binary_to(x);
+		}
 		@Override public void source_to(xwriter x){
 			x.p("def");
 			super.source_to(x);
@@ -518,7 +476,7 @@ final public class crun_source_editor extends a{
 			x.p("(");
 			arguments.forEach(e->{
 				e.source_to(x);
-				});
+			});
 			x.p(")").p(ws_after_expr_close);
 			function_code.source_to(x);
 		}
@@ -600,10 +558,10 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
-//			final expression ra=arguments.get(0);
-//			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
-//			final int rai=ra.src.charAt(0)-'a';
-//			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			//			final expression ra=arguments.get(0);
+			//			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			//			final int rai=ra.src.charAt(0)-'a';
+			//			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
 			final expression rd=arguments.get(0);
 			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
 			final int rdi=rd.src.charAt(0)-'a';
@@ -651,9 +609,7 @@ final public class crun_source_editor extends a{
 		}
 		public int eval(xbin b){
 			final def_const dc=(def_const)b.toc.get("const "+src);
-			if(dc!=null){
-				return dc.expr.eval(b);
-			}
+			if(dc!=null){ return dc.expr.eval(b); }
 			if(src.startsWith("0x")){
 				try{
 					return Integer.parseInt(src.substring(2),16);
@@ -683,7 +639,7 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static class func_lp extends el{
-		final private ArrayList<expression>arguments=new ArrayList<>();
+		final private ArrayList<expression> arguments=new ArrayList<>();
 		final private String ws_after_expression_open,ws_after_expression_closed;
 		final private block loop_code;
 		public func_lp(a pt,String nm,reader r){
@@ -691,12 +647,12 @@ final public class crun_source_editor extends a{
 			ws_after_expression_open=r.next_empty_space();
 			int i=0;
 			while(true){
-				if(r.is_next_char_expression_close())break;
+				if(r.is_next_char_expression_close()) break;
 				final expression arg=new expression(this,"e"+i++,r);
 				arguments.add(arg);
 			}
 			ws_after_expression_closed=r.next_empty_space();
-//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
+			//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
 			loop_code=new block(this,"b",r);
 		}
 		@Override public void binary_to(xbin x){
