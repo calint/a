@@ -272,23 +272,27 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static class block extends el{
-		final private String after_ws;
+		final private String ws_after_open_block,ws_trailing;
 		public block(a pt,String nm,reader r){// {}  gives 0 length file
 			super(pt,nm,r);
 			if(!r.is_next_char_block_open()) throw new Error(r.line+":"+r.col+" expected {");
 			int i=0;
-			after_ws=r.next_empty_space();
+			ws_after_open_block=r.next_empty_space();
 			while(true){
+				pl("line :"+i);
+				if(r.next_empty_space().length()!=0)
+					throw new Error();
 				if(r.is_next_char_block_close()) break;
-				final data d=new data(this,"i"+i,r);
+				final data d=new data(this,"i"+i++,r);
 				datas.add(d);
 			}
+			ws_trailing=r.next_empty_space();
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			x.p('{').p(after_ws);
+			x.p('{').p(ws_after_open_block);
 			datas.forEach(e->e.source_to(x));
-			x.p('}');
+			x.p('}').p(ws_trailing);
 		}
 		@Override public void binary_to(xbin x){
 			datas.forEach(e->e.binary_to(x));
@@ -298,17 +302,20 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static final class data extends el{
-		final private String src,ws_after;
-		final private int i;
+//		final private String src,ws_after;
+//		final private int i;
 		final private el expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
-			src=r.next_token();
+			final String src=r.next_token();
+			pl("data token "+src);
 			if("def".equals(src)){
 				expr=new def(this,"e",r);
-				i=0;
-			}else if(r.is_next_char_expression_open()){
-				i=0;
+//				i=0;
+				return;
+			}
+			if(r.is_next_char_expression_open()){
+//				i=0;
 				if("li".equals(src)){
 					expr=new func_li(this,"e",r);
 				}else if("st".equals(src)){
@@ -324,31 +331,85 @@ final public class crun_source_editor extends a{
 				}else{
 					expr=new call(this,"e",src,r);
 				}
-			}else if(src.startsWith("0x")){
-				expr=null;
+				return;
+			}
+			
+			expr=new const_int(this,"e",src,r);
+//			else if(src.startsWith("0x")){
+//				expr=null;
+//				try{
+//					i=Integer.parseInt(src.substring(2),16);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a hex: "+src);
+//				}
+//			}else if(src.startsWith("0b")){
+//				expr=null;
+//				try{
+//					i=Integer.parseInt(src.substring(2),2);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a binary: "+src);
+//				}
+//			}else if(src.endsWith("h")){
+//				expr=null;
+//				try{
+//					i=Integer.parseInt(src.substring(0,src.length()-1),16);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a hex: "+src);
+//				}
+//			}else{
+//				expr=null;
+//				try{
+//					i=Integer.parseInt(src);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a number: "+src);
+//				}
+//			}
+//			ws_after=r.next_empty_space();
+		}
+		@Override public void binary_to(xbin x){
+//			if(expr!=null){
+				expr.binary_to(x);
+//				return;
+//			}
+//			x.write(i);
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+//			if(expr!=null){
+				expr.source_to(x);
+//				x.p(ws_after);
+//				return;
+//			}
+//			x.p(src).p(ws_after);
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class const_int extends expression{
+		final private int value;
+		final String ws_after;
+		public const_int(a pt,String nm,String src,reader r){
+			super(pt,nm,src,r);
+			if(src.startsWith("0x")){
 				try{
-					i=Integer.parseInt(src.substring(2),16);
+					value=Integer.parseInt(src.substring(2),16);
 				}catch(NumberFormatException e){
 					throw new Error("not a hex: "+src);
 				}
 			}else if(src.startsWith("0b")){
-				expr=null;
 				try{
-					i=Integer.parseInt(src.substring(2),2);
+					value=Integer.parseInt(src.substring(2),2);
 				}catch(NumberFormatException e){
 					throw new Error("not a binary: "+src);
 				}
 			}else if(src.endsWith("h")){
-				expr=null;
 				try{
-					i=Integer.parseInt(src.substring(0,src.length()-1),16);
+					value=Integer.parseInt(src.substring(0,src.length()-1),16);
 				}catch(NumberFormatException e){
 					throw new Error("not a hex: "+src);
 				}
 			}else{
-				expr=null;
 				try{
-					i=Integer.parseInt(src);
+					value=Integer.parseInt(src);
 				}catch(NumberFormatException e){
 					throw new Error("not a number: "+src);
 				}
@@ -356,45 +417,40 @@ final public class crun_source_editor extends a{
 			ws_after=r.next_empty_space();
 		}
 		@Override public void binary_to(xbin x){
-			if(expr!=null){
-				expr.binary_to(x);
-				return;
-			}
-			x.write(i);
+			x.write(value);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			if(expr!=null){
-				expr.source_to(x);
-				x.p(ws_after);
-				return;
-			}
-			x.p(src).p(ws_after);
+			x.p(ws_after);
+		}
+		@Override public int eval(xbin b){
+			return value;
 		}
 		private static final long serialVersionUID=1;
 	}
 	public static class call extends el{
-		private String name,ws_after;
+		private String name,ws_after_name,ws_after_arguments_close;
 		protected ArrayList<expression> arguments;
 		public call(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
-			ws_after=r.next_empty_space();
+			ws_after_name=r.next_empty_space();
 			arguments=new ArrayList<>();
 			while(true){
 				if(r.is_next_char_expression_close()) break;
 				final expression arg=new expression(pt,nm,r);
 				arguments.add(arg);
 			}
+			ws_after_arguments_close=r.next_empty_space();
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			x.p(name).p("(").p(ws_after);
+			x.p(name).p("(").p(ws_after_name);
 			arguments.forEach(e->{
 				e.source_to(x);
 				//				x.spc();
 				});
-			x.p(")");
+			x.p(")").p(ws_after_arguments_close);
 		}
 		@Override public void binary_to(xbin x){
 			final def_func d=(def_func)x.toc.get("func "+name);
@@ -421,10 +477,10 @@ final public class crun_source_editor extends a{
 			name=r.next_token();
 			ws_after_name=r.next_empty_space();
 			if(r.is_next_char_expression_open()){
-				e=new def_func(this,"f",name,r);
-				return;
+				e=new def_func(this,name,name,r);
+			}else{
+				e=new def_const(this,name,name,r);
 			}
-			e=new def_const(this,name,name,r);
 		}
 		@Override public void binary_to(xbin x){e.binary_to(x);}
 		@Override public void source_to(xwriter x){
@@ -582,6 +638,11 @@ final public class crun_source_editor extends a{
 		public expression(a pt,String nm,reader r){
 			super(pt,nm,r);
 			src=r.next_token();
+			ws_after=r.next_empty_space();
+		}
+		public expression(a pt,String nm,String src,reader r){
+			super(pt,nm,r);
+			this.src=src;
 			ws_after=r.next_empty_space();
 		}
 		@Override public void source_to(xwriter x){
