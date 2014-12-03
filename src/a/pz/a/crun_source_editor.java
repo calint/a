@@ -337,7 +337,7 @@ final public class crun_source_editor extends a{
 				}
 				return;
 			}
-			expr=new const_int(this,"e",src,r);
+			expr=new expression(this,"e",src,r);
 		}
 		@Override public void binary_to(xbin x){
 			expr.binary_to(x);
@@ -348,49 +348,44 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class const_int extends expression{
-		final private int value;
-//		final String ws_after;
-		public const_int(a pt,String nm,String src,reader r){
-			super(pt,nm,src,r);
-			if(src.startsWith("0x")){
-				try{
-					value=Integer.parseInt(src.substring(2),16);
-				}catch(NumberFormatException e){
-					throw new Error("not a hex: "+src);
-				}
-			}else if(src.startsWith("0b")){
-				try{
-					value=Integer.parseInt(src.substring(2),2);
-				}catch(NumberFormatException e){
-					throw new Error("not a binary: "+src);
-				}
-			}else if(src.endsWith("h")){
-				try{
-					value=Integer.parseInt(src.substring(0,src.length()-1),16);
-				}catch(NumberFormatException e){
-					throw new Error("not a hex: "+src);
-				}
-			}else{
-				try{
-					value=Integer.parseInt(src);
-				}catch(NumberFormatException e){
-					throw new Error("not a number: "+src);
-				}
-			}
-//			ws_after=r.next_empty_space();
-		}
-		@Override public void source_to(xwriter x){
-			super.source_to(x);
-		}
-		@Override public void binary_to(xbin x){
-			x.write(value);
-		}
-		@Override public int eval(xbin b){
-			return value;
-		}
-		private static final long serialVersionUID=1;
-	}
+//	final public static class const_int extends expression{
+//		final private int value;
+//		public const_int(a pt,String nm,String src,reader r){
+//			super(pt,nm,src,r);
+//			if(src.startsWith("0x")){
+//				try{
+//					value=Integer.parseInt(src.substring(2),16);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a hex: "+src);
+//				}
+//			}else if(src.startsWith("0b")){
+//				try{
+//					value=Integer.parseInt(src.substring(2),2);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a binary: "+src);
+//				}
+//			}else if(src.endsWith("h")){
+//				try{
+//					value=Integer.parseInt(src.substring(0,src.length()-1),16);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a hex: "+src);
+//				}
+//			}else{
+//				try{
+//					value=Integer.parseInt(src);
+//				}catch(NumberFormatException e){
+//					throw new Error("not a number: "+src);
+//				}
+//			}
+//		}
+//		@Override public void binary_to(xbin x){
+//			x.write(value);
+//		}
+//		@Override public int eval(xbin b){
+//			return value;
+//		}
+//		private static final long serialVersionUID=1;
+//	}
 	public static class call extends el{
 		private String name,ws_after_name,ws_after_arguments_close;
 		protected ArrayList<expression> arguments;
@@ -613,6 +608,9 @@ final public class crun_source_editor extends a{
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			x.p(src).p(ws_after);
+		}
+		@Override public void binary_to(xbin x){
+			x.write(eval(x));
 		}
 		public int eval(xbin b){
 			final def_const dc=(def_const)b.toc.get("const "+src);
