@@ -415,17 +415,18 @@ final public class crun_source_editor extends a{
 		private String name,ws_after_name;//,ws_after_expr_close;
 //		protected ArrayList<expression> arguments;
 //		protected block function_code;
-		protected def_const constant;
-		protected def_func func;
+//		protected def_const constant;
+//		protected def_func func;
+		protected el e;
 		public def(a pt,String nm,reader r){
 			super(pt,nm,r);
 			name=r.next_token();
 			ws_after_name=r.next_empty_space();
 			if(r.is_next_char_expression_open()){
-				func=new def_func(this,"f",name,r);
+				e=new def_func(this,"f",name,r);
 				return;
 			}
-			constant=new def_const(this,name,name,r);
+			e=new def_const(this,name,name,r);
 			return;
 //			arguments=new ArrayList<>();
 //			int i=0;
@@ -439,22 +440,19 @@ final public class crun_source_editor extends a{
 //			function_code=new block(this,"c",r);
 		}
 		@Override public void binary_to(xbin x){
-			if(constant!=null){
-				return;
-			}
-			x.def(name,func);
-			func.binary_to(x);
-			x.write(8);//ret
+			e.binary_to(x);
+//			if(constant!=null){
+//				return;
+//			}
+//			x.def(name,func);
+//			func.binary_to(x);
+//			x.write(8);//ret
 		}
 		@Override public void source_to(xwriter x){
 			x.p("def");
 			super.source_to(x);
 			x.p(name).p(ws_after_name);
-			if(constant!=null){
-				constant.source_to(x);
-				return;
-			}
-			func.source_to(x);
+			e.source_to(x);
 //			x.p("(");
 //			arguments.forEach(e->{
 //				e.source_to(x);
