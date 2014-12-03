@@ -60,10 +60,11 @@ final public class acore extends a{
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
-		if(o instanceof block){
+		if(o instanceof crun_source_editor.program){
+			final crun_source_editor.program p=(crun_source_editor.program)o;
 			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=-1;
-			final xbin b=new xbin(cor.rom);
-			((block)o).binary_to(b);
+			final xbin b=new xbin(p.toc,cor.rom);
+			p.code.binary_to(b);
 			b.link();
 			ec.sts.set(b.ix());
 			st.set(b.ix());
