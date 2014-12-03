@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import b.a;
 import b.xwriter;
@@ -55,6 +56,11 @@ final public class crun_source_editor extends a{
 	//		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 	//	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
+	final public static class program{
+		final Map<String,el>toc;
+		final block code;
+		public program(Map<String,el>toc,block code){this.toc=toc;this.code=code;}
+	}
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
@@ -63,7 +69,7 @@ final public class crun_source_editor extends a{
 			x.xu(sts.clr());
 			el.source_to(x.xub(resrc,true,true));
 			x.xube();
-			ev(x,this,el);
+			ev(x,this,new program(r.toc,el));
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;
@@ -110,6 +116,7 @@ final public class crun_source_editor extends a{
 	private static final long serialVersionUID=11;
 
 	public static final class reader{
+		final public LinkedHashMap<String,el>toc=new LinkedHashMap<>();
 		private PushbackReader r;
 		public int line=1,col=1,prevcol=1,nchar=0;
 		public reader(Reader r){
@@ -203,7 +210,9 @@ final public class crun_source_editor extends a{
 		}
 	}
 	public static final class xbin{
-		public xbin(final int[] dest){
+		final public Map<String,el>toc;
+		public xbin(Map<String,el>toc,final int[] dest){
+			this.toc=toc;
 			data=dest;
 			defs=new LinkedHashMap<>();
 			links=new LinkedHashMap<>();
@@ -387,18 +396,16 @@ final public class crun_source_editor extends a{
 			x.p(")");
 		}
 		@Override public void binary_to(xbin x){
-			if(!"main".equals(name)){
-				final def d=x.functions.get(name);
-				if(d==null)throw new Error("function not found: "+name);
-				if(arguments.size()!=d.arguments.size())throw new Error("number of arguments do not match: "+name);
-				int i=0;
-				for(expression e:arguments){
-					final expression a=d.arguments.get(i++);
-					final int rdi=a.src.charAt(0)-'a';
-					final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
-					x.write(in);
-					x.write(e.eval(x));
-				}
+			final def d=(def)x.toc.get("func "+name);
+			if(d==null)throw new Error("function not found: "+name);
+			if(arguments.size()!=d.arguments.size())throw new Error("number of arguments do not match: "+name);
+			int i=0;
+			for(expression e:arguments){
+				final expression a=d.arguments.get(i++);
+				final int rdi=a.src.charAt(0)-'a';
+				final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
+				x.write(in);
+				x.write(e.eval(x));
 			}
 			x.link_to_def(name);
 			x.write(0x0010);//call
@@ -428,6 +435,7 @@ final public class crun_source_editor extends a{
 			ws_after_expr_close=r.next_empty_space();
 //			if(!r.is_next_char_block_open()) throw new Error("expected function code within { ... }");
 			function_code=new block(this,"c",r);
+			r.toc.put("func "+name,this);
 		}
 		@Override public void binary_to(xbin x){
 			if(constant!=null){
@@ -463,6 +471,7 @@ final public class crun_source_editor extends a{
 			this.name=name;
 			expr=new expression(this,"e",r);
 			ws_after_expr_close=r.next_empty_space();
+			r.toc.put("const "+name,this);
 		}
 		@Override public void binary_to(xbin x){
 			x.def_const(name,this);
