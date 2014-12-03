@@ -2,7 +2,6 @@ package a.pz.a;
 import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
-import a.pz.a.crun_source_editor.block;
 import a.pz.a.crun_source_editor.xbin;
 import a.pz.bas.program;
 import a.pz.bas.assembly.add;
@@ -109,7 +108,7 @@ final public class acore extends a{
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css("textarea","line-height:1.4em")
 				.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
-				.css(ec.src,"min-width:16em;min-height:140em;line-height:1.4em")
+				.css(ec.src,"min-width:20em;min-height:140em;line-height:1.4em")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
 			switch(th.toint()){
