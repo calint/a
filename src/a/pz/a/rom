@@ -1,10 +1,4 @@
 {
-def screen 0x1000
-def red 0xf00
-def screen2 0x4060
-def blue 0xf
-
-
 line(screen red 0x30)
 rect(screen red 0x30 0x40 0x20)
 dot(screen red)
@@ -32,4 +26,10 @@ def rect(a b c d e){
   }
 }
 0xffff
+
+def screen 0x1000
+def red 0xf00
+def screen2 0x4060
+def blue 0xf
+
 }

@@ -589,7 +589,7 @@ final public class crun_source_editor extends a{
 			x.p(src).p(ws_after);
 		}
 		public int eval(xbin b){
-			final def_const dc=b.constants.get(src);
+			final def_const dc=(def_const)b.toc.get("const "+src);
 			if(dc!=null){
 				return dc.expr.eval(b);
 			}
