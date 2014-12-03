@@ -56,10 +56,10 @@ final public class crun_source_editor extends a{
 	//		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 	//	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
-	final public static class program{
+	final public static class prog{
 		final Map<String,el>toc;
 		final block code;
-		public program(Map<String,el>toc,block code){this.toc=toc;this.code=code;}
+		public prog(Map<String,el>toc,block code){this.toc=toc;this.code=code;}
 	}
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
@@ -69,7 +69,7 @@ final public class crun_source_editor extends a{
 			x.xu(sts.clr());
 			el.source_to(x.xub(resrc,true,true));
 			x.xube();
-			ev(x,this,new program(r.toc,el));
+			ev(x,this,new prog(r.toc,el));
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;
@@ -299,14 +299,16 @@ final public class crun_source_editor extends a{
 	}
 	public static final class data extends el{
 		final private String src,ws_after;
-		private int i;
-		private el expr;
+		final private int i;
+		final private el expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			src=r.next_token();
 			if("def".equals(src)){
 				expr=new def(this,"e",r);
+				i=0;
 			}else if(r.is_next_char_expression_open()){
+				i=0;
 				if("li".equals(src)){
 					expr=new func_li(this,"e",r);
 				}else if("st".equals(src)){
@@ -323,24 +325,28 @@ final public class crun_source_editor extends a{
 					expr=new call(this,"e",src,r);
 				}
 			}else if(src.startsWith("0x")){
+				expr=null;
 				try{
 					i=Integer.parseInt(src.substring(2),16);
 				}catch(NumberFormatException e){
 					throw new Error("not a hex: "+src);
 				}
 			}else if(src.startsWith("0b")){
+				expr=null;
 				try{
 					i=Integer.parseInt(src.substring(2),2);
 				}catch(NumberFormatException e){
 					throw new Error("not a binary: "+src);
 				}
 			}else if(src.endsWith("h")){
+				expr=null;
 				try{
 					i=Integer.parseInt(src.substring(0,src.length()-1),16);
 				}catch(NumberFormatException e){
 					throw new Error("not a hex: "+src);
 				}
 			}else{
+				expr=null;
 				try{
 					i=Integer.parseInt(src);
 				}catch(NumberFormatException e){
