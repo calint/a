@@ -45,7 +45,7 @@ final public class b{
 	public final static String pathsep="/";
 	public static @conf String hello="public domain server #1";
 	public static String id=""+(int)Math.floor(Math.random()*10000);//? fixedwidth
-	public static String root_dir=".";
+	public static @conf String root_dir=".";
 	public static @conf(reboot=true)String server_port=ensure(System.getProperty("app.port"),"8888");
 	public static @conf boolean print_requests=false;
 	public static @conf boolean print_reply_headers=false;
