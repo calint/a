@@ -18,7 +18,7 @@ final public class crun_source_editor extends a{
 	public a src;
 	public a resrc;
 	public a sts;
-	public static class line_numbers extends a{
+	final public static class line_numbers extends a{
 		public int focus_line=0;
 		@Override public void to(xwriter x) throws Throwable{
 			for(int i=1;i<100;i++)
@@ -57,9 +57,9 @@ final public class crun_source_editor extends a{
 	//	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
 	final public static class prog{
-		final Map<String,el> toc;
+		final Map<String,statement> toc;
 		final block code;
-		public prog(Map<String,el> toc,block code){
+		public prog(Map<String,statement> toc,block code){
 			this.toc=toc;
 			this.code=code;
 		}
@@ -119,7 +119,7 @@ final public class crun_source_editor extends a{
 	private static final long serialVersionUID=11;
 
 	public static final class reader{
-		final public LinkedHashMap<String,el> toc=new LinkedHashMap<>();
+		final public LinkedHashMap<String,statement> toc=new LinkedHashMap<>();
 		private PushbackReader r;
 		public int line=1,col=1,prevcol=1,nchar=0;
 		public reader(Reader r){
@@ -213,8 +213,8 @@ final public class crun_source_editor extends a{
 		}
 	}
 	public static final class xbin{
-		final public Map<String,el> toc;
-		public xbin(Map<String,el> toc,final int[] dest){
+		final public Map<String,statement> toc;
+		public xbin(Map<String,statement> toc,final int[] dest){
 			this.toc=toc;
 			data=dest;
 			//			defs=new LinkedHashMap<>();
@@ -259,14 +259,14 @@ final public class crun_source_editor extends a{
 			return ix;
 		}
 	}
-	public static class el extends a{
+	public static class statement extends a{
 		final private String ws;
-		public el(a pt,String nm,reader r){// {}  gives 0 length file
+		public statement(a pt,String nm,reader r){// {}  gives 0 length file
 			super(pt,nm);
 			ws=r.next_empty_space();
 			r.bm();
 		}
-		public el(a pt,String nm){// {}  gives 0 length file
+		public statement(a pt,String nm){// {}  gives 0 length file
 			super(pt,nm);
 			ws="";
 //			r.bm();
@@ -279,7 +279,7 @@ final public class crun_source_editor extends a{
 		//		public void refactor_reorder_function_arguments(xwriter x,String arg){}
 		private static final long serialVersionUID=1;
 	}
-	final public static class block extends el{
+	final public static class block extends statement{
 		final private String ws_after_open_block,ws_trailing;
 		public block(a pt,String nm,reader r){// {}  gives 0 length file
 			super(pt,nm,r);
@@ -308,10 +308,8 @@ final public class crun_source_editor extends a{
 		final private ArrayList<data> datas=new ArrayList<>();
 		private static final long serialVersionUID=1;
 	}
-	public static final class data extends el{
-		//		final private String src,ws_after;
-		//		final private int i;
-		final private el expr;
+	public static final class data extends statement{
+		final private statement expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			final String src=r.next_token();
@@ -321,17 +319,17 @@ final public class crun_source_editor extends a{
 			}
 			if(r.is_next_char_expression_open()){
 				if("li".equals(src)){
-					expr=new func_li(this,"e",r);
+					expr=new call_li(this,"e",r);
 				}else if("st".equals(src)){
-					expr=new func_st(this,"e",r);
+					expr=new call_st(this,"e",r);
 				}else if("stc".equals(src)){
-					expr=new func_stc(this,"e",r);
+					expr=new call_stc(this,"e",r);
 				}else if("lp".equals(src)){
-					expr=new func_lp(this,"e",r);
+					expr=new call_lp(this,"e",r);
 				}else if("inc".equals(src)){
-					expr=new func_inc(this,"e",r);
+					expr=new call_inc(this,"e",r);
 				}else if("add".equals(src)){
-					expr=new func_add(this,"e",r);
+					expr=new call_add(this,"e",r);
 				}else{
 					expr=new call(this,"e",src,r);
 				}
@@ -348,46 +346,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-//	final public static class const_int extends expression{
-//		final private int value;
-//		public const_int(a pt,String nm,String src,reader r){
-//			super(pt,nm,src,r);
-//			if(src.startsWith("0x")){
-//				try{
-//					value=Integer.parseInt(src.substring(2),16);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a hex: "+src);
-//				}
-//			}else if(src.startsWith("0b")){
-//				try{
-//					value=Integer.parseInt(src.substring(2),2);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a binary: "+src);
-//				}
-//			}else if(src.endsWith("h")){
-//				try{
-//					value=Integer.parseInt(src.substring(0,src.length()-1),16);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a hex: "+src);
-//				}
-//			}else{
-//				try{
-//					value=Integer.parseInt(src);
-//				}catch(NumberFormatException e){
-//					throw new Error("not a number: "+src);
-//				}
-//			}
-//		}
-//		@Override public void binary_to(xbin x){
-//			x.write(value);
-//		}
-//		@Override public int eval(xbin b){
-//			return value;
-//		}
-//		private static final long serialVersionUID=1;
-//	}
-	public static class call extends el{
-		private String name,ws_after_name,ws_after_arguments_close;
+	public static class call extends statement{
+		private String name,ws_after_name,ws_trailing;
 		protected ArrayList<expression> arguments;
 		public call(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
@@ -399,16 +359,13 @@ final public class crun_source_editor extends a{
 				final expression arg=new expression(pt,nm,r);
 				arguments.add(arg);
 			}
-			ws_after_arguments_close=r.next_empty_space();
+			ws_trailing=r.next_empty_space();
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			x.p(name).p("(").p(ws_after_name);
-			arguments.forEach(e->{
-				e.source_to(x);
-				//				x.spc();
-				});
-			x.p(")").p(ws_after_arguments_close);
+			arguments.forEach(e->e.source_to(x));
+			x.p(")").p(ws_trailing);
 		}
 		@Override public void binary_to(xbin x){
 			final def_func d=(def_func)x.toc.get("func "+name);
@@ -427,9 +384,9 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class def extends el{
+	final public static class def extends statement{
 		final private String name,ws_after_name;
-		final private el e;
+		final private statement e;
 		public def(a pt,String nm,reader r){
 			super(pt,nm,r);
 			name=r.next_token();
@@ -451,7 +408,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class def_func extends el{
+	final public static class def_func extends statement{
 		final private String name,ws_after_expr_close;
 		final private ArrayList<expression> arguments=new ArrayList<>();
 		final private block function_code;
@@ -484,7 +441,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class def_const extends el{
+	final public static class def_const extends statement{
 		final private String ws_after_expr_close;
 		final private expression expr;
 		public def_const(a pt,String nm,String name,reader r){
@@ -500,8 +457,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class func_li extends call{
-		public func_li(a pt,String nm,reader r){
+	final public static class call_li extends call{
+		public call_li(a pt,String nm,reader r){
 			super(pt,nm,"li",r);
 		}
 		@Override public void binary_to(xbin x){
@@ -516,8 +473,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class func_st extends call{
-		public func_st(a pt,String nm,reader r){
+	final public static class call_st extends call{
+		public call_st(a pt,String nm,reader r){
 			super(pt,nm,"st",r);
 		}
 		@Override public void binary_to(xbin x){
@@ -535,8 +492,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class func_add extends call{
-		public func_add(a pt,String nm,reader r){
+	final public static class call_add extends call{
+		public call_add(a pt,String nm,reader r){
 			super(pt,nm,"add",r);
 		}
 		@Override public void binary_to(xbin x){
@@ -554,8 +511,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class func_inc extends call{
-		public func_inc(a pt,String nm,reader r){
+	final public static class call_inc extends call{
+		public call_inc(a pt,String nm,reader r){
 			super(pt,nm,"inc",r);
 		}
 		@Override public void binary_to(xbin x){
@@ -574,8 +531,8 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	final public static class func_stc extends call{
-		public func_stc(a pt,String nm,reader r){
+	final public static class call_stc extends call{
+		public call_stc(a pt,String nm,reader r){
 			super(pt,nm,"stc",r);
 		}
 		@Override public void binary_to(xbin x){
@@ -593,7 +550,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class expression extends el{
+	public static class expression extends statement{
 		final private String src,ws_after;
 		public expression(a pt,String nm,reader r){
 			super(pt,nm,r);
@@ -643,11 +600,11 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class func_lp extends el{
+	final public static class call_lp extends statement{
 		final private ArrayList<expression> arguments=new ArrayList<>();
 		final private String ws_after_expression_open,ws_after_expression_closed;
 		final private block loop_code;
-		public func_lp(a pt,String nm,reader r){
+		public call_lp(a pt,String nm,reader r){
 			super(pt,nm,r);
 			ws_after_expression_open=r.next_empty_space();
 			int i=0;
