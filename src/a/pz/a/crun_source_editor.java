@@ -266,6 +266,11 @@ final public class crun_source_editor extends a{
 			ws=r.next_empty_space();
 			r.bm();
 		}
+		public el(a pt,String nm){// {}  gives 0 length file
+			super(pt,nm);
+			ws="";
+//			r.bm();
+		}
 		public void source_to(xwriter x){
 			x.p(ws);
 		}
@@ -274,7 +279,7 @@ final public class crun_source_editor extends a{
 		//		public void refactor_reorder_function_arguments(xwriter x,String arg){}
 		private static final long serialVersionUID=1;
 	}
-	public static class block extends el{
+	final public static class block extends el{
 		final private String ws_after_open_block,ws_trailing;
 		public block(a pt,String nm,reader r){// {}  gives 0 length file
 			super(pt,nm,r);
@@ -332,7 +337,6 @@ final public class crun_source_editor extends a{
 				}
 				return;
 			}
-
 			expr=new const_int(this,"e",src,r);
 		}
 		@Override public void binary_to(xbin x){
@@ -344,7 +348,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class const_int extends expression{
+	final public static class const_int extends expression{
 		final private int value;
 //		final String ws_after;
 		public const_int(a pt,String nm,String src,reader r){
@@ -375,6 +379,9 @@ final public class crun_source_editor extends a{
 				}
 			}
 //			ws_after=r.next_empty_space();
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
 		}
 		@Override public void binary_to(xbin x){
 			x.write(value);
@@ -425,7 +432,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def extends el{
+	final public static class def extends el{
 		final private String name,ws_after_name;
 		final private el e;
 		public def(a pt,String nm,reader r){
@@ -449,7 +456,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_func extends el{
+	final public static class def_func extends el{
 		final private String name,ws_after_expr_close;
 		final private ArrayList<expression> arguments=new ArrayList<>();
 		final private block function_code;
@@ -482,7 +489,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class def_const extends el{
+	final public static class def_const extends el{
 		final private String ws_after_expr_close;
 		final private expression expr;
 		public def_const(a pt,String nm,String name,reader r){
@@ -498,7 +505,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class func_li extends call{
+	final public static class func_li extends call{
 		public func_li(a pt,String nm,reader r){
 			super(pt,nm,"li",r);
 		}
@@ -514,7 +521,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class func_st extends call{
+	final public static class func_st extends call{
 		public func_st(a pt,String nm,reader r){
 			super(pt,nm,"st",r);
 		}
@@ -533,7 +540,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class func_add extends call{
+	final public static class func_add extends call{
 		public func_add(a pt,String nm,reader r){
 			super(pt,nm,"add",r);
 		}
@@ -552,7 +559,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class func_inc extends call{
+	final public static class func_inc extends call{
 		public func_inc(a pt,String nm,reader r){
 			super(pt,nm,"inc",r);
 		}
@@ -572,7 +579,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class func_stc extends call{
+	final public static class func_stc extends call{
 		public func_stc(a pt,String nm,reader r){
 			super(pt,nm,"stc",r);
 		}
@@ -599,7 +606,7 @@ final public class crun_source_editor extends a{
 			ws_after=r.next_empty_space();
 		}
 		public expression(a pt,String nm,String src,reader r){
-			super(pt,nm,r);
+			super(pt,nm);
 			this.src=src;
 			ws_after=r.next_empty_space();
 		}
