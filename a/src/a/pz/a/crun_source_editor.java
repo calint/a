@@ -550,7 +550,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-	public static class expression extends statement{
+	final public static class expression extends statement{
 		final private String src,ws_after;
 		public expression(a pt,String nm,reader r){
 			super(pt,nm,r);
