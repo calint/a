@@ -214,14 +214,13 @@ final public class crun_source_editor extends a{
 		public xbin(Map<String,el>toc,final int[] dest){
 			this.toc=toc;
 			data=dest;
-			defs=new LinkedHashMap<>();
-			links=new LinkedHashMap<>();
-			constants=new LinkedHashMap<>();
-			functions=new LinkedHashMap<>();
+//			defs=new LinkedHashMap<>();
+//			links=new LinkedHashMap<>();
+//			constants=new LinkedHashMap<>();
+//			functions=new LinkedHashMap<>();
 		}
-		public xbin def(final String name,def d){
+		public xbin def(final String name,def_func d){
 			defs.put(name,ix);
-			functions.put(name,d);
 			pl("def "+name+" at "+ix);
 			return this;
 		} 
@@ -242,16 +241,16 @@ final public class crun_source_editor extends a{
 				pl("linked "+me.getKey()+" to "+me.getValue());
 			});
 		}
-		public xbin def_const(String name,def_const constant){
-			pl("constant "+name+" "+constant);
-			constants.put(name,constant);
-			return this;
-		}
-		private LinkedHashMap<String,Integer>defs;
-		private LinkedHashMap<Integer,String>links;
-		private LinkedHashMap<String,def_const>constants;
-		private LinkedHashMap<String,def>functions;
-		public int[] data;
+//		public xbin def_const(String name,def_const constant){
+//			pl("constant "+name+" "+constant);
+//			constants.put(name,constant);
+//			return this;
+//		}
+		private LinkedHashMap<String,Integer>defs=new LinkedHashMap<>();
+		private LinkedHashMap<Integer,String>links=new LinkedHashMap<>();
+//		private LinkedHashMap<String,def_const>constants;
+//		private LinkedHashMap<String,def>functions;
+		private int[] data;
 		private int ix;
 		public int ix(){
 			return ix;
@@ -396,7 +395,7 @@ final public class crun_source_editor extends a{
 			x.p(")");
 		}
 		@Override public void binary_to(xbin x){
-			final def d=(def)x.toc.get("func "+name);
+			final def_func d=(def_func)x.toc.get("func "+name);
 			if(d==null)throw new Error("function not found: "+name);
 			if(arguments.size()!=d.arguments.size())throw new Error("number of arguments do not match: "+name);
 			int i=0;
@@ -413,18 +412,65 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static class def extends el{
-		private String name,ws_after_name,ws_after_expr_close;
-		protected ArrayList<expression> arguments;
-		protected block function_code;
+		private String name,ws_after_name;//,ws_after_expr_close;
+//		protected ArrayList<expression> arguments;
+//		protected block function_code;
 		protected def_const constant;
+		protected def_func func;
 		public def(a pt,String nm,reader r){
 			super(pt,nm,r);
 			name=r.next_token();
 			ws_after_name=r.next_empty_space();
-			if(!r.is_next_char_expression_open()){
-				constant=new def_const(this,name,name,r);
+			if(r.is_next_char_expression_open()){
+				func=new def_func(this,"f",name,r);
 				return;
 			}
+			constant=new def_const(this,name,name,r);
+			return;
+//			arguments=new ArrayList<>();
+//			int i=0;
+//			while(true){
+//				if(r.is_next_char_expression_close()) break;
+//				final expression arg=new expression(this,""+i++,r);
+//				arguments.add(arg);
+//			}
+//			ws_after_expr_close=r.next_empty_space();
+////			if(!r.is_next_char_block_open()) throw new Error("expected function code within { ... }");
+//			function_code=new block(this,"c",r);
+		}
+		@Override public void binary_to(xbin x){
+			if(constant!=null){
+				return;
+			}
+			x.def(name,func);
+			func.binary_to(x);
+			x.write(8);//ret
+		}
+		@Override public void source_to(xwriter x){
+			x.p("def");
+			super.source_to(x);
+			x.p(name).p(ws_after_name);
+			if(constant!=null){
+				constant.source_to(x);
+				return;
+			}
+			func.source_to(x);
+//			x.p("(");
+//			arguments.forEach(e->{
+//				e.source_to(x);
+//				});
+//			x.p(")").p(ws_after_expr_close);
+//			function_code.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+	public static class def_func extends el{
+		private String name,ws_after_expr_close;
+		protected ArrayList<expression> arguments;
+		protected block function_code;
+		public def_func(a pt,String nm,String name,reader r){
+			super(pt,nm,r);
+			this.name=name;
 			arguments=new ArrayList<>();
 			int i=0;
 			while(true){
@@ -438,22 +484,12 @@ final public class crun_source_editor extends a{
 			r.toc.put("func "+name,this);
 		}
 		@Override public void binary_to(xbin x){
-			if(constant!=null){
-				x.def_const(name,constant);
-				return;
-			}
 			x.def(name,this);
 			function_code.binary_to(x);
 			x.write(8);//ret
 		}
 		@Override public void source_to(xwriter x){
-			x.p("def");
 			super.source_to(x);
-			x.p(name).p(ws_after_name);
-			if(constant!=null){
-				constant.source_to(x);
-				return;
-			}
 			x.p("(");
 			arguments.forEach(e->{
 				e.source_to(x);
@@ -464,17 +500,13 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static class def_const extends el{
-		private String name,ws_after_expr_close;
+		private String ws_after_expr_close;
 		protected expression expr;
 		public def_const(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
-			this.name=name;
 			expr=new expression(this,"e",r);
 			ws_after_expr_close=r.next_empty_space();
 			r.toc.put("const "+name,this);
-		}
-		@Override public void binary_to(xbin x){
-			x.def_const(name,this);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
