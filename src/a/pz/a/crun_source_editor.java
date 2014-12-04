@@ -268,6 +268,11 @@ final public class crun_source_editor extends a{
 		public int ix(){
 			return ix;
 		}
+		public int data_location_in_binary_for_name(String src){
+			final Integer i=defs.get(src);
+			if(i==null)throw new Error("data not found: "+src);
+			return i.intValue();
+		}
 	}
 	public static class statement extends a{
 		final private String ws;
@@ -603,6 +608,8 @@ final public class crun_source_editor extends a{
 		public int eval(xbin b){
 			final def_const dc=(def_const)b.toc.get("const "+src);
 			if(dc!=null){ return dc.expr.eval(b); }
+			final def_data dd=(def_data)b.toc.get("data "+src);
+			if(dd!=null){ return b.data_location_in_binary_for_name(src); }
 			if(src.startsWith("0x")){
 				try{
 					return Integer.parseInt(src.substring(2),16);
