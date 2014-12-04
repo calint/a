@@ -27,15 +27,16 @@ function start(){
 	}
 	ws.onmessage=function(e){
 		onframe();
-		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps";
 		var ua=new DataView(e.data);
 		var cmd=ua.getUint8(0);
 //		console.log("command "+cmd);
 		var dat=e.data.slice(1);
 		if(cmd==48){//refresh display
 			frameno++;
+			$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps";
 			var b64=base64ArrayBuffer(dat);
 			$.scr.src='data:image/png;base64,'+b64;
+			$.scr.onload=function(){ws.send(keys);}
 //			if(last_scr_wi!=$.scr.width){//scale display x2
 //				$.scr.width*=3;
 //				last_scr_wi=$.scr.width;
@@ -43,7 +44,6 @@ function start(){
 			$.f2.value='';
 //			console.log("send keys "+keys);
 			$.sts.value=keys[1];
-			ws.send(keys);
 			return;
 		}else if(cmd==49){//text to f1 compile status
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
