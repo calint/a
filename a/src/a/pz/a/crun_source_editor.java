@@ -241,17 +241,28 @@ final public class crun_source_editor extends a{
 			data[ix++]=d;
 			return this;
 		}
-		public xbin link_to_def(String name){
-			links.put(ix,name);
-			pl("ref at "+ix+" to "+name);
+		public xbin link_call(String name){
+			calls.put(ix,name);
+			pl("call at "+ix+" to "+name);
+			return this;
+		}
+		public xbin link_li(String name){
+			lis.put(ix,name);
+			pl("li at "+ix+" to "+name);
 			return this;
 		}
 		public void link(){
-			links.entrySet().forEach(me->{
+			calls.entrySet().forEach(me->{
 				if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
 				final int addr=defs.get(me.getValue());
 				data[me.getKey()]|=(addr<<6);
-				pl("linked "+me.getKey()+" to "+me.getValue());
+				pl("linked call at "+me.getKey()+" to "+me.getValue());
+			});
+			lis.entrySet().forEach(me->{
+				if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
+				final int addr=defs.get(me.getValue());
+				data[me.getKey()]=addr;
+				pl("linked data at "+me.getKey()+" to "+me.getValue());
 			});
 		}
 		//		public xbin def_const(String name,def_const constant){
@@ -260,7 +271,8 @@ final public class crun_source_editor extends a{
 		//			return this;
 		//		}
 		private LinkedHashMap<String,Integer> defs=new LinkedHashMap<>();
-		private LinkedHashMap<Integer,String> links=new LinkedHashMap<>();
+		private LinkedHashMap<Integer,String> calls=new LinkedHashMap<>();
+		private LinkedHashMap<Integer,String> lis=new LinkedHashMap<>();
 		//		private LinkedHashMap<String,def_const>constants;
 		//		private LinkedHashMap<String,def>functions;
 		private int[] data;
@@ -349,6 +361,8 @@ final public class crun_source_editor extends a{
 					expr=new call_ldc(this,"e",r);
 				}else if("ld".equals(src)){
 					expr=new call_ld(this,"e",r);
+				}else if("foo".equals(src)){
+					expr=new call_foo(this,"e",r);
 				}else{
 					expr=new call(this,"e",src,r);
 				}
@@ -398,7 +412,7 @@ final public class crun_source_editor extends a{
 				x.write(in);
 				x.write(e.eval(x));
 			}
-			x.link_to_def(name);
+			x.link_call(name);
 			x.write(0x0010);//call
 		}
 		private static final long serialVersionUID=1;
@@ -706,6 +720,58 @@ final public class crun_source_editor extends a{
 			final int rai=0,znxr=0;
 			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
 			x.write(i);
+			loop_code.binary_to(x);
+			x.write(4);//nxt
+		}
+		@Override public void source_to(xwriter x){
+			x.p("lp");
+			super.source_to(x);
+			x.p("(");
+			x.p(ws_after_expression_open);
+			arguments.forEach(e->e.source_to(x));
+			x.p(")");
+			x.p(ws_after_expression_closed);
+			loop_code.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+	final public static class call_foo extends statement{
+		final private ArrayList<expression> arguments=new ArrayList<>();
+		final private String ws_after_expression_open,ws_after_expression_closed;
+		final private block loop_code;
+		public call_foo(a pt,String nm,reader r){
+			super(pt,nm,r);
+			ws_after_expression_open=r.next_empty_space();
+			int i=0;
+			while(true){
+				if(r.is_next_char_expression_close()) break;
+				final expression arg=new expression(this,"e"+i++,r);
+				arguments.add(arg);
+			}
+			ws_after_expression_closed=r.next_empty_space();
+			//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
+			loop_code=new block(this,"b",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression rd=arguments.get(0);
+//			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+//			final int rdi=rd.src.charAt(0)-'a';
+//			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+//			final int rai=0,znxr=0;
+//			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
+//			x.write(i);
+
+			x.write(0|0x0000|(0&15)<<8|(0&15)<<12);//li(a dots)
+			x.link_li(rd.src);
+			x.write(0);
+			x.write(0|0x00c0|(0&15)<<8|(2&15)<<12);//ldc(c a)
+			x.write(0|0x0100|(0&15)<<8|(2&15)<<12);//lp(c)
+			for(expression e:arguments.subList(1,arguments.size())){
+				final String reg=e.src;
+				final int regi=reg.charAt(0)-'a';
+				x.write(0|0x00c0|(0&15)<<8|(regi&15)<<12);//ldc(c regi)
+			}
 			loop_code.binary_to(x);
 			x.write(4);//nxt
 		}
