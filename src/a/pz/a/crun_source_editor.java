@@ -30,6 +30,9 @@ final public class crun_source_editor extends a{
 	}
 	public line_numbers ln;
 	public void to(final xwriter x) throws Throwable{
+		x.style("def","font-weight:bold");//a name
+		x.style("fc","font-style: italic");//function name refered
+		x.style("ac","color: gray");//assembler
 		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," crun ","a").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
@@ -37,7 +40,7 @@ final public class crun_source_editor extends a{
 		x.el_();
 		x.td();
 		x.inptxtarea(src);
-		x.td().el(resrc);
+		x.td().rel(resrc);
 		x.table_();
 	}
 	public boolean isonbrkpt(final int srclno){
@@ -68,10 +71,12 @@ final public class crun_source_editor extends a{
 		final reader r=new reader(src.reader());
 		try{
 			final block el=new block(this,"b",r);
+			final xwriter src=new xwriter();
+			el.source_to(src);
+			resrc.set(src.toString());
 			if(x==null) return;
-			x.xu(sts.clr());
-			el.source_to(x.xub(resrc,true,true));
-			x.xube();
+			x.xu(sts.clr(),resrc);
+//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new prog(r.toc,el));
 		}catch(Throwable t){
 			b.b.log(t);
@@ -402,13 +407,12 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	public static class call extends statement{
-		private String name,ws_after_name,ws_trailing;
-		protected ArrayList<expression> arguments;
+		final private String name,ws_after_name,ws_trailing;
+		final protected ArrayList<expression> arguments=new ArrayList<>();
 		public call(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
 			ws_after_name=r.next_empty_space();
-			arguments=new ArrayList<>();
 			while(true){
 				if(r.is_next_char_expression_close()) break;
 				final expression arg=new expression(pt,nm,r);
@@ -418,7 +422,12 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			x.p(name).p("(").p(ws_after_name);
+			final String asm="li add foo fow inc ld ldc li lp st stc tx";
+			final boolean is=asm.indexOf(name)!=-1;
+			x.tag(is?"ac":"fc");
+			x.p(name);
+			x.tage(is?"ac":"fc");
+			x.p("(").p(ws_after_name);
 			arguments.forEach(e->e.source_to(x));
 			x.p(")").p(ws_trailing);
 		}
@@ -463,7 +472,7 @@ final public class crun_source_editor extends a{
 		@Override public void source_to(xwriter x){
 			x.p("def");
 			super.source_to(x);
-			x.p(name);
+			x.tag("def").p(name).tage("def");
 			x.p(ws_after_name);
 			e.source_to(x);
 		}
@@ -810,7 +819,10 @@ final public class crun_source_editor extends a{
 			super.source_to(x);
 			x.p("(");
 			x.p(ws_after_expression_open);
-			arguments.forEach(e->e.source_to(x));
+			x.tag("c");
+			arguments.get(0).source_to(x);
+			x.tage("c");
+			arguments.subList(1,arguments.size()-1).forEach(e->e.source_to(x));
 			x.p(")");
 			x.p(ws_after_expression_closed);
 			loop_code.source_to(x);
@@ -875,7 +887,10 @@ final public class crun_source_editor extends a{
 			super.source_to(x);
 			x.p("(");
 			x.p(ws_after_expression_open);
-			arguments.forEach(e->e.source_to(x));
+			x.tag("c");
+			arguments.get(0).source_to(x);
+			x.tage("c");
+			arguments.subList(1,arguments.size()-1).forEach(e->e.source_to(x));
 			x.p(")");
 			x.p(ws_after_expression_closed);
 			loop_code.source_to(x);
@@ -922,8 +937,8 @@ final public class crun_source_editor extends a{
 			data.binary_to(x);
 		}
 		@Override public void source_to(xwriter x){
+			x.p("[");
 			super.source_to(x);
-			x.p(name).p("[");
 			arguments.forEach(e->e.source_to(x));
 			x.p("]");
 			data.source_to(x);
