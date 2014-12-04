@@ -77,7 +77,7 @@ final public class crun_source_editor extends a{
 			b.b.log(t);
 			if(x==null) return;
 			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+r.bm_nchar+";e.selectionEnd="+r.nchar+";}");
-			x.xu(sts.set(t.getMessage()));
+			x.xu(sts.set("line "+r.bm_line+": "+t.getMessage()));
 			//			x.xalert(t.getMessage());
 		}
 		//		final program p;
@@ -340,6 +340,8 @@ final public class crun_source_editor extends a{
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			final String src=r.next_token();
+			if(src.length()==0)
+				throw new Error("unexpected empty token");
 			if("def".equals(src)){
 				expr=new def(this,"e",r);
 				return;
@@ -363,6 +365,10 @@ final public class crun_source_editor extends a{
 					expr=new call_ld(this,"e",r);
 				}else if("foo".equals(src)){
 					expr=new call_foo(this,"e",r);
+				}else if("fow".equals(src)){
+					expr=new call_fow(this,"e",r);
+				}else if("tx".equals(src)){
+					expr=new call_tx(this,"e",r);
 				}else{
 					expr=new call(this,"e",src,r);
 				}
@@ -776,7 +782,7 @@ final public class crun_source_editor extends a{
 			x.write(4);//nxt
 		}
 		@Override public void source_to(xwriter x){
-			x.p("lp");
+			x.p("foo");
 			super.source_to(x);
 			x.p("(");
 			x.p(ws_after_expression_open);
@@ -784,6 +790,77 @@ final public class crun_source_editor extends a{
 			x.p(")");
 			x.p(ws_after_expression_closed);
 			loop_code.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+final public static class call_fow extends statement{
+		final private ArrayList<expression> arguments=new ArrayList<>();
+		final private String ws_after_expression_open,ws_after_expression_closed;
+		final private block loop_code;
+		public call_fow(a pt,String nm,reader r){
+			super(pt,nm,r);
+			ws_after_expression_open=r.next_empty_space();
+			int i=0;
+			while(true){
+				if(r.is_next_char_expression_close()) break;
+				final expression arg=new expression(this,"e"+i++,r);
+				arguments.add(arg);
+			}
+			ws_after_expression_closed=r.next_empty_space();
+			//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
+			loop_code=new block(this,"b",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression rd=arguments.get(0);
+//			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+//			final int rdi=rd.src.charAt(0)-'a';
+//			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+//			final int rai=0,znxr=0;
+//			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
+//			x.write(i);
+
+			x.write(0|0x0000|(0&15)<<8|(0&15)<<12);//li(a dots)
+			x.link_li(rd.src);
+			x.write(0);
+			x.write(0|0x00c0|(0&15)<<8|(2&15)<<12);//ldc(c a)
+			x.write(0|0x0100|(0&15)<<8|(2&15)<<12);//lp(c)
+			for(expression e:arguments.subList(1,arguments.size())){
+				final String reg=e.src;
+				final int regi=reg.charAt(0)-'a';
+				x.write(0|0x00c0|(0&15)<<8|(regi&15)<<12);//ldc(c regi)
+			}
+			loop_code.binary_to(x);
+			x.write(4);//nxt
+		}
+		@Override public void source_to(xwriter x){
+			x.p("fow");
+			super.source_to(x);
+			x.p("(");
+			x.p(ws_after_expression_open);
+			arguments.forEach(e->e.source_to(x));
+			x.p(")");
+			x.p(ws_after_expression_closed);
+			loop_code.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+	final public static class call_tx extends call{
+		public call_tx(a pt,String nm,reader r){
+			super(pt,nm,"tx",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression ra=arguments.get(1);
+			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			final int rai=ra.src.charAt(0)-'a';
+			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			final expression rd=arguments.get(0);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			final int i=0x00e0|(rai&15)<<8|(rdi&15)<<12;
+			x.write(i);
 		}
 		private static final long serialVersionUID=1;
 	}
