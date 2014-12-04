@@ -1,4 +1,4 @@
-{li(a 0)
+{
 @inline rects.drw()
 @inline rects.upd()
 @inline dots.drw()
