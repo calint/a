@@ -60,11 +60,18 @@ final public class acore extends a{
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
 		if(o instanceof crun_source_editor.prog){
+			pl("*** compiler");
 			final crun_source_editor.prog p=(crun_source_editor.prog)o;
 			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=-1;
 			final xbin b=new xbin(p.toc,cor.rom);
 			p.code.binary_to(b);
+			pl("*** linker");
 			b.link();
+			pl("*** toc");
+			p.toc.entrySet().forEach(me->{
+				pl(me.getKey());
+			});
+			pl("*** done");
 			ec.sts.set(b.ix());
 			st.set(b.ix());
 			//x_r(x,"");
