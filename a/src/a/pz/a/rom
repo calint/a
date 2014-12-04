@@ -1,6 +1,6 @@
 {
-line(screen red 0x30)
-rect(screen2 red 0x30 0x40 0x20)
+rect(screen red 0x30 0x40 0x24)
+rect(screen2 red 0x30 0x40 0x22)
 dots.drw()
 dots.upd()
 eof
@@ -17,8 +17,7 @@ def dots.upd(){
   }
 }
 eof eof
-def dots[yx rgb]
-def dots{
+def dots[yx rgb]{
   3
   0x4040 0x800
   0x4151 0x080
@@ -39,7 +38,6 @@ def rect(a b c d e){
   lp(d){
     lp(c){
       stc(a b)
-      inc(b)
     }
     add(a e)
   }
