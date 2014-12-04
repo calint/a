@@ -825,12 +825,19 @@ final public static class call_fow extends statement{
 			x.write(0);
 			x.write(0|0x00c0|(0&15)<<8|(2&15)<<12);//ldc(c a)
 			x.write(0|0x0100|(0&15)<<8|(2&15)<<12);//lp(c)
+			x.write(0|0x00e0|(0&15)<<8|(1&15)<<12);//tx(b a)
 			for(expression e:arguments.subList(1,arguments.size())){
 				final String reg=e.src;
 				final int regi=reg.charAt(0)-'a';
 				x.write(0|0x00c0|(0&15)<<8|(regi&15)<<12);//ldc(c regi)
 			}
 			loop_code.binary_to(x);
+			x.write(0|0x00e0|(1&15)<<8|(0&15)<<12);//tx(a b)
+			for(expression e:arguments.subList(1,arguments.size())){
+				final String reg=e.src;
+				final int regi=reg.charAt(0)-'a';
+				x.write(0|0x0040|(0&15)<<8|(regi&15)<<12);//stc(a reg)
+			}
 			x.write(4);//nxt
 		}
 		@Override public void source_to(xwriter x){
