@@ -79,8 +79,8 @@ final public class porta extends websock implements threadedsock{
 		}
 		final int wi=256,hi=128;
 		final byte[] png=png_from_bitmap(co.ram,wi,hi);
-		send_binary(refresh_display,png);
 		send_binary("2"+co.meter_instructions);
+		send_binary(refresh_display,png);
 	}
 	private static final byte[] refresh_display=new byte[]{'0'};
 
