@@ -10,7 +10,7 @@
 </style><title>clare</title>
 <output id="f2"></output>
 <img id=scr src="" alt="display" tabindex=0 onkeydown="keys[1]=event.keyCode;return false;" onkeyup="keys[1]=0;return false;">
- <output id="recvsize"></output>  <output id="outp"></output> <output id=sts></output> <a href="javascript:compile()">crun</a><output id="f1"></output><a href="javascript:stop()"> off</a><script>
+ <output id="recvsize"></output>  <output id="outp"></output> <output id=sts></output> <a href="javascript:compile()">crun</a> <output id="f1"></output><a href="javascript:stop()"> off</a><script>
 $=document.all;
 var keys=new Uint8Array([48,0]);
 var ison=false,frameno=0,last_scr_wi=0,pause=false;
@@ -30,6 +30,7 @@ function start(){
 		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps";
 		var ua=new DataView(e.data);
 		var cmd=ua.getUint8(0);
+//		console.log("command "+cmd);
 		var dat=e.data.slice(1);
 		if(cmd==48){//refresh display
 			frameno++;
@@ -40,9 +41,13 @@ function start(){
 //				last_scr_wi=$.scr.width;
 //			}
 			$.f2.value='';
+//			console.log("send keys "+keys);
+			$.sts.value=keys[1];
+			ws.send(keys);
+			return;
 		}else if(cmd==49){//text to f1 compile status
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
-//			console.log('{'+str+'}')
+//			console.log('string f1 {'+str+'}')
 			if(str==''){//ok
 				pause=false;
 				frameno=0;
@@ -56,13 +61,9 @@ function start(){
 		}else if(cmd==50){//text to f2
 			pause=true;
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
-			$.f2.value=str;
+			$.f1.value=str;
+			//console.log(str);
 			return;
-		}
-		//console.log(keys);
-		if(!pause){
-			$.sts.value=keys[1];
-			ws.send(keys);
 		}
 	};
 	ws.onerror=function(e){console.log("websocket error");};

@@ -165,7 +165,7 @@ public class websock extends a implements sock{static final long serialVersionUI
 	}
 	final public void send(final ByteBuffer bb)throws Throwable{send(bb,true);}
 	final public void send(final ByteBuffer bb,final boolean textmode)throws Throwable{
-//		if(bbos!=null)throw new Error("overwrite");//?
+		if(bbos!=null)throw new Error("overwrite");//?
 		// rfc6455#section-5.2
 		// Base Framing Protocol
 		final int ndata=bb.remaining();

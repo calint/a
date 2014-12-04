@@ -5,11 +5,11 @@
 @inline dots.upd()
 eof eof
 def dots
-[    yx    rgb ]{4
-  0x7840 0x800
-  0x7951 0x080
-  0x7a62 0x008
-  0x7b73 0x000
+[   yx    dyx    rgb ]{4
+  0x7840 0x0001 0x800
+  0x7951 0x0002 0x080
+  0x7a62 0x0003 0x008
+  0x7b73 0x0004 0x088
 }
 def rects
 [   yyxx  rgb   wi    hi   ln ]{ 3
@@ -39,16 +39,16 @@ def rects.drw(){
   }
 }
 def dots.drw(){
-  foo(dots d e){
-    st(d e)
+  foo(dots d e f){
+    st(d f)
   }
 }
 def dots.upd(){
-  li(f 0x7f00)
-  fow(dots d e){
-    inc(d)
-    tx(g d)
-    sub(g f)
+  li(g 0x7f00)
+  fow(dots d e f){
+    add(d e)
+    tx(h d)
+    sub(h g)
     @ifp li(d 0x0800)
   }
 }
