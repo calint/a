@@ -294,7 +294,7 @@ final public class crun_source_editor extends a{
 		}
 		public int data_location_in_binary_for_name(String src){
 			final Integer i=defs.get(src);
-			if(i==null)throw new Error("data not found: "+src);
+			if(i==null) throw new Error("data not found: "+src);
 			return i.intValue();
 		}
 	}
@@ -308,7 +308,7 @@ final public class crun_source_editor extends a{
 		public statement(a pt,String nm){// {}  gives 0 length file
 			super(pt,nm);
 			ws="";
-//			r.bm();
+			//			r.bm();
 		}
 		public void source_to(xwriter x){
 			x.p(ws);
@@ -326,7 +326,7 @@ final public class crun_source_editor extends a{
 			int i=0;
 			ws_after_open_block=r.next_empty_space();
 			while(true){
-//				pl("line :"+i);
+				//				pl("line :"+i);
 				if(r.next_empty_space().length()!=0) throw new Error();
 				if(r.is_next_char_block_close()) break;
 				final data d=new data(this,"i"+i++,r);
@@ -352,8 +352,7 @@ final public class crun_source_editor extends a{
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
 			final String src=r.next_token();
-			if(src.length()==0)
-				throw new Error("unexpected empty token");
+			if(src.length()==0) throw new Error("unexpected empty token");
 			if("def".equals(src)){
 				expr=new def(this,"e",r);
 				return;
@@ -773,14 +772,23 @@ final public class crun_source_editor extends a{
 			loop_code=new block(this,"b",r);
 		}
 		@Override public void binary_to(xbin x){
+			final String table_name=arguments.get(0).src;
+			final def_data dd=(def_data)x.toc.get("data "+table_name);
+			if(dd==null) throw new Error("table not found: "+table_name);
+
+			final def_tuple dt=(def_tuple)x.toc.get("tuple "+table_name);
+			if(dt==null) throw new Error("table definition not found: "+table_name);
+
+			if(arguments.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
+
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 			final expression rd=arguments.get(0);
-//			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
-//			final int rdi=rd.src.charAt(0)-'a';
-//			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
-//			final int rai=0,znxr=0;
-//			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
-//			x.write(i);
+			//			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			//			final int rdi=rd.src.charAt(0)-'a';
+			//			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			//			final int rai=0,znxr=0;
+			//			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
+			//			x.write(i);
 
 			x.write(0|0x0000|(0&15)<<8|(0&15)<<12);//li(a dots)
 			x.link_li(rd.src);
@@ -807,7 +815,7 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-final public static class call_fow extends statement{
+	final public static class call_fow extends statement{
 		final private ArrayList<expression> arguments=new ArrayList<>();
 		final private String ws_after_expression_open,ws_after_expression_closed;
 		final private block loop_code;
@@ -825,14 +833,23 @@ final public static class call_fow extends statement{
 			loop_code=new block(this,"b",r);
 		}
 		@Override public void binary_to(xbin x){
+			final String table_name=arguments.get(0).src;
+			final def_data dd=(def_data)x.toc.get("data "+table_name);
+			if(dd==null) throw new Error("table not found: "+table_name);
+
+			final def_tuple dt=(def_tuple)x.toc.get("tuple "+table_name);
+			if(dt==null) throw new Error("table definition not found: "+table_name);
+
+			if(arguments.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
+
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 			final expression rd=arguments.get(0);
-//			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
-//			final int rdi=rd.src.charAt(0)-'a';
-//			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
-//			final int rai=0,znxr=0;
-//			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
-//			x.write(i);
+			//			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			//			final int rdi=rd.src.charAt(0)-'a';
+			//			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			//			final int rai=0,znxr=0;
+			//			final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
+			//			x.write(i);
 
 			x.write(0|0x0000|(0&15)<<8|(0&15)<<12);//li(a dots)
 			x.link_li(rd.src);

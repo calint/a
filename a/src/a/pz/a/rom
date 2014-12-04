@@ -5,8 +5,6 @@ dots.drw()
 dots.upd()
 eof
 
-def dot[yx rgb]
-
 def dots.drw(){
   foo(dots d e){
     st(d e)
@@ -19,6 +17,7 @@ def dots.upd(){
   }
 }
 eof eof
+def dots[yx rgb]
 def dots{
   3
   0x4040 0x800
