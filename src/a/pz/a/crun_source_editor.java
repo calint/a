@@ -244,6 +244,11 @@ final public class crun_source_editor extends a{
 			pl("def func "+name+" at "+ix);
 			return this;
 		}
+		public xbin def(final String name){
+			defs.put(name,ix);
+			pl("def "+name+" at "+ix);
+			return this;
+		}
 		public xbin data(final String name,def_data d){
 			defs.put(name,ix);
 			pl("def data "+name+" at "+ix);
@@ -773,11 +778,8 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void binary_to(xbin x){
 			final String table_name=arguments.get(0).src;
-			final def_data dd=(def_data)x.toc.get("data "+table_name);
-			if(dd==null) throw new Error("table not found: "+table_name);
-
 			final def_tuple dt=(def_tuple)x.toc.get("tuple "+table_name);
-			if(dt==null) throw new Error("table definition not found: "+table_name);
+			if(dt==null) throw new Error("table not found: "+table_name);
 
 			if(arguments.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 
@@ -834,11 +836,8 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void binary_to(xbin x){
 			final String table_name=arguments.get(0).src;
-			final def_data dd=(def_data)x.toc.get("data "+table_name);
-			if(dd==null) throw new Error("table not found: "+table_name);
-
 			final def_tuple dt=(def_tuple)x.toc.get("tuple "+table_name);
-			if(dt==null) throw new Error("table definition not found: "+table_name);
+			if(dt==null) throw new Error("table not found: "+table_name);
 
 			if(arguments.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 
@@ -903,8 +902,9 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_tuple extends statement{
-		final private String name,ws_after_expr_close;
+		final private String name;
 		final private ArrayList<expression> arguments=new ArrayList<>();
+		final private block data;
 		public def_tuple(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
@@ -914,17 +914,19 @@ final public class crun_source_editor extends a{
 				final expression arg=new expression(this,""+i++,r);
 				arguments.add(arg);
 			}
-			ws_after_expr_close=r.next_empty_space();
+			data=new block(this,"d",r);
 			r.toc.put("tuple "+name,this);
 		}
 		@Override public void binary_to(xbin x){
-			// default values
+			x.def(name);
+			data.binary_to(x);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			x.p(name).p("[");
 			arguments.forEach(e->e.source_to(x));
-			x.p("]").p(ws_after_expr_close);
+			x.p("]");
+			data.source_to(x);
 		}
 		private static final long serialVersionUID=1;
 	}
