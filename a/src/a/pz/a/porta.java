@@ -73,25 +73,14 @@ final public class porta extends websock implements threadedsock{
 				if(loop==false) break;
 				if((co.instruction&0xffff)==0xffff) loop=false;
 			}
-//			pl(""+co.meter_frames+"  "+co.meter_instructions);
 		}catch(Throwable t){
 			send_binary("2",stacktraceline(t));
 			return;
 		}
-		//		final long t1=System.nanoTime();
-		//		b.b.pl("zn step micro dt: "+(t1-t0)/1000);
 		final int wi=256,hi=128;
 		final byte[] png=png_from_bitmap(co.ram,wi,hi);
-		//		final long t2=System.nanoTime();
-		//		b.b.pl("snapshot micro dt: "+(t2-t1)/1000);
-		//			while(issending()){//?
-		//				pl(new Date()+"\t"+session().id()+"\tstaling");
-		//				final long stall_ms=20;
-		//				try{Thread.sleep(stall_ms);}catch(final InterruptedException ignored){}
-		//			}
 		send_binary(refresh_display,png);
-		//		final long t3=System.nanoTime();
-		//		b.b.pl("send micro dt: "+(t3-t2)/1000);
+		send_binary("2"+co.meter_instructions);
 	}
 	private static final byte[] refresh_display=new byte[]{'0'};
 
