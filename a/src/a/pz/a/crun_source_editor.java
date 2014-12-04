@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ final public class crun_source_editor extends a{
 	//	public a brkpts;
 	private Set<Integer> brkptsset=new HashSet<Integer>();
 	public a src;
-//	public a resrc;
+	//	public a resrc;
 	public a sts;
 	final public static class line_numbers extends a{
 		public int focus_line=0;
@@ -41,7 +42,7 @@ final public class crun_source_editor extends a{
 		x.el_();
 		x.td();
 		x.inptxtarea(src);
-//		x.td().spaned(resrc);
+		//		x.td().spaned(resrc);
 		x.table_();
 	}
 	public boolean isonbrkpt(final int srclno){
@@ -74,10 +75,10 @@ final public class crun_source_editor extends a{
 			final block el=new block(this,"b",r);
 			final xwriter src=new xwriter();
 			el.source_to(src);
-//			resrc.set(src.toString());
+			//			resrc.set(src.toString());
 			if(x==null) return;
 			x.xu(sts.clr());
-//			el.source_to(x.xub(resrc,true,true));x.xube();
+			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new prog(r.toc,el));
 		}catch(Throwable t){
 			b.b.log(t);
@@ -264,6 +265,10 @@ final public class crun_source_editor extends a{
 			data[ix++]=d;
 			return this;
 		}
+//		public xbin back(){
+//			ix--;
+//			return this;
+//		}
 		public xbin link_call(String name){
 			calls.put(ix,name);
 			pl("link call at "+ix+" to "+name);
@@ -365,8 +370,19 @@ final public class crun_source_editor extends a{
 		final private statement expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
-			final String src=r.next_token();
-			if(src.length()==0) throw new Error("unexpected empty token");
+			final HashMap<String,String> annotations=new HashMap<>();
+			final String src;
+			while(true){
+				final String s=r.next_token();
+				if(s.length()==0) throw new Error("unexpected empty token");
+				if(s.startsWith("@")){//annotation
+					final String ws=r.next_empty_space();
+					annotations.put(s.substring(1),ws);
+					continue;
+				}
+				src=s;
+				break;
+			}
 			if("def".equals(src)){
 				expr=new def(this,"e",r);
 				return;
@@ -395,7 +411,7 @@ final public class crun_source_editor extends a{
 				}else if("tx".equals(src)){
 					expr=new call_tx(this,"e",r);
 				}else{
-					expr=new call(this,"e",src,r);
+					expr=new call(this,"e",annotations,src,r);
 				}
 				return;
 			}
@@ -413,9 +429,14 @@ final public class crun_source_editor extends a{
 	public static class call extends statement{
 		final private String name,ws_after_name,ws_trailing;
 		final protected ArrayList<expression> arguments=new ArrayList<>();
+		final Map<String,String> annotations_ws;
 		public call(a pt,String nm,String name,reader r){
+			this(pt,nm,new HashMap<String,String>(),name,r);
+		}
+		public call(a pt,String nm,Map<String,String> annotations_ws,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
+			this.annotations_ws=annotations_ws;
 			ws_after_name=r.next_empty_space();
 			while(true){
 				if(r.is_next_char_expression_close()) break;
@@ -426,7 +447,8 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			final String asm="li add foo fow inc ld ldc li lp st stc tx";
+			annotations_ws.entrySet().forEach(me->x.p("@").p(me.getKey()).p(me.getValue()));
+			final String asm="li add foo fow inc ld ldc li lp st stc tx zkp skp";
 			final boolean is=asm.indexOf(name)!=-1;
 			x.tag(is?"ac":"fc");
 			x.p(name);
@@ -447,8 +469,12 @@ final public class crun_source_editor extends a{
 				x.write(in);
 				x.write(e.eval(x));
 			}
-			x.link_call(name);
-			x.write(0x0010);//call
+			if(annotations_ws.containsKey("inline")){
+				d.function_code.binary_to(x);
+			}else{
+				x.link_call(name);
+				x.write(0x0010);//call
+			}
 		}
 		private static final long serialVersionUID=1;
 	}
