@@ -1,7 +1,30 @@
 {
 rects.drw()
-dots.drw()
-dots.upd()
+rects.upd()
+li(a 0)
+eof
+def rects
+[   yyxx  rgb   wi    hi   ln ]{ 3
+  0x1200 0x0ff 256    80  0x24
+  0x1000 0xf00 0x30  0x40 0x24
+  0x5800 0x00f 0x30   50  0x23
+}
+eof
+def rects.upd(){
+  fow(rects d e f g h){
+    inc(h)
+  }
+}
+def rects.drw(){
+  foo(rects d e f g h){
+    lp(g){
+      lp(f){
+        stc(d e)
+      }
+      add(d h)
+    }
+  }
+}
 eof
 def dots.drw(){
   foo(dots d e){
@@ -15,8 +38,8 @@ def dots.upd(){
   }
 }
 eof eof
-def dots[yx rgb]{
-  3
+def dots
+[    yx    rgb ]{3
   0x4040 0x800
   0x4151 0x080
   0x4262 0x008
@@ -32,26 +55,9 @@ def line(a b c){
   }
 }
 eof
-def rects[yx rgb wi hi ln]{
-  2
-  screen  red 0x30 0x40 0x24
-  screen2 red 0x30 0x40 0x22
-}
-def rects.drw(){
-  foo(rects d e f g h){
-    lp(g){
-      lp(f){
-        stc(d e)
-      }
-      add(d h)
-    }
-  }
-}
-eof
 
-def screen 0x1000
 def red 0xf00
-def screen2 0x6000
+def green 0xf0
 def blue 0xf
 def eof 0xffff
 }
