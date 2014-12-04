@@ -128,6 +128,7 @@ final public class crun_source_editor extends a{
 		private int read(){
 			try{
 				final int ch=r.read();
+				last_read_char=ch;
 				nchar++;
 				if(ch=='\n'){
 					line++;
@@ -211,6 +212,10 @@ final public class crun_source_editor extends a{
 			bm_col=col;
 			bm_nchar=nchar;
 		}
+		public int last_read_char;
+		public void unread_last_char(){
+			unread(last_read_char);
+		}
 	}
 	public static final class xbin{
 		final public Map<String,statement> toc;
@@ -224,7 +229,12 @@ final public class crun_source_editor extends a{
 		}
 		public xbin def(final String name,def_func d){
 			defs.put(name,ix);
-			pl("def "+name+" at "+ix);
+			pl("func "+name+" at "+ix);
+			return this;
+		}
+		public xbin data(final String name,def_data d){
+			defs.put(name,ix);
+			pl("data "+name+" at "+ix);
 			return this;
 		}
 		public xbin write(final int d){
@@ -393,6 +403,9 @@ final public class crun_source_editor extends a{
 			ws_after_name=r.next_empty_space();
 			if(r.is_next_char_expression_open()){
 				e=new def_func(this,name,name,r);
+			}else if(r.is_next_char_block_open()){
+				r.unread_last_char();
+				e=new def_data(this,name,name,r);
 			}else{
 				e=new def_const(this,name,name,r);
 			}
@@ -403,7 +416,8 @@ final public class crun_source_editor extends a{
 		@Override public void source_to(xwriter x){
 			x.p("def");
 			super.source_to(x);
-			x.p(name).p(ws_after_name);
+			x.p(name);
+			x.p(ws_after_name);
 			e.source_to(x);
 		}
 		private static final long serialVersionUID=1;
@@ -428,32 +442,49 @@ final public class crun_source_editor extends a{
 		@Override public void binary_to(xbin x){
 			x.def(name,this);
 			function_code.binary_to(x);
-			x.write(8);//ret
+			x.write(8);//ret // if last instr 4 set last instr 4+8
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			x.p("(");
-			arguments.forEach(e->{
-				e.source_to(x);
-			});
+			arguments.forEach(e->e.source_to(x));
 			x.p(")").p(ws_after_expr_close);
 			function_code.source_to(x);
 		}
 		private static final long serialVersionUID=1;
 	}
 	final public static class def_const extends statement{
-		final private String ws_after_expr_close;
+		final private String ws_trailing;
 		final private expression expr;
 		public def_const(a pt,String nm,String name,reader r){
 			super(pt,nm,r);
 			expr=new expression(this,"e",r);
-			ws_after_expr_close=r.next_empty_space();
+			ws_trailing=r.next_empty_space();
 			r.toc.put("const "+name,this);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			expr.source_to(x);
-			x.p(ws_after_expr_close);
+			x.p(ws_trailing);
+		}
+		private static final long serialVersionUID=1;
+	}
+	final public static class def_data extends statement{
+		final private block data;
+		final private String name;
+		public def_data(a pt,String nm,String name,reader r){
+			super(pt,nm,r);
+			this.name=name;
+			data=new block(this,"d",r);
+			r.toc.put("data "+name,this);
+		}
+		@Override public void binary_to(xbin x){
+			x.data(name,this);
+			data.binary_to(x);
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+			data.source_to(x);
 		}
 		private static final long serialVersionUID=1;
 	}

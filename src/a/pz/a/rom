@@ -5,6 +5,11 @@ dot(screen red)
 dot(screen2 blue)
 
 eof
+def dots{
+  0x1040 0x800
+  0x1050 0x080
+  0x1060 0x008
+}
 def dot(a b){st(a b)}
 
 eof
