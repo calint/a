@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -265,10 +264,10 @@ final public class crun_source_editor extends a{
 			data[ix++]=d;
 			return this;
 		}
-//		public xbin back(){
-//			ix--;
-//			return this;
-//		}
+		//		public xbin back(){
+		//			ix--;
+		//			return this;
+		//		}
 		public xbin link_call(String name){
 			calls.put(ix,name);
 			pl("link call at "+ix+" to "+name);
@@ -409,7 +408,9 @@ final public class crun_source_editor extends a{
 				}else if("fow".equals(src)){
 					expr=new call_fow(this,"e",r);
 				}else if("tx".equals(src)){
-					expr=new call_tx(this,"e",r);
+					expr=new call_tx(this,"e",annotations,r);
+				}else if("sub".equals(src)){
+					expr=new call_sub(this,"e",r);
 				}else{
 					expr=new call(this,"e",annotations,src,r);
 				}
@@ -444,6 +445,9 @@ final public class crun_source_editor extends a{
 				arguments.add(arg);
 			}
 			ws_trailing=r.next_empty_space();
+		}
+		public boolean has_annotation(String src){
+			return annotations_ws.containsKey(src);
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
@@ -928,8 +932,8 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_tx extends call{
-		public call_tx(a pt,String nm,reader r){
-			super(pt,nm,"tx",r);
+		public call_tx(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
+			super(pt,nm,annotations,"tx",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -941,7 +945,13 @@ final public class crun_source_editor extends a{
 			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
-			final int i=0x00e0|(rai&15)<<8|(rdi&15)<<12;
+			int znxr=0;
+			if(has_annotation("@ifp")) znxr|=3;
+			if(has_annotation("@ifz")) znxr|=1;
+			if(has_annotation("@ifn")) znxr|=2;
+			if(has_annotation("@nxt")) znxr|=4;
+			if(has_annotation("@ret")) znxr|=8;
+			final int i=znxr|0x00e0|(rai&15)<<8|(rdi&15)<<12;
 			x.write(i);
 		}
 		private static final long serialVersionUID=1;
@@ -972,6 +982,25 @@ final public class crun_source_editor extends a{
 			arguments.forEach(e->e.source_to(x));
 			x.p("]");
 			data.source_to(x);
+		}
+		private static final long serialVersionUID=1;
+	}
+	final public static class call_sub extends call{
+		public call_sub(a pt,String nm,reader r){
+			super(pt,nm,"sub",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression ra=arguments.get(0);
+			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			final int rai=ra.src.charAt(0)-'a';
+			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			final expression rd=arguments.get(1);
+			if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
+			final int rdi=rd.src.charAt(0)-'a';
+			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+			final int i=0x0020|(rai&15)<<8|(rdi&15)<<12;
+			x.write(i);
 		}
 		private static final long serialVersionUID=1;
 	}

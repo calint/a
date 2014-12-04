@@ -19,8 +19,13 @@ def rects
 }
 eof eof eof
 def rects.upd(){
+  li(m 0x25)
+  li(k 0x10)
   fow(rects d e f g h){
     inc(h)
+    tx(i h)
+    sub(i m)
+    @ifp tx(h k)
   }
 }
 def rects.drw(){
