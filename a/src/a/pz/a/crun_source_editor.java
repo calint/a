@@ -174,7 +174,7 @@ final public class crun_source_editor extends a{
 			final xwriter x=new xwriter();
 			while(true){
 				final int ch=read();
-				if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'){
+				if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'){
 					unread(ch);
 					break;
 				}
@@ -206,6 +206,18 @@ final public class crun_source_editor extends a{
 			unread(ch);
 			return false;
 		}
+		public boolean is_next_char_tuple_open(){
+			final int ch=read();
+			if(ch=='[') return true;
+			unread(ch);
+			return false;
+		}
+		public boolean is_next_char_tuple_close(){
+			final int ch=read();
+			if(ch==']') return true;
+			unread(ch);
+			return false;
+		}
 		public int bm_line,bm_col,bm_nchar;
 		public void bm(){
 			bm_line=line;
@@ -229,12 +241,12 @@ final public class crun_source_editor extends a{
 		}
 		public xbin def(final String name,def_func d){
 			defs.put(name,ix);
-			pl("func "+name+" at "+ix);
+			pl("def func "+name+" at "+ix);
 			return this;
 		}
 		public xbin data(final String name,def_data d){
 			defs.put(name,ix);
-			pl("data "+name+" at "+ix);
+			pl("def data "+name+" at "+ix);
 			return this;
 		}
 		public xbin write(final int d){
@@ -243,12 +255,12 @@ final public class crun_source_editor extends a{
 		}
 		public xbin link_call(String name){
 			calls.put(ix,name);
-			pl("call at "+ix+" to "+name);
+			pl("link call at "+ix+" to "+name);
 			return this;
 		}
 		public xbin link_li(String name){
 			lis.put(ix,name);
-			pl("li at "+ix+" to "+name);
+			pl("link li at "+ix+" to "+name);
 			return this;
 		}
 		public void link(){
@@ -262,7 +274,7 @@ final public class crun_source_editor extends a{
 				if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
 				final int addr=defs.get(me.getValue());
 				data[me.getKey()]=addr;
-				pl("linked data at "+me.getKey()+" to "+me.getValue());
+				pl("linked li at "+me.getKey()+" to "+me.getValue());
 			});
 		}
 		//		public xbin def_const(String name,def_const constant){
@@ -314,7 +326,7 @@ final public class crun_source_editor extends a{
 			int i=0;
 			ws_after_open_block=r.next_empty_space();
 			while(true){
-				pl("line :"+i);
+//				pl("line :"+i);
 				if(r.next_empty_space().length()!=0) throw new Error();
 				if(r.is_next_char_block_close()) break;
 				final data d=new data(this,"i"+i++,r);
@@ -435,6 +447,8 @@ final public class crun_source_editor extends a{
 			}else if(r.is_next_char_block_open()){
 				r.unread_last_char();
 				e=new def_data(this,name,name,r);
+			}else if(r.is_next_char_tuple_open()){
+				e=new def_tuple(this,name,name,r);
 			}else{
 				e=new def_const(this,name,name,r);
 			}
@@ -868,6 +882,32 @@ final public static class call_fow extends statement{
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00e0|(rai&15)<<8|(rdi&15)<<12;
 			x.write(i);
+		}
+		private static final long serialVersionUID=1;
+	}
+	final public static class def_tuple extends statement{
+		final private String name,ws_after_expr_close;
+		final private ArrayList<expression> arguments=new ArrayList<>();
+		public def_tuple(a pt,String nm,String name,reader r){
+			super(pt,nm,r);
+			this.name=name;
+			int i=0;
+			while(true){
+				if(r.is_next_char_tuple_close()) break;
+				final expression arg=new expression(this,""+i++,r);
+				arguments.add(arg);
+			}
+			ws_after_expr_close=r.next_empty_space();
+			r.toc.put("tuple "+name,this);
+		}
+		@Override public void binary_to(xbin x){
+			// default values
+		}
+		@Override public void source_to(xwriter x){
+			super.source_to(x);
+			x.p(name).p("[");
+			arguments.forEach(e->e.source_to(x));
+			x.p("]").p(ws_after_expr_close);
 		}
 		private static final long serialVersionUID=1;
 	}
