@@ -2,7 +2,7 @@
 	html{white-space:pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
 	title{display:inline;font-weight:bold;font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	a{text-decoration:none;color:blue}
-	#scr{outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
+	#scr{width:60em;height:30em;outline:0;border:1px solid gray;box-shadow:0 0 .5em rgba(0,0,0,.5)}
 	#src{font-size:1em;line-height:1.3em;background:#eee;font-family:courier;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
 	#recvsize{color:green}
 	#sts{color:brown}
@@ -10,7 +10,7 @@
 </style><title>clare</title>
 <output id="f2"></output>
 <img id=scr src="" alt="display" tabindex=0 onkeydown="keys[1]=event.keyCode;return false;" onkeyup="keys[1]=0;return false;">
- <output id="recvsize"></output>  <output id="outp"></output> <output id=sts></output> <a href="javascript:compile()">crun</a><output id="f1"></output><script>
+ <output id="recvsize"></output>  <output id="outp"></output> <output id=sts></output> <a href="javascript:compile()">crun</a><output id="f1"></output><a href="javascript:stop()"> off</a><script>
 $=document.all;
 var keys=new Uint8Array([48,0]);
 var ison=false,frameno=0,last_scr_wi=0,pause=false;
@@ -33,18 +33,12 @@ function start(){
 		var dat=e.data.slice(1);
 		if(cmd==48){//refresh display
 			frameno++;
-//			var b64=encode_base64(dat);
 			var b64=base64ArrayBuffer(dat);
 			$.scr.src='data:image/png;base64,'+b64;
-//		    var arrayBufferView = new Uint8Array( dat );
-//		    var blob = new Blob( [ arrayBufferView ], { type: "image/png" } );
-//		    var urlCreator = window.URL || window.webkitURL;
-//		    var imageUrl = urlCreator.createObjectURL( blob );
-//		    $.scr.src=imageUrl;
-			if(last_scr_wi!=$.scr.width){//scale display x2
-				$.scr.width*=3;
-				last_scr_wi=$.scr.width;
-			}
+//			if(last_scr_wi!=$.scr.width){//scale display x2
+//				$.scr.width*=3;
+//				last_scr_wi=$.scr.width;
+//			}
 			$.f2.value='';
 		}else if(cmd==49){//text to f1 compile status
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
@@ -83,6 +77,7 @@ function stop(){
 //	$.scr.focus();
 }
 function compile(){
+	start();
 	ws.send("1"+$.src.value);
 	$.scr.focus();
 }
@@ -104,66 +99,75 @@ onframe.fps=0;
 onload=start;
 </script>
 <textarea id=src spellcheck=false>
-typedef int
-const pos int 1040
-const hi int 30
-const wi int 40
-const skp int c0
-const colr int 800
-li a pos
-add a p
-inc p
-li b hi
-li c wi
-li d colr
-li e skp
-call draw
+{
+@inline rects.upd()
+@inline rects.drw()
+@inline dots.drw()
+@inline dots.upd()
+eof eof
+def dots
+[    yx    rgb ]{4
+  0x7840 0x800
+  0x7951 0x080
+  0x7a62 0x008
+  0x7b73 0x000
+}
+def rects
+[   yyxx  rgb   wi    hi   ln ]{ 3
+  0x1400 0x0ff 256    80  0x24
+  0x1000 0xf00 0x30  0x40 0x24
+  0x5800 0x00f 0x30   50  0x23
+}
+eof eof eof
+def rects.upd(){
+  li(m 0x40)
+  fow(rects d e f g h){
+    inc(h)
+    @debug tx(p h)
+    tx(i h)
+    sub(i m)
+    @ifp li(h 0x10)
+  }
+}
+def rects.drw(){
+  foo(rects d e f g h){
+    lp(g){
+      lp(f){
+        stc(d e)
+      }
+      add(d h)
+    }
+  }
+}
+def dots.drw(){
+  foo(dots d e){
+    st(d e)
+  }
+}
+def dots.upd(){
+  li(f 0x7f00)
+  fow(dots d e){
+    inc(d)
+    tx(g d)
+    sub(g f)
+    @ifp li(d 0x0800)
+  }
+}
+eof
+def dot(a b){st(a b)}
+def line(a b c){
+  lp(c){
+    stc(a b)
+    inc(b)
+  }
+}
+eof
 
-li a pos
-call dots.draw
-..
-..
-struct dot yyxx int 0000 rgb int 000
-:dots
-. 2
-. 0800 ffff
-. 1004 ffff
-..
-
-:dots.draw a scr 400
-  var b,c,d,e
-  li b &dots
-  ldc c b
-  lp c
-    ldc d b
-    ldc e b
-    add d a
-//bug    st d e nxt ret
-    st d e nxt 
-  ret
-..
-int r f00
-int g 0f0
-int b 00f
-li c 10
-li a 400
-..
-:draw a scr 400 b height 20 c width 100 d pxl 8888 e skp c0
-  lp b
-    lp c
-      stc a d nxt
-      add a e nxt ret
-..
-
-//:sprite medusa 4 4
-//./\.
-///--\
-//:sprite medusa_right 4 4
-//./\.
-/// |\
-//:sprite medusa_left 4 4
-//./\.
-///| \
+def red 0xf00
+def green 0xf0
+def blue 0xf
+def eof 0xffff
+}
 </textarea> 
 
 <script>
