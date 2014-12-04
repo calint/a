@@ -370,14 +370,14 @@ final public class crun_source_editor extends a{
 		final private statement expr;
 		public data(a pt,String nm,reader r){
 			super(pt,nm,r);
-			final HashMap<String,String> annotations=new HashMap<>();
+			final LinkedHashMap<String,String> annotations=new LinkedHashMap<>();
 			final String src;
 			while(true){
 				final String s=r.next_token();
 				if(s.length()==0) throw new Error("unexpected empty token");
 				if(s.startsWith("@")){//annotation
 					final String ws=r.next_empty_space();
-					annotations.put(s.substring(1),ws);
+					annotations.put(s,ws);
 					continue;
 				}
 				src=s;
@@ -431,9 +431,9 @@ final public class crun_source_editor extends a{
 		final protected ArrayList<expression> arguments=new ArrayList<>();
 		final Map<String,String> annotations_ws;
 		public call(a pt,String nm,String name,reader r){
-			this(pt,nm,new HashMap<String,String>(),name,r);
+			this(pt,nm,new LinkedHashMap<String,String>(),name,r);
 		}
-		public call(a pt,String nm,Map<String,String> annotations_ws,String name,reader r){
+		public call(a pt,String nm,LinkedHashMap<String,String> annotations_ws,String name,reader r){
 			super(pt,nm,r);
 			this.name=name;
 			this.annotations_ws=annotations_ws;
@@ -447,7 +447,7 @@ final public class crun_source_editor extends a{
 		}
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
-			annotations_ws.entrySet().forEach(me->x.p("@").p(me.getKey()).p(me.getValue()));
+			annotations_ws.entrySet().forEach(me->x.p(me.getKey()).p(me.getValue()));
 			final String asm="li add foo fow inc ld ldc li lp st stc tx zkp skp";
 			final boolean is=asm.indexOf(name)!=-1;
 			x.tag(is?"ac":"fc");
@@ -469,7 +469,7 @@ final public class crun_source_editor extends a{
 				x.write(in);
 				x.write(e.eval(x));
 			}
-			if(annotations_ws.containsKey("inline")){
+			if(annotations_ws.containsKey("@inline")){
 				d.function_code.binary_to(x);
 			}else{
 				x.link_call(name);
