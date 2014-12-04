@@ -118,7 +118,7 @@ final public class acore extends a{
 				.css(".laycent","display:table;margin-left:auto;margin-right:auto")
 				.css("textarea","line-height:1.4em")
 				.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
-				.css(ec.src,"min-width:20em;min-height:140em;line-height:1.4em")
+				.css(ec.src,"min-width:24em;min-height:140em;line-height:1.4em;border-right:1px dotted gray")
 				.css(ajaxsts,"position:fixed;bottom:0;right:0")
 				;
 			switch(th.toint()){
