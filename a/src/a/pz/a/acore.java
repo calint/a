@@ -2,6 +2,7 @@ package a.pz.a;
 import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
+import a.pz.a.crun_source_editor.block;
 import a.pz.a.crun_source_editor.xbin;
 import a.pz.bas.program;
 import a.pz.bas.assembly.add;
@@ -57,11 +58,13 @@ final public class acore extends a{
 		lo.core=cor;
 		ec.x_f3(null,null);
 	}
+	private block src;
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
 		if(o instanceof crun_source_editor.prog){
 			pl("*** compiler");
 			final crun_source_editor.prog p=(crun_source_editor.prog)o;
+			src=p.code;
 			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=-1;
 			final xbin b=new xbin(p.toc,cor.rom);
 			p.code.binary_to(b);
@@ -78,7 +81,7 @@ final public class acore extends a{
 			cor.reset();
 			x_f(x,"");
 			if(x==null)return;
-			x.xu(ro,st,ec.sts);
+			x.xu(ro,st,ec.sts,src);
 		}else if(o instanceof program){
 			final program p=(program)o;//? oishereinstanceofprogram
 			final xwriter y=new xwriter();
@@ -171,6 +174,8 @@ final public class acore extends a{
 		x.divo("laycent");
 		if(hasbit(bit_show_panel))x.divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
 		if(hasbit(bit_show_rom))x.divo(ro,"float panel").r(ro).div_();
+		if(src==null)x.p("<div id=-ec-b class='float textleft panel'></div>");
+		else x.divh(src,"float textleft panel");
 		if(hasbit(bit_show_source_editor))x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
 		if(pt()==null){
 			x.divo("floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
