@@ -16,7 +16,7 @@ final public class crun_source_editor extends a{
 	//	public a brkpts;
 	private Set<Integer> brkptsset=new HashSet<Integer>();
 	public a src;
-	public a resrc;
+//	public a resrc;
 	public a sts;
 	final public static class line_numbers extends a{
 		public int focus_line=0;
@@ -33,6 +33,7 @@ final public class crun_source_editor extends a{
 		x.style("def","font-weight:bold");//a name
 		x.style("fc","font-style: italic");//function name refered
 		x.style("ac","color: gray");//assembler
+		x.style("dr","font-style: italic");//data refered
 		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," crun ","a").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
@@ -40,7 +41,7 @@ final public class crun_source_editor extends a{
 		x.el_();
 		x.td();
 		x.inptxtarea(src);
-		x.td().rel(resrc);
+//		x.td().spaned(resrc);
 		x.table_();
 	}
 	public boolean isonbrkpt(final int srclno){
@@ -73,9 +74,9 @@ final public class crun_source_editor extends a{
 			final block el=new block(this,"b",r);
 			final xwriter src=new xwriter();
 			el.source_to(src);
-			resrc.set(src.toString());
+//			resrc.set(src.toString());
 			if(x==null) return;
-			x.xu(sts.clr(),resrc);
+			x.xu(sts.clr());
 //			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new prog(r.toc,el));
 		}catch(Throwable t){
@@ -319,6 +320,9 @@ final public class crun_source_editor extends a{
 			super(pt,nm);
 			ws="";
 			//			r.bm();
+		}
+		final @Override public void to(xwriter x) throws Throwable{
+			source_to(x);
 		}
 		public void source_to(xwriter x){
 			x.p(ws);
@@ -757,7 +761,7 @@ final public class crun_source_editor extends a{
 			x.write(4);//nxt
 		}
 		@Override public void source_to(xwriter x){
-			x.p("lp");
+			x.tag("ac").p("lp").tage("ac");
 			super.source_to(x);
 			x.p("(");
 			x.p(ws_after_expression_open);
@@ -819,10 +823,10 @@ final public class crun_source_editor extends a{
 			super.source_to(x);
 			x.p("(");
 			x.p(ws_after_expression_open);
-			x.tag("c");
+			x.tag("dr");
 			arguments.get(0).source_to(x);
-			x.tage("c");
-			arguments.subList(1,arguments.size()-1).forEach(e->e.source_to(x));
+			x.tage("dr");
+			arguments.subList(1,arguments.size()).forEach(e->e.source_to(x));
 			x.p(")");
 			x.p(ws_after_expression_closed);
 			loop_code.source_to(x);
@@ -887,10 +891,10 @@ final public class crun_source_editor extends a{
 			super.source_to(x);
 			x.p("(");
 			x.p(ws_after_expression_open);
-			x.tag("c");
+			x.tag("dr");
 			arguments.get(0).source_to(x);
-			x.tage("c");
-			arguments.subList(1,arguments.size()-1).forEach(e->e.source_to(x));
+			x.tage("dr");
+			arguments.subList(1,arguments.size()).forEach(e->e.source_to(x));
 			x.p(")");
 			x.p(ws_after_expression_closed);
 			loop_code.source_to(x);
