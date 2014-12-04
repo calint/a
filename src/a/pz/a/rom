@@ -1,10 +1,8 @@
 {
-rect(screen red 0x30 0x40 0x24)
-rect(screen2 red 0x30 0x40 0x22)
+rects.drw()
 dots.drw()
 dots.upd()
 eof
-
 def dots.drw(){
   foo(dots d e){
     st(d e)
@@ -34,12 +32,19 @@ def line(a b c){
   }
 }
 eof
-def rect(a b c d e){
-  lp(d){
-    lp(c){
-      stc(a b)
+def rects[yx rgb wi hi ln]{
+  2
+  screen  red 0x30 0x40 0x24
+  screen2 red 0x30 0x40 0x22
+}
+def rects.drw(){
+  foo(rects d e f g h){
+    lp(g){
+      lp(f){
+        stc(d e)
+      }
+      add(d h)
     }
-    add(a e)
   }
 }
 eof
