@@ -8,13 +8,18 @@ def text.drw(){
   }
 }
 eof
-def texts[  dest_addr    width   height   add_after_line   text   rgb   add_after_glyph   ]{1
+def texts[  dest_addr    width   height   add_after_line   text   rgb   add_after_glyph   ]{2
               0x3040       4        4         252           txt   0xf00       0x3fc   
+              0x3440       4        4         252           os   0xf00       0x3fc   
 } 
 eof
 def txt[bmp4x4]{6
   0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
   0xffff
+}
+eof
+def os[bmp4x4]{1
+   0xffff
 }
 eof
 @inline rects.drw()
@@ -42,7 +47,7 @@ def print_bmp_4x4(d e f g l i){
     add(d g)
   }
 }
-eof
+@registerts_left_mnop eof
 
 def dots
 [   yx    dyx    rgb ]{4
