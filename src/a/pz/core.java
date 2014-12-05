@@ -264,6 +264,8 @@ final public class core implements Serializable{
 //		if(i<0){zn=2;return;}
 		flags=3;
 	}
-	
+	public boolean is_instruction_eof(){
+		return loading_register==-1&&(instruction&0xffff)==0xffff;
+	}
 	private static final long serialVersionUID=1;
 }

@@ -1,9 +1,34 @@
 {
+li(a 0x0800)
+li(b 4)
+li(c 4)
+li(d 252)
+li(e 0xfafa)
+li(f 0xf00)
+bmp4(a b c d e f)
+eof
+def bmp4(a b c d e f){
+  lp(c){
+    lp(b){
+      shf(e -1)
+      @ifn stc(a f)
+      @ifz inc(a)
+      @ifp inc(a)
+    }
+    add(a d)
+  }
+}
+eof
+
+
+
+
+
 @inline rects.upd()
 @inline rects.drw()
 @inline dots.drw()
 @inline dots.upd()
-eof eof
+
 def dots
 [   yx    dyx    rgb ]{4
   0x7840 0x0001 0x800
