@@ -71,7 +71,8 @@ final public class porta extends websock implements threadedsock{
 			while(true){
 				co.step();
 				if(loop==false) break;
-				if((co.instruction&0xffff)==0xffff) loop=false;
+				if(co.is_instruction_eof())loop=false;
+//				if((co.instruction&0xffff)==0xffff) loop=false;
 			}
 		}catch(Throwable t){
 			send_binary("2",stacktraceline(t));

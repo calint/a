@@ -392,11 +392,11 @@ final public class crun_source_editor extends a{
 				}else if("st".equals(src)){
 					expr=new call_st(this,"e",r);
 				}else if("stc".equals(src)){
-					expr=new call_stc(this,"e",r);
+					expr=new call_stc(this,"e",annotations,r);
 				}else if("lp".equals(src)){
 					expr=new call_lp(this,"e",r);
 				}else if("inc".equals(src)){
-					expr=new call_inc(this,"e",r);
+					expr=new call_inc(this,"e",annotations,r);
 				}else if("add".equals(src)){
 					expr=new call_add(this,"e",r);
 				}else if("ldc".equals(src)){
@@ -411,6 +411,8 @@ final public class crun_source_editor extends a{
 					expr=new call_tx(this,"e",annotations,r);
 				}else if("sub".equals(src)){
 					expr=new call_sub(this,"e",r);
+				}else if("shf".equals(src)){
+					expr=new call_shf(this,"e",annotations,r);
 				}else{
 					expr=new call(this,"e",annotations,src,r);
 				}
@@ -452,7 +454,7 @@ final public class crun_source_editor extends a{
 		@Override public void source_to(xwriter x){
 			super.source_to(x);
 			annotations_ws.entrySet().forEach(me->x.p(me.getKey()).p(me.getValue()));
-			final String asm="li add foo fow inc ld ldc li lp st stc tx zkp skp";
+			final String asm="li add foo fow inc ld ldc li lp st stc tx shf   zkp skp";
 			final boolean is=asm.indexOf(name)!=-1;
 			x.tag(is?"ac":"fc");
 			x.p(name);
@@ -467,7 +469,10 @@ final public class crun_source_editor extends a{
 			if(arguments.size()!=d.arguments.size()) throw new Error("number of arguments do not match: "+name);
 			int i=0;
 			for(expression e:arguments){
-				final expression a=d.arguments.get(i++);
+				final expression a=d.arguments.get(i);
+				if(a.src.equals(d.arguments.get(i).src))
+					continue;
+				i++;
 				final int rdi=a.src.charAt(0)-'a';
 				final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
 				x.write(in);
@@ -479,6 +484,15 @@ final public class crun_source_editor extends a{
 				x.link_call(name);
 				x.write(0x0010);//call
 			}
+		}
+		protected int apply_zncr_annotations_on_instruction(int i){
+			int znxr=0;
+			if(has_annotation("@ifp")) znxr|=3;
+			if(has_annotation("@ifz")) znxr|=1;
+			if(has_annotation("@ifn")) znxr|=2;
+			if(has_annotation("@nxt")) znxr|=4;
+			if(has_annotation("@ret")) znxr|=8;
+			return znxr|i;
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -639,8 +653,8 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_inc extends call{
-		public call_inc(a pt,String nm,reader r){
-			super(pt,nm,"inc",r);
+		public call_inc(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"inc",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -653,14 +667,15 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0200|(0&15)<<8|(rdi&15)<<12;
+			final int zni=apply_zncr_annotations_on_instruction(i);
 			//? inc reg imm4
-			x.write(i);
+			x.write(zni);
 		}
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_stc extends call{
-		public call_stc(a pt,String nm,reader r){
-			super(pt,nm,"stc",r);
+		public call_stc(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"stc",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -673,7 +688,8 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0040|(rai&15)<<8|(rdi&15)<<12;
-			x.write(i);
+			final int znxr_i=apply_zncr_annotations_on_instruction(i);
+			x.write(znxr_i);
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -1010,5 +1026,22 @@ final public class crun_source_editor extends a{
 		}
 		private static final long serialVersionUID=1;
 	}
-
+	final public static class call_shf extends call{
+		public call_shf(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"shf",r);
+		}
+		@Override public void binary_to(xbin x){
+			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+			final expression ra=arguments.get(0);
+			if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
+			final int rai=ra.src.charAt(0)-'a';
+			if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+			final expression rd=arguments.get(1);
+			final int im4=rd.eval(x);
+			if(im4<-8||im4>7) throw new Error("shift range between -8 and 7");//? -8 8  shf a 0 being a>>1 
+			final int i=0x0060|(im4&15)<<8|(rai&15)<<12;
+			x.write(i);
+		}
+		private static final long serialVersionUID=1;
+	}
 }

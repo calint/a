@@ -243,7 +243,7 @@ final public class acore extends a{
 			cor.step();
 			final long t1=System.currentTimeMillis();
 			dt=t1-t0;
-			if(cor.instruction==-1)ev(null,this);//refresh display
+			if(cor.is_instruction_eof())ev(null,this);//refresh display
 			if(dt>runms)break;
 		}
 		if(dt==0)dt=1;
@@ -287,7 +287,8 @@ final public class acore extends a{
 			while(true){
 				cor.step();
 				if(loop==false)break;
-				if((cor.instruction&0xffff)==0xffff)loop=false;
+				if(cor.is_instruction_eof())loop=false;
+//				if(cor.loading_register==-1&&(cor.instruction&0xffff)==0xffff)loop=false;
 			}
 			final long dt=(System.nanoTime()-t0)/1000;
 			final long dinstr=cor.meter_instructions;
