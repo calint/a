@@ -1,5 +1,10 @@
 {
+@inline rects.drw()
 @inline text.drw()
+@inline dots.drw()
+
+@inline rects.upd()
+@inline dots.upd()
 
 eof
 def text.drw(){
@@ -22,10 +27,6 @@ def os[bmp4x4]{1
    0xffff
 }
 eof
-@inline rects.drw()
-@inline dots.drw()
-@inline rects.upd()
-@inline dots.upd()
 eof 
 def pl(d e f g h i j){
   ldc(k h)
