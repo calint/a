@@ -5,6 +5,10 @@ li(c 4)
 li(d 252)
 li(e 0xfafa)
 li(f 0xf00)
+li(g 0x3fc)
+bmp4(a b c d e f)
+sub(a g)
+li(e 0xfafa)
 bmp4(a b c d e f)
 eof
 def bmp4(a b c d e f){
