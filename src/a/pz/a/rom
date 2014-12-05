@@ -1,18 +1,21 @@
 {
-@inline rects.upd()
 @inline rects.drw()
 @inline dots.drw()
+@inline rects.upd()
 @inline dots.upd()
-
-li(a 0x3040)
-li(b 4)
-li(c 4)
-li(d 252)
-li(e 0xfafa)
-li(f 0xf0f)
-li(g 0x3fc)
-li(h txt)
-@inline pl(a b c d e f g h)
+@inline text.drw()
+eof
+def text.drw(){
+  li(a 0x3040)
+  li(b 4)
+  li(c 4)
+  li(d 252)
+  li(e 0xfafa)
+  li(f 0xf0f)
+  li(g 0x3fc)
+  li(h txt)
+  @inline pl(a b c d e f g h)
+}
 eof
 def txt[bmp4x4]{6
   0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
