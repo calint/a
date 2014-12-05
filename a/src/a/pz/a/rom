@@ -1,45 +1,45 @@
 {
+@inline text.drw()
+
+eof
+def text.drw(){
+  foo(texts d e f g h i j){
+     @inline pl(d e f g h i j)
+  }
+}
+eof
+def texts[  dest_addr    width   height   add_after_line   text   rgb   add_after_glyph   ]{1
+              0x3040       4        4         252           txt   0xf00       0x3fc   
+} 
+eof
+def txt[bmp4x4]{6
+  0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
+  0xffff
+}
+eof
 @inline rects.drw()
 @inline dots.drw()
 @inline rects.upd()
 @inline dots.upd()
-@inline text.drw()
-eof
-def text.drw(){
-  li(a 0x3040)
-  li(b 4)
-  li(c 4)
-  li(d 252)
-  li(e 0xfafa)
-  li(f 0xf0f)
-  li(g 0x3fc)
-  li(h txt)
-  @inline pl(a b c d e f g h)
-}
-eof
-def txt[bmp4x4]{6
-  0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
-  0xffff
-}
-eof
-def pl(a b c d e f g h){
-  ldc(i h)
-  lp(i){
-    ldc(e h)
-    @inline print_bmp_4x4(a b c d e f)
-    sub(a g)
+eof 
+def pl(d e f g h i j){
+  ldc(k h)
+  lp(k){
+    ldc(l h)
+    print_bmp_4x4(d e f g l i)
+    sub(d j)
   }
 }
 eof
-def print_bmp_4x4(a b c d e f){
-  lp(c){
-    lp(b){
-      shf(e -1)
-      @ifn stc(a f)
-      @ifz inc(a)
-      @ifp inc(a)
+def print_bmp_4x4(d e f g l i){
+  lp(f){
+    lp(e){
+      shf(l -1)
+      @ifn stc(d i)
+      @ifz inc(d)
+      @ifp inc(d)
     }
-    add(a d)
+    add(d g)
   }
 }
 eof

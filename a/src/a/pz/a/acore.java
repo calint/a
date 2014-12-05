@@ -287,6 +287,7 @@ final public class acore extends a{
 			while(true){
 				cor.step();
 				if(loop==false)break;
+				if(cor.meter_instructions>1024*1024)loop=false;
 				if(cor.is_instruction_eof())loop=false;
 //				if(cor.loading_register==-1&&(cor.instruction&0xffff)==0xffff)loop=false;
 			}
