@@ -1,17 +1,36 @@
 {
-li(a 0x0800)
+@inline rects.upd()
+@inline rects.drw()
+@inline dots.drw()
+@inline dots.upd()
+
+li(a 0x3040)
 li(b 4)
 li(c 4)
 li(d 252)
 li(e 0xfafa)
-li(f 0xf00)
+li(f 0xf0f)
 li(g 0x3fc)
-bmp4(a b c d e f)
-sub(a g)
-li(e 0xfafa)
-bmp4(a b c d e f)
+li(h txt)
+@inline pl(a b c d e f g h)
 eof
-def bmp4(a b c d e f){
+def txt[bmp4x4]{10
+  0x000f 0x00ff 0x0fff 0x0175
+  0x0767 0x0043
+  0x0043 0x0252 0x0126 0xffff
+  0xfafa 0xbaba 0xbaba 0xfafa
+}
+eof
+def pl(a b c d e f g h){
+  ldc(i h)
+  lp(i){
+    ldc(e h)
+    @inline print_bmp_4x4(a b c d e f)
+    sub(a g)
+  }
+}
+eof
+def print_bmp_4x4(a b c d e f){
   lp(c){
     lp(b){
       shf(e -1)
@@ -23,15 +42,6 @@ def bmp4(a b c d e f){
   }
 }
 eof
-
-
-
-
-
-@inline rects.upd()
-@inline rects.drw()
-@inline dots.drw()
-@inline dots.upd()
 
 def dots
 [   yx    dyx    rgb ]{4
