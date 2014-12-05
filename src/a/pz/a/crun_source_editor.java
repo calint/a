@@ -279,6 +279,12 @@ final public class crun_source_editor extends a{
 			return this;
 		}
 		public void link(){
+			evals.entrySet().forEach(me->{
+				final int pc=me.getKey();
+				final expression ev=me.getValue();
+				final int value=ev.eval(this);
+				data[pc]=value;
+			});
 			calls.entrySet().forEach(me->{
 				if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
 				final int addr=defs.get(me.getValue());
@@ -307,10 +313,14 @@ final public class crun_source_editor extends a{
 		public int ix(){
 			return ix;
 		}
-		public int data_location_in_binary_for_name(String src){
+		public int def_location_in_binary_for_name(String src){
 			final Integer i=defs.get(src);
-			if(i==null) throw new Error("data not found: "+src);
+			if(i==null) throw new Error("def not found: "+src);
 			return i.intValue();
+		}
+		private LinkedHashMap<Integer,expression> evals=new LinkedHashMap<>();		
+		public void evaluate_pre_link(expression e){
+			evals.put(ix,e);
 		}
 	}
 	public static class statement extends a{
@@ -466,7 +476,8 @@ final public class crun_source_editor extends a{
 		@Override public void binary_to(xbin x){
 			final def_func d=(def_func)x.toc.get("func "+name);
 			if(d==null) throw new Error("function not found: "+name);
-			if(arguments.size()!=d.arguments.size()) throw new Error("number of arguments do not match: "+name);
+			if(arguments.size()!=d.arguments.size())
+				throw new Error("number of arguments do not match: "+name);
 			int i=0;
 			for(expression e:arguments){
 				final expression a=d.arguments.get(i);
@@ -610,7 +621,9 @@ final public class crun_source_editor extends a{
 			final int i=znxr|0x0000|0<<8|rdi<<12;
 			x.write(i);
 			final expression imm=arguments.get(1);
-			x.write(imm.eval(x));
+			x.evaluate_pre_link(imm);
+//			x.write(imm.eval(x));
+			x.write(0);
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -754,7 +767,9 @@ final public class crun_source_editor extends a{
 			final def_const dc=(def_const)b.toc.get("const "+src);
 			if(dc!=null){ return dc.expr.eval(b); }
 			final def_data dd=(def_data)b.toc.get("data "+src);
-			if(dd!=null){ return b.data_location_in_binary_for_name(src); }
+			if(dd!=null){ return b.def_location_in_binary_for_name(src); }
+			final def_tuple dt=(def_tuple)b.toc.get("tuple "+src);
+			if(dt!=null){ return b.def_location_in_binary_for_name(src); }
 			if(src.startsWith("0x")){
 				try{
 					return Integer.parseInt(src.substring(2),16);
