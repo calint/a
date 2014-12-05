@@ -761,7 +761,9 @@ final public class crun_source_editor extends a{
 			x.p(src).p(ws_after);
 		}
 		@Override public void binary_to(xbin x){
-			x.write(eval(x));
+//			x.write(eval(x));
+			x.evaluate_pre_link(this);
+			x.write(0);
 		}
 		public int eval(xbin b){
 			final def_const dc=(def_const)b.toc.get("const "+src);
