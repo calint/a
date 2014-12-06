@@ -5,6 +5,7 @@ import b.a;
 import b.xwriter;
 
 public final class data extends statement{
+	private static final long serialVersionUID=1;
 	final private statement expr;
 	public data(a pt,String nm,reader r){
 		super(pt,nm,r);
@@ -66,5 +67,4 @@ public final class data extends statement{
 		super.source_to(x);
 		expr.source_to(x);
 	}
-	private static final long serialVersionUID=1;
 }

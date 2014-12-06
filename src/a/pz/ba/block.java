@@ -5,7 +5,9 @@ import b.a;
 import b.xwriter;
 
 final public class block extends statement{
+	private static final long serialVersionUID=1;
 	final private String ws_after_open_block,ws_trailing;
+	final private ArrayList<data> datas=new ArrayList<>();
 	public block(a pt,String nm,reader r){// {}  gives 0 length file
 		super(pt,nm,r);
 		if(!r.is_next_char_block_open()) throw new Error(r.line+":"+r.col+" expected {");
@@ -20,16 +22,14 @@ final public class block extends statement{
 		}
 		ws_trailing=r.next_empty_space();
 	}
+
+	@Override public void binary_to(xbin x){
+		datas.forEach(e->e.binary_to(x));
+	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
 		x.p('{').p(ws_after_open_block);
 		datas.forEach(e->e.source_to(x));
 		x.p('}').p(ws_trailing);
 	}
-	@Override public void binary_to(xbin x){
-		datas.forEach(e->e.binary_to(x));
-	}
-
-	final private ArrayList<data> datas=new ArrayList<>();
-	private static final long serialVersionUID=1;
 }
