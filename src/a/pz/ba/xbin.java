@@ -106,11 +106,13 @@ public final class xbin{
 		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
 		if(!registers_available.contains(name))throw new compiler_error(at_statement,"register not available",name);
 		if(!registers_available.remove(name))throw new Error();
+		pl(ix+" allocate register "+name);
 	}
 	public void decl_register_alias(String reg,String token){
 		pl("register alias "+reg+"   "+token);
 	}
 	public void free_register(String e){
+		pl(ix+" free register "+e);
 		registers_available.add(e);
 	}
 }
