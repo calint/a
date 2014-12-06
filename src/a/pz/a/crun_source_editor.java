@@ -493,10 +493,10 @@ final public class crun_source_editor extends a{
 				d.function_code.binary_to(x);
 			}else{
 				x.link_call(name);
-				x.write(apply_zncr_annotations_on_instruction(0x0010));//call
+				x.write(apply_znxr_annotations_on_instruction(0x0010));//call
 			}
 		}
-		protected int apply_zncr_annotations_on_instruction(int i){
+		protected int apply_znxr_annotations_on_instruction(int i){
 			int znxr=0;
 			if(has_annotation("@ifp")) znxr|=3;
 			if(has_annotation("@ifz")) znxr|=1;
@@ -642,7 +642,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00d8|(rai&15)<<8|(rdi&15)<<12;
-			final int zni=apply_zncr_annotations_on_instruction(i);
+			final int zni=apply_znxr_annotations_on_instruction(i);
 			x.write(zni);
 		}
 		private static final long serialVersionUID=1;
@@ -662,7 +662,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00a0|(rai&15)<<8|(rdi&15)<<12;
-			final int zni=apply_zncr_annotations_on_instruction(i);
+			final int zni=apply_znxr_annotations_on_instruction(i);
 			x.write(zni);
 		}
 		private static final long serialVersionUID=1;
@@ -682,7 +682,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0200|(0&15)<<8|(rdi&15)<<12;
-			final int zni=apply_zncr_annotations_on_instruction(i);
+			final int zni=apply_znxr_annotations_on_instruction(i);
 			//? inc reg imm4
 			x.write(zni);
 		}
@@ -703,7 +703,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0040|(rai&15)<<8|(rdi&15)<<12;
-			final int znxr_i=apply_zncr_annotations_on_instruction(i);
+			final int znxr_i=apply_znxr_annotations_on_instruction(i);
 			x.write(znxr_i);
 		}
 		private static final long serialVersionUID=1;
@@ -723,7 +723,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00c0|(rai&15)<<8|(rdi&15)<<12;
-			x.write(apply_zncr_annotations_on_instruction(i));
+			x.write(apply_znxr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -742,7 +742,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00f8|(rai&15)<<8|(rdi&15)<<12;
-			x.write(apply_zncr_annotations_on_instruction(i));
+			x.write(apply_znxr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -1041,7 +1041,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0020|(rai&15)<<8|(rdi&15)<<12;
-			x.write(apply_zncr_annotations_on_instruction(i));
+			x.write(apply_znxr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -1059,7 +1059,7 @@ final public class crun_source_editor extends a{
 			final int im4=rd.eval(x);
 			if(im4<-8||im4>7) throw new Error("shift range between -8 and 7");//? -8 8  shf a 0 being a>>1 
 			final int i=0x0060|(im4&15)<<8|(rai&15)<<12;
-			x.write(apply_zncr_annotations_on_instruction(i));
+			x.write(apply_znxr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
