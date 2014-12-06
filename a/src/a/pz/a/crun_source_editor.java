@@ -21,6 +21,7 @@ final public class crun_source_editor extends a{
 		x.style("ac","color: gray");//assembler
 //		x.style("ac","font-weight:bold");//a name
 //		x.style("dr","font-style: italic");//data refered
+		x.style("dr","font-weight:bold");//a name
 		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," crun ","a").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
