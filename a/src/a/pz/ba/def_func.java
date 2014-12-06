@@ -19,7 +19,7 @@ final public class def_func extends statement{
 			arguments.add(arg);
 		}
 		ws_after_expr_close=r.next_empty_space();
-		function_code=new block(this,"c",r);
+		function_code=new block(this,"c",r,block.no_declarations);
 		r.toc.put("func "+name,this);
 	}
 	@Override public void binary_to(xbin x){

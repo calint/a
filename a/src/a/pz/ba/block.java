@@ -1,7 +1,6 @@
 package a.pz.ba;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import b.a;
 import b.xwriter;
 
@@ -9,7 +8,9 @@ final public class block extends statement{
 	private static final long serialVersionUID=1;
 	final private String ws_after_open_block,ws_trailing;
 	final private ArrayList<data> datas=new ArrayList<>();
-	public block(a pt,String nm,reader r){// {}  gives 0 length file
+	final private ArrayList<String> declarations;
+	final public static ArrayList<String>no_declarations=new ArrayList<>();
+	public block(a pt,String nm,reader r,ArrayList<String>declarations){// {}  gives 0 length file
 		super(pt,nm,read_annot(r),"",r);
 		if(!r.is_next_char_block_open()) throw new compiler_error(this,"expected { to open code block","");
 		int i=0;
@@ -22,19 +23,8 @@ final public class block extends statement{
 			datas.add(d);
 		}
 		ws_trailing=r.next_empty_space();
+		this.declarations=declarations;
 	}
-	private static LinkedHashMap<String,String> read_annot(reader r){
-		final LinkedHashMap<String,String> annotations=new LinkedHashMap<>();
-		while(true){
-			if(!r.is_next_char_annotation_open())break;
-			final String s=r.next_token();
-			if(s.length()==0) throw new Error("unexpected empty token");
-			final String ws=r.next_empty_space();
-			annotations.put(s,ws);
-		}
-		return annotations;
-	}
-
 	@Override public void binary_to(xbin x){
 		datas.forEach(e->e.binary_to(x));
 	}
