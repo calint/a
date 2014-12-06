@@ -7,6 +7,12 @@
 @inline dots.upd()
 
 eof
+def dots.drw(){
+  foo(dots d e f){
+    st(d f)
+  }
+}
+eof
 def text.drw(){
   foo(texts){
      @inline pl(d e f g h i j)
@@ -88,11 +94,6 @@ def rects.drw(){
       }
       add(d h)
     }
-  }
-}
-def dots.drw(){
-  foo(dots d e f){
-    st(d f)
   }
 }
 def dots.upd(){
