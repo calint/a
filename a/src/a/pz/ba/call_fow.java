@@ -24,8 +24,8 @@ final public class call_fow extends statement{
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).src;
-		final def_tuple dt=(def_tuple)x.toc.get("tuple "+table_name);
-		if(dt==null) throw new Error("table not found: "+table_name);
+		final def_struct dt=(def_struct)x.toc.get("struct "+table_name);
+		if(dt==null) throw new Error("struct not found: "+table_name);
 
 		if(arguments.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 

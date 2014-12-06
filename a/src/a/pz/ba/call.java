@@ -2,7 +2,6 @@ package a.pz.ba;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import b.a;
 import b.xwriter;
 
@@ -10,11 +9,11 @@ public class call extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name,ws_trailing;
 	final protected ArrayList<expression> arguments=new ArrayList<>();
-	final Map<String,String> annotations_ws;
+//	final Map<String,String> annotations_ws;
 	public call(a pt,String nm,LinkedHashMap<String,String> annotations_ws,String name,reader r){
-		super(pt,nm,no_annotations,r);
+		super(pt,nm,annotations_ws,r);
 		this.name=name;
-		this.annotations_ws=annotations_ws;
+//		this.annotations_ws=annotations_ws;
 		ws_after_name=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close()) break;
@@ -49,19 +48,15 @@ public class call extends statement{
 			x.write(in);
 			x.write(e.eval(x));
 		}
-		if(annotations_ws.containsKey("@inline")){
+		if(has_annotation("@inline")){
 			d.function_code.binary_to(x);
 		}else{
 			x.link_call(name);
 			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
 		}
 	}
-	public boolean has_annotation(String src){
-		return annotations_ws.containsKey(src);
-	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		annotations_ws.entrySet().forEach(me->x.p(me.getKey()).p(me.getValue()));
 		final String asm="li add foo fow inc ld ldc li lp st stc tx shf   zkp skp";
 		final boolean is=asm.indexOf(name)!=-1;
 		x.tag(is?"ac":"fc");

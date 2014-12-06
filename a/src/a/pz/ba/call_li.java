@@ -22,7 +22,7 @@ final public class call_li extends call{
 		final int i=znxr|0x0000|0<<8|rdi<<12;
 		x.write(i);
 		final expression imm=arguments.get(1);
-		x.evaluate_pre_link(imm);
+		x.at_pre_link_evaluate(imm);
 		//			x.write(imm.eval(x));
 		x.write(0);
 	}

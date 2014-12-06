@@ -22,9 +22,14 @@ public class statement extends a{
 	}
 	public void binary_to(xbin x){}
 	public void source_to(xwriter x){
+		annotations.entrySet().forEach(me->x.p(me.getKey()).p(me.getValue()));
 		x.p(ws_before);
 	}
 	final @Override public void to(xwriter x) throws Throwable{
 		source_to(x);
 	}
+	public boolean has_annotation(String src){
+		return annotations.containsKey(src);
+	}
+
 }
