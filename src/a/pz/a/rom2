@@ -1,31 +1,116 @@
 {
-dots.drw()
-dots.upd()
+@inline rects.drw()
+@inline text.drw()
+@inline dots.drw()
+
+@inline rects.upd()
+@inline dots.upd()
+
+eof
+def print_bmp_4x4(d e f g l i){
+  lp(f){
+    lp(e){
+      shf(l -1)
+      @ifn stc(d i)
+      @ifz inc(d)
+      @ifp inc(d)
+    }
+    add(d g)
+  }
+}
 eof
 def dots.drw(){
-  foo(dots d e){
-    st(d e)
+  foo(dots){
+    st(yx rgb)
+  }
+}
+def dots
+[   yx    dyx    rgb ]{4
+  0x7840 0x0001 0x800
+  0x7951 0x0002 0x080
+  0x7a62 0x0003 0x008
+  0x7b73 0x0004 0x088
+}
+def rects
+[   yx    rgb   wi    hi   ln  ]{ 3
+  0x1400 0x0ff 256    80  0x24
+  0x1000 0xf00 0x30  0x40 0x24
+  0x5800 0x00f 0x30   50  0x23
+}
+eof
+def rects.drw(){
+  foo(rects){
+    lp(hi){
+      lp(wi){
+        stc(yx rgb)
+      }
+      add(yx ln)
+    }
   }
 }
 eof
-def dots.upd(){
-  fow(dots d e){
-    inc(d)
+def text.drw(){
+  foo(texts){
+     @inline pl(
+        dest_addr width height 
+        add_after_line text rgb add_after_glyph
+     )
   }
 }
-eof eof
-def dots{
-  3
-  0x4040 0x800
-  0x4050 0x080
-  0x4060 0x008
-  0x0000 0x000
+eof
+def texts
+[ dest_addr    width   height   add_after_line   text   rgb   add_after_glyph ]{2
+   0x3040       4        4         252           txt   0xf00       0x3fc   
+   0x3440       4        4         252           os    0xf00       0x3fc   
+} 
+eof
+def txt[u16]{6
+  0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
+  0xffff
+}
+eof
+def os[bmp4x4]{1
+   0xffff
+}
+eof
+eof 
+def pl(d e f g h i j){
+  var k
+  ldc(k h)
+  var l
+  lp(k){
+    ldc(l h)
+    @inline print_bmp_4x4(d e f g l i)
+    sub(d j)
+  }
 }
 eof eof eof
-line(screen red 0x30)
-rect(screen2 red 0x30 0x40 0x20)
-def dot(a b){st(a b)}
+def rects.upd(){
+  var m
+  li(m 0x40)
+  fow(rects d e f g h){
+    inc(h)
+    var p
+    @debug tx(p h)
+    var i
+    tx(i h)
+    sub(i m)
+    @ifp li(h 0x10)
+  }
+}
+def dots.upd(){
+  var g
+  li(g 0x7f00)
+  fow(dots d e f){
+    add(d e)
+    var h
+    tx(h d)
+    sub(h g)
+    @ifp li(d 0x0800)
+  }
+}
 eof
+def dot(a b){st(a b)}
 def line(a b c){
   lp(c){
     stc(a b)
@@ -33,45 +118,9 @@ def line(a b c){
   }
 }
 eof
-def rect(a b c d e){
-  lp(d){
-    lp(c){
-      stc(a b)
-      inc(b)
-    }
-    add(a e)
-  }
-}
-eof
-def dots.draw(){
-  li(a dots)
-  ldc(c a)
-  lp(c){
-    ldc(d a)
-    ldc(e a)
-    st(d e)
-  }
-}
-def dots.update(){
-  li(a dots)
-  ldc(c a)
-  lp(c){
-    tx(b a)
-    ldc(d a)
-    ldc(e a)
 
-    inc(d)
-
-    tx(a b)
-    stc(a d)
-    stc(a e)
-  }
-}
-eof eof
-
-def screen 0x1000
 def red 0xf00
-def screen2 0x6000
+def green 0xf0
 def blue 0xf
 def eof 0xffff
 }
