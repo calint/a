@@ -2,6 +2,7 @@ package a.pz.ba;
 
 import static b.b.pl;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public final class xbin{
@@ -90,5 +91,26 @@ public final class xbin{
 	public xbin write(final int d){
 		data[ix++]=d;
 		return this;
+	}
+
+	private final LinkedList<String> registers_available=new LinkedList<>();
+	{
+		for(String s:"a b c d e f g h i j k l m n o p".split(" "))
+			registers_available.add(s);
+	}
+	public String allocate_register(statement at_statement){
+		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
+		return registers_available.remove(0);
+	}
+	public void allocate_register(statement at_statement,String name){
+		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
+		if(!registers_available.contains(name))throw new compiler_error(at_statement,"register not available",name);
+		if(!registers_available.remove(name))throw new Error();
+	}
+	public void decl_register_alias(String reg,String token){
+		pl("register alias "+reg+"   "+token);
+	}
+	public void free_register(String e){
+		registers_available.add(e);
 	}
 }
