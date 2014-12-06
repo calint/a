@@ -18,8 +18,7 @@ final public class expression extends statement{
 		ws_after=r.next_empty_space();
 	}
 	@Override public void binary_to(xbin x){
-		//			x.write(eval(x));
-		x.evaluate_pre_link(this);
+		x.at_pre_link_evaluate(this);
 		x.write(0);
 	}
 	public int eval(xbin b){
@@ -27,7 +26,7 @@ final public class expression extends statement{
 		if(dc!=null){ return dc.expr.eval(b); }
 		final def_data dd=(def_data)b.toc.get("data "+src);
 		if(dd!=null){ return b.def_location_in_binary_for_name(src); }
-		final def_tuple dt=(def_tuple)b.toc.get("tuple "+src);
+		final def_struct dt=(def_struct)b.toc.get("struct "+src);
 		if(dt!=null){ return b.def_location_in_binary_for_name(src); }
 		if(src.startsWith("0x")){
 			try{

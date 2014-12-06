@@ -44,13 +44,13 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
-	public boolean is_next_char_tuple_close(){
+	public boolean is_next_char_struct_close(){
 		final int ch=read();
 		if(ch==']') return true;
 		unread(ch);
 		return false;
 	}
-	public boolean is_next_char_tuple_open(){
+	public boolean is_next_char_struct_open(){
 		final int ch=read();
 		if(ch=='[') return true;
 		unread(ch);

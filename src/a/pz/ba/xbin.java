@@ -47,7 +47,7 @@ public final class xbin{
 		if(i==null) throw new Error("def not found: "+src);
 		return i.intValue();
 	}
-	public void evaluate_pre_link(expression e){
+	public void at_pre_link_evaluate(expression e){
 		evals.put(ix,e);
 	}
 	public int ix(){
