@@ -32,6 +32,12 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
+	public boolean is_next_char_annotation_open(){
+		final int ch=read();
+		if(ch=='@') return true;
+		unread(ch);
+		return false;
+	}
 	public boolean is_next_char_expression_close(){
 		final int ch=read();
 		if(ch==')') return true;

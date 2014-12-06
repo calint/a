@@ -18,13 +18,7 @@ final public class call_tx extends call{
 		if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
 		final int rdi=rd.src.charAt(0)-'a';
 		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
-		int znxr=0;
-		if(has_annotation("@ifp")) znxr|=3;
-		if(has_annotation("@ifz")) znxr|=1;
-		if(has_annotation("@ifn")) znxr|=2;
-		if(has_annotation("@nxt")) znxr|=4;
-		if(has_annotation("@ret")) znxr|=8;
-		final int i=znxr|0x00e0|(rai&15)<<8|(rdi&15)<<12;
-		x.write(i);
+		final int i=0x00e0|(rai&15)<<8|(rdi&15)<<12;
+		x.write(apply_znxr_annotations_on_instruction(i));
 	}
 }

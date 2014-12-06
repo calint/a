@@ -27,11 +27,11 @@ public class call extends statement{
 	}
 	protected int apply_znxr_annotations_on_instruction(int i){
 		int znxr=0;
-		if(has_annotation("@ifp")) znxr|=3;
-		if(has_annotation("@ifz")) znxr|=1;
-		if(has_annotation("@ifn")) znxr|=2;
-		if(has_annotation("@nxt")) znxr|=4;
-		if(has_annotation("@ret")) znxr|=8;
+		if(has_annotation("ifp")) znxr|=3;
+		if(has_annotation("ifz")) znxr|=1;
+		if(has_annotation("ifn")) znxr|=2;
+		if(has_annotation("nxt")) znxr|=4;
+		if(has_annotation("ret")) znxr|=8;
 		return znxr|i;
 	}
 	@Override public void binary_to(xbin x){
@@ -48,7 +48,7 @@ public class call extends statement{
 			x.write(in);
 			x.write(e.eval(x));
 		}
-		if(has_annotation("@inline")){
+		if(has_annotation("inline")){
 			d.function_code.binary_to(x);
 		}else{
 			x.link_call(name);
