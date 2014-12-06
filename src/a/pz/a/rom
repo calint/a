@@ -39,7 +39,10 @@ def rects.drw(){
 eof
 def text.drw(){
   foo(texts){
-     @inline pl(d e f g h i j)
+     @inline pl(
+        dest_addr width height 
+        add_after_line text rgb add_after_glyph
+     )
   }
 }
 eof
