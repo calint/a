@@ -9,14 +9,10 @@ final public class call_shf extends call{
 		super(pt,nm,annotations,"shf",r);
 	}
 	@Override public void binary_to(xbin x){
-		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
-		final expression ra=arguments.get(0);
-		if(ra.token.length()!=1) throw new Error("not a register: "+ra.token);
-		final int rai=ra.token.charAt(0)-'a';
-		if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
+		final int rai=register_index_from_string(this,arguments.get(0).token);
 		final expression rd=arguments.get(1);
 		final int im4=rd.eval(x);
-		if(im4<-8||im4>7) throw new Error("shift range between -8 and 7");//? -8 8  shf a 0 being a>>1 
+		if(im4<-8||im4>7) throw new compiler_error(this,"shift range between -8 and 7",""+im4);//? -8 8  shf a 0 being a>>1 
 		final int i=0x0060|(im4&15)<<8|(rai&15)<<12;
 		x.write(apply_znxr_annotations_on_instruction(i));
 	}

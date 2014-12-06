@@ -9,15 +9,11 @@ final public class call_li extends call{
 		super(pt,nm,annotations,"li",r);
 	}
 	@Override public void binary_to(xbin x){
-		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
-		final expression rd=arguments.get(0);
-		if(rd.token.length()!=1) throw new Error("not a register: "+rd.token);
-		final int rdi=rd.token.charAt(0)-'a';
-		final int i=0x0000|0<<8|rdi<<12;
+		final int rdi=register_index_from_string(this,arguments.get(0).token);
+		final int i=0x0000|rdi<<12;
 		x.write(apply_znxr_annotations_on_instruction(i));
 		final expression imm=arguments.get(1);
 		x.at_pre_link_evaluate(imm);
-		//			x.write(imm.eval(x));
 		x.write(0);
 	}
 }

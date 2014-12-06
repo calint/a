@@ -14,7 +14,7 @@ final public class expression extends statement{
 		ws_after=r.next_empty_space();
 	}
 	public expression(a pt,String nm,LinkedHashMap<String,String> annotations,String token,reader r){
-		super(pt,nm,annotations);
+		super(pt,nm,annotations,r.bm_line+":"+r.bm_col);
 		this.token=token;
 		ws_after=r.next_empty_space();
 	}
@@ -33,25 +33,25 @@ final public class expression extends statement{
 			try{
 				return Integer.parseInt(token.substring(2),16);
 			}catch(NumberFormatException e){
-				throw new Error("not a hex: "+token);
+				throw new compiler_error(this,"not a hex",token);
 			}
 		}else if(token.startsWith("0b")){
 			try{
 				return Integer.parseInt(token.substring(2),2);
 			}catch(NumberFormatException e){
-				throw new Error("not a binary: "+token);
+				throw new compiler_error(this,"not a binary",token);
 			}
 		}else if(token.endsWith("h")){
 			try{
 				return Integer.parseInt(token.substring(0,token.length()-1),16);
 			}catch(NumberFormatException e){
-				throw new Error("not a hex: "+token);
+				throw new compiler_error(this,"not a hex",token);
 			}
 		}else{
 			try{
 				return Integer.parseInt(token);
 			}catch(NumberFormatException e){
-				throw new Error("not a number: "+token);
+				throw new compiler_error(this,"not a number",token);
 			}
 		}
 	}

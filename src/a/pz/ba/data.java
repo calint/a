@@ -12,6 +12,7 @@ public final class data extends statement{
 		super(pt,nm,no_annotations,"",r);
 		final LinkedHashMap<String,String> annotations=new LinkedHashMap<>();
 		final String token;
+		r.bm();
 		while(true){
 			final String s=r.next_token();
 			if(s.length()==0) throw new Error("unexpected empty token");
