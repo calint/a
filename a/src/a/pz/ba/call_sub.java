@@ -4,7 +4,8 @@ import java.util.LinkedHashMap;
 import b.a;
 
 final public class call_sub extends call{
-	public call_sub(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+	private static final long serialVersionUID=1;
+	public call_sub(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
 		super(pt,nm,annotations,"sub",r);
 	}
 	@Override public void binary_to(xbin x){
@@ -20,5 +21,4 @@ final public class call_sub extends call{
 		final int i=0x0020|(rai&15)<<8|(rdi&15)<<12;
 		x.write(apply_znxr_annotations_on_instruction(i));
 	}
-	private static final long serialVersionUID=1;
 }

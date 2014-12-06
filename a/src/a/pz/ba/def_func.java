@@ -5,6 +5,7 @@ import b.a;
 import b.xwriter;
 
 final public class def_func extends statement{
+	private static final long serialVersionUID=1;
 	final private String name,ws_after_expr_close;
 	final ArrayList<expression> arguments=new ArrayList<>();
 	final block function_code;
@@ -33,5 +34,4 @@ final public class def_func extends statement{
 		x.p(")").p(ws_after_expr_close);
 		function_code.source_to(x);
 	}
-	private static final long serialVersionUID=1;
 }

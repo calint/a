@@ -4,7 +4,8 @@ import java.util.LinkedHashMap;
 import b.a;
 
 final public class call_inc extends call{
-	public call_inc(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+	private static final long serialVersionUID=1;
+	public call_inc(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
 		super(pt,nm,annotations,"inc",r);
 	}
 	@Override public void binary_to(xbin x){
@@ -22,5 +23,4 @@ final public class call_inc extends call{
 		//? inc reg imm4
 		x.write(zni);
 	}
-	private static final long serialVersionUID=1;
 }

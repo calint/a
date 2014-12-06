@@ -4,6 +4,7 @@ import b.a;
 import b.xwriter;
 
 final public class def_data extends statement{
+	private static final long serialVersionUID=1;
 	final private block data;
 	final private String name;
 	public def_data(a pt,String nm,String name,reader r){
@@ -20,5 +21,4 @@ final public class def_data extends statement{
 		super.source_to(x);
 		data.source_to(x);
 	}
-	private static final long serialVersionUID=1;
 }

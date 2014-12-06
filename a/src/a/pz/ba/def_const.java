@@ -4,6 +4,7 @@ import b.a;
 import b.xwriter;
 
 final public class def_const extends statement{
+	private static final long serialVersionUID=1;
 	final private String ws_trailing;
 	final expression expr;
 	public def_const(a pt,String nm,String name,reader r){
@@ -17,5 +18,4 @@ final public class def_const extends statement{
 		expr.source_to(x);
 		x.p(ws_trailing);
 	}
-	private static final long serialVersionUID=1;
 }

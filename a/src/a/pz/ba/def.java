@@ -4,6 +4,7 @@ import b.a;
 import b.xwriter;
 
 final public class def extends statement{
+	private static final long serialVersionUID=1;
 	final private String name,ws_after_name;
 	final private statement e;
 	public def(a pt,String nm,reader r){
@@ -31,5 +32,4 @@ final public class def extends statement{
 		x.p(ws_after_name);
 		e.source_to(x);
 	}
-	private static final long serialVersionUID=1;
 }

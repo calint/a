@@ -5,6 +5,7 @@ import b.a;
 import b.xwriter;
 
 final public class def_tuple extends statement{
+	private static final long serialVersionUID=1;
 	final private String name;
 	final ArrayList<expression> arguments=new ArrayList<>();
 	final private block data;
@@ -31,5 +32,4 @@ final public class def_tuple extends statement{
 		x.p("]");
 		data.source_to(x);
 	}
-	private static final long serialVersionUID=1;
 }

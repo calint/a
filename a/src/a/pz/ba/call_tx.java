@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import b.a;
 
 final public class call_tx extends call{
+	private static final long serialVersionUID=1;
 	public call_tx(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
 		super(pt,nm,annotations,"tx",r);
 	}
@@ -26,5 +27,4 @@ final public class call_tx extends call{
 		final int i=znxr|0x00e0|(rai&15)<<8|(rdi&15)<<12;
 		x.write(i);
 	}
-	private static final long serialVersionUID=1;
 }

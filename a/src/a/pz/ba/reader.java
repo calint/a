@@ -10,8 +10,76 @@ public final class reader{
 	final public LinkedHashMap<String,statement> toc=new LinkedHashMap<>();
 	private PushbackReader r;
 	public int line=1,col=1,prevcol=1,nchar=0;
+	public int bm_line,bm_col,bm_nchar;
+	public int last_read_char;
 	public reader(Reader r){
 		this.r=new PushbackReader(r,1);
+	}
+	public void bm(){
+		bm_line=line;
+		bm_col=col;
+		bm_nchar=nchar;
+	}
+	public boolean is_next_char_block_close(){
+		final int ch=read();
+		if(ch=='}') return true;
+		unread(ch);
+		return false;
+	}
+	public boolean is_next_char_block_open(){
+		final int ch=read();
+		if(ch=='{') return true;
+		unread(ch);
+		return false;
+	}
+	public boolean is_next_char_expression_close(){
+		final int ch=read();
+		if(ch==')') return true;
+		unread(ch);
+		return false;
+	}
+	public boolean is_next_char_expression_open(){
+		final int ch=read();
+		if(ch=='(') return true;
+		unread(ch);
+		return false;
+	}
+	public boolean is_next_char_tuple_close(){
+		final int ch=read();
+		if(ch==']') return true;
+		unread(ch);
+		return false;
+	}
+	public boolean is_next_char_tuple_open(){
+		final int ch=read();
+		if(ch=='[') return true;
+		unread(ch);
+		return false;
+	}
+	public String next_empty_space(){
+		final xwriter x=new xwriter();
+		while(true){
+			final int ch=read();
+			if(Character.isWhitespace(ch)){
+				x.p((char)ch);
+				continue;
+			}
+			unread(ch);
+			break;
+		}
+		return x.toString();
+	}
+	public String next_token(){
+		final xwriter x=new xwriter();
+		while(true){
+			final int ch=read();
+			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'){
+				unread(ch);
+				break;
+			}
+			x.p((char)ch);
+		}
+		return x.toString();
 	}
 	private int read(){
 		try{
@@ -45,74 +113,6 @@ public final class reader{
 			throw new Error(e);
 		}
 	}
-	public String next_empty_space(){
-		final xwriter x=new xwriter();
-		while(true){
-			final int ch=read();
-			if(Character.isWhitespace(ch)){
-				x.p((char)ch);
-				continue;
-			}
-			unread(ch);
-			break;
-		}
-		return x.toString();
-	}
-	public String next_token(){
-		final xwriter x=new xwriter();
-		while(true){
-			final int ch=read();
-			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'){
-				unread(ch);
-				break;
-			}
-			x.p((char)ch);
-		}
-		return x.toString();
-	}
-	public boolean is_next_char_block_open(){
-		final int ch=read();
-		if(ch=='{') return true;
-		unread(ch);
-		return false;
-	}
-	public boolean is_next_char_block_close(){
-		final int ch=read();
-		if(ch=='}') return true;
-		unread(ch);
-		return false;
-	}
-	public boolean is_next_char_expression_open(){
-		final int ch=read();
-		if(ch=='(') return true;
-		unread(ch);
-		return false;
-	}
-	public boolean is_next_char_expression_close(){
-		final int ch=read();
-		if(ch==')') return true;
-		unread(ch);
-		return false;
-	}
-	public boolean is_next_char_tuple_open(){
-		final int ch=read();
-		if(ch=='[') return true;
-		unread(ch);
-		return false;
-	}
-	public boolean is_next_char_tuple_close(){
-		final int ch=read();
-		if(ch==']') return true;
-		unread(ch);
-		return false;
-	}
-	public int bm_line,bm_col,bm_nchar;
-	public void bm(){
-		bm_line=line;
-		bm_col=col;
-		bm_nchar=nchar;
-	}
-	public int last_read_char;
 	public void unread_last_char(){
 		unread(last_read_char);
 	}
