@@ -27,6 +27,7 @@ public final class data extends statement{
 			return;
 		}
 		if(r.is_next_char_expression_open()){
+			final String asm="li stc lp inc add ldc ld foo fow tx sub shf";
 			if("li".equals(src)){
 				expr=new call_li(this,"e",annotations,r);
 			}else if("st".equals(src)){
@@ -34,7 +35,7 @@ public final class data extends statement{
 			}else if("stc".equals(src)){
 				expr=new call_stc(this,"e",annotations,r);
 			}else if("lp".equals(src)){
-				expr=new call_lp(this,"e",r);
+				expr=new call_lp(this,"e",annotations,r);
 			}else if("inc".equals(src)){
 				expr=new call_inc(this,"e",annotations,r);
 			}else if("add".equals(src)){
@@ -44,9 +45,9 @@ public final class data extends statement{
 			}else if("ld".equals(src)){
 				expr=new call_ld(this,"e",annotations,r);
 			}else if("foo".equals(src)){
-				expr=new call_foo(this,"e",r);
+				expr=new call_foo(this,"e",annotations,r);
 			}else if("fow".equals(src)){
-				expr=new call_fow(this,"e",r);
+				expr=new call_fow(this,"e",annotations,r);
 			}else if("tx".equals(src)){
 				expr=new call_tx(this,"e",annotations,r);
 			}else if("sub".equals(src)){

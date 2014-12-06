@@ -9,11 +9,9 @@ public class call extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name,ws_trailing;
 	final protected ArrayList<expression> arguments=new ArrayList<>();
-//	final Map<String,String> annotations_ws;
 	public call(a pt,String nm,LinkedHashMap<String,String> annotations,String name,reader r){
 		super(pt,nm,annotations,"",r);
 		this.name=name;
-//		this.annotations_ws=annotations_ws;
 		ws_after_name=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close()) break;

@@ -1,6 +1,7 @@
 package a.pz.ba;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import b.a;
 import b.xwriter;
 
@@ -9,8 +10,8 @@ final public class call_foo extends statement{
 	final private ArrayList<expression> arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private block loop_code;
-	public call_foo(a pt,String nm,reader r){
-		super(pt,nm,no_annotations,"",r);
+	public call_foo(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
+		super(pt,nm,annotations,"",r);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
 		while(true){
