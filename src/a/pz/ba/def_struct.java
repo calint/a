@@ -18,7 +18,7 @@ final public class def_struct extends statement{
 			final expression arg=new expression(this,""+i++,no_annotations,r);
 			arguments.add(arg);
 		}
-		data=new block(this,"d",r);
+		data=new block(this,"d",r,block.no_declarations);
 		r.toc.put("struct "+name,this);
 	}
 	@Override public void binary_to(xbin x){

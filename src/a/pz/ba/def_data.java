@@ -10,7 +10,7 @@ final public class def_data extends statement{
 	public def_data(a pt,String nm,String name,reader r){
 		super(pt,nm,no_annotations,"",r);
 		this.name=name;
-		data=new block(this,"d",r);
+		data=new block(this,"d",r,block.no_declarations);
 		r.toc.put("data "+name,this);
 	}
 	@Override public void binary_to(xbin x){
