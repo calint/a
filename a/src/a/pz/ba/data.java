@@ -16,7 +16,7 @@ public final class data extends statement{
 			if(s.length()==0) throw new Error("unexpected empty token");
 			if(s.startsWith("@")){//annotation
 				final String ws=r.next_empty_space();
-				annotations.put(s,ws);
+				annotations.put(s.substring(1),ws);
 				continue;
 			}
 			src=s;

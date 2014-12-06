@@ -25,7 +25,7 @@ public class statement extends a{
 	}
 	public void binary_to(xbin x){}
 	public void source_to(xwriter x){
-		annotations.entrySet().forEach(me->x.p(me.getKey()).p(me.getValue()));
+		annotations.entrySet().forEach(me->x.p('@').p(me.getKey()).p(me.getValue()));
 		x.p(token).p(ws_before);
 	}
 	final @Override public void to(xwriter x) throws Throwable{
