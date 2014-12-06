@@ -400,7 +400,7 @@ final public class crun_source_editor extends a{
 				if("li".equals(src)){
 					expr=new call_li(this,"e",annotations,r);
 				}else if("st".equals(src)){
-					expr=new call_st(this,"e",r);
+					expr=new call_st(this,"e",annotations,r);
 				}else if("stc".equals(src)){
 					expr=new call_stc(this,"e",annotations,r);
 				}else if("lp".equals(src)){
@@ -408,11 +408,11 @@ final public class crun_source_editor extends a{
 				}else if("inc".equals(src)){
 					expr=new call_inc(this,"e",annotations,r);
 				}else if("add".equals(src)){
-					expr=new call_add(this,"e",r);
+					expr=new call_add(this,"e",annotations,r);
 				}else if("ldc".equals(src)){
-					expr=new call_ldc(this,"e",r);
+					expr=new call_ldc(this,"e",annotations,r);
 				}else if("ld".equals(src)){
-					expr=new call_ld(this,"e",r);
+					expr=new call_ld(this,"e",annotations,r);
 				}else if("foo".equals(src)){
 					expr=new call_foo(this,"e",r);
 				}else if("fow".equals(src)){
@@ -420,7 +420,7 @@ final public class crun_source_editor extends a{
 				}else if("tx".equals(src)){
 					expr=new call_tx(this,"e",annotations,r);
 				}else if("sub".equals(src)){
-					expr=new call_sub(this,"e",r);
+					expr=new call_sub(this,"e",annotations,r);
 				}else if("shf".equals(src)){
 					expr=new call_shf(this,"e",annotations,r);
 				}else{
@@ -493,7 +493,7 @@ final public class crun_source_editor extends a{
 				d.function_code.binary_to(x);
 			}else{
 				x.link_call(name);
-				x.write(0x0010);//call
+				x.write(apply_zncr_annotations_on_instruction(0x0010));//call
 			}
 		}
 		protected int apply_zncr_annotations_on_instruction(int i){
@@ -628,8 +628,8 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_st extends call{
-		public call_st(a pt,String nm,reader r){
-			super(pt,nm,"st",r);
+		public call_st(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"st",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -642,13 +642,14 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00d8|(rai&15)<<8|(rdi&15)<<12;
-			x.write(i);
+			final int zni=apply_zncr_annotations_on_instruction(i);
+			x.write(zni);
 		}
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_add extends call{
-		public call_add(a pt,String nm,reader r){
-			super(pt,nm,"add",r);
+		public call_add(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"add",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -661,7 +662,8 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00a0|(rai&15)<<8|(rdi&15)<<12;
-			x.write(i);
+			final int zni=apply_zncr_annotations_on_instruction(i);
+			x.write(zni);
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -707,8 +709,8 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_ldc extends call{
-		public call_ldc(a pt,String nm,reader r){
-			super(pt,nm,"ldc",r);
+		public call_ldc(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"ldc",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -721,13 +723,13 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00c0|(rai&15)<<8|(rdi&15)<<12;
-			x.write(i);
+			x.write(apply_zncr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_ld extends call{
-		public call_ld(a pt,String nm,reader r){
-			super(pt,nm,"ld",r);
+		public call_ld(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"ld",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -740,7 +742,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x00f8|(rai&15)<<8|(rdi&15)<<12;
-			x.write(i);
+			x.write(apply_zncr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -1025,8 +1027,8 @@ final public class crun_source_editor extends a{
 		private static final long serialVersionUID=1;
 	}
 	final public static class call_sub extends call{
-		public call_sub(a pt,String nm,reader r){
-			super(pt,nm,"sub",r);
+		public call_sub(a pt,String nm,LinkedHashMap<String,String>annotations,reader r){
+			super(pt,nm,annotations,"sub",r);
 		}
 		@Override public void binary_to(xbin x){
 			//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
@@ -1039,7 +1041,7 @@ final public class crun_source_editor extends a{
 			final int rdi=rd.src.charAt(0)-'a';
 			if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 			final int i=0x0020|(rai&15)<<8|(rdi&15)<<12;
-			x.write(i);
+			x.write(apply_zncr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
@@ -1057,7 +1059,7 @@ final public class crun_source_editor extends a{
 			final int im4=rd.eval(x);
 			if(im4<-8||im4>7) throw new Error("shift range between -8 and 7");//? -8 8  shf a 0 being a>>1 
 			final int i=0x0060|(im4&15)<<8|(rai&15)<<12;
-			x.write(i);
+			x.write(apply_zncr_annotations_on_instruction(i));
 		}
 		private static final long serialVersionUID=1;
 	}
