@@ -58,7 +58,7 @@ public final class data extends statement{
 			}
 			return;
 		}
-		expr=new expression(this,"e",src,r);
+		expr=new expression(this,"e",no_annotations,src,r);
 	}
 	@Override public void binary_to(xbin x){
 		expr.binary_to(x);

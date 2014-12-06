@@ -11,8 +11,8 @@ final public class call_shf extends call{
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		final expression ra=arguments.get(0);
-		if(ra.src.length()!=1) throw new Error("not a register: "+ra.src);
-		final int rai=ra.src.charAt(0)-'a';
+		if(ra.token.length()!=1) throw new Error("not a register: "+ra.token);
+		final int rai=ra.token.charAt(0)-'a';
 		if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
 		final expression rd=arguments.get(1);
 		final int im4=rd.eval(x);

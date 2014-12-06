@@ -17,7 +17,7 @@ public class call extends statement{
 		ws_after_name=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(pt,nm,r);
+			final expression arg=new expression(pt,nm,no_annotations,r);
 			arguments.add(arg);
 		}
 		ws_trailing=r.next_empty_space();
@@ -41,9 +41,9 @@ public class call extends statement{
 		int i=0;
 		for(expression e:arguments){
 			final expression a=d.arguments.get(i);
-			if(a.src.equals(d.arguments.get(i).src)) continue;
+			if(a.token.equals(d.arguments.get(i).token)) continue;
 			i++;
-			final int rdi=a.src.charAt(0)-'a';
+			final int rdi=a.token.charAt(0)-'a';
 			final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
 			x.write(in);
 			x.write(e.eval(x));
