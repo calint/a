@@ -10,7 +10,7 @@ final public class def_tuple extends statement{
 	final ArrayList<expression> arguments=new ArrayList<>();
 	final private block data;
 	public def_tuple(a pt,String nm,String name,reader r){
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		this.name=name;
 		int i=0;
 		while(true){

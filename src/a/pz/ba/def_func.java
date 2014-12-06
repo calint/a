@@ -10,7 +10,7 @@ final public class def_func extends statement{
 	final ArrayList<expression> arguments=new ArrayList<>();
 	final block function_code;
 	public def_func(a pt,String nm,String name,reader r){
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		this.name=name;
 		int i=0;
 		while(true){
