@@ -22,7 +22,6 @@ final public class call_foo extends statement{
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
 		final ArrayList<String>declarations=new ArrayList<>();
-		arguments.forEach(e->declarations.add(e.token));
 		loop_code=new block(this,"b",r,declarations,b);
 	}
 	@Override public void binary_to(xbin x){
@@ -62,6 +61,7 @@ final public class call_foo extends statement{
 			args=arguments;
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
+		args.subList(1,args.size()).forEach(e->blk.declarations.add(e.token));
 		final expression rd=args.get(0);
 //		final int rai=register_index(reg_a);
 ////		final int rbi=register_index(reg_b);
