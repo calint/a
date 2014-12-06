@@ -5,8 +5,8 @@ import b.a;
 
 final public class call_ld extends call{
 	private static final long serialVersionUID=1;
-	public call_ld(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
-		super(pt,nm,annotations,"ld",r);
+	public call_ld(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,block b){
+		super(pt,nm,annotations,"ld",r,b);
 	}
 	@Override public void binary_to(xbin x){
 		final int rai=register_index_from_string(this,arguments.get(1).token);

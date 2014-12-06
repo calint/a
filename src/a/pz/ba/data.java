@@ -8,8 +8,8 @@ import b.xwriter;
 public final class data extends statement{
 	private static final long serialVersionUID=1;
 	final private statement expr;
-	public data(a pt,String nm,reader r){
-		super(pt,nm,no_annotations,"",r);
+	public data(a pt,String nm,reader r,block b){
+		super(pt,nm,no_annotations,"",r,b);
 		final LinkedHashMap<String,String> annotations=new LinkedHashMap<>();
 		final String token;
 		r.bm();
@@ -25,26 +25,28 @@ public final class data extends statement{
 			break;
 		}
 		if("def".equals(token)){
-			expr=new def(this,"e",annotations,r);
+			expr=new def(this,"e",annotations,r,b);
 			return;
 		}
 		if(!r.is_next_char_expression_open()){
-			expr=new expression(this,"e",annotations,token,r);
+			expr=new expression(this,"e",annotations,token,r,b);
 			return;
 		}
 		final String asm="li stc lp inc add ldc ld tx sub shf  foo fow";
 		if(asm.indexOf(token)==-1){
-			expr=new call(this,"e",annotations,token,r);
+			expr=new call(this,"e",annotations,token,r,b);
 			return;
 		}
 		try{
 			final String clsnm=getClass().getPackage().getName()+".call_"+token;
 			final Class<?> cls=Class.forName(clsnm);
-			final Constructor<?> ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class);
-			expr=(statement)ctor.newInstance(this,"e",annotations,r);
+			final Constructor<?> ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,block.class);
+			System.out.println("instr "+token);
+			expr=(statement)ctor.newInstance(this,"e",annotations,r,b);
 			return;
 		}catch(Throwable t){
-			throw new Error(t);
+			final Throwable tt=t.getCause();
+			throw new Error(tt==null?t:tt);
 		}
 	}
 	@Override public void binary_to(xbin x){
