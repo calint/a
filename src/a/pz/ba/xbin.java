@@ -93,7 +93,7 @@ public final class xbin{
 		return this;
 	}
 
-	private final LinkedList<String> registers_available=new LinkedList<>();
+	public final LinkedList<String> registers_available=new LinkedList<>();
 	{
 		for(String s:"a b c d e f g h i j k l m n o p".split(" "))
 			registers_available.add(s);
