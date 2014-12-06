@@ -54,7 +54,7 @@ final public class crun_source_editor extends a{
 			final block el=new block(this,"b",r,block.no_declarations);
 			final xwriter src=new xwriter();
 			el.source_to(src);
-			//			resrc.set(src.toString());
+//			resrc.set(src.toString());
 			if(x==null) return;
 			x.xu(sts.clr());
 			//			el.source_to(x.xub(resrc,true,true));x.xube();

@@ -78,7 +78,9 @@ final public class acore extends a{
 				for(int i=0;i<cor.rom.length;i++)
 					cor.rom[i]=-1;
 				final xbin b=new xbin(p.toc,cor.rom);
+				pl("registers available "+b.registers_available.size()+" "+b.registers_available);
 				p.code.binary_to(b);
+				pl("registers available "+b.registers_available.size()+" "+b.registers_available);
 				pl("*** linker");
 				b.link();
 				pl("*** toc");
