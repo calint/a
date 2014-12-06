@@ -45,7 +45,7 @@ public final class data extends statement{
 			final String clsnm=getClass().getPackage().getName()+".call_"+token;
 			final Class<?> cls=Class.forName(clsnm);
 			final Constructor<?> ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,block.class);
-			System.out.println("instr "+token);
+//			System.out.println("instr "+token);
 			expr=(statement)ctor.newInstance(this,"e",annotations,r,b);
 			return;
 		}catch(Throwable t){
