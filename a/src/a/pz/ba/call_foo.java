@@ -54,8 +54,9 @@ final public class call_foo extends statement{
 				final String rn=(char)r+++"";
 				x.allocate_register(this,rn);
 				allocated_registers.add(rn);
-				args.add(new expression(rn));
-//				x.decl_register_alias(rn,col.token);
+				final expression e=new expression(rn);
+				args.add(e);
+				x.alias_register(col.token,rn);
 			}
 		}else{
 			args=arguments;
@@ -81,6 +82,14 @@ final public class call_foo extends statement{
 		loop_code.binary_to(x);
 		x.write(4);//nxt
 		allocated_registers.forEach(e->x.free_register(e));
+		if(arguments.size()==1){//select *
+			final String struct_name=args.get(0).token;
+			final def_struct stc=(def_struct)x.toc.get("struct "+struct_name);
+			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
+			for(def_struct_field col:stc.arguments){
+				x.unalias_register(col.token);
+			}
+		}
 	}
 	private int register_index(String reg_a){
 		return reg_a.charAt(0)-'a';

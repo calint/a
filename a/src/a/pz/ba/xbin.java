@@ -108,11 +108,32 @@ public final class xbin{
 		if(!registers_available.remove(name))throw new Error();
 		pl(ix+" allocate register "+name);
 	}
-	public void decl_register_alias(String reg,String token){
-		pl("register alias "+reg+"   "+token);
+	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
+	public void alias_register(String token,String reg){
+		if(register_aliases.containsKey(token))throw new Error("register already aliased: "+token+"   "+register_aliases);
+		register_aliases.put(token,reg);
+		pl(ix+" register alias "+reg+"   "+token);
+	}
+	public void unalias_register(String token){
+		if(!register_aliases.containsKey(token))throw new Error("alias not found: "+token+"   "+register_aliases);
+		register_aliases.remove(token);
+		pl(ix+" unregister alias "+token);
 	}
 	public void free_register(String e){
 		pl(ix+" free register "+e);
 		registers_available.add(e);
+	}
+	public String register_for_alias(String alias){
+		return register_aliases.get(alias);
+	}
+	public int register_index_for_alias(statement stmt,String alias){
+		 String regnm=register_for_alias(alias);
+		if(regnm==null)
+			regnm=alias;
+//			throw new compiler_error(stmt,"alias '"+alias+"' not found in "+register_aliases,alias);
+		if(regnm.length()!=1) throw new Error("not a register: "+regnm);
+		final int rdi=regnm.charAt(0)-'a';
+		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+		return rdi;
 	}
 }

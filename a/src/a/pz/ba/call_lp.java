@@ -26,9 +26,7 @@ final public class call_lp extends statement{
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		final expression rd=arguments.get(0);
-		if(rd.token.length()!=1) throw new Error("not a register: "+rd.token);
-		final int rdi=rd.token.charAt(0)-'a';
-		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+		final int rdi=x.register_index_for_alias(this,rd.token);
 		final int rai=0,znxr=0;
 		final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
 		x.write(i);
