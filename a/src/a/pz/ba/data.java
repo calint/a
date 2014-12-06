@@ -32,7 +32,7 @@ public final class data extends statement{
 			expr=new expression(this,"e",annotations,token,r);
 			return;
 		}
-		final String asm="li stc lp inc add ldc ld foo fow tx sub shf";
+		final String asm="li stc lp inc add ldc ld tx sub shf  foo fow";
 		if(asm.indexOf(token)==-1){
 			expr=new call(this,"e",annotations,token,r);
 			return;
