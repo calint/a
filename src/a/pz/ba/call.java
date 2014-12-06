@@ -66,7 +66,13 @@ public class call extends statement{
 		x.p(")").p(ws_trailing);
 	}
 
-	public static int declared_register_index_from_string(statement stmt,String token){
+	public static int declared_register_index_from_string(xbin bin,statement stmt,String token){
+		final String reg=bin.register_for_alias(token);
+		if(reg!=null)
+			token=reg;
+//		if(reg==null)
+//			throw new compiler_error(stmt,"alias not found in "+bin.register_aliases,token);
+//		token=reg;
 		if(token.length()!=1) throw new compiler_error(stmt,"not a register",token);
 		if(!stmt.blk.is_register_declared(token))
 			throw new compiler_error(stmt,"register not declared",token);

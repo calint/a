@@ -7,20 +7,33 @@
 @inline dots.upd()
 
 eof
-def rects.drw(){
-  foo(rects){
-    lp(g){
-      lp(f){
-        stc(d e)
-      }
-      add(d h)
-    }
-  }
-}
-eof
 def dots.drw(){
   foo(dots){
-    st(d f)
+    st(yx rgb)
+  }
+}
+def dots
+[   yx    dyx    rgb ]{4
+  0x7840 0x0001 0x800
+  0x7951 0x0002 0x080
+  0x7a62 0x0003 0x008
+  0x7b73 0x0004 0x088
+}
+def rects
+[   yyxx  rgb   wi    hi   ln ]{ 3
+  0x1400 0x0ff 256    80  0x24
+  0x1000 0xf00 0x30  0x40 0x24
+  0x5800 0x00f 0x30   50  0x23
+}
+eof
+def rects.drw(){
+  foo(rects){
+    lp(hi){
+      lp(wi){
+        stc(yyxx rgb)
+      }
+      add(yyxx ln)
+    }
   }
 }
 eof
@@ -69,20 +82,6 @@ def print_bmp_4x4(d e f g l i){
   }
 }
 @registerts_left_mnop eof
-
-def dots
-[   yx    dyx    rgb ]{4
-  0x7840 0x0001 0x800
-  0x7951 0x0002 0x080
-  0x7a62 0x0003 0x008
-  0x7b73 0x0004 0x088
-}
-def rects
-[   yyxx  rgb   wi    hi   ln ]{ 3
-  0x1400 0x0ff 256    80  0x24
-  0x1000 0xf00 0x30  0x40 0x24
-  0x5800 0x00f 0x30   50  0x23
-}
 eof eof eof
 def rects.upd(){
   var m
