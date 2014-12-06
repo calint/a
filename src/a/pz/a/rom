@@ -7,8 +7,19 @@
 @inline dots.upd()
 
 eof
+def rects.drw(){
+  foo(rects){
+    lp(g){
+      lp(f){
+        stc(d e)
+      }
+      add(d h)
+    }
+  }
+}
+eof
 def dots.drw(){
-  foo(dots d e f){
+  foo(dots){
     st(d f)
   }
 }
@@ -84,16 +95,6 @@ def rects.upd(){
     tx(i h)
     sub(i m)
     @ifp li(h 0x10)
-  }
-}
-def rects.drw(){
-  foo(rects d e f g h){
-    lp(g){
-      lp(f){
-        stc(d e)
-      }
-      add(d h)
-    }
   }
 }
 def dots.upd(){
