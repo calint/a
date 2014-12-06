@@ -8,7 +8,7 @@ public final class data extends statement{
 	private static final long serialVersionUID=1;
 	final private statement expr;
 	public data(a pt,String nm,reader r){
-		super(pt,nm,no_annotations,r);
+		super(pt,nm,no_annotations,"",r);
 		final LinkedHashMap<String,String> annotations=new LinkedHashMap<>();
 		final String src;
 		while(true){

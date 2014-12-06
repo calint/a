@@ -8,7 +8,7 @@ final public class expression extends statement{
 	final String src;
 	private final String ws_after;
 	public expression(a pt,String nm,reader r){
-		super(pt,nm,no_annotations,r);
+		super(pt,nm,no_annotations,"",r);
 		src=r.next_token();
 		ws_after=r.next_empty_space();
 	}
