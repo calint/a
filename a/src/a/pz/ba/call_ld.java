@@ -9,15 +9,8 @@ final public class call_ld extends call{
 		super(pt,nm,annotations,"ld",r);
 	}
 	@Override public void binary_to(xbin x){
-		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
-		final expression ra=arguments.get(1);
-		if(ra.token.length()!=1) throw new Error("not a register: "+ra.token);
-		final int rai=ra.token.charAt(0)-'a';
-		if(rai<0||rai>15) throw new Error("source registers 'a' through 'p' available");
-		final expression rd=arguments.get(0);
-		if(rd.token.length()!=1) throw new Error("not a register: "+rd.token);
-		final int rdi=rd.token.charAt(0)-'a';
-		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+		final int rai=register_index_from_string(this,arguments.get(1).token);
+		final int rdi=register_index_from_string(this,arguments.get(0).token);
 		final int i=0x00f8|(rai&15)<<8|(rdi&15)<<12;
 		x.write(apply_znxr_annotations_on_instruction(i));
 	}

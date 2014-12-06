@@ -11,7 +11,7 @@ final public class block extends statement{
 	final private ArrayList<data> datas=new ArrayList<>();
 	public block(a pt,String nm,reader r){// {}  gives 0 length file
 		super(pt,nm,read_annot(r),"",r);
-		if(!r.is_next_char_block_open()) throw new Error(r.line+":"+r.col+" expected {");
+		if(!r.is_next_char_block_open()) throw new compiler_error(this,"expected { to open code block","");
 		int i=0;
 		ws_after_open_block=r.next_empty_space();
 		while(true){
