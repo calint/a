@@ -2,8 +2,8 @@ package a.pz.a;
 import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
-import a.pz.a.crun_source_editor.block;
-import a.pz.a.crun_source_editor.xbin;
+import a.pz.ba.block;
+import a.pz.ba.xbin;
 import a.pz.bas.program;
 import a.pz.bas.assembly.add;
 import a.pz.bas.assembly.call;
@@ -61,9 +61,9 @@ final public class acore extends a{
 	private block src;
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
-		if(o instanceof crun_source_editor.prog){
+		if(o instanceof prog){
 			pl("*** compiler");
-			final crun_source_editor.prog p=(crun_source_editor.prog)o;
+			final prog p=(prog)o;
 			src=p.code;
 			for(int i=0;i<cor.rom.length;i++)cor.rom[i]=-1;
 			final xbin b=new xbin(p.toc,cor.rom);

@@ -11,10 +11,9 @@ import java.io.StringReader;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 import a.pz.core;
-import a.pz.a.crun_source_editor.block;
-import a.pz.a.crun_source_editor.prog;
-import a.pz.a.crun_source_editor.reader;
-import a.pz.a.crun_source_editor.xbin;
+import a.pz.ba.block;
+import a.pz.ba.reader;
+import a.pz.ba.xbin;
 import b.threadedsock;
 import b.websock;
 final public class porta extends websock implements threadedsock{
