@@ -9,7 +9,7 @@ final public class block extends statement{
 	final private String ws_after_open_block,ws_trailing;
 	final private ArrayList<data> datas=new ArrayList<>();
 	public block(a pt,String nm,reader r){// {}  gives 0 length file
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		if(!r.is_next_char_block_open()) throw new Error(r.line+":"+r.col+" expected {");
 		int i=0;
 		ws_after_open_block=r.next_empty_space();

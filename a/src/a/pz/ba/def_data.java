@@ -8,7 +8,7 @@ final public class def_data extends statement{
 	final private block data;
 	final private String name;
 	public def_data(a pt,String nm,String name,reader r){
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		this.name=name;
 		data=new block(this,"d",r);
 		r.toc.put("data "+name,this);

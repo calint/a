@@ -1,20 +1,22 @@
 package a.pz.ba;
 
+import java.util.LinkedHashMap;
 import b.a;
 import b.xwriter;
 
 public class statement extends a{
-	//		public void refactor_rename(xwriter x,String arg){}
-	//		public void refactor_reorder_function_arguments(xwriter x,String arg){}
+	final public static LinkedHashMap<String,String> no_annotations=new LinkedHashMap<>();
 	private static final long serialVersionUID=1;
 	final private String ws_before;
-	public statement(a pt,String nm){// {}  gives 0 length file
+	final LinkedHashMap<String,String> annotations;
+	public statement(a pt,String nm){
 		super(pt,nm);
 		ws_before="";
-		//			r.bm();
+		annotations=no_annotations;
 	}
-	public statement(a pt,String nm,reader r){// {}  gives 0 length file
+	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
 		super(pt,nm);
+		this.annotations=annotations;
 		ws_before=r.next_empty_space();
 		r.bm();
 	}

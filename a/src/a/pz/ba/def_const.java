@@ -8,7 +8,7 @@ final public class def_const extends statement{
 	final private String ws_trailing;
 	final expression expr;
 	public def_const(a pt,String nm,String name,reader r){
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		expr=new expression(this,"e",r);
 		ws_trailing=r.next_empty_space();
 		r.toc.put("const "+name,this);

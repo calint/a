@@ -12,7 +12,7 @@ public class call extends statement{
 	final protected ArrayList<expression> arguments=new ArrayList<>();
 	final Map<String,String> annotations_ws;
 	public call(a pt,String nm,LinkedHashMap<String,String> annotations_ws,String name,reader r){
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		this.name=name;
 		this.annotations_ws=annotations_ws;
 		ws_after_name=r.next_empty_space();

@@ -10,7 +10,7 @@ final public class call_lp extends statement{
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private block loop_code;
 	public call_lp(a pt,String nm,reader r){
-		super(pt,nm,r);
+		super(pt,nm,no_annotations,r);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
 		while(true){
