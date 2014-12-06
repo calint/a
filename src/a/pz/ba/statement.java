@@ -8,25 +8,25 @@ public class statement extends a{
 	final public static LinkedHashMap<String,String> no_annotations=new LinkedHashMap<>();
 	private static final long serialVersionUID=1;
 	final private String token;
-	final private String ws_before;
+	final private String ws_after;
 	final LinkedHashMap<String,String> annotations;
-	public statement(a pt,String nm){
+	public statement(a pt,String nm,LinkedHashMap<String,String> annotations){
 		super(pt,nm);
-		ws_before="";
-		annotations=no_annotations;
+		this.annotations=annotations;
 		token="";
+		ws_after="";
 	}
 	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String token,reader r){
 		super(pt,nm);
 		this.annotations=annotations;
-		ws_before=r.next_empty_space();
-		r.bm();
 		this.token=token;
+		ws_after=r.next_empty_space();
+		r.bm();
 	}
 	public void binary_to(xbin x){}
 	public void source_to(xwriter x){
 		annotations.entrySet().forEach(me->x.p('@').p(me.getKey()).p(me.getValue()));
-		x.p(token).p(ws_before);
+		x.p(token).p(ws_after);
 	}
 	final @Override public void to(xwriter x) throws Throwable{
 		source_to(x);

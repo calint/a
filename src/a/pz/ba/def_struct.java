@@ -15,7 +15,7 @@ final public class def_struct extends statement{
 		int i=0;
 		while(true){
 			if(r.is_next_char_struct_close()) break;
-			final expression arg=new expression(this,""+i++,r);
+			final expression arg=new expression(this,""+i++,no_annotations,r);
 			arguments.add(arg);
 		}
 		data=new block(this,"d",r);

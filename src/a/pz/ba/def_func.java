@@ -15,7 +15,7 @@ final public class def_func extends statement{
 		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,""+i++,r);
+			final expression arg=new expression(this,""+i++,no_annotations,r);
 			arguments.add(arg);
 		}
 		ws_after_expr_close=r.next_empty_space();

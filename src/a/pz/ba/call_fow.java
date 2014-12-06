@@ -15,7 +15,7 @@ final public class call_fow extends statement{
 		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,r);
+			final expression arg=new expression(this,"e"+i++,no_annotations,r);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
@@ -23,7 +23,7 @@ final public class call_fow extends statement{
 		loop_code=new block(this,"b",r);
 	}
 	@Override public void binary_to(xbin x){
-		final String table_name=arguments.get(0).src;
+		final String table_name=arguments.get(0).token;
 		final def_struct dt=(def_struct)x.toc.get("struct "+table_name);
 		if(dt==null) throw new Error("struct not found: "+table_name);
 
@@ -39,20 +39,20 @@ final public class call_fow extends statement{
 		//			x.write(i);
 
 		x.write(0|0x0000|(0&15)<<8|(0&15)<<12);//li(a dots)
-		x.link_li(rd.src);
+		x.link_li(rd.token);
 		x.write(0);
 		x.write(0|0x00c0|(0&15)<<8|(2&15)<<12);//ldc(c a)
 		x.write(0|0x0100|(0&15)<<8|(2&15)<<12);//lp(c)
 		x.write(0|0x00e0|(0&15)<<8|(1&15)<<12);//tx(b a)
 		for(expression e:arguments.subList(1,arguments.size())){
-			final String reg=e.src;
+			final String reg=e.token;
 			final int regi=reg.charAt(0)-'a';
 			x.write(0|0x00c0|(0&15)<<8|(regi&15)<<12);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
 		x.write(0|0x00e0|(1&15)<<8|(0&15)<<12);//tx(a b)
 		for(expression e:arguments.subList(1,arguments.size())){
-			final String reg=e.src;
+			final String reg=e.token;
 			final int regi=reg.charAt(0)-'a';
 			x.write(0|0x0040|(0&15)<<8|(regi&15)<<12);//stc(a reg)
 		}

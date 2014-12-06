@@ -15,7 +15,7 @@ final public class call_lp extends statement{
 		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,r);
+			final expression arg=new expression(this,"e"+i++,no_annotations,r);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
@@ -25,8 +25,8 @@ final public class call_lp extends statement{
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		final expression rd=arguments.get(0);
-		if(rd.src.length()!=1) throw new Error("not a register: "+rd.src);
-		final int rdi=rd.src.charAt(0)-'a';
+		if(rd.token.length()!=1) throw new Error("not a register: "+rd.token);
+		final int rdi=rd.token.charAt(0)-'a';
 		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 		final int rai=0,znxr=0;
 		final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
