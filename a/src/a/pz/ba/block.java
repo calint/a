@@ -11,7 +11,10 @@ final public class block extends statement{
 	final private ArrayList<String> declarations;
 	final public static ArrayList<String>no_declarations=new ArrayList<>();
 	public block(a pt,String nm,reader r,ArrayList<String>declarations){// {}  gives 0 length file
-		super(pt,nm,read_annot(r),"",r);
+		this(pt,nm,r,declarations,null);
+	}
+	public block(a pt,String nm,reader r,ArrayList<String>declarations,block b){// {}  gives 0 length file
+		super(pt,nm,read_annot(r),"",r,b);
 		if(!r.is_next_char_block_open()) throw new compiler_error(this,"expected { to open code block","");
 		int i=0;
 		ws_after_open_block=r.next_empty_space();
@@ -19,7 +22,7 @@ final public class block extends statement{
 			//				pl("line :"+i);
 			if(r.next_empty_space().length()!=0) throw new Error();
 			if(r.is_next_char_block_close()) break;
-			final data d=new data(this,"i"+i++,r);
+			final data d=new data(this,"i"+i++,r,this);
 			datas.add(d);
 		}
 		ws_trailing=r.next_empty_space();

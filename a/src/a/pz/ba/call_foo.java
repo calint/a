@@ -10,18 +10,18 @@ final public class call_foo extends statement{
 	final private ArrayList<expression> arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private block loop_code;
-	public call_foo(a pt,String nm,LinkedHashMap<String,String> annotations,reader r){
-		super(pt,nm,annotations,"",r);
+	public call_foo(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,block b){
+		super(pt,nm,annotations,"",r,b);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,no_annotations,r);
+			final expression arg=new expression(this,"e"+i++,no_annotations,r,b);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		loop_code=new block(this,"b",r,block.no_declarations);
+		loop_code=new block(this,"b",r,block.no_declarations,b);
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;

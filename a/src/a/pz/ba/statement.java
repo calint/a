@@ -11,19 +11,22 @@ public class statement extends a{
 	final private String ws_after;
 	final private LinkedHashMap<String,String> annotations;
 	final private String location_in_source;
-	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String loc){
+	final private block blk;
+	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String loc,block b){
 		super(pt,nm);
 		this.annotations=annotations;
 		token="";
 		ws_after="";
 		location_in_source=loc;
+		blk=b;
 	}
-	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String token,reader r){
+	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String token,reader r,block b){
 		super(pt,nm);
 		this.annotations=annotations;
 		this.token=token;
 		ws_after=r.next_empty_space();
 		location_in_source=r.bm_line+":"+r.bm_col;
+		blk=b;
 //		r.bm();
 	}
 	public void binary_to(xbin x){}

@@ -9,16 +9,16 @@ final public class def_struct extends statement{
 	final private String name;
 	final ArrayList<expression> arguments=new ArrayList<>();
 	final private block data;
-	public def_struct(a pt,String nm,String name,reader r){
-		super(pt,nm,no_annotations,"",r);
+	public def_struct(a pt,String nm,String name,reader r,block b){
+		super(pt,nm,no_annotations,"",r,b);
 		this.name=name;
 		int i=0;
 		while(true){
 			if(r.is_next_char_struct_close()) break;
-			final expression arg=new expression(this,""+i++,no_annotations,r);
+			final expression arg=new expression(this,""+i++,no_annotations,r,b);
 			arguments.add(arg);
 		}
-		data=new block(this,"d",r,block.no_declarations);
+		data=new block(this,"d",r,block.no_declarations,b);
 		r.toc.put("struct "+name,this);
 	}
 	@Override public void binary_to(xbin x){
