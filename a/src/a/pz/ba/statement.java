@@ -7,11 +7,11 @@ import b.xwriter;
 public class statement extends a{
 	final public static LinkedHashMap<String,String> no_annotations=new LinkedHashMap<>();
 	private static final long serialVersionUID=1;
-	final private String token;
+	final protected String token;
 	final private String ws_after;
 	final private LinkedHashMap<String,String> annotations;
 	final private String location_in_source;
-	final private block blk;
+	final protected block blk;
 	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String loc,block b){
 		super(pt,nm);
 		this.annotations=annotations;

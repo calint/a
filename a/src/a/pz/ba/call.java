@@ -66,8 +66,10 @@ public class call extends statement{
 		x.p(")").p(ws_trailing);
 	}
 
-	public static int register_index_from_string(statement stmt,String token){
+	public static int declared_register_index_from_string(statement stmt,String token){
 		if(token.length()!=1) throw new compiler_error(stmt,"not a register",token);
+		if(!stmt.blk.is_register_declared(token))
+			throw new compiler_error(stmt,"register not declared",token);
 		final int rai=token.charAt(0)-'a';
 		if(rai<0||rai>15) throw new compiler_error(stmt,"registers 'a' through 'p' available",token);
 		return rai;

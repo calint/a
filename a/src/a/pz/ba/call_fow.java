@@ -20,8 +20,9 @@ final public class call_fow extends statement{
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
-		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		loop_code=new block(this,"b",r,block.no_declarations,b);
+		final ArrayList<String>declarations=new ArrayList<>();
+		arguments.forEach(e->declarations.add(e.token));
+		loop_code=new block(this,"b",r,declarations,b);
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
