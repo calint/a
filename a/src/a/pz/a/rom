@@ -7,6 +7,18 @@
 @inline dots.upd()
 
 eof
+def print_bmp_4x4(d e f g l i){
+  lp(f){
+    lp(e){
+      shf(l -1)
+      @ifn stc(d i)
+      @ifz inc(d)
+      @ifp inc(d)
+    }
+    add(d g)
+  }
+}
+eof
 def dots.drw(){
   foo(dots){
     st(yx rgb)
@@ -72,19 +84,6 @@ def pl(d e f g h i j){
     sub(d j)
   }
 }
-eof
-def print_bmp_4x4(d e f g l i){
-  lp(f){
-    lp(e){
-      shf(l -1)
-      @ifn stc(d i)
-      @ifz inc(d)
-      @ifp inc(d)
-    }
-    add(d g)
-  }
-}
-@registerts_left_mnop eof
 eof eof eof
 def rects.upd(){
   var m
