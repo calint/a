@@ -52,15 +52,16 @@ final public class call_foo extends statement{
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
 			int r='d';
 			for(def_struct_field col:stc.arguments){
-				final String rn=(char)r+"";
+				final String rn=(char)r+++"";
 				x.allocate_register(this,rn);
 				allocated_registers.add(rn);
+				args.add(new expression(rn));
 //				x.decl_register_alias(rn,col.token);
 			}
 		}else{
 			args=arguments;
+			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-		if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		final expression rd=args.get(0);
 //		final int rai=register_index(reg_a);
 ////		final int rbi=register_index(reg_b);
