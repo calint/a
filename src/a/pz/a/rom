@@ -30,7 +30,9 @@ def os[bmp4x4]{1
 eof
 eof 
 def pl(d e f g h i j){
+  var k
   ldc(k h)
+  var l
   lp(k){
     ldc(l h)
     @inline print_bmp_4x4(d e f g l i)
@@ -66,10 +68,13 @@ def rects
 }
 eof eof eof
 def rects.upd(){
+  var m
   li(m 0x40)
   fow(rects d e f g h){
     inc(h)
+    var p
     @debug tx(p h)
+    var i
     tx(i h)
     sub(i m)
     @ifp li(h 0x10)
@@ -91,9 +96,11 @@ def dots.drw(){
   }
 }
 def dots.upd(){
+  var g
   li(g 0x7f00)
   fow(dots d e f){
     add(d e)
+    var h
     tx(h d)
     sub(h g)
     @ifp li(d 0x0800)

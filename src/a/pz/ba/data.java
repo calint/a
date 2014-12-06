@@ -24,6 +24,10 @@ public final class data extends statement{
 			token=s;
 			break;
 		}
+		if("var".equals(token)){
+			expr=new def_var(this,"e",r,b);
+			return;
+		}
 		if("def".equals(token)){
 			expr=new def(this,"e",annotations,r,b);
 			return;
