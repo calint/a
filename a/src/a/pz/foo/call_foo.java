@@ -30,13 +30,6 @@ final public class call_foo extends statement{
 		if(dt==null) throw new Error("struct not found: "+table_name);
 		final ArrayList<expression>args;
 		final ArrayList<String>allocated_registers=new ArrayList<>();
-//		x.allocate_register(this,"a");
-//		x.allocate_register(this,"b");
-//		x.allocate_register(this,"c");
-//		allocated_registers.add("a");
-//		allocated_registers.add("b");
-//		allocated_registers.add("c");
-//		
 		final String reg_a=x.allocate_register(this);
 		final String reg_b=x.allocate_register(this);
 		final String reg_c=x.allocate_register(this);
@@ -49,11 +42,7 @@ final public class call_foo extends statement{
 			final String struct_name=args.get(0).token;
 			final def_struct stc=(def_struct)x.toc.get("struct "+struct_name);
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
-//			int r='d';
 			for(def_struct_field col:stc.arguments){
-//				final String rn=(char)r+++"";
-//				x.allocate_register(this,rn);
-//				allocated_registers.add(rn);
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
 				final expression e=new expression(reg);
@@ -76,7 +65,6 @@ final public class call_foo extends statement{
 		x.write(0|0x00c0|(0&15)<<8|(rci&15)<<12);//ldc(c a)
 		x.write(0|0x0100|(0&15)<<8|(rci&15)<<12);//lp(c)
 		for(expression e:args.subList(1,args.size())){
-			final String reg=e.token;
 			final int regi=x.register_index_for_alias(this,e.token);//reg.charAt(0)-'a';
 			x.write(0|0x00c0|(0&15)<<8|(regi&15)<<12);//ldc(c regi)
 		}
