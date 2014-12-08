@@ -41,23 +41,24 @@ public class call extends statement{
 		final ArrayList<String>allocated_registers=new ArrayList<>();
 		final ArrayList<String>aliases=new ArrayList<>();
 		for(expression e:arguments){
-			final expression a=d.arguments.get(i);
-//			if(a.token.equals(arguments.get(i).token)) continue;
+			final expression argspec=d.arguments.get(i);
 			i++;
+			if(argspec.token.equals(e.token)) 
+				continue;
 			final String r=x.get_register_for_alias(e.token);
 			if(r!=null){
-				if(x.get_register_for_alias(a.token)==null)
-					x.alias_register(a.token,r);
-				aliases.add(a.token);
+				if(x.get_register_for_alias(argspec.token)==null)
+					x.alias_register(argspec.token,r);
+				aliases.add(argspec.token);
 				continue;
 			}
 			// alias if alias
 			
 			final String rd=x.allocate_register(this);
 			allocated_registers.add(rd);
-			x.alias_register(a.token,rd);
-			aliases.add(a.token);
-			final int rdi=x.register_index_for_alias(this,a.token);
+			x.alias_register(argspec.token,rd);
+			aliases.add(argspec.token);
+			final int rdi=x.register_index_for_alias(this,argspec.token);
 //			final int rdi=a.token.charAt(0)-'a';
 			final int in=0x0000|(rdi&15)<<12;
 			x.write(in);

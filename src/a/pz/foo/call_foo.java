@@ -1,5 +1,6 @@
 package a.pz.foo;
 
+import static b.b.pl;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import b.a;
@@ -50,6 +51,7 @@ final public class call_foo extends statement{
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
 		args.subList(1,args.size()).forEach(e->blk.declarations.add(e.token));
+		pl("foo "+blk.declarations.toString());
 		final expression rd=args.get(0);
 		final String ra=x.allocate_register(this);
 		allocated_registers.add(ra);
