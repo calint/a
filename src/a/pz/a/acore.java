@@ -83,7 +83,7 @@ final public class acore extends a{
 				p.code.binary_to(b);
 				final int nregs_aft=b.registers_available.size();
 				if(nregs_pre!=nregs_aft)
-					throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft);
+					throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+b.registers_available);
 				pl("registers available "+b.registers_available.size()+" "+b.registers_available);
 				pl("*** linker");
 				b.link();
