@@ -27,7 +27,7 @@ final public class call_foo extends statement{
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
 		final def_struct dt=(def_struct)x.toc.get("struct "+table_name);
-		if(dt==null) throw new Error("struct not found: "+table_name);
+		if(dt==null) throw new compiler_error(this,"table not found",table_name);
 		final ArrayList<expression>args;
 		final ArrayList<String>allocated_registers=new ArrayList<>();
 //		final String reg_a=x.allocate_register(this);
