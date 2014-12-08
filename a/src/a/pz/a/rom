@@ -6,18 +6,18 @@ def text.drw(){
     var n
     ldc(n text)
     lp(n){
-      var bb
-      ldc(bb text)
-      @inline print_bmp_4x4(dest_addr width height add_after_line bb rgb)
+      var bmp
+      ldc(bmp text)
+      @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
       sub(dest_addr add_after_glyph)
     }
   }
 }
-def print_bmp_4x4(scr wi hi ln bmp colr){
+def print_bmp_4x4(scr wi hi ln bmp rgb){
   lp(hi){
     lp(wi){
       shf(bmp -1)
-      @ifn stc(scr colr)
+      @ifn stc(scr rgb)
       @ifz inc(scr)
       @ifp inc(scr)
     }
