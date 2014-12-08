@@ -1,4 +1,5 @@
 {
+@inline rects.upd()
 @inline rects.drw()
 eof eof
 def rects
@@ -8,6 +9,17 @@ def rects
   0x5800 0x00f 0x30   50  0x23
 }
 eof
+def rects.upd(){
+  var m
+  li(m 0x40)
+  fow(rects){
+    inc(ln)
+    var i
+    tx(i ln)
+    sub(i m)
+    @ifp li(ln 0x10)
+  }
+}
 def rects.drw(){
   foo(rects){
     lp(hi){

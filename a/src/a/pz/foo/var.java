@@ -18,4 +18,9 @@ final public class var extends statement{
 		super.source_to(x);
 		x.p(name).p(ws_trailing);
 	}
+	@Override public void binary_to(xbin x){
+		final String reg=x.allocate_register(this);
+		x.alias_register(name,reg);
+		blk.vars.add(name);
+	}
 }

@@ -137,4 +137,10 @@ public final class xbin{
 		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 		return rdi;
 	}
+	public void unalloc(statement stmt,String alias){
+		final String r=register_for_alias(alias);
+		if(r==null)throw new compiler_error(stmt,"alias not registered",alias);
+		unalias_register(alias);
+		free_register(r);
+	}
 }

@@ -30,12 +30,6 @@ final public class call_foo extends statement{
 		if(dt==null) throw new compiler_error(this,"table not found",table_name);
 		final ArrayList<expression>args;
 		final ArrayList<String>allocated_registers=new ArrayList<>();
-//		final String reg_a=x.allocate_register(this);
-//		allocated_registers.add(reg_a);
-//		final String reg_b=x.allocate_register(this);
-//		allocated_registers.add(reg_b);
-//		final String reg_c=x.allocate_register(this);
-//		allocated_registers.add(reg_c);
 		final ArrayList<String>aliases=new ArrayList<>();
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
@@ -76,15 +70,8 @@ final public class call_foo extends statement{
 		x.write(4);//nxt
 		aliases.forEach(e->x.unalias_register(e));
 		allocated_registers.forEach(e->x.free_register(e));
-//		if(arguments.size()==1){//select *
-//			final String struct_name=args.get(0).token;
-//			final def_struct stc=(def_struct)x.toc.get("struct "+struct_name);
-//			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
-//			for(def_struct_field col:stc.arguments){
-//				x.unalias_register(col.token);
-//			}
-//		}
 	}
+	
 	private int register_index(String reg_a){
 		return reg_a.charAt(0)-'a';
 	}
