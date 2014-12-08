@@ -78,7 +78,7 @@ final public class call_fow extends statement{
 //			final int regi=reg.charAt(0)-'a';
 			x.write(0|0x0040|(rai&15)<<8|(regi&15)<<12);//stc(a reg)
 		}
-		aliases.forEach(e->x.unalias_register(e));
+		aliases.forEach(e->x.unalias_register(this,e));
 		allocated_registers.forEach(e->x.free_register(e));
 		x.write(4);//nxt
 	}

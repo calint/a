@@ -102,20 +102,20 @@ public final class xbin{
 		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
 		return registers_available.remove(0);
 	}
-	private void allocate_register(statement at_statement,String name){
-		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
-		if(!registers_available.contains(name))throw new compiler_error(at_statement,"register not available",name);
-		if(!registers_available.remove(name))throw new Error();
-		pl(ix+" allocate register "+name);
-	}
+//	private void allocate_register(statement at_statement,String name){
+//		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
+//		if(!registers_available.contains(name))throw new compiler_error(at_statement,"register not available",name);
+//		if(!registers_available.remove(name))throw new Error();
+//		pl(ix+" allocate register "+name);
+//	}
 	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
 	public void alias_register(String token,String reg){
-		if(register_aliases.containsKey(token))throw new Error("register already aliased: "+token+"   "+register_aliases);
+		if(register_aliases.containsKey(token))throw new Error("alias "+token+" is "+register_aliases);
 		register_aliases.put(token,reg);
 		pl(ix+" register alias "+reg+"   "+token);
 	}
-	public void unalias_register(String token){
-		if(!register_aliases.containsKey(token))throw new Error("alias not found: "+token+"   "+register_aliases);
+	public void unalias_register(statement stmt,String token){
+		if(!register_aliases.containsKey(token))throw new compiler_error(stmt,"alias not found: "+token+"   "+register_aliases,"");
 		register_aliases.remove(token);
 		pl(ix+" unregister alias "+token);
 	}
@@ -140,7 +140,10 @@ public final class xbin{
 	public void unalloc(statement stmt,String alias){
 		final String r=register_for_alias(alias);
 		if(r==null)throw new compiler_error(stmt,"alias not registered",alias);
-		unalias_register(alias);
+		unalias_register(stmt,alias);
 		free_register(r);
+	}
+	public String get_register_for_alias(String token){
+		return register_aliases.get(token);
 	}
 }

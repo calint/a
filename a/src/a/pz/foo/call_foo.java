@@ -68,7 +68,7 @@ final public class call_foo extends statement{
 		}
 		loop_code.binary_to(x);
 		x.write(4);//nxt
-		aliases.forEach(e->x.unalias_register(e));
+		aliases.forEach(e->x.unalias_register(this,e));
 		allocated_registers.forEach(e->x.free_register(e));
 	}
 	
