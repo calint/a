@@ -10,6 +10,7 @@ final public class block extends statement{
 	final private ArrayList<data> datas=new ArrayList<>();
 	final protected ArrayList<String> declarations;
 	final public static ArrayList<String> no_declarations=new ArrayList<>();
+	final ArrayList<String> vars=new ArrayList<>();
 	public block(a pt,String nm,reader r,ArrayList<String> declarations){// {}  gives 0 length file
 		this(pt,nm,r,declarations,null);
 	}
@@ -36,7 +37,9 @@ final public class block extends statement{
 	}
 
 	@Override public void binary_to(xbin x){
+		vars.clear();
 		datas.forEach(e->e.binary_to(x));
+		vars.forEach(e->x.unalloc(this,e));
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
