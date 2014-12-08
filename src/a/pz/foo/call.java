@@ -42,15 +42,24 @@ public class call extends statement{
 		final ArrayList<String>aliases=new ArrayList<>();
 		for(expression e:arguments){
 			final expression a=d.arguments.get(i);
-			if(a.token.equals(arguments.get(i).token)) continue;
+//			if(a.token.equals(arguments.get(i).token)) continue;
 			i++;
+			final String r=x.get_register_for_alias(e.token);
+			if(r!=null){
+				if(x.get_register_for_alias(a.token)==null)
+					x.alias_register(a.token,r);
+				aliases.add(a.token);
+				continue;
+			}
+			// alias if alias
+			
 			final String rd=x.allocate_register(this);
 			allocated_registers.add(rd);
 			x.alias_register(a.token,rd);
 			aliases.add(a.token);
 			final int rdi=x.register_index_for_alias(this,a.token);
 //			final int rdi=a.token.charAt(0)-'a';
-			final int in=0x0000|(0&15)<<8|(rdi&15)<<12;
+			final int in=0x0000|(rdi&15)<<12;
 			x.write(in);
 			x.write(e.eval(x));
 		}
@@ -61,7 +70,7 @@ public class call extends statement{
 			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
 		}
 		allocated_registers.forEach(e->x.free_register(e));
-		aliases.forEach(e->x.unalias_register(e));
+		aliases.forEach(e->x.unalias_register(this,e));
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);

@@ -1,11 +1,55 @@
 {
-@inline rects.drw()
-@inline dots.drw()
+@inline text.drw()
+eof eof eof
+def text.drw(){
+  foo(texts){
+    var n
+    ldc(n text)
+    var bb
+    lp(n){
+      ldc(bb text)
+      @inline print_bmp_4x4(dest_addr width height add_after_line bb rgb)
+      sub(dest_addr add_after_glyph)
+    }
+  }
+}
+def print_bmp_4x4(scr wi hi ln bmp colr){
+  lp(hi){
+    lp(wi){
+      shf(bmp -1)
+      @ifn stc(scr colr)
+      @ifz inc(scr)
+      @ifp inc(scr)
+    }
+    add(scr ln)
+  }
+}
+def texts
+[ dest_addr    width   height   add_after_line   text   rgb   add_after_glyph ]{2
+   0x3040       4        4         252           txt   0xf00       0x3fc   
+   0x3440       4        4         252           os    0xf00       0x3fc   
+} 
+eof
+def txt[u16]{6
+  0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
+  0xffff
+}
+eof
+def os[bmp4x4]{1
+   0xffff
+}
+eof
+def pl(dest_addr width height add_after_line text rgb add_after_glyph){
+  var n
+  ldc(n text)
+  var bmp
+  lp(n){
+    ldc(bmp text)
+    @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
+    sub(dest_addr j)
+  }
+}
 
-@inline rects.upd()
-@inline dots.upd()
-
-eof eof
 def rects
 [   yx    rgb   wi    hi   ln     ]{ 3
   0x1400 0x0ff 256    80  0x24
@@ -57,18 +101,6 @@ def dots.upd(){
     @ifp li(yx 0x0800)
   }
 }
-def print_bmp_4x4(scr wi hi ln bmp rgb){
-  lp(hi){
-    lp(wi){
-      shf(bmp -1)
-      @ifn stc(scr rgb)
-      @ifz inc(scr)
-      @ifp inc(scr)
-    }
-    add(scr ln)
-  }
-}
-
 def red 0xf00
 def green 0xf0
 def blue 0xf
