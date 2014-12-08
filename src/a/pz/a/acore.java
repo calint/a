@@ -3,8 +3,6 @@ import static b.b.log;
 import static b.b.pl;
 import static b.b.stacktrace;
 import a.pz.core;
-import a.pz.ba.block;
-import a.pz.ba.xbin;
 import a.pz.bas.program;
 import a.pz.bas.assembly.add;
 import a.pz.bas.assembly.call;
@@ -17,6 +15,8 @@ import a.pz.bas.assembly.shf;
 import a.pz.bas.assembly.stc;
 import a.pz.bas.assembly.sub;
 import a.pz.bas.assembly.tx;
+import a.pz.foo.block;
+import a.pz.foo.xbin;
 import b.a;
 import b.xwriter;
 final public class acore extends a{

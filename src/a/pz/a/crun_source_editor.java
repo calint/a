@@ -1,8 +1,8 @@
 package a.pz.a;
 import java.util.HashSet;
 import java.util.Set;
-import a.pz.ba.block;
-import a.pz.ba.reader;
+import a.pz.foo.block;
+import a.pz.foo.reader;
 import b.a;
 import b.xwriter;
 final public class crun_source_editor extends a{
