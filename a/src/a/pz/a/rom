@@ -5,8 +5,8 @@ def text.drw(){
   foo(texts){
     var n
     ldc(n text)
-    var bb
     lp(n){
+      var bb
       ldc(bb text)
       @inline print_bmp_4x4(dest_addr width height add_after_line bb rgb)
       sub(dest_addr add_after_glyph)
