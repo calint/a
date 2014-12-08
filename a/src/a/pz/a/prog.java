@@ -1,8 +1,8 @@
 package a.pz.a;
 
 import java.util.Map;
-import a.pz.ba.block;
-import a.pz.ba.statement;
+import a.pz.foo.block;
+import a.pz.foo.statement;
 
 final public class prog{
 	final Map<String,statement> toc;
