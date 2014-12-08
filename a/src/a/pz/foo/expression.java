@@ -18,7 +18,7 @@ final public class expression extends statement{
 //		this.token=token;
 		ws_after=r.next_empty_space();
 	}
-	public expression(String token){super(null,null,null,null,null);ws_after="";}
+	public expression(String token){super(null,"",null,"",token,null);ws_after="";}
 	@Override public void binary_to(xbin x){
 		x.at_pre_link_evaluate(this);
 		x.write(0);

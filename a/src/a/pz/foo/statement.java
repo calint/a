@@ -20,6 +20,14 @@ public class statement extends a{
 		location_in_source=loc;
 		blk=b;
 	}
+	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String loc,String token,block b){
+		super(pt,nm);
+		this.annotations=annotations;
+		this.token=token;
+		ws_after="";
+		location_in_source=loc;
+		blk=b;
+	}
 	public statement(a pt,String nm,LinkedHashMap<String,String> annotations,String token,reader r,block b){
 		super(pt,nm,token);
 		this.annotations=annotations;

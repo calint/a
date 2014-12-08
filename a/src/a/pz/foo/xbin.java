@@ -121,7 +121,7 @@ public final class xbin{
 	}
 	public void free_register(String e){
 		pl(ix+" free register "+e);
-		registers_available.add(e);
+		registers_available.add(0,e);
 	}
 	public String register_for_alias(String alias){
 		return register_aliases.get(alias);
