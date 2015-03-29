@@ -8,7 +8,7 @@ final public class $ extends a implements cacheable{static final long serialVers
 	public String filetype(){return "html";}
 	public String contenttype(){return "text/html;charset=utf8";}
 	public String lastmod(){return null;}
-	public long lastmodupdms(){return 24*60*60*1000;}
+	public long lastmodupdms(){return 0;}//24*60*60*1000;}
 	public boolean cacheforeachuser(){return false;}
 
 	public void to(final xwriter x)throws Throwable{
