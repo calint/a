@@ -47,11 +47,11 @@ function start(){
 			$.sts.value=keys[1];
 //			console.log(b64);
 			$.scr.src='data:image/png;base64,'+b64;
-//			ws.send(keys);
-			$.scr.onload=function(){
+//			$.scr.onload=function(){
 //				console.log("send keys")
-				ws.send(keys);
-			}
+//				ws.send(keys);
+//			}
+			ws.send(keys);
 			return;
 		}else if(cmd==49){//text to f1 compile status
 			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
