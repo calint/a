@@ -14,9 +14,5 @@ cd /a &&
 export JAVA_HOME=/jre
 export PATH=$JAVA_HOME/bin:$PATH
 export CLASSPATH=/a/bin
-#killall java > /dev/null
-#cmd="java -cp bin`ls lib|while read f;do echo -n :;echo -n lib/$f;done` b.b server_port 80 $*" &&
-#echo \ :: $cmd &&
-#$cmd &
 java -cp bin`ls lib|while read f;do echo -n :;echo -n lib/$f;done` b.b server_port 80 $* &
 exit 0
