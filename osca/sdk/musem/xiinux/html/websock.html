@@ -1,0 +1,23 @@
+<!DOCTYPE html><meta charset="utf-8" />
+<div id="output" ></div>
+<script>
+ws=[];run();
+function p(txt){
+	var p=document.createElement("p").innerHTML=txt;
+	ws.output.appendChild(p);
+}
+function run(){
+	ws.uri="ws://localhost:8088/websock";
+	ws.output=document.getElementById("output");
+	ws.ws=new WebSocket(ws.uri);
+	ws.ws.onopen=function(e){alert("sending");ws.ws.send("hello from websock");}
+	ws.ws.onclose=function(e){alert("close");};
+	ws.ws.onmessage=function(e){alert("message:"+e.data);ws.ws.close();};
+	ws.ws.onerror=function(e){alert("error");ws.ws.close();}
+}
+</script>
+	
+	
+	
+	
+	
