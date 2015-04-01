@@ -17,7 +17,7 @@ import b.xwriter;
 import c.client;
 
 final public class ficsgames extends a{
-	public a pl;{pl.set("ctenitchi");}//player name
+	public a pl;{pl.set("fics handle");}//player name
 	public a af;//query date
 	public a ot;//output
 	public ficsgames(){
