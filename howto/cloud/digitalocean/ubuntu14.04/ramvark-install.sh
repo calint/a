@@ -9,5 +9,6 @@ tar -xzvf jre.tgz&&
 chmod ugo+x /etc/rc.local&&
 apt-get update&&
 apt-get -y install gcc clang&&
+dpkg -i deb/*&&
 date
 

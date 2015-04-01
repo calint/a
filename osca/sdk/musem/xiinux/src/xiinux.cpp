@@ -359,20 +359,19 @@ int sock::run(){
 		}else return 0;
 	}
 	if(bufi==bufnn){
-		int sbufnn=recv(fd,buf,conbufnn,0);
-		if(sbufnn==0){//closed
+		bufnn=recv(fd,buf,conbufnn,0);
+		if(bufnn==0){//closed
 			stats.cbc++;//?
 	//		perror("recv");
 			return 0;
 		}
-		if(sbufnn<0)
+		if(bufnn<0)//? bunn not signed
 			if(errno!=EAGAIN&&errno!=EWOULDBLOCK){//error
 				perror("recv");
 				printf("\n%s:%d errno=%d client error\n\n",__FILE__,__LINE__,errno);
 				stats.errors++;
 				return 0;
 			}
-		bufnn=sbufnn;
 		bufi=0;
 		bufp=buf;
 		stats.input+=bufnn;
