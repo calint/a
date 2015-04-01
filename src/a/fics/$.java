@@ -26,7 +26,7 @@ final public class $ extends a{
 		x.style();
 //		x.css(this,"width:768px;color:#222;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
 //		x.css(this,"margin:0 4em 0 4em;padding:0 4em 0 4em;box-shadow:0 0 17px rgba(0,0,0,.5);border-radius:1px");
-		x.css("body","margin-left:1em;font-size:1em");
+//		x.css("html","padding-left:2em;font-size:1em");
 		x.css(sts,"color:green");
 		x.css(in1,"border:1px dotted green;width:100%;height:8em");
 //		x.css(dsp,"border:1px dotted blue;display:block");

@@ -1,7 +1,7 @@
-     free chess trainer
+     free chess trainer for freechess.org
 --------------------------------------------------
 
-  improving rating for non expert players is mainly
+  improving chess for non expert players is mainly
 
     improving tactical vision
 
@@ -12,29 +12,23 @@
            and
 
          playing ... slow games
-
-
+ 
             thus
 
       free chess trainer helps you
 
-     finding your lacks in tactical play
+        spot tactical opportunity
 
-       in an entertaining way
 
-       
-       looking for improved chess rating ?  read more
 
-       
-       
-       
-       
-       page 2
-       
-    basic program for beginners and intermediate players   rating 1000 - 1600:
-   1. play 5 blitz games first day at freechess.org    5 min
-   2. use chess trainer to compose problems from your played games
-   3. solve problems
-   4. play one long game next day  30+ min
-   5. repeat until reaching A class rating  ~1800
+
+         get better
+
+    in an easy entertaining way
+            
    
+              
+         
+      apply in your regular chess games
+     
+           upgrade your rating
