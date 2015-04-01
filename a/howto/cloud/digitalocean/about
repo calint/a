@@ -1,10 +1,3 @@
-
-
-
-
-
-# update
-rsync --recursive --verbose --exclude .svn --exclude u/ /Users/calin/Documents/workspace-2/a/  root@162.243.127.160:/a/
-ssh root@162.243.127.160 'killall java;. /etc/rc.local'
-
-ssh root@162.243.127.160 'shutdown -r now'
+ 
+ integration with digitalocean.com cloud services
+ 
