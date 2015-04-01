@@ -7,7 +7,12 @@ public class utf extends a{
 	private static final long serialVersionUID=1;
 	public void to(xwriter x) throws Throwable{
 		final int line_width=33;
-		final int chars=Integer.parseInt(tostr(req.get().query(),Integer.toString(0x20000)));
+		int chars;
+		try{
+			chars=Integer.parseInt(tostr(req.get().query(),Integer.toString(0x20000)));
+		}catch(NumberFormatException ignored){
+			chars=4096;
+		}
 		final int lines=chars/line_width;
 		x.style().p("*{font-family:monospaced;font-size:32px}").style_();
 		x.tag("center").code().pre();

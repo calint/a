@@ -23,7 +23,8 @@ public final class path implements Serializable{static final long serialVersionU
 		file=f;
 		final String name=f.getName();
 //		if(name==null||name.length()==0||name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
-		if(name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
+//		if(name.equals(".")||name.contains(".."))throw new Error("illegal name: "+name);
+		if(name.contains(".."))throw new Error("illegal name: "+name);
 		if(b.firewall_paths_on)b.firewall_ensure_path_access(uri());
 	}
 	path(final File f,final boolean ommit_checks){file=f;}// called by b.b
