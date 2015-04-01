@@ -10,7 +10,7 @@ while :;do
 	rsync --recursive --verbose --progress --exclude .svn -aze 'ssh -oStrictHostKeyChecking=no -oBatchMode=yes' $SRC root@$IP:/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
-	echo "`date +$DTF`  ${COLR}·  waiting for update $IP:/a/ from $WS/a/"
+	echo "`date +$DTF`  ${COLR}·  waiting for $IP"
 done
 date
 while :;do
