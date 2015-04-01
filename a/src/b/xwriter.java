@@ -137,9 +137,9 @@ public final class xwriter{
 	public xwriter td(final String cls){return td(cls,"");}
 	public xwriter td(final String cls,final String style){
 		tago("td");
-		if(cls==null||cls.length()==0)
+		if(cls!=null&&cls.length()!=0)
 			attr("class",cls);
-		if(style!=null&&!style.isEmpty())
+		if(style!=null&&style.length()!=0)
 			attr("style",style);
 		return tagoe();
 	}

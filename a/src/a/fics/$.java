@@ -16,7 +16,7 @@ final public class $ extends a{
 	public a hint;
 	public a in1;//pgn input
 	public a devthr;{devthr.set(.8f);}
-	public a crafty_bin_path;{crafty_bin_path.set("/opt/local/bin/crafty");}
+	public a crafty_bin_path;{crafty_bin_path.set("crafty");}
 	public ficsgames fg;
 	public a_ajaxsts ajaxsts;
 	public void to(final xwriter x)throws Throwable{
