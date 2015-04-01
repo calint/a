@@ -8,6 +8,6 @@ tar -xzvf a-lib.tgz&&
 tar -xzvf jre.tgz&&
 chmod ugo+x /etc/rc.local&&
 apt-get update&&
-apt-get install gcc clang figlet banner cowsay&&
+apt-get -y install gcc clang&&
 date
 
