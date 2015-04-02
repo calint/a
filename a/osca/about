@@ -6,8 +6,8 @@
 #     \    lowlatency \     \ \ 
 #      \_______________\        
 #                               
-#       \\  \\  \\              
-#        sticky notes           
+#           \\  \\  \\          
+#           sticky notes        
 #                               
 #   ./\.       
 #   /--\       
@@ -23,17 +23,20 @@
 #   /\_-_/\    
 #     | |      
 #              
-# runtime ubuntu packages
-sudo apt-get install scrot
-sudo apt-get install leafpad
-sudo apt-get install alsamixer
-sudo apt-get install vlc
-sudo apt-get install thunar
 
-#sudo apt-get install xpad
-sudo apt-get install alsa-utils && sudo addgroup c audio
+
+
+
+notes
+
+# runtime ubuntu packages
+sudo apt-get install scrot leafpad alsamixer vlc thunar pmount alsa-utils chromium-browser
+
+# to enable alsamixer
+sudo addgroup c audio 
 
 # developer ubuntu packages
-sudo apt-get install libx11-dev
-sudo apt-get install libxft-dev
-sudo apt-get install gnome-devel
+sudo apt-get install libx11-dev libxft-dev gnome-devel
+
+# two finger scroll speed
+synclient VertScrollDelta=-1 HorizScrollDelta=1
