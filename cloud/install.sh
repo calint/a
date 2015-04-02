@@ -1,5 +1,5 @@
 echo `date` rsync
-rsync -e "ssh -i$KEY_ -oStrictHostKeyChecking=no" --recursive --exclude .svn $SYNC_ root@$HOST_:/
+rsync -e "$SSHK" --recursive --exclude .svn $SYNC_ root@$HOST_:/
 
 echo `date` install
 $SSHKR 'sh -s'<install-ramvark.sh

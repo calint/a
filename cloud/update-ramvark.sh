@@ -11,7 +11,7 @@ COLR=
 
 echo "`date +$DTF`  ${COLR}•  update $HOST_:/a/ from $WORKSPACE_/a/"
 while :;do
-	rsync -e "ssh -i $KEY_" --recursive $VERBVOSE --exclude .svn --exclude u/ $WORKSPACE_/a/ root@$HOST_:/a/
+	rsync -e "$SSHK" --recursive $VERBVOSE --exclude .svn --exclude u/ $WORKSPACE_/a/ root@$HOST_:/a/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo "`date +$DTF`  ${COLR}·  waiting for update $HOST_:/a/ from $WORKSPACE_/a/"
@@ -20,7 +20,7 @@ done
 echo "`date +$DTF`  ${COLR}•  reset"
 #echo $SSH_OPTS
 while :;do
-	ssh -i $KEY_ $SSH_OPTS root@$HOST_ $CMD_RESET
+	$SSHKR $CMD_RESET
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo "`date +$DTF`  ${COLR}·  waiting for $HOST_ to ssh"
