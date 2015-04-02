@@ -23,7 +23,8 @@ public class $ extends a {
 	public a bt;{bt.set("c");}// build type  pczero bootable='b' or console='c'
 	public a c6;// design holder
 	{cap.from($.class.getResourceAsStream("main.cap"),"// cap code");}
-	@Override public void to(xwriter x) throws Throwable {
+	@Override public void to(xwriter x) throws Throwable{
+		x.p("<body>");
 		x.title("cap c sandbox");
 //		x.style("html","padding:0");
 		x.style(cap,"white-space:pre;word-wrap:normal;overflow-x:scroll;box-shadow:0 0 .5em rgba(0,0,0,.5);background:#f8f8f8;width:30em;height:128em;padding:0 1em 0 .5em");
