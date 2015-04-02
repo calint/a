@@ -1,0 +1,39 @@
+#  frameless osca desktop on    
+#  ________________             
+#  \ hp stream 11  \        \\  
+#   \  ubuntu 14.1  \       |\\ 
+#    \   linux 4     \      ||  
+#     \    lowlatency \     \ \ 
+#      \_______________\        
+#                               
+#       \\  \\  \\              
+#        sticky notes           
+#                               
+#   ./\.       
+#   /--\       
+#        ___   
+#       |o o|  
+#       /| |\  
+#   ____       
+#  |O  O|      
+#  |_ -_|      
+#   /||\       
+#     ___      
+#    /- -\     
+#   /\_-_/\    
+#     | |      
+#              
+# runtime ubuntu packages
+sudo apt-get install scrot
+sudo apt-get install leafpad
+sudo apt-get install alsamixer
+sudo apt-get install vlc
+sudo apt-get install thunar
+
+#sudo apt-get install xpad
+sudo apt-get install alsa-utils && sudo addgroup c audio
+
+# developer ubuntu packages
+sudo apt-get install libx11-dev
+sudo apt-get install libxft-dev
+sudo apt-get install gnome-devel

@@ -1,22 +1,23 @@
 #include<X11/Xlib.h>
-#include <X11/cursorfont.h>
+#include<X11/cursorfont.h>
 #include<stdlib.h>
 #include<stdio.h>
 #include<unistd.h>
 #include"frameless-cfg.h"
 typedef int xdesk;
-typedef struct {
+typedef unsigned int bits;
+typedef struct{
 	Window w;
-	int rx,ry;
-	unsigned int rw,rh;
-	int gx,gy;
-	unsigned int gw,gh;
-	unsigned int border,depth;
-	int vh;
-	xdesk desk;
-	int desk_x;
-	char bits;
-} xwin;
+//	int rx,ry;
+//	unsigned int rw,rh;
+	int gx,gy;// position
+	unsigned int gw,gh;// width height
+//	unsigned int border,depth;
+	bits vh;// bit 1 means fullheight    bit 2 means fullwidth
+	xdesk desk;// desk the window is on
+	int desk_x;// x coord of window before folded at desk switch
+	unsigned char bits;// bit 1 means allocated
+}xwin;
 #define xwinsct 128
 static xwin wins[xwinsct];
 static FILE*flog;
@@ -31,18 +32,18 @@ static unsigned int key=0;
 static int winslip=7;
 static xwin*winfocused=NULL;
 static int dragging=0;
-static char
-		*ix_evnames[LASTEvent]=
-				{"unknown","unknown",//0
-				"KeyPress","KeyRelease",//2
-				"ButtonPress","ButtonRelease",//4
-				"MotionNotify",//6
-				"EnterNotify","LeaveNotify",//7 LeaveWindowMask LeaveWindowMask
-				"FocusIn","FocusOut",//9 from XSetFocus
-				"KeymapNotify",//11
-				"Expose","GraphicsExpose","NoExpose",//12
-				"VisibilityNotify","CreateNotify","DestroyNotify","UnmapNotify","MapNotify",//15
-				"MapRequest","ReparentNotify","ConfigureNotify","ConfigureRequest","GravityNotify","ResizeRequest","CirculateNotify","CirculateRequest","PropertyNotify","SelectionClear","SelectionRequest","SelectionNotify","ColormapNotify","ClientMessage","MappingNotify","GenericEvent"};
+static char*ix_evnames[LASTEvent]={
+	"unknown","unknown",//0
+	"KeyPress","KeyRelease",//2
+	"ButtonPress","ButtonRelease",//4
+	"MotionNotify",//6
+	"EnterNotify","LeaveNotify",//7 LeaveWindowMask LeaveWindowMask
+	"FocusIn","FocusOut",//9 from XSetFocus
+	"KeymapNotify",//11
+	"Expose","GraphicsExpose","NoExpose",//12
+	"VisibilityNotify","CreateNotify","DestroyNotify","UnmapNotify","MapNotify",//15
+	"MapRequest","ReparentNotify","ConfigureNotify","ConfigureRequest","GravityNotify","ResizeRequest","CirculateNotify","CirculateRequest","PropertyNotify","SelectionClear","SelectionRequest","SelectionNotify","ColormapNotify","ClientMessage","MappingNotify","GenericEvent"
+};
 
 static xwin*xwinget(Window w){
 //	if(w==root){
@@ -82,6 +83,8 @@ static xwin*xwinget(Window w){
 	xw=&wins[firstavail];
 	xw->bits|=1;//allocated
 	wincount++;
+	fprintf(flog,"       wincount: %d\n",wincount);
+	fflush(flog);
 	xw->w=w;
 	xw->vh=0;
 	xw->desk=dsk;
@@ -90,12 +93,13 @@ static xwin*xwinget(Window w){
 static void xwinfocus(xwin*this){
 	XWindowAttributes xwinattr;
 	if(!XGetWindowAttributes(dpy,this->w,&xwinattr)){
-		fprintf(flog,"focustry   can not retrieve attributes for %p   skipped\n",(void*)this);
-		fflush(flog);
+		fprintf(flog,"! xwinfocus   %p can not get attributes,   skipped\n",(void*)this);fflush(flog);
 		return;
 	}
-	if(!xwinattr.root==root)
+	if(xwinattr.root!=root){
+		fprintf(flog,"! xwinfocus   %p root is not desktop,  skipped\n",(void*)this);fflush(flog);
 		return;
+	}
 	if(winfocused){
 		XSetWindowBorder(dpy,winfocused->w,0x00000000);
 	}
@@ -113,21 +117,25 @@ static void focusfirstondesk(){
 		if((w->bits&1)&&(w->desk==dsk)){
 			xwinraise(w);
 			xwinfocus(w);
-			//			fprintf(flog,"focusfirstondesk found %d\n",k);
-			//			fflush(flog);
+//			fprintf(flog,"focusfirstondesk found %d\n",k);
+//			fflush(flog);
 			return;
 		}
 	}
 	winfocused=NULL;
-	//	fprintf(flog,"focusfirstondesk found no windows\n");
-	//	fflush(flog);
+//	fprintf(flog,"focusfirstondesk found no windows\n");
 }
 static void xwinfree(Window w){
-	fprintf(flog,"xwinfree  %x\n",(int)w);
+	fprintf(flog,"   xwinfree   %p\n",(void*)w);
 	xwin*xw=xwinget(w);
-	fprintf(flog,"xwinfree  fond  xwin %p\n",(void*)xw);
-	xw->bits&=0xfe;//free
-	wincount--;
+	fprintf(flog,"       found xwin   %p    bits: %x\n",(void*)xw,xw->bits);
+	fflush(flog);
+	if(xw->bits&1){
+		xw->bits&=0xfe;//free
+		wincount--;
+		fprintf(flog,"          freed    wincount: %d\n",wincount);
+		fflush(flog);
+	}
 	if(winfocused==xw){
 		winfocused=NULL;
 //		focusfirstondesk();
@@ -135,7 +143,8 @@ static void xwinfree(Window w){
 }
 static void xwingeom(xwin*this){
 	Window wsink;
-	XGetGeometry(dpy,this->w,(Window*)&wsink,&this->gx,&this->gy,&this->gw,&this->gh,&this->border,&this->depth);
+	unsigned int dummy;
+	XGetGeometry(dpy,this->w,(Window*)&wsink,&this->gx,&this->gy,&this->gw,&this->gh,&dummy,&dummy);
 }
 static void xwingeomset(xwin*this,int x,int y,int w,int h){
 	XMoveResizeWindow(dpy,this->w,x,y,w,h);
@@ -175,7 +184,7 @@ static void xwinclose(xwin*this){
 	XSendEvent(dpy,this->w,False,NoEventMask,&ke);
 }
 static void xwintogglefullscreen(xwin*this){
-	if(this->vh&3){
+	if((this->vh&3)==3){
 		xwingeomset(this,this->gx,this->gy,this->gw,this->gh);
 		this->vh=0;
 	}else{
@@ -212,7 +221,7 @@ static void xwinhide(xwin*this){
 	xwingeom(this);
 	this->desk_x=this->gx;
 	int slip=rand()%winslip;
-	this->gx=(scr_w-13+slip);
+	this->gx=(scr_w-13+slip); //? magicnum13
 	xwingeomset2(this);
 }
 static void xwinshow(xwin*this){
@@ -238,30 +247,31 @@ static int _focustry(int k){
 	xwin*w=&wins[k];
 	if((w->bits&1)&&(w->desk==dsk)){
 		if(w->w==root){
-			fprintf(flog,"focustry on window %p   skipped, isroot\n",(void*)w);
+			fprintf(flog,"     focustry %p   isroot  skipped\n",(void*)w);
 			fflush(flog);
 			return 0;
 		}
 		char*name;
 		XWindowAttributes xwinattr;
 		if(!XGetWindowAttributes(dpy,w->w,&xwinattr)){
-			fprintf(flog,"focustry   can not retrieve attributes for %p   skipped\n",(void*)w);
+			fprintf(flog,"     focustry   can not retrieve attributes for %p   skipped\n",(void*)w);
 			fflush(flog);
+			return 0;
 		}
 		if(!XFetchName(dpy,w->w,&name)){
 			fprintf(flog,"focustry on window %p   skipped, no name\n",(void*)w);
 			fflush(flog);
 			return 0;
 		}
-		//		fprintf(flog,"focustry found %d   %s\n",k,name);
-		//		fflush(flog);
+//		fprintf(flog,"focustry found %d   %s\n",k,name);
+//		fflush(flog);
 		xwinraise(w);
 		xwinfocus(w);
 		return 1;
 	}
 	return 0;
 }
-static void focusnext(){//?
+static void focusnext(){
 	int k0=_xwinix(winfocused);
 	int k=k0;
 	while(++k<xwinsct){
@@ -331,6 +341,8 @@ static void mixermastervoldown(){
 static void mixermastervolup(){
 	system(bin_volup);
 }
+static void mixermastervoltogglemute(){
+}
 static void desksave(int dsk,FILE*f){
 	int n=0;
 	fprintf(flog,"desktop %d\n",dsk);
@@ -348,7 +360,7 @@ static void desksave(int dsk,FILE*f){
 				fprintf(flog,"%s ",*argv++);
 		else
 			fprintf(flog,"%x",(unsigned int)w->w);
-		fprintf(f,"   %x %dx%d+%d+%d\n",(unsigned int)w->w,w->rw,w->rh,w->rx,w->ry);
+//		fprintf(f,"   %x %dx%d+%d+%d\n",(unsigned int)w->w,w->rw,w->rh,w->rx,w->ry);
 		fflush(f);
 	}
 }
@@ -356,8 +368,11 @@ static int errorhandler(Display*d,XErrorEvent*e){
 	char buffer_return[1024]="";
 	int length=1024;
 	XGetErrorText(d,e->error_code,buffer_return,length);
-	fprintf(flog,"!!! x11 error from %x: %d\n",(unsigned int)e->resourceid,e->error_code);
-	fprintf(flog,"%s\n",buffer_return);
+	fprintf(flog,"!!! x11 error\n");
+	fprintf(flog,"!!!       text: %s\n",buffer_return);
+	fprintf(flog,"!!!       type: %d\n",e->type);
+	fprintf(flog,"!!! resourceid: %d\n",(unsigned int)e->resourceid);
+	fprintf(flog,"!!! error code: %d\n",(unsigned int)e->error_code);
 	fflush(flog);
 	return 0;
 }
@@ -379,14 +394,15 @@ int main(int argc,char**args){
 	scr=DefaultScreen(dpy);
 	scr_w=DisplayWidth(dpy,scr);
 	scr_h=DisplayHeight(dpy,scr);
-	fprintf(flog,"%dx%d\n",scr_w,scr_h);
+	fprintf(flog,"frameless window manager\nscreen dimension: %d x %d\n",scr_w,scr_h);
 	fflush(flog);
 
 	for(n=0;n<xwinsct;n++)
 		wins[n].bits=0;
 
 	root=DefaultRootWindow(dpy);
-	XDefineCursor(dpy,root,XC_arrow);
+	Cursor root_window_cursor=XCreateFontCursor(dpy,XC_arrow);
+	XDefineCursor(dpy,root,root_window_cursor);
 	xwinget(root);
 
 	//	Window winrt,winpt;
@@ -416,21 +432,23 @@ int main(int argc,char**args){
 		xwin*xw;
 		switch(ev.type){
 		default:
-			fprintf(flog,"%s   %p %s  unhandled\n",ix_evnames[ev.type],(void*)ev.xany.window,ev.xany.window==root?"*":"");
+			fprintf(flog,"  unhandled event: %s   %p %s  unhandled\n",ix_evnames[ev.type],(void*)ev.xany.window,ev.xany.window==root?"*":"");
 			fflush(flog);
 			break;
-		case ClientMessage:
-		case ReparentNotify:
-		case CreateNotify:
-		case DestroyNotify:
-		case ConfigureNotify:
-		case MapRequest:
-//			fprintf(flog,"unhandled  %s\n",ix_evnames[ev.type]);
-			break;
+		case ClientMessage:break;
+		case ReparentNotify:break;
+		case CreateNotify:break;
+		case DestroyNotify:break;
+		case ConfigureNotify:break;
+		case MapRequest:break;
 		case MapNotify:
-			fprintf(flog,"mapnotify   %p\n",(void*)ev.xmap.window);
-			if(ev.xmap.window==root||ev.xmap.window==0||ev.xmap.override_redirect)
+			fprintf(flog,"  mapnotify   %p\n",(void*)ev.xmap.window);
+			fflush(flog);
+			if(ev.xmap.window==root||ev.xmap.window==0||ev.xmap.override_redirect){
+				fprintf(flog,"   ignored");
+				fflush(flog);
 				break;
+			}
 			xw=xwinget(ev.xmap.window);
 			xwingeomcenter(xw);
 			xwinfocus(xw);
@@ -438,9 +456,10 @@ int main(int argc,char**args){
 			XSelectInput(dpy,xw->w,EnterWindowMask);
 			break;
 		case UnmapNotify:
-			fprintf(flog,"unmapnotify\n");
+			fprintf(flog,"unmapnotify   %p   %p\n",(void*)ev.xmap.window,(void*)ev.xmap.window);
+			fflush(flog);
 			if(ev.xmap.window==root||ev.xmap.window==0||ev.xmap.override_redirect){
-				fprintf(flog,"did not unmap window %d",(int)ev.xmap.window);
+				fprintf(flog,"   ignored");
 				fflush(flog);
 				break;
 			}
@@ -450,7 +469,8 @@ int main(int argc,char**args){
 		case EnterNotify:
 			if(dragging)
 				break;
-			fprintf(flog,"enter notify: win=%p  root=%p   subwin=%p\n",(void*)ev.xcrossing.window,(void*)ev.xcrossing.root,(void*)ev.xcrossing.subwindow);
+			fprintf(flog,"enternotify   %p   root=%p   subwin=%p\n",(void*)ev.xcrossing.window,(void*)ev.xcrossing.root,(void*)ev.xcrossing.subwindow);
+			fflush(flog);
 			xw=xwinget(ev.xcrossing.window);
 			xwinfocus(xw);
 			break;
@@ -474,10 +494,10 @@ int main(int argc,char**args){
 				fprintf(flog,"forked %d\n",pid);
 				fflush(flog);
 				if(pid==0){//child
-					//					int r=execl("/usr/bin/scrot","-s","scr--%Y-%m-%d---%H-%M-%S.jpg","-e","mkdir -p ~/img/&&mv $f ~/img/&&feh ~/img/$f",NULL);
-					//					fprintf(flog,"screenshot rect: %d\n",r);
-					//					fflush(flog);
-					//					exit(r);
+//					int r=execl("/usr/bin/scrot","-s","scr--%Y-%m-%d---%H-%M-%S.jpg","-e","mkdir -p ~/img/&&mv $f ~/img/&&feh ~/img/$f",NULL);
+//					fprintf(flog,"screenshot rect: %d\n",r);
+//					fflush(flog);
+//					exit(r);
 					int r=execlp("scrot","-s",NULL);
 					fprintf(flog," after exec:  %d\n",r);
 					fflush(flog);
@@ -558,10 +578,13 @@ int main(int argc,char**args){
 			case 127://pause
 				desksave(dsk,flog);
 				break;
-			case 74://volume down F8
+			case 72://toggle mute
+				mixermastervoltogglemute();
+				break;
+			case 73://volume down F8
 				mixermastervoldown();
 				break;
-			case 75://volume up F9
+			case 74://volume up F9
 				mixermastervolup();
 				break;
 			case 96://F12
@@ -569,7 +592,7 @@ int main(int argc,char**args){
 				XCloseDisplay(dpy);
 				break;
 
-				int dskprv;
+int dskprv;//? weirddeclarelocation
 			case 38://a
 			case 111://up
 				dskprv=dsk;
@@ -603,7 +626,7 @@ int main(int argc,char**args){
 				key=0;
 			break;
 
-			XButtonEvent buttonevstart;
+XButtonEvent buttonevstart;//? decllocation
 		case ButtonPress:
 			dragging=1;
 			xw=xwinget(ev.xbutton.window);
@@ -651,5 +674,6 @@ int main(int argc,char**args){
 			break;
 		}
 	}
+	//? cleanup  cursor
 	return 0;
 }
