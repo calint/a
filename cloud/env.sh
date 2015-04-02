@@ -5,8 +5,8 @@ SYNC_=$WORKSPACE_/a/cloud/ubuntu14.04/
 KEY_=$HOME/p/aws-key.pem
 
 SSH_KEY_ARG="$(if [ -z KEY_ ];then echo;else echo -i$KEY_;fi)"
-SSHK="ssh $SSH_KEY_ARG"
-SSHKR="ssh $SSH_KEY_ARG root@$HOST_"
+SSHK="ssh -oStrictHostKeyChecking=no $SSH_KEY_ARG"
+SSHKR="$SSHK root@$HOST_"
 
 echo "      host=$HOST_"
 #echo "       key=$KEY_"
