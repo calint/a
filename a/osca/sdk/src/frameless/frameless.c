@@ -44,11 +44,11 @@ static char*ix_evnames[LASTEvent]={
 };
 
 static xwin*xwinget(Window w){
-	fprintf(flog,"! xwinget  %p\n",(void*)w);fflush(flog);
-	if(w==0){
-		fprintf(flog,"! is null\n");fflush(flog);
-		return NULL;
-	}
+//	fprintf(flog,"! xwinget  %p\n",(void*)w);fflush(flog);
+//	if(w==0){
+//		fprintf(flog,"! is null\n");fflush(flog);
+//		return NULL;
+//	}
 //	if(w==root){
 //		fprintf(flog," ? winget root\n");
 //		fflush(flog);
@@ -95,25 +95,15 @@ static xwin*xwinget(Window w){
 }
 static void xwinfocus(xwin*this){
 	fprintf(flog,"xwinfocus  %p\n",(void*)this->w);fflush(flog);
-	XWindowAttributes xwinattr;
-	fprintf(flog,"xwinfocus  1   %p\n",(void*)this->w);fflush(flog);
-	if(!XGetWindowAttributes(dpy,this->w,&xwinattr)){
-		fprintf(flog,"! xwinfocus   %p can not get attributes,   skipped\n",(void*)this);fflush(flog);
-		return;
-	}
-	fprintf(flog,"xwinfocus  2   %p\n",(void*)this->w);fflush(flog);
-	if(xwinattr.root!=root){
-		fprintf(flog,"! xwinfocus   %p root is not desktop,  skipped\n",(void*)this);fflush(flog);
-		return;
-	}
+//	fprintf(flog,"xwinfocus  1\n");fflush(flog);
 	if(winfocused){
 		XSetWindowBorder(dpy,winfocused->w,0x00000000);
 	}
-	fprintf(flog,"xwinfocus  3   %p\n",(void*)this->w);fflush(flog);
+//	fprintf(flog,"xwinfocus  2\n");fflush(flog);
 	XSetInputFocus(dpy,this->w,RevertToParent,CurrentTime);
-	fprintf(flog,"xwinfocus  4   %p\n",(void*)this->w);fflush(flog);
+//	fprintf(flog,"xwinfocus  3\n");fflush(flog);
 	XSetWindowBorder(dpy,this->w,0x00008000);
-	fprintf(flog,"xwinfocus  5   %p\n",(void*)this->w);fflush(flog);
+	fprintf(flog,"xwinfocus  .\n");fflush(flog);
 	winfocused=this;
 }
 static void xwinraise(xwin*this){
@@ -126,15 +116,12 @@ static void focusfirstondesk(){
 		if((w->bits&1)&&(w->desk==dsk)){
 			xwinraise(w);
 			xwinfocus(w);
-//			fprintf(flog,"focusfirstondesk found %d\n",k);
-//			fflush(flog);
 			return;
 		}
 	}
 	winfocused=NULL;
-//	fprintf(flog,"focusfirstondesk found no windows\n");
 }
-static xwin*xwinfind(Window w){
+static xwin*_winfind(Window w){
 	fprintf(flog,"! xwinfind  %p\n",(void*)w);fflush(flog);
 	int n;
 	for(n=0;n<xwinsct;n++){
@@ -145,7 +132,7 @@ static xwin*xwinfind(Window w){
 }
 static void xwinfree(Window w){
 	fprintf(flog,"   xwinfree   %p\n",(void*)w);fflush(flog);
-	xwin*xw=xwinfind(w);
+	xwin*xw=_winfind(w);
 	if(!xw){
 		fprintf(flog,"! did not find window %p",(void*)w);
 		return;
@@ -267,17 +254,17 @@ static int _focustry(int k){
 	xwin*w=&wins[k];
 	if((w->bits&1)&&(w->desk==dsk)){
 		fprintf(flog,"     focustry %p\n",(void*)w->w);
-		if(w->w==root){
-			fprintf(flog,"                is root  skipped\n");
-			fflush(flog);
-			return 0;
-		}
-		XWindowAttributes xwinattr;
-		if(!XGetWindowAttributes(dpy,w->w,&xwinattr)){
-			fprintf(flog,"                can not retrieve attributes  skipped\n");
-			fflush(flog);
-			return 0;
-		}
+//		if(w->w==root){
+//			fprintf(flog,"                is root  skipped\n");
+//			fflush(flog);
+//			return 0;
+//		}
+//		XWindowAttributes xwinattr;
+//		if(!XGetWindowAttributes(dpy,w->w,&xwinattr)){
+//			fprintf(flog,"                can not retrieve attributes  skipped\n");
+//			fflush(flog);
+//			return 0;
+//		}
 //		char*name;
 //		if(!XFetchName(dpy,w->w,&name)){
 //			fprintf(flog,"focustry on window %p   skipped, no name\n",(void*)(w->w));
@@ -430,6 +417,7 @@ int main(int argc,char**args){
 	XEvent ev;
 	while(!XNextEvent(dpy,&ev)){
 		xwin*xw;
+		fprintf(flog,"event: %s   win=%p\n",ix_evnames[ev.type],(void*)ev.xany.window);
 		switch(ev.type){
 		default:
 			fprintf(flog,"  unhandled event: %s   %p %s  unhandled\n",ix_evnames[ev.type],(void*)ev.xany.window,ev.xany.window==root?"*":"");
@@ -442,8 +430,7 @@ int main(int argc,char**args){
 		case ConfigureNotify:break;
 		case MapRequest:break;
 		case MapNotify:
-			fprintf(flog,"  mapnotify   %p\n",(void*)ev.xmap.window);
-			fflush(flog);
+			fprintf(flog,"mapnotify     %p\n",(void*)ev.xmap.window);fflush(flog);
 			if(ev.xmap.window==root||ev.xmap.window==0||ev.xmap.override_redirect){
 				fprintf(flog,"   ignored");
 				fflush(flog);
@@ -452,8 +439,11 @@ int main(int argc,char**args){
 			xw=xwinget(ev.xmap.window);
 			xwingeomcenter(xw);
 			xwinfocus(xw);
+//			fprintf(flog,"mapnotify  1\n");fflush(flog);
 			XGrabButton(dpy,AnyButton,Mod4Mask,xw->w,True,ButtonPressMask,GrabModeAsync,GrabModeAsync,None,None);
+//			fprintf(flog,"mapnotify  2\n");fflush(flog);
 			XSelectInput(dpy,xw->w,EnterWindowMask);
+			fprintf(flog,"mapnotify  .\n");fflush(flog);
 			break;
 		case UnmapNotify:
 			fprintf(flog,"unmapnotify   %p   %p\n",(void*)ev.xmap.window,(void*)ev.xmap.window);fflush(flog);
@@ -462,9 +452,9 @@ int main(int argc,char**args){
 				fflush(flog);
 				break;
 			}
-			fprintf(flog,"unmapnotify  1     %p   %p\n",(void*)ev.xmap.window,(void*)ev.xmap.window);fflush(flog);
+//			fprintf(flog,"unmapnotify  1\n");fflush(flog);
 			xwinfree(ev.xmap.window);
-			fprintf(flog,"unmapnotify  2     %p   %p\n",(void*)ev.xmap.window,(void*)ev.xmap.window);fflush(flog);
+			fprintf(flog,"unmapnotify  .\n");fflush(flog);
 			break;
 		case EnterNotify:
 			if(dragging)
@@ -473,6 +463,7 @@ int main(int argc,char**args){
 			fflush(flog);
 			xw=xwinget(ev.xcrossing.window);
 			xwinfocus(xw);
+			fprintf(flog,"enternotify  .\n");fflush(flog);
 			break;
 		case KeyPress:
 			fprintf(flog,"keypress   %p   root=%p   subwin=%p\n",(void*)ev.xcrossing.window,(void*)ev.xcrossing.root,(void*)ev.xcrossing.subwindow);
@@ -621,6 +612,7 @@ int dskprv;//? weirddeclarelocation
 					}
 				deskshow(dsk,dskprv);
 				break;
+			//default:break;
 			}
 			break;
 		case KeyRelease:
