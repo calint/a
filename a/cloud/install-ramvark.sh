@@ -15,13 +15,13 @@ tar -xzf a-lib.tgz&&
 tar -xzf jre.tgz&&
 
 chmod ugo+x /etc/rc.local&&
-#apt-get update&&
+apt-get --quiet=2 update&&
 
 echo `date` install gcc clang
 apt-get --quiet=2 -y install gcc clang&&
 dpkg -i deb/* 1>/dev/null
 
-echo `date` open port 80
+echo `date` start
 /etc/rc.local &
 
 echo `date` done
