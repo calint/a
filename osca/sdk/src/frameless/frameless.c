@@ -588,8 +588,8 @@ int main(int argc,char**args){
 				mixermastervolup();
 				break;
 			case 96://F12
-				XSetCloseDownMode(dpy,RetainPermanent);
-				XCloseDisplay(dpy);
+//				XSetCloseDownMode(dpy,RetainPermanent);
+//				XCloseDisplay(dpy);
 				break;
 
 int dskprv;//? weirddeclarelocation
