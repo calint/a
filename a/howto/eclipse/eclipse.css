@@ -1,0 +1,51 @@
+*{
+	margin:0;
+	padding:0;
+	font-size:7px;
+	font-family:terminal;
+	background-color:#cdcdcd;
+	color:#020202;
+}
+
+.MWindow{}
+.MTrimmedWindow{}
+.MTrimmedWindow.topLevel{}
+.MTrimBar{
+	visibility:hidden;
+}
+.MArea{}
+.MPartStack{
+	swt-tab-renderer:null;
+	swt-tab-height:17px;
+	swt-maximize-visible:false;
+	swt-minimize-visible:false;
+	background-color:#c0c0c0;
+}
+.MPart Label{
+/*	visibility:hidden; */
+}
+.MToolBar{
+	height:	8px;
+}
+CTabItem{
+	font-style:normal;
+	font-weight:normal;
+	font-size:6px;
+}
+CTabItem.busy{
+	font-style:italic;
+}
+CTabItem.highlighted{
+	font-weight:bold;
+}
+Tree{}
+Canvas{}
+CTabFolder Canvas{}
+.MPlaceHolder Label{
+	color:yellow;
+}
+StyledText{
+	font-family:mono;
+	font-size:9px;
+	line-height:17px;
+}
