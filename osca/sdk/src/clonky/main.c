@@ -1,3 +1,4 @@
+#define APP "clonky system overview"
 #include"tmr.h"
 #include"dc.h"
 #include"graph.h"
@@ -311,48 +312,28 @@ static void _renddf(){
 	fclose(f);
 }
 static void _rendiostat(){
+	static long long unsigned int last_kb_read=0,last_kb_wrtn=0;
 	char buf[1024];
 	const int r=system("iostat -d>.clonky.sh8");
 	if(r)return;
-//	Linux 3.11.0-14-generic (vaio) 	03/12/2014 	_x86_64_	(2 CPU)
-//
-//	Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
-//	sda               7.89        25.40        80.46     914108    2896281
 	FILE*f=fopen(".clonky.sh8","r");
+	//	Linux 3.11.0-14-generic (vaio) 	03/12/2014 	_x86_64_	(2 CPU)
+	//
+	//	Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+	//	sda               7.89        25.40        80.46     914108    2896281
 	fgets(buf,sizeof buf,f);
 	fgets(buf,sizeof buf,f);
 	fgets(buf,sizeof buf,f);
-	char dev[32];
+	char dev[64];
 	float tps,kb_read_s,kb_wrtn_s;
-	unsigned long long kb_read,kb_wrtn;
+	long long unsigned int kb_read,kb_wrtn;
 	fscanf(f,"%s %f %f %f %llu %llu",dev,&tps,&kb_read_s,&kb_wrtn_s,&kb_read,&kb_wrtn);
 	fclose(f);
-	dcyinc(dc,dyhr);
-	dcyinc(dc,default_graph_height);
-	const float kb_rw_s=kb_read_s+kb_wrtn_s;
-	graphaddvalue(graphhd,kb_rw_s);
-	char unit[32];
-	int bitshiftscale;
-	int scale;
-	if(kb_rw_s>1024*1024){
-		sprintf(unit,"GB");
-		bitshiftscale=20;
-		scale=20*1024*1024;
-	}else if(kb_rw_s>1024){
-		sprintf(unit,"MB");
-		bitshiftscale=10;
-		scale=1024*1024;
-	}else{
-		sprintf(unit,"KB");
-		bitshiftscale=0;
-		scale=1024;
-	}
-	graphdraw2(graphhd,dc,default_graph_height,scale);
-//	sprintf(buf,"%s %s %.2f %.2f %.2f",unit,dev,tps,kb_read_s,kb_wrtn_s);
-	sprintf(buf,"read %.0f write %.0f %s/s",kb_read_s,kb_wrtn_s,unit);
+	const char*unit="kB";
+	sprintf(buf,"read %llu %s wrote %llu %s",kb_read-last_kb_read,unit,kb_wrtn-last_kb_wrtn,unit);
 	pl(buf);
-//	sprintf(buf,"%llu %llu",kb_read,kb_wrtn);
-//	pl(buf);
+	last_kb_read=kb_read;
+	last_kb_wrtn=kb_wrtn;
 }
 static void _renddmsg(){
 	char buf[1024];
@@ -468,7 +449,7 @@ static void autoconfig(){
 	autoconfig_wifi();
 }
 int main(){
-	puts("clonky");
+	puts(APP);
 	if(!(dc=dcnew()))return 1;
 	dcwset(dc,width);
 	if(align==1)

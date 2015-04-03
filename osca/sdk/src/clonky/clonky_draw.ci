@@ -6,9 +6,10 @@
 	_rendmeminfo();
 	_rendwifitraffic();
 	_rendnet();
-	_rendiostat();
 	_rendhr();
 	_renddf();
+	_rendhr();
+	_rendiostat();
 	_rendhr();
 	_rendlid();
 	_rendhr();

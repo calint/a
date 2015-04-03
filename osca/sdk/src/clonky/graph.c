@@ -23,7 +23,7 @@ struct graph*graphnew(int nvalues){
 	return g;
 }
 void graphprint(const struct graph*g){
-	printf("graph:\n size %d\n addr:%p\n nvalues: %d\n values: %x\n ix: %d\n",sizeof(*g),g,g->nvalues,(unsigned int)g->values,g->ix);
+	printf("graph:\n size %lu\n addr:%p\n nvalues: %d\n values: %p\n ix: %d\n",sizeof(*g),(void*)g,g->nvalues,(void*)g->values,g->ix);
 }
 void graphdel(struct graph*g){
 	free(g->values);
