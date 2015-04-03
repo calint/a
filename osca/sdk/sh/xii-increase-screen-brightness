@@ -1,0 +1,2 @@
+#!/bin/sh
+exec xbacklight -inc 10

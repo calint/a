@@ -30,7 +30,8 @@
 notes
 
 # runtime ubuntu packages
-sudo apt-get install scrot leafpad alsamixer vlc thunar pmount alsa-utils chromium-browser xbacklight
+sudo apt-get install scrot leafpad alsamixer vlc thunar alsa-utils chromium-browser xbacklight
+# pmount 
 
 # to enable alsamixer
 sudo addgroup c audio 
