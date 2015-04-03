@@ -343,10 +343,10 @@ static void deskshow(int dsk,int dskprv){
 			xwinshow(xw);
 	}
 }
-static void mixermastervoldown(){
+static void mixermastervoldown(){//? inline
 	system(bin_voldown);
 }
-static void mixermastervolup(){
+static void mixermastervolup(){//? inline
 	system(bin_volup);
 }
 static void mixermastervoltogglemute(){
@@ -600,6 +600,12 @@ int main(int argc,char**args){
 				break;
 			case 74://volume up F9
 				mixermastervolup();
+				break;
+			case 68://screen brightness down
+				system("xii-decrease-screen-brightness");
+				break;
+			case 69://screen brightness up
+				system("xii-increase-screen-brightness");
 				break;
 			case 96://F12
 //				XSetCloseDownMode(dpy,RetainPermanent);

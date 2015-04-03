@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<string.h>
 #include<X11/keysym.h>
+#include <X11/Xutil.h>
 int main(){
 	puts("menuq");
 	Display*dpy=XOpenDisplay(NULL);
@@ -22,7 +23,7 @@ int main(){
 	int y=(23>>1)+(23>>2);
 	XDrawString(dpy,win,gc,x,y,"_",1);
 	int keycode=0;
-	char*str;
+//	char*str;
 	const int buflen=32;
 	char buf[buflen];
 	int bufi=0;
@@ -67,15 +68,20 @@ int main(){
 				XSetForeground(dpy,gc,BlackPixel(dpy,scr));
 				XFillRectangle(dpy,win,gc,x,0,7,23);
 				XSetForeground(dpy,gc,WhitePixel(dpy,scr));
-				str=XKeysymToString(XKeycodeToKeysym(dpy,keycode,0));
-				if(keycode==65){//space
-					str=" ";
-				}else if(keycode==61){
-					str="-";
-				}
-				XDrawString(dpy,win,gc,x,y,str,1);
+
+				char buffer[20];
+				KeySym keysym;
+				//XComposeStatus compose;
+				XLookupString(&e.xkey,buffer,sizeof buffer,&keysym,NULL);
+				//str=XKeysymToString(XKeycodeToKeysym(dpy,keycode,0));
+				//if(keycode==65){//space
+				//	str=" ";
+				//}else if(keycode==61){
+				//	str="-";
+				//}
+				XDrawString(dpy,win,gc,x,y,buffer,1);
 				x+=7;
-				*bufp++=str[0];
+				*bufp++=buffer[0];
 				bufi++;
 				if(bufi>buflen)
 					go=0;
