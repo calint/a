@@ -1,10 +1,11 @@
-#define APP "window manager frameless  2015-04-02---4"
+#define APP "window manager frameless  2015-04-03"
 #include<X11/Xlib.h>
 #include<X11/cursorfont.h>
 #include<stdlib.h>
 #include<stdio.h>
 #include<unistd.h>
-#include"frameless-cfg.h"
+#define logfile "frameless.log"
+#define bin_screenshot_area "scrot -s 'scr--%Y-%m-%d---%H-%M-%S.jpg' -e 'mkdir -p ~/img/&&mv $f ~/img/&&feh ~/img/$f'"
 typedef int xdesk;
 typedef unsigned int bits;
 typedef struct{
@@ -343,12 +344,6 @@ static void deskshow(int dsk,int dskprv){
 			xwinshow(xw);
 	}
 }
-static void mixermastervoldown(){//? inline
-	system(bin_voldown);
-}
-static void mixermastervolup(){//? inline
-	system(bin_volup);
-}
 static void mixermastervoltogglemute(){
 }
 static void desksave(int dsk,FILE*f){
@@ -493,13 +488,13 @@ int main(int argc,char**args){
 				xw=xwinget(ev.xkey.subwindow);
 			switch(key){
 			case 53://x
-				system(bin_sticky);
+				system("xii-sticky");
 				break;
 			case 54://c
-				system(bin_console);
+				system("xii-term");
 				break;
 			case 107://sysrq prntscr
-				system(bin_screenshot);
+				system("xii-scrsht");
 				break;
 			case 70: {//f4
 				fprintf(flog,"forking\n");
@@ -525,22 +520,22 @@ int main(int argc,char**args){
 				break;
 			}
 			case 24://q
-				system(bin_binmenu);
+				system("xii-qbin");
 				break;
 			case 31://i
-				system(bin_browser);
+				system("xii-browser");
 				break;
 			case 58://m
-				system(bin_media);
+				system("xii-media");
 				break;
 			case 41://f
-				system(bin_files);
+				system("xii-files");
 				break;
 			case 55://v
-				system(bin_mixer);
+				system("xii-mixer");
 				break;
 			case 26://e
-				system(bin_editor);
+				system("xii-editor");
 				break;
 			case 9://esc
 				if(winfocused)
@@ -575,7 +570,7 @@ int main(int argc,char**args){
 				xwinbump(winfocused,200);
 				break;
 			case 16://7
-				system(bin_ide);
+				system("xii-ide");
 				break;
 			case 94://<
 			case 113://left
@@ -595,17 +590,17 @@ int main(int argc,char**args){
 			case 72://toggle mute
 				mixermastervoltogglemute();
 				break;
-			case 73://volume down F8
-				mixermastervoldown();
-				break;
-			case 74://volume up F9
-				mixermastervolup();
-				break;
-			case 68://screen brightness down
+			case 68:// F2   screen brightness down
 				system("xii-decrease-screen-brightness");
 				break;
-			case 69://screen brightness up
+			case 69:// F3   screen brightness up
 				system("xii-increase-screen-brightness");
+				break;
+			case 73:// F8   volume down
+				system("xii-vol-down");
+				break;
+			case 74:// F9   volume up
+				system("xii-vol-up");
 				break;
 			case 96://F12
 //				XSetCloseDownMode(dpy,RetainPermanent);
