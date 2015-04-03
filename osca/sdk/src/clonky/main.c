@@ -241,38 +241,29 @@ static void _rendhelloclonky(){
 	dcdrwstr(dc,bbuf,strlen(bbuf));
 }
 static void _rendmeminfo(){
-	//	 :: cat /proc/meminfo
-	//	MemTotal:        1937372 kB
-	//	MemFree:           99120 kB
-	//	MemAvailable:     887512 kB
-	//	Buffers:           45608 kB
-	//	Cached:           872160 kB
 	FILE*file=fopen("/proc/meminfo","r");
-	if(file){
-		char name[64],unit[32];
-		long long memtotal,memavail;
-		fgets(bbuf,sizeof(bbuf),file);//	MemTotal:        1937372 kB
-		sscanf(bbuf,"%s %llu %s",name,&memtotal,unit);
-		fgets(bbuf,sizeof(bbuf),file);//	MemFree:           99120 kB
-		fgets(bbuf,sizeof(bbuf),file);//	MemAvailable:     887512 kB
-		sscanf(bbuf,"%s %llu %s",name,&memavail,unit);
-		int proc=(memtotal-memavail)*100/memtotal;
-		graphaddvalue(graphmem,proc);
-		dcyinc(dc,dyhr);
-		dcyinc(dc,default_graph_height);
-//		dcyinc(dc,100>>2+2);
-		graphdraw(graphmem,dc,2);
-//		long long free=memfree+memcached;
-		if(memavail>>10!=0){
-			memavail>>=10;
-			memtotal>>=10;
-			strcpy(unit,"MB");
-		}
-		sprintf(bbuf,"freemem %llu of %llu %s",memavail,memtotal,unit);
-		dccr(dc);
-		dcdrwstr(dc,bbuf,strlen(bbuf));
-		fclose(file);
+	if(!file)return;
+	char name[64],unit[32];
+	long long memtotal,memavail;
+	fgets(bbuf,sizeof(bbuf),file);//	MemTotal:        1937372 kB
+	sscanf(bbuf,"%s %llu %s",name,&memtotal,unit);
+	fgets(bbuf,sizeof(bbuf),file);//	MemFree:           99120 kB
+	fgets(bbuf,sizeof(bbuf),file);//	MemAvailable:     887512 kB
+	fclose(file);
+	sscanf(bbuf,"%s %llu %s",name,&memavail,unit);
+	int proc=(memtotal-memavail)*100/memtotal;
+	graphaddvalue(graphmem,proc);
+	dcyinc(dc,dyhr);
+	dcyinc(dc,default_graph_height);
+	graphdraw(graphmem,dc,2);
+	if(memavail>>10!=0){
+		memavail>>=10;
+		memtotal>>=10;
+		strcpy(unit,"MB");
 	}
+	sprintf(bbuf,"freemem %llu of %llu %s",memavail,memtotal,unit);
+	dccr(dc);
+	dcdrwstr(dc,bbuf,strlen(bbuf));
 }
 static void _rendnet(){
 	qdir("/sys/class/net",netdir);
