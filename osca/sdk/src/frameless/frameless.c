@@ -372,7 +372,28 @@ static void desksave(int dsk,FILE*f){
 		fflush(f);
 	}
 }
+#include<execinfo.h>
+static void
+print_trace (void)
+{
+  void *array[10];
+  size_t size;
+  char **strings;
+  size_t i;
+
+  size = backtrace (array, 10);
+  strings = backtrace_symbols (array, size);
+
+  printf ("Obtained %zd stack frames.\n", size);
+
+  for (i = 0; i < size; i++){
+     fprintf (flog,"%s\n", strings[i]);
+	}
+	fflush(flog);
+  free (strings);
+}
 static int errorhandler(Display*d,XErrorEvent*e){
+	print_trace();
 	char buffer_return[1024]="";
 	int length=1024;
 	XGetErrorText(d,e->error_code,buffer_return,length);
@@ -537,7 +558,7 @@ int main(int argc,char**args){
 						xwingeomwider(winfocused);
 				}
 				break;
-			case 56://border
+			case 56://b
 				if(winfocused)
 					xwinbump(winfocused,59);
 				break;
@@ -612,7 +633,6 @@ int dskprv;//? weirddeclarelocation
 					}
 				deskshow(dsk,dskprv);
 				break;
-			//default:break;
 			}
 			break;
 		case KeyRelease:
@@ -632,7 +652,6 @@ XButtonEvent buttonevstart;//? decllocation
 			break;
 		case MotionNotify:
 			while(XCheckTypedEvent(dpy,MotionNotify,&ev));
-			//fprintf(flog,"motionnotify   %p\n",xw?(void*)xw->w:0);fflush(flog);
 			int xdiff=ev.xbutton.x_root-buttonevstart.x_root;
 			int ydiff=ev.xbutton.y_root-buttonevstart.y_root;
 			int nx=xw->gx+xdiff;
