@@ -157,9 +157,8 @@ static void netdir(char*filename){
 	dccr(dc);
 	dcdrwstr(dc,bbuf,strlen(bbuf));
 }
-static FILE*file;
 static void _rendlid(){
-	file=fopen("/proc/acpi/button/lid/LID/state","r");
+	FILE*file=fopen("/proc/acpi/button/lid/LID/state","r");
 	if(file){
 		fgets(line,sizeof(line),file);
 		strcompactspaces(line);
@@ -211,7 +210,7 @@ static void _rendbattery(){
 		dcdrwhr1(dc,width*charge_now/charge_full_design);
 }
 static void _rendcpuload(){
-	file=fopen("/proc/stat","r");
+	FILE*file=fopen("/proc/stat","r");
 	if(file){
 		// user: normal processes executing in user mode
 		// nice: niced processes executing in user mode
@@ -242,33 +241,34 @@ static void _rendhelloclonky(){
 	dcdrwstr(dc,bbuf,strlen(bbuf));
 }
 static void _rendmeminfo(){
-	file=fopen("/proc/meminfo","r");
+	//	 :: cat /proc/meminfo
+	//	MemTotal:        1937372 kB
+	//	MemFree:           99120 kB
+	//	MemAvailable:     887512 kB
+	//	Buffers:           45608 kB
+	//	Cached:           872160 kB
+	FILE*file=fopen("/proc/meminfo","r");
 	if(file){
 		char name[64],unit[32];
-		long long memtotal,memfree,memcached;
-		fgets(bbuf,sizeof(bbuf),file);
+		long long memtotal,memavail;
+		fgets(bbuf,sizeof(bbuf),file);//	MemTotal:        1937372 kB
 		sscanf(bbuf,"%s %llu %s",name,&memtotal,unit);
-		strcompactspaces(bbuf);
-		fgets(bbuf,sizeof(bbuf),file);
-		sscanf(bbuf,"%s %llu %s",name,&memfree,unit);
-		strcompactspaces(bbuf);
-		fgets(bbuf,sizeof(bbuf),file);
-		fgets(bbuf,sizeof(bbuf),file);
-		sscanf(bbuf,"%s %llu %s",name,&memcached,unit);
-		strcompactspaces(bbuf);
-		int proc=(memtotal-(memfree+memcached))*100/memtotal;
+		fgets(bbuf,sizeof(bbuf),file);//	MemFree:           99120 kB
+		fgets(bbuf,sizeof(bbuf),file);//	MemAvailable:     887512 kB
+		sscanf(bbuf,"%s %llu %s",name,&memavail,unit);
+		int proc=(memtotal-memavail)*100/memtotal;
 		graphaddvalue(graphmem,proc);
 		dcyinc(dc,dyhr);
 		dcyinc(dc,default_graph_height);
 //		dcyinc(dc,100>>2+2);
 		graphdraw(graphmem,dc,2);
-		long long free=memfree+memcached;
-		if(free>>10!=0){
-			free>>=10;
+//		long long free=memfree+memcached;
+		if(memavail>>10!=0){
+			memavail>>=10;
 			memtotal>>=10;
 			strcpy(unit,"MB");
 		}
-		sprintf(bbuf,"freemem %llu of %llu %s",free,memtotal,unit);
+		sprintf(bbuf,"freemem %llu of %llu %s",memavail,memtotal,unit);
 		dccr(dc);
 		dcdrwstr(dc,bbuf,strlen(bbuf));
 		fclose(file);
@@ -357,10 +357,11 @@ static void _rendiostat(){
 		scale=1024;
 	}
 	graphdraw2(graphhd,dc,default_graph_height,scale);
-	sprintf(buf,"%s %s %.2f %.2f %.2f",unit,dev,tps,kb_read_s,kb_wrtn_s);
+//	sprintf(buf,"%s %s %.2f %.2f %.2f",unit,dev,tps,kb_read_s,kb_wrtn_s);
+	sprintf(buf,"read %.0f write %.0f %s/s",kb_read_s,kb_wrtn_s,unit);
 	pl(buf);
-	sprintf(buf,"%llu %llu",kb_read,kb_wrtn);
-	pl(buf);
+//	sprintf(buf,"%llu %llu",kb_read,kb_wrtn);
+//	pl(buf);
 }
 static void _renddmsg(){
 	char buf[1024];
@@ -443,7 +444,7 @@ static int is_wlan_device(const char*sys_cls_net_wlan){
 	*buf=0;
 	FILE*f=fopen(".clonky.sh1","r");
 	if(!f)puts("cannot open file");
-	const int c=fgets(buf,256,f);
+	fgets(buf,256,f);
 	fclose(f);
 	if(strendswith(buf,"no wireless extensions.\n"))
 		return 0;
