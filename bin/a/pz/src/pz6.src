@@ -1,0 +1,153 @@
+inc p
+li a 300
+st a p
+
+li b :blits
+inc b
+ld b c
+
+li d 1
+li k 7fff
+ld k e
+ifp add c d
+ifz sub c d
+st b c
+
+li m 100
+
+li a 0400
+li c 70
+li d 0f00
+add d p
+call clr
+
+li a 400
+call drwrects
+
+li a 400
+call drwblits
+
+li a 400
+li b :txt
+call typewriter
+
+li a 400
+call drwdots
+..
+typewriter:
+li c 4
+li j f00
+tx f m
+sub f c
+li g -400
+add g c
+ldc b i
+lp i
+  ldc b d
+  call type nxt
+ret
+..
+type:
+lp c
+  lp c
+    shf d -1
+    ifn stc a j
+    ifp inc a
+    ifz inc a
+    inc j nxt
+  add a f nxt   
+add a g ret    
+..
+clr:
+lp c
+  lp m
+    stc a d nxt
+    inc d nxt ret
+..
+drwdots:
+li f :dots
+ldc f c
+lp c
+  ldc f g
+  ldc f h
+  add g a
+  stc g h nxt ret
+..
+drwrects:
+li b :rects
+ldc b c
+lp c
+  ldc b a
+  ldc b d
+  ldc b e
+  ldc b f
+  tx g m
+  sub g f
+  lp e
+    lp f
+      stc a d nxt
+    add a g nxt
+  nxt ret
+..
+drwblits:
+li k :blits
+ldc k j
+lp j
+  ldc k a
+  ldc k b
+  ldc k h
+  ldc k i
+  tx e m
+  sub e i
+  lp h
+    lp i
+      ldc b d
+      ifz inc a nxt
+      ifp stc a d nxt
+      ifn stc a d nxt
+    add b e
+    add a e nxt
+  nxt ret
+..
+txt:
+. 12
+. 000f 00ff 0fff 0175
+. 0767 0043
+. 0043 0252 0126 ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+
+dots:
+. 1
+. 0100 f00 
+
+rects:
+. 5
+. 3830 0422 0010 0010
+. 040c 0fff 0008 0008
+. 0400 0eee 0008 0008
+. 1000 0ddd 0008 0008
+. 100c 0ccc 0008 0008
+
+blits:
+. 10
+. 1030 0000 0020 0020
+. 2080 0000 0020 0020
+. 4080 0000 0020 0020
+. 6080 0000 0020 0020
+. 04a0 0000 0020 0020
+. 20a0 0000 0020 0020
+. 40a0 0000 0020 0020
+. 60a0 0000 0020 0020
+. 04c0 0000 0020 0020
+. 20c0 0000 0020 0020
+. 40c0 0000 0020 0020
+. 60c0 0000 0020 0020
+. 04e0 0000 0020 0020
+. 20e0 0000 0020 0020
+. 40e0 0000 0020 0020
+. 60e0 0000 0020 0020

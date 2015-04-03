@@ -1,0 +1,10 @@
+li a 1000
+li e 10
+li c 200
+li d 400
+lp e
+  lp c
+    inc p
+    stc a p nxt
+  add a d nxt
+..
