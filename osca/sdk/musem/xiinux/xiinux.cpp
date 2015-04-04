@@ -11,7 +11,10 @@
 #include<sys/sendfile.h>
 #include<pthread.h>
 #include<ctype.h>
-static const char*app="xiinux web server";
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<pthread.h>
+static const char*app="xiinux web server 2015";
 static int const K=1024;
 static size_t const conbufnn=K;
 static int const nclients=K;
@@ -84,6 +87,7 @@ public:
 fle*homepage;
 class widget{
 public:
+//	virtual ~widget()=0;
 	virtual void to(xwriter&x)=0;
 	virtual void ax(xwriter&x,char*a[]=0){if(a)x.pk(a[0]);}
 };
