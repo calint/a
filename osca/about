@@ -34,7 +34,21 @@ sudo apt-get install scrot leafpad alsamixer vlc thunar alsa-utils chromium-brow
 # pmount 
 
 # to enable alsamixer
-sudo addgroup c audio 
+sudo addgroup `id -un` audio
+
+# to enable kvm
+sudo adduser `id -un` libvirtd
+
+
+
+OpenGL3
+# to enable opengl
+sudo adduser `id -un` video
+
+# opengl devel
+sudo apt-get install freeglut3 freeglut3-dev
+sudo apt-get install libxmu-dev libxi-dev
+
 
 # developer ubuntu packages
 sudo apt-get install libx11-dev libxft-dev gnome-devel

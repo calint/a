@@ -1,0 +1,9 @@
+# 1. create repository $repname in github.com
+# 2. in project directory do
+repname=$1
+git init
+git remote add origin https://github.com/calint/$repname.git
+git add .
+git pull https://github.com/calint/$repname.git
+git commit -a -m "initial commit"
+git push -u origin --all
