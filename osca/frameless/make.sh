@@ -1,5 +1,5 @@
 BIN=frameless
-SRC=src/frameless.c
+SRC=frameless.c
 #OPTS=-Os
 WARNINGS="-Wall -Wextra"
 LIBS=-lX11

@@ -1,11 +1,12 @@
-BIN=menuq
-SRC=menuq.c
+BIN=xiinux
+SRC=xiinux.cpp
 #OPTS=-Os
 WARNINGS="-Wall -Wextra"
-LIBS=-lX11
+LIBS=-lpthread
+COMPILER=clang++
 
 echo &&
-gcc  -o $BIN  $SRC $LIBS $OPTS $WARNINGS && 
+$COMPILER  -o $BIN  $SRC $LIBS $OPTS $WARNINGS && 
 echo    "             lines   words  chars" &&
 echo -n "       wc:" &&
 cat $SRC|wc
