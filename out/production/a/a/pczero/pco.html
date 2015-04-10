@@ -1,0 +1,335 @@
+<!DOCTYPE html><meta charset="utf-8">
+<style>
+	html{white-space: pre;font-family:courier;margin:0;padding:0;margin-left:auto;margin-right:auto;padding:0 4em 0 4em;display:block;text-align:center;width:1024px;color:#222;border-right:0px dotted #666;border-left:0px dotted #666;box-shadow:0 0 27px rgba(0,0,0,1);border-radius:1px}
+	#scr{outline:0;border:1px solid gray;width:1024px;height:512px;box-shadow:0 0 .5em rgba(0,0,0,.5)}
+	#src{background:#eee;font-family:courier;font-size:1em;padding-left:1em;width:20em;height:512em;border:1px dashed gray;display:block;margin-left:auto;margin-right:auto}
+	#recvsize{color:green}
+	#sts{color:brown}
+	a{text-decoration:none;color:blue}
+	t{font-size:.5em;padding:1em;padding-top:.5em;border:1px solid gray;background:yellow;box-shadow:0 0 .5em rgba(0,0,0,.5)}
+</style>
+<t><b><a href=/pczero.vintage>pczero</a></b> model <b>pre-k</b>  has 16 bit instructions, 64 KB ram, 512 bytes rom, 16 x 16 bit registers</t>
+<img id=scr src="" tabindex=0 onkeydown="keys=new Uint8Array([0,event.keyCode]);return true;" onkeyup="keys=new Uint8Array([0,0]);return true;"/>
+ <output id=sts></output>  <output id="recvsize"></output>  <a href="javascript:stop()">off</a><a href="javascript:start()">on</a> <output id="outp"></output>
+ <a href="javascript:compile()">compile</a> <b>source</b>
+<textarea id=src spellcheck=false>
+p++ // frame
+a=0300
+*a=p
+
+b=:blits // address of tag
+b++ // skip size
+c=*b // load blit[0].pos
+
+d=1 // step size
+k=7fff // keyb addr
+ld k e // load
+ifp c+=d // if e>0
+ifz c-=d // if e==0
+*b=c // store
+
+m=100 // dispwidth
+
+//call
+a=0400 // from
+c=70 // lines
+d=0f00 // argb
+d+=p
+clr
+
+//call
+a=400
+drwrects
+
+//call
+a=400
+drwblits
+
+//call
+a=400
+b=:txt // ref
+typewriter
+
+//call
+a=400
+drwdots
+
+..
+..
+clr:
+lp c
+  lp m
+    stc a d nxt
+    inc d nxt ret
+
+drwdots:
+f=:dots
+c=*f++
+lp c
+  g=*f++ // yyxx
+  h=*f++ // argb
+  g+=a
+  *g++=h nxt ret
+
+..
+typewriter:
+c=4 // chwh
+j=f00 // argb
+f:=m // inca
+f-=c
+g=-400 // -c*m
+g+=c // +c
+i=*b++
+lp i
+  d=*b++
+  type nxt
+ret
+..
+type:
+lp c
+  lp c
+    d<<=1
+    ifn *a++=j
+    ifp a++
+    ifz a++
+    j++ nxt
+  a+=f nxt   
+a+=g ret    
+..
+drwrects:
+b=:rects
+ldc b c // len
+lp c
+  a=*b++ // yyxx
+  d=*b++ // argb
+  e=*b++ // hi
+  f=*b++ // wi
+  g:=m // linewdth
+  g-=f // inca
+  lp e
+    lp f
+      *a++=d nxt
+    a+=g nxt
+  nxt ret
+..
+drwblits:
+k=:blits
+ldc k j
+lp j
+  a=*k++ // to
+  b=*k++ // from
+  h=*k++ // height
+  i=*k++ // width
+  e:=m
+  e-=i
+  lp h
+    lp i
+      d=*b++
+      ifz a++ nxt
+      ifp *a++=d nxt
+      ifn *a++=d nxt
+    b+=e
+    a+=e nxt
+  nxt ret
+
+..
+txt:
+. 12 // len
+. 000f 00ff 0fff 0175 
+. 0767 0043
+. 0043 0252 0126 ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+
+dots:
+. 1
+//yyxx argb
+. 0100 f00 
+
+rects:
+. 5
+//yyxx argb hi   wi
+. 3830 0422 0010 0010
+. 040c 0fff 0008 0008
+. 0400 0eee 0008 0008
+. 1000 0ddd 0008 0008
+. 100c 0ccc 0008 0008
+
+blits:
+. 10
+//yyxx adr  wi   hi
+. 1030 0000 0020 0020
+. 2080 0000 0020 0020
+. 4080 0000 0020 0020
+. 6080 0000 0020 0020
+. 04a0 0000 0020 0020
+. 20a0 0000 0020 0020
+. 40a0 0000 0020 0020
+. 60a0 0000 0020 0020
+. 04c0 0000 0020 0020
+. 20c0 0000 0020 0020
+. 40c0 0000 0020 0020
+. 60c0 0000 0020 0020
+. 04e0 0000 0020 0020
+. 20e0 0000 0020 0020
+. 40e0 0000 0020 0020
+. 60e0 0000 0020 0020
+
+
+</textarea> 
+
+
+
+<script>
+$=document.all;
+var keys=new Uint8Array([0,0]);
+var ison=false;
+var frameno=0;
+
+start();
+
+function start(){
+	if(ison){alert("already on");return;}
+	ison=true;
+	$.sts.value="on";
+	frameno=0;
+	ws=new WebSocket("ws://"+location.host+"/pczero.porta");
+	ws.binaryType="arraybuffer";
+	ws.onopen=function(e){p(" porta");ws.send(keys);}
+	ws.onmessage=function(e){
+		frameno++;
+		onframe();
+		$.recvsize.value="frame: "+frameno+"  "+e.data.byteLength+" B  "+onframe.fps+" fps";
+		var ua=new DataView(e.data);
+		var cmd=ua.getUint8(0);
+		var dat=e.data.slice(1);
+//		console.log("command: "+cmd);
+		if(cmd==0){
+//			console.log(frameno);
+			//var blob=new Blob([dat],{type:'image/png'});
+			//img.src=blob;
+			var b64=base64ArrayBuffer(dat);
+			$.scr.src='data:image/png;base64,'+b64;
+		}else if(cmd==49){
+//			console.log('text len: '+e.data.byteLength);
+			var str=String.fromCharCode.apply(null,new Uint8Array(dat));
+//			console.log(str);
+			$.sts.value=str;
+			return;
+		}
+		ws.send(keys);
+	};
+	ws.onerror=function(e){alert("websocket error");};
+	$.scr.focus();
+}
+function stop(){
+	ison=false;
+	ws.close();
+	$.outp.value="";
+	$.sts.value="off";
+//	$.scr.focus();
+}
+function compile(){
+	ws.send("1"+$.src.value);
+	$.scr.focus();
+}
+function p(txt){$.outp.value+=txt;}
+function onframe(){
+	var t=new Date().getTime();
+	var dt=t-onframe.t0;
+//	console.log(dt+"   "+onframe.fps+"    "+onframe.f0+"   "+frameno);
+	if(dt>1000){
+		onframe.t0=t;
+		var df=frameno-onframe.f0;
+		onframe.f0=frameno;
+		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
+	}
+}
+onframe.t0=0;
+onframe.f0=0;
+onframe.fps=0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// from https://gist.github.com/jonleighton/958841
+// Converts an ArrayBuffer directly to base64, without any intermediate 'convert to string then
+// use window.btoa' step. According to my tests, this appears to be a faster approach:
+// http://jsperf.com/encoding-xhr-image-data/5
+
+function base64ArrayBuffer(arrayBuffer) {
+  var base64    = ''
+  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+  var bytes         = new Uint8Array(arrayBuffer)
+  var byteLength    = bytes.byteLength
+  var byteRemainder = byteLength % 3
+  var mainLength    = byteLength - byteRemainder
+
+  var a, b, c, d
+  var chunk
+
+  // Main loop deals with bytes in chunks of 3
+  for (var i = 0; i < mainLength; i = i + 3) {
+    // Combine the three bytes into a single integer
+    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+
+    // Use bitmasks to extract 6-bit segments from the triplet
+    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+    d = chunk & 63               // 63       = 2^6 - 1
+
+    // Convert the raw binary segments to the appropriate ASCII encoding
+    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+  }
+
+  // Deal with the remaining bytes and padding
+  if (byteRemainder == 1) {
+    chunk = bytes[mainLength]
+
+    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+
+    // Set the 4 least significant bits to zero
+    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+
+    base64 += encodings[a] + encodings[b] + '=='
+  } else if (byteRemainder == 2) {
+    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+
+    a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+    b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+
+    // Set the 2 least significant bits to zero
+    c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+
+    base64 += encodings[a] + encodings[b] + encodings[c] + '='
+  }
+  
+  return base64
+}
+</script>

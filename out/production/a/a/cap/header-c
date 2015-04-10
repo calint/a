@@ -1,0 +1,49 @@
+extern volatile const int osca_key;//last received keycode (char)
+extern volatile const int osca_t;//time lower 32b
+extern volatile const int osca_t1;//time higher 32b
+static inline void osca_pass(){}
+
+#include<stdio.h>
+#define d(fmt, ...)printf("\n%s:%d: " fmt,__FILE__,__LINE__,__VA_ARGS__);
+#define nl()printf("\n");
+#define p(format,args...)fprintf(stdout,format,##args)
+#define pl(format,args...)p(format,##args);nl()
+#define pi(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define pls(stream,format,args...)fprintf(stream,format,##args)
+#define out stdout
+#define null 0
+typedef size_t   size;
+typedef FILE*    stream;
+typedef const char* str;
+#define int_default 0
+#define float_default 0f
+#define str_default ""
+#define true 1
+#define false 0
+typedef struct field{
+    const char*type;
+    const char*name;
+    size offset;
+    size size;
+}field;
+typedef struct function{
+    const char*type;
+    const char*name;
+    const char*args;
+    void(*func)();
+}function;
+typedef struct struc{
+    const char*name;
+    size nfields;
+    const field*fields;
+    size nfuncs;
+    const function*funcs;
+}struc;
+#define offsetof(st, m) ((size)(&((st *)0)->m))
+//- -- - -- - - - - - -  ---  -- - - - - - - - - - -   - - - - - - - - - - - - -
+static void mem_clear(int address,int nbytes,int colr){
+	int*p1=(int*)address;
+	while(nbytes--)//? nbytes>>2 since sizeof(int)==4
+		*p1++=colr;
+}
+

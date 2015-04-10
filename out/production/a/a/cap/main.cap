@@ -1,0 +1,34 @@
+address{int;
+  to(stream){}
+}
+size_in_bytes{int}
+name{str}
+color{int}
+file{address;
+  size_in_bytes;
+  name;
+  to(stream){pls(s,"{%d %d}",address.i,size_in_bytes.i)}
+  to2(stream){}
+  address get_address(){return(address);}
+  clear(color){mem_clear(address.i,size_in_bytes.i,c.i)}
+  fill(int){}
+}
+width{int}height{int}
+width_in_pixels{width}
+height_in_pixels{height}
+
+bmp{file;
+  width_in_pixels;height_in_pixels;
+  to(stream){}
+}
+
+c{run(){
+    pl("hello world");
+    file f;
+    f.address=0xa5a00;
+    f.size_in_bytes=0x20;
+    color c;
+    c=0xf0e0d0;
+    f.to(out);
+    f.clear(c);
+}}

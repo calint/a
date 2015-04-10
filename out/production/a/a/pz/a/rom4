@@ -1,0 +1,6 @@
+{
+@inline dot(0x3040 0xf00)
+def dot(addr rgb){
+  st(addr rgb)
+}
+}
