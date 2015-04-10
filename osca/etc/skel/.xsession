@@ -1,5 +1,3 @@
-xsetroot -bitmap /sdk/bmp/sq.bmp
+xsetroot -bitmap $OSCA/bmp/sq.bmp
 xmodmap -e "clear Lock"
-$XC&
-
-clonky & exec frameless
+$OSCA/clonky/clonky & exec $OSCA/frameless/frameless
