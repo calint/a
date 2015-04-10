@@ -11,7 +11,7 @@ COLR=
 
 echo "`date +$DTF`  ${COLR}•  update $HOST_:/a/ from $WORKSPACE_/a/"
 while :;do
-	rsync -e "$SSHK" --recursive $VERBVOSE --exclude .svn --exclude u/ $WORKSPACE_/a/ root@$HOST_:/a/
+	rsync -e "$SSHK" --recursive $VERBVOSE --exclude .svn --exclude .git --exclude u/ $WORKSPACE_/a/ root@$HOST_:/a/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo "`date +$DTF`  ${COLR}·  waiting for update $HOST_:/a/ from $WORKSPACE_/a/"
