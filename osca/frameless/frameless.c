@@ -92,17 +92,15 @@ static xwin*xwinget(Window w){
 	xw->w=w;
 	xw->vh=0;
 	xw->desk=dsk;
+	XSetWindowBorderWidth(dpy,w,1);
 	return xw;
 }
 static void xwinfocus(xwin*this){
 	fprintf(flog,"xwinfocus  %p\n",(void*)this->w);fflush(flog);
-//	fprintf(flog,"xwinfocus  1\n");fflush(flog);
 	if(winfocused){
 		XSetWindowBorder(dpy,winfocused->w,0x00000000);
 	}
-//	fprintf(flog,"xwinfocus  2\n");fflush(flog);
 	XSetInputFocus(dpy,this->w,RevertToParent,CurrentTime);
-//	fprintf(flog,"xwinfocus  3\n");fflush(flog);
 	XSetWindowBorder(dpy,this->w,0x00008000);
 	fprintf(flog,"xwinfocus  .\n");fflush(flog);
 	winfocused=this;
@@ -572,7 +570,7 @@ int main(int argc,char**args){
 			case 16://7
 				system("xii-ide");
 				break;
-			case 28://t
+			case 27://r
 			case 113://left
 				focusprev();
 				break;
