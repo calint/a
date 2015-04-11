@@ -1,6 +1,9 @@
 #!/bin/sh
+CC="gcc -std=c11"
+SRC=src/*.c
 BIN=mounte
-gcc *.c -o $BIN -std=gnu99 -Wfatal-errors -Wall -Wextra&&
-chown root $BIN&&
-chmod u+s $BIN&&
+OPTS="-Wfatal-errors -Wall -Wextra"
+$CC -o $BIN $OPTS $SRC&&
+sudo chown root $BIN&&
+sudo chmod u+s $BIN&&
 ls -l $BIN

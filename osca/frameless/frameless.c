@@ -572,7 +572,7 @@ int main(int argc,char**args){
 			case 16://7
 				system("xii-ide");
 				break;
-			case 27://r
+			case 28://t
 			case 113://left
 				focusprev();
 				break;
