@@ -1,9 +1,7 @@
 // requires https://download.gnome.org/sources/gtksourceview/3.12/gtksourceview-3.12.3.tar.xz
+#define APP "sticky"
 #include<gtk/gtk.h>
 #include<gtksourceview/gtksourceview.h>
-#define PADDING 5
-#define BACKGROUND_COLOR "yellow"
-#define FONT "monospace 9"
 #define WIDTH 200
 #define HEIGHT 200
 void on_window_destroy(/*GtkWidget*widget,gpointer data*/){
@@ -11,26 +9,32 @@ void on_window_destroy(/*GtkWidget*widget,gpointer data*/){
 }
 int main(int argc,char**argv){
 	gtk_init(&argc,&argv);
-	GdkColor color;
-	gdk_color_parse(BACKGROUND_COLOR,&color);
+	GdkDisplay*display=gdk_display_get_default();
+	GdkScreen*screen=gdk_display_get_default_screen(display);
 	GtkWidget*window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_widget_modify_bg(window,GTK_STATE_NORMAL,&color);
-	gtk_window_set_title(GTK_WINDOW(window),"sticky");
+	g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(on_window_destroy),NULL);
+
+	GtkCssProvider*provider=gtk_css_provider_new();
+	gtk_style_context_add_provider_for_screen(screen,GTK_STYLE_PROVIDER(provider),GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+//	GError*err;
+//	gtk_css_provider_load_from_path(GTK_CSS_PROVIDER(provider),"~/.gconf/sticky/sticky.css",&err);
+//	printf(" loading from path: %d  %s\n",err->code,err->message);
+	gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(provider),
+		"GtkWindow{\n"
+		"	background-color:yellow;\n"
+		"	font-family:monospace;\n"
+		"	font-size:1em;\n"
+		"}\n"
+		"GtkTextView{\n"
+		"	background-color:inherit;\n"
+		"}\n"
+		,-1,NULL);
+	g_object_unref(provider);
+	gtk_window_set_title(GTK_WINDOW(window),APP);
 	gtk_window_set_default_size(GTK_WINDOW(window),WIDTH,HEIGHT);//? magicnum
-	//? set position at pointer
-	g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK (on_window_destroy),NULL);
-	GtkWidget*vbox=gtk_vbox_new(FALSE,2);
-	gtk_container_add(GTK_CONTAINER(window),vbox);
-//	GtkWidget*text_view=gtk_text_view_new();
+//? set position at pointer
 	GtkWidget*text_view=gtk_source_view_new();
-	gtk_widget_modify_base(text_view,GTK_STATE_NORMAL,&color);
-	gtk_text_view_set_left_margin(GTK_TEXT_VIEW(text_view),PADDING);
-	gtk_text_view_set_right_margin(GTK_TEXT_VIEW(text_view),PADDING);
-	PangoFontDescription*font_desc;
-	font_desc = pango_font_description_from_string(FONT);
-	gtk_widget_modify_font(text_view,font_desc);
-	pango_font_description_free(font_desc);
-	gtk_box_pack_start(GTK_BOX(vbox),text_view,TRUE,TRUE,PADDING);
+	gtk_container_add(GTK_CONTAINER(window),text_view);
 	gtk_widget_show_all(window);
 	gtk_main();
 	return 0;

@@ -1,4 +1,4 @@
-#define APP "window manager frameless  2015-04-03"
+#define APP "window manager frameless"
 #include<X11/Xlib.h>
 #include<X11/cursorfont.h>
 #include<stdlib.h>
@@ -24,11 +24,14 @@ static Display*dpy;
 static Window root;
 static xdesk dsk=0;
 static int wincount=0;
-static int scr=0;
-static int scr_w=0;
-static int scr_h=0;
+static struct screen{
+	int id,wi,hi;
+}scr;
+//static int scr=0;
+//static int scr_w=0;
+//static int scr_h=0;
 static unsigned int key=0;
-static int winslip=7;
+static const int winslip=7;
 static xwin*winfocused=NULL;
 static int dragging=0;
 static char*ix_evnames[LASTEvent]={
@@ -45,25 +48,6 @@ static char*ix_evnames[LASTEvent]={
 };
 
 static xwin*xwinget(Window w){
-//	fprintf(flog,"! xwinget  %p\n",(void*)w);fflush(flog);
-//	if(w==0){
-//		fprintf(flog,"! is null\n");fflush(flog);
-//		return NULL;
-//	}
-//	if(w==root){
-//		fprintf(flog," ? winget root\n");
-//		fflush(flog);
-//	}
-//	char*name;
-//	if(!XFetchName(dpy,w,&name)){
-//		fprintf(flog,"xwinget: can not fetch name on  %p\n",(void*)w);
-//		fflush(flog);
-//		return NULL;
-//	}else{
-//		fprintf(flog,"xwinget %s\n",name);
-//		fflush(flog);
-//	}
-
 	int n;
 	xwin*xw=NULL;
 	int firstavail=-1;
@@ -163,8 +147,8 @@ static void xwingeomset2(xwin*this){
 //}
 static void xwingeomcenter(xwin*this){
 	xwingeom(this);
-	int nx=(scr_w-this->gw)>>1;
-	int ny=(scr_h-this->gh)>>1;
+	int nx=(scr.wi-this->gw)>>1;
+	int ny=(scr.hi-this->gh)>>1;
 	xwingeomset(this,nx,ny,this->gw,this->gh);
 }
 static void xwingeomwider(xwin*this){
@@ -195,7 +179,7 @@ static void xwintogglefullscreen(xwin*this){
 		this->vh=0;
 	}else{
 		xwingeom(this);
-		xwingeomset(this,0,0,scr_w,scr_h);
+		xwingeomset(this,0,0,scr.wi,scr.hi);
 		this->vh=3;
 	}
 }
@@ -207,7 +191,7 @@ static void xwintogglefullheight(xwin*this){
 		xwingeomset(this,this->gx,gy,this->gw,gh);
 	}else{
 		xwingeom(this);
-		xwingeomset(this,this->gx,0,this->gw,scr_h);
+		xwingeomset(this,this->gx,0,this->gw,scr.hi);
 	}
 	this->vh^=1;
 }
@@ -219,7 +203,7 @@ static void xwintogglefullwidth(xwin*this){
 		xwingeomset(this,gx,this->gy,gw,this->gh);
 	}else{
 		xwingeom(this);
-		xwingeomset(this,0,this->gy,scr_w,this->gh);
+		xwingeomset(this,0,this->gy,scr.wi,this->gh);
 	}
 	this->vh^=2;
 }
@@ -227,7 +211,7 @@ static void xwinhide(xwin*this){
 	xwingeom(this);
 	this->desk_x=this->gx;
 	int slip=rand()%winslip;
-	this->gx=(scr_w-13+slip); //? magicnum13
+	this->gx=(scr.wi-13+slip); //? magicnum13
 	xwingeomset2(this);
 }
 static void xwinshow(xwin*this){
@@ -253,25 +237,6 @@ static int _focustry(int k){
 	xwin*w=&wins[k];
 	if((w->bits&1)&&(w->desk==dsk)){
 		fprintf(flog,"     focustry %p\n",(void*)w->w);
-//		if(w->w==root){
-//			fprintf(flog,"                is root  skipped\n");
-//			fflush(flog);
-//			return 0;
-//		}
-//		XWindowAttributes xwinattr;
-//		if(!XGetWindowAttributes(dpy,w->w,&xwinattr)){
-//			fprintf(flog,"                can not retrieve attributes  skipped\n");
-//			fflush(flog);
-//			return 0;
-//		}
-//		char*name;
-//		if(!XFetchName(dpy,w->w,&name)){
-//			fprintf(flog,"focustry on window %p   skipped, no name\n",(void*)(w->w));
-//			fflush(flog);
-//			return 0;
-//		}
-//		fprintf(flog,"focustry found %d   %s\n",k,name);
-//		fflush(flog);
 		xwinraise(w);
 		xwinfocus(w);
 		return 1;
@@ -410,10 +375,10 @@ int main(int argc,char**args){
 	if(!flog)exit(1);
 	dpy=XOpenDisplay(NULL);
 	if(!dpy)exit(2);
-	scr=DefaultScreen(dpy);
-	scr_w=DisplayWidth(dpy,scr);
-	scr_h=DisplayHeight(dpy,scr);
-	fprintf(flog,"\n\n\n\n%s\nscreen dimension: %d x %d\n",APP,scr_w,scr_h);
+	scr.id=DefaultScreen(dpy);
+	scr.wi=DisplayWidth(dpy,scr.id);
+	scr.hi=DisplayHeight(dpy,scr.id);
+	fprintf(flog,"\n\n\n\n%s\nscreen dimension: %d x %d\n",APP,scr.wi,scr.hi);
 	fflush(flog);
 
 	for(n=0;n<xwinsct;n++)
@@ -570,7 +535,7 @@ int main(int argc,char**args){
 			case 16://7
 				system("xii-ide");
 				break;
-			case 27://r
+//			case 27://r
 			case 113://left
 				focusprev();
 				break;
@@ -659,11 +624,11 @@ XButtonEvent buttonevstart;//? decllocation
 			int nh=xw->gh+ydiff;
 			if(xw->vh&2){
 				nx=0;
-				nw=scr_w;
+				nw=scr.wi;
 			}
 			if(xw->vh&1){
 				ny=0;
-				nh=scr_h;
+				nh=scr.hi;
 			}
 			switch(key){
 			default:
