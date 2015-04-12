@@ -1,3 +1,2 @@
 #!/bin/sh
-#exec $OSCA/sticky/sticky&
-exec $WORKSPACE/sticky/Debug/sticky&
+exec $OSCA/sticky/sticky&
