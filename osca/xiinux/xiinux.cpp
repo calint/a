@@ -91,7 +91,7 @@ class doc{
 	const char*lastmod;
 public:
 	doc(const char*data,const char*lastmod=nullptr):lastmod(lastmod){
-		printf("new doc %p\n",(void*)this);
+//		printf("new doc %p\n",(void*)this);
 		size=strlen(data);
 		buf=(char*)malloc(size);
 		memcpy(buf,data,size);
