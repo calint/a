@@ -1,0 +1,3 @@
+# launcher for x11
+gcc -O0 -g3 -pedantic -Wall -Wextra -c -fmessage-length=0 -MMD -MP -MF"src/menuq.d" -MT"src/menuq.d" -o "src/menuq.o" "../src/menuq.c"
+gcc  -o "menuq"  ./src/menuq.o   -lX11
