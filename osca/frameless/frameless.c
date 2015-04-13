@@ -624,11 +624,11 @@ XButtonEvent buttonevstart;//? decllocation
 			int ny=xw->gy+ydiff;
 			int nh=xw->gh+ydiff;
 			if(xw->vh&2){
-				nx=0;
+				nx=-border_width;
 				nw=scr.wi;
 			}
 			if(xw->vh&1){
-				ny=0;
+				ny=-border_width;
 				nh=scr.hi;
 			}
 			switch(key){
@@ -637,9 +637,9 @@ XButtonEvent buttonevstart;//? decllocation
 				break;
 			case 27://r
 				if(nw<0)
-					nw=0;
+					nw=1;
 				if(nh<0)
-					nh=0;
+					nh=1;
 				xwingeomset(xw,xw->gx,xw->gy,nw,nh);
 				break;
 			}
