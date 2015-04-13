@@ -6,6 +6,7 @@
 #include<unistd.h>
 #define logfile "frameless.log"
 #define bin_screenshot_area "scrot -s 'scr--%Y-%m-%d---%H-%M-%S.jpg' -e 'mkdir -p ~/img/&&mv $f ~/img/&&feh ~/img/$f'"
+#define border_width 1
 typedef int xdesk;
 typedef unsigned int bits;
 typedef struct{
@@ -179,7 +180,7 @@ static void xwintogglefullscreen(xwin*this){
 		this->vh=0;
 	}else{
 		xwingeom(this);
-		xwingeomset(this,0,0,scr.wi,scr.hi);
+		xwingeomset(this,-border_width,-border_width,scr.wi+2*border_width,scr.hi+2*border_width);
 		this->vh=3;
 	}
 }
@@ -191,7 +192,7 @@ static void xwintogglefullheight(xwin*this){
 		xwingeomset(this,this->gx,gy,this->gw,gh);
 	}else{
 		xwingeom(this);
-		xwingeomset(this,this->gx,0,this->gw,scr.hi);
+		xwingeomset(this,this->gx,-border_width,this->gw,scr.hi+2*border_width);
 	}
 	this->vh^=1;
 }
@@ -203,7 +204,7 @@ static void xwintogglefullwidth(xwin*this){
 		xwingeomset(this,gx,this->gy,gw,this->gh);
 	}else{
 		xwingeom(this);
-		xwingeomset(this,0,this->gy,scr.wi,this->gh);
+		xwingeomset(this,-border_width,this->gy,scr.wi+2*border_width,this->gh);
 	}
 	this->vh^=2;
 }
