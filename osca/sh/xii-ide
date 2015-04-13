@@ -1,3 +1,5 @@
 #!/bin/sh
 IDE=~/downloads/eclipse/eclipse
 exec env LIBOVERLAY_SCROLLBAR=1 $IDE&
+#exec $IDE&
+
