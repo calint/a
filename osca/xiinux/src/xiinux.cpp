@@ -514,7 +514,7 @@ private:
 			if(!o){
 //				printf(" * widget not found in session, creating  %s\n",qs);
 				o=widgetget(qs);
-				const int key_len=strlen(qs);
+				const size_t key_len=strlen(qs);
 				char*key=(char*)malloc(key_len+1);
 				memcpy(key,qs,key_len+1);
 				ses->put_widget(key,o);

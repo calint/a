@@ -1,6 +1,6 @@
 CC="clang++ -std=c++11"
 BIN=xiinux
-SRC=xiinux.cpp
+SRC=src/*.cpp
 DBG="-g -O0"
 #OPTS=-Os
 WARNINGS="-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wfatal-errors"
@@ -16,3 +16,4 @@ cat $SRC|gzip|wc &&
 echo && ls -o --color $BIN &&
 echo &&
 valgrind --leak-check=yes --leak-check=full --show-leak-kinds=all ./$BIN
+
