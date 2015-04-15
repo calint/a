@@ -1,13 +1,14 @@
 #  frameless osca desktop on    
-#  ________________             
-#  \ hp stream 11  \        \\  
-#   \  ubuntu 14.1  \       |\\ 
-#    \   linux 4     \      ||  
-#     \    lowlatency \     \ \ 
-#      \_______________\        
+#      ________________             
+#      \ hp stream 11  \     \\  
+#       \  ubuntu 14.1  \    |\\ 
+#        \   linux 4     \   ||  
+#         \    lowlatency \  \ \ 
+#          \_______________\        
 #                               
-#           \\  \\  \\          
-#           sticky notes        
+#               \\  \\  \\          
+#                              
+#                sticky notes        
 #                               
 #   ./\.       
 #   /--\       
