@@ -24,8 +24,6 @@ static int const port=8088;
 class stats{
 public:
 	size_t ms{0};
-	size_t socks{0};
-	size_t sessions{0};
 	size_t input{0};
 	size_t output{0};
 	size_t accepts{0};
@@ -37,11 +35,11 @@ public:
 	size_t errors{0};
 	size_t brkp{0};
 	void printhdr(FILE*f){
-		fprintf(f,"%12s%12s%12s%8s%8s%8s%8s%8s%8s%8s%8s%8s%8s\n","ms","input","output","socks","sess","accepts","reads","writes","files","widgets","cache","errors","brkp");
+		fprintf(f,"%12s%12s%12s%8s%8s%8s%8s%8s%8s%8s%8s\n","ms","input","output","accepts","reads","writes","files","widgets","cache","errors","brkp");
 		fflush(f);
 	}
 	void print(FILE*f){
-		fprintf(f,"\r%12zu%12zu%12zu%8zu%8zu%8zu%8zu%8zu%8zu%8zu%8zu%8zu%8zu",ms,input,output,socks,sessions,accepts,reads,writes,files,widgets,cache,errors,brkp);
+		fprintf(f,"\r%12zu%12zu%12zu%8zu%8zu%8zu%8zu%8zu%8zu%8zu%8zu",ms,input,output,accepts,reads,writes,files,widgets,cache,errors,brkp);
 		fflush(f);
 	}
 };
@@ -50,7 +48,12 @@ class xwriter{
 	int fd;
 	const char*set_session_id{nullptr};
 public:
-	xwriter(const int fd=0):fd(fd){}
+	xwriter(const int fd=0):fd(fd){
+		printf("new writer %p\n",(void*)this);
+	}
+	~xwriter(){
+		printf("delete writer %p\n",(void*)this);
+	}
 	inline void send_session_id_at_next_opportunity(const char*id){set_session_id=id;}
 	xwriter&reply_http(const int code,const char*content,const size_t len){
 		char bb[K];
@@ -90,9 +93,9 @@ public:
 class doc{
 	size_t size;
 	char*buf;
-//	const char*lastmod;
+	const char*lastmod;
 public:
-	doc(const char*data,const char*lastmod=nullptr){//:lastmod(lastmod){
+	doc(const char*data,const char*lastmod=nullptr):lastmod(lastmod){
 //		printf("new doc %p\n",(void*)this);
 		size=strlen(data);
 		buf=(char*)malloc(size);
@@ -206,7 +209,7 @@ public:
 		while(1){
 			if(!strcmp(l->key,key)){
 				if(!allow_overwrite)
-					throw"lutoverwrite";
+					throw;
 				l->data=data;
 				return;
 			}
@@ -246,11 +249,9 @@ class session{
 	lut<widget*>widgets;
 public:
 	session(/*takes*/char*session_id):_id(session_id){
-		stats.sessions++;
-//		printf(" * new session %s @ %p\n",session_id,(void*)this);
+//		printf(" * new session @ %p\n",(void*)this);
 	}
 	~session(){
-		stats.sessions--;
 //		printf(" * delete session %s\n",_id);
 		free(_id);
 		kvp.delete_content(true);
@@ -268,13 +269,14 @@ public:
 //		printf(" * delete sessions %p\n",(void*)this);
 		all.delete_content(false);
 	}
-	lut<session*>all{K};
+	lut<session*>all;
 };
 static sessions sessions;
-static int epollfd;
+enum io_request{request_close,request_read,request_write,request_next,request_wait};
+static int epfd;
 class sock{
 private:
-	enum parser_state{waiting_for_read_new_request,method,uri,query,protocol,header_key,header_value,resume_send_file,read_content};
+	enum parser_state{method,uri,query,protocol,header_key,header_value,resume_send_file,read_content,running_widget};
 	parser_state state{method};
 	int fdfile{0};
 	off_t fdfileoffset{0};
@@ -287,142 +289,100 @@ private:
 	char*content{nullptr};
 	size_t content_len{0};
 	unsigned long long content_pos{0};
+public:
+	int fd;
 	char buf[conbufnn];
 	char*bufp{buf};
 	size_t bufi{0};
 	size_t bufnn{0};
-	void io_request_read(){
-		struct epoll_event ev;
-		ev.data.ptr=this;
-		ev.events=EPOLLIN|EPOLLRDHUP|EPOLLET;
-		if(epoll_ctl(epollfd,EPOLL_CTL_MOD,fd,&ev)){
-			perror("ioreqread");
-			throw"epollmodread";
-		}
-	}
-	void io_request_write(){
-		struct epoll_event ev;
-		ev.data.ptr=this;
-		ev.events=EPOLLOUT|EPOLLRDHUP|EPOLLET;
-		if(epoll_ctl(epollfd,EPOLL_CTL_MOD,fd,&ev)){
-			perror("ioreqwrite");
-			throw"epollmodwrite";
-		}
-	}
-public:
-	int fd;
-	sock(const int fd=0):fd(fd){
-		stats.socks++;
-	}
+	sock(const int fd=0):fd(fd){}
 	~sock(){
-		stats.socks--;
-		//printf(" * delete sock %p\n",(void*)this);
-		delete[]content;
+		printf(" * delete sock %p\n",(void*)this);
+		delete content;
 		if(!close(fd)){
 			return;
 		}
 		stats.errors++;
-		printf("%s:%d ",__FILE__,__LINE__);perror("sockdel");
+		printf("%s:%d ",__FILE__,__LINE__);perror("");
 	}
-	void run(){while(true){
-		//printf(" state %d\n",state);
-		if(state==read_content){
-			//printf(" read content\n");
+	io_request run(const bool read){
+		if(read){
 			stats.reads++;
-			const ssize_t nn=recv(fd,content+content_pos,content_len-content_pos,0);
-			if(nn==0){//closed by client
-				delete this;
-				return;
-			}
-			if(nn<0){
-				if(errno==EAGAIN||errno==EWOULDBLOCK){
-					printf("eagain || wouldblock\n");
-					io_request_read();
-					return;
-				}else if(errno==104){// connection reset by peer
-					delete this;
-					return;
+			if(state==read_content){//reading content
+				const ssize_t nn=recv(fd,content+content_pos,content_len-content_pos,0);
+				if(nn==0){//closed by client
+					return request_close;
 				}
-				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("readcontent");
-				stats.errors++;
-				delete this;
-				throw"readingcontent";
-			}
-			content_pos+=(unsigned)nn;
-			stats.input+=(unsigned)nn;
-			if(content_pos==content_len){
-				*(content+content_len)=0;
-				process();
-				const char*str=hdrs["connection"];
-				if(!str||strcmp("Keep-Alive",str)){
-					//printf(" not ka connection\n");
-					delete this;
-					return;
+				if(nn<0){
+					if(errno==EAGAIN||errno==EWOULDBLOCK){
+						return request_read;
+					}else if(errno==104){// connection reset by peer
+						return request_close;
+					}
+					printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+					stats.errors++;
+					return request_close;
+					throw;
 				}
-				io_request_read();
-				printf(" read next req\n");
+				content_pos+=(unsigned)nn;
+				stats.input+=(unsigned)nn;
+				if(content_pos==content_len){
+					*(content+content_len)=0;
+					switch(process()){
+					case request_close:return request_close;
+					case request_write:return request_write;
+					case request_next:return request_read;
+					case request_read:return request_read;
+					case request_wait:throw;
+					}
+				}
+			}else{
+				if(bufi>=conbufnn)
+					throw"bufferoverrun";
+				const ssize_t nn=recv(fd,buf+bufi,conbufnn-bufi,0);
+				if(nn==0){//closed
+					return request_close;
+				}
+				if(nn<0){//error
+					if(errno==EAGAIN||errno==EWOULDBLOCK){
+						return request_read;
+					}else if(errno==104){// connection reset by peer
+						return request_close;
+					}
+					printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+					stats.errors++;
+					return request_close;
+				}
+				bufnn+=(unsigned)nn;
+				stats.input+=(unsigned)nn;
 			}
-			return;
-		}else if(state==resume_send_file){
+		}else{
 			stats.writes++;
+		}
+		if(state==resume_send_file){
 			const ssize_t sf=sendfile(fd,fdfile,&fdfileoffset,fdfilecount);
 			if(sf<0){//error
 				if(errno==EAGAIN){
-					io_request_write();
-					return;
+					return request_write;
 				}
 				stats.errors++;
-				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("resumesendfile");
-				delete this;
-				return;
+				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+				return request_close;
 			}
 			fdfilecount-=size_t(sf);
 			stats.output+=size_t(sf);
 			if(fdfilecount!=0){
 				state=resume_send_file;
-				io_request_write();
-				return;
+				return request_write;
 			}
 			close(fdfile);
 			state=method;
 		}
-		if(bufi>=conbufnn)
-			throw"bufferoverrun";
-		if(bufi==bufnn){
-			bufi=bufnn=0;
-			bufp=buf;
-			stats.reads++;
-			//printf(" read %d\n",bufi);
-			const ssize_t nn=recv(fd,buf+bufi,conbufnn-bufi,0);
-			//printf(" read %d\n",nn);
-			if(nn==0){//closed
-				delete this;
-				return;
-			}
-			if(nn<0){//error
-				if(errno==EAGAIN||errno==EWOULDBLOCK){
-					io_request_read();
-					return;
-				}else if(errno==104){// connection reset by peer
-					delete this;
-					return;
-				}
-				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("readbuf");
-				stats.errors++;
-				delete this;
-				return;
-			}
-			bufnn+=(unsigned)nn;
-			stats.input+=(unsigned)nn;
-			if(state==waiting_for_read_new_request)
-				state=method;
-		}
-//		printf("parse  %zu of %zu\n",bufi,bufnn);
 		while(bufi<bufnn){
-//			printf("%d",state);fflush(stdout);
 			bufi++;
 			const char c=*bufp++;
 			switch(state){
+			case running_widget:throw;
 			case method:
 				if(c==' '){
 					state=uri;
@@ -454,13 +414,12 @@ public:
 				}
 				break;
 			case header_key:
-				if(c=='\n'){// content or done parsing
+				if(c=='\n'){
 					const char*content_length_str=hdrs["content-length"];
 					if(content_length_str){
-						//printf(" content len %s\n",content_length_str);
 						content_len=(size_t)atoll(content_length_str);
 						//? assert constraints for content_len
-						delete[]content;
+						if(content)delete content;
 						content=new char[content_len+1];// extra char for end-of-string
 						const size_t chars_left_in_buffer=bufnn-bufi;
 						if(chars_left_in_buffer>=content_len){
@@ -472,25 +431,16 @@ public:
 							memcpy(content,bufp,chars_left_in_buffer);
 							content_pos=chars_left_in_buffer;
 							state=read_content;
-//							printf(" io request read after copy %zu\n",content_pos);
-							const char*expect_continue=hdrs["expect"];
-							if(expect_continue&&!strcmp(expect_continue,"100-continue")){
-//								printf("client expects 100 continue before sending post\n");
-								const ssize_t n=send(fd,"HTTP/1.1 100\r\n\r\n",16,0);
-								if(n<0)throw"sendingcontinue";
-							}
-							io_request_read();
-							state=read_content;
-							//printf(" return for read  state=%d   %zu/%zu\n",state,content_pos,content_len);
-							return;
+							return request_read;
+							break;
 						}
 					}else{
 						content=nullptr;
 					}
-					process();
-					if(state==waiting_for_read_new_request)
-						return;
-					break;
+					const io_request ioreq=process();
+					if(ioreq==request_next)
+						break;
+					return ioreq;
 				}else if(c==':'){
 					*(bufp-1)=0;
 					hdrvp=bufp;
@@ -510,25 +460,87 @@ public:
 				break;
 			case resume_send_file:
 			case read_content:
-			case waiting_for_read_new_request:
 				throw"illegalstate";
 			}
 		}
-		if(state!=method){// not finished parsing request
-			io_request_read();
-			return;
-		}
-		const char*str=hdrs["connection"];
-		if(!str||strcmp("Keep-Alive",str)){
-			delete this;
-			return;
-		}
-		// continue parsing
-	}}
+		return request_done();
+	}
 private:
-	void process(){
+	io_request request_done(){
+		if(state==method){
+			const char*str=hdrs["connection"];
+			if(str&&!strcmp("Keep-Alive",str)){
+				bufi=bufnn=0;
+				bufp=buf;
+				return request_read;
+			}else{
+				return request_close;
+			}
+		}else{
+			return request_read;
+		}
+	}
+	pthread_t pt;
+	widget*active_widget{nullptr};
+	xwriter*xw{nullptr};
+	static void*thdwidgetrun(void*arg){
+		sock*sk=(sock*)arg;
+		printf("thread for socket %p running\n",(void*)sk);
+		widget*w=sk->active_widget;
+		xwriter*x=sk->xw;
+		printf("running widget %s@%p  using writer %s@%p\n",typeid(arg).name(),w,typeid(x).name(),(void*)x);
+		try{
+			if(sk->content){
+	//				printf(" * content:\n%s\n",content);
+				sk->active_widget->on_content(*sk->xw,sk->content,sk->content_len);
+				delete[]sk->content;
+				sk->content=nullptr;
+			}else{
+				w->to(*x);
+			}
+			sk->active_widget=nullptr;
+			delete sk->xw;
+			sk->xw=nullptr;
+			printf("done running widget %p\n",(void*)w);
+			sk->state=method;
+			switch(sk->request_done()){
+			case request_close:
+				printf("socket %p done. closing.\n",(void*)sk);
+				delete sk;
+				break;
+			case request_read:{
+				struct epoll_event epollev;
+				epollev.data.ptr=(void*)sk;
+				epollev.events=EPOLLIN|EPOLLRDHUP|EPOLLET;
+				if(epoll_ctl(epfd,EPOLL_CTL_MOD,sk->fd,&epollev))
+					{perror("epollmodread");delete sk;}
+				break;
+			}
+			case request_write:{
+				struct epoll_event epollev;
+				epollev.events=EPOLLOUT|EPOLLRDHUP|EPOLLET;
+				if(epoll_ctl(epfd,EPOLL_CTL_MOD,sk->fd,&epollev))
+					{perror("epollmodwrite");delete sk;}
+				break;
+			}
+			case request_next:throw;
+			case request_wait:throw;
+			}
+		}catch(const char*e){
+			printf(" *** exception %s\n",e);
+			delete sk;
+		}
+		pthread_exit(nullptr);
+	}
+
+	io_request process(){
+		if(state==running_widget){// resume
+			throw;
+		}
+
 		const char*path=pth+1;
-		xwriter x=xwriter(fd);
+		xw=new xwriter(fd);
+		printf("created writer %p\n",(void*)xw);
 		if(!*path&&qs){
 			stats.widgets++;
 			const char*cookie=hdrs["cookie"];
@@ -543,21 +555,18 @@ private:
 			if(!session_id){
 				// create session
 				//"Fri, 31 Dec 1999 23:59:59 GMT"
-				time_t timer=time(NULL);
-				struct tm*tm_info=gmtime(&timer);
+//				strftime(lastmod,size_t(64),"%Y%mm%dd--%H:%M:%S--",tm);
 				char*sid=(char*)malloc(24);
-				//						 20150411--225519-ieu44d
-				strftime(sid,size_t(24),"%Y%m%d-%H%M%S-",tm_info);
-//				free(tm_info);
-				char*sid_ptr=sid+16;
-				for(int i=0;i<7;i++){
+				strncpy(sid,"20150411-2255190-ieu44d",24);
+				char*sid_ptr=sid+17;
+				for(int i=0;i<6;i++){
 					*sid_ptr++='a'+random()%26;
 				}
 				*sid_ptr=0;
 //				printf(" * creating session %s\n",session_id);
 				ses=new session(sid);
 				sessions.all.put(sid,ses,false);
-				x.send_session_id_at_next_opportunity(sid);
+				xw->send_session_id_at_next_opportunity(sid);
 			}else{
 				ses=sessions.all[session_id];
 				if(!ses){// session not found, reload
@@ -570,50 +579,60 @@ private:
 					sessions.all.put(sid,ses,false);
 				}
 			}
-			widget*o=ses->get_widget(qs);
-			if(!o){
+			active_widget=ses->get_widget(qs);
+			if(!active_widget){
 //				printf(" * widget not found in session, creating  %s\n",qs);
-				o=widgetget(qs);
+				active_widget=widgetget(qs);
 				const size_t key_len=strlen(qs);
 				char*key=(char*)malloc(key_len+1);
 				memcpy(key,qs,key_len+1);
-				ses->put_widget(key,o);
+				ses->put_widget(key,active_widget);
 			}
-			if(content){
-//				printf(" * content:\n%s\n",content);
-				o->on_content(x,content,content_len);
-				delete[]content;
-				content=nullptr;
-				state=method;
-				return;
-			}else{
-				o->to(x);
-				state=method;
-				return;
-			}
+			printf("socket %p starting thread\n",(void*)this);
+			printf("active widget %s@%p\n",typeid(active_widget).name(),(void*)active_widget);
+			if(pthread_create(&pt,nullptr,&sock::thdwidgetrun,this))
+				{perror("threadcreate");exit(6);}
+//			if(content){
+////				printf(" * content:\n%s\n",content);
+//				o->on_content(x,content,content_len);
+//				delete[]content;
+//				content=nullptr;
+//			}else{
+//				o->to(x);
+//			}
+			state=running_widget;
+			return request_wait;
 		}
 		if(!*path){
 			stats.cache++;
-			homepage->to(x);
+			homepage->to(*xw);
+			delete xw;
+			xw=nullptr;
 			state=method;
-			return;
+			return request_next;
 		}
 		if(strstr(path,"..")){
-			x.reply_http(403,"path contains ..");
+			xw->reply_http(403,"path contains ..");
+			delete xw;
+			xw=nullptr;
 			state=method;
-			return;
+			return request_next;
 		}
 		stats.files++;
 		struct stat fdstat;
 		if(stat(path,&fdstat)){
-			x.reply_http(404,"not found");
+			xw->reply_http(404,"not found");
+			delete xw;
+			xw=nullptr;
 			state=method;
-			return;
+			return request_next;
 		}
 		if(S_ISDIR(fdstat.st_mode)){
-			x.reply_http(403,"path is directory");
+			xw->reply_http(403,"path is directory");
+			delete xw;
+			xw=nullptr;
 			state=method;
-			return;
+			return request_next;
 		}
 		const struct tm*tm=gmtime(&fdstat.st_mtime);
 		char lastmod[64];
@@ -626,23 +645,25 @@ private:
 			const ssize_t hdrsn=send(fd,hdr,hdrnn,0);
 			if(hdrsn<0){
 				stats.errors++;
-				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("notmod");
-				throw"errorsending";
+				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+				throw;
 			}
 			if((unsigned)hdrsn!=hdrnn){
 				stats.errors++;
-				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("notmod2");
-				throw"errorsending";
+				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+				throw;
 			}
 			stats.output+=(size_t)hdrsn;
 			state=method;
-			return;
+			return request_next;
 		}
 		fdfile=open(path,O_RDONLY);
 		if(fdfile==-1){
-			x.reply_http(404,"cannot open");
+			xw->reply_http(404,"cannot open");
+			delete xw;
+			xw=nullptr;
 			state=method;
-			return;
+			return request_next;
 		}
 		fdfileoffset=0;
 		fdfilecount=size_t(fdstat.st_size);
@@ -652,8 +673,8 @@ private:
 			off_t rs=0;
 			if(EOF==sscanf(range,"bytes=%zu",&rs)){
 				stats.errors++;
-				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("scanrange");
-				throw"errrorscanning";
+				printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+				throw;
 			}
 			fdfileoffset=rs;
 			const off_t s=rs;
@@ -667,39 +688,46 @@ private:
 		const ssize_t bbsn=send(fd,bb,bbnn,0);
 		if(bbsn<0){
 			stats.errors++;
-			printf("\n\n%s:%d ",__FILE__,__LINE__);perror("sendheaders");
-			throw"errorsending1";
+			printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+			throw;
 		}
 		if(size_t(bbsn)!=bbnn){
 			stats.errors++;
-			printf("\n\n%s:%d ",__FILE__,__LINE__);perror("sendheaders2");
-			throw"errorsending2";
+			printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+			throw;
 		}
 		stats.output+=size_t(bbsn);
 		const ssize_t nn=sendfile(fd,fdfile,&fdfileoffset,fdfilecount);
 		if(nn<0){
 			if(errno==32){//broken pipe
 				stats.brkp++;
-				delete this;
-				throw"brokenpipe";
+				return request_close;
 			}
 			stats.errors++;
-			printf("\n\n%s:%d ",__FILE__,__LINE__);perror("sendfile");
-			delete this;
-			throw"errorreading";
+			printf("\n\n%s:%d ",__FILE__,__LINE__);perror("");
+			return request_close;
 		}
 		stats.output+=size_t(nn);
 		fdfilecount-=size_t(nn);
 		if(fdfilecount!=0){
 			state=resume_send_file;
-			io_request_write();
-			return;
+			return request_write;
 		}
 		close(fdfile);
 		state=method;
+		return request_next;
 	}
 };
-static sock server_socket;
+static sock server;
+static void sigexit(int i){
+	puts("exiting");
+	delete homepage;
+	if(shutdown(server.fd,SHUT_RDWR))perror("shutdown");
+	close(server.fd);
+	signal(SIGINT,SIG_DFL);
+	kill(getpid(),SIGINT);
+	exit(i);
+}
 static void*thdwatchrun(void*arg){
 	if(arg)
 		puts((const char*)arg);
@@ -716,16 +744,7 @@ static void*thdwatchrun(void*arg){
 	}
 	return nullptr;
 }
-static void sigexit(int i){
-	puts("exiting");
-	delete homepage;
-	if(shutdown(server_socket.fd,SHUT_RDWR))perror("shutdown");
-	close(server_socket.fd);
-	signal(SIGINT,SIG_DFL);
-	kill(getpid(),SIGINT);
-	exit(i);
-}
-int main(int argc,char**argv){
+int main(){
 	signal(SIGINT,sigexit);
 	puts(APP);
 	printf("  port %d\n",port);
@@ -733,6 +752,7 @@ int main(int argc,char**argv){
 	char buf[4*K];
 	snprintf(buf,sizeof buf,"HTTP/1.1 200\r\nConnection: Keep-Alive\r\nContent-Length: %zu\r\n\r\n%s",strlen(APP),APP);
 	homepage=new doc(buf);
+//	homepage=new doc(app,time());
 
 	struct sockaddr_in srv;
 	const ssize_t srvsz=sizeof(srv);
@@ -740,73 +760,75 @@ int main(int argc,char**argv){
 	srv.sin_family=AF_INET;
 	srv.sin_addr.s_addr=INADDR_ANY;
 	srv.sin_port=htons(port);
-	if((server_socket.fd=socket(AF_INET,SOCK_STREAM,0))==-1){perror("socket");exit(1);}
-	if(bind(server_socket.fd,(struct sockaddr*)&srv,srvsz)){perror("bind");exit(2);}
-	if(listen(server_socket.fd,nclients)==-1){perror("listen");exit(3);}
-	epollfd=epoll_create(nclients);
-	if(!epollfd){perror("epollcreate");exit(4);}
+	if((server.fd=socket(AF_INET,SOCK_STREAM,0))==-1)
+		{perror("socket");exit(1);}
+	if(bind(server.fd,(struct sockaddr*)&srv,srvsz))
+		{perror("bind");exit(2);}
+	if(listen(server.fd,nclients)==-1)
+		{perror("listen");exit(3);}
+	epfd=epoll_create(nclients);
+	if(!epfd)
+		{perror("epollcreate");exit(4);}
 	struct epoll_event ev;
 	ev.events=EPOLLIN;
-	ev.data.ptr=&server_socket;
-	if(epoll_ctl(epollfd,EPOLL_CTL_ADD,server_socket.fd,&ev)<0){perror("epolladd");exit(5);}
+	ev.data.ptr=&server;
+	if(epoll_ctl(epfd,EPOLL_CTL_ADD,server.fd,&ev)<0)
+		{perror("epolladd");exit(5);}
 	struct epoll_event events[nclients];
-	const bool watch_thread=argc>1;
+	const bool watch_thread=false;
+//	thread t1(thd_watch,"hello");
 	pthread_t thdwatch;
-	if(watch_thread)if(pthread_create(&thdwatch,nullptr,&thdwatchrun,nullptr)){perror("threadcreate");exit(6);}
+	if(watch_thread){
+		if(pthread_create(&thdwatch,nullptr,&thdwatchrun,nullptr))
+			{perror("threadcreate");exit(6);}
+	}
 	while(true){
-		//printf(" epoll_wait\n");
-		const int nn=epoll_wait(epollfd,events,nclients,-1);
-		//printf(" epoll_wait returned %d\n",nn);
-		if(nn==-1){
-			perror("epollwait");
-			puts("epoll_wait error");
-			continue;
-			exit(7);
-		}
+		const int nn=epoll_wait(epfd,events,nclients,-1);
+		if(nn==-1)
+			{perror("epollwait");exit(7);}
 		for(int i=0;i<nn;i++){
-			sock&c=*(sock*)events[i].data.ptr;
-			if(c.fd==server_socket.fd){// new connection
+			sock*sk=(sock*)events[i].data.ptr;
+			if(sk->fd==server.fd){
 				stats.accepts++;
-				const int fda=accept(server_socket.fd,0,0);
-				if(fda==-1){
-					perror("accept");
-					puts("accept");
-					continue;
-					exit(8);
-				}
+				const int fda=accept(server.fd,0,0);
+				if(fda==-1)
+					{perror("accept");exit(8);}
 				int opts=fcntl(fda,F_GETFL);
-				if(opts<0){
-					perror("optget");
-					puts("optget");
-					continue;
-					exit(9);
-				}
+				if(opts<0)
+					{perror("optget");exit(9);}
 				opts|=O_NONBLOCK;
-				if(fcntl(fda,F_SETFL,opts)){
-					perror("optsetNONBLOCK");
-					puts("optsetNONBLOCK");
-					continue;
-					exit(10);
-				}
+				if(fcntl(fda,F_SETFL,opts))
+					{perror("optsetNONBLOCK");exit(10);}
 				ev.data.ptr=new sock(fda);
 				ev.events=EPOLLIN|EPOLLRDHUP|EPOLLET;
-				if(epoll_ctl(epollfd,EPOLL_CTL_ADD,fda,&ev)){
-					perror("epolladd");
-					perror("puts");
-					continue;
-					exit(11);
-				}
+				if(epoll_ctl(epfd,EPOLL_CTL_ADD,fda,&ev))
+					{perror("epolladd");exit(11);}
 				int flag=1;
-				if(setsockopt(fda,IPPROTO_TCP,TCP_NODELAY,(void*)&flag,sizeof(int))<0){
-					perror("optsetTCP_NODELAY");
-					puts("optsetTCP_NODELAY");
-					exit(12);
-				}
+				if(setsockopt(fda,IPPROTO_TCP,TCP_NODELAY,(void*)&flag,sizeof(int))<0)
+					{perror("optsetTCP_NODELAY");exit(12);}
 				continue;
 			}
-			try{c.run();}catch(const char*e){
+			try{
+				switch(sk->run((events[i].events&EPOLLIN)==EPOLLIN)){
+				case request_close:
+					delete sk;
+					break;
+				case request_read:
+					events[i].events=EPOLLIN|EPOLLRDHUP|EPOLLET;
+					if(epoll_ctl(epfd,EPOLL_CTL_MOD,sk->fd,&events[i]))
+						{perror("epollmodread");delete sk;}
+					break;
+				case request_write:
+					events[i].events=EPOLLOUT|EPOLLRDHUP|EPOLLET;
+					if(epoll_ctl(epfd,EPOLL_CTL_MOD,sk->fd,&events[i]))
+						{perror("epollmodwrite");delete sk;}
+					break;
+				case request_next:throw;
+				case request_wait:break;
+				}
+			}catch(const char*e){
 				printf(" *** exception %s\n",e);
-				delete&c;
+				delete sk;
 			}
 		}
 	}
