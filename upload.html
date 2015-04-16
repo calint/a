@@ -26,7 +26,7 @@ function upload(path,blobOrFile,progressbarId){
 		console.log('onload '+path+' '+xhr.status);
 		document.getElementById(progressbarId).value=1;
 	};
-	xhr.open('POST','/'+escape(path),true);
+	xhr.open('PUT','/'+escape(path),true);
 	xhr.setRequestHeader("Content-type","file");
 	xhr.onloadstart=function(e){console.log('onloadstart '+path+'  '+xhr.status);};
 	xhr.onabort=function(e){console.log('onabort');};
