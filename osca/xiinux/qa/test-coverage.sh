@@ -49,12 +49,13 @@ curl -s $HTTP/?asdf>cmp&&
 diff -q cmp t04.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
-echo " * chained requests"&&
+echo " * chained get"&&
 echo $'GET / HTTP/1.1\r\n\r\nGET / HTTP/1.1\r\n\r\n'|nc $HOST $PORT>cmp&&
 diff -q cmp t09.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
 echo " * post"&&
+# echo $'PUT /upl HTTP/1.1\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nx'|nc $HOST $PORT
 curl -s --header "Content-Type:text/plain;charset=utf-8" --data "hello ᐖᐛツ" $HTTP/?typealine>cmp&&
 diff -q cmp t10.cmp&&
 rm cmp&&
@@ -63,6 +64,31 @@ echo " * bigger post >4K"&&
 curl -s --header "Content-Type:text/plain;charset=utf-8" --data-binary @q02.txt $HTTP/?typealine>cmp&&
 diff -q cmp t11.cmp&&
 rm cmp&&
+#--- - - - - ---  - - - - -- - -- - -- - - -- - 
+echo " * upload small file"&&
+curl -sq -XPUT --header "Content-Type:file" --data-binary @q01.txt $HTTP/upl>/dev/null&&
+curl -s $HTTP/upload/upl>cmp&&
+diff -q cmp q01.txt&&
+rm cmp&&
+rm ../upload/upl&&
+#--- - - - - ---  - - - - -- - -- - -- - - -- - 
+echo " * upload bigger file"&&
+curl -sq -XPUT --header "Content-Type:file" --data-binary @q02.txt $HTTP/upl>/dev/null&&
+curl -s $HTTP/upload/upl>cmp&&
+diff -q cmp q02.txt&&
+rm cmp&&
+rm ../upload/upl&&
+#--- - - - - ---  - - - - -- - -- - -- - - -- - 
+echo " * chained upload"&&
+echo $'PUT /upl HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nxPUT /upl2 HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\ny'|nc $HOST $PORT>cmp&&
+diff -q cmp t12.cmp&&
+curl -s $HTTP/upload/upl>cmp&&
+diff -q cmp t13.cmp&&
+curl -s $HTTP/upload/upl2>cmp&&
+diff -q cmp t14.cmp&&
+rm cmp&&
+rm ../upload/upl&&
+rm ../upload/upl2&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- -
 date&&echo
 
