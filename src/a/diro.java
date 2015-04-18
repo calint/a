@@ -88,7 +88,7 @@ public class diro extends a{
 		final String icnren="r";
 		x.span("margin-left:22px;float:right");
 		if(isfile){
-			x.ax(this,"s",icnfile);
+			x.ax(this,"s",icnfile).spc();
 			x.ax(this,"sx","▣");
 			x.span_();
 			x.nl();
@@ -158,7 +158,7 @@ public class diro extends a{
 		if(isfile){
 //			x.pre().nl().flush();
 //			path.to(new osltgt(x.outputstream()));
-			x.style().css(bd,"width:100%;height:100%;border:1px dotted green").style_();
+			x.style().css(bd,"width:100%;height:1111em;border:1px dotted green").style_();
 			x.inptxtarea(bd,"ed");
 			x.focus(bd);
 		}else{
@@ -176,6 +176,8 @@ public class diro extends a{
 	}
 	synchronized public final void x_e(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_DIR_ENTER))throw new Error("notallowed");
+		final String qr=queries.get(p.toString());
+		q.set(qr);
 		try{
 			final path pp=path.get(p);
 			path=pp;
@@ -208,9 +210,16 @@ public class diro extends a{
 	final protected String ttoa(final long ms){return df.format(ms);}
 	final protected String btoa(final long n){return nf.format(n);}
 //	private String query;
+	private Map<String,String>queries=new HashMap<>();
 	synchronized public final void x_(final xwriter x,final String p)throws Throwable{
 		if(!hasbit(BIT_ALLOW_QUERY))throw new Error("notallowed");
 //		query=q.toString();
+		if(q.toString().endsWith("/")){
+//			q.clr();
+			x_up(x,null);
+			return;
+		}
+		queries.put(path.toString(),q.str());
 		x.xuo(this);
 //		to(x.xub(this));x.xube();
 //		x.p("var e=$('").p(q.id()).p("');e.setSelectionRange(e.value.length,e.value.length)").nl();
@@ -222,6 +231,8 @@ public class diro extends a{
 		if(p==null)
 			return;
 		path=p.isin(root)?p:root;
+		final String qr=queries.get(p.toString());
+		q.set(qr);
 		x.xu(this);
 		x.xfocus(q);
 	}
