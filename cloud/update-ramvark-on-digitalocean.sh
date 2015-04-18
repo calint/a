@@ -1,17 +1,17 @@
 . ./env.sh
 
-VERBOSE=--verbose
+VERBOSE=-v
 #VERBOSE=   # silent
                        # wait for port to free
 CMD_RESET='killall java;sleep 1;/etc/rc.local>/var/log/ramvark.log&'
-SSH_OPTS='-oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=60'
+SSH_OPTS='-oBatchMode=yes -oStrictHostKeyChecking=no -oConnectTimeout=5'
 
 DTF=%F---%H:%M:%S-
 COLR=
 
 echo "`date +$DTF`  ${COLR}•  update $HOST_:/a/ from $WORKSPACE_/a/"
 while :;do
-	rsync -e "$SSHK" --recursive $VERBVOSE --exclude .svn --exclude .git --exclude u/ $WORKSPACE_/a/ root@$HOST_:/a/
+	rsync $VERBOSE -e "$SSHK" --recursive --exclude .svn --exclude .git --exclude u/ $WORKSPACE_/a/ root@$HOST_:/a/
 	if [ $? -eq 0 ];then break;fi
 	sleep 1
 	echo "`date +$DTF`  ${COLR}·  waiting for update $HOST_:/a/ from $WORKSPACE_/a/"
