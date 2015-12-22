@@ -1,0 +1,162 @@
+p++ // frame
+a=0300
+stc a p
+
+b=:blits
+b++ // skip len
+ldc b c // first
+c++ // inc
+b=:blits //
+b++ // skip len
+stc b c // store
+
+m=100 // dispwidth
+
+//call
+a=0400 // from
+c=70 // lines
+d=0f00 // argb
+d+=p
+clr
+
+//call
+a=400
+drwrects
+
+//call
+a=400
+drwblits
+
+//call
+a=400
+b=:txt // ref
+typewriter
+
+//call
+a=400
+drwdots
+
+..
+..
+clr:
+lp c
+  lp m
+    stc a d nxt
+    inc d nxt ret
+
+drwdots:
+f=:dots
+c=*f++
+lp c
+  g=*f++ // yyxx
+  h=*f++ // argb
+  g+=a
+  stc g h nxt ret
+
+..
+typewriter:
+c=4 // chwh
+j=f00 // argb
+f:=m // inca
+f-=c
+g=-400 // -c*m
+g+=c // +c
+i=*b++
+lp i
+  d=*b++
+  type nxt
+ret
+..
+type:
+lp c
+  lp c
+    d<<=1
+    ifn stc a j
+    ifp a++
+    ifz a++
+    j++ nxt
+  a+=f nxt   
+a+=g ret    
+..
+drwrects:
+b=:rects
+ldc b c // len
+lp c
+  a=*b++ // yyxx
+  d=*b++ // argb
+  e=*b++ // hi
+  f=*b++ // wi
+  g:=m // linewdth
+  g-=f // inca
+  lp e
+    lp f
+      stc a d nxt
+    a+=g nxt
+  nxt ret
+..
+drwblits:
+k=:blits
+ldc k j
+lp j
+  a=*k++ // to
+  b=*k++ // from
+  h=*k++ // height
+  i=*k++ // width
+  e:=m
+  e-=i
+  lp h
+    lp i
+      d=*b++
+      ifz a++ nxt
+      ifp stc a d nxt
+      ifn stc a d nxt
+    b+=e
+    a+=e nxt
+  nxt ret
+
+..
+txt:
+. 12 // len
+. 000f 00ff 0fff 0175 
+. 0767 0043
+. 0043 0252 0126 ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+. ffff ffff ffff ffff
+
+dots:
+. 1
+//yyxx argb
+. 0100 f00 
+
+rects:
+. 5
+//yyxx argb hi   wi
+. 3830 0422 0010 0010
+. 040c 0fff 0008 0008
+. 0400 0eee 0008 0008
+. 1000 0ddd 0008 0008
+. 100c 0ccc 0008 0008
+
+blits:
+. 1
+//yyxx adr  wi   hi
+. 3830 0000 0020 0020
+. 2080 0000 0020 0020
+. 4080 0000 0020 0020
+. 6080 0000 0020 0020
+. 04a0 0000 0020 0020
+. 20a0 0000 0020 0020
+. 40a0 0000 0020 0020
+. 60a0 0000 0020 0020
+. 04c0 0000 0020 0020
+. 20c0 0000 0020 0020
+. 40c0 0000 0020 0020
+. 60c0 0000 0020 0020
+. 04e0 0000 0020 0020
+. 20e0 0000 0020 0020
+. 40e0 0000 0020 0020
+. 60e0 0000 0020 0020
