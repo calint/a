@@ -74,6 +74,7 @@ public class a implements Serializable{
 	public final a set(final int i){s=Integer.toString(i);return this;}
 	public final a set(final float f){s=Float.toString(f);return this;}
 	public final a set(final long i){s=Long.toString(i);return this;}
+	public final a set(final double d){s=Double.toString(d);return this;}
 	public final a clr(){return set((String)null);}
 	public final boolean isempty(){return s==null||s.length()==0;}
 	public final String toString(){return s==null?"":s;}
@@ -82,6 +83,7 @@ public class a implements Serializable{
 	public final float toflt(){return isempty()?0:Float.parseFloat(toString());}
 	public final long tolong(){return isempty()?0:Long.parseLong(toString());}	
 	public final short toshort(){return isempty()?0:Short.parseShort(toString());}
+	public final double todbl(){return isempty()?0:Double.parseDouble(toString());}
 	
 	
 	

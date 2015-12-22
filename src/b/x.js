@@ -1,4 +1,4 @@
-debug_set=false;
+debug_set=true;
 debug_js=true;
 debug_verbose=false;
 
