@@ -25,7 +25,7 @@ public class cell_formula_sum extends cell{
 			last_refresh=sum;
 			set(sum);
 			if(x!=null)
-				x.pl("$s('#"+id()+"','"+str()+"');");
+				x.pl("$s('"+id()+"','"+str()+"');");
 		}
 		return changed;
 	}

@@ -48,7 +48,7 @@ public class spreadsheet extends a{
 				final cell c=cells[row][col];
 				if(c==null)continue;
 				final String cid=c.id();
-				x.p("<td id=#").p(cid).p(" onclick=\"").axjs(id(),"c",cid).p("\">");
+				x.p("<td id=").p(cid).p(" onclick=\"").axjs(id(),"c",cid).p("\">");
 				c.to(x);
 			}
 			x.nl();

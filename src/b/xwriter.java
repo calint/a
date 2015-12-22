@@ -55,7 +55,7 @@ public final class xwriter{
 		if(!isempty(param))p(" ").p(param);
 		return p("')");
 	}
-	public xwriter ajx(final a e,final String args){return tago("a").attr("href","javascript:$x('"+e.id()+" "+args+"')").tagoe();}
+	public xwriter ajx(final a e,final String args){return tago("a").attr("href","javascript:$x('"+e.id()+" "+args+"')").attr("id",e.id()).tagoe();}
 	public xwriter ajx(final a e){return tago("a").attr("href","javascript:$x('"+e.id()+"')").tagoe();}
 	public xwriter ajx_(){return tage("a");}
 	public xwriter br(){return tag("br");}
@@ -243,9 +243,9 @@ public final class xwriter{
 	public xwriter ul(final String cls){return tago("ul").attr("class",cls).tagoe();}
 	public xwriter cssfont(final String name,final String url){return p("@font-face{font-family:").p(name).p(";src:url(").p(url).p(");}");}
 	public xwriter jsstr(final String s){try{new osjsstr(os).write(tobytes(s));return this;}catch(final IOException e){throw new Error(e);}}
-	public xwriter xu(final String id,final String s){return p("$s('#").p(id).p("','").jsstr(s).pl("');");}
+	public xwriter xu(final String id,final String s){return p("$s('").p(id).p("','").jsstr(s).pl("');");}
 	public xwriter xu(final a e,final String s){return xu(e.id(),s);}
-	public xwriter xub(final a e,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('#").p(e.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
+	public xwriter xub(final a e,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('").p(e.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
 	public xwriter xube(){return pl("');");}
 	public xwriter xu(final a e)throws Throwable{e.to(xub(e,true,false));return xube();}
 	public xwriter xu(final a...es)throws Throwable{
