@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import b.a;
+import b.req;
 import b.xwriter;
 
 public class pc extends a{
@@ -12,7 +13,7 @@ public class pc extends a{
 	public pc() {
 		s=new storage[2];
 		for(int i=0;i<s.length;i++){
-			s[i]=new storage(this,Integer.toString(i));
+			s[i]=new storage_file(this,Integer.toString(i));
 		}
 	}
 	@Override public void to(xwriter x)throws Throwable{
@@ -27,8 +28,9 @@ public class pc extends a{
 		x.nl().nl().nl();
 		long n=0;
 		for(final storage st:s)
-			n+=st.size_in_bytes();
-		x.p ("  pc has ").p(s.length).p(" storage device").p(s.length!=1?"s":"").p(", ").p_data_size(n).p(" bytes total");
+			n+=st.used_space_in_bytes();
+		x.p ("  pc has ").p(s.length).p(" storage device").p(s.length!=1?"s":"");
+		x.p(", used ").p_data_size(n).p(" bytes total");
 		x.table("b");
 		x.tr();
 		for(final storage st:s){
@@ -51,8 +53,9 @@ public class pc extends a{
 		final String qy=q.str();
 		final String dest_elem_id=r.id();
 		x.p("$s('").p(dest_elem_id).pl("','<ul>');");
+		final req r=req.get();
 		Arrays.stream(s,0,s.length).parallel().forEach(st->{try{
-			st.query(qy,s->x.p("$p('").p(dest_elem_id).p("','<li>").p(s).pl("');"));
+			st.query(r,qy,s->x.p("$p('").p(dest_elem_id).p("','<li>").p(s).pl("');"));
 		}catch(Throwable t){throw new Error(t);}finally{}});
 		x.p("$p('").p(dest_elem_id).pl("','</ul>');");
 		q.clr();
