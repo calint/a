@@ -94,7 +94,7 @@ public class pc extends a{
 		x.xu(inp);
 		x_q(x,q.str());
 	}
-	synchronized public void x_q(xwriter x,String p)throws Throwable{
+	synchronized public void x_q(final xwriter x,final String p)throws Throwable{
 		final String dest_elem_id=r.id();
 		final String qy=q.str();
 		if(qy.length()==0){
@@ -104,6 +104,7 @@ public class pc extends a{
 		x.p("$s('").p(dest_elem_id).pl("','<ul>');");
 		final req r=req.get();
 		Arrays.stream(s,0,s.length).parallel().forEach(st->{try{
+			//? bug synchronize x
 			st.query(r,qy,s->x.p("$p('").p(dest_elem_id).p("','<li>").jsstr(s).pl("');"));
 		}catch(Throwable t){throw new Error(t);}finally{}});
 		x.p("$p('").p(dest_elem_id).pl("','</ul>');");
