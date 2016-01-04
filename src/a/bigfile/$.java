@@ -6,8 +6,7 @@ import b.xwriter;
 public class $ extends a{
 	public pc pc;
 	@Override public void to(xwriter x)throws Throwable{
-		x.el(pc);
-		pc.to(x);
-		x.el_();
+		x.style("html","padding-left:5em");
+		x.el(pc).r(pc).el_();
 	}
 }

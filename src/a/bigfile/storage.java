@@ -26,12 +26,11 @@ public class storage extends a{
 		blobs.add(b);
 		size_in_bytes+=n;
 	}
-	public void x_q(xwriter x,String s)throws Throwable{}
 
 	synchronized public long size_in_bytes(){return size_in_bytes;}
 
-	interface console{void p(String s);}
-	public void query(final String q,final console c){
+	interface reply{void p(String s);}
+	public void query(final String q,final reply c){
 		for(final blob b:blobs){
 			final String s=b.str();
 			if(s.startsWith(q)){
