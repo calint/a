@@ -26,4 +26,5 @@ public class storage_ram extends storage{
 			}
 		}
 	}
+	private static final long serialVersionUID=1;
 }
