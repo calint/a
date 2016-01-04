@@ -1,0 +1,262 @@
+<!DOCTYPE html><title>bigfile</title><script>
+$=document.all;
+function $t(s){
+	console.log('> '+s);
+}
+function $w(s,x,y,c){
+	console.log('* window '+s+'  '+x+' '+y+' '+c);
+	var d=document.createElement('div');
+	d.innerHTML=c;
+	d.style.border='1px dotted blue';
+	d.style.position='absolute';
+	d.style.left=x+'px';
+	d.style.top=y+'px';
+	document.getElementsByTagName('body')[0].appendChild(d);
+}
+onload=function(){
+	console.log("open")
+	ws=new WebSocket("ws://"+location.host+"/bigfile.portb");
+	ws.onopen=function(e){
+		console.log("opened");
+	}
+	ws.onmessage=function(e){
+//		console.log(e.data);
+		eval(e.data);
+	};
+	ws.onerror=function(e){
+		console.log("websocket error");
+	};
+}
+</script>
+<body>
+
+
+                      b i g f i l e
+
+               distributed list of blobs
+
+          can     
+              * add new blob
+              * replace blob
+              * search blobs
+              * mark blob as deleted
+              * purge deleted blobs
+         
+         has
+              * interfaces
+              * ip network
+              * udp protocol
+          
+         distributed
+              * virtual computers in cloud       
+              * distributed storage and search
+       
+       
+                    [ client ]
+       [ client ] adds, replaces, searches, deletes blobs using interfaces to udp protocol
+         |[ client ]
+          ||...|[ client ]
+       ================================= medium ip network protocol udp
+       ================================================================
+        |||...|
+       .. . . . . . . . .
+       : gateway        : 
+       :. . . . . . . . :
+       : add blob       :  
+       : replace blob   :  
+       : search blobs   :  
+       : delete blob    :  
+       : purge deleted  :  
+       :. . . . . . . . :
+
+         to many partial storages
+         
+       .. . . . . . . . .
+       : storage        : 
+       :. . . . . . . . :
+       : add blob       :  
+       : replace blob   :  
+       : search blobs   :  
+       : delete blob    :  
+       : purge deleted  :  
+       :. . . . . . . . :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   b i g   f i l e
+   
+         * distributed storage of searchable arbitrary binary aka blobs
+
+         * can add, replace, search and delete
+
+         * runs in scalable cloud computing
+   
+   
+   
+   c l o u d   c o m p u t i n g 
+    
+         * gateway serves clients and manages storages
+         
+         * storage stores partial file and responds to gateway
+         
+         * storage can add, replace, search and delete blobs
+         
+         * storage can purge deleted blobs
+         
+         * storage uses broadcast udp in ip network to return results
+   
+         * gateway uses udp broadcast to issue commands to storages
+         
+         * processor processes, merges, sorts streams of blobs
+         
+         * gateway transfers results from storage network to client
+      
+
+
+
+       .. . . . . . . . . .
+       : big file         :
+       :. . . . . . . . . :
+       :  has             : 
+       :   gateway        : 
+       :   storages       : 
+       :   network        :
+       :. . . . . . . . . :
+       :  can             : 
+       :   blob           :
+       :    add           :
+       :    replace       :
+       :    delete        :
+       :   blobs          :  
+       :    search        :  
+       :. . . . . . . . . :
+
+       .. . . . . . . . .
+       : network        : 
+       :. . . . . . . . :
+       :  can           : 
+       :   send         :  
+       :   receive      :  
+       :. . . . . . . . :
+       :  has           : 
+       :   address      :
+       :. . . . . . . . :
+       
+       .. . . . . . . . .
+       : storage        : 
+       :. . . . . . . . :
+       :  can           : 
+       :   blob         :  
+       :    add         :  
+       :    replace     :  
+       :    delete      :  
+       :   blobs        :  
+       :    search      :  
+       :    purge       :  
+       :. . . . . . . . :
+       :  has           : 
+       :   files        : 
+       :. . . . . . . . :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+                 storage single cpu virtual computer, pc, 
+                 
+                 * file system
+                       /blobs/a
+                              b        
+                              active
+                              purge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         
+         
+     ----------------------------------------------------------------------------
+          i n t e r f a c e s
+     ----------------------------------------------------------------------------
+     
+		 interface blob{
+		 	void to(OutputStream os);
+		 }
+		 
+		 interface bigfile{
+		     long add(String s);
+		     long set(long si,String s);
+		     void search(String query,blobproc bp,console c);
+		     void delete(long si);
+		 } 
+		 
+		 interface blobproc{
+		 	boolean proc(blob b);
+		 }
+		 
+		 interface console{
+		 	void pl(String s);
+		 	void progress(long amount_done,long total_amount);
+		 }
+		

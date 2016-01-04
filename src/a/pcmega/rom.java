@@ -10,23 +10,25 @@ final public class rom extends a{
 		x.el(this);
 		x.style(this,"ul li.stp","background-color:#c88");
 		x.pre();
-		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
+		x.p("   znxr ci.. aaaaa ddddd .. ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
 //		x.style("el.rom el","background:#eea");
 		int row=0;
 		final String id=id();
+		final int instruction_width_in_bits=20;
 		for(final int d:rom){
 			x.li();
 			x.p(vintage.fld("00",Integer.toHexString(row)));
 			x.tag("span",id+"_"+row+"_s").spc().tage("span");
-			for(int k=0,bit=1;k<16;bit<<=1){
+			for(int k=0,bit=1;k<instruction_width_in_bits;bit<<=1){
 				x.p("<a href=\"javascript:$x('").p(id).p("  ").p(row).p(" ").p(k).p("')\" id=").p(id).p("_").p(row).p("$").p(k).p(">");
 				if((d&bit)==bit)
 					x.p("o");
 				else
 					x.p(".");
 				x.p("</a>");
-				if(++k%4==0)
+				k++;
+				if(k==4||k==8||k==13||k==18||k==20)
 					x.spc();
 			}
 			final String wid=id();

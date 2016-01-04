@@ -3,7 +3,7 @@ import b.a;
 import b.xwriter;
 public class loops extends a{
 	static final long serialVersionUID=1;
-	final static int size=8;
+	final static int size=16;
 	private int[]stkctr=new int[size];
 	private int[]stkadr=new int[size];
 	private int ix=0;
@@ -11,8 +11,8 @@ public class loops extends a{
 		x.el(this);
 		x.p("loop stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<size;){
-			x.p(vintage.fld("0000",Integer.toHexString(stkadr[i]))).p(":");
-			x.p(vintage.fld("0000",Integer.toHexString(stkctr[i]))).spc();
+			x.p(vintage.fld("00000",Integer.toHexString(stkadr[i]))).p(":");
+			x.p(vintage.fld("00000",Integer.toHexString(stkctr[i]))).spc();
 			i++;
 			if((i%2)==0)
 				x.nl();

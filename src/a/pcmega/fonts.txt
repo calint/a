@@ -18,9 +18,10 @@ font 4x5 font0
 . o o . .  
 . . o . .  
 . . o . .  
+. . . . . 
+ 
 . . . . .  
-. . . . .  
-. . o o .  
+. . o . .  
 . . . o .  
 . . o . .  
 . o o o .  
@@ -48,7 +49,7 @@ font 4x5 font0
 . . . . .  
 
 . . . . .  
-. . o o .  
+. . o . .  
 . o . . .  
 . o o o .  
 . . o o .  
@@ -124,7 +125,7 @@ font 4x5 font0
 . . o o .  
 . . . . .  
 
-font 5x7 hex
+font 5x7 hex padded top left
 . . . . . . 
 . . o o . . 
 . o o . o . 
@@ -397,4 +398,4 @@ font 5x7 font3
 . o o . . . 
 . o o . . . 
 . . . . . . 
-m
+

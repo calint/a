@@ -1,0 +1,31 @@
+<script>
+$=document.all;
+function $t(s){
+	console.log('> '+s);
+}
+function $w(s,x,y,c){
+	console.log('* window '+s+'  '+x+' '+y+' '+c);
+	var d=document.createElement('div');
+	d.innerHTML=c;
+	d.style.border='1px dotted blue';
+	d.style.position='absolute';
+	d.style.left=x+'px';
+	d.style.top=y+'px';
+	document.getElementsByTagName('body')[0].appendChild(d);
+}
+onload=function(){
+	console.log("open")
+	ws=new WebSocket("ws://"+location.host+"/frameless.portb");
+	ws.onopen=function(e){
+		console.log("opened");
+	}
+	ws.onmessage=function(e){
+//		console.log(e.data);
+		eval(e.data);
+	};
+	ws.onerror=function(e){
+		console.log("websocket error");
+	};
+}
+</script>
+<body>

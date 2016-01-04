@@ -1,0 +1,63 @@
+<!doctype html><meta charset=utf-8>
+tinitus 2 <output id=sts></output>
+<script>
+console.debug("hello");
+$=document.all;
+var ison=false,frameno=0,pause=false;
+function start(){
+	if(ison)return;
+	console.log("start")
+	ison=true;
+	$.sts.value="on";
+	ws=new WebSocket("ws://"+location.host+"/tinitus.porta");
+	ws.binaryType="arraybuffer";
+
+	var context=null;
+	if('webkitAudioContext' in window) {
+		context = new webkitAudioContext();
+	}else{
+		context = new AudioContext();
+	}
+	var audioSource = context.createBufferSource();
+	audioSource.connect( context.destination );
+
+	ws.onopen=function(e){
+		console.log("open");
+	}
+	
+	ws.onmessage=function(e){
+		onframe();
+		console.log("data length: "+e.data.byteLength);
+		context.decodeAudioData( e.data, function( res ) {
+			console.log("play data: "+e.data.byteLength);
+	        audioSource.buffer = res;
+	        audioSource.noteOn( 0 );
+		} );
+	};
+	ws.onerror=function(e){
+		console.log("websocket error");
+	};
+}
+function stop(){
+	console.log("close");
+	ison=false;
+	ws.close();
+	$.sts.value="off";
+}
+function p(txt){$.sts.value+=txt;}
+function onframe(){
+	var t=new Date().getTime();
+	var dt=t-onframe.t0;
+	if(dt>1000){
+		onframe.t0=t;
+		var df=frameno-onframe.f0;
+		onframe.f0=frameno;
+		onframe.fps=Math.floor(dt==0?0:df*1000/dt);
+	}
+}
+onframe.t0=0;
+onframe.f0=0;
+onframe.fps=0;
+
+onload=start;
+</script>

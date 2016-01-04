@@ -3,14 +3,14 @@ import b.a;
 import b.xwriter;
 public class calls extends a{
 	static final long serialVersionUID=1;
-	final int size=8;
+	final int size=16;
 	private int[]stk=new int[size];
 	private int ix=0;
 	public void to(final xwriter x){
 		x.el(this);
 		x.p("call stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<stk.length;){
-			x.p(vintage.fld("0000",Integer.toHexString(stk[i++]))).spc();
+			x.p(vintage.fld("00000",Integer.toHexString(stk[i++]))).spc();
 			if((i%4)==0)
 				x.nl();
 		}

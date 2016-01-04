@@ -21,7 +21,7 @@ final public class regs extends a{
 			if((i&0xf)==0xf)
 				x.nl();
 		}
-		x.nl();
+//		x.nl();
 		x.el_();
 	}
 	public void rst(){for(int i=0;i<r.length;i++)r[i]=0;}

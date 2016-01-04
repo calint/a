@@ -251,7 +251,7 @@ final public class vintage extends a{
 		x.span(sts,"font-weight:bold").nl();
 		x.r(sys).nl();
 		x.r(regs);
-		x.r(calls);
+		x.r(calls).nl();
 		x.r(loops);
 		x.pre_();
 	}
