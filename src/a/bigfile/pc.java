@@ -35,8 +35,10 @@ public class pc extends a{
 	@Override public void to(xwriter x)throws Throwable{
 		x.style(inp,"border:1px dotted green;padding:.5em;width:30em");
 		x.style(q,"border:1px dotted yellow;background:yellow;padding:.5em;width:10em");
-		x.style(r,"border:1px dotted blue;display:block;padding:.5em;width:60em");
-		x.style(r,"li","padding:.5em;width:100%");
+		x.style(r,"border:0px dotted blue;display:block;padding:.5em;width:60em");
+		x.style(r,"li","padding:.5em;padding-left:0;margin:0px;width:50em;border-bottom:1px dashed gray;list-style-type:none");//display:inline
+		x.style(r,"li:first-child","border-top:3px solid red");
+		x.style(r,"ul","border-top:3px double gray;width:51em;list-style:none;list-style-type:none");
 		x.p("     search: ").inptxt(q,this,"q");
 		x.focus(q);
 		x.p("    or    typealine ").inptxt(inp,this,"add").nl();
