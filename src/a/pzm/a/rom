@@ -1,0 +1,112 @@
+{
+@inline rects.drw()
+@inline rects.upd()
+@inline text.drw()
+@inline dots.drw()
+@inline dots.upd()
+eof eof eof
+def text.drw(){
+  foo(texts){
+    var n
+    ldc(n text)
+    lp(n){
+      var bmp
+      ldc(bmp text)
+      @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
+      sub(dest_addr add_after_glyph)
+    }
+  }
+}
+def print_bmp_4x4(scr wi hi ln bmp rgb){
+  lp(hi){
+    lp(wi){
+      shf(bmp -1)
+      @ifn stc(scr rgb)
+      @ifz inc(scr)
+      @ifp inc(scr)
+    }
+    add(scr ln)
+  }
+}
+def texts
+[ dest_addr    width   height   add_after_line   text   rgb   add_after_glyph ]{2
+   0x3040       4        4         252           txt   0xf00       0x3fc   
+   0x3440       4        4         252           os    0xf00       0x3fc   
+} 
+eof
+def txt[u16]{6
+  0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
+  0xffff
+}
+eof
+def os[bmp4x4]{1
+   0xffff
+}
+eof
+def pl(dest_addr width height add_after_line text rgb add_after_glyph){
+  var n
+  ldc(n text)
+  var bmp
+  lp(n){
+    ldc(bmp text)
+    @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
+    sub(dest_addr j)
+  }
+}
+
+def rects
+[   yx    rgb   wi    hi   ln     ]{ 3
+  0x1400 0x0ff 256    80  0x24
+  0x1000 0xf00 0x30  0x40 0x24
+  0x5800 0x00f 0x30   50  0x23
+}
+eof
+def rects.upd(){
+  var m
+  li(m 0x40)
+  fow(rects){
+    inc(ln)
+    var i
+    tx(i ln)
+    sub(i m)
+    @ifp li(ln 0x10)
+  }
+}
+def rects.drw(){
+  foo(rects){
+    lp(hi){
+      lp(wi){
+        stc(yx rgb)
+      }
+      add(yx ln)
+    }
+  }
+}
+def dots
+[   yx    dyx    rgb ]{4
+  0x7840 0x0001 0x800
+  0x7951 0x0002 0x080
+  0x7a62 0x0003 0x008
+  0x7b73 0x0004 0x088
+}
+def dots.drw(){
+  foo(dots){
+    st(yx rgb)
+  }
+}
+def dots.upd(){
+  var g
+  li(g 0x7f00)
+  fow(dots){
+    add(yx dyx)
+    var h
+    tx(h yx)
+    sub(h g)
+    @ifp li(yx 0x0800)
+  }
+}
+def red 0xf00
+def green 0xf0
+def blue 0xf
+def eof 0xffff
+}
