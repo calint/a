@@ -5,7 +5,7 @@ import a.pzm.foo.block;
 import a.pzm.foo.reader;
 import b.a;
 import b.xwriter;
-final public class crun_source_editor extends a{
+final public class source_editor extends a{
 	int focusline;
 	private int lstfocusline;
 	//	public a brkpts;

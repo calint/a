@@ -2,6 +2,8 @@ package a.pzm;
 import java.io.Serializable;
 final public class core implements Serializable{
 	public static final int op_eof=0xfffff;
+	public static final int op_stc=0x40;
+	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public int core_id,program_counter,instruction,flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]registers,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	public long meter_instructions,meter_frames;

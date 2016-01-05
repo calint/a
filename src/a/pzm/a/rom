@@ -1,4 +1,6 @@
 {
+var tick
+inc(tick)
 @inline rects.drw()
 @inline rects.upd()
 @inline text.drw()
@@ -12,8 +14,14 @@ def text.drw(){
   }
 }
 def text.upd(){
+  var scr_max
+  li(scr_max 0x6000)
   fow(texts){
     add(dest_addr delta_dest_addr)
+    var h
+    tx(h dest_addr)
+    sub(h scr_max)
+    @ifp tx(dest_addr h)
   }
 }
 def pl(dest_addr width height add_after_line text rgb sub_after_glyph){
@@ -39,7 +47,7 @@ def print_bmp_4x4(scr wi hi ln bmp rgb){
 }
 def texts
 [ dest_addr  delta_dest_addr  width   height   add_after_line   text   rgb   sub_after_glyph ]{3
-   0x3040      0x0001          4        4         252           txt   0xf00       0x3fc   
+   0x3040      0x0101          4        4         252           txt   0xf00       0x3fc   
    0x3840      0x0100          4        4         252           os    0xf00       0x3fc   
    0x5040      0x0000          3        3         253           os    0xff0       0x2fd   
 } 

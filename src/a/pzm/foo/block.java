@@ -11,10 +11,10 @@ final public class block extends statement{
 	final protected ArrayList<String> declarations;
 	final public static ArrayList<String> no_declarations=new ArrayList<>();
 	final ArrayList<String> vars=new ArrayList<>();
-	public block(a pt,String nm,reader r,ArrayList<String> declarations){// {}  gives 0 length file
+	public block(a pt,String nm,reader r,ArrayList<String>declarations){// {}  gives 0 length file
 		this(pt,nm,r,declarations,null);
 	}
-	public block(a pt,String nm,reader r,ArrayList<String> declarations,block b){// {}  gives 0 length file
+	public block(a pt,String nm,reader r,ArrayList<String>declarations,block b){// {}  gives 0 length file
 		super(pt,nm,read_annot(r),"",r,b);
 		this.declarations=declarations;
 		if(!r.is_next_char_block_open()) throw new compiler_error(this,"expected { to open code block","");

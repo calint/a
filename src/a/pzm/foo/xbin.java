@@ -38,14 +38,14 @@ public final class xbin{
 		pl("def "+name+" at "+ix);
 		return this;
 	}
-	public xbin def(final String name,def_func d){
-		defs.put(name,ix);
-		pl("def func "+name+" at "+ix);
-		return this;
-	}
+//	public xbin def(final String name,def_func d){
+//		defs.put(name,ix);
+//		pl("def func "+name+" at "+ix);
+//		return this;
+//	}
 	public int def_location_in_binary_for_name(String src){
 		final Integer i=defs.get(src);
-		if(i==null) throw new Error("def not found: "+src);
+		if(i==null)throw new Error("def not found: "+src);
 		return i.intValue();
 	}
 	public void at_pre_link_evaluate(expression e){
@@ -127,13 +127,13 @@ public final class xbin{
 		return register_aliases.get(alias);
 	}
 	public int register_index_for_alias(statement stmt,String alias){
-		 String regnm=register_for_alias(alias);
+		String regnm=register_for_alias(alias);
 		if(regnm==null)
-//			regnm=alias;
 			throw new compiler_error(stmt,"alias '"+alias+"' not found in "+register_aliases,alias);
 		if(regnm.length()!=1)
-		 throw new compiler_error(stmt,"not a register",regnm);
+			throw new compiler_error(stmt,"not a register",regnm);
 		final int rdi=regnm.charAt(0)-'a';
+		//? magicnum
 		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
 		return rdi;
 	}

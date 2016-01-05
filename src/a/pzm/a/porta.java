@@ -45,15 +45,15 @@ final public class porta extends websock implements threadedsock{
 				final prog p=new prog(r.toc,el);
 				pl("*** compiler");
 				for(int i=0;i<co.rom.length;i++)
-					co.rom[i]=-1;
+					co.rom[i]=0;
 				final xbin b=new xbin(p.toc,co.rom);
 				p.code.binary_to(b);
 				pl("*** linker");
 				b.link();
-				pl("*** toc");
-				p.toc.entrySet().forEach(me->{
-					pl(me.getKey());
-				});
+//				pl("*** toc");
+//				p.toc.entrySet().forEach(me->{
+//					pl(me.getKey());
+//				});
 				pl("*** done");
 				co.reset();
 				send_binary("1");
