@@ -60,7 +60,7 @@ final public class call_fow extends statement{
 		final int rci=register_index(rc);
 		allocated_registers.add(rc);
 		x.write(0|0x0000|(rai&63)<<14);//li(a dots)
-		x.link_li(arguments.get(0).token);
+		x.linker_add_li(arguments.get(0).token);
 		x.write(0);
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)
 		x.write(0|0x0100|(rci&63)<<14);//lp(c)

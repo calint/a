@@ -67,7 +67,7 @@ public class call extends statement{
 		if(has_annotation("inline")){
 			d.function_code.binary_to(x);
 		}else{
-			x.link_call(name);
+			x.linker_add_call(name);
 			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
 		}
 		allocated_registers.forEach(e->x.free_register(e));

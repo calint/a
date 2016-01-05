@@ -7,17 +7,14 @@
 eof eof eof
 def text.drw(){
   foo(texts){
-    @inline pl(dest_addr width height add_after_line text rgb add_after_glyph)
-  }
-}
-def pl(dest_addr width height add_after_line text rgb add_after_glyph){
-  var n
-  ldc(n text)
-  lp(n){
-    var bmp
-    ldc(bmp text)
-    @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
-    sub(dest_addr add_after_glyph)
+    var n
+    ldc(n text)
+    lp(n){
+      var bmp
+      ldc(bmp text)
+      @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
+      sub(dest_addr add_after_glyph)
+    }
   }
 }
 def print_bmp_4x4(scr wi hi ln bmp rgb){
@@ -46,7 +43,16 @@ def os[bmp4x4]{1
    0xffff
 }
 eof
-
+def pl(dest_addr width height add_after_line text rgb add_after_glyph){
+  var n
+  ldc(n text)
+  lp(n){
+    var bmp
+    ldc(bmp text)
+    @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
+    sub(dest_addr j)
+  }
+}
 
 def rects
 [   yx    rgb   wi    hi   ln     ]{ 3

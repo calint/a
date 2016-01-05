@@ -77,7 +77,7 @@ final public class acore extends a{
 				final prog p=(prog)o;
 				src=p.code;
 				for(int i=0;i<cor.rom.length;i++)
-					cor.rom[i]=-1;
+					cor.rom[i]=0;
 				final xbin b=new xbin(p.toc,cor.rom);
 				final int nregs_pre=b.registers_available.size();
 				pl("registers available "+b.registers_available.size()+" "+b.registers_available);

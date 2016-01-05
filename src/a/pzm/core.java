@@ -1,7 +1,7 @@
 package a.pzm;
 import java.io.Serializable;
 final public class core implements Serializable{
-//	public boolean on,idle,waiting_for_notify,notify;
+	public static final int op_eof=0xfffff;
 	public int core_id,program_counter,instruction,flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]registers,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	public long meter_instructions,meter_frames;
@@ -17,7 +17,6 @@ final public class core implements Serializable{
 	}
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public void reset(){
-//		on=waiting_for_notify=notify=idle=false;
 		flags=program_counter=instruction=call_stack_index=loop_stack_index=0;
 		loading_register=-1;
 		if(registers!=null)for(int i=0;i<registers.length;i++)registers[i]=0;
@@ -28,7 +27,6 @@ final public class core implements Serializable{
 		if(rom!=null)for(int i=0;i<rom.length;i++)ram[i]=rom[i];//?
 		if(rom!=null)instruction=rom[0];
 	}
-//	public void meters_reset(){meter_instructions=meter_frames=0;}
 	private void calls_push(final int v){call_stack[call_stack_index++]=v;}
 	private boolean loops_loop_is_done(){return--loop_stack_counter[loop_stack_index-1]==0;}
 	private void loops_pop(){loop_stack_index--;}
@@ -39,23 +37,8 @@ final public class core implements Serializable{
 		loop_stack_counter[loop_stack_index]=counter;
 		loop_stack_index++;
 	}
-//	public void step_frame(){
-//		while(on){
-//			step();
-//			if(instruction_register==-1)return;
-//		}
-//	}
 	public void step(){
-//		if(waiting_for_notify){
-//			if(notify){
-//				synchronized(this){waiting_for_notify=notify=false;}
-//				program_counter_set(program_counter+1);
-//			}else{
-//				return;
-//			}
-//		}
 		meter_instructions++;
-//		if(pcr>=rom.size)throw new Error("program out of bounds");
 		if(loading_register!=-1){// load reg 2 instructions command
 			registers[loading_register]=instruction;
 			loading_register=-1;
@@ -66,7 +49,6 @@ final public class core implements Serializable{
 			program_counter=0;
 			instruction=rom[0];
 			meter_frames++;
-//			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
 		}
 		int in=instruction;// znxr ci.. rraaii rrddii
@@ -82,11 +64,11 @@ final public class core implements Serializable{
 		final int xr=in&0x3;
 		final boolean invalid_opcode=(in&6)==6;
 		if(!invalid_opcode&&(in&4)==4){//call
-			final int imm14=in>>4;// .. ...... ......  (imm14)
+			final int imm16=in>>4;// .. ...... ......  (imm14)
 			final int znx=flags|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<16)|(program_counter+1);
-			program_counter=imm14;
-			instruction=rom[imm14];
+			program_counter=imm16;
+			instruction=rom[imm16];
 			calls_push(stkentry);
 			return;
 		}
@@ -106,7 +88,7 @@ final public class core implements Serializable{
 		boolean isret=false;//? nxt ret bug?
 		if(!invalid_opcode&&!program_counter_has_been_set&&(xr&2)==2){// ret after loop complete
 			final int stkentry=calls_pop();
-			final int ipc=stkentry&0xfff;
+			final int ipc=stkentry&0xffff;
 			final int znx=(stkentry>>16);
 			if((znx&4)==4){// nxt after previous call
 				if(loops_loop_is_done()){
@@ -129,7 +111,7 @@ final public class core implements Serializable{
 		final int op=in&7;
 		in>>=3;// rraaii rrddii
 		final int imm12=in;
-		final int rai=in&0x3f;
+		final int rai=in&0x3f;//? magicnum
 		in>>=6;// rrddii
 		final int rdi=in&0x3f;
 		if(!invalid_opcode){
@@ -141,10 +123,12 @@ final public class core implements Serializable{
 						loops_push(program_counter+1,d);	
 					}else if(rai==2){//inc
 						registers[rdi]++;	
+						evaluate_zn_flags(registers[rdi]);
 					}else if(rai==3){//neg
 						final int d=registers[rdi];
 						final int r=-d;
 						registers[rdi]=r;
+						evaluate_zn_flags(registers[rdi]);
 					}else if(rai==4){//dac
 						final int d=registers[rdi];
 						try{
@@ -219,33 +203,21 @@ final public class core implements Serializable{
 				program_counter=index_in_rom;
 				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
-			}else if(op==2){// wait
-//				if(!waiting_for_notify){// first time
-//					synchronized(this){// atomic wait mode
-//						waiting_for_notify=true;
-//						notify=false;
-//					}
-//					return;
-//				}
-//				// after notify
-//				synchronized(this){waiting_for_notify=notify=false;}
-			}else if(op==3){// notify
-				final int imm4=(instruction>>12);
-				b.b.pl("notify "+imm4);
-//				try{ev(null,this,new Integer(imm4));}catch(Throwable t){throw new Error(t);}
+			}else if(op==2){// free
+			}else if(op==3){// free
 			}else if(op==4){// free  
-			}else if(op==5){// sub
+			}else if(op==5){// free
 			}else if(op==6){// st
 				final int d=registers[rdi];
 				final int a=registers[rai];
 				ram[a]=d;
-//				meters_stc++;
+//				meters_st++;
 			}else if(op==7){// ld
 				final int a=registers[rai];
 				final int d=ram[a];
 				registers[rdi]=d;
 				evaluate_zn_flags(d);
-//				meters_ldc++;
+//				meters_ld++;
 			}else throw new Error();
 		}
 		if(!program_counter_has_been_set){
@@ -254,18 +226,13 @@ final public class core implements Serializable{
 			instruction=rom[index_in_rom];
 		}
 	}
-//	private void program_counter_set(final int index_in_rom){
-//		program_counter=index_in_rom;
-//		instruction=rom[index_in_rom];
-//	}
 	private void evaluate_zn_flags(final int number_to_be_evaluated){
 		if(number_to_be_evaluated==0){flags=1;return;}
 		if((number_to_be_evaluated&(1<<16))==(1<<16)){flags=2;return;}//? .
-//		if(i<0){zn=2;return;}
 		flags=3;
 	}
 	public boolean is_instruction_eof(){
-		return loading_register==-1&&(instruction&0xfffff)==0xfffff;
+		return loading_register==-1&&(instruction&op_eof)==op_eof;
 	}
 	private static final long serialVersionUID=1;
 }

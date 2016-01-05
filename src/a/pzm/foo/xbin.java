@@ -78,12 +78,12 @@ public final class xbin{
 	//			ix--;
 	//			return this;
 	//		}
-	public xbin link_call(String name){
+	public xbin linker_add_call(String name){
 		calls.put(ix,name);
 		pl("link call at "+ix+" to "+name);
 		return this;
 	}
-	public xbin link_li(String name){
+	public xbin linker_add_li(String name){
 		lis.put(ix,name);
 		pl("link li at "+ix+" to "+name);
 		return this;

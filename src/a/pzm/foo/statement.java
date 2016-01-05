@@ -51,7 +51,7 @@ public class statement extends a{
 	public String location_in_source(){
 		return location_in_source;
 	}
-	public static LinkedHashMap<String,String> read_annot(reader r){
+	public static LinkedHashMap<String,String>read_annot(reader r){
 		final LinkedHashMap<String,String> annotations=new LinkedHashMap<>();
 		while(true){
 			if(!r.is_next_char_annotation_open()) break;

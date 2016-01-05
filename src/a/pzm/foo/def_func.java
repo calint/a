@@ -25,10 +25,10 @@ final public class def_func extends statement{
 		r.toc.put("func "+name,this);
 	}
 	@Override public void binary_to(xbin x){
-		return;
 //		x.def(name,this);
 //		function_code.binary_to(x);
 //		x.write(8);//ret // if last instr 4 set last instr 4+8
+		return;
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
