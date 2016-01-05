@@ -20,7 +20,7 @@ import a.pzm.foo.xbin;
 import b.a;
 import b.xwriter;
 final public class acore extends a{
-	public core cor=new core(32,16,16,32*1024,1*1024);
+	public core cor=new core(64,16,16,256*1024,64*1024);
 	public rom ro;
 	public display ra;
 	public core_status sy;
@@ -124,7 +124,7 @@ final public class acore extends a{
 	public void to(final xwriter x) throws Throwable{
 		//		final String id=id();
 		if(pt()==null){
-			x.title("clare")
+			x.title("clare 20 bit")
 					.style()
 					.css("html","color:#111;width:110em")
 					.css("body",
@@ -190,7 +190,10 @@ final public class acore extends a{
 //		else x.divh(src,"float textleft panel");
 		if(hasbit(bit_show_source_editor)) x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
 		if(pt()==null){
-			x.divo("floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
+			x.divo("floatclear");
+			x.p("clare 20 bit  ").p(cor.registers.length).p(" registers  ").p(ro.ints.length>>10).p(" kb rom  ").p(ra.ints.length>>10).p(" kb ram");
+			x.nl();
+			x.p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
 		}
 		x.div_();
 	}
