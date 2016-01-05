@@ -21,34 +21,36 @@ final public class vintage extends a{
 	@SuppressWarnings("static-access")
 	private void pramble(final xwriter x){
 		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl(" vintage 20 bit computing - mega znxrcis "+vintage.strdatasize(ram.size));
+		x.pl(" vintage 20 bit computing - "+vintage.strdatasize(ram.size)+" megazen");
 		for(int k=0;k<48;k++)x.p('-');x.nl();
-		x.pl("   "+regs.size+" 20 bit regs");
-		x.pl("   "+vintage.strdatasize2(rom.size)+" 20 bit code cache");
+		x.pl("   "+regs.size+" registers");
+		x.pl("   "+vintage.strdatasize2(rom.size)+" rom");
 //		x.pl("   "++" x 16b bmp display");
-		x.pl("   "+vintage.strdatasize(ram.size)+" 20 bit ram in "+ram.width+"x"+ram.height+" display");
+		x.pl("   "+vintage.strdatasize(ram.size)+" ram");
+		x.pl("   "+ram.width+"x"+ram.height+" display");
 		x.pl("   "+loops.size+" loops stack");
 		x.pl("   "+calls.size+" calls stack");
 		x.pl("");
 		prambleops(x);
 	}
-	private final static short opload=0x000;
-	private final static short oplp=0x100;
-	private final static short opinc=0x200;
-	private final static short opneg=0x300;
-	private final static short opdac=0x400;
-	private final static short opwait=0x058;
-	private final static short opnotify=0x078;
-	private final static short opset=0xe0;
-	private final static short opldc=0xc0;
-	private final static short opadd=0xa0;
-	private final static short opskp=0x80;
-	private final static short opshf=0x60;
-	private final static short opstc=0x40;
-	private final static short opsub=0x20;
-	private final static short opcall=0x10;
-	private final static short opst=0x0d8;//?
-	private final static short opld=0x0f8;//?
+	private final static int opload=0x000;
+	private final static int oplp=0x100;
+	private final static int opinc=0x200;
+	private final static int opneg=0x300;
+	private final static int opdac=0x400;
+	private final static int opwait=0x058;
+	private final static int opnotify=0x078;
+	private final static int opset=0xe0;
+	private final static int opldc=0xc0;
+	private final static int opadd=0xa0;
+	private final static int opskp=0x80;
+	private final static int opshf=0x60;
+	private final static int opstc=0x40;
+	private final static int opsub=0x20;
+	private final static int opcall=0x10;
+	private final static int opst=0x0d8;//?
+	private final static int opld=0x0f8;//?
+	private final static int oprerun=0xffff;
 	public static void prambleops(final xwriter x){
 //		x.pl("  op format znxrci              ");
 //		x.el("text-align:left;border:1px solid red;display:inline-table");
@@ -66,8 +68,8 @@ final public class vintage extends a{
 		x.nl();
 		x.pl(":------:------:----------------------:");
 		x.pl(": load : "+fld("x000",Integer.toHexString(opload))+" : next instr to reg[x] :");
-		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : 2b + ..              :");
-		x.pl(":  skp : "+fld("..00",Integer.toHexString(opskp))+" : pc+=..               :");
+		x.pl(": call : "+fld("..00",Integer.toHexString(opcall))+" : pc=imm16             :");
+		x.pl(":  skp : "+fld("..00",Integer.toHexString(opskp))+" : pc+=imm12            :");
 		x.pl(":  stc : "+fld("yx00",Integer.toHexString(opstc))+" : ram[x++]=y           :");
 		x.pl(":   st : "+fld("yx00",Integer.toHexString(opst))+" : ram[x]=y             :");
  		x.pl(":   lp : "+fld("x000",Integer.toHexString(oplp))+" : loop x               :");
@@ -95,6 +97,7 @@ final public class vintage extends a{
 		x.pl(":notify: "+fld("x000",Integer.toHexString(opnotify))+" : notify x             :");
 		x.pl(":  rrn : ffff : rerun                :");
 		x.pl(":------:------:----------------------:");
+//		x.pl("    note x y z is 6 bits              ");
 	}
 	public static void main(final String[]a)throws Throwable{
 		final PrintStream out=System.out;
@@ -546,7 +549,7 @@ final public class vintage extends a{
 				final int rdi=rifor(regd);
 				ir+=inc?opstc:opst;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 				romwrite(ir);
 				continue;
 			}
@@ -563,7 +566,7 @@ final public class vintage extends a{
 				final int rai=rifor(tokens);
 				ir+=inc?opldc:opld;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 				romwrite(ir);
 				continue;
 			}}
@@ -575,7 +578,7 @@ final public class vintage extends a{
 				final int rega=rifor(tokens);
 				ir+=opset;
 				ir+=(rega<<8);
-				ir+=(regd<<12);
+				ir+=(regd<<14);
 				romwrite(ir);
 				continue;
 			}}
@@ -587,7 +590,7 @@ final public class vintage extends a{
 				final int regd=rifor(tokens);
 				ir+=opsub;
 				ir+=(rega<<8);
-				ir+=(regd<<12);
+				ir+=(regd<<14);
 				romwrite(ir);
 				continue;
 			}}
@@ -599,7 +602,7 @@ final public class vintage extends a{
 				final int regd=rifor(tokens);
 				ir+=opadd;
 				ir+=(rega<<8);
-				ir+=(regd<<12);
+				ir+=(regd<<14);
 				romwrite(ir);
 				continue;
 			}}
@@ -608,7 +611,7 @@ final public class vintage extends a{
 				final String dest=ln.substring(0,i0);
 				final int rdi=rifor(dest);
 				ir+=opinc;
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 				romwrite(ir);
 				continue;
 			}}
@@ -619,10 +622,10 @@ final public class vintage extends a{
 				final int rdi=rifor(dest);
 				int shf=Integer.parseInt(tokens,16);
 				shf=-shf;
-				final int rai=shf&0xf;
+				final int im4=shf&0xf;
 				ir+=opshf;
-				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(im4<<8);
+				ir+=(rdi<<14);
 				romwrite(ir);
 				continue;
 			}}
@@ -635,12 +638,12 @@ final public class vintage extends a{
 				final int im4=shf&0xf;
 				ir+=opshf;
 				ir+=(im4<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 				romwrite(ir);
 				continue;
 			}}
 			if(ln.indexOf("..")!=-1){
-				ir+=0xffff;
+				ir+=0xfffff;
 				romwrite(ir);
 				continue;
 			}
@@ -649,7 +652,7 @@ final public class vintage extends a{
 				final String regname=ln.substring(0,i0);
 				final int rdi=rifor(regname);
 				final String v=ln.substring(i0+1);
-				ir+=(rdi<<12);
+				ir|=(rdi<<14);
 				romwrite(ir);
 				if(v.startsWith(":")){
 					final String lbl=v.substring(1).trim();
@@ -678,57 +681,57 @@ final public class vintage extends a{
 			if("lp".equals(tkns[of])){
 				final int rdi=rifor(tkns[++of]);
 				ir+=oplp;
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("stc".equals(tkns[of])){
 				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 				ir+=opstc;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("ldc".equals(tkns[of])){
 				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 				ir+=opldc;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("st".equals(tkns[of])){
 				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 				ir+=opst;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("ld".equals(tkns[of])){
 				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 				ir+=opld;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("inc".equals(tkns[of])){
 				final int rdi=rifor(tkns[++of]);
 				ir+=opinc;
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("shf".equals(tkns[of])){
 				final int rdi=rifor(tkns[++of]);
 				final int rai=Integer.parseInt(tkns[++of],16)&0xf;
 				ir+=opshf;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("not".equals(tkns[of])){
 				final int rdi=rifor(tkns[++of]);
 				final int rai=0;
 				ir+=opshf;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("add".equals(tkns[of])){
 				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 				ir+=opadd;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("load".equals(tkns[of])){
 				final int rdi=rifor(tkns[++of]);
 				ir+=opload;
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 				romwrite(ir);
 				final String v=tkns[of+1];
 				if(v.startsWith(":")){
@@ -748,29 +751,29 @@ final public class vintage extends a{
 				final int rai=rifor(tkns[++of]);
 				ir+=opset;
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("wait".equals(tkns[of])){
 				ir+=opwait;
 			}else if("notify".equals(tkns[of])){
 				ir+=opnotify;
 				final int rdi=Integer.parseInt(tkns[++of],16);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("neg".equals(tkns[of])){
 				ir+=opneg;
 				final int rdi=rifor(tkns[++of]);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("sub".equals(tkns[of])){
 				ir+=opsub;
 				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else if("dac".equals(tkns[of])){
 				ir+=opdac;
 //				final int rai=rifor(tkns[++of]);
 				final int rdi=rifor(tkns[++of]);
 //				ir+=(rai<<8);
-				ir+=(rdi<<12);
+				ir+=(rdi<<14);
 			}else 
 				throw new Error("line "+lnosrc+": unknown op "+tkns[of]);
 			romwrite(ir);
@@ -831,7 +834,7 @@ final public class vintage extends a{
 	private int rifor(final String s){
 		if(s.length()>1)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");
 		final int i=s.charAt(0)-'a';
-		if(i>15)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");		
+		if(i>64)throw new Error("line "+lnosrc+": variable name '"+s+"' invalid. valid variable names a through p");		
 		return i;
 	}
 	boolean wait;
@@ -855,7 +858,7 @@ final public class vintage extends a{
 			setpcr(pcr+1);
 			return;
 		}
-		if(ir==0xffff){//? move
+		if(ir==0xfffff){//? move
 			wasrerun=true;
 			setpcr(0);
 			mtrframes++;
@@ -872,14 +875,14 @@ final public class vintage extends a{
 			setpcr(pcr+skp);
 			return;
 		}
-		in>>=2;// xr ci.. .rai .rdi
+		in>>=2;// xr ci.. rraaii rrddii
 		final int xr=in&0x3;
 		final boolean rcinvalid=(in&6)==6;
 		if(!rcinvalid&&(in&4)==4){//call
-			final int imm10=in>>4;// .. .... ....
+			final int imm12=in>>4;// .. .... ....
 			final int znx=zn+((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<12)|(pcr+1);
-			setpcr(imm10);
+			setpcr(imm12);
 			calls.push(stkentry);
 			return;			
 		}
@@ -913,13 +916,13 @@ final public class vintage extends a{
 			}
 			isret=true;
 		}
-		in>>=3;// i.. .rai .rdi
+		in>>=3;// i.. rraaii rrddii
 		final int op=in&7;
-		in>>=3;// .rai .rdi
-		final int imm8=in;
-		final int rai=in&0xf;
-		in>>=4;// .rdi
-		final int rdi=in&0xf;
+		in>>=3;// rraaii rrddii
+		final int imm14=in;
+		final int rai=in&0x3f;
+		in>>=6;// rrddii
+		final int rdi=in&0x3f;
 		if(!rcinvalid){
 			if(op==0){//load
 				if(rai!=0){//branch
@@ -978,9 +981,9 @@ final public class vintage extends a{
 					zneval(r);
 				}
 			}else if(op==4){//skp
-				if(imm8==0)throw new Error("unencoded op (rol x)");
+				if(imm14==0)throw new Error("unencoded op (rol x)");
 				if(ispcrset)throw new Error("unimplemented");
-				setpcr(pcr+imm8);
+				setpcr(pcr+imm14);
 				ispcrset=true;
 			}else if(op==5){//add
 				{final int a=regs.get(rai);
@@ -1001,9 +1004,9 @@ final public class vintage extends a{
 		}else{
 			if(op==0){//free
 			}else if(op==1){//skp
-				if(imm8==0)throw new Error("unencoded op (rol x)");
+				if(imm14==0)throw new Error("unencoded op (rol x)");
 				if(ispcrset)throw new Error("unimplemented");
-				setpcr(pcr+imm8);
+				setpcr(pcr+imm14);
 				ispcrset=true;
 			}else if(op==2){// wait
 				if(!wait){// first time

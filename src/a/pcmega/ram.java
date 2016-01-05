@@ -10,7 +10,7 @@ final public class ram extends a{
 	static final long serialVersionUID=1;
 	public final static int width=256;
 	public final static int height=128;	
-	public final static int size=width*height*4;
+	public final static int size=width*height*4*4;
 	final private int scl=2;
 	private int[]ram=new int[size];
 	public ram(){rst();}
@@ -57,9 +57,9 @@ final public class ram extends a{
 //			a=addr%ram.length;
 //		}else
 			a=addr;
-		ram[a]=(short)value;
+		ram[a]=value;
 		if(x==null)return;
-		final short argb=(short)value;
+		final int argb=value;
 		final String hex=Integer.toHexString(argb);
 		final String id=id();
 		x.p("{var d2=$('").p(id).p("').getContext('2d');");

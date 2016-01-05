@@ -3,14 +3,14 @@ import b.a;
 import b.xwriter;
 final public class rom extends a{
 	static final long serialVersionUID=1;
-	public final static int size=1024*8;
+	public final static int size=1024*64;
 	private int disppagenrows=128;
 	private int[]rom=new int[size];
 	public void to(final xwriter x){
 		x.el(this);
 		x.style(this,"ul li.stp","background-color:#c88");
 		x.pre();
-		x.p("   znxr ci.. aaaaa ddddd .. ").ax(this,"clr","x").p("   ").nl();
+		x.p("   znxr ci.. aaaaaa dddddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
 //		x.style("el.rom el","background:#eea");
 		int row=0;
@@ -28,7 +28,7 @@ final public class rom extends a{
 					x.p(".");
 				x.p("</a>");
 				k++;
-				if(k==4||k==8||k==13||k==18||k==20)
+				if(k==4||k==8||k==14||k==20)
 					x.spc();
 			}
 			final String wid=id();
