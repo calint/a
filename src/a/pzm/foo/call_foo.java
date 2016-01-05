@@ -28,7 +28,12 @@ final public class call_foo extends statement{
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
 		final def_struct dt=(def_struct)x.toc.get("struct "+table_name);
-		if(dt==null) throw new compiler_error(this,"table not found",table_name);
+		String ref_to_register=null;
+		if(dt==null){
+			ref_to_register=x.register_for_alias(table_name);
+			if(ref_to_register==null)
+				throw new compiler_error(this,"table not found",table_name);
+		}
 		final ArrayList<expression>args;
 		final ArrayList<String>allocated_registers=new ArrayList<>();
 		final ArrayList<String>aliases=new ArrayList<>();
@@ -59,9 +64,15 @@ final public class call_foo extends statement{
 		final String rc=x.allocate_register(this);
 		final int rci=register_index(rc);
 		allocated_registers.add(rc);
-		x.write(0|0x0000|(rai&63)<<14);//li(a dots)
-		x.linker_add_li(rd.token);
-		x.write(0);
+		if(ref_to_register==null){
+			x.write(0|0x0000|(rai&63)<<14);//li(a dots)
+			x.linker_add_li(rd.token);
+			x.write(0);
+		}else{
+			final int rdi=x.register_index_for_alias(this,ref_to_register);
+			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//li(a dots)			
+		}
+		
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)
 		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14);//lp(c)
 		for(expression e:args.subList(1,args.size())){

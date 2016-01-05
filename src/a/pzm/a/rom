@@ -2,22 +2,28 @@
 @inline rects.drw()
 @inline rects.upd()
 @inline text.drw()
+@inline text.upd()
 @inline dots.drw()
 @inline dots.upd()
 eof eof eof
 def text.drw(){
   foo(texts){
-    @inline pl(dest_addr width height add_after_line text rgb add_after_glyph)
+    @inline pl(dest_addr width height add_after_line text rgb sub_after_glyph)
   }
 }
-def pl(dest_addr width height add_after_line text rgb add_after_glyph){
+def text.upd(){
+  fow(texts){
+    add(dest_addr delta_dest_addr)
+  }
+}
+def pl(dest_addr width height add_after_line text rgb sub_after_glyph){
   var n
   ldc(n text)
   lp(n){
     var bmp
     ldc(bmp text)
     @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
-    sub(dest_addr add_after_glyph)
+    sub(dest_addr sub_after_glyph)
   }
 }
 def print_bmp_4x4(scr wi hi ln bmp rgb){
@@ -32,18 +38,19 @@ def print_bmp_4x4(scr wi hi ln bmp rgb){
   }
 }
 def texts
-[ dest_addr    width   height   add_after_line   text   rgb   add_after_glyph ]{2
-   0x3040       4        4         252           txt   0xf00       0x3fc   
-   0x3440       4        4         252           os    0xf00       0x3fc   
+[ dest_addr  delta_dest_addr  width   height   add_after_line   text   rgb   sub_after_glyph ]{3
+   0x3040      0x0001          4        4         252           txt   0xf00       0x3fc   
+   0x3840      0x0100          4        4         252           os    0xf00       0x3fc   
+   0x5040      0x0000          3        3         253           os    0xff0       0x2fd   
 } 
 eof
-def txt[u16]{6
-  0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
+def txt[bmp]{6
+  0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
   0xffff
 }
 eof
-def os[bmp4x4]{1
-   0xffff
+def os[bmp]{2
+   0xffff 0xffff
 }
 eof
 
