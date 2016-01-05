@@ -59,14 +59,14 @@ final public class call_foo extends statement{
 		final String rc=x.allocate_register(this);
 		final int rci=register_index(rc);
 		allocated_registers.add(rc);
-		x.write(0|0x0000|(rai&15)<<12);//li(a dots)
+		x.write(0|0x0000|(rai&63)<<14);//li(a dots)
 		x.link_li(rd.token);
 		x.write(0);
-		x.write(0|0x00c0|(rai&15)<<8|(rci&15)<<12);//ldc(c a)
-		x.write(0|0x0100|(0&15)<<8|(rci&15)<<12);//lp(c)
+		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)
+		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14);//lp(c)
 		for(expression e:args.subList(1,args.size())){
 			final int regi=x.register_index_for_alias(this,e.token);//reg.charAt(0)-'a';
-			x.write(0|0x00c0|(rai&15)<<8|(regi&15)<<12);//ldc(c regi)
+			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
 		x.write(4);//nxt

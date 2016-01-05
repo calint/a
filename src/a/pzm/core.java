@@ -62,14 +62,14 @@ final public class core implements Serializable{
 			instruction=rom[++program_counter];
 			return;
 		}
-		if((instruction&0xffff)==0xffff){// end of frame
+		if((instruction&0xfffff)==0xfffff){// end of frame
 			program_counter=0;
 			instruction=rom[0];
 			meter_frames++;
 //			try{ev(null);}catch(Throwable t){throw new Error(t);}
 			return;
 		}
-		int in=instruction;// znxr ci.. .rai .rdi
+		int in=instruction;// znxr ci.. rraaii rrddii
 		final int izn=in&3;
 		if((izn!=0&&(izn!=flags))){
 			final int op=(in>>5)&127;//? &7 //i.. .... ....
@@ -78,15 +78,15 @@ final public class core implements Serializable{
 			instruction=rom[program_counter];
 			return;
 		}
-		in>>=2;// xr ci.. .rai .rdi
+		in>>=2;// xr ci.. rraaii rrddii
 		final int xr=in&0x3;
 		final boolean invalid_opcode=(in&6)==6;
 		if(!invalid_opcode&&(in&4)==4){//call
-			final int imm10=in>>4;// .. .... ....
+			final int imm14=in>>4;// .. ...... ......  (imm14)
 			final int znx=flags|((xr&1)<<2);// nxt after ret
-			final int stkentry=(znx<<12)|(program_counter+1);
-			program_counter=imm10;
-			instruction=rom[imm10];
+			final int stkentry=(znx<<16)|(program_counter+1);
+			program_counter=imm14;
+			instruction=rom[imm14];
 			calls_push(stkentry);
 			return;
 		}
@@ -107,7 +107,7 @@ final public class core implements Serializable{
 		if(!invalid_opcode&&!program_counter_has_been_set&&(xr&2)==2){// ret after loop complete
 			final int stkentry=calls_pop();
 			final int ipc=stkentry&0xfff;
-			final int znx=(stkentry>>12);
+			final int znx=(stkentry>>16);
 			if((znx&4)==4){// nxt after previous call
 				if(loops_loop_is_done()){
 					loops_pop();
@@ -125,13 +125,13 @@ final public class core implements Serializable{
 			}
 			isret=true;
 		}
-		in>>=3;// i.. .rai .rdi
+		in>>=3;// i.. rraaii rrddii
 		final int op=in&7;
-		in>>=3;// .rai .rdi
-		final int imm8=in;
-		final int rai=in&0xf;
-		in>>=4;// .rdi
-		final int rdi=in&0xf;
+		in>>=3;// rraaii rrddii
+		final int imm12=in;
+		final int rai=in&0x3f;
+		in>>=6;// rrddii
+		final int rdi=in&0x3f;
 		if(!invalid_opcode){
 			if(op==0){//load
 				if(rai!=0){//branch
@@ -180,7 +180,7 @@ final public class core implements Serializable{
 					final int r=~d;
 					registers[rdi]=r;
 				}else{//shf
-					final int a=rai>7?rai-16:rai;
+					final int a=rai>31?rai-64:rai;//? !
 					final int r;
 					if(a<0)r=registers[rdi]<<-a;
 					else r=registers[rdi]>>a;
@@ -188,9 +188,9 @@ final public class core implements Serializable{
 					evaluate_zn_flags(r);
 				}
 			}else if(op==4){//skp
-				if(imm8==0)throw new Error("unencoded op (rol x)");
+				if(imm12==0)throw new Error("unencoded op (rol x)");
 				if(program_counter_has_been_set)throw new Error("unimplemented");
-				final int index_in_rom=program_counter+imm8;
+				final int index_in_rom=program_counter+imm12;
 				program_counter=index_in_rom;
 				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
@@ -213,9 +213,9 @@ final public class core implements Serializable{
 		}else{
 			if(op==0){//free
 			}else if(op==1){//skp
-				if(imm8==0)throw new Error("unencoded op (rol x)");
+				if(imm12==0)throw new Error("unencoded op (rol x)");
 				if(program_counter_has_been_set)throw new Error("unimplemented");
-				final int index_in_rom=program_counter+imm8;
+				final int index_in_rom=program_counter+imm12;
 				program_counter=index_in_rom;
 				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
@@ -265,7 +265,7 @@ final public class core implements Serializable{
 		flags=3;
 	}
 	public boolean is_instruction_eof(){
-		return loading_register==-1&&(instruction&0xffff)==0xffff;
+		return loading_register==-1&&(instruction&0xfffff)==0xfffff;
 	}
 	private static final long serialVersionUID=1;
 }

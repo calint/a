@@ -8,7 +8,7 @@ import b.a;
 import b.xwriter;
 final public class display extends a{
 	public int[]ints;
-	public int scl=2,wi=256,hi=128;
+	public int scl=4,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
 		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 		x.script();

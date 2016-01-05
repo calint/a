@@ -108,5 +108,5 @@ def dots.upd(){
 def red 0xf00
 def green 0xf0
 def blue 0xf
-def eof 0xffff
+def eof 0xfffff
 }

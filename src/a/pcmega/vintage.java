@@ -971,7 +971,7 @@ final public class vintage extends a{
 					regs.setr(rdi,(short)r);
 				}else{//shf
 //					if(rai==0)throw new Error("unimplmented op");
-					final int a=rai>7?rai-16:rai;
+					final int a=rai>31?rai-64:rai;
 					final int r;
 					if(a<0)
 						r=regs.get(rdi)<<-a;

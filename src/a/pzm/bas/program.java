@@ -555,7 +555,7 @@ public final class program extends stmt implements Serializable{
 		if(register.length()!=1)
 			throw new compiler_error(location_in_source(),"not a register: "+register);
 		final int i=register.charAt(0)-'a';
-		final int nregs=16;//? magicnumber
+		final int nregs=64;//? magicnumber
 		if(i<0||i>=nregs)
 			throw new compiler_error(location_in_source(),"register not found: "+register);
 		return i;
@@ -567,7 +567,7 @@ public final class program extends stmt implements Serializable{
 		return ch>='a'&&ch<='p';
 	}
 
-	final public Map<String,stmt> allocated_registers=new LinkedHashMap<>();
+	final public Map<String,stmt>allocated_registers=new LinkedHashMap<>();
 	public void allocate_register(stmt e,String regname){
 		final stmt s=allocated_registers.get(regname);
 		if(s!=null)

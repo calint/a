@@ -8,8 +8,8 @@ final public class loop_stack extends a{
 		final int ix=core.loop_stack_index;
 		x.p("loop stack:").p(Integer.toHexString(ix)).nl();
 		for(int i=0;i<core.loop_stack_address.length;){
-			x.p(acore.fld("0000",Integer.toHexString(core.loop_stack_address[i]))).p(":");
-			x.p(acore.fld("0000",Integer.toHexString(core.loop_stack_counter[i]))).spc();
+			x.p(acore.fld("00000",Integer.toHexString(core.loop_stack_address[i]))).p(":");
+			x.p(acore.fld("00000",Integer.toHexString(core.loop_stack_counter[i]))).spc();
 			i++;
 			if((i%2)==0)
 				x.nl();

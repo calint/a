@@ -19,7 +19,7 @@ function start(){
 	console.log("start")
 	ison=true;
 	$.sts.value="on";
-	ws=new WebSocket("ws://"+location.host+"/pz.a.porta");
+	ws=new WebSocket("ws://"+location.host+"/pzm.a.porta");
 	ws.binaryType="arraybuffer";
 	ws.onopen=function(e){
 		console.log("open");
@@ -221,7 +221,7 @@ def dots.upd(){
 def red 0xf00
 def green 0xf0
 def blue 0xf
-def eof 0xffff
+def eof 0xfffff
 }
 </textarea> 
 

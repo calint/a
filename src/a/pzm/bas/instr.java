@@ -49,7 +49,7 @@ public class instr extends stmt{
 		txt=x.toString();
 	}
 	public int znxr_ci__ra__rd__(){
-		return znxr|op|((rai&15)<<8)|((rdi&15)<<12);
+		return znxr|op|((rai&63)<<8)|((rdi&63)<<14);
 	}
 	public void compile(program r){
 		bin=new int[]{znxr_ci__ra__rd__()};

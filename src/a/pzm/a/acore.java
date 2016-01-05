@@ -20,7 +20,7 @@ import a.pzm.foo.xbin;
 import b.a;
 import b.xwriter;
 final public class acore extends a{
-	public core cor=new core(16,8,8,32*1024,1*1024);
+	public core cor=new core(32,16,16,32*1024,1*1024);
 	public rom ro;
 	public display ra;
 	public core_status sy;
@@ -64,6 +64,7 @@ final public class acore extends a{
 		ro.ints=cor.rom;
 		ra.ints=cor.ram;
 		re.ints=cor.registers;
+		ca.stk=cor.call_stack;
 		lo.core=cor;
 		ec.x_f3(null,null);
 	}

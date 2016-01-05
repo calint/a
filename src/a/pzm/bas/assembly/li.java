@@ -9,7 +9,7 @@ final public class li extends instr{
 		private String data;
 //		private int value;
 		private constexpr ce;
-		final public static int op=0x0000;
+		final public static int op=0;
 		public li(program r) throws IOException{
 			super(r,0,op,null,r.next_token_in_line());
 			data=r.next_token_in_line();

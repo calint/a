@@ -20,7 +20,7 @@ final public class porta extends websock implements threadedsock{
 	static final long serialVersionUID=1;
 	private core co;
 	final protected void onopened() throws Throwable{
-		co=new core(16,8,8,32*K,1*K);
+		co=new core(64,16,16,512*K,16*K);
 	}
 	public static String tostr(final ByteBuffer bb){
 		try{

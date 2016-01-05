@@ -5,10 +5,10 @@ final public class registers extends a{
 	public int[]ints;
 	public void to(final xwriter x){
 		x.p("registers:").nl();
-		final String pad="0000";
+		final String pad="00000";
 		for(int i=0;i<ints.length;){
 			final String hex=Integer.toHexString(ints[i++]);
-			if(hex.length()<4)
+			if(hex.length()<5)
 				x.p(acore.fld(pad,hex));
 			else
 				x.p(hex.substring(hex.length()-pad.length()));

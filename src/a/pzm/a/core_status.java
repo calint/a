@@ -8,7 +8,7 @@ import b.xwriter;
 public class core_status extends a{
 	public void to(final xwriter x)throws Throwable{
 		final acore z=(acore)pt(acore.class);
-		x.p(zntkns(z.cor.flags)).spc().p("[").p(fld("000",Integer.toHexString(z.cor.program_counter))).p("]:").p(fld("0000",Integer.toHexString(z.cor.instruction)));
+		x.p(zntkns(z.cor.flags)).spc().p("[").p(fld("0000",Integer.toHexString(z.cor.program_counter))).p("]:").p(fld("00000",Integer.toHexString(z.cor.instruction)));
 	}
 	private static String zntkns(final int zn){
 		if(zn==0){return"--";}

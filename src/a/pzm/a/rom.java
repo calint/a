@@ -4,7 +4,7 @@ import b.xwriter;
 final public class rom extends a{
 	public void to(final xwriter x){
 //		x.divo(this,"float panel");
-		x.p("   znxr ci.. aaaa dddd ").ax(this,"clr","x").p("   ").nl();
+		x.p("  znxr ci.. aaaaaa dddddd ").ax(this,"clr","x").p("   ").nl();
 		x.ul();
 		int row=0;
 		final String id=id();
@@ -12,20 +12,22 @@ final public class rom extends a{
 			x.li();
 			x.p(acore.fld("00",Integer.toHexString(row)));
 			x.tag("span",id+"-"+row+"-s").spc().tage("span");
-			for(int k=0,bit=1;k<16;bit<<=1){
+			for(int k=0,bit=1;k<20;bit<<=1){
 				x.p("<a href=\"javascript:$x('").p(id).p("  ").p(row).p(" ").p(k).p("')\" id=").p(id).p("-").p(row).p("-").p(k).p(">");
 				if((d&bit)==bit)
 					x.p("o");
 				else
 					x.p(".");
 				x.p("</a>");
-				if(++k%4==0)
+				if(k==3||k==7||k==13)
 					x.spc();
+				k++;
 			}
+			x.spc();
 			final String wid=id();
 			final int rowint=ints[row];
 			final String rowinthex=Integer.toHexString(rowint);
-			x.tago("span").attr("id",wid+"-"+row).tagoe().p(acore.fld("0000",rowinthex)).tage("span").nl();
+			x.tago("span").attr("id",wid+"-"+row).tagoe().p(acore.fld("00000",rowinthex)).tage("span").nl();
 			row++;
 			if(row>=disppagenrows)
 				break;

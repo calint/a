@@ -12,8 +12,9 @@ final public class call_shf extends call{
 		final int rai=declared_register_index_from_string(x,this,arguments.get(0).token);
 		final expression rd=arguments.get(1);
 		final int im4=rd.eval(x);
+		//?
 		if(im4<-8||im4>7) throw new compiler_error(this,"shift range between -8 and 7",""+im4);//? -8 8  shf a 0 being a>>1 
-		final int i=0x0060|(im4&15)<<8|(rai&15)<<12;
+		final int i=0x0060|(im4&63)<<8|(rai&63)<<14;
 		x.write(apply_znxr_annotations_on_instruction(i));
 	}
 }

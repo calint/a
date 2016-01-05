@@ -28,7 +28,7 @@ final public class call_lp extends statement{
 		final expression rd=arguments.get(0);
 		final int rdi=x.register_index_for_alias(this,rd.token);
 		final int rai=0,znxr=0;
-		final int i=0x0100|znxr|(rai&15)<<8|(rdi&15)<<12;
+		final int i=0x0100|znxr|(rai&63)<<8|(rdi&63)<<14;
 		x.write(i);
 		loop_code.binary_to(x);
 		x.write(4);//nxt
