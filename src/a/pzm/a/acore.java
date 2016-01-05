@@ -126,19 +126,20 @@ final public class acore extends a{
 		if(pt()==null){
 			x.title("clare")
 					.style()
-					.css("html","color:#111")
+					.css("html","color:#111;width:110em")
 					.css("body",
-							"padding:7em 0 0 11em;width:400em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+							"padding:1em 0 0 11em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
 					.css(".border","border:1px dotted red").css(".float","float:left").css(".textleft","text-align:left").css(".fontbold","font-weight:bold")
 					.css(".floatclear","clear:both").css(".panel","padding-left:.5em;padding-right:.5em").css(".stp","background-color:#ee0")
 					.css(".brk","background-color:#ee2").css(".nbr","width:3em;border:1px dotted;text-align:right")
 					.css(".laycent","display:table;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
 					.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
+//					.css(ec,"display:inline-block")
 					.css(ec.src,"min-width:60em;min-height:200em;line-height:1.4em;border-right:1px dotted gray")
 					.css(ajaxsts,"position:fixed;bottom:0;right:0");
 			switch(th.toint()){
 			case 0:
-				;
+				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
 				break;
 			case 1:
 				x.css("html","background:#111;color:#060").css("a","color:#007").css(".stp","background-color:#020").css(".brk","background-color:#021");
@@ -172,10 +173,10 @@ final public class acore extends a{
 			pramble_to(x);
 			x.nl();
 		}
-		if(hasbit(bit_show_schematics)) schematics_to(x);
-		if(hasbit(bit_show_instructions_table)) instructions_table_to(x);
+		if(hasbit(bit_show_schematics))schematics_to(x);
+		if(hasbit(bit_show_instructions_table))instructions_table_to(x);
 		//		x.divh(sl,"panel");
-		if(hasbit(bit_show_screen)) x.r(ra);
+		if(hasbit(bit_show_screen))x.r(ra);
 		//		x.divh(sr,"panel");
 		if(hasbit(bit_menu))
 			x.divo().ax(this,"r",""," reset","r").ax(this,"f",""," frame","f").ax(this,"n",""," step","s").ax(this,"g",""," go","g")
@@ -185,8 +186,8 @@ final public class acore extends a{
 		x.divo("laycent");
 		if(hasbit(bit_show_panel)) x.divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
 		if(hasbit(bit_show_rom)) x.divo(ro,"float panel").r(ro).div_();
-		if(src==null) x.p("<div id=-ec-b class='float textleft panel'></div>");
-		else x.divh(src,"float textleft panel");
+//		if(src==null)x.p("<div id=-ec-b class='float textleft panel'></div>");
+//		else x.divh(src,"float textleft panel");
 		if(hasbit(bit_show_source_editor)) x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
 		if(pt()==null){
 			x.divo("floatclear").p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
