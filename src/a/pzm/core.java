@@ -197,7 +197,12 @@ final public class core implements Serializable{
 				registers[rdi]=a;
 			}
 		}else{
-			if(op==0){//free
+			if(op==0){//0x18 addi
+				final int a=registers[rai];
+				final int d=rdi>31?rdi-64:rdi;//? magicnum
+				final int r=a+d;
+				evaluate_zn_flags(r);
+				registers[rai]=r;
 			}else if(op==1){//skp
 				if(imm12==0)throw new Error("unencoded op (rol x)");
 				if(program_counter_has_been_set)throw new Error("unimplemented");
@@ -208,7 +213,11 @@ final public class core implements Serializable{
 			}else if(op==2){// free
 			}else if(op==3){// free
 			}else if(op==4){// free  
-			}else if(op==5){// free
+			}else if(op==5){// ldd
+				final int a=--registers[rai];
+				final int d=ram[a];
+				registers[rdi]=d;
+				evaluate_zn_flags(d);
 			}else if(op==6){// st
 				final int d=registers[rdi];
 				final int a=registers[rai];

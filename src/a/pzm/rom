@@ -1,26 +1,37 @@
 {
 var tick
+addi(tick -1)
+neg(tick)
 inc(tick)
 
 var stack
 li(stack 0x7f00)
 
-@inline stack.push(0xf00)
-@inline stack.push(0xff0)
-@inline stack.push(0x00f)
+stack.push(0xf00)
+stack.push(0xff0)
+stack.push(0x00f)
+var d
+stack.pop(d)
+stack.pop(d)
+stack.inc()
+stack.push(d)
+stack.push(d)
+stack.push(d)
 
-@inline rects.drw()
-@inline rects.upd()
-@inline text.drw()
-@inline text.upd()
-@inline dots.drw()
-@inline dots.upd()
+rects.drw()
+rects.upd()
+text.drw()
+text.upd()
+dots.drw()
+dots.upd()
 eof
-def stack.push(d){
-  stc(stack d)
-}
+eof
+def stack.push(dat){stc(stack dat)}
+def stack.pop(dat){ldd(dat stack)}
+def stack.inc(){inc(stack)}
 eof
 def text.drw(){
+  inc(tick)
   foo(texts){
     @inline pl(dest_addr width height add_after_line text rgb sub_after_glyph)
   }

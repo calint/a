@@ -95,7 +95,7 @@ public class statement extends a{
 			expr=new expression(this,"e",parent,annot,token,r);
 			return;
 		}
-		final String asm="li stc lp inc add ldc ld tx sub shf  foo fow";
+		final String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg foo fow";
 		if(asm.indexOf(token)==-1){
 			expr=new call(this,"e",parent,annot,token,r);
 			return;

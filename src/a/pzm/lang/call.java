@@ -64,18 +64,18 @@ public class call extends statement{
 			x.write(in);
 			x.write(e.eval(x));
 		}
-		if(has_annotation("inline")){
+//		if(has_annotation("inline")){
 			d.function_code.binary_to(x);
-		}else{
-			x.linker_add_call(name);
-			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
-		}
+//		}else{
+//			x.linker_add_call(name);
+//			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
+//		}
 		allocated_registers.forEach(e->x.free_register(e));
 		aliases.forEach(e->x.unalias_register(this,e));
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		final String asm="li add foo fow inc ld ldc li lp st stc tx shf   zkp skp";
+		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
 		final boolean is=asm.indexOf(name)!=-1;
 		x.tag(is?"ac":"fc");
 		x.p(name);

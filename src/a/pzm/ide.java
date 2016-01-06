@@ -299,15 +299,15 @@ final public class ide extends a{
 		//		x.pl("(c) 1984 some rights reserved ltd");
 	}
 	public void schematics_to(final xwriter x){
-		x.pl("|_______|______|____|____|  ");
-		x.pl("|z n x r|c i 00|0000|0000|  ");
-		x.pl("|_______|______|____|____|  ");
-		x.pl("\\1 2 4 8\\. . ..\\....\\....   ");
-		x.pl(" \\    n  \\      \\....\\....  ");
-		x.pl("  \\z n x r\\c i ..\\yyyy\\xxxx ");
-		x.pl("   \\e e t e\\a m             ");
-		x.pl("    \\r g   t l m            ");
-		x.pl("     \\o       l             ");
+		x.pl("|_______|______|______|______|   ");
+		x.pl("|z n x r|c i ..|   imm12     |   ");
+		x.pl("|_______|______|______|______|   ");
+		x.pl("\\1 2 4 8\\. . ..\\......\\......   ");
+		x.pl(" \\    n  \\      \\......\\......  ");
+		x.pl("  \\z n x r\\c i ..\\aaaaaa\\dddddd");
+		x.pl("   \\e e t e\\a m                ");
+		x.pl("    \\r g   t l  m              ");
+		x.pl("     \\o       l                ");
 	}
 	public void pramble_to(final xwriter x){
 		final int bits_per_instruction=16;
@@ -336,28 +336,31 @@ final public class ide extends a{
 		x.pl(":      : ...d : ifz ... nxt ret      :");
 		x.pl(":   li : "+fld("x000",Integer.toHexString(0x00))+" : next instr to reg[x] :");
 		x.pl(": call : "+fld("ii00",Integer.toHexString(0x10))+" : imm12                :");
+		x.pl(":   lp : "+fld("d000",Integer.toHexString(0x100))+" : loop r[d] times      :");
 		x.pl(":  skp : "+fld("ii00",Integer.toHexString(0x80))+" : pc+=imm12            :");
-		x.pl(":  stc : "+fld("yx00",Integer.toHexString(0x40))+" : ram[x++]=y           :");
-		x.pl(":   st : "+fld("yx00",Integer.toHexString(0xd8))+" : ram[x]=y             :");
-		x.pl(":   lp : "+fld("x000",Integer.toHexString(0x100))+" : loop r[x] times      :");
-		x.pl(":  ldc : "+fld("yx00",Integer.toHexString(0xc0))+" : y=ram[x++]           :");
-		x.pl(":   ld : "+fld("yx00",Integer.toHexString(0xf8))+" : y=ram[x]             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(0x60))+" : r[x]>>=i             :");
-		x.pl(":  shf : "+fld("xi00",Integer.toHexString(0x60))+" : r[x]<<=i             :");
-		x.pl(":  not : "+fld("x000",Integer.toHexString(0x60))+" : r[x]=~r[x]           :");
-		x.pl(":  inc : "+fld("x000",Integer.toHexString(0x200))+" : r[x]++               :");
-		x.pl(":  neg : "+fld("x000",Integer.toHexString(0x300))+" : r[x]=-r[x]           :");
-		x.pl(":  add : "+fld("yx00",Integer.toHexString(0xa0))+" : r[y]+=r[x]           :");
-		x.pl(":   tx : "+fld("yx00",Integer.toHexString(0xe0))+" : r[y]=r[x]            :");
+		x.pl(":   st : "+fld("xy00",Integer.toHexString(0xd8))+" : ram[y]=x             :");
+		x.pl(":  stc : "+fld("da00",Integer.toHexString(0x40))+" : ram[a++]=d           :");
+		x.pl(":   ld : "+fld("da00",Integer.toHexString(0xf8))+" : d=ram[a]             :");
+		x.pl(":  ldc : "+fld("da00",Integer.toHexString(0xc0))+" : d=ram[a++]           :");
+		x.pl(":  ldd : "+fld("da00",Integer.toHexString(0xb8))+" : d=ram[--a]           :");
+		x.pl(":  shf : "+fld("di00",Integer.toHexString(0x60))+" : r[d]>>=i             :");
+		x.pl(":  shf : "+fld("di00",Integer.toHexString(0x60))+" : r[d]<<=i             :");
+		x.pl(":  not : "+fld("d000",Integer.toHexString(0x60))+" : r[d]=~r[d]           :");
+		x.pl(":  inc : "+fld("d000",Integer.toHexString(0x200))+" : r[d]++               :");
+//		x.pl(":  dec : "+fld("x000",Integer.toHexString(0xa8))+" : --r[x]               :");
+		x.pl(":  neg : "+fld("d000",Integer.toHexString(0x300))+" : r[d]=-r[d]           :");
+		x.pl(":  add : "+fld("da00",Integer.toHexString(0xa0))+" : r[a]+=r[d]           :");
+		x.pl(": addi : "+fld("ia00",Integer.toHexString(0x18))+" : r[a]+=i              :");
+		x.pl(":   tx : "+fld("da00",Integer.toHexString(0xe0))+" : r[a]=r[d]            :");
 		//		x.pl(":  skp : "+fld("im00",Integer.toHexString(opskp))+" : pc+=imm8             :");
-		x.pl(":  sub : "+fld("xy00",Integer.toHexString(0x20))+" : r[y]-=r[x]           :");
-		x.pl(":  dac : "+fld("x000",Integer.toHexString(0x400))+" : dac=r[x]             :");
+		x.pl(":  sub : "+fld("da00",Integer.toHexString(0x20))+" : r[a]-=r[d]           :");
+		x.pl(":  dac : "+fld("d000",Integer.toHexString(0x400))+" : dac=r[d]             :");
 		x.pl(":  eof : ffff : end-of-frame         :");
 		x.pl(":------:------:----------------------:");
-		x.pl(":      : ..18 : cr invalids          :");
-		x.pl(": wait : "+fld("x000",Integer.toHexString(0x58))+" : wait                 :");
-		x.pl(":notify: "+fld("x000",Integer.toHexString(0x78))+" : notify               :");
-		x.pl(":------:------:----------------------:");
+//		x.pl(":      : ..18 : cr invalids          :");
+//		x.pl(": wait : "+fld("x000",Integer.toHexString(0x58))+" : wait                 :");
+//		x.pl(":notify: "+fld("x000",Integer.toHexString(0x78))+" : notify               :");
+//		x.pl(":------:------:----------------------:");
 	}
 
 	private static final long serialVersionUID=1;
