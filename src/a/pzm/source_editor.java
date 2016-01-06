@@ -1,9 +1,12 @@
 package a.pzm;
+import static b.b.pl;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import a.pzm.lang.reader;
 import a.pzm.lang.statement;
+import a.pzm.lang.xbin;
 import b.a;
 import b.xwriter;
 final public class source_editor extends a{
@@ -30,9 +33,11 @@ final public class source_editor extends a{
 		x.el_();
 		x.td();
 		x.inptxtarea(src);
+		x.focus(src);
 		//		x.td().spaned(resrc);
 		x.table_();
-		if(code!=null)code.to(x);
+		if(code!=null)
+				code.to(x);
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
@@ -54,14 +59,33 @@ final public class source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
-			code=new statement(this,"b",null,r);
+			code=new statement(this,"b",null,r);// root statement
+			final prog p=new prog(r.toc,code);
+			final int[]rom=new int[1024*1024];
+			final xbin b=new xbin(p.toc,rom);
+			final int nregs_pre=b.registers_available.size();
+			pl("registers available "+b.registers_available.size()+" "+b.registers_available);
+			code.binary_to(b);
+			b.link();
+			final int[]new_rom=new int[b.ix()];
+			System.arraycopy(rom, 0, new_rom, 0, b.ix());
+			final int nregs_aft=b.registers_available.size();
+			if(nregs_pre!=nregs_aft)
+				throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+b.registers_available);
+			pl("registers available "+b.registers_available.size()+" "+b.registers_available);
+			pl("*** toc");
+			p.toc.entrySet().forEach(me->{
+				pl(me.getKey());
+			});
+			pl("*** done");
+
 //			final xwriter src=new xwriter();
 //			code.source_to(src);
 //			resrc.set(src.toString());
 			if(x==null) return;
-			x.xu(sts.clr());
+			x.xu(sts.clr(),code);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
-			ev(x,this,new prog(r.toc,code));
+			ev(x,this,new_rom);
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;

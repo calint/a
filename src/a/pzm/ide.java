@@ -3,6 +3,7 @@ import static b.b.log;
 import static b.b.pl;
 import static b.b.stacktrace;
 
+import a.pzm.lang.compiler_error;
 import a.pzm.lang.xbin;
 import b.a;
 import b.xwriter;
@@ -53,34 +54,35 @@ final public class ide extends a{
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
-		if(o instanceof prog){
+		if(o instanceof int[]){
 			try{
 				pl("*** compiler");
 				for(int i=0;i<cor.rom.length;i++)
 					cor.rom[i]=0;
-				final prog p=(prog)o;
-				final xbin b=new xbin(p.toc,cor.rom);
-				final int nregs_pre=b.registers_available.size();
-				pl("registers available "+b.registers_available.size()+" "+b.registers_available);
-				p.stmt.binary_to(b);
-				final int nregs_aft=b.registers_available.size();
-				if(nregs_pre!=nregs_aft)
-					throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+b.registers_available);
-				pl("registers available "+b.registers_available.size()+" "+b.registers_available);
-				pl("*** linker");
-				b.link();
-				pl("*** toc");
-				p.toc.entrySet().forEach(me->{
-					pl(me.getKey());
-				});
-				pl("*** done");
-				ec.sts.set(b.ix());
-				st.set(b.ix());
+				
+				final int[]rm=(int[])o;
+				if(rm.length>cor.rom.length)
+					throw new Error();
+				if(rm.length==0)
+					throw new Error();
+				System.arraycopy(rm, 0, cor.rom, 0, rm.length);
+				
+				ec.sts.set(rm.length);
+				st.set(rm.length);
 				cor.reset();
 				ro.xfocus_on_binary_location(x,0);
 				x_f(x,"");
 			}catch(Throwable t){
 				log(t);
+				if(t instanceof compiler_error){
+					compiler_error ce=(compiler_error)t;
+					final String loc=ce.stmt.location_in_source();
+					final String[]locs=loc.split(":");
+					if(ce.rdr!=null){
+						x.pl("{var e=$('"+ec.src.id()+"');e.selectionStart="+ce.rdr.bm_nchar+";e.selectionEnd="+ce.rdr.nchar+";}");
+						x.xu(ec.sts.set("line "+ce.rdr.bm_line+": "+t.getMessage()));
+					}
+				}
 				ec.sts.set(t.toString());
 				st.set("");
 			}

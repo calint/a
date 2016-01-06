@@ -54,25 +54,25 @@ final public class expression extends statement{
 			try{
 				return Integer.parseInt(token.substring(2),16);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not a hex",token);
+				throw new compiler_error(this,"not found or not a hex",token);
 			}
 		}else if(token.startsWith("0b")){
 			try{
 				return Integer.parseInt(token.substring(2),2);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not a binary",token);
+				throw new compiler_error(this,"not found or not a binary",token);
 			}
 		}else if(token.endsWith("h")){
 			try{
 				return Integer.parseInt(token.substring(0,token.length()-1),16);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not a hex",token);
+				throw new compiler_error(this,"not found or not a hex",token);
 			}
 		}else{
 			try{
 				return Integer.parseInt(token);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not a number",token);
+				throw new compiler_error(this,"not found or not an integer",token);
 			}
 		}
 	}

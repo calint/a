@@ -13,7 +13,7 @@ public class statement extends a{
 	final private String location_in_source;
 	final private LinkedHashMap<String,String>annotations;
 	final protected String token;
-	final private String ws_after_token;
+	final private String ws_trailing;
 	final private String ws_after_open_block;
 	final private String ws_after_assign;
 	final private ArrayList<statement>statements=new ArrayList<>();
@@ -34,7 +34,7 @@ public class statement extends a{
 		super(pt,nm,token);
 		this.annotations=annotations;
 		this.token=token;
-		ws_after_token="";
+		ws_trailing="";
 		location_in_source=loc;
 		parent_statement=parent;
 		ws_after_open_block="";
@@ -45,7 +45,7 @@ public class statement extends a{
 		parent_statement=parent;
 		this.annotations=annotations;
 		this.token=token;
-		ws_after_token=r.next_empty_space();
+		ws_trailing=r.next_empty_space();
 		location_in_source=r.bm_line+":"+r.bm_col;
 		ws_after_open_block="";
 		ws_after_assign="";
@@ -66,7 +66,7 @@ public class statement extends a{
 			while(true){
 				if(r.next_empty_space().length()!=0)throw new Error();
 				if(r.is_next_char_block_close()){
-					ws_after_token=r.next_empty_space();
+					ws_trailing=r.next_empty_space();
 					ws_after_assign="";
 					return;
 				}
@@ -75,10 +75,11 @@ public class statement extends a{
 			}
 		} 
 		ws_after_open_block="";
-		ws_after_token=r.next_empty_space();
+		ws_trailing=r.next_empty_space();
 		while(true){
 			final String s=r.next_token();
-			if(s.length()==0)throw new Error("unexpected empty token");
+			if(s.length()==0)
+				throw new compiler_error(this,r,"unexpected empty token","");
 			if(s.startsWith("@")){//annotation
 				final String ws=r.next_empty_space();
 				annot.put(s.substring(1),ws);
@@ -99,9 +100,7 @@ public class statement extends a{
 		}
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
-//			final String t=r.next_token();
 			expr=new expression(this,"e",parent,annot,r,tkk);
-//			final String tk=r.next_token();
 //			b.b.pl("assign "+tkk+"="+tk);
 			return;
 		}
@@ -147,13 +146,16 @@ public class statement extends a{
 		if(!statements.isEmpty()){
 			x.p('{').p(ws_after_open_block);
 			statements.forEach(e->e.source_to(x));
-			x.p('}').p(ws_after_token);
+			x.p('}').p(ws_trailing);
 		}else{
-			x.p(token).p(ws_after_token);
+			x.p(token).p(ws_trailing);
 		}
 	}
 	final @Override public void to(xwriter x) throws Throwable{
+		x.style(this,"border:1px dotted blue");
+		x.divo(this);
 		source_to(x);
+		x.div_();
 	}
 //	@Override public String toString(){
 //		try{

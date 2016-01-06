@@ -40,9 +40,9 @@ final public class rom extends a{
 	}
 	private int last_focus_on_binary_location;
 	void xfocus_on_binary_location(xwriter x,final int binary_location){
-		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(last_focus_on_binary_location).p("];e.className=e._oldcls;");
+		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(last_focus_on_binary_location).p("];if(e){e.className=e._oldcls;}");
 		last_focus_on_binary_location=binary_location;
-		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(binary_location).p("];e._oldcls=e.className;e.className='stp';");
+		x.p("var e=$('").p(id()).p("').getElementsByTagName('li')[").p(binary_location).p("];if(e){e._oldcls=e.className;e.className='stp';}");
 		x.nl();
 	}
 	public void x_clr(xwriter x,String s)throws Throwable{
