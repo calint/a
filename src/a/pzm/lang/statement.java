@@ -38,9 +38,9 @@ public class statement extends a{
 		parent_statement=parent;
 		ws_after_open_block="";
 	}
-	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,statement b){
+	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,statement parent){
 		super(pt,nm,token);
-		parent_statement=b;
+		parent_statement=parent;
 		this.annotations=annotations;
 		this.token=token;
 		ws_after=r.next_empty_space();
@@ -54,19 +54,21 @@ public class statement extends a{
 		location_in_source=r.bm_line+":"+r.bm_col;
 		token="";
 		annotations=new LinkedHashMap<>();
+		LinkedHashMap<String,String>annot=new LinkedHashMap<>();
 		final String token;
 		r.bm();
 		if(r.is_next_char_block_open()){
 			int i=0;
 			ws_after_open_block=r.next_empty_space();
 			while(true){
-				//				pl("line :"+i);
 				if(r.next_empty_space().length()!=0)throw new Error();
-				if(r.is_next_char_block_close())break;
+				if(r.is_next_char_block_close()){
+					ws_after=r.next_empty_space();
+					break;
+				}
 				final statement d=new statement(this,"i-"+i++,this,r);
 				statements.add(d);
 			}
-			ws_after=r.next_empty_space();
 			return;
 		} 
 		ws_after_open_block=ws_after="";
@@ -75,27 +77,27 @@ public class statement extends a{
 			if(s.length()==0)throw new Error("unexpected empty token");
 			if(s.startsWith("@")){//annotation
 				final String ws=r.next_empty_space();
-				annotations.put(s.substring(1),ws);
+				annot.put(s.substring(1),ws);
 				continue;
 			}
 			token=s;
 			break;
 		}
 		if("var".equals(token)){
-			expr=new var(this,"e",r,parent_statement);
+			expr=new var(this,"e",parent,annot,r);
 			return;
 		}
 		if("def".equals(token)){
-			expr=new def(this,"e",annotations,r,parent);
+			expr=new def(this,"e",parent,annot,r);
 			return;
 		}
 		if(!r.is_next_char_expression_open()){
-			expr=new expression(this,"e",annotations,token,r,parent);
+			expr=new expression(this,"e",parent,annot,token,r);
 			return;
 		}
 		final String asm="li stc lp inc add ldc ld tx sub shf  foo fow";
 		if(asm.indexOf(token)==-1){
-			expr=new call(this,"e",annotations,token,r,parent);
+			expr=new call(this,"e",parent,annot,token,r);
 			return;
 		}
 		try{
@@ -103,7 +105,7 @@ public class statement extends a{
 			final Class<?>cls=Class.forName(clsnm);
 			final Constructor<?>ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,statement.class);
 //			System.out.println("instr "+token);
-			expr=(statement)ctor.newInstance(this,"e",annotations,r,parent);
+			expr=(statement)ctor.newInstance(this,"e",annot,r,parent);
 			return;
 		}catch(Throwable t){
 			final Throwable tt=t.getCause();
@@ -119,13 +121,15 @@ public class statement extends a{
 	}
 	public void source_to(xwriter x){
 		annotations.entrySet().forEach(me->x.p('@').p(me.getKey()).p(me.getValue()));
-		x.p(token).p(ws_after);
-		if(expr!=null)
+		if(expr!=null){
 			expr.source_to(x);
+		}
 		if(!statements.isEmpty()){
 			x.p('{').p(ws_after_open_block);
 			statements.forEach(e->e.source_to(x));
 			x.p('}').p(ws_after);
+		}else{
+			x.p(token).p(ws_after);
 		}
 	}
 	final @Override public void to(xwriter x) throws Throwable{
@@ -139,7 +143,7 @@ public class statement extends a{
 //		}catch(Throwable t){throw new Error(t);}
 //	}
 	public boolean has_annotation(String src){
-		return annotations.containsKey(src);
+		return expr==null?annotations.containsKey(src):expr.has_annotation(src);
 	}
 	public String location_in_source(){
 		return location_in_source;

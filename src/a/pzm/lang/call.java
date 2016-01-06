@@ -9,7 +9,7 @@ public class call extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name,ws_trailing;
 	final protected ArrayList<expression>arguments=new ArrayList<>();
-	public call(a pt,String nm,LinkedHashMap<String,String> annotations,String name,reader r,statement b){
+	public call(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String name,reader r){
 		super(pt,nm,annotations,"",r,b);
 		this.name=name;
 		ws_after_name=r.next_empty_space();
@@ -21,7 +21,7 @@ public class call extends statement{
 		ws_trailing=r.next_empty_space();
 	}
 	public call(a pt,String nm,String name,reader r,statement b){
-		this(pt,nm,new LinkedHashMap<String,String>(),name,r,b);
+		this(pt,nm,b,new LinkedHashMap<String,String>(),name,r);
 	}
 	protected int apply_znxr_annotations_on_instruction(int i){
 		int znxr=0;

@@ -32,6 +32,7 @@ final public class source_editor extends a{
 		x.inptxtarea(src);
 		//		x.td().spaned(resrc);
 		x.table_();
+		if(code!=null)code.to(x);
 	}
 	public boolean isonbrkpt(final int srclno){
 		return brkptsset.contains(srclno);
@@ -49,10 +50,11 @@ final public class source_editor extends a{
 	//		x.pl("var e=$('"+id()+"').getElementsByTagName('ol')[0].getElementsByTagName('li')["+(lno-1)+"];e._oldcls=e.className;if(!e._oldcls)e._oldcls='';e.className='brk';");
 	//	}
 	public final static boolean ommit_compiling_source_from_disassembler=false;
+	statement code;
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
-			final statement code=new statement(this,"b",null,r);
+			code=new statement(this,"b",null,r);
 //			final xwriter src=new xwriter();
 //			code.source_to(src);
 //			resrc.set(src.toString());

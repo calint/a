@@ -1,11 +1,18 @@
 package a.pzm.lang;
 
+import java.util.LinkedHashMap;
+
 import b.a;
 import b.xwriter;
 
 final public class var extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_trailing;
+	public var(a pt,String nm,statement parent_statement,LinkedHashMap<String,String>annotations,reader r){
+		super(pt,nm,annotations,"var",r,parent_statement);		
+		name=r.next_token();
+		ws_trailing=r.next_empty_space();
+	}
 	public var(a pt,String nm,reader r,statement parent_statement){
 		super(pt,nm,no_annotations,"var",r,parent_statement);
 		name=r.next_token();

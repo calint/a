@@ -9,9 +9,9 @@ final public class expression extends statement{
 	private static final long serialVersionUID=1;
 	private final String ws_after;
 	public expression(a pt,String nm,reader r,statement b){
-		this(pt,nm,new LinkedHashMap<>(),r.next_token(),r,b);
+		this(pt,nm,b,new LinkedHashMap<>(),r.next_token(),r);
 	}
-	public expression(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,statement b){
+	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String token,reader r){
 		super(pt,nm,annotations,token,r,b);
 		ws_after=r.next_empty_space();
 	}

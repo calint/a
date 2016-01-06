@@ -6,7 +6,7 @@ import b.a;
 final public class call_add extends call{
 	private static final long serialVersionUID=1;
 	public call_add(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
-		super(pt,nm,annotations,"add",r,b);
+		super(pt,nm,b,annotations,"add",r);
 	}
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);

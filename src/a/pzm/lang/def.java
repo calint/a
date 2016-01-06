@@ -8,7 +8,7 @@ final public class def extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name;
 	final private statement e;
-	public def(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
+	public def(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r){
 		super(pt,nm,annotations,"def",r,b);
 		name=r.next_token();
 		ws_after_name=r.next_empty_space();
