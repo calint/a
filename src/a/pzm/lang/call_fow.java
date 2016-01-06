@@ -26,7 +26,7 @@ final public class call_fow extends statement{
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
-		final def_struct dt=(def_struct)x.toc.get("struct "+table_name);
+		final def_table dt=(def_table)x.toc.get("table "+table_name);
 		if(dt==null) throw new Error("struct not found: "+table_name);
 		final ArrayList<expression>args;
 		final ArrayList<String>allocated_registers=new ArrayList<>();
@@ -35,9 +35,9 @@ final public class call_fow extends statement{
 			args=new ArrayList<>();
 			args.addAll(arguments);
 			final String struct_name=args.get(0).token;
-			final def_struct stc=(def_struct)x.toc.get("struct "+struct_name);
+			final def_table stc=(def_table)x.toc.get("table "+struct_name);
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
-			for(def_struct_field col:stc.arguments){
+			for(def_table_column col:stc.arguments){
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);

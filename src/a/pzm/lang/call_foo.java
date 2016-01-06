@@ -8,10 +8,10 @@ import b.xwriter;
 
 final public class call_foo extends statement{
 	private static final long serialVersionUID=1;
-	final private ArrayList<expression> arguments=new ArrayList<>();
+	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private block loop_code;
-	public call_foo(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,block b){
+	public call_foo(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,block b){
 		super(pt,nm,annotations,"",r,b);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
@@ -27,7 +27,7 @@ final public class call_foo extends statement{
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
-		final def_struct dt=(def_struct)x.toc.get("struct "+table_name);
+		final def_table dt=(def_table)x.toc.get("table "+table_name);
 		String ref_to_register=null;
 		if(dt==null){
 			ref_to_register=x.register_for_alias(table_name);
@@ -41,9 +41,9 @@ final public class call_foo extends statement{
 			args=new ArrayList<>();
 			args.addAll(arguments);
 			final String struct_name=args.get(0).token;
-			final def_struct stc=(def_struct)x.toc.get("struct "+struct_name);
+			final def_table stc=(def_table)x.toc.get("table "+struct_name);
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
-			for(def_struct_field col:stc.arguments){
+			for(def_table_column col:stc.arguments){
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import b.a;
 import b.xwriter;
 
-final public class def_struct extends statement{
+final public class def_table extends statement{
 	private static final long serialVersionUID=1;
 	final private String name;
-	final ArrayList<def_struct_field> arguments=new ArrayList<>();
+	final ArrayList<def_table_column> arguments=new ArrayList<>();
 	final private block data;
-	public def_struct(a pt,String nm,String name,reader r,block b){
+	public def_table(a pt,String nm,String name,reader r,block b){
 		super(pt,nm,no_annotations,"",r,b);
 		this.name=name;
 //		int i=0;
@@ -17,13 +17,13 @@ final public class def_struct extends statement{
 			if(r.is_next_char_struct_close()) break;
 //			final expression arg=new expression(this,""+i++,no_annotations,r,b);
 //			arguments.add(arg);
-			final def_struct_field sf=new def_struct_field(this,"",r,b);
+			final def_table_column sf=new def_table_column(this,"",r,b);
 //			final String field=r.next_token();
 //			r.next_empty_space();
 			arguments.add(sf);
 		}
 		data=new block(this,"d",r,block.no_declarations,b);
-		r.toc.put("struct "+name,this);
+		r.toc.put("table "+name,this);
 	}
 	@Override public void binary_to(xbin x){
 		x.def(name);

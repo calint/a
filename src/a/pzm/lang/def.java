@@ -18,7 +18,7 @@ final public class def extends statement{
 			r.unread_last_char();
 			e=new def_data(this,name,name,r,b);
 		}else if(r.is_next_char_struct_open()){
-			e=new def_struct(this,name,name,r,b);
+			e=new def_table(this,name,name,r,b);
 		}else{
 			e=new def_const(this,name,name,r,b);
 		}

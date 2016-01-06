@@ -24,6 +24,7 @@ final public class def_func extends statement{
 		function_code=new block(this,"c",r,declarations,b);
 		r.toc.put("func "+name,this);
 	}
+	public String name(){return name;}
 	@Override public void binary_to(xbin x){
 //		x.def(name,this);
 //		function_code.binary_to(x);

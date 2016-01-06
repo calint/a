@@ -12,14 +12,14 @@ public final class xbin{
 	//			constants.put(name,constant);
 	//			return this;
 	//		}
-	private LinkedHashMap<String,Integer> defs=new LinkedHashMap<>();
-	private LinkedHashMap<Integer,String> calls=new LinkedHashMap<>();
-	private LinkedHashMap<Integer,String> lis=new LinkedHashMap<>();
+	private LinkedHashMap<String,Integer>defs=new LinkedHashMap<>();
+	private LinkedHashMap<Integer,String>calls=new LinkedHashMap<>();
+	private LinkedHashMap<Integer,String>lis=new LinkedHashMap<>();
 	//		private LinkedHashMap<String,def_const>constants;
 	//		private LinkedHashMap<String,def>functions;
-	private int[] data;
+	private int[]data;
 	private int ix;
-	private LinkedHashMap<Integer,expression> evals=new LinkedHashMap<>();
+	private LinkedHashMap<Integer,expression>evals=new LinkedHashMap<>();
 	public xbin(Map<String,statement> toc,final int[] dest){
 		this.toc=toc;
 		data=dest;

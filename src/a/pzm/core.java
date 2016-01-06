@@ -125,12 +125,12 @@ final public class core implements Serializable{
 						loops_push(program_counter+1,d);	
 					}else if(rai==2){//inc
 						registers[rdi]++;	
-						evaluate_zn_flags(registers[rdi]);
+//						evaluate_zn_flags(registers[rdi]);
 					}else if(rai==3){//neg
 						final int d=registers[rdi];
 						final int r=-d;
 						registers[rdi]=r;
-						evaluate_zn_flags(registers[rdi]);
+//						evaluate_zn_flags(registers[rdi]);
 					}else if(rai==4){//dac
 						final int d=registers[rdi];
 						try{
