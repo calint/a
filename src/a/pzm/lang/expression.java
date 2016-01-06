@@ -8,15 +8,38 @@ import b.xwriter;
 final public class expression extends statement{
 	private static final long serialVersionUID=1;
 	private final String ws_after;
-	public expression(a pt,String nm,reader r,statement b){
-		this(pt,nm,b,new LinkedHashMap<>(),r.next_token(),r);
+	final protected String destreg;
+	public expression(a pt,String nm,reader r,statement parent){
+		this(pt,nm,parent,new LinkedHashMap<>(),r.next_token(),r,null);
 	}
-	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String token,reader r){
+	public expression(a pt,String nm,statement parent,reader r,String dest_reg){
+		this(pt,nm,parent,new LinkedHashMap<>(),r.next_token(),r,dest_reg);
+	}
+	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String token,reader r,String dest_reg){
 		super(pt,nm,annotations,token,r,b);
 		ws_after=r.next_empty_space();
+		this.destreg=dest_reg;
 	}
-	public expression(String token){super(null,"",null,"",token,null);ws_after="";}
+	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
+		super(pt,nm,annotations,r.next_token(),r,b);
+		ws_after=r.next_empty_space();
+		this.destreg=dest_reg;
+	}
+	public expression(String token){
+		super(null,"",null,"",token,null);ws_after="";
+		destreg=null;
+	}
 	@Override public void binary_to(xbin x){
+		if(x.alias_exists(token)){// tx
+			final int rai=x.register_index_for_alias(this,token);
+			final int rdi=x.register_index_for_alias(this,destreg);
+			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(b a)
+			return;
+		}
+		if(destreg!=null){// li
+			final int rai=x.register_index_for_alias(this,destreg);
+			x.write(0|0x0000|(rai&63)<<14);//li(rai ____)
+		}
 		x.at_pre_link_evaluate(this);
 		x.write(0);
 	}

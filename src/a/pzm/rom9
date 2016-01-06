@@ -1,7 +1,5 @@
 {
 var tick=0b100
-var tk=8
-tick=tk
 addi(tick -1)
 neg(tick)
 inc(tick)

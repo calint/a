@@ -95,7 +95,7 @@ public final class xbin{
 
 	public final LinkedList<String> registers_available=new LinkedList<>();
 	{
-		for(String s:"a b c d e f g h i j k l m n o p".split(" "))
+		for(String s:"a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" "))
 			registers_available.add(s);
 	}
 	public String allocate_register(statement at_statement){
@@ -109,6 +109,7 @@ public final class xbin{
 //		pl(ix+" allocate register "+name);
 //	}
 	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
+	public boolean alias_exists(final String alias){return register_aliases.containsKey(alias);}
 	public void alias_register(String token,String reg){
 		if(register_aliases.containsKey(token))throw new Error("alias "+token+" is "+register_aliases);
 		register_aliases.put(token,reg);
@@ -134,7 +135,7 @@ public final class xbin{
 			throw new compiler_error(stmt,"not a register",regnm);
 		final int rdi=regnm.charAt(0)-'a';
 		//? magicnum
-		if(rdi<0||rdi>15) throw new Error("destination registers 'a' through 'p' available");
+		if(rdi<0||rdi>63) throw new Error("destination register out of range");
 		return rdi;
 	}
 	public void unalloc(statement stmt,String alias){

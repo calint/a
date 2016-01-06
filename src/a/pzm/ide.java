@@ -77,6 +77,7 @@ final public class ide extends a{
 				ec.sts.set(b.ix());
 				st.set(b.ix());
 				cor.reset();
+				ro.xfocus_on_binary_location(x,0);
 				x_f(x,"");
 			}catch(Throwable t){
 				log(t);

@@ -13,8 +13,9 @@ public class statement extends a{
 	final private String location_in_source;
 	final private LinkedHashMap<String,String>annotations;
 	final protected String token;
-	final private String ws_after;
+	final private String ws_after_token;
 	final private String ws_after_open_block;
+	final private String ws_after_assign;
 	final private ArrayList<statement>statements=new ArrayList<>();
 	final protected ArrayList<String>declarations=new ArrayList<>();
 	final ArrayList<String>vars=new ArrayList<>();
@@ -33,19 +34,21 @@ public class statement extends a{
 		super(pt,nm,token);
 		this.annotations=annotations;
 		this.token=token;
-		ws_after="";
+		ws_after_token="";
 		location_in_source=loc;
 		parent_statement=parent;
 		ws_after_open_block="";
+		ws_after_assign="";
 	}
 	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,statement parent){
 		super(pt,nm,token);
 		parent_statement=parent;
 		this.annotations=annotations;
 		this.token=token;
-		ws_after=r.next_empty_space();
+		ws_after_token=r.next_empty_space();
 		location_in_source=r.bm_line+":"+r.bm_col;
 		ws_after_open_block="";
+		ws_after_assign="";
 //		r.bm();
 	}
 	public statement(a pt,String nm,statement parent,reader r){
@@ -55,7 +58,7 @@ public class statement extends a{
 		token="";
 		annotations=new LinkedHashMap<>();
 		LinkedHashMap<String,String>annot=new LinkedHashMap<>();
-		final String token;
+		final String tkk;
 		r.bm();
 		if(r.is_next_char_block_open()){
 			int i=0;
@@ -63,15 +66,16 @@ public class statement extends a{
 			while(true){
 				if(r.next_empty_space().length()!=0)throw new Error();
 				if(r.is_next_char_block_close()){
-					ws_after=r.next_empty_space();
-					break;
+					ws_after_token=r.next_empty_space();
+					ws_after_assign="";
+					return;
 				}
 				final statement d=new statement(this,"i-"+i++,this,r);
 				statements.add(d);
 			}
-			return;
 		} 
-		ws_after_open_block=ws_after="";
+		ws_after_open_block="";
+		ws_after_token=r.next_empty_space();
 		while(true){
 			final String s=r.next_token();
 			if(s.length()==0)throw new Error("unexpected empty token");
@@ -80,28 +84,44 @@ public class statement extends a{
 				annot.put(s.substring(1),ws);
 				continue;
 			}
-			token=s;
+			tkk=s;
 			break;
 		}
-		if("var".equals(token)){
+		if("var".equals(tkk)){
 			expr=new var(this,"e",parent,annot,r);
+			ws_after_assign="";
 			return;
 		}
-		if("def".equals(token)){
+		if("def".equals(tkk)){
 			expr=new def(this,"e",parent,annot,r);
+			ws_after_assign="";
 			return;
 		}
+		if(r.is_next_char_assign()){
+			ws_after_assign=r.next_empty_space();
+//			final String t=r.next_token();
+			expr=new expression(this,"e",parent,annot,r,tkk);
+//			final String tk=r.next_token();
+//			b.b.pl("assign "+tkk+"="+tk);
+			return;
+		}
+		ws_after_assign="";
 		if(!r.is_next_char_expression_open()){
-			expr=new expression(this,"e",parent,annot,token,r);
+//			if(r.is_next_char_assign()){
+				expr=new expression(this,"e",parent,annot,tkk,r,null);
+//			}else{
+//				r.bm();
+//				throw new compiler_error(this,"expected '='","");
+//			}
 			return;
 		}
 		final String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg foo fow";
-		if(asm.indexOf(token)==-1){
-			expr=new call(this,"e",parent,annot,token,r);
+		if(asm.indexOf(tkk)==-1){
+			expr=new call(this,"e",parent,annot,tkk,r);
 			return;
 		}
 		try{
-			final String clsnm=getClass().getPackage().getName()+".call_"+token;
+			final String clsnm=getClass().getPackage().getName()+".call_"+tkk;
 			final Class<?>cls=Class.forName(clsnm);
 			final Constructor<?>ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,statement.class);
 //			System.out.println("instr "+token);
@@ -127,9 +147,9 @@ public class statement extends a{
 		if(!statements.isEmpty()){
 			x.p('{').p(ws_after_open_block);
 			statements.forEach(e->e.source_to(x));
-			x.p('}').p(ws_after);
+			x.p('}').p(ws_after_token);
 		}else{
-			x.p(token).p(ws_after);
+			x.p(token).p(ws_after_token);
 		}
 	}
 	final @Override public void to(xwriter x) throws Throwable{
