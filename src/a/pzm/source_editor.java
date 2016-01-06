@@ -52,14 +52,14 @@ final public class source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
-			final block el=new block(this,"b",r,block.no_declarations);
+			final block blk=new block(this,"b",r);
 			final xwriter src=new xwriter();
-			el.source_to(src);
+			blk.source_to(src);
 //			resrc.set(src.toString());
 			if(x==null) return;
 			x.xu(sts.clr());
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
-			ev(x,this,new prog(r.toc,el));
+			ev(x,this,new prog(r.toc,blk));
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;

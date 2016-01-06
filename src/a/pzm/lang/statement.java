@@ -8,11 +8,11 @@ import b.xwriter;
 public class statement extends a{
 	final public static LinkedHashMap<String,String>no_annotations=new LinkedHashMap<>();
 	private static final long serialVersionUID=1;
+	final protected block blk;
+	final private String location_in_source;
+	final private LinkedHashMap<String,String>annotations;
 	final protected String token;
 	final private String ws_after;
-	final private LinkedHashMap<String,String>annotations;
-	final private String location_in_source;
-	final protected block blk;
 	private statement expr;
 //	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String loc,block b){
 //		super(pt,nm);
@@ -22,6 +22,7 @@ public class statement extends a{
 //		location_in_source=loc;
 //		blk=b;
 //	}
+	//? use
 	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String loc,String token,block b){
 		super(pt,nm,token);
 		this.annotations=annotations;
@@ -32,16 +33,16 @@ public class statement extends a{
 	}
 	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,block b){
 		super(pt,nm,token);
+		blk=b;
 		this.annotations=annotations;
 		this.token=token;
 		ws_after=r.next_empty_space();
 		location_in_source=r.bm_line+":"+r.bm_col;
-		blk=b;
 //		r.bm();
 	}
-	public statement(a pt,String nm,block b,reader r){
+	public statement(a pt,String nm,block parent_block,reader r){
 		super(pt,nm);
-		blk=b;
+		blk=parent_block;
 		location_in_source=r.bm_line+":"+r.bm_col;
 		ws_after=token="";
 		annotations=new LinkedHashMap<>();
@@ -59,20 +60,20 @@ public class statement extends a{
 			break;
 		}
 		if("var".equals(token)){
-			expr=new var(this,"e",r,b);
+			expr=new var(this,"e",r,parent_block);
 			return;
 		}
 		if("def".equals(token)){
-			expr=new def(this,"e",annotations,r,b);
+			expr=new def(this,"e",annotations,r,parent_block);
 			return;
 		}
 		if(!r.is_next_char_expression_open()){
-			expr=new expression(this,"e",annotations,token,r,b);
+			expr=new expression(this,"e",annotations,token,r,parent_block);
 			return;
 		}
 		final String asm="li stc lp inc add ldc ld tx sub shf  foo fow";
 		if(asm.indexOf(token)==-1){
-			expr=new call(this,"e",annotations,token,r,b);
+			expr=new call(this,"e",annotations,token,r,parent_block);
 			return;
 		}
 		try{
@@ -80,7 +81,7 @@ public class statement extends a{
 			final Class<?>cls=Class.forName(clsnm);
 			final Constructor<?>ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,block.class);
 //			System.out.println("instr "+token);
-			expr=(statement)ctor.newInstance(this,"e",annotations,r,b);
+			expr=(statement)ctor.newInstance(this,"e",annotations,r,parent_block);
 			return;
 		}catch(Throwable t){
 			final Throwable tt=t.getCause();

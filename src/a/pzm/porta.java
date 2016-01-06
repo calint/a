@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 import a.pzm.lang.block;
@@ -41,8 +43,8 @@ final public class porta extends websock implements threadedsock{
 			try{
 				//				new program(src).zap(co.rom);
 				final reader r=new reader(new StringReader(src));
-				final block el=new block(this,"b",r,block.no_declarations);
-				final prog p=new prog(r.toc,el);
+				final block blk=new block(this,"b",r,new ArrayList<>());
+				final prog p=new prog(r.toc,blk);
 				pl("*** compiler");
 				for(int i=0;i<co.rom.length;i++)
 					co.rom[i]=0;
