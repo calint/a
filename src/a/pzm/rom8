@@ -1,25 +1,13 @@
 {
 var tick
 inc(tick)
-
-var stack
-li(stack 0x7f00)
-
-@inline stack.push(0xf00)
-@inline stack.push(0xff0)
-@inline stack.push(0x00f)
-
 @inline rects.drw()
 @inline rects.upd()
 @inline text.drw()
 @inline text.upd()
 @inline dots.drw()
 @inline dots.upd()
-eof
-def stack.push(d){
-  stc(stack d)
-}
-eof
+eof eof eof
 def text.drw(){
   foo(texts){
     @inline pl(dest_addr width height add_after_line text rgb sub_after_glyph)
@@ -72,7 +60,6 @@ eof
 def os[bmp]{2
    0xffff 0xffff
 }
-def err[]{2}
 eof
 
 
