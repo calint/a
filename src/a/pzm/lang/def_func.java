@@ -7,9 +7,9 @@ import b.xwriter;
 final public class def_func extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_expr_close;
-	final ArrayList<expression> arguments=new ArrayList<>();
-	final block function_code;
-	public def_func(a pt,String nm,String name,reader r,block b){
+	final ArrayList<expression>arguments=new ArrayList<>();
+	final statement function_code;
+	public def_func(a pt,String nm,String name,reader r,statement b){
 		super(pt,nm,no_annotations,"",r,b);
 		this.name=name;
 		int i=0;
@@ -19,9 +19,8 @@ final public class def_func extends statement{
 			arguments.add(arg);
 		}
 		ws_after_expr_close=r.next_empty_space();
-		final ArrayList<String>declarations=new ArrayList<>();
 		arguments.forEach(e->declarations.add(e.token));
-		function_code=new block(this,"c",r,declarations,b);
+		function_code=new statement(this,"c",b,r);
 		r.toc.put("func "+name,this);
 	}
 	public String name(){return name;}

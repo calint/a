@@ -2,6 +2,7 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+
 import b.a;
 import b.xwriter;
 
@@ -9,8 +10,8 @@ final public class call_lp extends statement{
 	private static final long serialVersionUID=1;
 	final private ArrayList<expression> arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
-	final private block loop_code;
-	public call_lp(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,block b){
+	final private statement loop_code;
+	public call_lp(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
 		super(pt,nm,annotations,"",r,b);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
@@ -21,7 +22,7 @@ final public class call_lp extends statement{
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		loop_code=new block(this,"b",r,b);
+		loop_code=new statement(this,"b",b,r);//? this parent
 	}
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);

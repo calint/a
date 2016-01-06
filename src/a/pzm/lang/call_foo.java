@@ -10,8 +10,8 @@ final public class call_foo extends statement{
 	private static final long serialVersionUID=1;
 	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
-	final private block loop_code;
-	public call_foo(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,block b){
+	final private statement loop_code;
+	public call_foo(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
 		super(pt,nm,annotations,"",r,b);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
@@ -22,8 +22,7 @@ final public class call_foo extends statement{
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		final ArrayList<String>declarations=new ArrayList<>();
-		loop_code=new block(this,"b",r,declarations,b);
+		loop_code=new statement(this,"b",b,r);
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
@@ -55,8 +54,8 @@ final public class call_foo extends statement{
 			args=arguments;
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-		args.subList(1,args.size()).forEach(e->blk.declarations.add(e.token));
-		pl("foo "+blk.declarations.toString());
+		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
+		pl("foo "+parent_statement.declarations.toString());
 		final expression rd=args.get(0);
 		final String ra=x.allocate_register(this);
 		allocated_registers.add(ra);

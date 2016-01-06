@@ -5,7 +5,7 @@ import b.a;
 
 final public class call_ld extends call{
 	private static final long serialVersionUID=1;
-	public call_ld(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,block b){
+	public call_ld(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
 		super(pt,nm,annotations,"ld",r,b);
 	}
 	@Override public void binary_to(xbin x){

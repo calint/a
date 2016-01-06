@@ -3,18 +3,18 @@ import static b.b.K;
 import static b.b.pl;
 import static b.b.stacktraceline;
 import static b.b.strenc;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import a.pzm.lang.block;
 import a.pzm.lang.reader;
+import a.pzm.lang.statement;
 import a.pzm.lang.xbin;
 import b.threadedsock;
 import b.websock;
@@ -43,13 +43,13 @@ final public class porta extends websock implements threadedsock{
 			try{
 				//				new program(src).zap(co.rom);
 				final reader r=new reader(new StringReader(src));
-				final block blk=new block(this,"b",r,new ArrayList<>());
-				final prog p=new prog(r.toc,blk);
+				final statement stmt=new statement(this, "stmt", null,r);
+				final prog p=new prog(r.toc,stmt);
 				pl("*** compiler");
 				for(int i=0;i<co.rom.length;i++)
 					co.rom[i]=0;
 				final xbin b=new xbin(p.toc,co.rom);
-				p.code.binary_to(b);
+				p.stmt.binary_to(b);
 				pl("*** linker");
 				b.link();
 //				pl("*** toc");

@@ -5,7 +5,7 @@ import b.a;
 
 final public class call_st extends call{
 	private static final long serialVersionUID=1;
-	public call_st(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,block b){
+	public call_st(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
 		super(pt,nm,annotations,"st",r,b);
 	}
 	@Override public void binary_to(xbin x){

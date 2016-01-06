@@ -6,8 +6,8 @@ import b.xwriter;
 final public class var extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_trailing;
-	public var(a pt,String nm,reader r,block b){
-		super(pt,nm,no_annotations,"var",r,b);
+	public var(a pt,String nm,reader r,statement parent_statement){
+		super(pt,nm,no_annotations,"var",r,parent_statement);
 		name=r.next_token();
 		ws_trailing=r.next_empty_space();
 //		System.out.println("var "+name+"  "+b.declarations);
@@ -22,6 +22,6 @@ final public class var extends statement{
 	@Override public void binary_to(xbin x){
 		final String reg=x.allocate_register(this);
 		x.alias_register(name,reg);
-		blk.vars.add(name);
+		parent_statement.vars.add(name);
 	}
 }

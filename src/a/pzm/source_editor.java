@@ -2,8 +2,8 @@ package a.pzm;
 import java.util.HashSet;
 import java.util.Set;
 
-import a.pzm.lang.block;
 import a.pzm.lang.reader;
+import a.pzm.lang.statement;
 import b.a;
 import b.xwriter;
 final public class source_editor extends a{
@@ -52,14 +52,14 @@ final public class source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
-			final block blk=new block(this,"b",r);
-			final xwriter src=new xwriter();
-			blk.source_to(src);
+			final statement code=new statement(this,"b",null,r);
+//			final xwriter src=new xwriter();
+//			code.source_to(src);
 //			resrc.set(src.toString());
 			if(x==null) return;
 			x.xu(sts.clr());
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
-			ev(x,this,new prog(r.toc,blk));
+			ev(x,this,new prog(r.toc,code));
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;

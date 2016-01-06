@@ -8,8 +8,8 @@ final public class def_table extends statement{
 	private static final long serialVersionUID=1;
 	final private String name;
 	final ArrayList<def_table_column> arguments=new ArrayList<>();
-	final private block data;
-	public def_table(a pt,String nm,String name,reader r,block b){
+	final private statement data;
+	public def_table(a pt,String nm,String name,reader r,statement b){
 		super(pt,nm,no_annotations,"",r,b);
 		this.name=name;
 //		int i=0;
@@ -22,7 +22,7 @@ final public class def_table extends statement{
 //			r.next_empty_space();
 			arguments.add(sf);
 		}
-		data=new block(this,"d",r,b);
+		data=new statement(this,"d",b,r);
 		r.toc.put("table "+name,this);
 	}
 	@Override public void binary_to(xbin x){

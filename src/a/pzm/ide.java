@@ -3,7 +3,7 @@ import static b.b.log;
 import static b.b.pl;
 import static b.b.stacktrace;
 
-import a.pzm.lang.block;
+import a.pzm.lang.statement;
 import a.pzm.lang.xbin;
 import b.a;
 import b.xwriter;
@@ -52,20 +52,18 @@ final public class ide extends a{
 		lo.core=cor;
 		ec.x_f3(null,null);
 	}
-	private block src;
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
 		if(o instanceof prog){
 			try{
 				pl("*** compiler");
-				final prog p=(prog)o;
-				src=p.code;
 				for(int i=0;i<cor.rom.length;i++)
 					cor.rom[i]=0;
+				final prog p=(prog)o;
 				final xbin b=new xbin(p.toc,cor.rom);
 				final int nregs_pre=b.registers_available.size();
 				pl("registers available "+b.registers_available.size()+" "+b.registers_available);
-				p.code.binary_to(b);
+				p.stmt.binary_to(b);
 				final int nregs_aft=b.registers_available.size();
 				if(nregs_pre!=nregs_aft)
 					throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+b.registers_available);
@@ -87,7 +85,7 @@ final public class ide extends a{
 				st.set("");
 			}
 			if(x==null) return;
-			x.xu(ro,st,ec.sts,src);
+			x.xu(ro,st,ec.sts);
 		}
 		else super.ev(x,from,o);
 	}

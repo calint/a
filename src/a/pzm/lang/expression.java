@@ -8,12 +8,12 @@ final public class expression extends statement{
 	private static final long serialVersionUID=1;
 //	final String token;
 	private final String ws_after;
-	public expression(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,block b){
+	public expression(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
 		super(pt,nm,annotations,r.next_token(),r,b);
 //		token=r.next_token();
 		ws_after=r.next_empty_space();
 	}
-	public expression(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,block b){
+	public expression(a pt,String nm,LinkedHashMap<String,String>annotations,String token,reader r,statement b){
 		super(pt,nm,annotations,token,r,b);
 //		this.token=token;
 		ws_after=r.next_empty_space();
