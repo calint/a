@@ -8,14 +8,14 @@ import b.xwriter;
 public class call extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name,ws_trailing;
-	final protected ArrayList<expression> arguments=new ArrayList<>();
+	final protected ArrayList<expression>arguments=new ArrayList<>();
 	public call(a pt,String nm,LinkedHashMap<String,String> annotations,String name,reader r,statement b){
 		super(pt,nm,annotations,"",r,b);
 		this.name=name;
 		ws_after_name=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(pt,nm,no_annotations,r,b);
+			final expression arg=new expression(pt,nm,r,b);
 			arguments.add(arg);
 		}
 		ws_trailing=r.next_empty_space();

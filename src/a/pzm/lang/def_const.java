@@ -9,7 +9,7 @@ final public class def_const extends statement{
 	final expression expr;
 	public def_const(a pt,String nm,String name,reader r,statement b){
 		super(pt,nm,no_annotations,"",r,b);
-		expr=new expression(this,"e",no_annotations,r,b);
+		expr=new expression(this,"e",r,b);
 		ws_trailing=r.next_empty_space();
 		r.toc.put("const "+name,this);
 	}

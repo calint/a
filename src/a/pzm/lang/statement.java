@@ -14,12 +14,11 @@ public class statement extends a{
 	final private LinkedHashMap<String,String>annotations;
 	final protected String token;
 	final private String ws_after;
-	private statement expr;
-
 	final private String ws_after_open_block;
 	final private ArrayList<statement>statements=new ArrayList<>();
 	final protected ArrayList<String>declarations=new ArrayList<>();
 	final ArrayList<String>vars=new ArrayList<>();
+	private statement expr;
 
 //	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String loc,block b){
 //		super(pt,nm);

@@ -17,7 +17,7 @@ final public class call_lp extends statement{
 		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,no_annotations,r,b);
+			final expression arg=new expression(this,"e"+i++,r,b);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
