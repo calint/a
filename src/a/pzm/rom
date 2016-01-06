@@ -1,12 +1,10 @@
 {
-var tick
+var tick=0b100
 addi(tick -1)
 neg(tick)
 inc(tick)
 
-var stack
-li(stack 0x7f00)
-
+var stack=0x7f00
 stack.push(0xf00)
 stack.push(0xff0)
 stack.push(0x00f)
@@ -37,8 +35,7 @@ def text.drw(){
   }
 }
 def text.upd(){
-  var scr_max
-  li(scr_max 0x6000)
+  var scr_max=0x6000
   fow(texts){
     add(dest_addr delta_dest_addr)
     var h
@@ -95,8 +92,7 @@ def rects
 }
 eof
 def rects.upd(){
-  var m
-  li(m 0x40)
+  var m=0x40
   fow(rects){
     inc(ln)
     var i
@@ -128,8 +124,7 @@ def dots.drw(){
   }
 }
 def dots.upd(){
-  var g
-  li(g 0x7f00)
+  var g=0x7f00
   fow(dots){
     add(yx dyx)
     var h

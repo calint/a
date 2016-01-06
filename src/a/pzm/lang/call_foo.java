@@ -69,7 +69,7 @@ final public class call_foo extends statement{
 			x.write(0);
 		}else{
 			final int rdi=x.register_index_for_alias(this,ref_to_register);
-			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//li(a dots)			
+			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(a )			
 		}
 		
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)

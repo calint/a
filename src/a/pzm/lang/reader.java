@@ -82,6 +82,12 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
+	public boolean is_next_char_assign(){
+		final int ch=read();
+		if(ch=='=')return true;
+		unread(ch);
+		return false;
+	}
 	public String next_empty_space(){
 		final xwriter x=new xwriter();
 		while(true){
@@ -99,7 +105,7 @@ public final class reader{
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
-			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'){
+			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||ch=='='){
 				unread(ch);
 				break;
 			}
