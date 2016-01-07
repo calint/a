@@ -46,6 +46,119 @@
 
 -1}
 
+{
+  var addr=0x4080
+  var rgb=0x0ff
+  var n=32
+
+  lp(n)stc(addr rgb)
+  
+-1
+}
+
+
+{
+  var addr=0x4080
+  var rgb=0x0ff
+  var n=32
+
+  lp(n){
+    stc(addr rgb)
+    inc(rgb)
+  }
+-1
+}
+
+
+
+{
+  var addr=0x4080
+  var rgb=0xf00
+  var n=43
+
+  lp(n)
+    stcinc(addr rgb)
+-1
+  def stcinc(a d){
+    stc(a d)
+    inc(d)
+  }
+}
+
+
+{
+-1
+{1}
+}
+
+
+{
+var di=0x4080
+foo(bmp){
+  stc(di d)
+}
+-1
+def bmp[d]{5 0x018 0x02c 0x2c 0x2c 0x18}
+}
+
+
+{
+type_bmp(0x2080 4 5 252 0xf999f 0xf00)
+type_bmp(0x2085 4 5 252 0x6bbb6 0xf00)
+-1
+foo(bmp){
+  type_bmp(0x2080 4 5 252 d 0xf00)
+}
+-1
+def bmp[d]{1 0x6bbb6}
+-1
+def type_bmp(scr wi hi ln bmp rgb){
+  lp(hi){
+    lp(wi){
+      shf(bmp -1)
+      @ifn stc(scr rgb)
+      @ifz inc(scr)
+      @ifp inc(scr)
+    }
+    add(scr ln)
+  }
+}
+}
+
+
+{
+var di=0x2080
+var ln=252
+var gln=0x4fb
+var wi=4
+var hi=5
+var rgb=0xf00
+foo(bmp){
+  type_bmp(di wi hi ln d rgb)
+  sub(di gln)
+}
+
+
+-1
+def bmp[d]{2 0xf999f 0x6bbb6}
+
+
+
+def type_bmp(scr wi hi ln bmp rgb){
+  lp(hi){
+    lp(wi){
+      shf(bmp -1)
+      @ifn stc(scr rgb)
+      @ifz inc(scr)
+      @ifp inc(scr)
+    }
+    add(scr ln)
+  }
+}
+}
+
+
+
 
 
 

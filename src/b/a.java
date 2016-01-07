@@ -77,7 +77,7 @@ public class a implements Serializable{
 	public final a set(final double d){s=Double.toString(d);return this;}
 	public final a clr(){return set((String)null);}
 	public final boolean isempty(){return s==null||s.length()==0;}
-	public final String toString(){return s==null?"":s;}
+	public String toString(){return s==null?"":s;}
 	public final String str(){return s==null?"":s;}
 	public final int toint(){return isempty()?0:Integer.parseInt(toString());}
 	public final float toflt(){return isempty()?0:Float.parseFloat(toString());}

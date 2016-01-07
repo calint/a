@@ -14,8 +14,8 @@ public class statement extends a{
 	private String location_in_source_end;
 	final private LinkedHashMap<String,String>annotations;
 	final protected String token;
-	final private String ws_trailing;
-	final private String ws_after_open_block;
+	private String ws_trailing;
+	private String ws_after_open_block;
 	final private String ws_after_assign;
 	final private ArrayList<statement>statements=new ArrayList<>();
 	final protected ArrayList<String>declarations=new ArrayList<>();
@@ -60,10 +60,9 @@ public class statement extends a{
 		mark_start_of_source(r);
 		token=tk==null?"":tk;
 		annotations=new LinkedHashMap<>();
-		LinkedHashMap<String,String>annot=new LinkedHashMap<>();
-		final String tkk;
+//		LinkedHashMap<String,String>annot=new LinkedHashMap<>();
 		r.bm();mark_start_of_source(r);
-		if(r.is_next_char_block_open()){
+		if(r.is_next_char_block_open()){// read block and return
 			int i=0;
 			ws_after_open_block=r.next_empty_space();
 			while(true){
@@ -79,39 +78,59 @@ public class statement extends a{
 				statements.add(d);
 			}
 		} 
-		ws_after_open_block="";
-		ws_trailing=r.next_empty_space();
+		// single statement
+		// read annotations
 		r.bm();
+		final String tkk;
 		while(true){
 			final String s=r.next_token();
-			if(s.length()==0){
-				mark_end_of_source(r);
-				throw new compiler_error(this,"unexpected continuation",token);
-			}
-			if(s.startsWith("@")){//annotation
-				final String ws=r.next_empty_space();
-				annot.put(s.substring(1),ws);
-				continue;
+			if(s.length()>0){
+				if(s.startsWith("@")){//annotation
+					final String ws=r.next_empty_space();
+					annotations.put(s.substring(1),ws);
+					continue;
+				}
 			}
 			tkk=s;
 			break;
 		}
+		mark_end_of_source(r);
+		if(tkk.length()==0){// end of tokens
+			if(r.is_next_char_block_open()){// open block  ie:  @dotta{0xfee}
+				int i=0;
+				ws_after_open_block=r.next_empty_space();
+				while(true){
+					if(r.next_empty_space().length()!=0)throw new Error();
+					if(r.is_next_char_block_close()){
+						mark_end_of_source(r);
+						ws_trailing=r.next_empty_space();
+						ws_after_assign="";
+						return;
+					}
+					r.bm();
+					final statement d=new statement(this,"i-"+i++,this,null,r);
+					statements.add(d);
+				}
+			}
+//			ws_trailing=r.next_empty_space();
+//			throw new compiler_error(this,"unexpected continuation",token);
+		}
 		if("var".equals(tkk)){
 			r.bm();
-			expr=new var(this,"e",parent,annot,r);
+			expr=new var(this,"e",parent,annotations,r);
 			ws_after_assign="";
 			mark_end_of_source(r);
 			return;
 		}
 		if("def".equals(tkk)){
-			expr=new def(this,"e",parent,annot,r);
+			expr=new def(this,"e",parent,annotations,r);
 			ws_after_assign="";
 			mark_end_of_source(r);
 			return;
 		}
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
-			expr=new expression(this,"e",parent,annot,r,tkk);
+			expr=new expression(this,"e",parent,annotations,r,tkk);
 //			b.b.pl("assign "+tkk+"="+tk);
 			mark_end_of_source(r);
 			return;
@@ -119,7 +138,7 @@ public class statement extends a{
 		ws_after_assign="";
 		if(!r.is_next_char_expression_open()){
 //			if(r.is_next_char_assign()){
-				expr=new expression(this,"e",parent,annot,tkk,r,null);
+				expr=new expression(this,"e",parent,annotations,tkk,r,null);
 //			}else{
 //				r.bm();
 //				throw new compiler_error(this,"expected '='","");
@@ -128,7 +147,7 @@ public class statement extends a{
 		}
 		final String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg foo fow";
 		if(asm.indexOf(tkk)==-1){
-			expr=new call(this,"e",parent,annot,tkk,r);
+			expr=new call(this,"e",parent,annotations,tkk,r);
 			mark_end_of_source(r);
 			return;
 		}
@@ -137,7 +156,7 @@ public class statement extends a{
 			final Class<?>cls=Class.forName(clsnm);
 			final Constructor<?>ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,statement.class);
 //			System.out.println("instr "+token);
-			expr=(statement)ctor.newInstance(this,"e",annot,r,parent);
+			expr=(statement)ctor.newInstance(this,"e",annotations,r,parent);
 			mark_end_of_source(r);
 			return;
 		}catch(Throwable t){
@@ -148,7 +167,9 @@ public class statement extends a{
 	public void binary_to(xbin x){
 		if(expr!=null)
 			expr.binary_to(x);
-		statements.forEach(e->e.binary_to(x));
+		statements.forEach(e->
+			e.binary_to(x)
+		);
 		vars.forEach(e->x.unalloc(this,e));
 		vars.clear();
 	}
@@ -211,5 +232,12 @@ public class statement extends a{
 		if(yes)return true;
 		if(parent_statement==null)return false;
 		return parent_statement.is_register_declared(register_name);
+	}
+	
+	@Override
+	public String toString(){
+		final xwriter x=new xwriter();
+		source_to(x);
+		return x.toString();
 	}
 }

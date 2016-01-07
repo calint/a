@@ -1,62 +1,23 @@
 {
-var tick=0b100
-var tk=8
-tick=tk
-addi(tick -1)
-neg(tick)
-inc(tick)
+var di=0x2080
+var ln=252
+var gln=0x4fb
+var wi=4
+var hi=5
+var rgb=0xf00
+foo(bmp){
+  type_bmp(di wi hi ln d rgb)
+  sub(di gln)
+  addi(rgb 15)
+}
 
-var stack=0x7f00
-stack.push(0xf00)
-stack.push(0xff0)
-stack.push(0x00f)
-var d
-stack.pop(d)
-stack.pop(d)
-stack.inc()
-stack.push(d)
-stack.push(d)
-stack.push(d)
 
-rects.drw()
-rects.upd()
-text.drw()
-text.upd()
-dots.drw()
-dots.upd()
-eof
-eof
-def stack.push(dat){stc(stack dat)}
-def stack.pop(dat){ldd(dat stack)}
-def stack.inc(){inc(stack)}
-eof
-def text.drw(){
-  inc(tick)
-  foo(texts){
-    @inline pl(dest_addr width height add_after_line text rgb sub_after_glyph)
-  }
-}
-def text.upd(){
-  var scr_max=0x6000
-  fow(texts){
-    add(dest_addr delta_dest_addr)
-    var h
-    tx(h dest_addr)
-    sub(h scr_max)
-    @ifp tx(dest_addr h)
-  }
-}
-def pl(dest_addr width height add_after_line text rgb sub_after_glyph){
-  var n
-  ldc(n text)
-  lp(n){
-    var bmp
-    ldc(bmp text)
-    @inline print_bmp_4x4(dest_addr width height add_after_line bmp rgb)
-    sub(dest_addr sub_after_glyph)
-  }
-}
-def print_bmp_4x4(scr wi hi ln bmp rgb){
+-1
+def bmp[d]{2 0xf999f 0x6bbb6}
+
+
+
+def type_bmp(scr wi hi ln bmp rgb){
   lp(hi){
     lp(wi){
       shf(bmp -1)
@@ -67,76 +28,4 @@ def print_bmp_4x4(scr wi hi ln bmp rgb){
     add(scr ln)
   }
 }
-def texts
-[ dest_addr  delta_dest_addr  width   height   add_after_line   text   rgb   sub_after_glyph ]{3
-   0x3040      0x0101          4        4         252           txt   0xf00       0x3fc   
-   0x3840      0x0100          4        4         252           os    0xf00       0x3fc   
-   0x5040      0x0000          3        3         253           os    0xff0       0x2fd   
-} 
-eof
-def txt[bmp]{6
-  0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
-  0xffff
-}
-eof
-def os[bmp]{2
-   0xffff 0xffff
-}
-def err[]{2}
-eof
-
-
-def rects
-[   yx    rgb   wi    hi   ln     ]{ 3
-  0x1400 0x0ff 256    80  0x24
-  0x1000 0xf00 0x30  0x40 0x24
-  0x5800 0x00f 0x30   50  0x23
-}
-eof
-def rects.upd(){
-  var m=0x40
-  fow(rects){
-    inc(ln)
-    var i
-    tx(i ln)
-    sub(i m)
-    @ifp li(ln 0x10)
-  }
-}
-def rects.drw(){
-  foo(rects){
-    lp(hi){
-      lp(wi){
-        stc(yx rgb)
-      }
-      add(yx ln)
-    }
-  }
-}
-def dots
-[   yx    dyx    rgb ]{4
-  0x7840 0x0001 0x800
-  0x7951 0x0002 0x080
-  0x7a62 0x0003 0x008
-  0x7b73 0x0004 0x088
-}
-def dots.drw(){
-  foo(dots){
-    st(yx rgb)
-  }
-}
-def dots.upd(){
-  var g=0x7f00
-  fow(dots){
-    add(yx dyx)
-    var h
-    tx(h yx)
-    sub(h g)
-    @ifp li(yx 0x0800)
-  }
-}
-def red 0xf00
-def green 0xf0
-def blue 0xf
-def eof 0xfffff
 }

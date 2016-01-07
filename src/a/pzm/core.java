@@ -239,7 +239,7 @@ final public class core implements Serializable{
 	}
 	private void evaluate_zn_flags(final int number_to_be_evaluated){
 		if(number_to_be_evaluated==0){flags=1;return;}
-		if((number_to_be_evaluated&(1<<16))==(1<<16)){flags=2;return;}//? .
+		if((number_to_be_evaluated&(1<<20))==(1<<20)){flags=2;return;}//? .
 		flags=3;
 	}
 	public boolean is_instruction_eof(){
