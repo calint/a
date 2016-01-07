@@ -72,6 +72,7 @@ final public class source_editor extends a{
 			pl("*** done");
 			if(x==null) return;
 			x.xu(sts.clr(),code);
+			((ide)pt()).xjs_update_focus_on_rom(x);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new_rom);
 		}catch(compiler_error t){

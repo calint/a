@@ -59,8 +59,9 @@ final public class ide extends a{
 				ec.sts.set(rm.length);
 				st.set(rm.length);
 				cor.reset();
-				ro.xfocus_on_binary_location(x,0);
+//				if(bit_show_rom)
 				x_f(x,"");
+				xjs_update_focus_on_rom(x);
 			}catch(Throwable t){
 				log(t);
 				ec.sts.set(t.toString());
@@ -88,7 +89,7 @@ final public class ide extends a{
 					.css(ec.ln,"display:inline-block")
 					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-left:1px dashed green;border-right:1px dashed green")
 					.css(ec.ln,"li.a","background:#fcc")
-					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding:.5em;border:1px dashed green")
+					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding-left:1em;padding-right:1em;padding-top:.5em;padding-bottom:.5em;border:1px dashed green")
 					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)");
 			switch(th.toint()){
 			case 0:
@@ -155,7 +156,7 @@ final public class ide extends a{
 		cor.meter_frames=cor.meter_instructions=0;
 		st.set("reseted");
 		if(x==null) return;
-		xupd_focus(x);
+		xjs_update_focus_on_rom(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
@@ -171,7 +172,7 @@ final public class ide extends a{
 		if(hasbit(bit_show_screen)&&refresh_display)
 			ra.xupd(x);
 		x.xu(sy,re,ca,lo);
-		if(hasbit(bit_show_rom))xupd_focus(x);
+		if(hasbit(bit_show_rom))xjs_update_focus_on_rom(x);
 	}
 	private boolean going;
 	/** go */
@@ -204,7 +205,7 @@ final public class ide extends a{
 				Thread.sleep(sleep_ms);
 		}
 	}
-	private void xupd_focus(xwriter x){
+	void xjs_update_focus_on_rom(xwriter x){
 		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 	}
 	private long runms=1000;
@@ -229,7 +230,7 @@ final public class ide extends a{
 		st.set(y.toString());
 		if(x==null) return;
 		x.xu(st,re,ca,lo);
-		xupd_focus(x);
+		xjs_update_focus_on_rom(x);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	/** runtobreakpoint */
@@ -250,7 +251,7 @@ final public class ide extends a{
 		}
 		if(x==null) return;
 		x.xu(st,sy,re,ca,lo);
-		xupd_focus(x);
+		xjs_update_focus_on_rom(x);
 		ra.xupd(x);
 	}
 	/** stepframe */
@@ -258,7 +259,7 @@ final public class ide extends a{
 		pl("x_f");
 		step_frame();
 		if(x==null) return;
-		xupd_focus(x);
+		xjs_update_focus_on_rom(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}

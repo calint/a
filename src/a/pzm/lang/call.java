@@ -2,6 +2,7 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+
 import b.a;
 import b.xwriter;
 
@@ -77,8 +78,8 @@ public class call extends statement{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
-		final boolean is=asm.indexOf(name)!=-1;
+//		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
+//		final boolean is=asm.indexOf(name)!=-1;
 //		x.tag(is?"ac":"fc");
 		x.p(name);
 //		x.tage(is?"ac":"fc");

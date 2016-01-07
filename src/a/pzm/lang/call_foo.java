@@ -1,8 +1,10 @@
 package a.pzm.lang;
 
 import static b.b.pl;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+
 import b.a;
 import b.xwriter;
 
@@ -24,8 +26,8 @@ final public class call_foo extends statement{
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
 		loop_code=new statement(this,"b",b,"",r);
 	}
-	private int foo_register;
-	private boolean foo_source_in_register;
+//	private int foo_register;
+//	private boolean foo_source_in_register;
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
 		final def_table dt=(def_table)x.toc.get("table "+table_name);
