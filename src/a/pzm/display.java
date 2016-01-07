@@ -10,7 +10,7 @@ final public class display extends a{
 	public int[]ints;
 	public int scl=4,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
-		x.p("<canvas style=\"display:inline;box-shadow:0 0 .5em rgba(0,0,0,.5);\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
+		x.p("<canvas style=\"display:inline-block;box-shadow:0 0 .5em rgba(0,0,0,.5);\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 		x.script();
 		xupd(x);
 		x.script_();
@@ -36,7 +36,7 @@ final public class display extends a{
 		final ByteBuffer bb_png=ByteBuffer.wrap(baos.toByteArray());
 		final ByteBuffer bb_png_base64=Base64.getEncoder().encode(bb_png);
 		final String str_png_base64=new String(bb_png_base64.array(),bb_png_base64.position(),bb_png_base64.limit());
-		x.p("var c=$('").p(id()).p("');if(c){var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,").p(str_png_base64).p("';}");
+		x.p("var c=$('").p(id()).p("');if(c){var d=c.getContext('2d');var i=new Image;i.onload=function(){d.drawImage(i,0,0,c.width,c.height);};i.src='data:image/png;base64,").p(str_png_base64).pl("';}");
 	}
 //	public int get(final int addr){
 //		final int a;

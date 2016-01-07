@@ -55,8 +55,7 @@ final public class ide extends a{
 					throw new Error();
 //				if(rm.length==0)
 //					throw new Error();
-				System.arraycopy(rm, 0, cor.rom, 0, rm.length);
-				
+				System.arraycopy(rm,0,cor.rom,0,rm.length);
 				ec.sts.set(rm.length);
 				st.set(rm.length);
 				cor.reset();
@@ -67,7 +66,7 @@ final public class ide extends a{
 				ec.sts.set(t.toString());
 				st.set("");
 			}
-			if(x==null) return;
+			if(x==null)return;
 			x.xu(ro,st,ec.sts);
 		}
 		else super.ev(x,from,o);
@@ -77,25 +76,34 @@ final public class ide extends a{
 		if(pt()==null){
 			x.title("clare 20 bit")
 					.style()
-					.css("html","color:#111")
-					.css("body",
-							"padding:1em 0 0 11em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
+//					.css("html","")
+//					.css("a","color:#0ff")
+					.css("body","padding:1em 0 0 11em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto")
 					.css(".border","border:1px dotted red").css(".float","display:inline-block").css(".textleft","text-align:left").css(".fontbold","font-weight:bold")
 					.css(".floatclear","clear:both").css(".panel","padding-left:.5em;padding-right:.5em").css(".stp","background-color:#ee0")
 					.css(".brk","background-color:#ee2").css(".nbr","width:3em;border:1px dotted;text-align:right")
 					.css(".laycent","white-space:no-wrap;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
-					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em;border-right:1px dotted gray")
-					.css(ajaxsts,"position:fixed;bottom:0;right:0;padding:.5em")
-					.css(this, "min-width:100px; width: auto !important; width: 100px;background:red");
+					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em")
+//					.css(ec.ln,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:inline-block")
+					.css(ec.ln,"display:inline-block")
+					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-left:1px dashed green;border-right:1px dashed green")
+					.css(ec.ln,"li.a","background:#fcc")
+					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding:.5em;border:1px dashed green")
+					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)");
 			switch(th.toint()){
 			case 0:
 				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
+				x.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#fff;border-left:1px dashed #ddd;border-right:1px dashed #ddd");
 				break;
 			case 1:
 				x.css("html","background:#111;color:#060").css("a","color:#007").css(".stp","background-color:#020").css(".brk","background-color:#021");
+				x.css(ec.ln,"li.a","background:#242");
 				break;
 			case 2:
-				x.css("html","background:#421;color:#830").css("a","color:#000").css(".stp","background-color:#a30").css(".brk","background-color:#a30");
+				x.css("html","background:#421;color:#830").css("a","color:#a32").css(".stp","background-color:#a30").css(".brk","background-color:#a30");
+				x.css(ec.ln,"li","background:#421;color:#830;border:1px dashed #720;border-top:0;border-bottom:0");
+				x.css(ec.ln,"li.a","background:#830;color:#430");
+				x.css(ajaxsts,"background:#421;border:1px dashed #830");
 				break;
 			}
 			x.style_().spanh(ajaxsts);
@@ -111,18 +119,15 @@ final public class ide extends a{
 		}
 		if(hasbit(bit_show_schematics))schematics_to(x);
 		if(hasbit(bit_show_instructions_table))instructions_table_to(x);
-		//		x.divh(sl,"panel");
 		if(hasbit(bit_show_screen))x.r(ra);
-		//		x.divh(sr,"panel");
 		if(hasbit(bit_menu))
-			x.divo().ax(this,"r",""," reset","r").ax(this,"f",""," frame","f").ax(this,"n",""," step","s").ax(this,"g",""," go","g")
-					.ax(this,"b",""," bench","b")
-					//				.ax(this,"b"," run-to-break-point")
+			x.divo().ax(this,"r",""," reset","r").ax(this,"f",""," frame","f").ax(this,"s",""," step","s").ax(this,"g",""," go","g")
+					.ax(this,"b",""," bench","b").ax(this,"e",""," exec","e")
 					.div_();
 		x.divo("laycent");
 		x.table().tr();
-		if(hasbit(bit_show_panel)) x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
-		if(hasbit(bit_show_rom)) x.td().divo(ro,"float panel").r(ro).div_();
+		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
+		if(hasbit(bit_show_rom))x.td().divo(ro,"float panel").r(ro).div_();
 		if(hasbit(bit_show_source_editor))x.td().divh(ec,"float textleft panel");
 		x.table_();
 		x.div_();
@@ -130,13 +135,14 @@ final public class ide extends a{
 			x.divo("floatclear");
 			x.p("clare 20 bit  ").p(cor.registers.length).p(" registers  ").p(ro.ints.length>>10).p(" kb rom  ").p(ra.ints.length>>10).p(" kb ram");
 			x.nl();
-			x.p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
+			x.p("theme: ").inptxt(th,this,"m","nbr").p("  display-bits:").inptxt(bi,this,"m","nbr").div_();
 		}
 	}
 	public boolean hasbit(final int bit){
 		return (bi.toint()&bit)==bit;
 	}
-	synchronized public void x_t(xwriter x,String s) throws Throwable{
+	/**change theme/reload*/
+	synchronized public void x_m(xwriter x,String s) throws Throwable{
 		pl("x_t");
 		x.xuo(this);
 		x.xfocus(th);
@@ -154,16 +160,18 @@ final public class ide extends a{
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	/** step */
-	synchronized public void x_n(final xwriter x,final String s) throws Throwable{
-		pl("x_n");
+	synchronized public void x_s(final xwriter x,final String s) throws Throwable{
+//		pl("x_n");
 		final boolean refresh_display=cor.loading_register==-1&&((cor.instruction&0x00d8)==0x00d8||(cor.instruction&core.op_stc)==core.op_stc);
 		st.clr();
 		cor.step();
-		if(x==null) return;
+		if(x==null)
+			return;
 		x.xu(st.set(cor.meter_instructions));
-		if(hasbit(bit_show_screen)&&refresh_display) ra.xupd(x);
+		if(hasbit(bit_show_screen)&&refresh_display)
+			ra.xupd(x);
 		x.xu(sy,re,ca,lo);
-		xupd_focus(x);
+		if(hasbit(bit_show_rom))xupd_focus(x);
 	}
 	private boolean going;
 	/** go */
@@ -174,17 +182,33 @@ final public class ide extends a{
 		going=true;
 		while(going){
 			pl("x_g "+i++);
-			x_n(x,null);
+			x_s(x,null);
+			x.flush();
+			if(sleep_ms>0)
+				Thread.sleep(sleep_ms);
+		}
+	}
+	/** execute, update screen */
+	synchronized public void x_e(final xwriter x,final String s)throws Throwable{
+		final long sleep_ms=100;
+		pl("x_e");
+		going=true;
+		while(going){
+			step_frame();
+			if(x==null)
+				continue;
+			if(hasbit(bit_show_screen))
+				ra.xupd(x);
 			x.flush();
 			if(sleep_ms>0)
 				Thread.sleep(sleep_ms);
 		}
 	}
 	private void xupd_focus(xwriter x){
-		if(hasbit(bit_show_rom)) ro.xfocus_on_binary_location(x,cor.program_counter);
+		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 	}
 	private long runms=1000;
-	synchronized public void x_u(final xwriter x,final String s) throws Throwable{
+	synchronized public void x_b(final xwriter x,final String s) throws Throwable{
 		pl("x_u");
 		going=false;
 		if(x!=null) x.xu(st.set("benching "+runms+" ms")).flush();
@@ -209,7 +233,7 @@ final public class ide extends a{
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	/** runtobreakpoint */
-	synchronized public void x_b(xwriter x,String s) throws Throwable{//? doesnotstopafterconnectionclose
+	synchronized public void x_l(xwriter x,String s) throws Throwable{//? doesnotstopafterconnectionclose
 		if(x!=null) x.xu(st.set("running to breakpoint")).flush();
 		//		final long t0=System.currentTimeMillis();
 		//		final long instr0=me.instr;
@@ -232,18 +256,22 @@ final public class ide extends a{
 	/** stepframe */
 	synchronized public void x_f(final xwriter x,final String s) throws Throwable{
 		pl("x_f");
-		going=false;
-		//		if(x!=null)x.xu(st.set("running frame")).flush();
+		step_frame();
+		if(x==null) return;
+		xupd_focus(x);
+		x.xu(st,sy,re,ca,lo);
+		if(hasbit(bit_show_screen))ra.xupd(x);
+	}
+	private void step_frame() {
 		final long t0=System.nanoTime();
 		try{
 			cor.meter_instructions=0;
 			boolean loop=true;
 			while(true){
 				cor.step();
-				if(loop==false) break;
-				if(cor.meter_instructions>1024*1024) loop=false;
-				if(cor.is_instruction_eof()) loop=false;
-				//				if(cor.loading_register==-1&&(cor.instruction&0xffff)==0xffff)loop=false;
+				if(loop==false)break;
+				if(cor.meter_instructions>1024*1024)loop=false;
+				if(cor.is_instruction_eof())loop=false;
 			}
 			final long dt=(System.nanoTime()-t0)/1000;
 			final long dinstr=cor.meter_instructions;
@@ -251,10 +279,6 @@ final public class ide extends a{
 		}catch(Throwable t){
 			st.set(stacktrace(t));
 		}
-		if(x==null) return;
-		xupd_focus(x);
-		x.xu(st,sy,re,ca,lo);
-		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	public void logo_to(final xwriter x){
 		final int con_wi=64;

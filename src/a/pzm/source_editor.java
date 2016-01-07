@@ -2,8 +2,6 @@ package a.pzm;
 import static b.b.pl;
 
 import java.io.StringReader;
-import java.util.HashSet;
-import java.util.Set;
 
 import a.pzm.lang.compiler_error;
 import a.pzm.lang.reader;
@@ -27,7 +25,7 @@ final public class source_editor extends a{
 //		x.style("ac","font-weight:bold");//a name
 //		x.style("dr","font-style: italic");//data refered
 //		x.style("dr","font-weight:bold");//a name
-		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," run ","r").nl();
+		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," compile ","c").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
 		ln.to(x);
