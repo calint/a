@@ -15,7 +15,7 @@ final public class var extends statement{
 		ws_after_name=r.next_empty_space();
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
-			r.bm();
+			r.set_location_in_source();
 			initial_value_expression=new expression(this,name,this,r,name);
 		}else{
 			ws_after_assign="";

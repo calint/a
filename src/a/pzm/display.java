@@ -10,7 +10,7 @@ final public class display extends a{
 	public int[]ints;
 	public int scl=4,wi=256,hi=128;
 	public void to(final xwriter x)throws Throwable{
-		x.p("<canvas class=\"display:block\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
+		x.p("<canvas style=\"display:inline;box-shadow:0 0 .5em rgba(0,0,0,.5);\" id=").p(id()).p(" width=").p(wi*scl).p(" height=").p(hi*scl).p("></canvas>");
 		x.script();
 		xupd(x);
 		x.script_();

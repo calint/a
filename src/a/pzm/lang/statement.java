@@ -61,7 +61,7 @@ public class statement extends a{
 		token=tk==null?"":tk;
 		annotations=new LinkedHashMap<>();
 //		LinkedHashMap<String,String>annot=new LinkedHashMap<>();
-		r.bm();mark_start_of_source(r);
+		r.set_location_in_source();mark_start_of_source(r);
 		if(r.is_next_char_block_open()){// read block and return
 			int i=0;
 			ws_after_open_block=r.next_empty_space();
@@ -73,14 +73,14 @@ public class statement extends a{
 					ws_after_assign="";
 					return;
 				}
-				r.bm();
+				r.set_location_in_source();
 				final statement d=new statement(this,"i-"+i++,this,null,r);
 				statements.add(d);
 			}
 		} 
 		// single statement
 		// read annotations
-		r.bm();
+		r.set_location_in_source();
 		final String tkk;
 		while(true){
 			final String s=r.next_token();
@@ -107,7 +107,7 @@ public class statement extends a{
 						ws_after_assign="";
 						return;
 					}
-					r.bm();
+					r.set_location_in_source();
 					final statement d=new statement(this,"i-"+i++,this,null,r);
 					statements.add(d);
 				}
@@ -116,7 +116,7 @@ public class statement extends a{
 //			throw new compiler_error(this,"unexpected continuation",token);
 		}
 		if("var".equals(tkk)){
-			r.bm();
+			r.set_location_in_source();
 			expr=new var(this,"e",parent,annotations,r);
 			ws_after_assign="";
 			mark_end_of_source(r);
@@ -209,12 +209,12 @@ public class statement extends a{
 		return location_in_source_end;
 	}
 	public void mark_end_of_source(final reader r){
-		r.bm();
-		location_in_source_end=r.bm_str();
+		r.set_location_in_source();
+		location_in_source_end=r.location_in_source();
 	}
 	public void mark_start_of_source(final reader r){
 //		r.bm();
-		location_in_source=r.bm_str();
+		location_in_source=r.location_in_source();
 	}
 	public static LinkedHashMap<String,String>read_annot(reader r){
 		final LinkedHashMap<String,String>annotations=new LinkedHashMap<>();

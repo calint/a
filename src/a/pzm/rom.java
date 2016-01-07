@@ -61,7 +61,7 @@ final public class rom extends a{
 		else v|=msk;
 		ints[row]=v;
 		x.xu(id()+"-"+row+"-"+bit,on?".":"o");
-		x.xu(id()+"-"+row,ide.fld("0000",Integer.toHexString(ints[row])));
+		x.xu(id()+"-"+row,ide.fld("00000",Integer.toHexString(ints[row])));
 	}
 //	public int get(final int row){return ints[row];}
 //	public void set(final int row,final int value){ints[row]=value;}

@@ -103,7 +103,7 @@ final public class source_editor extends a{
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;
-			x.xu(sts.set("line "+r.bm_line+": "+t.getMessage()));
+			x.xu(sts.set("line "+r.location_in_source()+": "+t.getMessage()));
 			//			x.xalert(t.getMessage());
 		}
 		//		final program p;

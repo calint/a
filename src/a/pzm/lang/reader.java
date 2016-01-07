@@ -9,9 +9,9 @@ import b.xwriter;
 public final class reader{
 	final public LinkedHashMap<String,statement> toc=new LinkedHashMap<>();
 	private PushbackReader r;
-	public int line=1,col=1,prevcol=1,nchar=0;
-	public int bm_line,bm_col,bm_nchar;
-	public int last_read_char;
+	private int line=1,col=1,prevcol=1,nchar=0;
+	private int bm_line,bm_col,bm_nchar;
+	private int last_read_char;
 	public final class range{
 		final public int from_index,to_index,from_line,to_line,from_line_char,to_line_char;
 		public range(int from_index,int to_index,int from_line,int to_line,int from_line_char,int to_line_char){
@@ -35,12 +35,12 @@ public final class reader{
 	public reader(Reader r){
 		this.r=new PushbackReader(r,1);
 	}
-	public void bm(){
+	public void set_location_in_source(){
 		bm_line=line;
 		bm_col=col;
 		bm_nchar=nchar;
 	}
-	public String bm_str(){
+	public String location_in_source(){
 		return bm_line+":"+bm_col+":"+bm_nchar+":"+nchar;
 	}
 	public boolean is_next_char_block_close(){

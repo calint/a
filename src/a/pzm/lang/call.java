@@ -15,7 +15,7 @@ public class call extends statement{
 		ws_after_name=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			r.bm();
+			r.set_location_in_source();
 			final expression arg=new expression(pt,nm,r,b);
 			arguments.add(arg);
 		}

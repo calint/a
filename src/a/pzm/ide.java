@@ -3,26 +3,9 @@ import static b.b.log;
 import static b.b.pl;
 import static b.b.stacktrace;
 
-import a.pzm.lang.compiler_error;
-import a.pzm.lang.xbin;
 import b.a;
 import b.xwriter;
 final public class ide extends a{
-	public core cor=new core(64,16,16,256*1024,64*1024);
-	public rom ro;
-	public display ra;
-	public core_status sy;
-	public registers re;
-	public call_stack ca;
-	public loop_stack lo;
-	/** statusline */
-	public a st;
-	/** coreid */
-	public a co;
-	public source_editor ec;
-	/** theme */
-	public a th;
-	public a bi;
 	public final static int bit_show_logo=1;
 	public final static int bit_show_schematics=2;
 	public final static int bit_show_pramble=4;
@@ -33,14 +16,23 @@ final public class ide extends a{
 	public final static int bit_show_rom=128;
 	public final static int bit_edasm=256;
 	public final static int bit_show_source_editor=512;
-	/** builtinajaxstatus */
-	public a ajaxsts;
-	/** disassembled */
-	public a di;
-	/** programtoc */
-	public a toc;
+
+	public core cor=new core(64,16,16,256*1024,64*1024);
+	public rom ro;
+	public display ra;
+	public core_status sy;
+	public registers re;
+	public call_stack ca;
+	public loop_stack lo;
+	/** statusline */public a st;
+	/** coreid */public a co;
+	public source_editor ec;
+	/** theme */public a th;
+	/**display bits*/public a bi;
+	/** builtinajaxstatus */public a ajaxsts;
+	/** disassembled */public a di;
+	/** programtoc */public a toc;
 	//	public metrics me;
-//	public sprite_editor se;
 	public ide() throws Throwable{
 		ec.src.from(getClass().getResourceAsStream("rom"));
 		ajaxsts.set("idle");
@@ -50,9 +42,7 @@ final public class ide extends a{
 		re.ints=cor.registers;
 		ca.stk=cor.call_stack;
 		lo.core=cor;
-//		ec.x_f3(null,null);
-//		se.ints=new int[20];
-//		se.disppagenrows=32;
+		th.set(1);
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");
@@ -99,7 +89,7 @@ final public class ide extends a{
 					.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
 //					.css(ec,"display:inline-block")
 					.css(ec.src,"min-width:60em;min-height:200em;line-height:1.4em;border-right:1px dotted gray")
-					.css(ajaxsts,"position:fixed;bottom:0;right:0");
+					.css(ajaxsts,"position:fixed;bottom:0;right:0;padding:.5em");
 			switch(th.toint()){
 			case 0:
 				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
@@ -112,20 +102,6 @@ final public class ide extends a{
 				break;
 			}
 			x.style_().spanh(ajaxsts);
-			//			try(final jskeys j=new jskeys(x)){
-			//				j.add("cS","$x('"+id+" s')");//? x.axstr(id,func,param):"$x('..','... ...');
-			//				j.add("cL","$x('"+id+" l')");
-			//				j.add("cT","$x('"+id+" n')");
-			//				j.add("cR","$x('"+id+" r')");
-			//				j.add("cF","$x('"+id+" i')");
-			//				j.add("cG","$x('"+id+" g')");
-			//				j.add("cU","$x('"+id+" u')");
-			//				j.add("cO","$x('"+id+" c')");
-			//				j.add("cF","$x('"+id+" f')");
-			//				j.add("cD","$x('"+ra.id()+" rfh')");
-			//				j.add("cB","$x('"+id+" b')");
-			//				j.add("cK","alert('info')");
-			//			}
 		}
 		x.divo(this);
 		if(hasbit(bit_show_logo)){
@@ -196,6 +172,7 @@ final public class ide extends a{
 	private boolean going;
 	/** go */
 	synchronized public void x_g(final xwriter x,final String s) throws Throwable{
+		final long sleep_ms=50;
 		pl("x_n");
 		int i=0;
 		going=true;
@@ -203,7 +180,8 @@ final public class ide extends a{
 			pl("x_g "+i++);
 			x_n(x,null);
 			x.flush();
-			Thread.sleep(500);
+			if(sleep_ms>0)
+				Thread.sleep(sleep_ms);
 		}
 	}
 	private void xupd_focus(xwriter x){
