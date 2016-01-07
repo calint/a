@@ -16,6 +16,41 @@
 	def yellow 0xff0
 }
 
+
+{
+  st(0x4080 0x0ff)
+
+-1}
+
+{
+  var addr=0x4080
+  var rgb=0x0ff
+  st(addr rgb)
+
+-1}
+
+{
+  var addr=0x4080
+  var rgb=0x0ff
+  stc(addr rgb)
+  stc(addr rgb)  
+
+-1}
+
+{
+  var addr=0x4080
+  var rgb=0x0ff
+
+  stc(addr rgb)
+  stc(addr 0xfff)  
+
+-1}
+
+
+
+
+
+
 {
 	px(0x2040 0xffff)
 	0xfffff

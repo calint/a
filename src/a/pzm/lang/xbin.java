@@ -109,7 +109,7 @@ public final class xbin{
 //		pl(ix+" allocate register "+name);
 //	}
 	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
-	public boolean alias_exists(final String alias){return register_aliases.containsKey(alias);}
+	public boolean is_register_alias_exists(final String alias){return register_aliases.containsKey(alias);}
 	public void alias_register(String token,String reg){
 		if(register_aliases.containsKey(token))throw new Error("alias "+token+" is "+register_aliases);
 		register_aliases.put(token,reg);
@@ -130,7 +130,7 @@ public final class xbin{
 	public int register_index_for_alias(statement stmt,String alias){
 		String regnm=register_for_alias(alias);
 		if(regnm==null)
-			throw new compiler_error(stmt,"alias '"+alias+"' not found in "+register_aliases,alias);
+			throw new compiler_error(stmt,"var '"+alias+"' not declared",register_aliases.keySet().toString());
 		if(regnm.length()!=1)
 			throw new compiler_error(stmt,"not a register",regnm);
 		final int rdi=regnm.charAt(0)-'a';
