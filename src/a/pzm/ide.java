@@ -24,14 +24,14 @@ final public class ide extends a{
 	public registers re;
 	public call_stack ca;
 	public loop_stack lo;
-	/** statusline */public a st;
-	/** coreid */public a co;
+	/**statusline*/public a st;
+	/**coreid*/public a co;
 	public source_editor ec;
-	/** theme */public a th;
+	/**theme*/public a th;
 	/**display bits*/public a bi;
-	/** builtinajaxstatus */public a ajaxsts;
-	/** disassembled */public a di;
-	/** programtoc */public a toc;
+	/**builtinajaxstatus*/public a ajaxsts;
+	/**disassembled*/public a di;
+	/**programtoc*/public a toc;
 	//	public metrics me;
 	public ide() throws Throwable{
 		ec.src.from(getClass().getResourceAsStream("rom"));
