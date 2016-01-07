@@ -1,20 +1,35 @@
 {
-var dil=0x1020
+var tick
+inc(tick)
+st(0x2010 tick)
+
 var ln=252
 var gln=0x4fb
 var wi=4
 var hi=5
-var rgb
-var n=16
-var nl=0x0600
+
+foo(labels){
+  type(ptr dest c)
+}
+
 var di
-lp(n){
-  addi(rgb 8)
+var lines=1
+var dil=0x0420
+var nl=0x0600
+var rgb=0xf00
+lp(lines){
   tx(di dil)
   pl(di wi hi ln rgb d)
   add(dil nl)
 }
 -1 -1
+def baba[ch]{4   0xb 0xa 0xb 0xa}
+def b20[ch]{3   2 0 0xb}
+def labels
+[  ptr   dest     c   ]{2
+  baba  0x7050  0xffe         
+  b20   0x7070  0xff0
+}
 def bmp[d]{16  
   0x6ddd6 0x6e66f 0x6f36f 0x6373e 
   0x37df3 0xece3e 0x6ced6 0xff244 
@@ -22,16 +37,36 @@ def bmp[d]{16
   0x6ccc7 0xeddde 0xfcecf 0xfcecc 
 }
 -1 -1
+def type(ptr file colr){
+  var length
+  ldc(length ptr)
+  lp(length){
+    var glyph
+    var ret
+    var ch
+    ldc(ch ptr)
+    bmp.seek(ret ch)
+    ld(glyph ret)
+    type_bmp(file wi hi ln glyph colr)
+    sub(file gln)
+  }
+}
+def bmp.seek(return record){
+  var temp=bmp
+  tx(return temp)
+  inc(return)
+  add(return record)
+}
 def pl(di wi hi ln rgb d){
   foo(bmp){
     type_bmp(di wi hi ln d rgb)
     sub(di gln)
+    inc(rgb)
   }
 }
 def type_bmp(scr wi hi ln bmp rgb){
   lp(hi){
     lp(wi){
-      inc(rgb)
       shf(bmp -1)
       @ifn stc(scr rgb)
       @ifz inc(scr)

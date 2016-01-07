@@ -24,6 +24,8 @@ final public class call_foo extends statement{
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
 		loop_code=new statement(this,"b",b,"",r);
 	}
+	private int foo_register;
+	private boolean foo_source_in_register;
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
 		final def_table dt=(def_table)x.toc.get("table "+table_name);
@@ -41,7 +43,12 @@ final public class call_foo extends statement{
 			args.addAll(arguments);
 			final String struct_name=args.get(0).token;
 			final def_table stc=(def_table)x.toc.get("table "+struct_name);
-			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
+//			if(stc==null){
+//				if(x.is_register_alias_exists(struct_name)){
+//					foo_register=x.register_index_for_alias(this,struct_name);
+//				}else
+//					throw new compiler_error(this,"struct not declared yet",struct_name);
+//			}
 			for(def_table_column col:stc.arguments){
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
