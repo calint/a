@@ -20,7 +20,7 @@ final public class def_func extends statement{
 		}
 		ws_after_expr_close=r.next_empty_space();
 		arguments.forEach(e->declarations.add(e.token));
-		function_code=new statement(this,"c",b,r);
+		function_code=new statement(this,"c",b,"",r);
 		r.toc.put("func "+name,this);
 	}
 	public String name(){return name;}

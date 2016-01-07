@@ -21,7 +21,7 @@ final public class call_fow extends statement{
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		arguments.forEach(e->declarations.add(e.token));
-		loop_code=new statement(this,"b",b,r);
+		loop_code=new statement(this,"b",b,"",r);
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;

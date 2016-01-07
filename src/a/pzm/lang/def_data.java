@@ -8,9 +8,9 @@ final public class def_data extends statement{
 	final private statement data;
 	final private String name;
 	public def_data(a pt,String nm,String name,reader r,statement b){
-		super(pt,nm,b,r);
+		super(pt,nm,b,"",r);
 		this.name=name;
-		data=new statement(this,"d",b,r);
+		data=new statement(this,"d",b,"",r);
 		r.toc.put("data "+name,this);
 	}
 	@Override public void binary_to(xbin x){

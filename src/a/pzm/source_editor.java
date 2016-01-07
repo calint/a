@@ -4,6 +4,7 @@ import static b.b.pl;
 import java.util.HashSet;
 import java.util.Set;
 
+import a.pzm.lang.compiler_error;
 import a.pzm.lang.reader;
 import a.pzm.lang.statement;
 import a.pzm.lang.xbin;
@@ -59,7 +60,7 @@ final public class source_editor extends a{
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final reader r=new reader(src.reader());
 		try{
-			code=new statement(this,"b",null,r);// root statement
+			code=new statement(this,"b",null,"",r);// root statement
 			final prog p=new prog(r.toc,code);
 			final int[]rom=new int[1024*1024];
 			final xbin b=new xbin(p.toc,rom);
@@ -86,10 +87,22 @@ final public class source_editor extends a{
 			x.xu(sts.clr(),code);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new_rom);
+		}catch(compiler_error t){
+			b.b.log(t);
+			if(x==null)return;
+			final String[]ix=t.stmt.location_in_source().split(":");
+			final String[]ixe;
+			if(b.b.isempty(t.stmt.location_in_source_end())){
+				ixe=ix;
+			}else{
+				ixe=t.stmt.location_in_source_end().split(":");
+			}
+			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ixe[2])+";}");
+			x.xu(sts.set("line "+ix[0]+":"+" "+t.getMessage()));
+			//			x.xalert(t.getMessage());
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;
-			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+r.bm_nchar+";e.selectionEnd="+r.nchar+";}");
 			x.xu(sts.set("line "+r.bm_line+": "+t.getMessage()));
 			//			x.xalert(t.getMessage());
 		}

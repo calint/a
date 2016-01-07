@@ -15,9 +15,11 @@ public class call extends statement{
 		ws_after_name=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close()) break;
+			r.bm();
 			final expression arg=new expression(pt,nm,r,b);
 			arguments.add(arg);
 		}
+		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();
 	}
 	public call(a pt,String nm,String name,reader r,statement b){

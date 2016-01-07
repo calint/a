@@ -41,7 +41,7 @@ public final class reader{
 		bm_nchar=nchar;
 	}
 	public String bm_str(){
-		return bm_line+":"+bm_col;
+		return bm_line+":"+bm_col+":"+bm_nchar+":"+nchar;
 	}
 	public boolean is_next_char_block_close(){
 		final int ch=read();

@@ -22,7 +22,7 @@ final public class def_table extends statement{
 //			r.next_empty_space();
 			arguments.add(sf);
 		}
-		data=new statement(this,"d",b,r);
+		data=new statement(this,"d",b,"",r);
 		r.toc.put("table "+name,this);
 	}
 	@Override public void binary_to(xbin x){

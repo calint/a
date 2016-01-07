@@ -3,20 +3,21 @@
 {-1 0xff0}
 
 {
--1 yellow red
-
-
-def red 0xf00
-def yellow 0xff0
+	-1 yellow red
+	def red 0xf00
+	def yellow 0xff0
 }
 
-
-
+{
+	var ticker
+	inc(ticker)
+	-1 yellow red
+	def red 0xf00
+	def yellow 0xff0
+}
 
 {
-px(0x2040 0xffff)
-
-0xfffff
-
-def px(addr argb){st(addr argb)}
+	px(0x2040 0xffff)
+	0xfffff
+	def px(addr argb){st(addr argb)}
 }

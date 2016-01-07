@@ -10,23 +10,26 @@ final public class expression extends statement{
 	private final String ws_after;
 	final protected String destreg;
 	public expression(a pt,String nm,reader r,statement parent){
-		this(pt,nm,parent,new LinkedHashMap<>(),r.next_token(),r,null);
+		this(pt,nm,parent,null,r.next_token(),r,null);
 	}
 	public expression(a pt,String nm,statement parent,reader r,String dest_reg){
-		this(pt,nm,parent,new LinkedHashMap<>(),r.next_token(),r,dest_reg);
+		this(pt,nm,parent,null,r.next_token(),r,dest_reg);
 	}
 	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String token,reader r,String dest_reg){
 		super(pt,nm,annotations,token,r,b);
+//		mark_end_of_source(r);
 		ws_after=r.next_empty_space();
 		this.destreg=dest_reg;
 	}
 	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
 		super(pt,nm,annotations,r.next_token(),r,b);
+		mark_end_of_source(r);
 		ws_after=r.next_empty_space();
 		this.destreg=dest_reg;
 	}
 	public expression(String token){
-		super(null,"",null,"",token,null);ws_after="";
+		super(null,"",null,"",token,null);
+		ws_after="";
 		destreg=null;
 	}
 	@Override public void binary_to(xbin x){

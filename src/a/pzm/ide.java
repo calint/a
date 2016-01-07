@@ -74,15 +74,6 @@ final public class ide extends a{
 				x_f(x,"");
 			}catch(Throwable t){
 				log(t);
-				if(t instanceof compiler_error){
-					compiler_error ce=(compiler_error)t;
-					final String loc=ce.stmt.location_in_source();
-					final String[]locs=loc.split(":");
-					if(ce.rdr!=null){
-						x.pl("{var e=$('"+ec.src.id()+"');e.selectionStart="+ce.rdr.bm_nchar+";e.selectionEnd="+ce.rdr.nchar+";}");
-						x.xu(ec.sts.set("line "+ce.rdr.bm_line+": "+t.getMessage()));
-					}
-				}
 				ec.sts.set(t.toString());
 				st.set("");
 			}

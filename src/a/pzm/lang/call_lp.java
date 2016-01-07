@@ -22,7 +22,7 @@ final public class call_lp extends statement{
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		loop_code=new statement(this,"b",b,r);//? this parent
+		loop_code=new statement(this,"b",b,"",r);//? this parent
 	}
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
