@@ -1,6 +1,7 @@
 package a.pzm;
 import static b.b.pl;
 
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import a.pzm.lang.reader;
 import a.pzm.lang.statement;
 import a.pzm.lang.xbin;
 import b.a;
+import b.req;
 import b.xwriter;
 final public class source_editor extends a{
 	int focusline;
@@ -58,9 +60,19 @@ final public class source_editor extends a{
 	public final static boolean ommit_compiling_source_from_disassembler=false;
 	statement code;
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
-		final reader r=new reader(src.reader());
+		final String source="{"+src.str()+"}";
+		final reader r=new reader(new StringReader(source));
 		try{
 			code=new statement(this,"b",null,"",r);// root statement
+			if(!ommit_compiling_source_from_disassembler){
+				final xwriter generated_source=new xwriter();
+				code.source_to(generated_source);
+				if(!generated_source.toString().equals(source)){
+					req.get().session().path("gen").writestr(generated_source.toString());
+					req.get().session().path("org").writestr(source);
+					throw new Error("generated source differs from input");
+				}
+			}
 			final prog p=new prog(r.toc,code);
 			final int[]rom=new int[1024*1024];
 			final xbin b=new xbin(p.toc,rom);

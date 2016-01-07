@@ -156,7 +156,8 @@ public class statement extends a{
 			final Class<?>cls=Class.forName(clsnm);
 			final Constructor<?>ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,statement.class);
 //			System.out.println("instr "+token);
-			expr=(statement)ctor.newInstance(this,"e",annotations,r,parent);
+			expr=(statement)ctor.newInstance(this,"e",annotations.clone(),r,parent);
+			annotations.clear();
 			mark_end_of_source(r);
 			return;
 		}catch(Throwable t){

@@ -88,7 +88,7 @@ final public class ide extends a{
 					.css(".laycent","display:table;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
 					.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
 //					.css(ec,"display:inline-block")
-					.css(ec.src,"min-width:60em;min-height:200em;line-height:1.4em;border-right:1px dotted gray")
+					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em;border-right:1px dotted gray")
 					.css(ajaxsts,"position:fixed;bottom:0;right:0;padding:.5em");
 			switch(th.toint()){
 			case 0:
@@ -127,7 +127,7 @@ final public class ide extends a{
 		if(hasbit(bit_show_rom)) x.divo(ro,"float panel").r(ro).div_();
 //		if(src==null)x.p("<div id=-ec-b class='float textleft panel'></div>");
 //		else x.divh(src,"float textleft panel");
-		if(hasbit(bit_show_source_editor)) x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
+		if(hasbit(bit_show_source_editor))x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
 //		x.nl();se.to(x);;
 		if(pt()==null){
 			x.divo("floatclear");

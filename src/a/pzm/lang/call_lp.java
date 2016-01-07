@@ -35,7 +35,7 @@ final public class call_lp extends statement{
 		x.write(4);//nxt
 	}
 	@Override public void source_to(xwriter x){
-		x.tag("ac").p("lp").tage("ac");
+		x.p("lp");
 		super.source_to(x);
 		x.p("(");
 		x.p(ws_after_expression_open);

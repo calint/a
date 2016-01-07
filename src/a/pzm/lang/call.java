@@ -79,9 +79,9 @@ public class call extends statement{
 		super.source_to(x);
 		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
 		final boolean is=asm.indexOf(name)!=-1;
-		x.tag(is?"ac":"fc");
+//		x.tag(is?"ac":"fc");
 		x.p(name);
-		x.tage(is?"ac":"fc");
+//		x.tage(is?"ac":"fc");
 		x.p("(").p(ws_after_name);
 		arguments.forEach(e->e.source_to(x));
 		x.p(")").p(ws_trailing);

@@ -28,7 +28,9 @@ final public class def extends statement{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.tag("def").p(name).tage("def");
+//		x.tag("def");
+		x.p(name);
+//		x.tage("def");
 		x.p(ws_after_name);
 		e.source_to(x);
 	}
