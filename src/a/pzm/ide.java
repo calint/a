@@ -30,8 +30,6 @@ final public class ide extends a{
 	/**theme*/public a th;
 	/**display bits*/public a bi;
 	/**builtinajaxstatus*/public a ajaxsts;
-	/**disassembled*/public a di;
-	/**programtoc*/public a toc;
 	//	public metrics me;
 	public ide() throws Throwable{
 		ec.src.from(getClass().getResourceAsStream("rom"));
@@ -79,17 +77,16 @@ final public class ide extends a{
 		if(pt()==null){
 			x.title("clare 20 bit")
 					.style()
-					.css("html","color:#111;width:110em")
+					.css("html","color:#111")
 					.css("body",
 							"padding:1em 0 0 11em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto;box-shadow:0 0 17px rgba(0,0,0,.5)")
-					.css(".border","border:1px dotted red").css(".float","float:left").css(".textleft","text-align:left").css(".fontbold","font-weight:bold")
+					.css(".border","border:1px dotted red").css(".float","display:inline-block").css(".textleft","text-align:left").css(".fontbold","font-weight:bold")
 					.css(".floatclear","clear:both").css(".panel","padding-left:.5em;padding-right:.5em").css(".stp","background-color:#ee0")
 					.css(".brk","background-color:#ee2").css(".nbr","width:3em;border:1px dotted;text-align:right")
-					.css(".laycent","display:table;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
-					.css(di,"text-align:right;width:12em;margin-right:1em;overflow:scroll")
-//					.css(ec,"display:inline-block")
+					.css(".laycent","white-space:no-wrap;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
 					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em;border-right:1px dotted gray")
-					.css(ajaxsts,"position:fixed;bottom:0;right:0;padding:.5em");
+					.css(ajaxsts,"position:fixed;bottom:0;right:0;padding:.5em")
+					.css(this, "min-width:100px; width: auto !important; width: 100px;background:red");
 			switch(th.toint()){
 			case 0:
 				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
@@ -119,23 +116,22 @@ final public class ide extends a{
 		//		x.divh(sr,"panel");
 		if(hasbit(bit_menu))
 			x.divo().ax(this,"r",""," reset","r").ax(this,"f",""," frame","f").ax(this,"n",""," step","s").ax(this,"g",""," go","g")
-					.ax(this,"u",""," bench","b")
+					.ax(this,"b",""," bench","b")
 					//				.ax(this,"b"," run-to-break-point")
 					.div_();
 		x.divo("laycent");
-		if(hasbit(bit_show_panel)) x.divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
-		if(hasbit(bit_show_rom)) x.divo(ro,"float panel").r(ro).div_();
-//		if(src==null)x.p("<div id=-ec-b class='float textleft panel'></div>");
-//		else x.divh(src,"float textleft panel");
-		if(hasbit(bit_show_source_editor))x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
-//		x.nl();se.to(x);;
+		x.table().tr();
+		if(hasbit(bit_show_panel)) x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
+		if(hasbit(bit_show_rom)) x.td().divo(ro,"float panel").r(ro).div_();
+		if(hasbit(bit_show_source_editor))x.td().divh(ec,"float textleft panel");
+		x.table_();
+		x.div_();
 		if(pt()==null){
 			x.divo("floatclear");
 			x.p("clare 20 bit  ").p(cor.registers.length).p(" registers  ").p(ro.ints.length>>10).p(" kb rom  ").p(ra.ints.length>>10).p(" kb ram");
 			x.nl();
 			x.p("theme: ").inptxt(th,this,"t","nbr").p("  display-bits:").inptxt(bi,this,"t","nbr").div_();
 		}
-		x.div_();
 	}
 	public boolean hasbit(final int bit){
 		return (bi.toint()&bit)==bit;

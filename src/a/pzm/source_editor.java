@@ -20,14 +20,14 @@ final public class source_editor extends a{
 	public boolean ommit_compiling_source_from_disassembler=false;
 	private statement code;
 	public void to(final xwriter x) throws Throwable{
-		x.style("def","font-weight:bold");//a name
+//		x.style("def","font-weight:bold");//a name
 //		x.style("fc","font-style: italic");//function name refered
-		x.style("fc","font-weight:bold");//a name
-		x.style("ac","color: gray");//assembler
+//		x.style("fc","font-weight:bold");//a name
+//		x.style("ac","color: gray");//assembler
 //		x.style("ac","font-weight:bold");//a name
 //		x.style("dr","font-style: italic");//data refered
-		x.style("dr","font-weight:bold");//a name
-		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," crun ","a").nl();
+//		x.style("dr","font-weight:bold");//a name
+		x.spanh(sts,"","width:5em;color:#800;font-weight:bold").ax(this,"f3",""," run ","r").nl();
 		x.table().tr().td("","text-align:right;padding-right:.5em");
 		x.el(ln);
 		ln.to(x);
