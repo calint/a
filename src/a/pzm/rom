@@ -11,6 +11,9 @@ var hi=5
 foo(labels){
   type(ptr dest c)
 }
+fow(labels){
+  inc(c)
+}
 
 var di
 var lines=1
@@ -18,13 +21,13 @@ var dil=0x0420
 var nl=0x0600
 var rgb=0xf00
 lp(lines){
-  tx(di dil)
+  di=dil
   pl(di wi hi ln rgb d)
   add(dil nl)
 }
 -1 -1
 def baba[ch]{4   0xb 0xa 0xb 0xa}
-def b20[ch]{3   2 0 0xb}
+def b20 [ch]{3   2 0 0xb}
 def labels
 [  ptr   dest     c   ]{2
   baba  0x7050  0xffe         
