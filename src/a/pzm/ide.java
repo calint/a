@@ -40,7 +40,7 @@ final public class ide extends a{
 	/** programtoc */
 	public a toc;
 	//	public metrics me;
-	public sprite_editor se;
+//	public sprite_editor se;
 	public ide() throws Throwable{
 		ec.src.from(getClass().getResourceAsStream("rom"));
 		ajaxsts.set("idle");
@@ -50,8 +50,8 @@ final public class ide extends a{
 		re.ints=cor.registers;
 		ca.stk=cor.call_stack;
 		lo.core=cor;
-		ec.x_f3(null,null);
-		se.ints=new int[32];
+//		ec.x_f3(null,null);
+//		se.ints=new int[20];
 //		se.disppagenrows=32;
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
@@ -152,7 +152,7 @@ final public class ide extends a{
 //		if(src==null)x.p("<div id=-ec-b class='float textleft panel'></div>");
 //		else x.divh(src,"float textleft panel");
 		if(hasbit(bit_show_source_editor)) x.divh(ec,"float textleft panel").divh(toc,"float textleft panel").divh(di,"float panel","padding-top:1em");
-		x.nl();se.to(x);;
+//		x.nl();se.to(x);;
 		if(pt()==null){
 			x.divo("floatclear");
 			x.p("clare 20 bit  ").p(cor.registers.length).p(" registers  ").p(ro.ints.length>>10).p(" kb rom  ").p(ra.ints.length>>10).p(" kb ram");

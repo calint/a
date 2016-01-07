@@ -158,7 +158,37 @@ def type_bmp(scr wi hi ln bmp rgb){
 }
 
 
+{
+var di=0x2080
+var ln=0xfc
+var gln=0x4fb
+var wi=4
+var hi=5
+var rgb=0xf00
+foo(bmp){
+  type_bmp(di wi hi ln d rgb)
+  sub(di gln)
+  addi(rgb 15)
+}
 
+
+-1
+def bmp[d]{2 0xf999f 0x6bbb6}
+
+
+
+def type_bmp(scr wi hi ln bmp rgb){
+  lp(hi){
+    lp(wi){
+      shf(bmp -1)
+      @ifn stc(scr rgb)
+      @ifz inc(scr)
+      @ifp inc(scr)
+    }
+    add(scr ln)
+  }
+}
+}
 
 
 
