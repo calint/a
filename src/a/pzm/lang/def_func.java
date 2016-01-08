@@ -10,7 +10,7 @@ final public class def_func extends statement{
 	final ArrayList<expression>arguments=new ArrayList<>();
 	final statement function_code;
 	public def_func(a pt,String nm,String name,reader r,statement b){
-		super(pt,nm,no_annotations,"",r,b);
+		super(pt,nm,null,"",r,b);
 		this.name=name;
 		int i=0;
 		while(true){
@@ -21,6 +21,7 @@ final public class def_func extends statement{
 		ws_after_expr_close=r.next_empty_space();
 		arguments.forEach(e->declarations.add(e.token));
 		function_code=new statement(this,"c",b,"",r);
+		mark_end_of_source(r);
 		r.toc.put("func "+name,this);
 	}
 	public String name(){return name;}

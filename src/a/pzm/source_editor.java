@@ -11,7 +11,7 @@ import b.a;
 import b.req;
 import b.xwriter;
 final public class source_editor extends a{
-	public a src;
+	/**textarea*/public a src;
 	//	public a resrc;
 	public a sts;
 	public line_numbers ln;
@@ -73,6 +73,7 @@ final public class source_editor extends a{
 			if(x==null) return;
 			x.xu(sts.clr(),code);
 			((ide)pt()).xjs_update_focus_on_rom(x);
+			ln.xj_select_line(x,0);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new_rom);
 		}catch(compiler_error t){
@@ -85,8 +86,9 @@ final public class source_editor extends a{
 			}else{
 				ixe=t.stmt.location_in_source_end().split(":");
 			}
-			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ixe[2])+";}");
+			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ix[3])+";}");
 			x.xu(sts.set("line "+ix[0]+":"+" "+t.getMessage()));
+			ln.xj_select_line(x,Integer.parseInt(ix[0]));
 			//			x.xalert(t.getMessage());
 		}catch(Throwable t){
 			b.b.log(t);

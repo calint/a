@@ -11,6 +11,7 @@ final public class def_data extends statement{
 		super(pt,nm,b,"",r);
 		this.name=name;
 		data=new statement(this,"d",b,"",r);
+		mark_end_of_source(r);
 		r.toc.put("data "+name,this);
 	}
 	@Override public void binary_to(xbin x){

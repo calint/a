@@ -7,7 +7,7 @@ import b.a;
 import b.xwriter;
 
 public class statement extends a{
-	final public static LinkedHashMap<String,String>no_annotations=new LinkedHashMap<>();
+//	final public static LinkedHashMap<String,String>no_annotations=new LinkedHashMap<>();
 	private static final long serialVersionUID=1;
 	final protected statement parent_statement;
 	private String location_in_source;
@@ -49,19 +49,16 @@ public class statement extends a{
 		this.token=token==null?"":token;
 		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();
-//		location_in_source=r.bm_line+":"+r.bm_col+":"+r.bm_nchar+":"+r.bm_nchar;
 		ws_after_open_block="";
 		ws_after_assign="";
-//		r.bm();
 	}
+	@SuppressWarnings("unchecked")
 	public statement(a pt,String nm,statement parent,String tk,reader r){
 		super(pt,nm);
 		parent_statement=parent;
 		mark_start_of_source(r);
 		token=tk==null?"":tk;
 		annotations=new LinkedHashMap<>();
-//		LinkedHashMap<String,String>annot=new LinkedHashMap<>();
-		r.set_location_in_source();mark_start_of_source(r);
 		if(r.is_next_char_block_open()){// read block and return
 			int i=0;
 			ws_after_open_block=r.next_empty_space();
@@ -112,33 +109,34 @@ public class statement extends a{
 					statements.add(d);
 				}
 			}
-//			ws_trailing=r.next_empty_space();
-//			throw new compiler_error(this,"unexpected continuation",token);
 		}
 		if("var".equals(tkk)){
 			r.set_location_in_source();
-			expr=new var(this,"e",parent,annotations,r);
+			expr=new var(this,"e",parent,(LinkedHashMap<String,String>)(annotations.clone()),r);
+			annotations.clear();
 			ws_after_assign="";
 			mark_end_of_source(r);
 			return;
 		}
 		if("def".equals(tkk)){
-			expr=new def(this,"e",parent,annotations,r);
+			expr=new def(this,"e",parent,(LinkedHashMap<String,String>)(annotations.clone()),r);
+			annotations.clear();
 			ws_after_assign="";
 			mark_end_of_source(r);
 			return;
 		}
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
-			expr=new expression(this,"e",parent,annotations,r,tkk);
-//			b.b.pl("assign "+tkk+"="+tk);
+			expr=new expression(this,"e",parent,(LinkedHashMap<String,String>)(annotations.clone()),r,tkk);
+			annotations.clear();
 			mark_end_of_source(r);
 			return;
 		}
 		ws_after_assign="";
 		if(!r.is_next_char_expression_open()){
 //			if(r.is_next_char_assign()){
-				expr=new expression(this,"e",parent,annotations,tkk,r,null);
+				expr=new expression(this,"e",parent,(LinkedHashMap<String,String>)(annotations.clone()),tkk,r,null);
+				annotations.clear();
 //			}else{
 //				r.bm();
 //				throw new compiler_error(this,"expected '='","");
@@ -147,7 +145,8 @@ public class statement extends a{
 		}
 		final String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg foo fow";
 		if(asm.indexOf(tkk)==-1){
-			expr=new call(this,"e",parent,annotations,tkk,r);
+			expr=new call(this,"e",parent,(LinkedHashMap<String,String>)(annotations.clone()),tkk,r);
+			annotations.clear();
 			mark_end_of_source(r);
 			return;
 		}
@@ -155,7 +154,6 @@ public class statement extends a{
 			final String clsnm=getClass().getPackage().getName()+".call_"+tkk;
 			final Class<?>cls=Class.forName(clsnm);
 			final Constructor<?>ctor=cls.getConstructor(a.class,String.class,LinkedHashMap.class,reader.class,statement.class);
-//			System.out.println("instr "+token);
 			expr=(statement)ctor.newInstance(this,"e",annotations.clone(),r,parent);
 			annotations.clear();
 			mark_end_of_source(r);
@@ -168,9 +166,7 @@ public class statement extends a{
 	public void binary_to(xbin x){
 		if(expr!=null)
 			expr.binary_to(x);
-		statements.forEach(e->
-			e.binary_to(x)
-		);
+		statements.forEach(e->e.binary_to(x));
 		vars.forEach(e->x.unalloc(this,e));
 		vars.clear();
 	}
@@ -193,13 +189,6 @@ public class statement extends a{
 		source_to(x);
 		x.div_();
 	}
-//	@Override public String toString(){
-//		try{
-//			final xwriter x=new xwriter();
-//			to(x);
-//			return x.toString();
-//		}catch(Throwable t){throw new Error(t);}
-//	}
 	public boolean has_annotation(String src){
 		return expr==null?annotations.containsKey(src):expr.has_annotation(src);
 	}
@@ -214,7 +203,6 @@ public class statement extends a{
 		location_in_source_end=r.location_in_source();
 	}
 	public void mark_start_of_source(final reader r){
-//		r.bm();
 		location_in_source=r.location_in_source();
 	}
 	public static LinkedHashMap<String,String>read_annot(reader r){
@@ -234,9 +222,7 @@ public class statement extends a{
 		if(parent_statement==null)return false;
 		return parent_statement.is_register_declared(register_name);
 	}
-	
-	@Override
-	public String toString(){
+	@Override public String toString(){
 		final xwriter x=new xwriter();
 		source_to(x);
 		return x.toString();
