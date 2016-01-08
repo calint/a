@@ -9,36 +9,26 @@ import b.xwriter;
 public class statement extends a{
 //	final public static LinkedHashMap<String,String>no_annotations=new LinkedHashMap<>();
 	private static final long serialVersionUID=1;
-	final protected statement parent_statement;
-	private String location_in_source;
-	private String location_in_source_end;
+	protected statement parent_statement;
+	private String source_location_start;
+	private String source_location_end;
 	private LinkedHashMap<String,String>annotations;
 	protected String token;
-	private String ws_trailing;
-	private String ws_after_open_block;
-	final private String ws_after_assign;
+	private String ws_trailing;// applies to 0xff00...
+	private String ws_after_open_block;// applies to { ... }
+	private String ws_after_assign;// applies to a = ...
 	private ArrayList<statement>statements;
-//	protected ArrayList<String>declarations;
-	private ArrayList<String>vars;
-	private statement expr;
-	private boolean is_assign_to_register;
+	private ArrayList<String>vars;//
+	private statement expr;// the actual expression
+	private boolean is_assign;// rega=regb
 
-
-//	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String loc,block b){
-//		super(pt,nm);
-//		this.annotations=annotations;
-//		token="";
-//		ws_after="";
-//		location_in_source=loc;
-//		blk=b;
-//	}
 	//? use
 	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String loc,String token,statement parent){
 		super(pt,nm,token);
 		this.annotations=annotations;
 		this.token=token;
 		ws_trailing="";
-		location_in_source=loc;
+		source_location_start=loc;
 		parent_statement=parent;
 		ws_after_open_block="";
 		ws_after_assign="";
@@ -131,10 +121,10 @@ public class statement extends a{
 			ws_after_assign=r.next_empty_space();
 			r.set_location_in_source();
 			expr=new expression(this,"e",this,annot,null,r,token);
-			is_assign_to_register=true;
+			is_assign=true;
 			return;
 		}else{
-			is_assign_to_register=false;
+			is_assign=false;
 		}
 		ws_after_assign="";
 		if(!r.is_next_char_expression_open()){
@@ -192,7 +182,7 @@ public class statement extends a{
 			return;
 		}
 		x.p(token).p(ws_trailing);
-		if(is_assign_to_register){
+		if(is_assign){
 			x.p("=").p(ws_after_assign);
 		}
 	}
@@ -207,17 +197,17 @@ public class statement extends a{
 		return expr==null?annotations.containsKey(src):expr.has_annotation(src);
 	}
 	public String location_in_source(){
-		return location_in_source;
+		return source_location_start;
 	}
 	public String location_in_source_end(){
-		return location_in_source_end;
+		return source_location_end;
 	}
 	public void mark_end_of_source(final reader r){
 		r.set_location_in_source();
-		location_in_source_end=r.location_in_source();
+		source_location_end=r.location_in_source();
 	}
 	public void mark_start_of_source(final reader r){
-		location_in_source=r.location_in_source();
+		source_location_start=r.location_in_source();
 	}
 	public static LinkedHashMap<String,String>read_annot(reader r){
 		final LinkedHashMap<String,String>annotations=new LinkedHashMap<>();

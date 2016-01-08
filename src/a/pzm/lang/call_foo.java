@@ -87,7 +87,7 @@ final public class call_foo extends statement{
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)
 		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14);//lp(c)
 		for(expression e:args.subList(1,args.size())){
-			final int regi=x.register_index_for_alias(this,e.token);//reg.charAt(0)-'a';
+			final int regi=x.register_index_for_alias(this,e.token);
 			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
