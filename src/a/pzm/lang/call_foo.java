@@ -52,6 +52,9 @@ final public class call_foo extends statement{
 //					throw new compiler_error(this,"struct not declared yet",struct_name);
 //			}
 			for(def_table_col col:stc.arguments){
+				if(x.is_register_alias_exists(col.token)){
+					throw new compiler_error(this,"var '"+col.token+"' already exists",x.register_aliases.toString());
+				}
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);

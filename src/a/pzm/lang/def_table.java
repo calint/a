@@ -13,8 +13,11 @@ final public class def_table extends statement{
 		super(pt,nm,null,"",r,b);
 		this.name=name;
 		while(true){
-			if(r.is_next_char_struct_close()) break;
+			if(r.is_next_char_struct_close())break;
 			final def_table_col sf=new def_table_col(this,"",r,b);
+			if(arguments.stream().filter(e->sf.token.equals(e.token)).findFirst().isPresent()){
+				throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());
+			}
 			arguments.add(sf);
 		}
 		data=new statement(this,"d",b,"",r);
