@@ -13,14 +13,16 @@ public class statement extends a{
 	private String location_in_source;
 	private String location_in_source_end;
 	private LinkedHashMap<String,String>annotations;
-	final protected String token;
+	protected String token;
 	private String ws_trailing;
 	private String ws_after_open_block;
 	final private String ws_after_assign;
 	private ArrayList<statement>statements;
 //	protected ArrayList<String>declarations;
-	ArrayList<String>vars;
+	private ArrayList<String>vars;
 	private statement expr;
+	private boolean is_assign_to_register;
+
 
 //	public statement(a pt,String nm,LinkedHashMap<String,String>annotations,String loc,block b){
 //		super(pt,nm);
@@ -112,33 +114,31 @@ public class statement extends a{
 			}
 		}
 		if("var".equals(token)){
+			ws_trailing=r.next_empty_space();
 			r.set_location_in_source();
-			expr=new def_var(this,"var",parent,annot,r);
+			expr=new var(this,"e",parent,annot,r);
 			ws_after_assign="";
 			r.set_location_in_source();
 			return;
 		}
 		if("def".equals(token)){
-			expr=new def(this,"def",parent,annot,r);
+			expr=new def(this,"e",parent,annot,r);
 			ws_after_assign="";
 			r.set_location_in_source();
 			return;
 		}
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
-			expr=new expression(this,"tx",parent,annot,r,token);
 			r.set_location_in_source();
+			expr=new expression(this,"e",this,annot,null,r,token);
+			is_assign_to_register=true;
 			return;
+		}else{
+			is_assign_to_register=false;
 		}
 		ws_after_assign="";
 		if(!r.is_next_char_expression_open()){
-//			if(r.is_next_char_assign()){
-				expr=new expression(this,"e",parent,annot,token,r,null);
-//				annotations.clear();
-//			}else{
-//				r.bm();
-//				throw new compiler_error(this,"expected '='","");
-//			}
+			expr=new expression(this,"e",parent,annot,token,r,null);
 			return;
 		}
 		final String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg foo fow";
@@ -192,6 +192,9 @@ public class statement extends a{
 			return;
 		}
 		x.p(token).p(ws_trailing);
+		if(is_assign_to_register){
+			x.p("=").p(ws_after_assign);
+		}
 	}
 	final @Override public void to(xwriter x) throws Throwable{
 		x.style(this,"border:1px dotted blue");

@@ -19,8 +19,7 @@ var lines=1
 var dil=0x0420
 var rgb=0xf00
 lp(lines){
-  var di
-  tx(di dil)
+  var di=dil
   pl(di wi hi ln rgb)
   add(dil nl)
 }
@@ -70,7 +69,7 @@ def type(ptr file colr){
 }
 def bmp.seek(return record){
   var temp=bmp
-  tx(return temp)
+  return=temp
   inc(return)
   add(return record)
 }

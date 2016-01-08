@@ -5,12 +5,12 @@ import java.util.LinkedHashMap;
 import b.a;
 import b.xwriter;
 
-final public class def_var extends statement{
+final public class var extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name,ws_after_assign;
 	final private expression initial_value_expression;
-	public def_var(a pt,String nm,statement parent_statement,LinkedHashMap<String,String>annotations,reader r){
-		super(pt,nm,annotations,"var",r,parent_statement);
+	public var(a pt,String nm,statement parent_statement,LinkedHashMap<String,String>annotations,reader r){
+		super(pt,nm,annotations,null,r,parent_statement);
 		r.set_location_in_source();
 		mark_start_of_source(r);
 		name=r.next_token();

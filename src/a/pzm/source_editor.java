@@ -15,7 +15,7 @@ final public class source_editor extends a{
 	//	public a resrc;
 	public a sts;
 	public line_numbers ln;
-	public boolean ommit_compiling_source_from_disassembler=false;
+	public boolean ommit_compiling_source_from_disassembler=true;
 	statement code;
 	public void to(final xwriter x) throws Throwable{
 //		x.style("def","font-weight:bold");//a name
