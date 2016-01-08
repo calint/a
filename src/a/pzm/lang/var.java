@@ -19,7 +19,7 @@ final public class var extends statement{
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
 			r.set_location_in_source();
-			initial_value_expression=new expression(this,name,this,r,name);
+			initial_value_expression=new expression(this,"e",this,r,name);
 		}else{
 			ws_after_assign="";
 			initial_value_expression=null;
@@ -42,8 +42,8 @@ final public class var extends statement{
 		parent_statement.vars_add(name);
 		if(initial_value_expression!=null){
 			if(x.is_register_alias_exists(initial_value_expression.token)){
-				final int rai=x.register_index_for_alias(this,name);
-				final int rdi=x.register_index_for_alias(this,initial_value_expression.token);
+				final int rai=x.register_index_for_alias(this,initial_value_expression.token);
+				final int rdi=x.register_index_for_alias(this,name);
 				x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(rai rdi)
 				return;
 			}
