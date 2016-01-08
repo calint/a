@@ -36,7 +36,7 @@ final public class rom extends a{
 		x.script();
 		xfocus_on_binary_location(x,last_focus_on_binary_location);
 		x.script_();
-//		x.div_();
+		x.div_();
 	}
 	private int last_focus_on_binary_location;
 	void xfocus_on_binary_location(xwriter x,final int binary_location){

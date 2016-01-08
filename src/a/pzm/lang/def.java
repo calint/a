@@ -13,14 +13,18 @@ final public class def extends statement{
 		name=r.next_token();
 		ws_after_name=r.next_empty_space();
 		if(r.is_next_char_expression_open()){
-			e=new def_func(this,name,name,r,b);
+			r.set_location_in_source();
+			e=new def_func(this,name,name,r,this);
 		}else if(r.is_next_char_block_open()){
 			r.unread_last_char();
-			e=new def_data(this,name,name,r,b);
+			r.set_location_in_source();
+			e=new def_data(this,name,name,r,this);
 		}else if(r.is_next_char_struct_open()){
-			e=new def_table(this,name,name,r,b);
+			r.set_location_in_source();
+			e=new def_table(this,name,name,r,this);
 		}else{
-			e=new def_const(this,name,name,r,b);
+			r.set_location_in_source();
+			e=new def_const(this,name,name,r,this);
 		}
 	}
 	@Override public void binary_to(xbin x){

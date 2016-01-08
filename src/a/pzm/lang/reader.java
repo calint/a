@@ -151,4 +151,7 @@ public final class reader{
 	public void unread_last_char(){
 		unread(last_read_char);
 	}
+	public String toString(){
+		return location_in_source();
+	}
 }

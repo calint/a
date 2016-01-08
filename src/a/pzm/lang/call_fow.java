@@ -10,7 +10,7 @@ final public class call_fow extends statement{
 	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
-	public call_fow(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
+	public call_fow(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
 		super(pt,nm,annotations,"",r,b);
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
@@ -20,7 +20,7 @@ final public class call_fow extends statement{
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
-		arguments.forEach(e->declarations.add(e.token));
+//		arguments.forEach(e->declarations.add(e.token));
 		loop_code=new statement(this,"b",b,"",r);
 	}
 	@Override public void binary_to(xbin x){
@@ -36,7 +36,7 @@ final public class call_fow extends statement{
 			final String struct_name=args.get(0).token;
 			final def_table stc=(def_table)x.toc.get("table "+struct_name);
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
-			for(def_table_column col:stc.arguments){
+			for(def_table_col col:stc.arguments){
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);
@@ -48,7 +48,7 @@ final public class call_fow extends statement{
 			args=arguments;
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
+//		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
 		final String ra=x.allocate_register(this);
 		allocated_registers.add(ra);
 		final int rai=register_index(ra);

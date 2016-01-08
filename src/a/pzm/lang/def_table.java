@@ -7,14 +7,14 @@ import b.xwriter;
 final public class def_table extends statement{
 	private static final long serialVersionUID=1;
 	final private String name;
-	final ArrayList<def_table_column>arguments=new ArrayList<>();
+	final ArrayList<def_table_col>arguments=new ArrayList<>();
 	final private statement data;
 	public def_table(a pt,String nm,String name,reader r,statement b){
 		super(pt,nm,null,"",r,b);
 		this.name=name;
 		while(true){
 			if(r.is_next_char_struct_close()) break;
-			final def_table_column sf=new def_table_column(this,"",r,b);
+			final def_table_col sf=new def_table_col(this,"",r,b);
 			arguments.add(sf);
 		}
 		data=new statement(this,"d",b,"",r);

@@ -51,7 +51,7 @@ final public class call_foo extends statement{
 //				}else
 //					throw new compiler_error(this,"struct not declared yet",struct_name);
 //			}
-			for(def_table_column col:stc.arguments){
+			for(def_table_col col:stc.arguments){
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);
@@ -63,8 +63,8 @@ final public class call_foo extends statement{
 			args=arguments;
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
-		pl("foo "+parent_statement.declarations.toString());
+//		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
+//		pl("foo "+parent_statement.declarations.toString());
 		final expression rd=args.get(0);
 		final String ra=x.allocate_register(this);
 		allocated_registers.add(ra);

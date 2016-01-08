@@ -61,7 +61,6 @@ final public class ide extends a{
 				cor.reset();
 //				if(bit_show_rom)
 				x_f(x,"");
-				xjs_update_focus_on_rom(x);
 			}catch(Throwable t){
 				log(t);
 				ec.sts.set(t.toString());
@@ -69,6 +68,7 @@ final public class ide extends a{
 			}
 			if(x==null)return;
 			x.xu(ro,st,ec.sts);
+			xj_update_focus_on_rom(x);
 		}
 		else super.ev(x,from,o);
 	}
@@ -156,7 +156,7 @@ final public class ide extends a{
 		cor.meter_frames=cor.meter_instructions=0;
 		st.set("reseted");
 		if(x==null) return;
-		xjs_update_focus_on_rom(x);
+		xj_update_focus_on_rom(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
@@ -172,7 +172,7 @@ final public class ide extends a{
 		if(hasbit(bit_show_screen)&&refresh_display)
 			ra.xupd(x);
 		x.xu(sy,re,ca,lo);
-		if(hasbit(bit_show_rom))xjs_update_focus_on_rom(x);
+		if(hasbit(bit_show_rom))xj_update_focus_on_rom(x);
 	}
 	private boolean going;
 	/** go */
@@ -205,7 +205,7 @@ final public class ide extends a{
 				Thread.sleep(sleep_ms);
 		}
 	}
-	void xjs_update_focus_on_rom(xwriter x){
+	void xj_update_focus_on_rom(xwriter x){
 		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 	}
 	private long runms=1000;
@@ -230,7 +230,7 @@ final public class ide extends a{
 		st.set(y.toString());
 		if(x==null) return;
 		x.xu(st,re,ca,lo);
-		xjs_update_focus_on_rom(x);
+		xj_update_focus_on_rom(x);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	/** runtobreakpoint */
@@ -251,7 +251,7 @@ final public class ide extends a{
 		}
 		if(x==null) return;
 		x.xu(st,sy,re,ca,lo);
-		xjs_update_focus_on_rom(x);
+		xj_update_focus_on_rom(x);
 		ra.xupd(x);
 	}
 	/** stepframe */
@@ -259,7 +259,7 @@ final public class ide extends a{
 		pl("x_f");
 		step_frame();
 		if(x==null) return;
-		xjs_update_focus_on_rom(x);
+		xj_update_focus_on_rom(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 	}

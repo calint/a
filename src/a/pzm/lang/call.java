@@ -10,14 +10,16 @@ public class call extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_name,ws_trailing;
 	final protected ArrayList<expression>arguments=new ArrayList<>();
-	public call(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String name,reader r){
-		super(pt,nm,annotations,"",r,b);
+	public call(a pt,String nm,statement parent,LinkedHashMap<String,String>annotations,String name,reader r){
+		super(pt,nm,annotations,name,r,parent);
 		this.name=name;
+		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
 		while(true){
-			if(r.is_next_char_expression_close()) break;
+			mark_end_of_source(r);
+			if(r.is_next_char_expression_close())break;
 			r.set_location_in_source();
-			final expression arg=new expression(pt,nm,r,b);
+			final expression arg=new expression(pt,nm,r,parent);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);
@@ -44,24 +46,24 @@ public class call extends statement{
 		final ArrayList<String>allocated_registers=new ArrayList<>();
 		final ArrayList<String>aliases=new ArrayList<>();
 		for(expression e:arguments){
-			final expression argspec=d.arguments.get(i);
+			final def_func_arg argument_spec=d.arguments.get(i);
 			i++;
-			if(argspec.token.equals(e.token)) 
+			if(argument_spec.token.equals(e.token)) 
 				continue;
 			final String r=x.get_register_for_alias(e.token);
 			if(r!=null){
-				if(x.get_register_for_alias(argspec.token)==null)
-					x.alias_register(argspec.token,r);
-				aliases.add(argspec.token);
+				if(x.get_register_for_alias(argument_spec.token)==null)
+					x.alias_register(argument_spec.token,r);
+				aliases.add(argument_spec.token);
 				continue;
 			}
 			// alias if alias
 			
 			final String rd=x.allocate_register(this);
 			allocated_registers.add(rd);
-			x.alias_register(argspec.token,rd);
-			aliases.add(argspec.token);
-			final int rdi=x.register_index_for_alias(this,argspec.token);
+			x.alias_register(argument_spec.token,rd);
+			aliases.add(argument_spec.token);
+			final int rdi=x.register_index_for_alias(this,argument_spec.token);
 //			final int rdi=a.token.charAt(0)-'a';
 			final int in=0x0000|(rdi&63)<<14;
 			x.write(in);
@@ -81,9 +83,9 @@ public class call extends statement{
 //		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
 //		final boolean is=asm.indexOf(name)!=-1;
 //		x.tag(is?"ac":"fc");
-		x.p(name);
+//		x.p(name).p(ws_after_name);
 //		x.tage(is?"ac":"fc");
-		x.p("(").p(ws_after_name);
+		x.p("(");
 		arguments.forEach(e->e.source_to(x));
 		x.p(")").p(ws_trailing);
 	}

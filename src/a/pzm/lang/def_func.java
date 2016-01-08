@@ -7,19 +7,19 @@ import b.xwriter;
 final public class def_func extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_after_expr_close;
-	final ArrayList<expression>arguments=new ArrayList<>();
+	final ArrayList<def_func_arg>arguments=new ArrayList<>();
 	final statement function_code;
 	public def_func(a pt,String nm,String name,reader r,statement b){
 		super(pt,nm,null,"",r,b);
 		this.name=name;
 		int i=0;
 		while(true){
-			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,""+i++,r,b);
+			if(r.is_next_char_expression_close())break;
+			final def_func_arg arg=new def_func_arg(this,""+i++,this,r);
 			arguments.add(arg);
 		}
 		ws_after_expr_close=r.next_empty_space();
-		arguments.forEach(e->declarations.add(e.token));
+//		arguments.forEach(e->declarations.add(e.token));
 		function_code=new statement(this,"c",b,"",r);
 		mark_end_of_source(r);
 		r.toc.put("func "+name,this);

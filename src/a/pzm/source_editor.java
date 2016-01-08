@@ -16,7 +16,7 @@ final public class source_editor extends a{
 	public a sts;
 	public line_numbers ln;
 	public boolean ommit_compiling_source_from_disassembler=false;
-	private statement code;
+	statement code;
 	public void to(final xwriter x) throws Throwable{
 //		x.style("def","font-weight:bold");//a name
 //		x.style("fc","font-style: italic");//function name refered
@@ -39,10 +39,10 @@ final public class source_editor extends a{
 //				code.to(x);
 	}
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
-		final String source="{"+src.str()+"}";
+		final String source=src.str();
 		final reader r=new reader(new StringReader(source));
 		try{
-			code=new statement(this,"b",null,"",r);// root statement
+			code=new statement(this,"code",null,null,r);// root statement
 			if(!ommit_compiling_source_from_disassembler){
 				final xwriter generated_source=new xwriter();
 				code.source_to(generated_source);
@@ -72,7 +72,7 @@ final public class source_editor extends a{
 			pl("*** done");
 			if(x==null) return;
 			x.xu(sts.clr(),code);
-			((ide)pt()).xjs_update_focus_on_rom(x);
+			((ide)pt()).xj_update_focus_on_rom(x);
 			ln.xj_select_line(x,0);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new_rom);
