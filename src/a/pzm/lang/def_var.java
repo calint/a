@@ -41,6 +41,12 @@ final public class def_var extends statement{
 		x.alias_register(name,reg);
 		parent_statement.vars_add(name);
 		if(initial_value_expression!=null){
+			if(x.is_register_alias_exists(initial_value_expression.token)){
+				final int rai=x.register_index_for_alias(this,name);
+				final int rdi=x.register_index_for_alias(this,initial_value_expression.token);
+				x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(rai rdi)
+				return;
+			}
 			final int rai=x.register_index_for_alias(this,name);
 			x.write(0|0x0000|(rai&63)<<14);//li(a initial_expression)
 			x.at_pre_link_evaluate(initial_value_expression);
