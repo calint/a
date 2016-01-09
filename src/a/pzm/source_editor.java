@@ -15,7 +15,7 @@ final public class source_editor extends a{
 	//	public a resrc;
 	public a sts;
 	public line_numbers ln;
-	public boolean ommit_compiling_source_from_disassembler=true;
+	public boolean ommit_compiling_source_from_disassembler=false;
 	public statement code;
 	public toc se;
 	public boolean disp_compile_action=false;
@@ -48,12 +48,12 @@ final public class source_editor extends a{
 			se.set_statement(code);
 			se.set_textareaid(src.id());
 			x.xuo(se);
-			final xwriter generated_source=new xwriter();
-			code.source_to(generated_source);
-			req.get().session().path("gen").writestr(generated_source.toString());
-			req.get().session().path("org").writestr(source);
 //			System.out.println(generated_source.toString());
 			if(!ommit_compiling_source_from_disassembler){
+				final xwriter generated_source=new xwriter();
+				code.source_to(generated_source);
+				req.get().session().path("gen").writestr(generated_source.toString());
+				req.get().session().path("org").writestr(source);
 				if(!generated_source.toString().equals(source)){
 					throw new Error("generated source differs from input");
 				}

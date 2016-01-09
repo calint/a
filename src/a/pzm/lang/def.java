@@ -19,7 +19,7 @@ public class def extends statement{
 			final def e=new def_table(parent,annot,r,name,ws_before_name,ws_after_name);
 			return e;
 		}else{
-			final def e=new def_const(parent,annot,r,name);
+			final def e=new def_const(parent,annot,r,name,ws_before_name,ws_after_name);
 			return e;
 		}
 	}
