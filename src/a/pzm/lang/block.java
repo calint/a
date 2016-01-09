@@ -6,13 +6,13 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 public class block extends statement{
-	final String ws_before_open_block;
+	final String before_annotations;
 	final String ws_after_open_block;
 	final String ws_after_close_block;
 	private ArrayList<statement>statements;
-	public block(statement parent,LinkedHashMap<String,String>annot,String ws_before_open_block,reader r)throws Throwable{
+	public block(statement parent,LinkedHashMap<String,String>annot,String ws_before_annotations,reader r)throws Throwable{
 		super(parent,annot);
-		this.ws_before_open_block=ws_before_open_block;
+		this.before_annotations=ws_before_annotations;
 		ws_after_open_block=r.next_empty_space();
 		while(true){
 			if(r.next_empty_space().length()!=0)throw new Error();
@@ -34,7 +34,9 @@ public class block extends statement{
 		statements=new ArrayList<>();
 	}
 	@Override public void source_to(xwriter x){
-		x.p(ws_before_open_block).p("{").p(ws_after_open_block);
+		x.p(before_annotations);
+		super.source_to(x);
+		x.p("{").p(ws_after_open_block);
 		for(statement s:statements){
 			s.source_to(x);
 		}
