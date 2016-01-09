@@ -3,6 +3,8 @@ import static b.b.log;
 import static b.b.pl;
 import static b.b.stacktrace;
 
+import a.pzm.lang.call_and;
+import a.pzm.lang.call_not;
 import b.a;
 import b.xwriter;
 final public class ide extends a{
@@ -347,7 +349,8 @@ final public class ide extends a{
 		x.pl(":  ldd : "+fld("da00",Integer.toHexString(0xb8))+" : d=ram[--a]           :");
 		x.pl(":  shf : "+fld("di00",Integer.toHexString(0x60))+" : r[d]>>=i             :");
 		x.pl(":  shf : "+fld("di00",Integer.toHexString(0x60))+" : r[d]<<=i             :");
-		x.pl(":  not : "+fld("d000",Integer.toHexString(0x60))+" : r[d]=~r[d]           :");
+		x.pl(":  not : "+fld("d000",Integer.toHexString(call_not.op))+" : r[d]=~r[d]           :");
+		x.pl(":  and : "+fld("da00",Integer.toHexString(call_and.op))+" : r[a]&=r[d]           :");
 		x.pl(":  inc : "+fld("d000",Integer.toHexString(0x200))+" : r[d]++               :");
 //		x.pl(":  dec : "+fld("x000",Integer.toHexString(0xa8))+" : --r[x]               :");
 		x.pl(":  neg : "+fld("d000",Integer.toHexString(0x300))+" : r[d]=-r[d]           :");

@@ -61,7 +61,6 @@ public class statement extends a{
 			return e;
 		}
 		//assembler op
-		final String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg foo fow";
 		if(asm.indexOf(tk)!=-1){
 			try{
 				final String clsnm=statement.class.getPackage().getName()+".call_"+tk;
@@ -78,6 +77,7 @@ public class statement extends a{
 		final call e=new call(parent,annot,tk,r);
 		return e;
 	}
+	final public static String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg not and   foo fow";
 //	private void ensure_annotations_exists() {
 //		if(annotations!=null)return;
 //		annotations=new LinkedHashMap<>();

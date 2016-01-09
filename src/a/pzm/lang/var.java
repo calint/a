@@ -39,6 +39,9 @@ final public class var extends statement{
 		}
 	}
 	@Override public void binary_to(xbin x){
+		if(x.is_register_alias_exists(var_name)){
+			throw new compiler_error(this,"var '"+var_name+"' already used",x.register_aliases.keySet().toString());
+		}
 		final String reg=x.allocate_register(this);
 		x.alias_register(var_name,reg);
 		parent_statement().vars_add(var_name);

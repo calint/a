@@ -27,13 +27,24 @@ public class toc extends a{
 	}
 	private void rec(xwriter x,LinkedList<String>indents,statement e){
 		final String fltr=filter.str();
-		if(fltr.indexOf('a')!=-1)if(!e.has_annotations())
+		if(fltr.indexOf('.')!=-1)if(!e.has_annotations())
 			return;
+		String q=fltr;
+		while(q.startsWith(".")){
+			q=q.substring(1);
+		}
+		final String qry=q;
+		if(qry.length()>0){
+			for(String s:e.annotations(true).keySet()){
+				if(!s.startsWith(q))
+					return;
+			}
+		}
+		
 		indents.forEach(s->x.p(s));
-		e.annotations(true).keySet().forEach(s->x.p('@').p(s));
-		x.spc();
-		
-		
+		e.annotations(true).keySet().forEach(s->{
+			x.p("@").p(s).spc();
+		});
 		final String[]ix=e.location_in_source().split(":");
 		final String[]ixe=e.location_in_source_end().split(":");
 		x.p("<a onmouseenter=\"");

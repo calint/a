@@ -116,22 +116,22 @@ final public class core implements Serializable{
 		final int rai=in&0x3f;//? magicnum
 		in>>=6;// rrddii
 		final int rdi=in&0x3f;
-		if(!invalid_opcode){
+		if(!invalid_opcode){// if not both c and r bits r set
 			if(op==0){//load
 				if(rai!=0){//branch
-					if(rai==1){//lp
+					if(rai==1){//0x100 lp
 						if(isnxt)throw new Error("unimplmeneted 1 op(x,y)");
 						final int d=registers[rdi];
 						loops_push(program_counter+1,d);	
-					}else if(rai==2){//inc
+					}else if(rai==2){//0x200 inc
 						registers[rdi]++;	
 //						evaluate_zn_flags(registers[rdi]);
-					}else if(rai==3){//neg
+					}else if(rai==3){//0x300 neg
 						final int d=registers[rdi];
 						final int r=-d;
 						registers[rdi]=r;
 //						evaluate_zn_flags(registers[rdi]);
-					}else if(rai==4){//dac
+					}else if(rai==4){//0x400 dac
 						final int d=registers[rdi];
 						try{
 							b.b.pl("dac "+d);
@@ -139,7 +139,8 @@ final public class core implements Serializable{
 						}catch(final Throwable t){
 							throw new Error(t);
 						}
-					}else throw new Error("unimplemented ops(x)");
+					}
+					else throw new Error("unimplemented op 0x500 to 0x3f00");
 				}else{
 					if(isret||isnxt){
 						if(!program_counter_has_been_set){
@@ -149,19 +150,19 @@ final public class core implements Serializable{
 					}
 					loading_register=rdi;
 				}
-			}else if(op==1){// sub
+			}else if(op==1){//0x20 sub
 				final int a=registers[rai];
 				final int d=registers[rdi];
 				final int r=a-d;
 				evaluate_zn_flags(r);
 				registers[rai]=r;
-			}else if(op==2){//stc
+			}else if(op==2){//0x20 stc
 				final int a=registers[rai]++;
 				final int d=registers[rdi];
 				ram[a]=d;
 //				me.stc++;
-			}else if(op==3){//shf and not
-				if(rai==0){//not
+			}else if(op==3){//0x60 shf and not
+				if(rai==0){//0x60 not shf(rdi 0)
 					final int d=registers[rdi];
 					final int r=~d;
 					registers[rdi]=r;
@@ -173,57 +174,64 @@ final public class core implements Serializable{
 					registers[rdi]=r;
 					evaluate_zn_flags(r);
 				}
-			}else if(op==4){//skp
-				if(imm12==0)throw new Error("unencoded op (rol x)");
+			}else if(op==4){//0x80 skp
+				if(imm12==0){// free   skp(0)
+					throw new Error("skp(0) not encoded");
+				}
 				if(program_counter_has_been_set)throw new Error("unimplemented");
 				final int index_in_rom=program_counter+imm12;
 				program_counter=index_in_rom;
 				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
-			}else if(op==5){//add
+			}else if(op==5){//0xa0 add
 				final int a=registers[rai];
 				final int d=registers[rdi];
 				final int r=a+d;
 				evaluate_zn_flags(r);
 				registers[rai]=r;
-			}else if(op==6){//ldc
+			}else if(op==6){//0xc0 ldc
 				final int a=registers[rai]++;
 				final int d=ram[a];
 				registers[rdi]=d;
 				evaluate_zn_flags(d);
 //				me.ldc++;
-			}else if(op==7){//tx
+			}else if(op==7){//0xe0 tx
 				final int a=registers[rai];
 				registers[rdi]=a;
 			}
-		}else{
+		}else{// cr ops
 			if(op==0){//0x18 addi
 				final int a=registers[rai];
 				final int d=rdi>31?rdi-64:rdi;//? magicnum
 				final int r=a+d;
 				evaluate_zn_flags(r);
 				registers[rai]=r;
-			}else if(op==1){//skp
+			}else if(op==1){//0x38 skp
 				if(imm12==0)throw new Error("unencoded op (rol x)");
 				if(program_counter_has_been_set)throw new Error("unimplemented");
 				final int index_in_rom=program_counter+imm12;
 				program_counter=index_in_rom;
 				instruction=rom[index_in_rom];
 				program_counter_has_been_set=true;
-			}else if(op==2){// free
-			}else if(op==3){// free
-			}else if(op==4){// free  
-			}else if(op==5){// ldd
+			}else if(op==2){//0x58 and
+				final int a=registers[rai];
+				final int d=registers[rdi];
+				final int r=a&d;
+				evaluate_zn_flags(r);
+				registers[rai]=r;				
+			}else if(op==3){//0x78 free
+			}else if(op==4){//0x98 free  
+			}else if(op==5){//0xb8 ldd
 				final int a=--registers[rai];
 				final int d=ram[a];
 				registers[rdi]=d;
 				evaluate_zn_flags(d);
-			}else if(op==6){// st
+			}else if(op==6){//0xd8 st
 				final int d=registers[rdi];
 				final int a=registers[rai];
 				ram[a]=d;
 //				meters_st++;
-			}else if(op==7){// ld
+			}else if(op==7){//0xf8 ld
 				final int a=registers[rai];
 				final int d=ram[a];
 				registers[rdi]=d;
