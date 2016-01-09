@@ -47,7 +47,7 @@ final public class source_editor extends a{
 			attach(code,"code");
 			se.set_statement(code);
 			se.set_textareaid(src.id());
-			x.xu(se);
+			x.xuo(se);
 			final xwriter generated_source=new xwriter();
 			code.source_to(generated_source);
 			req.get().session().path("gen").writestr(generated_source.toString());
