@@ -2,12 +2,11 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import b.a;
 
 final public class call_st extends call{
 	private static final long serialVersionUID=1;
-	public call_st(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
-		super(pt,nm,b,annotations,"st",r);
+	public call_st(statement parent,LinkedHashMap<String,String>annot,reader r){
+		super(parent,annot,"st",r);
 	}
 	@Override public void binary_to(xbin x){
 		final expression arg1=arguments.get(0);

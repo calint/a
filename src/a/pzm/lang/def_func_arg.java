@@ -1,12 +1,11 @@
 package a.pzm.lang;
 
-import b.a;
-
-final public class def_func_arg extends statement{
+final public class def_func_arg extends expression{
 	private static final long serialVersionUID=1;
-	public def_func_arg(a pt,String nm,statement parent,reader r){
-		super(pt,nm,parent,null,r);
+	public def_func_arg(def_func parent,reader r){
+		super(parent,null,r,null,null);
 	}
 	@Override public void binary_to(xbin x){
-		return;}
+		return;
+	}
 }

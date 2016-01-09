@@ -16,7 +16,7 @@ final public class source_editor extends a{
 	public a sts;
 	public line_numbers ln;
 	public boolean ommit_compiling_source_from_disassembler=true;
-	statement code;
+	public statement code;
 	public void to(final xwriter x) throws Throwable{
 //		x.style("def","font-weight:bold");//a name
 //		x.style("fc","font-style: italic");//function name refered
@@ -42,13 +42,15 @@ final public class source_editor extends a{
 		final String source=src.str();
 		final reader r=new reader(new StringReader(source));
 		try{
-			code=new statement(this,"code",null,null,r);// root statement
+			code=statement.read(r);
+			attach(code,"code");
+			final xwriter generated_source=new xwriter();
+			code.source_to(generated_source);
+			req.get().session().path("gen").writestr(generated_source.toString());
+			req.get().session().path("org").writestr(source);
+//			System.out.println(generated_source.toString());
 			if(!ommit_compiling_source_from_disassembler){
-				final xwriter generated_source=new xwriter();
-				code.source_to(generated_source);
 				if(!generated_source.toString().equals(source)){
-					req.get().session().path("gen").writestr(generated_source.toString());
-					req.get().session().path("org").writestr(source);
 					throw new Error("generated source differs from input");
 				}
 			}
@@ -71,7 +73,7 @@ final public class source_editor extends a{
 //			});
 			pl("*** done");
 			if(x==null) return;
-			x.xu(sts.clr(),code);
+			x.xu(sts.clr(),code).flush();
 			((ide)pt()).xj_update_focus_on_rom(x);
 			ln.xj_select_line(x,0);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
@@ -86,7 +88,7 @@ final public class source_editor extends a{
 			}else{
 				ixe=t.stmt.location_in_source_end().split(":");
 			}
-			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ix[3])+";}");
+			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ixe[2])+";}");
 			x.xu(sts.set("line "+ix[0]+":"+" "+t.getMessage()));
 			ln.xj_select_line(x,Integer.parseInt(ix[0]));
 			//			x.xalert(t.getMessage());

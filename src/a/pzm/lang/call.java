@@ -8,26 +8,46 @@ import b.xwriter;
 
 public class call extends statement{
 	private static final long serialVersionUID=1;
-	final private String name,ws_after_name,ws_trailing;
+	final private String ws_left,name,ws_after_name,ws_trailing;
 	final protected ArrayList<expression>arguments=new ArrayList<>();
-	public call(a pt,String nm,statement parent,LinkedHashMap<String,String>annotations,String name,reader r){
-		super(pt,nm,annotations,name,r,parent);
-		this.name=name;
+	public call(statement parent,LinkedHashMap<String,String>annot,String function_name,reader r){
+		super(parent,annot);
+		ws_left=r.next_empty_space();
+		mark_start_of_source(r);
+		this.name=function_name;
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
+//		if(!r.is_next_char_expression_open())
+//			throw new compiler_error(this,"expected '(' and arguments for '"+function_name+"'","");
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
 			r.set_location_in_source();
-			final expression arg=new expression(pt,nm,r,parent);
+			final expression arg=new expression(parent,null,r,null,null);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();
 	}
-	public call(a pt,String nm,String name,reader r,statement b){
-		this(pt,nm,b,new LinkedHashMap<String,String>(),name,r);
-	}
+//
+//	public call(a pt,String nm,statement parent,LinkedHashMap<String,String>annotations,String name,reader r){
+//		super(pt,nm,annotations,name,r,parent);
+//		this.name=name;
+//		mark_end_of_source(r);
+//		ws_after_name=r.next_empty_space();
+//		while(true){
+//			mark_end_of_source(r);
+//			if(r.is_next_char_expression_close())break;
+//			r.set_location_in_source();
+//			final expression arg=new expression(pt,nm,r,parent);
+//			arguments.add(arg);
+//		}
+//		mark_end_of_source(r);
+//		ws_trailing=r.next_empty_space();
+//	}
+//	public call(a pt,String nm,String name,reader r,statement b){
+//		this(b,new LinkedHashMap<String,String>(),name,r);
+//	}
 	protected int apply_znxr_annotations_on_instruction(int i){
 		int znxr=0;
 		if(has_annotation("ifp")) znxr|=3;
@@ -39,7 +59,7 @@ public class call extends statement{
 	}
 	@Override public void binary_to(xbin x){
 		final def_func d=(def_func)x.toc.get("func "+name);
-		if(d==null) throw new compiler_error(this,"function not found",name);
+		if(d==null)throw new compiler_error(this,"function not found",name);
 		if(arguments.size()!=d.arguments.size())
 			throw new compiler_error(this,"function "+name+" expects "+d.arguments.size()+" arguments, got "+arguments.size(),"");
 		int i=0;
@@ -83,7 +103,7 @@ public class call extends statement{
 //		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
 //		final boolean is=asm.indexOf(name)!=-1;
 //		x.tag(is?"ac":"fc");
-//		x.p(name).p(ws_after_name);
+		x.p(ws_left).p(name).p(ws_after_name);
 //		x.tage(is?"ac":"fc");
 		x.p("(");
 		arguments.forEach(e->e.source_to(x));

@@ -1,12 +1,17 @@
 package a.pzm.lang;
 
-import b.a;
+import java.util.LinkedHashMap;
 
 final public class def_table_col extends statement{
 	private static final long serialVersionUID=1;
-	public def_table_col(a pt,String nm,reader r,statement b){
-		super(pt,nm,null,r.next_token(),r,b);
+	private String ws_after_name;
+	public def_table_col(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
+		super(parent,annot);
+		token=r.next_token();
+		if(token.length()==0)
+			throw new compiler_error(this,"unexpected empty token","");
 		mark_end_of_source(r);
-		r.toc.put("table_column "+token,this);
+		ws_after_name=r.next_empty_space();
+//		r.toc.put("table_column "+token,this);
 	}
 }

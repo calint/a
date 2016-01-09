@@ -1,11 +1,8 @@
 package a.pzm.lang;
 
-import static b.b.pl;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import b.a;
 import b.xwriter;
 
 final public class call_foo extends statement{
@@ -13,26 +10,29 @@ final public class call_foo extends statement{
 	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
-	public call_foo(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
-		super(pt,nm,annotations,"",r,b);
+	public call_foo(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
+		super(parent,annot);
+//		if(!r.is_next_char_expression_open()){
+//			throw new compiler_error(this,"expected '(' for 'foo' arguments","");
+//		}
 		ws_after_expression_open=r.next_empty_space();
 		int i=0;
 		while(true){
-			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,r,b);
+			if(r.is_next_char_expression_close())break;
+			final expression arg=new expression(this,null,r,"",(String)null);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		loop_code=new statement(this,"b",b,"",r);
+		loop_code=statement.read(this,r);
 	}
 //	private int foo_register;
 //	private boolean foo_source_in_register;
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
-		final def_table dt=(def_table)x.toc.get("table "+table_name);
+		final def_table tbl=(def_table)x.toc.get("table "+table_name);
 		String ref_to_register=null;
-		if(dt==null){
+		if(tbl==null){
 			ref_to_register=x.register_for_alias(table_name);
 			if(ref_to_register==null)
 				throw new compiler_error(this,"table not found",table_name);
@@ -43,15 +43,7 @@ final public class call_foo extends statement{
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
-			final String struct_name=args.get(0).token;
-			final def_table stc=(def_table)x.toc.get("table "+struct_name);
-//			if(stc==null){
-//				if(x.is_register_alias_exists(struct_name)){
-//					foo_register=x.register_index_for_alias(this,struct_name);
-//				}else
-//					throw new compiler_error(this,"struct not declared yet",struct_name);
-//			}
-			for(def_table_col col:stc.arguments){
+			for(def_table_col col:tbl.arguments){
 				if(x.is_register_alias_exists(col.token)){
 					throw new compiler_error(this,"var '"+col.token+"' already exists",x.register_aliases.toString());
 				}
@@ -59,12 +51,12 @@ final public class call_foo extends statement{
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);
 				aliases.add(col.token);
-				final expression e=new expression(col.token);
+				final expression e=new expression(this,col.token);
 				args.add(e);
 			}
 		}else{
 			args=arguments;
-			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
+			if(args.size()-1!=tbl.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
 //		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
 //		pl("foo "+parent_statement.declarations.toString());

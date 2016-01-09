@@ -73,6 +73,13 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
+	public boolean is_next_char_expression_open_pushback(){
+		final int ch=read();
+		unread(ch);
+		if(ch=='(')
+			return true;
+		return false;
+	}
 	public boolean is_next_char_struct_close(){
 		final int ch=read();
 		if(ch==']') return true;
@@ -136,7 +143,7 @@ public final class reader{
 	private void unread(final int ch){
 		try{
 			nchar--;
-			if(ch!=-1) r.unread(ch);
+			if(ch!=-1)r.unread(ch);
 			if(ch=='\n'){
 				line--;
 				col=prevcol;

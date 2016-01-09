@@ -1,12 +1,11 @@
 package a.pzm.lang;
 
 import java.util.LinkedHashMap;
-import b.a;
 
 final public class call_shf extends call{
 	private static final long serialVersionUID=1;
-	public call_shf(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
-		super(pt,nm,b,annotations,"shf",r);
+	public call_shf(statement parent,LinkedHashMap<String,String>annot,reader r){
+		super(parent,annot,"ldc",r);
 	}
 	@Override public void binary_to(xbin x){
 		final int rai=declared_register_index_from_string(x,this,arguments.get(0).token);

@@ -1,5 +1,1 @@
-var tick
-inc(tick)
--1
-
-
+{var t inc(t) -1}

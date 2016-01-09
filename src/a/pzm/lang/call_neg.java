@@ -6,7 +6,7 @@ import b.a;
 final public class call_neg extends call{
 	private static final long serialVersionUID=1;
 	public call_neg(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
-		super(pt,nm,b,annotations,"neg",r);
+		super(b,annotations,"neg",r);
 	}
 	@Override public void binary_to(xbin x){
 		final int rdi=declared_register_index_from_string(x,this,arguments.get(0).token);

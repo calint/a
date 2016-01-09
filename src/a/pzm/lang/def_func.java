@@ -1,7 +1,8 @@
 package a.pzm.lang;
 
 import java.util.ArrayList;
-import b.a;
+import java.util.LinkedHashMap;
+
 import b.xwriter;
 
 final public class def_func extends statement{
@@ -9,18 +10,18 @@ final public class def_func extends statement{
 	final private String name,ws_after_expr_close;
 	final ArrayList<def_func_arg>arguments=new ArrayList<>();
 	final statement function_code;
-	public def_func(a pt,String nm,String name,reader r,statement b){
-		super(pt,nm,null,"",r,b);
+	public def_func(statement parent,LinkedHashMap<String,String>annot,reader r,String name)throws Throwable{
+		super(parent,annot);
 		this.name=name;
 		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close())break;
-			final def_func_arg arg=new def_func_arg(this,""+i++,this,r);
+			final def_func_arg arg=new def_func_arg(this,r);
 			arguments.add(arg);
 		}
 		ws_after_expr_close=r.next_empty_space();
 //		arguments.forEach(e->declarations.add(e.token));
-		function_code=new statement(this,"c",b,"",r);
+		function_code=statement.read(this,r);
 		mark_end_of_source(r);
 		r.toc.put("func "+name,this);
 	}

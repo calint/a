@@ -6,8 +6,8 @@ import b.a;
 
 final public class call_stc extends call{
 	private static final long serialVersionUID=1;
-	public call_stc(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
-		super(pt,nm,b,annotations,"stc",r);
+	public call_stc(statement parent,LinkedHashMap<String,String>annot,reader r){
+		super(parent,annot,"stc",r);
 	}
 	@Override public void binary_to(xbin x){
 		final expression era=arguments.get(0);

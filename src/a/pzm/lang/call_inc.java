@@ -1,12 +1,11 @@
 package a.pzm.lang;
 
 import java.util.LinkedHashMap;
-import b.a;
 
 final public class call_inc extends call{
 	private static final long serialVersionUID=1;
-	public call_inc(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
-		super(pt,nm,b,annotations,"inc",r);
+	public call_inc(statement parent,LinkedHashMap<String,String>annotations,reader r){
+		super(parent,annotations,"inc",r);
 	}
 	@Override public void binary_to(xbin x){
 		final String rd=arguments.get(0).token;

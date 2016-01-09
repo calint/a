@@ -40,7 +40,7 @@ final public class ide extends a{
 		re.ints=cor.registers;
 		ca.stk=cor.call_stack;
 		lo.core=cor;
-		th.set(1);
+		th.set(0);
 	}
 	@Override public void ev(xwriter x,a from,Object o) throws Throwable{
 		pl("ev");

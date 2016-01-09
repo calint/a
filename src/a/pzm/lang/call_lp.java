@@ -3,7 +3,6 @@ package a.pzm.lang;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import b.a;
 import b.xwriter;
 
 final public class call_lp extends statement{
@@ -11,18 +10,21 @@ final public class call_lp extends statement{
 	final private ArrayList<expression> arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
-	public call_lp(a pt,String nm,LinkedHashMap<String,String> annotations,reader r,statement b){
-		super(pt,nm,annotations,"",r,b);
+	public call_lp(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
+		super(parent,annot);
+//		if(!r.is_next_char_expression_open()){
+//			throw new compiler_error(this,"expected '(' for 'lp' arguments","");
+//		}
 		ws_after_expression_open=r.next_empty_space();
-		int i=0;
+//		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,r,b);
+			final expression arg=new expression(this,null,r,null,null);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
-		loop_code=new statement(this,"b",b,"",r);//? this parent
+		loop_code=statement.read(this,r);//? this parent
 	}
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);

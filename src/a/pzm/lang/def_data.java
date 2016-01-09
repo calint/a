@@ -1,16 +1,17 @@
 package a.pzm.lang;
 
-import b.a;
+import java.util.LinkedHashMap;
+
 import b.xwriter;
 
 final public class def_data extends statement{
 	private static final long serialVersionUID=1;
 	final private statement data;
 	final private String name;
-	public def_data(a pt,String nm,String name,reader r,statement b){
-		super(pt,nm,b,"",r);
+	public def_data(statement parent,LinkedHashMap<String,String>annot,reader r,String name)throws Throwable{
+		super(parent,annot);
 		this.name=name;
-		data=new statement(this,"d",b,"",r);
+		data=statement.read(this,r);
 		mark_end_of_source(r);
 		r.toc.put("data "+name,this);
 	}

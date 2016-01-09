@@ -2,39 +2,35 @@ package a.pzm.lang;
 
 import java.util.LinkedHashMap;
 
-import b.a;
 import b.xwriter;
 
-final public class expression extends statement{
+public class expression extends statement{
 	private static final long serialVersionUID=1;
-	private final String ws_after;
+	private final String ws_leading,ws_after;
 	final protected String destreg;
-	public expression(a pt,String nm,reader r,statement parent){
-		this(pt,nm,parent,null,r.next_token(),r,null);
-	}
-	public expression(a pt,String nm,statement parent,reader r,String dest_reg){
-		this(pt,nm,parent,null,r.next_token(),r,dest_reg);
-	}
-	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,String token,reader r,String dest_reg){
-		super(pt,nm,annotations,token,r,b);
+	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
+		super(parent,annot);
 		destreg=dest_reg;
-		if(token==null){
-			r.set_location_in_source();
-			this.token=r.next_token();
-		}
+		ws_leading=tk==null?"":r.next_empty_space();
+		mark_start_of_source(r);
+		token=tk==null?r.next_token():tk;
 		mark_end_of_source(r);
-		ws_after=r.next_empty_space();
+		if(token.length()==0)
+			throw new compiler_error(this,"expression is empty","");
+		ws_after=r.next_empty_space();		
 	}
-	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
-		super(pt,nm,annotations,r.next_token(),r,b);
-//		mark_end_of_source(r);
-		ws_after="";
-		this.destreg=dest_reg;
-	}
-	public expression(String token){
-		super(null,"",null,"",token,null);
-		ws_after="";
+//	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
+//		super(pt,nm,annotations,r.next_token(),r,b);
+////		mark_end_of_source(r);
+//		ws_after="";
+//		this.destreg=dest_reg;
+//	}
+	public expression(statement parent,String dest_reg){
+		super(parent,null);
+		ws_after=ws_leading="";
+		token=dest_reg;
 		destreg=null;
+//		destreg=dest_reg;
 	}
 	@Override public void binary_to(xbin x){
 		if(x.is_register_alias_exists(token)){// tx
@@ -85,6 +81,6 @@ final public class expression extends statement{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-//		x.p(token).p(ws_after);
+		x.p(token).p(ws_after);
 	}
 }

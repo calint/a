@@ -51,7 +51,7 @@ final public class porta extends websock implements threadedsock{
 			try{
 				//				new program(src).zap(co.rom);
 				final reader r=new reader(new StringReader(src));
-				final statement stmt=new statement(this, "stmt",null,"",r);
+				final statement stmt=statement.read(r);
 				final prog p=new prog(r.toc,stmt);
 				pl("*** compile");
 				for(int i=0;i<co.rom.length;i++)

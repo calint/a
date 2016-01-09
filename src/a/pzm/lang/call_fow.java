@@ -2,7 +2,7 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import b.a;
+
 import b.xwriter;
 
 final public class call_fow extends statement{
@@ -10,18 +10,21 @@ final public class call_fow extends statement{
 	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
-	public call_fow(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
-		super(pt,nm,annotations,"",r,b);
+	public call_fow(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
+		super(parent,annot);
+//		if(!r.is_next_char_expression_open()){
+//			throw new compiler_error(this,"expected '(' for 'fow' arguments","");
+//		}
 		ws_after_expression_open=r.next_empty_space();
-		int i=0;
+//		int i=0;
 		while(true){
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,"e"+i++,r,b);
+			final expression arg=new expression(this,null,r,null,null);
 			arguments.add(arg);
 		}
 		ws_after_expression_closed=r.next_empty_space();
 //		arguments.forEach(e->declarations.add(e.token));
-		loop_code=new statement(this,"b",b,"",r);
+		loop_code=statement.read(this,r);
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
@@ -41,7 +44,7 @@ final public class call_fow extends statement{
 				allocated_registers.add(reg);
 				x.alias_register(col.token,reg);
 				aliases.add(col.token);
-				final expression e=new expression(col.token);
+				final expression e=new expression(this,col.token);
 				args.add(e);
 			}
 		}else{

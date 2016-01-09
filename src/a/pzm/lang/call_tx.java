@@ -7,7 +7,7 @@ import b.xwriter;
 final public class call_tx extends call{
 	private static final long serialVersionUID=1;
 	public call_tx(a pt,String nm,LinkedHashMap<String,String>annotations,reader r,statement b){
-		super(pt,nm,b,annotations,"tx",r);
+		super(b,annotations,"tx",r);
 	}
 	@Override public void binary_to(xbin x){
 		final int rai=declared_register_index_from_string(x,this,arguments.get(1).token);
