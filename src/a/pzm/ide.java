@@ -77,24 +77,25 @@ final public class ide extends a{
 		if(pt()==null){
 			x.title("clare 20 bit")
 					.style()
-//					.css("html","")
+					.css("html","")
 //					.css("a","color:#0ff")
-					.css("body","padding:1em 0 0 11em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto")
+					.css("body","padding:1em 0 0 7em;text-align:center;line-height:1.4em;margin-left:auto;margin-right:auto")
 					.css(".border","border:1px dotted red").css(".float","display:inline-block").css(".textleft","text-align:left").css(".fontbold","font-weight:bold")
 					.css(".floatclear","clear:both").css(".panel","padding-left:.5em;padding-right:.5em").css(".stp","background-color:#ee0")
 					.css(".brk","background-color:#ee2").css(".nbr","width:3em;border:1px dotted;text-align:right")
 					.css(".laycent","white-space:no-wrap;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
+					.css(ec,"border:1px dashed #ccc")
 					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em")
 //					.css(ec.ln,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:inline-block")
 					.css(ec.ln,"display:inline-block")
-					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-left:1px dashed green;border-right:1px dashed green")
+					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-right:1px dashed green")
 					.css(ec.ln,"li.a","background:#fcc")
 					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding-left:1em;padding-right:1em;padding-top:.5em;padding-bottom:.5em;border:1px dashed green")
 					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)");
 			switch(th.toint()){
 			case 0:
 				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
-				x.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#fff;border-left:1px dashed #ddd;border-right:1px dashed #ddd");
+				x.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#fff;border-right:1px dashed #ddd");
 				break;
 			case 1:
 				x.css("html","background:#111;color:#060").css("a","color:#007").css(".stp","background-color:#020").css(".brk","background-color:#021");
@@ -122,7 +123,7 @@ final public class ide extends a{
 		if(hasbit(bit_show_instructions_table))instructions_table_to(x);
 		if(hasbit(bit_show_screen))x.r(ra);
 		if(hasbit(bit_menu))
-			x.divo().ax(this,"r",""," reset","r").ax(this,"f",""," frame","f").ax(this,"s",""," step","s").ax(this,"g",""," go","g")
+			x.divo().ax(this,"c",""," compile","c").ax(this,"r",""," reset","r").ax(this,"f",""," frame","f").ax(this,"s",""," step","s").ax(this,"g",""," go","g")
 					.ax(this,"b",""," bench","b").ax(this,"e",""," exec","e")
 					.div_();
 		x.divo("laycent");
@@ -174,6 +175,10 @@ final public class ide extends a{
 			ra.xupd(x);
 		x.xu(sy,re,ca,lo);
 		if(hasbit(bit_show_rom))xj_update_focus_on_rom(x);
+	}
+	/** compile */
+	synchronized public void x_c(final xwriter x,final String s) throws Throwable{
+		ec.x_f3(x,s);
 	}
 	private boolean going;
 	/** go */

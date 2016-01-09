@@ -12,10 +12,14 @@ final public class def_table extends def{
 	final private statement data;
 	public def_table(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
 		super(parent,annot);
+		nm(name);
+		mark_start_of_source(r);
 		this.ws_before_name=ws_before_name;
+//		mark_start_of_source(r);
 		this.name=name;
 		this.ws_after_name=ws_after_name;
 		while(true){
+			mark_end_of_source(r);
 			if(r.is_next_char_struct_close())break;
 			final def_table_col sf=new def_table_col(this,null,r);
 			if(arguments.stream().filter(e->sf.token.equals(e.token)).findFirst().isPresent()){
@@ -24,7 +28,7 @@ final public class def_table extends def{
 			arguments.add(sf);
 		}
 		data=statement.read(this,r);
-		mark_end_of_source(r);
+		mark_end_of_source_from(data);
 		r.toc.put("table "+name,this);
 	}
 	@Override public void binary_to(xbin x){

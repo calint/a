@@ -48,8 +48,8 @@ public class a implements Serializable{
 	public final String id(){
 		String s=nm;
 		for(a p=this;p.pt!=null;p=p.pt)
-			s=tostr(p.pt.nm,"")+field_path_separator+s;
-		return tostr(s,field_path_separator);
+			s=tostr(p.pt.nm,"")+req.field_path_separator+s;
+		return tostr(s,req.field_path_separator);
 	}
 	public final String nm(){return nm;}
 //	public final a nm(final String nm){this.nm=nm;return this;}
@@ -113,8 +113,6 @@ public class a implements Serializable{
 	public a pt(final a e){pt=e;return this;}//? if pt ondetach?
 	public a nm(final String s){nm=s;return this;}
 	final public void xrfsh(final xwriter x)throws Throwable{to(x.xub(this,true,false));x.xube();} 
-	final public static String field_path_separator="-";
-	
 	/**implement to provide custom html document title*/
 //	public interface titled{void title_to(xwriter x);}
 	final public Reader reader(){return new StringReader(s==null?"":s);}

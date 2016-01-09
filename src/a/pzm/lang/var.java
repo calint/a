@@ -11,20 +11,24 @@ final public class var extends statement{
 	final private String ws_left;
 	public var(statement parent,LinkedHashMap<String,String>annot,reader r){
 		super(parent,annot);
-		ws_left=r.next_empty_space();
-		r.set_location_in_source();
 		mark_start_of_source(r);
+		ws_left=r.next_empty_space();
+//		r.set_location_in_source();
+//		mark_start_of_source(r);
 		var_name=r.next_token();
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
 		if(r.is_next_char_assign()){
 			ws_after_assign=r.next_empty_space();
+			mark_end_of_source(r);
 			r.set_location_in_source();
 			initial_value_expression=new expression(this,null,r,var_name,null);
+			mark_end_of_source_from(initial_value_expression);
 		}else{
 			ws_after_assign="";
 			initial_value_expression=null;
 		}
+//		mark_end_of_source(r);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);

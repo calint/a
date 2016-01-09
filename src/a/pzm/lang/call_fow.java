@@ -12,19 +12,19 @@ final public class call_fow extends statement{
 	final private statement loop_code;
 	public call_fow(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
 		super(parent,annot);
-//		if(!r.is_next_char_expression_open()){
-//			throw new compiler_error(this,"expected '(' for 'fow' arguments","");
-//		}
+		mark_start_of_source(r);
 		ws_after_expression_open=r.next_empty_space();
-//		int i=0;
 		while(true){
+			mark_end_of_source(r);
 			if(r.is_next_char_expression_close()) break;
 			final expression arg=new expression(this,null,r,null,null);
 			arguments.add(arg);
 		}
+		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
 //		arguments.forEach(e->declarations.add(e.token));
 		loop_code=statement.read(this,r);
+		mark_end_of_source_from(loop_code);
 	}
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;

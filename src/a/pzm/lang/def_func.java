@@ -12,7 +12,9 @@ final public class def_func extends def{
 	final statement function_code;
 	public def_func(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_bef_name,String ws_aft_name)throws Throwable{
 		super(parent,annot);
+		nm(name);
 		ws_before_name=ws_bef_name;
+		mark_start_of_source(r);
 		this.name=name;
 		ws_after_name=ws_aft_name;
 		while(true){

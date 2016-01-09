@@ -5,11 +5,9 @@ import java.util.LinkedHashMap;
 public class def extends statement{
 	public static def read(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
 		final String ws_before_name=r.next_empty_space();
-		r.set_location_in_source();
 		final String name=r.next_token();
 		final String ws_after_name=r.next_empty_space();
 		if(r.is_next_char_expression_open()){
-			r.set_location_in_source();
 			final def e=new def_func(parent,annot,r,name,ws_before_name,ws_after_name);
 			return e;
 		}else if(r.is_next_char_block_open()){
@@ -18,11 +16,9 @@ public class def extends statement{
 			final def e=new def_data(parent,annot,r,name,ws_before_name,ws_after_name);
 			return e;
 		}else if(r.is_next_char_struct_open()){
-			r.set_location_in_source();
 			final def e=new def_table(parent,annot,r,name,ws_before_name,ws_after_name);
 			return e;
 		}else{
-			r.set_location_in_source();
 			final def e=new def_const(parent,annot,r,name);
 			return e;
 		}

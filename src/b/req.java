@@ -700,7 +700,7 @@ public final class req{
 					continue;
 				}
 				//? indexofloop
-				final String[]pth=me.getKey().split(a.field_path_separator);
+				final String[]pth=me.getKey().split(req.field_path_separator);
 				a ee=e;
 				for(int n=1;n<pth.length;n++){
 					ee=ee.chld(pth[n]);
@@ -725,7 +725,7 @@ public final class req{
 					axarg=ax.substring(i2+1);
 				}
 			}
-			final String[]pth=axid.split(a.field_path_separator);//? indexofloop
+			final String[]pth=axid.split(req.field_path_separator);//? indexofloop
 			for(int n=1;n<pth.length;n++){
 				e=e.chld(pth[n]);
 				if(e==null)break;
@@ -938,6 +938,7 @@ public final class req{
 	private FileChannel upload_channel;
 	private String upload_lastmod_s;
 	private sock sck;
+	final public static String field_path_separator="-";
 
 	private static Map<String,chdresp>cachef;
 	private static Map<String,chdresp>cacheu;

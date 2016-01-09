@@ -2,7 +2,9 @@ package a.pzm.lang;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import b.a;
 import b.xwriter;
@@ -108,6 +110,9 @@ public class statement extends a{
 		r.set_location_in_source();
 		source_location_end=r.location_in_source();
 	}
+	public void mark_end_of_source_from(statement e){
+		source_location_end=e.source_location_end;
+	}
 	public void mark_start_of_source(final reader r){
 		source_location_start=r.location_in_source();
 	}
@@ -143,5 +148,10 @@ public class statement extends a{
 		if(vars!=null)return;
 		vars=new ArrayList<>();
 	}
-
+	public Map<String,String>annotations(boolean return_empty_if_null){
+		if(annotations==null&&return_empty_if_null)
+			return Collections.EMPTY_MAP;
+		return annotations;
+	}
+	public boolean has_annotations(){return annotations!=null&&!annotations.isEmpty();}
 }

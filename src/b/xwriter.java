@@ -234,7 +234,7 @@ public final class xwriter{
 		final String eid=ax.id();
 		attr("onfocus","this.setSelectionRange(this.value.length,this.value.length)");
 		attr("oninput","$b(this);$x('"+eid+" "+onchangeaxp+"');return true;");
-		attr("onkeypress","if(!event)event=window.event;if(event.keyCode!=13)return true;$x('"+eid+" "+onselectaxp+"');return false;");
+		if(onselectaxp!=null)attr("onkeypress","if(!event)event=window.event;if(event.keyCode!=13)return true;$x('"+eid+" "+onselectaxp+"');return false;");
 		return tagoe();
 	}
 	public xwriter inputax(final a e){return inpax(e,null,e.pt(),null);}

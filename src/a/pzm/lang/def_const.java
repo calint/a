@@ -10,6 +10,8 @@ final public class def_const extends def{
 	final expression expr;
 	public def_const(statement parent,LinkedHashMap<String,String>annot,reader r,String name){
 		super(parent,annot);
+		nm(name);
+		mark_start_of_source(r);
 		expr=new expression(this,null,r,null,null);
 		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();
