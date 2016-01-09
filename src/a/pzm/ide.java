@@ -138,6 +138,7 @@ final public class ide extends a{
 			x.nl();
 			x.p("theme: ").inptxt(th,this,"m","nbr").p("  display-bits:").inptxt(bi,this,"m","nbr").div_();
 		}
+//		x.divh(ec.src,null,"text-align:left");
 	}
 	public boolean hasbit(final int bit){
 		return (bi.toint()&bit)==bit;

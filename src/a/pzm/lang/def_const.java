@@ -1,14 +1,15 @@
 package a.pzm.lang;
 
-import b.a;
+import java.util.LinkedHashMap;
+
 import b.xwriter;
 
-final public class def_const extends statement{
+final public class def_const extends def{
 	private static final long serialVersionUID=1;
 	final private String ws_trailing;
 	final expression expr;
-	public def_const(a pt,String nm,String name,reader r,statement b){
-		super(b,null);
+	public def_const(statement parent,LinkedHashMap<String,String>annot,reader r,String name){
+		super(parent,annot);
 		expr=new expression(this,null,r,null,null);
 		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();

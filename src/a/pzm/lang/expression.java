@@ -6,18 +6,26 @@ import b.xwriter;
 
 public class expression extends statement{
 	private static final long serialVersionUID=1;
-	private final String ws_leading,ws_after;
-	final protected String destreg;
+	final private String ws_leading,ws_after;
+	final private String destreg;
+	boolean is_assign;//? 
 	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
 		super(parent,annot);
 		destreg=dest_reg;
-		ws_leading=tk==null?"":r.next_empty_space();
-		mark_start_of_source(r);
-		token=tk==null?r.next_token():tk;
-		mark_end_of_source(r);
+		if(tk==null){// first token supplied
+			mark_start_of_source(r);
+			ws_leading=r.next_empty_space();
+			token=r.next_token();
+			mark_end_of_source(r);
+		}else{
+			mark_start_of_source(r);
+			ws_leading="";
+			token=tk;
+			mark_end_of_source(r);
+		}
 		if(token.length()==0)
 			throw new compiler_error(this,"expression is empty","");
-		ws_after=r.next_empty_space();		
+		ws_after=r.next_empty_space();
 	}
 //	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
 //		super(pt,nm,annotations,r.next_token(),r,b);
@@ -47,8 +55,8 @@ public class expression extends statement{
 		x.write(0);
 	}
 	public int eval(xbin b){
-		final def_const dc=(def_const)b.toc.get("const "+token);
-		if(dc!=null){return dc.expr.eval(b); }
+//		final def_const dc=(def_const)b.toc.get("const "+token);
+//		if(dc!=null){return dc.expr.eval(b); }
 		final def_data dd=(def_data)b.toc.get("data "+token);
 		if(dd!=null){return b.def_location_in_binary_for_name(token); }
 		final def_table dt=(def_table)b.toc.get("table "+token);
@@ -81,6 +89,9 @@ public class expression extends statement{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.p(token).p(ws_after);
+		if(is_assign){
+			x.p(destreg).p("=");
+		}
+		x.p(ws_leading).p(token).p(ws_after);
 	}
 }

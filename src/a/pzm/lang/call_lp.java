@@ -15,13 +15,17 @@ final public class call_lp extends statement{
 //		if(!r.is_next_char_expression_open()){
 //			throw new compiler_error(this,"expected '(' for 'lp' arguments","");
 //		}
+		mark_start_of_source(r);
+		mark_end_of_source(r);
 		ws_after_expression_open=r.next_empty_space();
 //		int i=0;
 		while(true){
-			if(r.is_next_char_expression_close()) break;
+			if(r.is_next_char_expression_close())break;
 			final expression arg=new expression(this,null,r,null,null);
 			arguments.add(arg);
+			mark_end_of_source(r);
 		}
+		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
 		//			if(!r.is_next_char_block_open())throw new Error("expected { for loop code");
 		loop_code=statement.read(this,r);//? this parent
