@@ -3,7 +3,6 @@ package a.pzm.lang;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import b.a;
 import b.xwriter;
 
 public class call extends statement{

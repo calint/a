@@ -2,9 +2,9 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import b.a;
 
 final public class call_stc extends call{
+	final public static int op=0x40;
 	private static final long serialVersionUID=1;
 	public call_stc(statement parent,LinkedHashMap<String,String>annot,reader r){
 		super(parent,annot,"stc",r);
@@ -29,7 +29,7 @@ final public class call_stc extends call{
 			rdi=x.register_index_for_alias(erd,erd.token);
 		}
 		final int rai=x.register_index_for_alias(era,era.token);
-		final int i=0x0040|(rai&63)<<8|(rdi&63)<<14;
+		final int i=op|(rai&63)<<8|(rdi&63)<<14;
 		final int znxr_i=apply_znxr_annotations_on_instruction(i);
 		x.write(znxr_i);
 		allocated_reg.forEach(e->x.unalloc(this,e));

@@ -7,6 +7,7 @@ import b.xwriter;
 
 final public class call_lp extends statement{
 	private static final long serialVersionUID=1;
+	final public static int op=0x100;
 	final private ArrayList<expression> arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
@@ -36,7 +37,7 @@ final public class call_lp extends statement{
 		final expression rd=arguments.get(0);
 		final int rdi=x.register_index_for_alias(this,rd.token);
 		final int rai=0,znxr=0;
-		final int i=0x0100|znxr|(rai&63)<<8|(rdi&63)<<14;
+		final int i=op|znxr|(rai&63)<<8|(rdi&63)<<14;
 		x.write(i);
 		loop_code.binary_to(x);
 		x.write(4);//nxt
