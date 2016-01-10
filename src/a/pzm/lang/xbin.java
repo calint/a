@@ -206,8 +206,15 @@ public final class xbin{
 		ix++;
 		return this;
 	}
+	public int maxregalloc;
+	public statement maxregalloc_at_statement;
 	public String alloc_register(statement at_statement){
 		if(registers_available.isEmpty())throw new compiler_error(at_statement,"out of registers","");
+		final int nallocated=nregisters-registers_available.size();
+		if(nallocated>maxregalloc){
+			maxregalloc=nallocated;
+			maxregalloc_at_statement=at_statement;
+		}
 		return registers_available.remove(0);
 	}
 //	private void allocate_register(statement at_statement,String name){

@@ -1,32 +1,47 @@
 @o{
-var tick
+var tick inc(tick)
+var rgb inc(rgb)
 st(0x2010 0xff0)
-inc(tick)
-@const var ln=252
-@const var gln=0x4fb
-@const var wi=4
-@const var hi=5
-@const var nl=0x0600
-var rgb
-inc(rgb)
-hex.drw(wi hi ln gln rgb)
-labels.drw(wi hi ln gln)
-bmp.drw(wi hi ln gln rgb)
-labels.upd()
+{
+  @const var ln=252
+  @const var gln=0x4fb
+  @const var wi=4
+  @const var hi=5
+  @const var nl=0x0600
+  labels.drw(wi hi ln gln)
+  hex.drw(wi hi ln gln rgb)
+  font.drwall1(wi hi ln gln rgb 5)
+  labels.upd()
+}
 -1 -1
-@str def baba[ch]{4   0xb 0xa 0xb 0xa}
-@str def b20 [ch]{3   2 0 0xb}
+@txt def baba[ch]{4   0xb 0xa 0xb 0xa}
+@txt def b20 [ch]{3   2 0 0xb}
+@txt @f def txt.type(txt di rgb wi hi ln gln){
+  var length
+  ldc(length txt)
+  lp(length){
+    var ch
+    ldc(ch txt)
+    var chaddr
+    bmp.seek(chaddr ch)
+    var glyph
+    ld(glyph chaddr)
+    font.drw(di wi hi ln rgb glyph)
+    sub(di gln)
+  }
+}
+
 @table def labels
 [  ptr   dest    rgb   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
 }
-@inline def labels.drw(wi hi ln gln){
+@table @f def labels.drw(wi hi ln gln){
   foo(labels){
-    type(ptr dest rgb wi hi ln gln)
+    txt.type(ptr dest rgb wi hi ln gln)
   }
 }
-@inline def labels.upd(){
+@table @f def labels.upd(){
   fow(labels){
     inc(rgb)
   }
@@ -52,17 +67,16 @@ labels.upd()
   0       0       0       0
   0       0       0       0
 }
-@inline def bmp.drw(wi hi nl gln argb){
-  var lines=1
+@font @v def font.drwall1(wi hi nl gln rgb lines){
   var dil=0x0420
   lp(lines){
     var di=dil
-    pl(di wi hi nl argb gln)
+    font.drwall(di wi hi nl rgb gln)
     add(dil nl)
   }
 }
 -1 -1
-@inline def type_bmp(di wi hi ln rgb bmp){
+@font @v def font.drw(di wi hi ln rgb bmp){
   lp(hi){
     lp(wi){
       shf(bmp -1)
@@ -73,34 +87,20 @@ labels.upd()
     add(di ln)
   }
 }
-@inline def pl(di wi hi ln rgb gln){
+@font @v def font.drwall(di wi hi ln rgb gln){
   foo(bmp){
-    type_bmp(di wi hi ln rgb d)
+    font.drw(di wi hi ln rgb d)
     sub(di gln)
     inc(rgb)
   }
 }
-@inline def type(ptr di rgb wi hi ln gln){
-  var length
-  ldc(length ptr)
-  lp(length){
-    var glyph
-    var ret
-    var ch
-    ldc(ch ptr)
-    bmp.seek(ret ch)
-    ld(glyph ret)
-    type_bmp(di wi hi ln rgb glyph)
-    sub(di gln)
-  }
-}
-@inline:ptr def bmp.seek(return record){
+@font @* def bmp.seek(return record){
   var temp=bmp
   return=temp
   inc(return)
   add(return record)
 }
-@inline def print_hex(di wi hi ln gln argb in){
+@f def print_hex(di wi hi ln gln argb in){
   var msk=0xf0000
   var times=5
   lp(times){
@@ -113,11 +113,11 @@ labels.upd()
     bmp.seek(ret hex)
     var glyph
     ld(glyph ret)
-    type_bmp(di wi hi ln argb glyph)
+    font.drw(di wi hi ln argb glyph)
     sub(di gln)
   }
 }
-@inline def hex.drw(wi hi ln gln rgb){
+@f def hex.drw(wi hi ln gln rgb){
   var di=0x6050
   var h=0xb00b0
   print_hex(di wi hi ln gln rgb h)

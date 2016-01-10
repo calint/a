@@ -72,10 +72,11 @@ final public class ide extends a{
 //				if(rm.length==0)
 //					throw new Error();
 				System.arraycopy(rm,0,cor.rom,0,rm.length);
-				ec.sts.set(rm.length);
+//				ec.sts.set(rm.length);
 				st.set(rm.length);
 				cor.reset();
 //				if(bit_show_rom)
+				xj_update_focus_on_rom(x);
 				x_f(x,"");
 			}catch(Throwable t){
 				log(t);

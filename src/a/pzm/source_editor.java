@@ -66,6 +66,7 @@ final public class source_editor extends a{
 			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
 			code.binary_to(bin);
 			bin.link();
+			sts.set(bin.ix()+" "+bin.maxregalloc+"@"+bin.maxregalloc_at_statement.source_lineno());
 			final int[]new_rom=new int[bin.ix()];
 			System.arraycopy(rom,0,new_rom,0,bin.ix());
 			final int nregs_aft=bin.registers_available.size();
@@ -81,8 +82,7 @@ final public class source_editor extends a{
 			}
 			pl("*** done");
 			if(x==null) return;
-			x.xu(sts.clr(),code).flush();
-			((ide)pt()).xj_update_focus_on_rom(x);
+			x.xu(sts,code);
 			ln.xj_select_line(x,0);
 			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new_rom);
