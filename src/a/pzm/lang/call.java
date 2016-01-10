@@ -66,23 +66,20 @@ public class call extends statement{
 				.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
 		if(arguments.size()!=d.argdefs.size())throw new compiler_error(this,"function "+token+" expects "+d.argdefs.size()+" arguments, got "+arguments.size(),"");
+		x.push_func();
 		final ArrayList<String>aliases=new ArrayList<>();
 		int i=0;
 		for(expression e:arguments){
 			final def_func_arg df=d.argdefs.get(i++);
-			if(x.vspc.is_declared(df.token)){
+			if(x.vspc().is_declared(df.token)){
 				continue;
 			}
-			x.vspc.alias(e,df.token,e.token);
+			x.vspc().alias(e,df.token,e.token);
 			aliases.add(df.token);
 		}
-//		if(has_annotation("inline")){
-			d.function_code.binary_to(x);
-//		}else{
-//			x.linker_add_call(name);
-//			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
-//		}
-		aliases.forEach(s->x.vspc.unalias(this,s));
+		d.function_code.binary_to(x);
+		aliases.forEach(s->x.vspc().unalias(this,s));
+		x.pop();
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
@@ -97,7 +94,7 @@ public class call extends statement{
 	}
 
 	public static int declared_register_index_from_string(xbin bin,statement stmt,String alias){
-		final int rai=bin.vspc.get_register_index(stmt,alias);
+		final int rai=bin.vspc().get_register_index(stmt,alias);
 		return rai;
 	}
 

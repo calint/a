@@ -41,10 +41,10 @@ final public class call_foo extends statement{
 			args.addAll(arguments);
 			tbl.arguments.forEach(col->{
 				final String col_name=col.token;
-				if(x.vspc.is_declared(col_name)){
+				if(x.vspc().is_declared(col_name)){
 					throw new compiler_error(this,"var '"+col_name+"' already declared",x.register_aliases.toString());
 				}
-				x.vspc.alloc_var(col,col_name);
+				x.vspc().alloc_var(col,col_name);
 				allocated_vars.add(col_name);
 				final expression e=new expression(this,col_name);
 				args.add(e);				
@@ -57,9 +57,9 @@ final public class call_foo extends statement{
 //		pl("foo "+parent_statement.declarations.toString());
 		final expression rd=args.get(0);
 		
-		final int rai=x.vspc.alloc_var(this,"$ra");
+		final int rai=x.vspc().alloc_var(this,"$ra");
 		allocated_vars.add("$ra");
-		final int rci=x.vspc.alloc_var(this,"$rc");
+		final int rci=x.vspc().alloc_var(this,"$rc");
 		allocated_vars.add("$rc");
 		
 		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
@@ -69,12 +69,12 @@ final public class call_foo extends statement{
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
 		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14,this);//lp(c)
 		for(expression e:args.subList(1,args.size())){
-			final int regi=x.vspc.get_register_index(this,e.token);
+			final int regi=x.vspc().get_register_index(this,e.token);
 			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
 		x.write(4,this);//nxt
-		allocated_vars.forEach(e->x.vspc.free_var(this,e));
+		allocated_vars.forEach(e->x.vspc().free_var(this,e));
 //		allocated_registers.forEach(e->x.free_register(this,e));
 	}
 	

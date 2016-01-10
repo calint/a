@@ -47,14 +47,15 @@ public class block extends statement{
 //		x.p("}");
 	}
 	@Override public void binary_to(xbin x){
-		if(statements!=null)for(statement s:statements){
-			s.binary_to(x);
+		if(statements!=null){
+			for(statement s:statements){
+				s.binary_to(x);
+			}
+			if(vars!=null){
+				vars.forEach(e->x.vspc().free_var(this,e));
+				vars.clear();
+			}
 		}
-		if(vars!=null){
-			vars.forEach(e->x.vspc.free_var(this,e));
-			vars.clear();
-		}
-
 	}
 
 	private static final long serialVersionUID=1;

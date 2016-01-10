@@ -51,7 +51,7 @@ public class statement extends a{
 		}
 		// assign
 		if(r.is_next_char_assign()){// ie  tick=3
-			r.set_location_in_source();
+//			r.set_location_in_source();
 			final expression e=new expression(parent,null,r,tk,null);
 			e.is_assign=true;
 			return e;

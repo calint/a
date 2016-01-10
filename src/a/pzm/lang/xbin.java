@@ -35,22 +35,19 @@ public final class xbin{
 				throw new compiler_error(stmt,"var '"+name+"' declared at line "+e.declared_at.source_lineno(),vars.keySet().toString());
 			final allocated_var v=new allocated_var();
 			v.declared_at=stmt;
-			v.bound_to_register=xb.allocate_register(stmt);
+			v.bound_to_register=xb.alloc_register(stmt);
 			v.name=name;
-			v.register_index=xb.register_index_for_name(v.bound_to_register);
+			v.register_index=xb.get_register_index_for_name(v.bound_to_register);
 			vars.put(name,v);
-			aliases.put(name,name);
+//			aliases.put(name,name);
 			return v.register_index;
 		}
 		public int get_register_index(statement stmt,final String name){
-			String nm=name;
-			while(true){
-				final String alias=aliases.get(nm);
-				if(alias.equals(nm))
-					break;
-				nm=alias;
+			final String alias=aliases.get(name);
+			if(alias!=null){// aliased to previous varspace
+				return pt.get_register_index(stmt,alias);
 			}
-			final allocated_var v=vars.get(nm);
+			final allocated_var v=vars.get(name);
 			if(v==null)
 				throw new compiler_error(stmt,"'"+name+"' is not declared",vars.keySet().toString());
 			return v.register_index;
@@ -60,13 +57,13 @@ public final class xbin{
 			if(v==null)
 				throw new compiler_error(stmt,"var '"+name+"' is not declared",vars.keySet().toString());
 			xb.free_register(stmt,v.bound_to_register);
-			aliases.remove(v.name);
+//			aliases.remove(v.name);
 		}
 		public String toString(){
-			return nm+vars.keySet().toString()+aliases.toString();
+			return nm+aliases.toString()+vars.values().toString();
 		}
 		public boolean is_declared(String name){
-			return aliases.containsKey(name);
+			return aliases.containsKey(name)||vars.containsKey(name);
 		}
 		private LinkedHashMap<String,String>aliases=new LinkedHashMap<>();
 		public void alias(statement stmt,String alias,String var){
@@ -82,7 +79,28 @@ public final class xbin{
 			aliases.remove(alias);
 		}
 		public boolean is_aliases_empty(){return aliases.isEmpty();}
+//		public varspace push_block(){
+//			return new varspace(xb,this,"block");
+//		}
+//		public varspace push_func(){
+//			return new varspace(xb,this,"func");
+//		}
+//		public varspace pop(){
+//			return pt;
+//		}
 	}
+	public varspace push_block(){
+		return vspc=new varspace(this,vspc,"block");
+	}
+	public varspace push_func(){
+		return vspc=new varspace(this,vspc,"func");
+	}
+	public varspace pop(){
+		if(!vspc.aliases.isEmpty())throw new Error();
+		if(!vspc.vars.isEmpty())throw new Error();
+		return vspc=vspc.pt;
+	}
+	public varspace vspc(){return vspc;}
 	public int nregisters=1<<6;
 	public final LinkedList<String>registers_available=new LinkedList<>();
 	{
@@ -92,11 +110,11 @@ public final class xbin{
 			registers_available.add("r"+i);
 		}
 	}
-	public int register_index_for_name(String regnm){
+	public int get_register_index_for_name(String regnm){
 		return Integer.parseInt(regnm.substring(1));
 	}
 
-	final public varspace vspc=new varspace(this,null,"/");
+	private varspace vspc=new varspace(this,null,"/");
 	final public Map<String,statement> toc;
 	//		public xbin def_const(String name,def_const constant){
 	//			pl("constant "+name+" "+constant);
@@ -187,7 +205,7 @@ public final class xbin{
 		ix++;
 		return this;
 	}
-	public String allocate_register(statement at_statement){
+	public String alloc_register(statement at_statement){
 		if(registers_available.isEmpty())throw new compiler_error(at_statement,"out of registers","");
 		return registers_available.remove(0);
 	}
@@ -236,7 +254,7 @@ public final class xbin{
 //	public String get_register_for_alias(String token){
 //		return register_aliases.get(token);
 //	}
-	public statement statement_for_address(int addr){
+	public statement get_statement_for_address(int addr){
 		return data_to_statement[addr];
 	}
 	public String toString(){

@@ -9,7 +9,7 @@ final public class call_shf extends call{
 		super(parent,annot,"shf",r);
 	}
 	@Override public void binary_to(xbin x){
-		final int rai=x.vspc.get_register_index(this,arguments.get(0).token);
+		final int rai=x.vspc().get_register_index(this,arguments.get(0).token);
 		final expression rd=arguments.get(1);
 		final int imm6=rd.eval(x);
 		if(imm6<-32||imm6>31) throw new compiler_error(this,"shift range between -32 and 31",""+imm6);//? -8 8  shf a 0 being a>>1 

@@ -13,10 +13,10 @@ final public class call_st extends call{
 
 		final expression ra=arguments.get(0);
 		final int rai;
-		if(x.vspc.is_declared(ra.token)){//alias
-			rai=x.vspc.get_register_index(ra,ra.token);
+		if(x.vspc().is_declared(ra.token)){//alias
+			rai=x.vspc().get_register_index(ra,ra.token);
 		}else{// load
-			rai=x.vspc.alloc_var(ra,"$ra");
+			rai=x.vspc().alloc_var(ra,"$ra");
 			allocated_regs.add("$ra");
 			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
 			final int d=ra.eval(x);
@@ -25,10 +25,10 @@ final public class call_st extends call{
 		
 		final expression rd=arguments.get(1);
 		final int rdi;
-		if(x.vspc.is_declared(rd.token)){//alias
-			rdi=x.vspc.get_register_index(rd,rd.token);
+		if(x.vspc().is_declared(rd.token)){//alias
+			rdi=x.vspc().get_register_index(rd,rd.token);
 		}else{
-			rdi=x.vspc.alloc_var(ra,"$rd");
+			rdi=x.vspc().alloc_var(ra,"$rd");
 			allocated_regs.add("$rd");
 			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
 			final int d=rd.eval(x);
@@ -37,6 +37,6 @@ final public class call_st extends call{
 		final int i=0x00d8|(rai&63)<<8|(rdi&63)<<14;
 		final int zni=apply_znxr_annotations_on_instruction(i);
 		x.write(zni,this);
-		allocated_regs.forEach(s->x.vspc.free_var(this,s));
+		allocated_regs.forEach(s->x.vspc().free_var(this,s));
 	}
 }

@@ -35,7 +35,7 @@ final public class call_lp extends statement{
 	@Override public void binary_to(xbin x){
 		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		final expression rd=arguments.get(0);
-		final int rdi=x.vspc.get_register_index(rd,rd.token);
+		final int rdi=x.vspc().get_register_index(rd,rd.token);
 		final int rai=0,znxr=0;
 		final int i=op|znxr|(rai&63)<<8|(rdi&63)<<14;
 		x.write(i,this);

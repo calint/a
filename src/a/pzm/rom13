@@ -12,13 +12,13 @@ st(addr tick)
 var dii=0x6050
 var argb=0xf00
 var h=0xb00b0
-print_hex(dii wi hi ln gln argb h)
+print_hex(dii wi hi ln argb h)
 argb=0x0f0
 h=0x0baba
-print_hex(dii wi hi ln gln argb h)
+print_hex(dii wi hi ln argb h)
 
 foo(labels){
-  type(ptr dest rgb wi hi ln gln)
+  type(ptr dest rgb)
 }
 fow(labels){
   inc(rgb)
@@ -28,7 +28,7 @@ var lines=1
 var dil=0x0420
 lp(lines){
   var di=dil
-  pl(di wi hi ln argb gln)
+  pl(di wi hi ln argb)
   add(dil nl)
 }
 -1 -1
@@ -72,14 +72,14 @@ lp(lines){
     add(scr ln)
   }
 }
-@inline def pl(di wi hi ln rgb gln){
+@inline def pl(di wi hi ln rgb){
   foo(bmp){
     type_bmp(di wi hi ln rgb d)
     sub(di gln)
     inc(rgb)
   }
 }
-@inline def type(ptr file rgb wi hi ln gln){
+@inline def type(ptr file rgb){
   var length
   ldc(length ptr)
   lp(length){
@@ -99,7 +99,7 @@ lp(lines){
   inc(return)
   add(return record)
 }
-@inline def print_hex(di wi hi ln gln argb in){
+@inline def print_hex(di wi hi ln argb in){
   var msk=0xf0000
   var times=5
   lp(times){

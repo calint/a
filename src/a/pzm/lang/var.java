@@ -39,16 +39,16 @@ final public class var extends statement{
 		}
 	}
 	@Override public void binary_to(xbin x){
-		x.vspc.alloc_var(this,token);
+		x.vspc().alloc_var(this,token);
 		parent_statement().vars_add(token);
 		if(initial_value_expression!=null){
-			if(x.vspc.is_declared(initial_value_expression.token)){
-				final int rai=x.vspc.get_register_index(this,initial_value_expression.token);
-				final int rdi=x.vspc.get_register_index(this,token);
+			if(x.vspc().is_declared(initial_value_expression.token)){
+				final int rai=x.vspc().get_register_index(this,initial_value_expression.token);
+				final int rdi=x.vspc().get_register_index(this,token);
 				x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(rai rdi)
 				return;
 			}
-			final int rai=x.vspc.get_register_index(this,token);
+			final int rai=x.vspc().get_register_index(this,token);
 			x.write(0|0x0000|(rai&63)<<14,this);//li(a initial_expression)
 			x.at_pre_link_evaluate(initial_value_expression);
 			x.write(0,initial_value_expression);
