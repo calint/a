@@ -232,8 +232,10 @@ final public class ide extends a{
 		if(hasbit(bit_show_source_editor)){
 			if(ec.bin==null)return;
 			final statement stmt=ec.bin.statement_for_address(cor.program_counter);
-			final int pc=Integer.parseInt(stmt.location_in_source().split(":")[0]);
+			final int pc=stmt.source_lineno();
 			ec.ln.xj_select_line(x,pc);
+			int[]range=stmt.source_selection();
+			x.pl("{var e=$('"+ec.src.id()+"');if(e){e.selectionStart="+range[0]+";e.selectionEnd="+range[1]+"}};");
 		}
 	}
 	private long runms=1000;

@@ -103,6 +103,15 @@ public class statement extends a{
 	public String location_in_source(){
 		return source_location_start;
 	}
+	public int source_lineno(){
+		return Integer.parseInt(location_in_source().split(":")[0]);
+	}
+	public int[]source_selection(){
+		final int[]d=new int[2];
+		d[0]=Integer.parseInt(location_in_source().split(":")[2]);
+		d[1]=Integer.parseInt(location_in_source_end().split(":")[2]);
+		return d;
+	}
 	public String location_in_source_end(){
 		return source_location_end;
 	}
