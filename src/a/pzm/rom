@@ -9,21 +9,20 @@ st(addr tick)
 @const var wi=4
 @const var hi=5
 @const var nl=0x0600
-var dii=0x6050
-var argb=0xf00
-var h=0xb00b0
-print_hex(dii wi hi ln gln argb h)
-argb=0x0f0
-h=0x0baba
-print_hex(dii wi hi ln gln argb h)
-
+var argb
+{
+  var di=0x6050
+  var h=0xb00b0
+  print_hex(di wi hi ln gln argb h)
+  h=0x0baba
+  print_hex(di wi hi ln gln argb h)
+}
 foo(labels){
   type(ptr dest rgb wi hi ln gln)
 }
 fow(labels){
   inc(rgb)
 }
-
 var lines=1
 var dil=0x0420
 lp(lines){
@@ -31,6 +30,7 @@ lp(lines){
   pl(di wi hi ln argb gln)
   add(dil nl)
 }
+
 -1 -1
 @str def baba[ch]{4   0xb 0xa 0xb 0xa}
 @str def b20 [ch]{3   2 0 0xb}
@@ -61,15 +61,15 @@ lp(lines){
   0       0       0       0
 }
 -1 -1
-@inline def type_bmp(scr wi hi ln rgb bmp){
+@inline def type_bmp(di wi hi ln rgb bmp){
   lp(hi){
     lp(wi){
       shf(bmp -1)
-      @ifn stc(scr rgb)
-      @ifz inc(scr)
-      @ifp inc(scr)
+      @ifn stc(di rgb)
+      @ifz inc(di)
+      @ifp inc(di)
     }
-    add(scr ln)
+    add(di ln)
   }
 }
 @inline def pl(di wi hi ln rgb gln){
