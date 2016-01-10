@@ -105,7 +105,7 @@ final public class ide extends a{
 //					.css(ec.ln,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:inline-block")
 					.css(ec.ln,"display:inline-block")
 					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-right:1px dashed green")
-					.css(ec.ln,"li.a","background:#fcc")
+					.css(ec.ln,"li.a","background:#ff0")
 					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding-left:1em;padding-right:1em;padding-top:.5em;padding-bottom:.5em;border:1px dashed green")
 					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)");
 			switch(th.toint()){
