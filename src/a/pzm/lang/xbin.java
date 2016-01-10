@@ -151,4 +151,7 @@ public final class xbin{
 	public String get_register_for_alias(String token){
 		return register_aliases.get(token);
 	}
+	public statement statement_for_address(int addr){
+		return data_to_statement[addr];
+	}
 }

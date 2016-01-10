@@ -18,6 +18,7 @@ import a.pzm.lang.call_shf;
 import a.pzm.lang.call_stc;
 import a.pzm.lang.call_sub;
 import a.pzm.lang.call_tx;
+import a.pzm.lang.statement;
 import b.a;
 import b.xwriter;
 final public class ide extends a{
@@ -228,6 +229,12 @@ final public class ide extends a{
 	}
 	void xj_update_focus_on_rom(xwriter x){
 		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
+		if(hasbit(bit_show_source_editor)){
+			if(ec.bin==null)return;
+			final statement stmt=ec.bin.statement_for_address(cor.program_counter);
+			final int pc=Integer.parseInt(stmt.location_in_source().split(":")[0]);
+			ec.ln.xj_select_line(x,pc);
+		}
 	}
 	private long runms=1000;
 	synchronized public void x_b(final xwriter x,final String s) throws Throwable{

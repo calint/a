@@ -39,6 +39,7 @@ final public class source_editor extends a{
 //		if(code!=null)
 //				code.to(x);
 	}
+	xbin bin;
 	synchronized public void x_f3(xwriter x,String s) throws Throwable{
 		final String source=src.str();
 		final reader r=new reader(new StringReader(source));
@@ -60,17 +61,17 @@ final public class source_editor extends a{
 			}
 			final prog p=new prog(r.toc,code);
 			final int[]rom=new int[1024*1024];//?
-			final xbin b=new xbin(p.toc,rom);//? intbuffer.get() put()   pages then create_int_array()
-			final int nregs_pre=b.registers_available.size();
-			pl("registers available "+b.registers_available.size()+" "+b.registers_available);
-			code.binary_to(b);
-			b.link();
-			final int[]new_rom=new int[b.ix()];
-			System.arraycopy(rom,0,new_rom,0,b.ix());
-			final int nregs_aft=b.registers_available.size();
+			bin=new xbin(p.toc,rom);//? intbuffer.get() put()   pages then create_int_array()
+			final int nregs_pre=bin.registers_available.size();
+			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
+			code.binary_to(bin);
+			bin.link();
+			final int[]new_rom=new int[bin.ix()];
+			System.arraycopy(rom,0,new_rom,0,bin.ix());
+			final int nregs_aft=bin.registers_available.size();
 			if(nregs_pre!=nregs_aft)
-				throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+b.registers_available);
-			pl("registers available "+b.registers_available.size()+" "+b.registers_available);
+				throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+bin.registers_available);
+			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
 //			pl("*** toc");
 //			p.toc.entrySet().forEach(me->{
 //				pl(me.getKey());
