@@ -109,7 +109,7 @@ public final class xbin{
 //		pl(ix+" allocate register "+name);
 //	}
 	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
-	public boolean is_register_alias_exists(final String alias){return register_aliases.containsKey(alias);}
+	public boolean is_alias_declared(final String alias){return register_aliases.containsKey(alias);}
 	public void alias_register(String token,String reg){
 		if(register_aliases.containsKey(token))throw new Error("alias "+token+" is "+register_aliases);
 		register_aliases.put(token,reg);

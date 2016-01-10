@@ -1,6 +1,9 @@
 @o{
 var tick
 inc(tick)
+var argb
+inc(argb)
+
 st(0x2010 tick)
 
 var ln=252
@@ -10,25 +13,24 @@ var hi=5
 var nl=0x0600
 
 foo(labels){
-  type(ptr dest c)
+  type(ptr dest rgb)
 }
 fow(labels){
-  inc(c)
+  inc(rgb)
 }
 
 var lines=1
 var dil=0x0420
-var rgb=0xf00
 lp(lines){
   var di=dil
-  pl(di wi hi ln rgb)
+  pl(di wi hi ln argb)
   add(dil nl)
 }
 -1 -1
 @str def baba[ch]{4   0xb 0xa 0xb 0xa}
 @str def b20 [ch]{3   2 0 0xb}
 @table def labels
-[  ptr   dest     c   ]{2
+[  ptr   dest    rgb   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
 }
@@ -54,33 +56,6 @@ lp(lines){
   0       0       0       0
 }
 -1 -1
-@proc def type(ptr file colr){
-  var length
-  ldc(length ptr)
-  lp(length){
-    var glyph
-    var ret
-    var ch
-    ldc(ch ptr)
-    bmp.seek(ret ch)
-    ld(glyph ret)
-    type_bmp(file wi hi ln colr glyph)
-    sub(file gln)
-  }
-}
-@ptr def bmp.seek(return record){
-  var temp=bmp
-  return=temp
-  inc(return)
-  add(return record)
-}
-@proc def pl(di wi hi ln rgb){
-  foo(bmp){
-    type_bmp(di wi hi ln rgb d)
-    sub(di gln)
-    inc(rgb)
-  }
-}
 @proc def type_bmp(scr wi hi ln rgb bmp){
   lp(hi){
     lp(wi){
@@ -91,6 +66,33 @@ lp(lines){
     }
     add(scr ln)
   }
+}
+@proc def pl(di wi hi ln rgb){
+  foo(bmp){
+    type_bmp(di wi hi ln rgb d)
+    sub(di gln)
+    inc(rgb)
+  }
+}
+@proc def type(ptr file rgb){
+  var length
+  ldc(length ptr)
+  lp(length){
+    var glyph
+    var ret
+    var ch
+    ldc(ch ptr)
+    bmp.seek(ret ch)
+    ld(glyph ret)
+    type_bmp(file wi hi ln rgb glyph)
+    sub(file gln)
+  }
+}
+@ptr def bmp.seek(return record){
+  var temp=bmp
+  return=temp
+  inc(return)
+  add(return record)
 }
 @color def yello 0xff0
 }

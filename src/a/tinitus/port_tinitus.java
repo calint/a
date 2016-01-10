@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import b.threadedsock;
 import b.websock;
 
-public class porta extends websock implements threadedsock, Runnable{
+public class port_tinitus extends websock implements threadedsock, Runnable{
 	public long sleep_time_in_ms=250;
 	public boolean running=true;
 	@Override

@@ -39,14 +39,16 @@ final public class var extends statement{
 		}
 	}
 	@Override public void binary_to(xbin x){
-		if(x.is_register_alias_exists(var_name)){
-			throw new compiler_error(this,"var '"+var_name+"' already used",x.register_aliases.keySet().toString());
+		if(x.is_alias_declared(var_name)){
+			throw new compiler_error(this,"var '"+var_name+"' already used",x.register_aliases.toString());
 		}
-		final String reg=x.allocate_register(this);
-		x.alias_register(var_name,reg);
-		parent_statement().vars_add(var_name);
+//		if(!x.is_register_alias_exists(var_name)){
+			final String reg=x.allocate_register(this);
+			x.alias_register(var_name,reg);
+			parent_statement().vars_add(var_name);
+//		}
 		if(initial_value_expression!=null){
-			if(x.is_register_alias_exists(initial_value_expression.token)){
+			if(x.is_alias_declared(initial_value_expression.token)){
 				final int rai=x.register_index_for_alias(this,initial_value_expression.token);
 				final int rdi=x.register_index_for_alias(this,var_name);
 				x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(rai rdi)

@@ -17,7 +17,7 @@ final public class call_stc extends call{
 //		}
 		final ArrayList<String>allocated_reg=new ArrayList<>();
 		final int rdi;
-		if(!x.is_register_alias_exists(erd.token)){
+		if(!x.is_alias_declared(erd.token)){
 			final String tempregstr=x.allocate_register(this);
 			x.alias_register(tempregstr,tempregstr);
 			allocated_reg.add(tempregstr);

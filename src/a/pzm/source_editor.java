@@ -59,8 +59,8 @@ final public class source_editor extends a{
 				}
 			}
 			final prog p=new prog(r.toc,code);
-			final int[]rom=new int[1024*1024];
-			final xbin b=new xbin(p.toc,rom);
+			final int[]rom=new int[1024*1024];//?
+			final xbin b=new xbin(p.toc,rom);//? intbuffer.get() put()   pages then create_int_array()
 			final int nregs_pre=b.registers_available.size();
 			pl("registers available "+b.registers_available.size()+" "+b.registers_available);
 			code.binary_to(b);
@@ -99,7 +99,7 @@ final public class source_editor extends a{
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;
-			x.xu(sts.set("line "+r.location_in_source()+": "+t.getMessage()));
+			x.xu(sts.set("line "+r.location_in_source()+": "+b.b.stacktrace(t)));//?
 			//			x.xalert(t.getMessage());
 		}
 	}

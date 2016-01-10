@@ -9,7 +9,7 @@ import b.xwriter;
 public class toc extends a{
 	private statement stmt;public void set_statement(statement s){this.stmt=s;}
 	private String textareaid;public void set_textareaid(String s){this.textareaid=s;}
-	public a filter;
+	public a filter;{filter.set(".");}
 	public void to(xwriter x) throws Throwable{
 		x.el(this);
 		if(stmt==null){

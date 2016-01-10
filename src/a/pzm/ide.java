@@ -283,6 +283,7 @@ final public class ide extends a{
 		xj_update_focus_on_rom(x);
 		x.xu(st,sy,re,ca,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
+//		if(hasbit(bit_tinitus))ti.xupd(x);
 	}
 	private void step_frame() {
 		final long t0=System.nanoTime();
@@ -291,6 +292,8 @@ final public class ide extends a{
 			boolean loop=true;
 			while(true){
 				cor.step();
+				
+				// if(tinitus)tinitus.recv(cor.instruction,cor.program_counter)
 				if(loop==false)break;
 				if(cor.meter_instructions>1024*1024)loop=false;
 				if(cor.is_instruction_eof())loop=false;
@@ -365,7 +368,6 @@ final public class ide extends a{
 		x.pl(":  not : "+fld("d000",Integer.toHexString(call_not.op))+" : r[d]=~r[d]           :");
 		x.pl(":  and : "+fld("da00",Integer.toHexString(call_and.op))+" : r[a]&=r[d]           :");
 		x.pl(":  inc : "+fld("d000",Integer.toHexString(call_inc.op))+" : r[d]++               :");
-//		x.pl(":  dec : "+fld("x000",Integer.toHexString(0xa8))+" : --r[x]               :");
 		x.pl(":  neg : "+fld("d000",Integer.toHexString(call_neg.op))+" : r[d]=-r[d]           :");
 		x.pl(":  add : "+fld("da00",Integer.toHexString(call_add.op))+" : r[a]+=r[d]           :");
 		x.pl(": addi : "+fld("ia00",Integer.toHexString(call_addi.op))+" : r[a]+=imm6           :");

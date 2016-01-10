@@ -41,7 +41,7 @@ public class expression extends statement{
 //		destreg=dest_reg;
 	}
 	@Override public void binary_to(xbin x){
-		if(x.is_register_alias_exists(token)){// tx
+		if(x.is_alias_declared(token)){// tx
 			final int rai=x.register_index_for_alias(this,token);
 			final int rdi=x.register_index_for_alias(this,destreg);
 			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(b a)

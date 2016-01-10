@@ -40,17 +40,19 @@ final public class call_foo extends statement{
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
-			for(def_table_col col:tbl.arguments){
-				if(x.is_register_alias_exists(col.token)){
-					throw new compiler_error(this,"var '"+col.token+"' already exists",x.register_aliases.toString());
+			tbl.arguments.forEach(col->{
+				final String col_name=col.token;
+				if(x.is_alias_declared(col_name)){
+					throw new compiler_error(this,"var '"+col_name+"' already declared",x.register_aliases.toString());
 				}
+//				x.alloc_alias(this,col.token);
 				final String reg=x.allocate_register(this);
 				allocated_registers.add(reg);
-				x.alias_register(col.token,reg);
-				aliases.add(col.token);
-				final expression e=new expression(this,col.token);
-				args.add(e);
-			}
+				x.alias_register(col_name,reg);
+				aliases.add(col_name);
+				final expression e=new expression(this,col_name);
+				args.add(e);				
+			});
 		}else{
 			args=arguments;
 			if(args.size()-1!=tbl.arguments.size()) throw new Error("argument count does not match table: "+table_name);

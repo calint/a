@@ -11,7 +11,7 @@ function start(){
 	console.log("start")
 	ison=true;
 	$.sts.value="on";
-	ws=new WebSocket("ws://"+location.host+"/tinitus.porta");
+	ws=new WebSocket("ws://"+location.host+"/tinitus.port_tinitus");
 	ws.binaryType="arraybuffer";
 
 	var audio_context=null;

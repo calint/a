@@ -65,6 +65,8 @@ final public class core implements Serializable{
 		in>>=2;// xr ci.. rraaii rrddii
 		final int xr=in&0x3;
 		final boolean invalid_opcode=(in&6)==6;
+		final boolean invalid_opcode2=(in&7)==7;//? 8 free instr(ra rd) without piggy back return
+		if(invalid_opcode2)System.out.println("invalid opcode "+Integer.toHexString(instruction));
 		if(!invalid_opcode&&(in&4)==4){//call
 			final int imm16=in>>4;// .. ...... ......  (imm14)
 			final int znx=flags|((xr&1)<<2);// nxt after ret
@@ -140,7 +142,7 @@ final public class core implements Serializable{
 							throw new Error(t);
 						}
 					}
-					else throw new Error("unimplemented op 0x500 to 0x3f00");
+					else throw new Error("unimplemented op 0x0500 to 0x3f00");
 				}else{
 					if(isret||isnxt){
 						if(!program_counter_has_been_set){
@@ -175,7 +177,7 @@ final public class core implements Serializable{
 					evaluate_zn_flags(r);
 				}
 			}else if(op==4){//0x80 skp
-				if(imm12==0){// free   skp(0)
+				if(imm12==0){// free   skp(0)   //? end of frame signal
 					throw new Error("skp(0) not encoded");
 				}
 				if(program_counter_has_been_set)throw new Error("unimplemented");
@@ -200,7 +202,7 @@ final public class core implements Serializable{
 				registers[rdi]=a;
 			}
 		}else{// cr ops
-			if(op==0){//0x18 addi
+			if(op==0){//0x18 addi   0x0.18 free bcz addi(d 0)
 				final int a=registers[rai];
 				final int d=rdi>31?rdi-64:rdi;//? magicnum
 				final int r=a+d;

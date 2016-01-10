@@ -2,6 +2,7 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 import b.xwriter;
 
@@ -58,7 +59,12 @@ public class call extends statement{
 	}
 	@Override public void binary_to(xbin x){
 		final def_func d=(def_func)x.toc.get("func "+name);
-		if(d==null)throw new compiler_error(this,"function not found",name);
+		final String funcs=x.toc.keySet().stream()
+				.filter(s->s.startsWith("func "))
+				.map(s->s.subSequence(0,"func ".length()))
+				.collect(Collectors.toList())
+				.toString();
+		if(d==null)throw new compiler_error(this,"function '"+name+"' not found",funcs);
 		if(arguments.size()!=d.arguments.size())
 			throw new compiler_error(this,"function "+name+" expects "+d.arguments.size()+" arguments, got "+arguments.size(),"");
 		int i=0;

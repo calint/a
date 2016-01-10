@@ -56,6 +56,13 @@ ui.onkey=function(ev){
 }
 ui._onreadystatechange=function(){
 //	$d(" * stage "+this.readyState);
+	var elsts=$('-ajaxsts');
+	if(elsts){{var e=elsts;
+		if(e._oldbg!=null){
+			e.style.background=e._oldbg;
+			delete e._oldbg;
+		}
+	}}
 	switch(this.readyState){
 	case 1:// Open
 		if(this._hasopened)break;this._hasopened=true;//? firefox quirkfix1
@@ -134,7 +141,13 @@ $x=function(pb){
 	if(!ui.req){
 		ui.req=new XMLHttpRequest();
 		ui.req.onreadystatechange=ui._onreadystatechange;
-		ui.req.onerror=function(){$s('-ajaxsts','connection to server lost. try reload or wait and re-try.');}
+		ui.req.onerror=function(){
+			var e=$('-ajaxsts');
+			if(!e)return;
+			e._oldbg=e.style.background;
+			e.style.background='#f00';
+			$s('-ajaxsts','connection to server lost. try reload or wait and re-try.');
+		}
 		$s('-ajaxsts'," * new connection");
 	}else{
 		$s('-ajaxsts'," * reusing connection");

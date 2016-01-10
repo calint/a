@@ -13,7 +13,7 @@ final public class call_st extends call{
 		final expression arg2=arguments.get(1);
 		final int rai;
 		final ArrayList<String>allocated_reg=new ArrayList<>();
-		if(x.is_register_alias_exists(arg1.token)){
+		if(x.is_alias_declared(arg1.token)){
 			rai=declared_register_index_from_string(x,this,arguments.get(0).token);
 		}else{
 			final String tempregstr=x.allocate_register(this);
@@ -25,7 +25,7 @@ final public class call_st extends call{
 			x.write(d);
 		}
 		final int rdi;
-		if(x.is_register_alias_exists(arg2.token)){
+		if(x.is_alias_declared(arg2.token)){
 			rdi=declared_register_index_from_string(x,this,arguments.get(1).token);
 		}else{
 			final String reg=x.allocate_register(this);
