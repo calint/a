@@ -10,7 +10,6 @@ final public class call_st extends call{
 	}
 	@Override public void binary_to(xbin x){
 		final ArrayList<String>allocated_regs=new ArrayList<>();
-
 		final expression ra=arguments.get(0);
 		final int rai;
 		if(x.vspc().is_declared(ra.token)){//alias
@@ -19,10 +18,11 @@ final public class call_st extends call{
 			rai=x.vspc().alloc_var(ra,"$ra");
 			allocated_regs.add("$ra");
 			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
-			final int d=ra.eval(x);
-			x.write(d,ra);
+			x.at_pre_link_evaluate(ra);
+			x.write(0,ra);
 		}
-		
+
+
 		final expression rd=arguments.get(1);
 		final int rdi;
 		if(x.vspc().is_declared(rd.token)){//alias
@@ -30,7 +30,7 @@ final public class call_st extends call{
 		}else{
 			rdi=x.vspc().alloc_var(ra,"$rd");
 			allocated_regs.add("$rd");
-			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
+			x.write(0|0x00000|(rdi&63)<<14,this);//li(rai imm20)
 			final int d=rd.eval(x);
 			x.write(d,rd);
 		}

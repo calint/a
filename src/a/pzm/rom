@@ -1,10 +1,7 @@
 @o{
 var tick
-store(0x2010 0xff0)
+st(0x2010 0xff0)
 inc(tick)
-@inline def store(addr data){
-  st(addr data)
-}
 @const var ln=252
 @const var gln=0x4fb
 @const var wi=4
