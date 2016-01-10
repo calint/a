@@ -155,6 +155,10 @@ final public class ide extends a{
 			x.nl();
 			x.p("theme: ").inptxt(th,this,"m","nbr").p("  display-bits:").inptxt(bi,this,"m","nbr").div_();
 		}
+		x.focus(ec.src);
+//		x.script();
+//		ec.x_f3(x,"");
+//		x.script_();
 //		x.divh(ec.src,null,"text-align:left");
 	}
 	public boolean hasbit(final int bit){
@@ -168,7 +172,6 @@ final public class ide extends a{
 	}
 	/** reset */
 	public void x_r(xwriter x,String s) throws Throwable{
-		pl("x_r");
 		going=false;
 		cor.reset();
 		cor.meter_frames=cor.meter_instructions=0;
@@ -200,11 +203,8 @@ final public class ide extends a{
 	/** go */
 	synchronized public void x_g(final xwriter x,final String s) throws Throwable{
 		final long sleep_ms=50;
-		pl("x_n");
-		int i=0;
 		going=true;
 		while(going){
-			pl("x_g "+i++);
 			x_s(x,null);
 			x.flush();
 			if(sleep_ms>0)
@@ -214,7 +214,6 @@ final public class ide extends a{
 	/** execute, update screen */
 	synchronized public void x_e(final xwriter x,final String s)throws Throwable{
 		final long sleep_ms=100;
-		pl("x_e");
 		going=true;
 		while(going){
 			step_frame();

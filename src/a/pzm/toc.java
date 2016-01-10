@@ -1,6 +1,4 @@
 package a.pzm;
-import static b.b.isempty;
-
 import java.util.LinkedList;
 import java.util.List;
 

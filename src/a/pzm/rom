@@ -1,9 +1,6 @@
 @o{
 var tick
 inc(tick)
-var argb
-inc(argb)
-
 st(0x2010 tick)
 
 @const var ln=252
@@ -11,6 +8,11 @@ st(0x2010 tick)
 @const var wi=4
 @const var hi=5
 @const var nl=0x0600
+var dii=0x6050
+var argb=0xf00
+print_hex(dii wi hi ln argb 0xb00b0)
+argb=0x0f0
+print_hex(dii wi hi ln argb 0x0baba)
 
 foo(labels){
   type(ptr dest rgb)
@@ -56,7 +58,7 @@ lp(lines){
   0       0       0       0
 }
 -1 -1
-@proc def type_bmp(scr wi hi ln rgb bmp){
+@inline def type_bmp(scr wi hi ln rgb bmp){
   lp(hi){
     lp(wi){
       shf(bmp -1)
@@ -67,14 +69,14 @@ lp(lines){
     add(scr ln)
   }
 }
-@proc def pl(di wi hi ln rgb){
+@inline def pl(di wi hi ln rgb){
   foo(bmp){
     type_bmp(di wi hi ln rgb d)
     sub(di gln)
     inc(rgb)
   }
 }
-@proc def type(ptr file rgb){
+@inline def type(ptr file rgb){
   var length
   ldc(length ptr)
   lp(length){
@@ -88,11 +90,28 @@ lp(lines){
     sub(file gln)
   }
 }
-@ptr def bmp.seek(return record){
+@inline:ptr def bmp.seek(return record){
   var temp=bmp
   return=temp
   inc(return)
   add(return record)
+}
+@inline def print_hex(di wi hi ln argb in){
+  var msk=0xf0000
+  var times=5
+  lp(times){
+    var hex=in
+    and(hex msk)
+    shf(hex 16)
+    shf(in -4)
+
+    var ret
+    bmp.seek(ret hex)
+    var glyph
+    ld(glyph ret)
+    type_bmp(di wi hi ln argb glyph)
+    sub(di gln)
+  }
 }
 @color def yello 0xff0
 }
