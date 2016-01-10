@@ -9,36 +9,34 @@ final public class call_st extends call{
 		super(parent,annot,"st",r);
 	}
 	@Override public void binary_to(xbin x){
-		final expression arg1=arguments.get(0);
-		final expression arg2=arguments.get(1);
+		final ArrayList<String>allocated_regs=new ArrayList<>();
+
+		final expression ra=arguments.get(0);
 		final int rai;
-		final ArrayList<String>allocated_reg=new ArrayList<>();
-		if(x.is_alias_declared(arg1.token)){
-			rai=declared_register_index_from_string(x,this,arguments.get(0).token);
-		}else{
-			final String tempregstr=x.allocate_register(this);
-			x.alias_register(tempregstr,tempregstr);
-			allocated_reg.add(tempregstr);
-			rai=x.register_index_for_alias(this,tempregstr);
-			x.write(0|0x0000|(rai&63)<<14,this);//li(rai imm20)
-			final int d=arg1.eval(x);
-			x.write(d,arg1);
+		if(x.vspc.is_declared(ra.token)){//alias
+			rai=x.vspc.get_register_index(ra,ra.token);
+		}else{// load
+			rai=x.vspc.alloc_var(ra,"$ra");
+			allocated_regs.add("$ra");
+			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
+			final int d=ra.eval(x);
+			x.write(d,ra);
 		}
+		
+		final expression rd=arguments.get(1);
 		final int rdi;
-		if(x.is_alias_declared(arg2.token)){
-			rdi=declared_register_index_from_string(x,this,arguments.get(1).token);
+		if(x.vspc.is_declared(rd.token)){//alias
+			rdi=x.vspc.get_register_index(rd,rd.token);
 		}else{
-			final String reg=x.allocate_register(this);
-			x.alias_register(reg,reg);
-			allocated_reg.add(reg);
-			rdi=x.register_index_for_alias(this,reg);
-			x.write(0|0x0000|(rdi&63)<<14,this);//li(rai imm20)
-			final int d=arg2.eval(x);
-			x.write(d,arg2);
+			rdi=x.vspc.alloc_var(ra,"$rd");
+			allocated_regs.add("$rd");
+			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
+			final int d=rd.eval(x);
+			x.write(d,rd);
 		}
 		final int i=0x00d8|(rai&63)<<8|(rdi&63)<<14;
 		final int zni=apply_znxr_annotations_on_instruction(i);
 		x.write(zni,this);
-		allocated_reg.forEach(e->x.unalloc(this,e));
+		allocated_regs.forEach(s->x.vspc.free_var(this,s));
 	}
 }

@@ -51,7 +51,7 @@ public class block extends statement{
 			s.binary_to(x);
 		}
 		if(vars!=null){
-			vars.forEach(e->x.unalloc(this,e));
+			vars.forEach(e->x.vspc.free_var(this,e));
 			vars.clear();
 		}
 

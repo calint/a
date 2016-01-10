@@ -40,9 +40,7 @@ final public class call_fow extends statement{
 			final def_table stc=(def_table)x.toc.get("table "+struct_name);
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
 			for(def_table_col col:stc.arguments){
-				final String reg=x.allocate_register(this);
-				allocated_registers.add(reg);
-				x.alias_register(col.token,reg);
+				x.vspc.alloc_var(col,col.token);
 				aliases.add(col.token);
 				final expression e=new expression(this,col.token);
 				args.add(e);
@@ -54,12 +52,12 @@ final public class call_fow extends statement{
 //		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
 		final String ra=x.allocate_register(this);
 		allocated_registers.add(ra);
-		final int rai=register_index(ra);
+		final int rai=get_register_index_for_name(ra);
 		final String rb=x.allocate_register(this);
 		allocated_registers.add(rb);
-		final int rbi=register_index(rb);
+		final int rbi=get_register_index_for_name(rb);
 		final String rc=x.allocate_register(this);
-		final int rci=register_index(rc);
+		final int rci=get_register_index_for_name(rc);
 		allocated_registers.add(rc);
 		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 		x.linker_add_li(arguments.get(0).token);
@@ -69,25 +67,25 @@ final public class call_fow extends statement{
 		x.write(0|0x00e0|(rai&63)<<8|(rbi&63)<<14,this);//tx(b a)
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
-			final int regi=x.register_index_for_alias(this,reg);//reg.charAt(0)-'a';
+			final int regi=x.vspc.get_register_index(this,reg);//reg.charAt(0)-'a';
 			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
 		x.write(0|0x00e0|(rbi&63)<<8|(rai&63)<<14,this);//tx(a b)
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
-			final int regi=x.register_index_for_alias(this,reg);//reg.charAt(0)-'a';
+			final int regi=x.vspc.get_register_index(this,reg);//reg.charAt(0)-'a';
 //			final int regi=reg.charAt(0)-'a';
 			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14,this);//stc(a reg)
 		}
-		aliases.forEach(e->x.unalias_register(this,e));
-		allocated_registers.forEach(e->x.free_register(e));
+		aliases.forEach(e->x.vspc.free_var(this,e));
+		allocated_registers.forEach(e->x.free_register(this,e));
 		x.write(4,this);//nxt
 	}
 	
 	
 	//??
-	private int register_index(String reg_a){
+	private int get_register_index_for_name(String reg_a){
 		return reg_a.charAt(0)-'a';
 	}
 

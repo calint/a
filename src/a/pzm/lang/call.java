@@ -65,34 +65,16 @@ public class call extends statement{
 				.collect(Collectors.toList())
 				.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
-		if(arguments.size()!=d.arguments.size())
-			throw new compiler_error(this,"function "+token+" expects "+d.arguments.size()+" arguments, got "+arguments.size(),"");
-		int i=0;
-		final ArrayList<String>allocated_registers=new ArrayList<>();
+		if(arguments.size()!=d.argdefs.size())throw new compiler_error(this,"function "+token+" expects "+d.argdefs.size()+" arguments, got "+arguments.size(),"");
 		final ArrayList<String>aliases=new ArrayList<>();
+		int i=0;
 		for(expression e:arguments){
-			final def_func_arg argument_spec=d.arguments.get(i);
-			i++;
-			if(argument_spec.token.equals(e.token)) 
-				continue;
-			final String r=x.get_register_for_alias(e.token);
-			if(r!=null){
-				if(x.get_register_for_alias(argument_spec.token)==null)
-					x.alias_register(argument_spec.token,r);
-				aliases.add(argument_spec.token);
+			final def_func_arg df=d.argdefs.get(i++);
+			if(x.vspc.is_declared(df.token)){
 				continue;
 			}
-			// alias if alias
-			
-			final String rd=x.allocate_register(this);
-			allocated_registers.add(rd);
-			x.alias_register(argument_spec.token,rd);
-			aliases.add(argument_spec.token);
-			final int rdi=x.register_index_for_alias(this,argument_spec.token);
-//			final int rdi=a.token.charAt(0)-'a';
-			final int in=0x0000|(rdi&63)<<14;
-			x.write(in,this);
-			x.write(e.eval(x),e);
+			x.vspc.alias(e,df.token,e.token);
+			aliases.add(df.token);
 		}
 //		if(has_annotation("inline")){
 			d.function_code.binary_to(x);
@@ -100,8 +82,7 @@ public class call extends statement{
 //			x.linker_add_call(name);
 //			x.write(apply_znxr_annotations_on_instruction(0x0010));//call
 //		}
-		allocated_registers.forEach(e->x.free_register(e));
-		aliases.forEach(e->x.unalias_register(this,e));
+		aliases.forEach(s->x.vspc.unalias(this,s));
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
@@ -116,7 +97,7 @@ public class call extends statement{
 	}
 
 	public static int declared_register_index_from_string(xbin bin,statement stmt,String alias){
-		final int rai=bin.register_index_for_alias(stmt,alias);
+		final int rai=bin.vspc.get_register_index(stmt,alias);
 		return rai;
 	}
 

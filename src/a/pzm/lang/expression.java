@@ -41,14 +41,14 @@ public class expression extends statement{
 //		destreg=dest_reg;
 	}
 	@Override public void binary_to(xbin x){
-		if(x.is_alias_declared(token)){// tx
-			final int rai=x.register_index_for_alias(this,token);
-			final int rdi=x.register_index_for_alias(this,destreg);
+		if(x.vspc.is_declared(token)){// tx
+			final int rai=x.vspc.get_register_index(this,token);
+			final int rdi=x.vspc.get_register_index(this,destreg);
 			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(b a)
 			return;
 		}
 		if(destreg!=null){// li
-			final int rai=x.register_index_for_alias(this,destreg);
+			final int rai=x.vspc.get_register_index(this,destreg);
 			x.write(0|0x0000|(rai&63)<<14,this);//li(rai ____)
 		}
 		x.at_pre_link_evaluate(this);

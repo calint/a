@@ -32,28 +32,20 @@ final public class call_foo extends statement{
 	@Override public void binary_to(xbin x){
 		final String table_name=arguments.get(0).token;
 		final def_table tbl=(def_table)x.toc.get("table "+table_name);
-		String ref_to_register=null;
-		if(tbl==null){
-			ref_to_register=x.register_for_alias(table_name);
-			if(ref_to_register==null)
-				throw new compiler_error(this,"table not found",table_name);
-		}
+		if(tbl==null)throw new compiler_error(this,"table not found",table_name);
 		final ArrayList<expression>args;
-		final ArrayList<String>allocated_registers=new ArrayList<>();
-		final ArrayList<String>aliases=new ArrayList<>();
+//		final ArrayList<String>allocated_registers=new ArrayList<>();
+		final ArrayList<String>allocated_vars=new ArrayList<>();
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
 			tbl.arguments.forEach(col->{
 				final String col_name=col.token;
-				if(x.is_alias_declared(col_name)){
+				if(x.vspc.is_declared(col_name)){
 					throw new compiler_error(this,"var '"+col_name+"' already declared",x.register_aliases.toString());
 				}
-//				x.alloc_alias(this,col.token);
-				final String reg=x.allocate_register(this);
-				allocated_registers.add(reg);
-				x.alias_register(col_name,reg);
-				aliases.add(col_name);
+				x.vspc.alloc_var(col,col_name);
+				allocated_vars.add(col_name);
 				final expression e=new expression(this,col_name);
 				args.add(e);				
 			});
@@ -64,36 +56,31 @@ final public class call_foo extends statement{
 //		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
 //		pl("foo "+parent_statement.declarations.toString());
 		final expression rd=args.get(0);
-		final String ra=x.allocate_register(this);
-		allocated_registers.add(ra);
-		final int rai=register_index(ra);
-		final String rc=x.allocate_register(this);
-		final int rci=register_index(rc);
-		allocated_registers.add(rc);
-		if(ref_to_register==null){
-			x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
-			x.linker_add_li(rd.token);
-			x.write(0,this);
-		}else{
-			final int rdi=x.register_index_for_alias(this,ref_to_register);
-			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(a )			
-		}
+		
+		final int rai=x.vspc.alloc_var(this,"$ra");
+		allocated_vars.add("$ra");
+		final int rci=x.vspc.alloc_var(this,"$rc");
+		allocated_vars.add("$rc");
+		
+		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
+		x.linker_add_li(rd.token);
+		x.write(0,this);
 		
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
 		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14,this);//lp(c)
 		for(expression e:args.subList(1,args.size())){
-			final int regi=x.register_index_for_alias(this,e.token);
+			final int regi=x.vspc.get_register_index(this,e.token);
 			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
 		x.write(4,this);//nxt
-		aliases.forEach(e->x.unalias_register(this,e));
-		allocated_registers.forEach(e->x.free_register(e));
+		allocated_vars.forEach(e->x.vspc.free_var(this,e));
+//		allocated_registers.forEach(e->x.free_register(this,e));
 	}
 	
-	private int register_index(String reg_a){
-		return reg_a.charAt(0)-'a';
-	}
+//	private int register_index(String reg_a){
+//		return reg_a.charAt(0)-'a';
+//	}
 	@Override public void source_to(xwriter x){
 		x.p("foo");
 		super.source_to(x);

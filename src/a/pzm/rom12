@@ -1,21 +1,31 @@
 @o{
 var tick
 inc(tick)
-var addr=0x2010
-st(addr tick)
+st(0x2010 tick)
 
 @const var ln=252
 @const var gln=0x4fb
 @const var wi=4
 @const var hi=5
 @const var nl=0x0600
-var dii=0x6050
-var argb=0xf00
-var h=0xb00b0
-print_hex(dii wi hi ln argb h)
-argb=0x0f0
-h=0x0baba
-print_hex(dii wi hi ln argb h)
+var rgb
+inc(rgb)
+
+{
+  var lines=20
+  var dil=0x0420
+  lp(lines){
+    var di=dil
+    pl(di wi hi ln rgb)
+    add(dil nl)
+  }
+}
+
+{
+  var dii=0x6a50
+  print_hex(dii wi hi ln rgb 0xb00b0)
+  print_hex(dii wi hi ln rgb 0x0baba)
+}
 
 foo(labels){
   type(ptr dest rgb)
@@ -24,13 +34,7 @@ fow(labels){
   inc(rgb)
 }
 
-var lines=1
-var dil=0x0420
-lp(lines){
-  var di=dil
-  pl(di wi hi ln argb)
-  add(dil nl)
-}
+
 -1 -1
 @str def baba[ch]{4   0xb 0xa 0xb 0xa}
 @str def b20 [ch]{3   2 0 0xb}
@@ -99,7 +103,7 @@ lp(lines){
   inc(return)
   add(return record)
 }
-@inline def print_hex(di wi hi ln argb in){
+@inline def print_hex(di wi hi ln rgb in){
   var msk=0xf0000
   var times=5
   lp(times){
@@ -112,7 +116,7 @@ lp(lines){
     bmp.seek(ret hex)
     var glyph
     ld(glyph ret)
-    type_bmp(di wi hi ln argb glyph)
+    type_bmp(di wi hi ln rgb glyph)
     sub(di gln)
   }
 }
