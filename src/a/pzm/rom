@@ -7,30 +7,12 @@ inc(tick)
 @const var wi=4
 @const var hi=5
 @const var nl=0x0600
-var argb
-{
-  var di=0x6050
-  var h=0xb00b0
-  print_hex(di wi hi ln gln argb h)
-  h=0x0baba
-  print_hex(di wi hi ln gln argb h)
-}
-foo(labels){
-  type(ptr dest rgb wi hi ln gln)
-}
-fow(labels){
-  inc(rgb)
-}
-{
-  var lines=1
-  var dil=0x0420
-  lp(lines){
-    var di=dil
-    pl(di wi hi ln argb gln)
-    add(dil nl)
-  }
-}
-
+var rgb
+inc(rgb)
+hex.drw(wi hi ln gln rgb)
+labels.drw(wi hi ln gln)
+bmp.drw(wi hi ln gln rgb)
+labels.upd()
 -1 -1
 @str def baba[ch]{4   0xb 0xa 0xb 0xa}
 @str def b20 [ch]{3   2 0 0xb}
@@ -38,6 +20,16 @@ fow(labels){
 [  ptr   dest    rgb   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
+}
+@inline def labels.drw(wi hi ln gln){
+  foo(labels){
+    type(ptr dest rgb wi hi ln gln)
+  }
+}
+@inline def labels.upd(){
+  fow(labels){
+    inc(rgb)
+  }
 }
 @font:4x5 def bmp[d]{36  
   0x6ddd6 0x6e66f 0x6f36f 0x6373e 
@@ -60,6 +52,15 @@ fow(labels){
   0       0       0       0
   0       0       0       0
 }
+@inline def bmp.drw(wi hi nl gln argb){
+  var lines=1
+  var dil=0x0420
+  lp(lines){
+    var di=dil
+    pl(di wi hi nl argb gln)
+    add(dil nl)
+  }
+}
 -1 -1
 @inline def type_bmp(di wi hi ln rgb bmp){
   lp(hi){
@@ -79,7 +80,7 @@ fow(labels){
     inc(rgb)
   }
 }
-@inline def type(ptr file rgb wi hi ln gln){
+@inline def type(ptr di rgb wi hi ln gln){
   var length
   ldc(length ptr)
   lp(length){
@@ -89,8 +90,8 @@ fow(labels){
     ldc(ch ptr)
     bmp.seek(ret ch)
     ld(glyph ret)
-    type_bmp(file wi hi ln rgb glyph)
-    sub(file gln)
+    type_bmp(di wi hi ln rgb glyph)
+    sub(di gln)
   }
 }
 @inline:ptr def bmp.seek(return record){
@@ -115,6 +116,13 @@ fow(labels){
     type_bmp(di wi hi ln argb glyph)
     sub(di gln)
   }
+}
+@inline def hex.drw(wi hi ln gln rgb){
+  var di=0x6050
+  var h=0xb00b0
+  print_hex(di wi hi ln gln rgb h)
+  h=0x0baba
+  print_hex(di wi hi ln gln rgb h)
 }
 @color def yello 0xff0
 }
