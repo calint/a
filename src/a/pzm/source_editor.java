@@ -76,6 +76,9 @@ final public class source_editor extends a{
 //			p.toc.entrySet().forEach(me->{
 //				pl(me.getKey());
 //			});
+			if(!bin.vspc.is_aliases_empty()){
+				throw new Error("lingering aliases");
+			}
 			pl("*** done");
 			if(x==null) return;
 			x.xu(sts.clr(),code).flush();

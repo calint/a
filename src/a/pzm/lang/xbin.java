@@ -81,6 +81,7 @@ public final class xbin{
 				throw new compiler_error(stmt,"alias '"+alias+"' not declared",vars.values().toString());
 			aliases.remove(alias);
 		}
+		public boolean is_aliases_empty(){return aliases.isEmpty();}
 	}
 	public int nregisters=1<<6;
 	public final LinkedList<String>registers_available=new LinkedList<>();
