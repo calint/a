@@ -16,6 +16,6 @@ final public class call_inc extends call{
 		final int rdi=x.register_index_for_alias(this,rd);
 		final int zni=apply_znxr_annotations_on_instruction(op|(rdi&63)<<14);
 		//? inc reg imm4
-		x.write(zni);
+		x.write(zni,this);
 	}
 }

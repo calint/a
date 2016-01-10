@@ -61,30 +61,33 @@ final public class call_fow extends statement{
 		final String rc=x.allocate_register(this);
 		final int rci=register_index(rc);
 		allocated_registers.add(rc);
-		x.write(0|0x0000|(rai&63)<<14);//li(a dots)
+		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 		x.linker_add_li(arguments.get(0).token);
-		x.write(0);
-		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)
-		x.write(0|0x0100|(rci&63)<<14);//lp(c)
-		x.write(0|0x00e0|(rai&63)<<8|(rbi&63)<<14);//tx(b a)
+		x.write(0,this);
+		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
+		x.write(0|0x0100|(rci&63)<<14,this);//lp(c)
+		x.write(0|0x00e0|(rai&63)<<8|(rbi&63)<<14,this);//tx(b a)
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
 			final int regi=x.register_index_for_alias(this,reg);//reg.charAt(0)-'a';
-			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14);//ldc(c regi)
+			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
-		x.write(0|0x00e0|(rbi&63)<<8|(rai&63)<<14);//tx(a b)
+		x.write(0|0x00e0|(rbi&63)<<8|(rai&63)<<14,this);//tx(a b)
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
 			final int regi=x.register_index_for_alias(this,reg);//reg.charAt(0)-'a';
 //			final int regi=reg.charAt(0)-'a';
-			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14);//stc(a reg)
+			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14,this);//stc(a reg)
 		}
 		aliases.forEach(e->x.unalias_register(this,e));
 		allocated_registers.forEach(e->x.free_register(e));
-		x.write(4);//nxt
+		x.write(4,this);//nxt
 	}
-		private int register_index(String reg_a){
+	
+	
+	//??
+	private int register_index(String reg_a){
 		return reg_a.charAt(0)-'a';
 	}
 

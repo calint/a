@@ -67,22 +67,22 @@ final public class call_foo extends statement{
 		final int rci=register_index(rc);
 		allocated_registers.add(rc);
 		if(ref_to_register==null){
-			x.write(0|0x0000|(rai&63)<<14);//li(a dots)
+			x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 			x.linker_add_li(rd.token);
-			x.write(0);
+			x.write(0,this);
 		}else{
 			final int rdi=x.register_index_for_alias(this,ref_to_register);
-			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(a )			
+			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(a )			
 		}
 		
-		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14);//ldc(c a)
-		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14);//lp(c)
+		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
+		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14,this);//lp(c)
 		for(expression e:args.subList(1,args.size())){
 			final int regi=x.register_index_for_alias(this,e.token);
-			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14);//ldc(c regi)
+			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
 		}
 		loop_code.binary_to(x);
-		x.write(4);//nxt
+		x.write(4,this);//nxt
 		aliases.forEach(e->x.unalias_register(this,e));
 		allocated_registers.forEach(e->x.free_register(e));
 	}

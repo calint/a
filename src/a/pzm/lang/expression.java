@@ -44,15 +44,15 @@ public class expression extends statement{
 		if(x.is_alias_declared(token)){// tx
 			final int rai=x.register_index_for_alias(this,token);
 			final int rdi=x.register_index_for_alias(this,destreg);
-			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(b a)
+			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(b a)
 			return;
 		}
 		if(destreg!=null){// li
 			final int rai=x.register_index_for_alias(this,destreg);
-			x.write(0|0x0000|(rai&63)<<14);//li(rai ____)
+			x.write(0|0x0000|(rai&63)<<14,this);//li(rai ____)
 		}
 		x.at_pre_link_evaluate(this);
-		x.write(0);
+		x.write(0,this);
 	}
 	public int eval(xbin b){
 //		final def_const dc=(def_const)b.toc.get("const "+token);

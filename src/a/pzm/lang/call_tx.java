@@ -14,7 +14,7 @@ final public class call_tx extends call{
 		final int rai=declared_register_index_from_string(x,this,arguments.get(1).token);
 		final int rdi=declared_register_index_from_string(x,this,arguments.get(0).token);
 		final int i=op|(rai&63)<<8|(rdi&63)<<14;
-		x.write(apply_znxr_annotations_on_instruction(i));
+		x.write(apply_znxr_annotations_on_instruction(i),this);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);

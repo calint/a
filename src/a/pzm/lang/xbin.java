@@ -18,11 +18,13 @@ public final class xbin{
 	//		private LinkedHashMap<String,def_const>constants;
 	//		private LinkedHashMap<String,def>functions;
 	private int[]data;
+	private statement[]data_to_statement;
 	private int ix;
 	private LinkedHashMap<Integer,expression>evals=new LinkedHashMap<>();
 	public xbin(Map<String,statement> toc,final int[] dest){
 		this.toc=toc;
 		data=dest;
+		data_to_statement=new statement[data.length];
 		//			defs=new LinkedHashMap<>();
 		//			links=new LinkedHashMap<>();
 		//			constants=new LinkedHashMap<>();
@@ -88,8 +90,10 @@ public final class xbin{
 		pl("link li at "+ix+" to "+name);
 		return this;
 	}
-	public xbin write(final int d){
-		data[ix++]=d;
+	public xbin write(final int d,statement stmt_binary_belongs_to){
+		data[ix]=d;
+		data_to_statement[ix]=stmt_binary_belongs_to;
+		ix++;
 		return this;
 	}
 

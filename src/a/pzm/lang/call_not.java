@@ -15,6 +15,6 @@ final public class call_not extends call{
 
 		final int rdi=x.register_index_for_alias(this,rd);
 		final int zni=apply_znxr_annotations_on_instruction(op|(rdi&63)<<14);
-		x.write(zni);
+		x.write(zni,this);
 	}
 }

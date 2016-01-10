@@ -54,6 +54,9 @@ ui.onkey=function(ev){
 	var cmd=ui.keys[ui._hashKey(ev)];
 	if(cmd)eval(cmd);
 }
+ui.fmtsize=function(num){
+	return num.toString().replace(/\B(?=(\d{3})+\b)/g,",");
+}
 ui._onreadystatechange=function(){
 //	$d(" * stage "+this.readyState);
 	var elsts=$('-ajaxsts');
@@ -81,7 +84,8 @@ ui._onreadystatechange=function(){
 	case 3:// Receiving
 //		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
-		$s('-ajaxsts','receiving '+this.responseText.length+' text');
+		var ms=new Date().getTime()-this._t0;
+		$s('-ajaxsts','receiving '+ui.fmtsize(this.responseText.length)+' text '+ui.fmtsize(Math.floor(this.responseText.length/ms))+' k/s');
 //		console.log('receiving '+this.responseText.length+' text');
 		if(s!='\n'){
 //			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
@@ -106,7 +110,7 @@ ui._onreadystatechange=function(){
 			eval(jscode);
 		}
 		this._dt=new Date().getTime()-this._t0;//? var _dt
-		$s('-ajaxsts',this._dt+' ms, '+this.responseText.length+' chars');
+		$s('-ajaxsts',this._dt+' ms '+ui.fmtsize(this.responseText.length)+' chars '+ui.fmtsize(Math.floor(this.responseText.length/this._dt))+' k/s');
 		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
 //		$d("done in "+this._dt+" ms");
 		break;		

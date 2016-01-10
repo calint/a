@@ -91,8 +91,8 @@ public class call extends statement{
 			final int rdi=x.register_index_for_alias(this,argument_spec.token);
 //			final int rdi=a.token.charAt(0)-'a';
 			final int in=0x0000|(rdi&63)<<14;
-			x.write(in);
-			x.write(e.eval(x));
+			x.write(in,this);
+			x.write(e.eval(x),e);
 		}
 //		if(has_annotation("inline")){
 			d.function_code.binary_to(x);

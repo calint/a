@@ -14,6 +14,6 @@ final public class call_and extends call{
 		final int rdi=declared_register_index_from_string(x,this,arguments.get(1).token);
 		final int i=op|(rai&63)<<8|(rdi&63)<<14;
 		final int zni=apply_znxr_annotations_on_instruction(i);
-		x.write(zni);
+		x.write(zni,this);
 	}
 }

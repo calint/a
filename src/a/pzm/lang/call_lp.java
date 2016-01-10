@@ -38,9 +38,9 @@ final public class call_lp extends statement{
 		final int rdi=x.register_index_for_alias(this,rd.token);
 		final int rai=0,znxr=0;
 		final int i=op|znxr|(rai&63)<<8|(rdi&63)<<14;
-		x.write(i);
+		x.write(i,this);
 		loop_code.binary_to(x);
-		x.write(4);//nxt
+		x.write(4,this);//nxt
 	}
 	@Override public void source_to(xwriter x){
 		x.p("lp");

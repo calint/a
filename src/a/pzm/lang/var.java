@@ -51,13 +51,13 @@ final public class var extends statement{
 			if(x.is_alias_declared(initial_value_expression.token)){
 				final int rai=x.register_index_for_alias(this,initial_value_expression.token);
 				final int rdi=x.register_index_for_alias(this,var_name);
-				x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14);//tx(rai rdi)
+				x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(rai rdi)
 				return;
 			}
 			final int rai=x.register_index_for_alias(this,var_name);
-			x.write(0|0x0000|(rai&63)<<14);//li(a initial_expression)
+			x.write(0|0x0000|(rai&63)<<14,this);//li(a initial_expression)
 			x.at_pre_link_evaluate(initial_value_expression);
-			x.write(0);
+			x.write(0,initial_value_expression);
 		}
 	}
 }

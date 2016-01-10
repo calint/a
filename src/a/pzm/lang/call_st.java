@@ -20,9 +20,9 @@ final public class call_st extends call{
 			x.alias_register(tempregstr,tempregstr);
 			allocated_reg.add(tempregstr);
 			rai=x.register_index_for_alias(this,tempregstr);
-			x.write(0|0x0000|(rai&63)<<14);//li(rai imm20)
+			x.write(0|0x0000|(rai&63)<<14,this);//li(rai imm20)
 			final int d=arg1.eval(x);
-			x.write(d);
+			x.write(d,arg1);
 		}
 		final int rdi;
 		if(x.is_alias_declared(arg2.token)){
@@ -32,13 +32,13 @@ final public class call_st extends call{
 			x.alias_register(reg,reg);
 			allocated_reg.add(reg);
 			rdi=x.register_index_for_alias(this,reg);
-			x.write(0|0x0000|(rdi&63)<<14);//li(rai imm20)
+			x.write(0|0x0000|(rdi&63)<<14,this);//li(rai imm20)
 			final int d=arg2.eval(x);
-			x.write(d);
+			x.write(d,arg2);
 		}
 		final int i=0x00d8|(rai&63)<<8|(rdi&63)<<14;
 		final int zni=apply_znxr_annotations_on_instruction(i);
-		x.write(zni);
+		x.write(zni,this);
 		allocated_reg.forEach(e->x.unalloc(this,e));
 	}
 }

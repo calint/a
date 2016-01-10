@@ -22,16 +22,16 @@ final public class call_stc extends call{
 			x.alias_register(tempregstr,tempregstr);
 			allocated_reg.add(tempregstr);
 			rdi=x.register_index_for_alias(this,tempregstr);
-			x.write(0|0x0000|(rdi&63)<<14);//li(rai imm20)
+			x.write(0|0x0000|(rdi&63)<<14,this);//li(rai imm20)
 			final int d=erd.eval(x);
-			x.write(d);
+			x.write(d,erd);
 		}else{
 			rdi=x.register_index_for_alias(erd,erd.token);
 		}
 		final int rai=x.register_index_for_alias(era,era.token);
 		final int i=op|(rai&63)<<8|(rdi&63)<<14;
 		final int znxr_i=apply_znxr_annotations_on_instruction(i);
-		x.write(znxr_i);
+		x.write(znxr_i,this);
 		allocated_reg.forEach(e->x.unalloc(this,e));
 	}
 }
