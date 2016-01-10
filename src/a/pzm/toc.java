@@ -17,10 +17,10 @@ public class toc extends a{
 			x.el_();
 			return;
 		}
-		x.style(this,"display:inline-block;background:#eee;box-shadow:0 0 3px rgba(0,0,0,.5);padding-left:1em;padding-right:1em");
+		x.style(this,"display:inline-block;box-shadow:0 0 3px rgba(0,0,0,.5);padding:0 1em .5em 1em");
 		final LinkedList<String>indents=new LinkedList<>();
 		x.inpax(filter,null,this,"",null).nl();
-		x.style(filter,"background:#ff0;width:4em");
+		x.style(filter,"width:4em");
 		x.focus(filter);
 		rec(x,indents,stmt);
 		x.el_();

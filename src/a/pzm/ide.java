@@ -108,20 +108,29 @@ final public class ide extends a{
 					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-right:1px dashed green")
 					.css(ec.ln,"li.a","background:#ff0")
 					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding-left:1em;padding-right:1em;padding-top:.5em;padding-bottom:.5em;border:1px dashed green")
-					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)");
+					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)")
+					.css(ec.se,"background:#eee")
+					.css(ec.se.filter,"background:#ff0");
 			switch(th.toint()){
 			case 0:
 				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
+				x.css(ec,"border:0");
 				x.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#fff;border-right:1px dashed #ddd");
 				break;
 			case 1:
-				x.css("html","background:#111;color:#060").css("a","color:#007").css(".stp","background-color:#020").css(".brk","background-color:#021");
+				x.css("html","background:#111;color:#060").css("a","color:#00a").css(".stp","background-color:#020").css(".brk","background-color:#021");
+				x.css(ec,"border:0");
 				x.css(ec.ln,"li.a","background:#242");
+				x.css(ec.se,"background:#111");
+				x.css(ec.se.filter,"background:#000");
 				break;
 			case 2:
 				x.css("html","background:#421;color:#830").css("a","color:#a32").css(".stp","background-color:#a30").css(".brk","background-color:#a30");
+				x.css(ec,"border:0");
 				x.css(ec.ln,"li","background:#421;color:#830;border:1px dashed #720;border-top:0;border-bottom:0");
 				x.css(ec.ln,"li.a","background:#830;color:#430");
+				x.css(ec.se,"background:#421");
+				x.css(ec.se.filter,"background:#310");
 				x.css(ajaxsts,"background:#421;border:1px dashed #830");
 				break;
 			}

@@ -14,16 +14,16 @@ st(0x2010 0xff0)
   labels.upd()
 }
 -1 -1
-@txt def baba[ch]{4   0xb 0xa 0xb 0xa}
-@txt def b20 [ch]{3   2 0 0xb}
-@txt @f def txt.type(txt di rgb wi hi ln gln){
+@t @txt def baba[ch]{4   0xb 0xa 0xb 0xa}
+@t @txt def b20 [ch]{3   2 0 0xb}
+@v def txt.type(txt di rgb wi hi ln gln){
   var length
   ldc(length txt)
   lp(length){
     var ch
     ldc(ch txt)
     var chaddr
-    bmp.seek(chaddr ch)
+    font.seek(chaddr ch)
     var glyph
     ld(glyph chaddr)
     font.drw(di wi hi ln rgb glyph)
@@ -31,22 +31,22 @@ st(0x2010 0xff0)
   }
 }
 
-@table def labels
+@t def labels
 [  ptr   dest    rgb   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
 }
-@table @f def labels.drw(wi hi ln gln){
+@v def labels.drw(wi hi ln gln){
   foo(labels){
     txt.type(ptr dest rgb wi hi ln gln)
   }
 }
-@table @f def labels.upd(){
+@v def labels.upd(){
   fow(labels){
     inc(rgb)
   }
 }
-@font:4x5 def bmp[d]{36  
+@t def font[d]{36  
   0x6ddd6 0x6e66f 0x6f36f 0x6373e 
   0x37df3 0xece3e 0x6ced6 0xff244 
   0x66fd6 0x6d724 0x6ddfd 0xedede
@@ -67,7 +67,7 @@ st(0x2010 0xff0)
   0       0       0       0
   0       0       0       0
 }
-@font @v def font.drwall1(wi hi nl gln rgb lines){
+@v def font.drwall1(wi hi nl gln rgb lines){
   var dil=0x0420
   lp(lines){
     var di=dil
@@ -76,7 +76,7 @@ st(0x2010 0xff0)
   }
 }
 -1 -1
-@font @v def font.drw(di wi hi ln rgb bmp){
+@v def font.drw(di wi hi ln rgb bmp){
   lp(hi){
     lp(wi){
       shf(bmp -1)
@@ -87,42 +87,45 @@ st(0x2010 0xff0)
     add(di ln)
   }
 }
-@font @v def font.drwall(di wi hi ln rgb gln){
-  foo(bmp){
+@v def font.drwall(di wi hi ln rgb gln){
+  foo(font){
     font.drw(di wi hi ln rgb d)
     sub(di gln)
     inc(rgb)
   }
 }
-@font @* def bmp.seek(return record){
-  var temp=bmp
+@* def font.seek(return record){
+  var temp=font
   return=temp
   inc(return)
   add(return record)
 }
-@f def print_hex(di wi hi ln gln argb in){
+@v def hex.print(di wi hi ln gln argb hex){
   var msk=0xf0000
   var times=5
   lp(times){
-    var hex=in
-    and(hex msk)
-    shf(hex 16)
-    shf(in -4)
+    var h=hex
+    and(h msk)
+    shf(h 16)
+    shf(hex -4)
 
     var ret
-    bmp.seek(ret hex)
+    font.seek(ret h)
     var glyph
     ld(glyph ret)
     font.drw(di wi hi ln argb glyph)
     sub(di gln)
   }
 }
-@f def hex.drw(wi hi ln gln rgb){
+@v def hex.drw(wi hi ln gln rgb){
   var di=0x6050
-  var h=0xb00b0
-  print_hex(di wi hi ln gln rgb h)
+  var h=0xb0bab
+  hex.print(di wi hi ln gln rgb h)
   h=0x0baba
-  print_hex(di wi hi ln gln rgb h)
+  hex.print(di wi hi ln gln rgb h)
 }
-@color def yello 0xff0
+@c def rgb.red 0xf00
+@c def rgb.green 0x0f0
+@c def rgb.blue 0x00f
+@c def rgb.yellow 0xff0
 }
