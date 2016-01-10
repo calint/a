@@ -20,6 +20,10 @@ final public class call_foo extends statement{
 			final expression arg=new expression(this,null,r,"",(String)null);
 			arguments.add(arg);
 		}
+//		if(arguments.isEmpty()){
+//			throw new compiler_error(this,"at least on argument required. found none.","");
+//		}
+		token=arguments.get(0).token;
 		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
 		loop_code=statement.read(this,r);

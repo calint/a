@@ -6,7 +6,7 @@ import b.xwriter;
 
 final public class def_const extends def{
 	private static final long serialVersionUID=1;
-	final private String ws_before_name,name,ws_after_name;
+	final private String ws_before_name,ws_after_name;
 	final private String ws_trailing;
 	final expression expr;
 	public def_const(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
@@ -14,7 +14,7 @@ final public class def_const extends def{
 		nm(name);
 		mark_start_of_source(r);
 		this.ws_before_name=ws_before_name;
-		this.name=name;
+		token=name;
 		mark_end_of_source(r);
 		this.ws_after_name=ws_after_name;
 		expr=new expression(this,null,r,null,null);
@@ -24,7 +24,7 @@ final public class def_const extends def{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.p("def").p(ws_before_name).p(name).p(ws_after_name);
+		x.p("def").p(ws_before_name).p(token).p(ws_after_name);
 		expr.source_to(x);
 		x.p(ws_trailing);
 	}

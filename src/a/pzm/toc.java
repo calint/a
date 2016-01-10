@@ -1,4 +1,6 @@
 package a.pzm;
+import static b.b.isempty;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,16 +45,23 @@ public class toc extends a{
 		
 		indents.forEach(s->x.p(s));
 		e.annotations(true).keySet().forEach(s->{
-			x.p("@").p(s).spc();
+			x.p(s).spc();
 		});
 		final String[]ix=e.location_in_source().split(":");
 		final String[]ixe=e.location_in_source_end().split(":");
 		x.p("<a onmouseenter=\"");
 		x.p("{var e=$('"+textareaid+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ixe[2])+";e.focus();}");
 		x.p("\">");
-		final String clsnm=e.getClass().getName();
+//		final String clsnm=e.getClass().getName();
 		final String nm=e.nm();
-		x.p(!b.b.isempty(nm)?nm:clsnm.subSequence(clsnm.lastIndexOf('.')+1,clsnm.length()));
+		if(b.b.isempty(nm)){
+//			e.source_to(x);
+			x.p(e.token());
+//			x.p(e.toString());
+		}else{
+			x.p(nm);
+		}
+//		x.p(!b.b.isempty(nm)?nm:clsnm.subSequence(clsnm.lastIndexOf('.')+1,clsnm.length()));
 		x.a_();
 //		x.spc().p('[').p(e.location_in_source()).p(',').p(e.location_in_source_end()).p(']');
 //		if(e instanceof def){

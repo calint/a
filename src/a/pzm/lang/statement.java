@@ -25,6 +25,7 @@ public class statement extends a{
 		super(parent,null,null);
 		this.annotations=annot;
 	}
+	public String token(){return token;}
 	public statement parent_statement(){
 		return (statement)pt();
 	}

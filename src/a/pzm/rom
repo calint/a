@@ -6,11 +6,11 @@ inc(argb)
 
 st(0x2010 tick)
 
-var ln=252
-var gln=0x4fb
-var wi=4
-var hi=5
-var nl=0x0600
+@const var ln=252
+@const var gln=0x4fb
+@const var wi=4
+@const var hi=5
+@const var nl=0x0600
 
 foo(labels){
   type(ptr dest rgb)

@@ -8,13 +8,13 @@ import b.xwriter;
 
 public class call extends statement{
 	private static final long serialVersionUID=1;
-	final private String ws_left,name,ws_after_name,ws_trailing;
+	final private String ws_left,ws_after_name,ws_trailing;
 	final protected ArrayList<expression>arguments=new ArrayList<>();
 	public call(statement parent,LinkedHashMap<String,String>annot,String function_name,reader r){
 		super(parent,annot);
 		ws_left=r.next_empty_space();
 		mark_start_of_source(r);
-		this.name=function_name;
+		token=function_name;
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
 //		if(!r.is_next_char_expression_open())
@@ -58,15 +58,15 @@ public class call extends statement{
 		return znxr|i;
 	}
 	@Override public void binary_to(xbin x){
-		final def_func d=(def_func)x.toc.get("func "+name);
+		final def_func d=(def_func)x.toc.get("func "+token);
 		final String funcs=x.toc.keySet().stream()
 				.filter(s->s.startsWith("func "))
 				.map(s->s.subSequence(0,"func ".length()))
 				.collect(Collectors.toList())
 				.toString();
-		if(d==null)throw new compiler_error(this,"function '"+name+"' not found",funcs);
+		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
 		if(arguments.size()!=d.arguments.size())
-			throw new compiler_error(this,"function "+name+" expects "+d.arguments.size()+" arguments, got "+arguments.size(),"");
+			throw new compiler_error(this,"function "+token+" expects "+d.arguments.size()+" arguments, got "+arguments.size(),"");
 		int i=0;
 		final ArrayList<String>allocated_registers=new ArrayList<>();
 		final ArrayList<String>aliases=new ArrayList<>();
@@ -108,7 +108,7 @@ public class call extends statement{
 //		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
 //		final boolean is=asm.indexOf(name)!=-1;
 //		x.tag(is?"ac":"fc");
-		x.p(ws_left).p(name).p(ws_after_name);
+		x.p(ws_left).p(token).p(ws_after_name);
 //		x.tage(is?"ac":"fc");
 		x.p("(");
 		arguments.forEach(e->e.source_to(x));
