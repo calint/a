@@ -23,7 +23,7 @@ public class call extends statement{
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
 			r.set_location_in_source();
-			final expression arg=new expression(parent,null,r,null,null);
+			final expression arg=new expression(this,null,r,null,null);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);
@@ -68,16 +68,23 @@ public class call extends statement{
 		if(arguments.size()!=d.argdefs.size())throw new compiler_error(this,"function "+token+" expects "+d.argdefs.size()+" arguments, got "+arguments.size(),"");
 		x.push_func();
 		final ArrayList<String>aliases=new ArrayList<>();
+		final ArrayList<String>vars=new ArrayList<>();
 		int i=0;
 		for(expression e:arguments){
 			final def_func_arg df=d.argdefs.get(i++);
-			if(x.vspc().is_declared(df.token)){
-				continue;
+			if(!x.vspc().parent().is_declared(e.token)){// not declared, load immediate data
+				final int rai=x.vspc().alloc_var(e,df.token);
+				vars.add(df.token);
+				x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
+				x.at_pre_link_evaluate(e);
+				x.write(0,e);
+			}else{
+				x.vspc().alias(e,df.token,e.token);
+				aliases.add(df.token);
 			}
-			x.vspc().alias(e,df.token,e.token);
-			aliases.add(df.token);
 		}
 		d.function_code.binary_to(x);
+		vars.forEach(s->x.vspc().free_var(this,s));
 		aliases.forEach(s->x.vspc().unalias(this,s));
 		x.pop();
 	}

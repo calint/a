@@ -29,6 +29,7 @@ public final class xbin{
 			xb=b;
 			vars=new LinkedHashMap<>();
 		}
+		public varspace parent(){return pt;}
 		public int alloc_var(statement stmt,String name){
 			final allocated_var e=vars.get(name);
 			if(e!=null)

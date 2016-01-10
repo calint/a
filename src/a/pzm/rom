@@ -1,9 +1,10 @@
 @o{
 var tick
+store(0x2010 0xff0)
 inc(tick)
-var addr=0x2010
-st(addr tick)
-
+@inline def store(addr data){
+  st(addr data)
+}
 @const var ln=252
 @const var gln=0x4fb
 @const var wi=4
@@ -23,12 +24,14 @@ foo(labels){
 fow(labels){
   inc(rgb)
 }
-var lines=1
-var dil=0x0420
-lp(lines){
-  var di=dil
-  pl(di wi hi ln argb gln)
-  add(dil nl)
+{
+  var lines=1
+  var dil=0x0420
+  lp(lines){
+    var di=dil
+    pl(di wi hi ln argb gln)
+    add(dil nl)
+  }
 }
 
 -1 -1
