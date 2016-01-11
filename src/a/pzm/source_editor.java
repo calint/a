@@ -61,7 +61,7 @@ final public class source_editor extends a{
 			final int[]rom=new int[1024*1024];//?
 			bin=new xbin(p.toc,rom);//? intbuffer.get() put()   pages then create_int_array()
 			final int nregs_pre=bin.registers_available.size();
-			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
+//			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
 			code.binary_to(bin);
 			bin.link();
 			sts.set(bin.ix()+" "+bin.maxregalloc+"@"+bin.maxregalloc_at_statement.source_lineno());
@@ -70,7 +70,7 @@ final public class source_editor extends a{
 			final int nregs_aft=bin.registers_available.size();
 			if(nregs_pre!=nregs_aft)
 				throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+bin.registers_available);
-			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
+//			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
 			if(!bin.vspc().is_aliases_empty()){
 				throw new Error("lingering aliases");
 			}

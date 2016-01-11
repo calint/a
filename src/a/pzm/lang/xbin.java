@@ -143,15 +143,16 @@ public final class xbin{
 			final expression ev=me.getValue();
 			final int value=ev.eval(this);
 			data[pc]=value;
+//			pl("eval at "+me.getKey()+" to "+me.getValue());
 		});
 		calls.entrySet().forEach(me->{
-			if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
+			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 			final int addr=defs.get(me.getValue());
 			data[me.getKey()]|=(addr<<6);
 			pl("linked call at "+me.getKey()+" to "+me.getValue());
 		});
 		lis.entrySet().forEach(me->{
-			if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
+			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 			final int addr=defs.get(me.getValue());
 			data[me.getKey()]=addr;
 			pl("linked li at "+me.getKey()+" to "+me.getValue());
@@ -183,7 +184,7 @@ public final class xbin{
 		return registers_available.remove(0);
 	}
 	public void free_register(statement stmt,String e){
-		pl(ix+" free register "+e);
+//		pl(ix+" free register "+e);
 		if(registers_available.contains(e))
 			throw new compiler_error(stmt,"register '"+e+"' already freed",registers_available.toString());
 		registers_available.add(0,e);
