@@ -10,7 +10,6 @@ final public class call_addi extends call{
 		super(b,annotations,"addi",r);
 	}
 	@Override public void binary_to(xbin x){
-		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		final int rai=declared_register_index_from_string(x,this,arguments.get(0).token);
 		final int rdi=Integer.parseInt(arguments.get(1).token);
 		if(rdi>31||rdi<-32)

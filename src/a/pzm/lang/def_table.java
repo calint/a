@@ -21,6 +21,7 @@ final public class def_table extends def{
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_struct_close())break;
+			r.set_location_in_source();
 			final def_table_col sf=new def_table_col(this,null,r);
 			if(arguments.stream().filter(e->sf.token.equals(e.token)).findFirst().isPresent()){
 				throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());

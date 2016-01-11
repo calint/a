@@ -17,8 +17,8 @@ final public class call_st extends call{
 		}else{// load
 			rai=x.vspc().alloc_var(ra,"$ra");
 			allocated_regs.add("$ra");
-			x.write(0|0x00000|(rai&63)<<14,this);//li(rai imm20)
-			x.at_pre_link_evaluate(ra);
+			x.write(0|0x00000|(rai&63)<<14,ra);//li(rai imm20)
+			x.add_at_pre_link_evaluate(ra);
 			x.write(0,ra);
 		}
 
@@ -30,7 +30,7 @@ final public class call_st extends call{
 		}else{
 			rdi=x.vspc().alloc_var(ra,"$rd");
 			allocated_regs.add("$rd");
-			x.write(0|0x00000|(rdi&63)<<14,this);//li(rai imm20)
+			x.write(0|0x00000|(rdi&63)<<14,rd);//li(rai imm20)
 			final int d=rd.eval(x);
 			x.write(d,rd);
 		}

@@ -1,44 +1,41 @@
 @o{
 var tick inc(tick)
-var rgb inc(rgb)
 st(0x2010 0xff0)
-{
-  @const var ln=252
-  @const var gln=0x4fb
+loop(tick)
+def loop(tick){
   @const var wi=4
   @const var hi=5
+  @const var ln=252
+  @const var gnl=0x4fb
   @const var nl=0x0600
-  labels.drw(wi hi ln gln)
-  hex.drw(wi hi ln gln rgb)
-  font.drwall1(wi hi ln gln rgb 5)
+  labels.drw(wi hi ln gnl)
+  hex.drw(wi hi ln gnl tick)
+  font.drwall1(wi hi ln gnl tick 5)
   labels.upd()
 }
--1 -1
+-1
 @t @txt def baba[ch]{4   0xb 0xa 0xb 0xa}
 @t @txt def b20 [ch]{3   2 0 0xb}
 @v def txt.type(txt di rgb wi hi ln gln){
   var length
   ldc(length txt)
   lp(length){
-    var ch
-    ldc(ch txt)
-    var chaddr
-    font.seek(chaddr ch)
-    var glyph
-    ld(glyph chaddr)
+    var ch ldc(ch txt)
+    var chaddr font.seek(chaddr ch)
+    var glyph ld(glyph chaddr)
     font.drw(di wi hi ln rgb glyph)
     sub(di gln)
   }
 }
 
 @t def labels
-[  ptr   dest    rgb   ]{2
+[  txt   dest    rgb   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
 }
 @v def labels.drw(wi hi ln gln){
   foo(labels){
-    txt.type(ptr dest rgb wi hi ln gln)
+    txt.type(txt dest rgb wi hi ln gln)
   }
 }
 @v def labels.upd(){
@@ -109,10 +106,8 @@ st(0x2010 0xff0)
     shf(h 16)
     shf(hex -4)
 
-    var ret
-    font.seek(ret h)
-    var glyph
-    ld(glyph ret)
+    var ret font.seek(ret h)
+    var glyph ld(glyph ret)
     font.drw(di wi hi ln argb glyph)
     sub(di gln)
   }

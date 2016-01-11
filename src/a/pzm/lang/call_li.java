@@ -14,7 +14,7 @@ final public class call_li extends call{
 		final int i=op|rdi<<14;
 		x.write(apply_znxr_annotations_on_instruction(i),this);
 		final expression imm=arguments.get(1);
-		x.at_pre_link_evaluate(imm);
+		x.add_at_pre_link_evaluate(imm);
 		x.write(0,imm);
 	}
 }

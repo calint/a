@@ -240,7 +240,7 @@ final public class ide extends a{
 		if(hasbit(bit_show_rom))ro.xfocus_on_binary_location(x,cor.program_counter);
 		if(hasbit(bit_show_source_editor)){
 			if(ec.bin==null)return;
-			final statement stmt=ec.bin.get_statement_for_address(cor.program_counter);
+			final statement stmt=ec.bin.statement_for_address(cor.program_counter);
 			if(stmt==null)
 				return;
 			final int pc=stmt.source_lineno();

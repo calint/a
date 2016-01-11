@@ -160,7 +160,7 @@ public class statement extends a{
 	}
 	public Map<String,String>annotations(boolean return_empty_if_null){
 		if(annotations==null&&return_empty_if_null)
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		return annotations;
 	}
 	public boolean has_annotations(){return annotations!=null&&!annotations.isEmpty();}

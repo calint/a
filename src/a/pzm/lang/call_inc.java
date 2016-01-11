@@ -9,12 +9,9 @@ final public class call_inc extends call{
 		super(parent,annotations,"inc",r);
 	}
 	@Override public void binary_to(xbin x){
-		final String rd=arguments.get(0).token;
-//		if(!x.is_alias_declared(rd))
-//			throw new compiler_error(arguments.get(0),"var '"+rd+"' not declared",x.register_aliases.toString());
-		final int rdi=x.vspc().get_register_index(this,rd);
+		final expression rd=arguments.get(0);
+		final int rdi=x.vspc().get_register_index(rd,rd.token);
 		final int zni=apply_znxr_annotations_on_instruction(op|(rdi&63)<<14);
-		//? inc reg imm4
 		x.write(zni,this);
 	}
 }

@@ -9,7 +9,6 @@ final public class call_and extends call{
 		super(parent,annot,"and",r);
 	}
 	@Override public void binary_to(xbin x){
-		//   znxr|op|((rai&15)<<8)|((rdi&15)<<12);
 		final int rai=x.vspc().get_register_index(this,arguments.get(0).token);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(1).token);
 		final int i=op|(rai&63)<<8|(rdi&63)<<14;

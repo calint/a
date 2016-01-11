@@ -48,8 +48,6 @@ final public class source_editor extends a{
 			attach(code,"code");
 			se.set_statement(code);
 			se.set_textareaid(src.id());
-			x.xuo(se);
-//			System.out.println(generated_source.toString());
 			if(!ommit_compiling_source_from_disassembler){
 				final xwriter generated_source=new xwriter();
 				code.source_to(generated_source);
@@ -63,7 +61,7 @@ final public class source_editor extends a{
 			final int[]rom=new int[1024*1024];//?
 			bin=new xbin(p.toc,rom);//? intbuffer.get() put()   pages then create_int_array()
 			final int nregs_pre=bin.registers_available.size();
-			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
+//			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
 			code.binary_to(bin);
 			bin.link();
 			sts.set(bin.ix()+" "+bin.maxregalloc+"@"+bin.maxregalloc_at_statement.source_lineno());
@@ -72,19 +70,15 @@ final public class source_editor extends a{
 			final int nregs_aft=bin.registers_available.size();
 			if(nregs_pre!=nregs_aft)
 				throw new Error("available register count pre binary_to and after do not match: pre="+nregs_pre+"  after="+nregs_aft+"   "+bin.registers_available);
-			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
-//			pl("*** toc");
-//			p.toc.entrySet().forEach(me->{
-//				pl(me.getKey());
-//			});
+//			pl("registers available "+bin.registers_available.size()+" "+bin.registers_available);
 			if(!bin.vspc().is_aliases_empty()){
 				throw new Error("lingering aliases");
 			}
 			pl("*** done");
-			if(x==null) return;
+			if(x==null)return;
+//			x.xuo(se);
 			x.xu(sts,code);
 			ln.xj_select_line(x,0);
-			//			el.source_to(x.xub(resrc,true,true));x.xube();
 			ev(x,this,new_rom);
 		}catch(compiler_error t){
 			b.b.log(t);
@@ -99,12 +93,10 @@ final public class source_editor extends a{
 			x.pl("{var e=$('"+src.id()+"');e.selectionStart="+Integer.parseInt(ix[2])+";e.selectionEnd="+Integer.parseInt(ixe[2])+";}");
 			x.xu(sts.set("line "+ix[0]+":"+" "+t.getMessage()));
 			ln.xj_select_line(x,Integer.parseInt(ix[0]));
-			//			x.xalert(t.getMessage());
 		}catch(Throwable t){
 			b.b.log(t);
 			if(x==null) return;
 			x.xu(sts.set("line "+r.location_in_source()+": "+b.b.stacktrace(t)));//?
-			//			x.xalert(t.getMessage());
 		}
 	}
 	private static final long serialVersionUID=11;

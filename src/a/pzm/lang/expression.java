@@ -12,17 +12,15 @@ public class expression extends statement{
 	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
 		super(parent,annot);
 		destreg=dest_reg;
+		mark_start_of_source(r);
 		if(tk==null){// first token supplied
-			mark_start_of_source(r);
 			ws_leading=r.next_empty_space();
 			token=r.next_token();
-			mark_end_of_source(r);
 		}else{
-			mark_start_of_source(r);
 			ws_leading="";
 			token=tk;
-			mark_end_of_source(r);
 		}
+		mark_end_of_source(r);
 		if(token.length()==0)
 			throw new compiler_error(this,"expression is empty","");
 		ws_after=r.next_empty_space();
@@ -51,7 +49,7 @@ public class expression extends statement{
 			final int rai=x.vspc().get_register_index(this,destreg);
 			x.write(0|0x0000|(rai&63)<<14,this);//li(rai ____)
 		}
-		x.at_pre_link_evaluate(this);
+		x.add_at_pre_link_evaluate(this);
 		x.write(0,this);
 	}
 	public int eval(xbin b){

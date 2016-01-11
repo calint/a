@@ -22,7 +22,6 @@ final public class call_fow extends statement{
 		}
 		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
-//		arguments.forEach(e->declarations.add(e.token));
 		loop_code=statement.read(this,r);
 		mark_end_of_source_from(loop_code);
 	}
@@ -49,7 +48,6 @@ final public class call_fow extends statement{
 			args=arguments;
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-//		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
 		final String ra=x.alloc_register(this);
 		allocated_registers.add(ra);
 		final int rai=get_register_index_for_name(ra);
@@ -75,7 +73,6 @@ final public class call_fow extends statement{
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
 			final int regi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
-//			final int regi=reg.charAt(0)-'a';
 			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14,this);//stc(a reg)
 		}
 		aliases.forEach(e->x.vspc().free_var(this,e));

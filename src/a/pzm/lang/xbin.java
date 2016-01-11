@@ -80,15 +80,6 @@ public final class xbin{
 			aliases.remove(alias);
 		}
 		public boolean is_aliases_empty(){return aliases.isEmpty();}
-//		public varspace push_block(){
-//			return new varspace(xb,this,"block");
-//		}
-//		public varspace push_func(){
-//			return new varspace(xb,this,"func");
-//		}
-//		public varspace pop(){
-//			return pt;
-//		}
 	}
 	public varspace push_block(){
 		return vspc=new varspace(this,vspc,"block");
@@ -115,52 +106,32 @@ public final class xbin{
 		return Integer.parseInt(regnm.substring(1));
 	}
 
+	final public Map<String,statement>toc;
 	private varspace vspc=new varspace(this,null,"/");
-	final public Map<String,statement> toc;
-	//		public xbin def_const(String name,def_const constant){
-	//			pl("constant "+name+" "+constant);
-	//			constants.put(name,constant);
-	//			return this;
-	//		}
 	private LinkedHashMap<String,Integer>defs=new LinkedHashMap<>();
 	private LinkedHashMap<Integer,String>calls=new LinkedHashMap<>();
 	private LinkedHashMap<Integer,String>lis=new LinkedHashMap<>();
-	//		private LinkedHashMap<String,def_const>constants;
-	//		private LinkedHashMap<String,def>functions;
 	private int[]data;
 	private statement[]data_to_statement;
 	private int ix;
 	private LinkedHashMap<Integer,expression>evals=new LinkedHashMap<>();
+	public int maxregalloc;
+	public statement maxregalloc_at_statement;
 	public xbin(Map<String,statement> toc,final int[] dest){
 		this.toc=toc;
 		data=dest;
 		data_to_statement=new statement[data.length];
-		//			defs=new LinkedHashMap<>();
-		//			links=new LinkedHashMap<>();
-		//			constants=new LinkedHashMap<>();
-		//			functions=new LinkedHashMap<>();
-	}
-	public xbin data(final String name,def_data d){
-		defs.put(name,ix);
-		pl("def data "+name+" at "+ix);
-		return this;
 	}
 	public xbin def(final String name){
 		defs.put(name,ix);
-		pl("def "+name+" at "+ix);
 		return this;
 	}
-//	public xbin def(final String name,def_func d){
-//		defs.put(name,ix);
-//		pl("def func "+name+" at "+ix);
-//		return this;
-//	}
-	public int def_location_in_binary_for_name(String src){
-		final Integer i=defs.get(src);
-		if(i==null)throw new Error("def not found: "+src);
+	public int def_location_in_binary_for_name(String name){
+		final Integer i=defs.get(name);
+		if(i==null)throw new Error("def not found: "+name);
 		return i.intValue();
 	}
-	public void at_pre_link_evaluate(expression e){
+	public void add_at_pre_link_evaluate(expression e){
 		evals.put(ix,e);
 	}
 	public int ix(){
@@ -172,24 +143,21 @@ public final class xbin{
 			final expression ev=me.getValue();
 			final int value=ev.eval(this);
 			data[pc]=value;
+//			pl("eval at "+me.getKey()+" to "+me.getValue());
 		});
 		calls.entrySet().forEach(me->{
-			if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
+			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 			final int addr=defs.get(me.getValue());
 			data[me.getKey()]|=(addr<<6);
 			pl("linked call at "+me.getKey()+" to "+me.getValue());
 		});
 		lis.entrySet().forEach(me->{
-			if(!defs.containsKey(me.getValue())) throw new Error("def not found: "+me.getValue());
+			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 			final int addr=defs.get(me.getValue());
 			data[me.getKey()]=addr;
 			pl("linked li at "+me.getKey()+" to "+me.getValue());
 		});
 	}
-	//		public xbin back(){
-	//			ix--;
-	//			return this;
-	//		}
 	public xbin linker_add_call(String name){
 		calls.put(ix,name);
 		pl("link call at "+ix+" to "+name);
@@ -206,8 +174,6 @@ public final class xbin{
 		ix++;
 		return this;
 	}
-	public int maxregalloc;
-	public statement maxregalloc_at_statement;
 	public String alloc_register(statement at_statement){
 		if(registers_available.isEmpty())throw new compiler_error(at_statement,"out of registers","");
 		final int nallocated=nregisters-registers_available.size();
@@ -217,52 +183,13 @@ public final class xbin{
 		}
 		return registers_available.remove(0);
 	}
-//	private void allocate_register(statement at_statement,String name){
-//		if(registers_available.isEmpty()) throw new compiler_error(at_statement,"out of registers","");
-//		if(!registers_available.contains(name))throw new compiler_error(at_statement,"register not available",name);
-//		if(!registers_available.remove(name))throw new Error();
-//		pl(ix+" allocate register "+name);
-//	}
-	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
-//	public boolean is_alias_declared(final String alias){return register_aliases.containsKey(alias);}
-//	public void alias_register(statement stmt,String token,String reg){
-//		if(register_aliases.containsKey(token))throw new compiler_error(stmt,"var '"+token+"' is already used",register_aliases.toString());
-//		register_aliases.put(token,reg);
-//		pl(ix+" register alias "+reg+"   "+token);
-//	}
-//	public void unalias_register(statement stmt,String token){
-//		if(!register_aliases.containsKey(token))throw new compiler_error(stmt,"alias not found: "+token+"   "+register_aliases,"");
-//		register_aliases.remove(token);
-//		pl(ix+" unregister alias "+token);
-//	}
 	public void free_register(statement stmt,String e){
-		pl(ix+" free register "+e);
+//		pl(ix+" free register "+e);
 		if(registers_available.contains(e))
 			throw new compiler_error(stmt,"register '"+e+"' already freed",registers_available.toString());
 		registers_available.add(0,e);
 	}
-//	public String register_for_alias(String alias){
-//		return register_aliases.get(alias);
-//	}
-//	public int register_index_for_alias(statement stmt,String alias){
-//		String regnm=register_for_alias(alias);
-//		if(regnm==null)
-//			throw new compiler_error(stmt,"var '"+alias+"' not declared",register_aliases.keySet().toString());
-//		final int rdi=register_index_for_name(regnm);
-//		//? magicnum
-//		if(rdi<0||rdi>63) throw new Error("destination register out of range");
-//		return rdi;
-//	}
-//	public void unalloc(statement stmt,String alias){
-//		final String r=register_for_alias(alias);
-//		if(r==null)throw new compiler_error(stmt,"alias not registered",alias);
-//		unalias_register(stmt,alias);
-//		free_register(stmt,r);
-//	}
-//	public String get_register_for_alias(String token){
-//		return register_aliases.get(token);
-//	}
-	public statement get_statement_for_address(int addr){
+	public statement statement_for_address(int addr){
 		return data_to_statement[addr];
 	}
 	public String toString(){
