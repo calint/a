@@ -14,7 +14,7 @@ final public class call_stc extends call{
 		final int rai=x.vspc().get_register_index(ra,ra.token);
 		final int rdi=x.vspc().get_register_index(rd,rd.token);
 		final int i=op|(rai&63)<<8|(rdi&63)<<14;
-		final int znxr_i=apply_znxr_annotations_on_instruction(i);
-		x.write(znxr_i,this);
+		final int znxr=apply_znxr_annotations_on_instruction(i);
+		x.write(znxr,this);
 	}
 }

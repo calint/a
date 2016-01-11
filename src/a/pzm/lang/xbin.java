@@ -117,7 +117,6 @@ public final class xbin{
 	private LinkedHashMap<Integer,expression>evals=new LinkedHashMap<>();
 	public int maxregalloc;
 	public statement maxregalloc_at_statement;
-	final LinkedHashMap<String,String>register_aliases=new LinkedHashMap<String,String>();
 	public xbin(Map<String,statement> toc,final int[] dest){
 		this.toc=toc;
 		data=dest;

@@ -37,10 +37,7 @@ final public class call_foo extends statement{
 			args.addAll(arguments);
 			tbl.arguments.forEach(col->{
 				final String col_name=col.token;
-				if(x.vspc().is_declared(col_name)){
-					throw new compiler_error(this,"var '"+col_name+"' already declared",x.register_aliases.toString());
-				}
-				x.vspc().alloc_var(col,col_name);
+				x.vspc().alloc_var(this,col_name);
 				allocated_vars.add(col_name);
 				final expression e=new expression(this,col_name);
 				args.add(e);				

@@ -10,6 +10,7 @@ final public class def_table_col extends statement{
 	public def_table_col(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
 		super(parent,annot);
 		ws_leading=r.next_empty_space();
+		mark_start_of_source(r);
 		token=r.next_token();
 		if(token.length()==0)
 			throw new compiler_error(this,"unexpected empty token","");
