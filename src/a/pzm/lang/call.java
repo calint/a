@@ -17,8 +17,6 @@ public class call extends statement{
 		token=function_name;
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
-//		if(!r.is_next_char_expression_open())
-//			throw new compiler_error(this,"expected '(' and arguments for '"+function_name+"'","");
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
@@ -29,25 +27,6 @@ public class call extends statement{
 		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();
 	}
-//
-//	public call(a pt,String nm,statement parent,LinkedHashMap<String,String>annotations,String name,reader r){
-//		super(pt,nm,annotations,name,r,parent);
-//		this.name=name;
-//		mark_end_of_source(r);
-//		ws_after_name=r.next_empty_space();
-//		while(true){
-//			mark_end_of_source(r);
-//			if(r.is_next_char_expression_close())break;
-//			r.set_location_in_source();
-//			final expression arg=new expression(pt,nm,r,parent);
-//			arguments.add(arg);
-//		}
-//		mark_end_of_source(r);
-//		ws_trailing=r.next_empty_space();
-//	}
-//	public call(a pt,String nm,String name,reader r,statement b){
-//		this(b,new LinkedHashMap<String,String>(),name,r);
-//	}
 	protected int apply_znxr_annotations_on_instruction(int i){
 		int znxr=0;
 		if(has_annotation("ifp")) znxr|=3;
@@ -75,7 +54,7 @@ public class call extends statement{
 			if(!x.vspc().parent().is_declared(e.token)){// not declared, load immediate data
 				final int rai=x.vspc().alloc_var(e,df.token);
 				vars.add(df.token);
-				x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
+				x.write(0|0x0000|(rai&63)<<14,e);//li(a dots)
 				x.at_pre_link_evaluate(e);
 				x.write(0,e);
 			}else{

@@ -12,17 +12,15 @@ public class expression extends statement{
 	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
 		super(parent,annot);
 		destreg=dest_reg;
+		mark_start_of_source(r);
 		if(tk==null){// first token supplied
-			mark_start_of_source(r);
 			ws_leading=r.next_empty_space();
 			token=r.next_token();
-			mark_end_of_source(r);
 		}else{
-			mark_start_of_source(r);
 			ws_leading="";
 			token=tk;
-			mark_end_of_source(r);
 		}
+		mark_end_of_source(r);
 		if(token.length()==0)
 			throw new compiler_error(this,"expression is empty","");
 		ws_after=r.next_empty_space();
