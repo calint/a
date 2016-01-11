@@ -49,7 +49,7 @@ public class expression extends statement{
 			final int rai=x.vspc().get_register_index(this,destreg);
 			x.write(0|0x0000|(rai&63)<<14,this);//li(rai ____)
 		}
-		x.at_pre_link_evaluate(this);
+		x.add_at_pre_link_evaluate(this);
 		x.write(0,this);
 	}
 	public int eval(xbin b){

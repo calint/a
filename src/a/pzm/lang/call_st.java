@@ -18,7 +18,7 @@ final public class call_st extends call{
 			rai=x.vspc().alloc_var(ra,"$ra");
 			allocated_regs.add("$ra");
 			x.write(0|0x00000|(rai&63)<<14,ra);//li(rai imm20)
-			x.at_pre_link_evaluate(ra);
+			x.add_at_pre_link_evaluate(ra);
 			x.write(0,ra);
 		}
 

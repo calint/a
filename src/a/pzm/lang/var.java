@@ -13,8 +13,6 @@ final public class var extends statement{
 		super(parent,annot);
 		mark_start_of_source(r);
 		ws_left=r.next_empty_space();
-//		r.set_location_in_source();
-//		mark_start_of_source(r);
 		token=r.next_token();
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
@@ -28,7 +26,6 @@ final public class var extends statement{
 			ws_after_assign="";
 			initial_value_expression=null;
 		}
-//		mark_end_of_source(r);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
@@ -50,7 +47,7 @@ final public class var extends statement{
 			}
 			final int rai=x.vspc().get_register_index(this,token);
 			x.write(0|0x0000|(rai&63)<<14,this);//li(a initial_expression)
-			x.at_pre_link_evaluate(initial_value_expression);
+			x.add_at_pre_link_evaluate(initial_value_expression);
 			x.write(0,initial_value_expression);
 		}
 	}

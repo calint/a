@@ -44,7 +44,6 @@ public class block extends statement{
 			s.source_to(x);
 		}
 		x.p("}").p(ws_after_close_block);
-//		x.p("}");
 	}
 	@Override public void binary_to(xbin x){
 		if(statements!=null){

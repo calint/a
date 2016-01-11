@@ -20,9 +20,6 @@ final public class call_foo extends statement{
 			final expression arg=new expression(this,null,r,"",(String)null);
 			arguments.add(arg);
 		}
-//		if(arguments.isEmpty()){
-//			throw new compiler_error(this,"at least on argument required. found none.","");
-//		}
 		token=arguments.get(0).token;
 		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
@@ -34,7 +31,6 @@ final public class call_foo extends statement{
 		final def_table tbl=(def_table)x.toc.get("table "+table_name);
 		if(tbl==null)throw new compiler_error(this,"table not found",table_name);
 		final ArrayList<expression>args;
-//		final ArrayList<String>allocated_registers=new ArrayList<>();
 		final ArrayList<String>allocated_vars=new ArrayList<>();
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
@@ -53,8 +49,6 @@ final public class call_foo extends statement{
 			args=arguments;
 			if(args.size()-1!=tbl.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-//		args.subList(1,args.size()).forEach(e->parent_statement.declarations.add(e.token));
-//		pl("foo "+parent_statement.declarations.toString());
 		final expression rd=args.get(0);
 		
 		final int rai=x.vspc().alloc_var(this,"$ra");
@@ -75,12 +69,8 @@ final public class call_foo extends statement{
 		loop_code.binary_to(x);
 		x.write(4,this);//nxt
 		allocated_vars.forEach(e->x.vspc().free_var(this,e));
-//		allocated_registers.forEach(e->x.free_register(this,e));
 	}
 	
-//	private int register_index(String reg_a){
-//		return reg_a.charAt(0)-'a';
-//	}
 	@Override public void source_to(xwriter x){
 		x.p("foo");
 		super.source_to(x);

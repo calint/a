@@ -55,7 +55,7 @@ public class call extends statement{
 				final int rai=x.vspc().alloc_var(e,df.token);
 				vars.add(df.token);
 				x.write(0|0x0000|(rai&63)<<14,e);//li(a dots)
-				x.at_pre_link_evaluate(e);
+				x.add_at_pre_link_evaluate(e);
 				x.write(0,e);
 			}else{
 				x.vspc().alias(e,df.token,e.token);

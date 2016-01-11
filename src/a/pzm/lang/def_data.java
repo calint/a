@@ -19,7 +19,7 @@ final public class def_data extends def{
 		r.toc.put("data "+name,this);
 	}
 	@Override public void binary_to(xbin x){
-		x.data(name,this);
+		x.def(name);
 		data.binary_to(x);
 	}
 	@Override public void source_to(xwriter x){
