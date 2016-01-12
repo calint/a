@@ -1,6 +1,14 @@
 @o{
 var tick
 inc(tick)
+
+
+var di=0xff
+drw(di)
+def drw(p){
+  st(0x5020 p)
+}
+
 st(0x2010 0xff0)
 loop(tick)
 def loop(tick){
@@ -15,6 +23,21 @@ def loop(tick){
   labels.upd()
 }
 -1
+@v def hex.print(di wi hi ln gln argb hex){
+  var msk=0xf0000
+  var times=5
+  lp(times){
+    var h=hex
+    and(h msk)
+    shf(h 16)
+    shf(hex -4)
+
+    var ret font.seek(ret h)
+    var glyph=*ret
+    font.drw(di wi hi ln argb glyph)
+    sub(di gln)
+  }
+}
 @t @txt def baba[ch]{4   0xb 0xa 0xb 0xa}
 @t @txt def b20 [ch]{3   2 0 0xb}
 @v def txt.type(txt di rgb wi hi ln gln){
@@ -95,26 +118,9 @@ def loop(tick){
   inc(ret)
   add(ret record)
 }
-@v def hex.print(di wi hi ln gln argb hex){
-  var msk=0xf0000
-  var times=5
-  lp(times){
-    var h=hex
-    and(h msk)
-    shf(h 16)
-    shf(hex -4)
-
-    var ret font.seek(ret h)
-    var glyph=*ret
-    font.drw(di wi hi ln argb glyph)
-    sub(di gln)
-  }
-}
 @v def hex.drw(wi hi ln gln rgb){
-  var di=0x6050
-  var h=0xb0bab
-  hex.print(di wi hi ln gln rgb h)
-  h=0x0baba
+  var di=0x4060
+  var h=0xb0b0b
   hex.print(di wi hi ln gln rgb h)
 }
 @c def rgb.red 0xf00
