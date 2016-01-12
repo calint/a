@@ -59,19 +59,19 @@ def loop(tick){
   }
 }
 @t def labels
-[  txt   dest    rgb   ]{2
+[  txt   dest    colr   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
   b20   0x7080  0xfff
 }
 @v def labels.drw(wi hi ln gln){
   foo(labels){
-    txt.type(txt dest rgb wi hi ln gln)
+    txt.type(txt dest colr wi hi ln gln)
   }
 }
 @v def labels.upd(){
   fow(labels){
-    inc(rgb)
+    inc(colr)
   }
 }
 @t def font[d]{36  
