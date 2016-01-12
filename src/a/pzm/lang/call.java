@@ -40,7 +40,7 @@ public class call extends statement{
 		final def_func d=(def_func)x.toc.get("func "+token);
 		final String funcs=x.toc.keySet().stream()
 				.filter(s->s.startsWith("func "))
-				.map(s->s.subSequence(0,"func ".length()))
+				.map(s->s.subSequence("func ".length(),s.length()))
 				.collect(Collectors.toList())
 				.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
@@ -65,7 +65,7 @@ public class call extends statement{
 		d.function_code.binary_to(x);
 		vars.forEach(s->x.vspc().free_var(this,s));
 		aliases.forEach(s->x.vspc().unalias(this,s));
-		x.pop();
+		x.pop(this);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);

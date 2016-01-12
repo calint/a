@@ -49,8 +49,10 @@ public final class xbin{
 				return pt.get_register_index(stmt,alias);
 			}
 			final allocated_var v=vars.get(name);
+			if(v==null&&pt!=null&&"block".equals(nm))
+				return pt.get_register_index(stmt,name);
 			if(v==null)
-				throw new compiler_error(stmt,"'"+name+"' is not declared",vars.keySet().toString());
+				throw new compiler_error(stmt,"'"+name+"' is not declared",this.toString());
 			return v.register_index;
 		}
 		public void free_var(statement stmt,String name){
@@ -64,7 +66,11 @@ public final class xbin{
 			return nm+aliases.toString()+vars.values().toString();
 		}
 		public boolean is_declared(String name){
-			return aliases.containsKey(name)||vars.containsKey(name);
+			final boolean yes=aliases.containsKey(name)||vars.containsKey(name);
+			if(yes)return true;
+			if(pt!=null&&"block".equals(nm))
+				return pt.is_declared(name);
+			return false;
 		}
 		private LinkedHashMap<String,String>aliases=new LinkedHashMap<>();
 		public void alias(statement stmt,String alias,String var){
@@ -87,9 +93,12 @@ public final class xbin{
 	public varspace push_func(){
 		return vspc=new varspace(this,vspc,"func");
 	}
-	public varspace pop(){
-		if(!vspc.aliases.isEmpty())throw new Error();
-		if(!vspc.vars.isEmpty())throw new Error();
+	public varspace pop(statement stmt){
+		if(vspc.aliases!=null&&!vspc.aliases.isEmpty())throw new Error();
+		if(vspc.vars!=null&&!vspc.vars.isEmpty())throw new Error();
+		
+//		if(vspc.aliases!=null)vspc.aliases.clear();
+//		if(vspc.vars!=null)vspc.vars.keySet().forEach(s->free_register(stmt,s));
 		return vspc=vspc.pt;
 	}
 	public varspace vspc(){return vspc;}

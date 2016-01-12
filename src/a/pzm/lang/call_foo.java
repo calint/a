@@ -31,6 +31,7 @@ final public class call_foo extends statement{
 		final def_table tbl=(def_table)x.toc.get("table "+table_name);
 		if(tbl==null)throw new compiler_error(this,"table not found",table_name);
 		final ArrayList<expression>args;
+		x.push_block();
 		final ArrayList<String>allocated_vars=new ArrayList<>();
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
@@ -65,7 +66,9 @@ final public class call_foo extends statement{
 		}
 		loop_code.binary_to(x);
 		x.write(4,this);//nxt
+
 		allocated_vars.forEach(e->x.vspc().free_var(this,e));
+		x.pop(this);
 	}
 	
 	@Override public void source_to(xwriter x){
