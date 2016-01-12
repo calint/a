@@ -2,6 +2,7 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 import b.xwriter;
 
@@ -38,8 +39,10 @@ final public class call_foo extends statement{
 				if(tbl==null)
 					throw new compiler_error(this,"table '"+table_name+"' from annotation not found","");
 				ispointer=true;
-			}else
-				throw new compiler_error(this,"table '"+table_name+"' not found","");
+			}else{
+				final String funcs=x.toc.keySet().stream().filter(s->s.startsWith("table ")).map(s->s.substring("table ".length())).collect(Collectors.toList()).toString();
+				throw new compiler_error(this,"table '"+table_name+"' not found",funcs);
+			}
 		}
 		x.push_block();
 		final ArrayList<expression>args;
