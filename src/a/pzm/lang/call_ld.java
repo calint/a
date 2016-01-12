@@ -9,6 +9,7 @@ final public class call_ld extends call{
 		super(parent,annot,"ld",r);
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(2);
 		final int rai=x.vspc().get_register_index(this,arguments.get(1).token);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
 //		final int i=op|(rai&63)<<8|(rdi&63)<<14;

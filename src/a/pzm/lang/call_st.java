@@ -12,6 +12,7 @@ final public class call_st extends call{
 			throw new compiler_error(this,"expected two arguments","");
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(2);
 		final ArrayList<String>allocated_regs=new ArrayList<>();
 		final expression ra=arguments.get(0);
 		final int rai;

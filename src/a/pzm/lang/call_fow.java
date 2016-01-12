@@ -21,6 +21,7 @@ final public class call_fow extends statement{
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);
+		if(arguments.size()<1)throw new compiler_error(this,"expected at least one argument","");
 		ws_after_expression_closed=r.next_empty_space();
 		loop_code=statement.read(this,r);
 		mark_end_of_source_from(loop_code);

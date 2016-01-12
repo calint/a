@@ -9,6 +9,7 @@ final public class call_sub extends call{
 		super(parent,annot,"sub",r);
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(2);
 		final int rai=x.vspc().get_register_index(this,arguments.get(0).token);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(1).token);
 		x.write_op(this,op,rai,rdi);

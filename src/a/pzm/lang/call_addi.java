@@ -9,6 +9,7 @@ final public class call_addi extends call{
 		super(parent,annotations,"addi",r);
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(2);
 		final int rai=x.vspc().get_register_index(this,arguments.get(0).token);
 		final int rdi=Integer.parseInt(arguments.get(1).token);
 		if(rdi>31||rdi<-32)

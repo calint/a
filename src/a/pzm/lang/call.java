@@ -77,6 +77,11 @@ public class call extends statement{
 		arguments.forEach(e->e.source_to(x));
 		x.p(")").p(ws_trailing);
 	}
+	protected void ensure_arg_count(int i) {
+		if(arguments!=null&&arguments.size()==i)
+			return;
+		throw new compiler_error(this,"expected "+i+" arguments, got "+(arguments!=null?arguments.size():0),"");
+	}
 
 //	public static int declared_register_index_from_string(xbin bin,statement stmt,String alias){
 //		final int rai=bin.vspc().get_register_index(stmt,alias);

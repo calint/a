@@ -9,6 +9,7 @@ final public class call_shf extends call{
 		super(parent,annot,"shf",r);
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(2);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
 		final expression rd=arguments.get(1);
 		final int imm6=rd.eval(x);

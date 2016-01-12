@@ -28,6 +28,8 @@ final public class call_lp extends statement{
 		mark_end_of_source_from(loop_code);
 	}
 	@Override public void binary_to(xbin x){
+		if(arguments.size()!=1)throw new compiler_error(this,"expected one argument, got "+arguments.size(),"");
+//		ensure_arg_count(1);
 		final expression rd=arguments.get(0);
 		final int rdi=x.vspc().get_register_index(rd,rd.token);
 		x.write_op(this,op,0,rdi);

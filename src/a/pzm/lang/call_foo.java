@@ -20,6 +20,7 @@ final public class call_foo extends statement{
 			final expression arg=new expression(this,null,r,"",(String)null);
 			arguments.add(arg);
 		}
+		if(arguments.size()<1)throw new compiler_error(this,"expected at least one argument","");
 		token=arguments.get(0).token;
 		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();

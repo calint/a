@@ -9,6 +9,7 @@ final public class call_not extends call{
 		super(parent,annotations,"not",r);
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(1);
 		final String rd=arguments.get(0).token;
 //		if(!x.vspc().is_declared(rd))
 //			throw new compiler_error(arguments.get(0),"var '"+rd+"' not declared",x.toString());

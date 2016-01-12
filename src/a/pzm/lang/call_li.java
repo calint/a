@@ -10,6 +10,7 @@ final public class call_li extends call{
 		super(b,annotations,"li",r);
 	}
 	@Override public void binary_to(xbin x){
+		ensure_arg_count(2);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
 		x.write_op(this,op,0,rdi);
 		final expression imm=arguments.get(1);
