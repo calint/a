@@ -2,6 +2,8 @@ package a.pzm.lang;
 
 import static b.b.pl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -58,7 +60,7 @@ public final class xbin{
 		public void free_var(statement stmt,String name){
 			final allocated_var v=vars.remove(name);
 			if(v==null)
-				throw new compiler_error(stmt,"var '"+name+"' is not declared",vars.keySet().toString());
+				throw new compiler_error(stmt,"var '"+name+"' is not declared",this.toString());
 			xb.free_register(stmt,v.bound_to_register);
 //			aliases.remove(v.name);
 		}
@@ -94,11 +96,15 @@ public final class xbin{
 		return vspc=new varspace(this,vspc,"func");
 	}
 	public varspace pop(statement stmt){
-		if(vspc.aliases!=null&&!vspc.aliases.isEmpty())throw new Error();
-		if(vspc.vars!=null&&!vspc.vars.isEmpty())throw new Error();
+//		if(vspc.aliases!=null&&!vspc.aliases.isEmpty())throw new Error();
+//		if(vspc.vars!=null&&!vspc.vars.isEmpty())throw new Error();
 		
-//		if(vspc.aliases!=null)vspc.aliases.clear();
-//		if(vspc.vars!=null)vspc.vars.keySet().forEach(s->free_register(stmt,s));
+		if(vspc.aliases!=null)vspc.aliases.keySet().forEach(s->vspc.unalias(stmt,s));
+		if(vspc.vars!=null){
+			final ArrayList<String>var_names=new ArrayList<>();
+			vspc.vars.keySet().forEach(name->var_names.add(name));
+			var_names.forEach(nm->vspc.free_var(stmt,nm));
+		}
 		return vspc=vspc.pt;
 	}
 	public varspace vspc(){return vspc;}
@@ -112,7 +118,11 @@ public final class xbin{
 		}
 	}
 	public int get_register_index_for_name(String regnm){
-		return Integer.parseInt(regnm.substring(1));
+		try{
+			return Integer.parseInt(regnm.substring(1));
+		}catch(NumberFormatException e){
+			throw new Error(e);
+		}
 	}
 
 	final public Map<String,statement>toc;

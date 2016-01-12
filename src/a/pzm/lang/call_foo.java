@@ -30,16 +30,15 @@ final public class call_foo extends statement{
 		final String table_name=arguments.get(0).token;
 		final def_table tbl=(def_table)x.toc.get("table "+table_name);
 		if(tbl==null)throw new compiler_error(this,"table not found",table_name);
-		final ArrayList<expression>args;
 		x.push_block();
-		final ArrayList<String>allocated_vars=new ArrayList<>();
+		final ArrayList<expression>args;
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
 			tbl.arguments.forEach(col->{
 				final String col_name=col.token;
 				x.vspc().alloc_var(this,col_name);
-				allocated_vars.add(col_name);
+//				allocated_vars.add(col_name);
 				final expression e=new expression(this,col_name);
 				args.add(e);				
 			});
@@ -47,17 +46,13 @@ final public class call_foo extends statement{
 			args=arguments;
 			if(args.size()-1!=tbl.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-		final expression rd=args.get(0);
-		
 		final int rai=x.vspc().alloc_var(this,"$ra");
-		allocated_vars.add("$ra");
 		final int rci=x.vspc().alloc_var(this,"$rc");
-		allocated_vars.add("$rc");
 		
 		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
-		x.linker_add_li(rd.token);
+		final expression tblnm=args.get(0);
+		x.linker_add_li(tblnm.token);
 		x.write(0,this);
-		
 		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
 		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14,this);//lp(c)
 		for(expression e:args.subList(1,args.size())){
@@ -66,8 +61,6 @@ final public class call_foo extends statement{
 		}
 		loop_code.binary_to(x);
 		x.write(4,this);//nxt
-
-		allocated_vars.forEach(e->x.vspc().free_var(this,e));
 		x.pop(this);
 	}
 	

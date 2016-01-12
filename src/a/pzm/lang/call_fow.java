@@ -29,9 +29,8 @@ final public class call_fow extends statement{
 		final String table_name=arguments.get(0).token;
 		final def_table dt=(def_table)x.toc.get("table "+table_name);
 		if(dt==null) throw new Error("struct not found: "+table_name);
+		x.push_block();
 		final ArrayList<expression>args;
-		final ArrayList<String>allocated_registers=new ArrayList<>();
-		final ArrayList<String>aliases=new ArrayList<>();
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
@@ -40,7 +39,7 @@ final public class call_fow extends statement{
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
 			for(def_table_col col:stc.arguments){
 				x.vspc().alloc_var(col,col.token);
-				aliases.add(col.token);
+//				aliases.add(col.token);
 				final expression e=new expression(this,col.token);
 				args.add(e);
 			}
@@ -48,15 +47,20 @@ final public class call_fow extends statement{
 			args=arguments;
 			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
-		final String ra=x.alloc_register(this);
-		allocated_registers.add(ra);
-		final int rai=get_register_index_for_name(ra);
-		final String rb=x.alloc_register(this);
-		allocated_registers.add(rb);
-		final int rbi=get_register_index_for_name(rb);
-		final String rc=x.alloc_register(this);
-		final int rci=get_register_index_for_name(rc);
-		allocated_registers.add(rc);
+		final int rai=x.vspc().alloc_var(this,"$ra");
+		final int rbi=x.vspc().alloc_var(this,"$rb");
+		final int rci=x.vspc().alloc_var(this,"$rc");
+
+//		final String ra=x.alloc_register(this);
+//		allocated_registers.add(ra);
+//		final int rai=get_register_index_for_name(ra);
+//		final String rb=x.alloc_register(this);
+//		allocated_registers.add(rb);
+//		final int rbi=get_register_index_for_name(rb);
+//		final String rc=x.alloc_register(this);
+//		final int rci=get_register_index_for_name(rc);
+//		allocated_registers.add(rc);
+		
 		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 		x.linker_add_li(arguments.get(0).token);
 		x.write(0,this);
@@ -75,17 +79,13 @@ final public class call_fow extends statement{
 			final int regi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
 			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14,this);//stc(a reg)
 		}
-		aliases.forEach(e->x.vspc().free_var(this,e));
-		allocated_registers.forEach(e->x.free_register(this,e));
+//		aliases.forEach(e->x.vspc().free_var(this,e));
+//		allocated_registers.forEach(e->x.free_register(this,e));
 		x.write(4,this);//nxt
-	}
-	
-	
-	//??
-	private int get_register_index_for_name(String reg_a){
-		return reg_a.charAt(0)-'a';
-	}
+		x.pop(this);
 
+	}
+	
 	@Override public void source_to(xwriter x){
 		x.p("fow");
 		super.source_to(x);
