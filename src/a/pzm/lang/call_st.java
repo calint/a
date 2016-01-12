@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 
 final public class call_st extends call{
 	private static final long serialVersionUID=1;
+	final public static int op=0xd8;
 	public call_st(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
 		super(parent,annot,"st",r);
 		if(arguments.size()!=2)
@@ -34,9 +35,11 @@ final public class call_st extends call{
 			final int d=rd.eval(x);
 			x.write(d,rd);
 		}
-		final int i=0x00d8|(rai&63)<<8|(rdi&63)<<14;
-		final int zni=apply_znxr_annotations_on_instruction(i);
-		x.write(zni,this);
+//		final int i=0x00d8|(rai&63)<<8|(rdi&63)<<14;
+//		final int zni=apply_znxr_annotations_on_instruction(i);
+//		x.write(zni,this);
+//		
+		x.write_op(this, op, rai, rdi);
 		allocated_regs.forEach(s->x.vspc().free_var(this,s));
 	}
 }

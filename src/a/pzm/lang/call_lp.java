@@ -24,17 +24,16 @@ final public class call_lp extends statement{
 		}
 		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
-		loop_code=statement.read(this,r);//? this parent
+		loop_code=statement.read(this,r);
 		mark_end_of_source_from(loop_code);
 	}
 	@Override public void binary_to(xbin x){
 		final expression rd=arguments.get(0);
 		final int rdi=x.vspc().get_register_index(rd,rd.token);
-		final int rai=0,znxr=0;
-		final int i=op|znxr|(rai&63)<<8|(rdi&63)<<14;
-		x.write(i,this);
+		x.write_op(this,op,0,rdi);
 		loop_code.binary_to(x);
-		x.write(4,this);//nxt
+		x.write_op(this,4,0,0);
+//		x.write(4,this);//nxt
 	}
 	@Override public void source_to(xwriter x){
 		x.p("lp");

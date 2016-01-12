@@ -219,4 +219,14 @@ public final class xbin{
 		x.p(vspc.toString());
 		return x.toString();
 	}
+	public void write_op(final statement stmt,final int op,final int rai,final int rdi){
+		int znxr=0;
+		if(stmt.has_annotation("ifp"))znxr|=3;
+		if(stmt.has_annotation("ifz"))znxr|=1;
+		if(stmt.has_annotation("ifn"))znxr|=2;
+		if(stmt.has_annotation("nxt"))znxr|=4;
+		if(stmt.has_annotation("ret"))znxr|=8;
+		final int i=op|znxr|(rai&63)<<8|(rdi&63)<<14;
+		write(i,stmt);
+	}
 }

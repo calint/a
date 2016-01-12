@@ -10,7 +10,7 @@ final public class call_addi extends call{
 		super(b,annotations,"addi",r);
 	}
 	@Override public void binary_to(xbin x){
-		final int rai=declared_register_index_from_string(x,this,arguments.get(0).token);
+		final int rai=x.vspc().get_register_index(this,arguments.get(0).token);
 		final int rdi=Integer.parseInt(arguments.get(1).token);
 		if(rdi>31||rdi<-32)
 			throw new compiler_error(this,"immediate value '"+arguments.get(1).token+"' out of range -32 .. 31","");

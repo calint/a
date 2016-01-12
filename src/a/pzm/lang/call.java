@@ -73,9 +73,9 @@ public class call extends statement{
 		x.p(")").p(ws_trailing);
 	}
 
-	public static int declared_register_index_from_string(xbin bin,statement stmt,String alias){
-		final int rai=bin.vspc().get_register_index(stmt,alias);
-		return rai;
-	}
+//	public static int declared_register_index_from_string(xbin bin,statement stmt,String alias){
+//		final int rai=bin.vspc().get_register_index(stmt,alias);
+//		return rai;
+//	}
 
 }

@@ -10,7 +10,7 @@ final public class call_neg extends call{
 		super(b,annotations,"neg",r);
 	}
 	@Override public void binary_to(xbin x){
-		final int rdi=declared_register_index_from_string(x,this,arguments.get(0).token);
+		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
 		final int zni=apply_znxr_annotations_on_instruction(op|(rdi&63)<<14);
 		//? inc reg imm4
 		x.write(zni,this);
