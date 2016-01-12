@@ -44,14 +44,14 @@ public class expression extends statement{
 //		destreg=dest_reg;
 	}
 	@Override public void binary_to(xbin x){
-		if(is_pointer_dereference){// ld or ldc
+		if(is_pointer_dereference){// ld or ldc   destreg=*token
 			if(x.vspc().is_declared(token)){// ld(ra rd)
 				final int rai=x.vspc().get_register_index(this,token);
 				final int rdi=x.vspc().get_register_index(this,destreg);
 				x.write_op(this,call_ld.op,rai,rdi);
 				return;
 			}
-			// ld(0xf00 4)
+			// ld(0xf00 4)   desreg=*
 			final String reg=x.alloc_register(this);
 			final int regi=x.get_register_index_for_name(reg);
 			x.write_op(this,call_li.op,0,regi);

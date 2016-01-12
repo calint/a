@@ -32,17 +32,16 @@ public final class xbin{
 		}
 		public varspace parent(){return pt;}
 		public int alloc_var(statement stmt,String name){
-			final allocated_var e=vars.get(name);
-			if(e!=null)
-				throw new compiler_error(stmt,"var '"+name+"' declared at line "+e.declared_at.source_lineno(),vars.keySet().toString());
-			final allocated_var v=new allocated_var();
-			v.declared_at=stmt;
-			v.bound_to_register=xb.alloc_register(stmt);
-			v.name=name;
-			v.register_index=xb.get_register_index_for_name(v.bound_to_register);
-			vars.put(name,v);
-//			aliases.put(name,name);
-			return v.register_index;
+			final allocated_var var=vars.get(name);
+			if(var!=null)
+				throw new compiler_error(stmt,"var '"+name+"' declared at line "+var.declared_at.source_lineno(),vars.keySet().toString());
+			final allocated_var allocated_var=new allocated_var();
+			allocated_var.declared_at=stmt;
+			allocated_var.bound_to_register=xb.alloc_register(stmt);
+			allocated_var.name=name;
+			allocated_var.register_index=xb.get_register_index_for_name(allocated_var.bound_to_register);
+			vars.put(name,allocated_var);
+			return allocated_var.register_index;
 		}
 		public int get_register_index(statement stmt,final String name){
 			final String alias=aliases.get(name);
