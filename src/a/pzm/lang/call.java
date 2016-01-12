@@ -44,11 +44,11 @@ public class call extends statement{
 				.collect(Collectors.toList())
 				.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
-		if(arguments.size()!=d.argdefs.size())throw new compiler_error(this,"function "+token+" expects "+d.argdefs.size()+" arguments, got "+arguments.size(),"");
+		if(arguments.size()!=d.params.size())throw new compiler_error(this,"function "+token+" expects "+d.params.size()+" arguments, got "+arguments.size(),"");
 		x.push_func();
 		int i=0;
 		for(expression e:arguments){
-			final def_func_arg df=d.argdefs.get(i++);
+			final def_func_param df=d.params.get(i++);
 			if(!x.vspc().parent().is_declared(e.token)){// not declared, load immediate data
 				final int rdi=x.vspc().alloc_var(e,df.token);
 //				x.write(0|0x0000|(rai&63)<<14,e);//li(a dots)

@@ -1,5 +1,6 @@
 @o{
-var tick inc(tick)
+var tick
+inc(tick)
 st(0x2010 0xff0)
 loop(tick)
 def loop(tick){

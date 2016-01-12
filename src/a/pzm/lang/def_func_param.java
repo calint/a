@@ -2,9 +2,9 @@ package a.pzm.lang;
 
 import b.xwriter;
 
-final public class def_func_arg extends def{
+final public class def_func_param extends def{
 	final private String ws_leading,ws_trailing;
-	public def_func_arg(def_func parent,reader r){
+	public def_func_param(def_func parent,reader r){
 		super(parent,null);
 		ws_leading=r.next_empty_space();
 		r.set_location_in_source();
