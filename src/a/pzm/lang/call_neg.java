@@ -11,9 +11,6 @@ final public class call_neg extends call{
 	}
 	@Override public void binary_to(xbin x){
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
-		final int zni=apply_znxr_annotations_on_instruction(op|(rdi&63)<<14);
-		//? inc reg imm4
-//		x.write(zni,this);
 		x.write_op(this,op,0,rdi);
 	}
 }
