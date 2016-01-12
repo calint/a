@@ -2,7 +2,6 @@
 var tick
 inc(tick)
 
-
 var di=6
 var x=*di
 drw(tick x)
@@ -15,8 +14,7 @@ def drw(tick p){
   var di=0x4040
   var p=0
   lp(n){
-    var h=*p
-    inc(p)
+    var h=*p++
     hex.print(di 4 5 252 0x4fb 0xf00 h)
     addi(di 1)
   }

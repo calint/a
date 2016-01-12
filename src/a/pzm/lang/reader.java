@@ -115,7 +115,7 @@ public final class reader{
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
-			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||ch=='='){
+			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||ch=='='||ch=='+'){
 				unread(ch);
 				break;
 			}
@@ -164,6 +164,12 @@ public final class reader{
 	public boolean is_next_char_pointer_dereference(){
 		final int ch=read();
 		if(ch=='*')return true;
+		unread(ch);
+		return false;
+	}
+	public boolean is_next_char_plus(){
+		final int ch=read();
+		if(ch=='+')return true;
 		unread(ch);
 		return false;
 	}
