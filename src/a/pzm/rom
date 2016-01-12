@@ -25,11 +25,11 @@ def loop(tick){
     sub(di gln)
   }
 }
-
 @t def labels
 [  txt   dest    rgb   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
+  b20   0x7080  0xfff
 }
 @v def labels.drw(wi hi ln gln){
   foo(labels){

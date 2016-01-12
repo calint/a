@@ -7,7 +7,7 @@ import b.xwriter;
 public class expression extends statement{
 	private static final long serialVersionUID=1;
 	final private String ws_leading,ws_after;
-	final private String destreg;
+	String destreg;
 	boolean is_assign;//? 
 	final boolean is_pointer_dereference;
 //	final String pointer;
@@ -62,16 +62,24 @@ public class expression extends statement{
 			x.free_register(this,reg);
 			return;
 		}
+		
+		
 		if(x.vspc().is_declared(token)){// tx
 			final int rai=x.vspc().get_register_index(this,token);
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_tx.op,rai,rdi);
 			return;
 		}
+		
+		
 		if(destreg!=null){// li
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_li.op,0,rdi);
+			x.add_at_pre_link_evaluate(this);
+			x.write(0,this);
+			return;
 		}
+		// constant
 		x.add_at_pre_link_evaluate(this);
 		x.write(0,this);
 	}

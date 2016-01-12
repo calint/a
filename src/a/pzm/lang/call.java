@@ -49,15 +49,22 @@ public class call extends statement{
 		int i=0;
 		for(expression e:arguments){
 			final def_func_param df=d.params.get(i++);
-			if(!x.vspc().parent().is_declared(e.token)){// not declared, load immediate data
-				final int rdi=x.vspc().alloc_var(e,df.token);
-//				x.write(0|0x0000|(rai&63)<<14,e);//li(a dots)
-				x.write_op(this, call_li.op, 0, rdi);
-				x.add_at_pre_link_evaluate(e);
-				x.write(0,e);
-			}else{
+//			if(!x.vspc().parent().is_declared(e.token)){// not declared, load immediate data
+//				final int rdi=x.vspc().alloc_var(e,df.token);
+//				x.write_op(this, call_li.op, 0, rdi);
+//				x.add_at_pre_link_evaluate(e);
+//				x.write(0,e);
+//			}else{
+//				x.vspc().alias(e,df.token,e.token);
+//			}
+
+			if(x.vspc().parent().is_declared(e.token)){
 				x.vspc().alias(e,df.token,e.token);
+				continue;
 			}
+			final int rdi=x.vspc().alloc_var(e,df.token);
+			e.destreg=df.token;
+			e.binary_to(x);
 		}
 		d.function_code.binary_to(x);
 		x.pop(this);
