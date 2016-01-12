@@ -3,12 +3,24 @@ var tick
 inc(tick)
 
 
-var di=0xff
-drw(di)
-def drw(p){
-  st(0x5020 p)
-}
+var di=6
+var x=*di
+drw(tick x)
 
+
+def drw(tick p){
+  st(0x5020 p)
+  st(0x5021 tick)
+  var n=4
+  var di=0x4040
+  var p=0
+  lp(n){
+    var h=*p
+    inc(p)
+    hex.print(di 4 5 252 0x4fb 0xf00 h)
+    addi(di 1)
+  }
+}
 st(0x2010 0xff0)
 loop(tick)
 def loop(tick){
@@ -119,8 +131,8 @@ def loop(tick){
   add(ret record)
 }
 @v def hex.drw(wi hi ln gln rgb){
-  var di=0x4060
-  var h=0xb0b0b
+  var di=0x2464
+  var h=0xb00b0
   hex.print(di wi hi ln gln rgb h)
 }
 @c def rgb.red 0xf00
