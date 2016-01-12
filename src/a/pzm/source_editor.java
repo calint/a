@@ -76,7 +76,7 @@ final public class source_editor extends a{
 			}
 			pl("*** done");
 			if(x==null)return;
-//			x.xuo(se);
+			x.xuo(se);
 			x.xu(sts,code);
 			ln.xj_select_line(x,0);
 			ev(x,this,new_rom);
