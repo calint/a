@@ -14,8 +14,10 @@ final public class call_addi extends call{
 		final int rdi=Integer.parseInt(arguments.get(1).token);
 		if(rdi>31||rdi<-32)
 			throw new compiler_error(this,"immediate value '"+arguments.get(1).token+"' out of range -32 .. 31","");
-		final int i=op|(rai&63)<<8|(rdi&63)<<14;
-		final int zni=apply_znxr_annotations_on_instruction(i);
-		x.write(zni,this);
+//		final int i=op|(rai&63)<<8|(rdi&63)<<14;
+//		final int zni=apply_znxr_annotations_on_instruction(i);
+//		x.write(zni,this);
+		
+		x.write_op(this,op,rai,rdi);
 	}
 }

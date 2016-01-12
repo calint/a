@@ -39,7 +39,7 @@ final public class call_st extends call{
 //		final int zni=apply_znxr_annotations_on_instruction(i);
 //		x.write(zni,this);
 //		
-		x.write_op(this, op, rai, rdi);
+		x.write_op(this,op,rai,rdi);
 		allocated_regs.forEach(s->x.vspc().free_var(this,s));
 	}
 }

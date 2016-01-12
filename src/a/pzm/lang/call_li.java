@@ -11,8 +11,10 @@ final public class call_li extends call{
 	}
 	@Override public void binary_to(xbin x){
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
-		final int i=op|rdi<<14;
-		x.write(apply_znxr_annotations_on_instruction(i),this);
+//		final int i=op|rdi<<14;
+//		x.write(apply_znxr_annotations_on_instruction(i),this);
+		x.write_op(this,op,0,rdi);
+		
 		final expression imm=arguments.get(1);
 		x.add_at_pre_link_evaluate(imm);
 		x.write(0,imm);

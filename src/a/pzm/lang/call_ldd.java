@@ -12,7 +12,8 @@ final public class call_ldd extends call{
 	@Override public void binary_to(xbin x){
 		final int rai=x.vspc().get_register_index(this,arguments.get(1).token);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
-		final int i=op|(rai&63)<<8|(rdi&63)<<14;
-		x.write(apply_znxr_annotations_on_instruction(i),this);
+//		final int i=op|(rai&63)<<8|(rdi&63)<<14;
+//		x.write(apply_znxr_annotations_on_instruction(i),this);
+		x.write_op(this,op,rai,rdi);
 	}
 }
