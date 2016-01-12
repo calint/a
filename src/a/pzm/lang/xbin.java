@@ -205,11 +205,11 @@ public final class xbin{
 		}
 		return registers_available.remove(0);
 	}
-	public void free_register(statement stmt,String e){
+	public void free_register(statement stmt,String register_name){
 //		pl(ix+" free register "+e);
-		if(registers_available.contains(e))
-			throw new compiler_error(stmt,"register '"+e+"' already freed",registers_available.toString());
-		registers_available.add(0,e);
+		if(registers_available.contains(register_name))
+			throw new compiler_error(stmt,"register '"+register_name+"' already freed",registers_available.toString());
+		registers_available.add(0,register_name);
 	}
 	public statement statement_for_address(int addr){
 		return data_to_statement[addr];

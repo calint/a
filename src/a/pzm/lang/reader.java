@@ -161,4 +161,10 @@ public final class reader{
 	public String toString(){
 		return location_in_source();
 	}
+	public boolean is_next_char_pointer_dereference(){
+		final int ch=read();
+		if(ch=='*')return true;
+		unread(ch);
+		return false;
+	}
 }

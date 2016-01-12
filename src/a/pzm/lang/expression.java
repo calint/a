@@ -9,14 +9,18 @@ public class expression extends statement{
 	final private String ws_leading,ws_after;
 	final private String destreg;
 	boolean is_assign;//? 
+	final boolean is_pointer_dereference;
+//	final String pointer;
 	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
 		super(parent,annot);
 		destreg=dest_reg;
 		mark_start_of_source(r);
 		if(tk==null){// first token supplied
 			ws_leading=r.next_empty_space();
+			is_pointer_dereference=r.is_next_char_pointer_dereference();
 			token=r.next_token();
 		}else{
+			is_pointer_dereference=false;
 			ws_leading="";
 			token=tk;
 		}
@@ -36,19 +40,36 @@ public class expression extends statement{
 		ws_after=ws_leading="";
 		token=dest_reg;
 		destreg=null;
+		is_pointer_dereference=false;
 //		destreg=dest_reg;
 	}
 	@Override public void binary_to(xbin x){
+		if(is_pointer_dereference){// ld or ldc
+			if(x.vspc().is_declared(token)){// ld(ra rd)
+				final int rai=x.vspc().get_register_index(this,token);
+				final int rdi=x.vspc().get_register_index(this,destreg);
+				x.write_op(this,call_ld.op,rai,rdi);
+				return;
+			}
+			// ld(0xf00 4)
+			final String reg=x.alloc_register(this);
+			final int regi=x.get_register_index_for_name(reg);
+			x.write_op(this,call_li.op,0,regi);
+			x.add_at_pre_link_evaluate(this);
+			x.write(0,this);
+			final int rdi=x.vspc().get_register_index(this,destreg);
+			x.write_op(this,call_ld.op,regi,rdi);
+			x.free_register(this,reg);
+			return;
+		}
 		if(x.vspc().is_declared(token)){// tx
 			final int rai=x.vspc().get_register_index(this,token);
 			final int rdi=x.vspc().get_register_index(this,destreg);
-//			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(b a)
 			x.write_op(this,call_tx.op,rai,rdi);
 			return;
 		}
 		if(destreg!=null){// li
 			final int rdi=x.vspc().get_register_index(this,destreg);
-//			x.write(0|0x0000|(rdi&63)<<14,this);//li(rai ____)
 			x.write_op(this,call_li.op,0,rdi);
 		}
 		x.add_at_pre_link_evaluate(this);
@@ -92,6 +113,8 @@ public class expression extends statement{
 		if(is_assign){
 			x.p(destreg).p("=");
 		}
-		x.p(ws_leading).p(token).p(ws_after);
+		x.p(ws_leading);
+		if(is_pointer_dereference)x.p("*");
+		x.p(token).p(ws_after);
 	}
 }

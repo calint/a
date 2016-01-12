@@ -20,7 +20,7 @@ def loop(tick){
 @v def txt.type(txt di rgb wi hi ln gln){
   @baba foo(txt){
     var chaddr font.seek(chaddr ch)
-    var glyph ld(glyph chaddr)
+    var glyph=*chaddr
     font.drw(di wi hi ln rgb glyph)
     sub(di gln)
   }
@@ -89,11 +89,11 @@ def loop(tick){
     inc(rgb)
   }
 }
-@* def font.seek(return record){
+@* def font.seek(ret record){
   var temp=font
-  return=temp
-  inc(return)
-  add(return record)
+  ret=temp
+  inc(ret)
+  add(ret record)
 }
 @v def hex.print(di wi hi ln gln argb hex){
   var msk=0xf0000
@@ -105,7 +105,7 @@ def loop(tick){
     shf(hex -4)
 
     var ret font.seek(ret h)
-    var glyph ld(glyph ret)
+    var glyph=*ret
     font.drw(di wi hi ln argb glyph)
     sub(di gln)
   }
