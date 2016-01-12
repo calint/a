@@ -39,7 +39,6 @@ final public class call_fow extends statement{
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
 			for(def_table_col col:stc.arguments){
 				x.vspc().alloc_var(col,col.token);
-//				aliases.add(col.token);
 				final expression e=new expression(this,col.token);
 				args.add(e);
 			}
@@ -50,17 +49,6 @@ final public class call_fow extends statement{
 		final int rai=x.vspc().alloc_var(this,"$ra");
 		final int rbi=x.vspc().alloc_var(this,"$rb");
 		final int rci=x.vspc().alloc_var(this,"$rc");
-
-//		final String ra=x.alloc_register(this);
-//		allocated_registers.add(ra);
-//		final int rai=get_register_index_for_name(ra);
-//		final String rb=x.alloc_register(this);
-//		allocated_registers.add(rb);
-//		final int rbi=get_register_index_for_name(rb);
-//		final String rc=x.alloc_register(this);
-//		final int rci=get_register_index_for_name(rc);
-//		allocated_registers.add(rc);
-		
 		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 		x.linker_add_li(arguments.get(0).token);
 		x.write(0,this);
@@ -79,8 +67,6 @@ final public class call_fow extends statement{
 			final int regi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
 			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14,this);//stc(a reg)
 		}
-//		aliases.forEach(e->x.vspc().free_var(this,e));
-//		allocated_registers.forEach(e->x.free_register(this,e));
 		x.write(4,this);//nxt
 		x.pop(this);
 

@@ -71,7 +71,8 @@ public class statement extends a{
 				return s;
 			}catch(Throwable t){
 				final Throwable tt=t.getCause();
-				throw new Error(tt==null?t:tt);
+//				throw new Error(tt==null?t:tt);
+				throw tt;
 			}
 		}
 		// function call

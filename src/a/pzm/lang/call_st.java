@@ -5,8 +5,10 @@ import java.util.LinkedHashMap;
 
 final public class call_st extends call{
 	private static final long serialVersionUID=1;
-	public call_st(statement parent,LinkedHashMap<String,String>annot,reader r){
+	public call_st(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
 		super(parent,annot,"st",r);
+		if(arguments.size()!=2)
+			throw new compiler_error(this,"expected two arguments","");
 	}
 	@Override public void binary_to(xbin x){
 		final ArrayList<String>allocated_regs=new ArrayList<>();
@@ -21,8 +23,6 @@ final public class call_st extends call{
 			x.add_at_pre_link_evaluate(ra);
 			x.write(0,ra);
 		}
-
-
 		final expression rd=arguments.get(1);
 		final int rdi;
 		if(x.vspc().is_declared(rd.token)){//alias
