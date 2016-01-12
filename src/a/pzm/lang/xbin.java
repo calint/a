@@ -99,7 +99,10 @@ public final class xbin{
 //		if(vspc.aliases!=null&&!vspc.aliases.isEmpty())throw new Error();
 //		if(vspc.vars!=null&&!vspc.vars.isEmpty())throw new Error();
 		
-		if(vspc.aliases!=null)vspc.aliases.keySet().forEach(s->vspc.unalias(stmt,s));
+		if(vspc.aliases!=null){
+			final ArrayList<String>aliases_names=new ArrayList<>();
+			aliases_names.forEach(nm->vspc.unalias(stmt,nm));
+		}
 		if(vspc.vars!=null){
 			final ArrayList<String>var_names=new ArrayList<>();
 			vspc.vars.keySet().forEach(name->var_names.add(name));
