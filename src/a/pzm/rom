@@ -17,10 +17,7 @@ def loop(tick){
 @t @txt def baba[ch]{4   0xb 0xa 0xb 0xa}
 @t @txt def b20 [ch]{3   2 0 0xb}
 @v def txt.type(txt di rgb wi hi ln gln){
-  var length
-  ldc(length txt)
-  lp(length){
-    var ch ldc(ch txt)
+  @baba foo(txt){
     var chaddr font.seek(chaddr ch)
     var glyph ld(glyph chaddr)
     font.drw(di wi hi ln rgb glyph)

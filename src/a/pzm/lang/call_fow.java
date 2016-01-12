@@ -26,9 +26,19 @@ final public class call_fow extends statement{
 		mark_end_of_source_from(loop_code);
 	}
 	@Override public void binary_to(xbin x){
-		final String table_name=arguments.get(0).token;
-		final def_table dt=(def_table)x.toc.get("table "+table_name);
-		if(dt==null) throw new Error("struct not found: "+table_name);
+		String table_name=arguments.get(0).token;
+		def_table tbl=(def_table)x.toc.get("table "+table_name);
+		if(tbl==null){
+			if(annotations!=null){
+				table_name=annotations.keySet().iterator().next();
+				tbl=(def_table)x.toc.get("table "+table_name);
+			}else
+				throw new compiler_error(this,"table '"+table_name+"' not found","");
+		}
+//		
+//		final String table_name=arguments.get(0).token;
+//		final def_table dt=(def_table)x.toc.get("table "+table_name);
+//		if(dt==null) throw new Error("struct not found: "+table_name);
 		x.push_block();
 		final ArrayList<expression>args;
 		if(arguments.size()==1){//select *
@@ -44,14 +54,14 @@ final public class call_fow extends statement{
 			}
 		}else{
 			args=arguments;
-			if(args.size()-1!=dt.arguments.size()) throw new Error("argument count does not match table: "+table_name);
+			if(args.size()-1!=tbl.arguments.size()) throw new Error("argument count does not match table: "+table_name);
 		}
 		final int rai=x.vspc().alloc_var(this,"$ra");
 		final int rbi=x.vspc().alloc_var(this,"$rb");
 		final int rci=x.vspc().alloc_var(this,"$rc");
 //		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 		x.write_op(this,call_li.op,0,rai);
-		x.linker_add_li(arguments.get(0).token);
+		x.linker_add_li(table_name);
 		x.write(0,this);
 //		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
 		x.write_op(this,call_ldc.op,rai,rci);
@@ -81,8 +91,8 @@ final public class call_fow extends statement{
 	}
 	
 	@Override public void source_to(xwriter x){
-		x.p("fow");
 		super.source_to(x);
+		x.p("fow");
 		x.p("(");
 		x.p(ws_after_expression_open);
 //		x.tag("dr");
