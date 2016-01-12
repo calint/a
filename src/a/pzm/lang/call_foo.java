@@ -49,18 +49,22 @@ final public class call_foo extends statement{
 		final int rai=x.vspc().alloc_var(this,"$ra");
 		final int rci=x.vspc().alloc_var(this,"$rc");
 		
-		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
+		x.write_op(this,call_li.op,0,rai);
+//		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
 		final expression tblnm=args.get(0);
 		x.linker_add_li(tblnm.token);
 		x.write(0,this);
-		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
-		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14,this);//lp(c)
-		for(expression e:args.subList(1,args.size())){
-			final int regi=x.vspc().get_register_index(this,e.token);
-			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
+		x.write_op(this,call_ldc.op,rai,rci);
+//		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
+		x.write_op(this,call_lp.op,0,rci);
+//		x.write(0|0x0100|(0&63)<<8|(rci&63)<<14,this);//lp(c)
+		for(expression e:args.subList(1,args.size())){// read record into registers
+			final int rdi=x.vspc().get_register_index(this,e.token);
+//			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
+			x.write_op(this,call_ldc.op,rai,rdi);
 		}
 		loop_code.binary_to(x);
-		x.write(4,this);//nxt
+		x.write_op(this,4,0,0);//nxt
 		x.pop(this);
 	}
 	

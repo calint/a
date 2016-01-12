@@ -50,8 +50,9 @@ public class call extends statement{
 		for(expression e:arguments){
 			final def_func_arg df=d.argdefs.get(i++);
 			if(!x.vspc().parent().is_declared(e.token)){// not declared, load immediate data
-				final int rai=x.vspc().alloc_var(e,df.token);
-				x.write(0|0x0000|(rai&63)<<14,e);//li(a dots)
+				final int rdi=x.vspc().alloc_var(e,df.token);
+//				x.write(0|0x0000|(rai&63)<<14,e);//li(a dots)
+				x.write_op(this, call_li.op, 0, rdi);
 				x.add_at_pre_link_evaluate(e);
 				x.write(0,e);
 			}else{

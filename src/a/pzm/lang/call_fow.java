@@ -49,25 +49,33 @@ final public class call_fow extends statement{
 		final int rai=x.vspc().alloc_var(this,"$ra");
 		final int rbi=x.vspc().alloc_var(this,"$rb");
 		final int rci=x.vspc().alloc_var(this,"$rc");
-		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
+//		x.write(0|0x0000|(rai&63)<<14,this);//li(a dots)
+		x.write_op(this,call_li.op,0,rai);
 		x.linker_add_li(arguments.get(0).token);
 		x.write(0,this);
-		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
-		x.write(0|0x0100|(rci&63)<<14,this);//lp(c)
-		x.write(0|0x00e0|(rai&63)<<8|(rbi&63)<<14,this);//tx(b a)
+//		x.write(0|0x00c0|(rai&63)<<8|(rci&63)<<14,this);//ldc(c a)
+		x.write_op(this,call_ldc.op,rai,rci);
+//		x.write(0|0x0100|(rci&63)<<14,this);//lp(c)
+		x.write_op(this,call_lp.op,0,rci);
+//		x.write(0|0x00e0|(rai&63)<<8|(rbi&63)<<14,this);//tx(b a)
+		x.write_op(this,call_tx.op,rai,rbi);
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
-			final int regi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
-			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
+			final int rdi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
+//			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
+			x.write_op(this,call_ldc.op,rai,rdi);
 		}
 		loop_code.binary_to(x);
-		x.write(0|0x00e0|(rbi&63)<<8|(rai&63)<<14,this);//tx(a b)
+//		x.write(0|0x00e0|(rbi&63)<<8|(rai&63)<<14,this);//tx(a b)
+		x.write_op(this,call_tx.op,rbi,rai);
 		for(expression e:args.subList(1,args.size())){
 			final String reg=e.token;
-			final int regi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
-			x.write(0|0x0040|(rai&63)<<8|(regi&63)<<14,this);//stc(a reg)
+			final int rdi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
+//			x.write(0|0x0040|(rai&63)<<8|(rdi&63)<<14,this);//stc(a reg)
+			x.write_op(this,call_stc.op,rai,rdi);
 		}
-		x.write(4,this);//nxt
+//		x.write(4,this);//nxt
+		x.write_op(this,4,0,0);
 		x.pop(this);
 
 	}

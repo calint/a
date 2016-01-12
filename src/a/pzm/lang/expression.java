@@ -42,12 +42,14 @@ public class expression extends statement{
 		if(x.vspc().is_declared(token)){// tx
 			final int rai=x.vspc().get_register_index(this,token);
 			final int rdi=x.vspc().get_register_index(this,destreg);
-			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(b a)
+//			x.write(0|0x00e0|(rai&63)<<8|(rdi&63)<<14,this);//tx(b a)
+			x.write_op(this,call_tx.op,rai,rdi);
 			return;
 		}
 		if(destreg!=null){// li
-			final int rai=x.vspc().get_register_index(this,destreg);
-			x.write(0|0x0000|(rai&63)<<14,this);//li(rai ____)
+			final int rdi=x.vspc().get_register_index(this,destreg);
+//			x.write(0|0x0000|(rdi&63)<<14,this);//li(rai ____)
+			x.write_op(this,call_li.op,0,rdi);
 		}
 		x.add_at_pre_link_evaluate(this);
 		x.write(0,this);
