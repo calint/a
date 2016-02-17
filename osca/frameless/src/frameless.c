@@ -330,24 +330,16 @@ static void desksave(int dsk,FILE*f){
 	}
 }
 #include<execinfo.h>
-static void
-print_trace (void)
-{
-  void *array[10];
-  size_t size;
-  char **strings;
-  size_t i;
-
-  size = backtrace (array, 10);
-  strings = backtrace_symbols (array, size);
-
-  printf ("Obtained %zd stack frames.\n", size);
-
-  for (i = 0; i < size; i++){
-     fprintf (flog,"%s\n", strings[i]);
+static void print_trace(){
+	void*array[10];
+	size_t size=backtrace(array,10);
+	char**strings=backtrace_symbols(array,size);
+	fprintf(flog,"Obtained %zd stack frames.\n",size);
+	for(size_t i=0;i<size;i++){
+		fprintf(flog,"%s\n",strings[i]);
 	}
 	fflush(flog);
-  free (strings);
+	free(strings);
 }
 static int errorhandler(Display*d,XErrorEvent*e){
 	print_trace();
