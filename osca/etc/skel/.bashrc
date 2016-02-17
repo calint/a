@@ -1,6 +1,7 @@
 export WORKSPACE=$HOME/w
 export OSCA=$WORKSPACE/a/osca
-export IDE=$HOME/download/eclipse/eclipse
+export IDE=$HOME/downloads/eclipse/eclipse
+export JRE=$HOME/downloads/jdk
 export XC=lxterminal
 export XF=thunar
 export XE=leafpad
@@ -11,7 +12,7 @@ export XX=
 export XQ=menuq
 
 export PATH=$PATH:$OSCA/sh
-export PATH=~/downloads/jdk/bin:$PATH
+export PATH=$JRE/bin:$PATH
 
 export PS1=' :: '
 source $HOME/.alias
