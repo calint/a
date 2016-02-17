@@ -118,7 +118,7 @@ static void xwinfree(Window w){
 	fprintf(flog,"   xwinfree   %p\n",(void*)w);fflush(flog);
 	xwin*xw=_winfind(w);
 	if(!xw){
-		fprintf(flog,"! did not find window %p",(void*)w);
+		fprintf(flog,"! did not find window %p\n",(void*)w);
 		return;
 	}
 	fprintf(flog,"       found xwin   %p    bits: %x\n",(void*)xw,xw->bits);fflush(flog);
