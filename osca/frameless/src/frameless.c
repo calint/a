@@ -53,7 +53,7 @@ static xwin*xwinget(Window w){
 	xwin*xw=NULL;
 	int firstavail=-1;
 	for(n=0;n<xwinsct;n++){
-		if(wins[n].bits&1){
+		if(wins[n].bits&1){//? magicnum1
 			if(wins[n].w==w){
 				return &wins[n];
 			}
@@ -77,16 +77,16 @@ static xwin*xwinget(Window w){
 	xw->w=w;
 	xw->vh=0;
 	xw->desk=dsk;
-	XSetWindowBorderWidth(dpy,w,1);
+	XSetWindowBorderWidth(dpy,w,border_width);
 	return xw;
 }
 static void xwinfocus(xwin*this){
 	fprintf(flog,"xwinfocus  %p\n",(void*)this->w);fflush(flog);
 	if(winfocused){
-		XSetWindowBorder(dpy,winfocused->w,0x00000000);
+		XSetWindowBorder(dpy,winfocused->w,0x00000000);//? magicnum
 	}
 	XSetInputFocus(dpy,this->w,RevertToParent,CurrentTime);
-	XSetWindowBorder(dpy,this->w,0x00008000);
+	XSetWindowBorder(dpy,this->w,0x00008000);//? magicnum
 	fprintf(flog,"xwinfocus  .\n");fflush(flog);
 	winfocused=this;
 }
@@ -123,7 +123,7 @@ static void xwinfree(Window w){
 	}
 	fprintf(flog,"       found xwin   %p    bits: %x\n",(void*)xw,xw->bits);fflush(flog);
 	if(xw->bits&1){
-		xw->bits&=0xfe;//free
+		xw->bits&=0xfe;//free  //? magicnum
 		wincount--;
 		fprintf(flog,"          freed    wincount: %d\n",wincount);fflush(flog);
 	}
@@ -148,20 +148,20 @@ static void xwingeomset2(xwin*this){
 //}
 static void xwingeomcenter(xwin*this){
 	xwingeom(this);
-	int nx=(scr.wi-this->gw)>>1;
-	int ny=(scr.hi-this->gh)>>1;
+	int nx=(scr.wi-this->gw)>>1; //? magicnum
+	int ny=(scr.hi-this->gh)>>1; //? magicnum
 	xwingeomset(this,nx,ny,this->gw,this->gh);
 }
 static void xwingeomwider(xwin*this){
 	xwingeom(this);
-	int nw=((this->gw<<2)+this->gw)>>2;
-	int nx=this->gx-((nw-this->gw)>>1);
+	int nw=((this->gw<<2)+this->gw)>>2; //? magicnum
+	int nx=this->gx-((nw-this->gw)>>1); //? magicnum
 	xwingeomset(this,nx,this->gy,nw,this->gh);
 }
 static void xwingeomthinner(xwin*this){
 	xwingeom(this);
-	int nw=((this->gw<<1)+this->gw)>>2;
-	int nx=this->gx-((nw-this->gw)>>1);
+	int nw=((this->gw<<1)+this->gw)>>2; //? magicnum
+	int nx=this->gx-((nw-this->gw)>>1); //? magicnum
 	xwingeomset(this,nx,this->gy,nw,this->gh);
 }
 static void xwinclose(xwin*this){
@@ -212,7 +212,7 @@ static void xwinhide(xwin*this){
 	xwingeom(this);
 	this->desk_x=this->gx;
 	int slip=rand()%winslip;
-	this->gx=(scr.wi-13+slip); //? magicnum13
+	this->gx=(scr.wi-13+slip); //? magicnum
 	xwingeomset2(this);
 }
 static void xwinshow(xwin*this){
@@ -221,8 +221,8 @@ static void xwinshow(xwin*this){
 }
 static void xwinbump(xwin*this,int r){
 	xwingeom(this);
-	this->gx+=(rand()%r)-(r>>1);
-	this->gy+=(rand()%r)-(r>>1);
+	this->gx+=(rand()%r)-(r>>1); //? magicnum
+	this->gy+=(rand()%r)-(r>>1); //? magicnum
 	xwingeomset2(this);
 }
 static int _xwinix(xwin*this){
@@ -296,7 +296,7 @@ static void deskshow(int dsk,int dskprv){
 	int n;
 	for(n=0;n<xwinsct;n++){
 		xwin*xw=&wins[n];
-		if(!(xw->bits&1))
+		if(!(xw->bits&1)) //? magicnum
 			continue;
 		if(xw->w==0)
 			continue;
@@ -314,7 +314,7 @@ static void desksave(int dsk,FILE*f){
 	fflush(flog);
 	for(n=0;n<xwinsct;n++){
 		xwin*w=&wins[n];
-		if(!(w->bits&1))
+		if(!(w->bits&1)) //? magicnum
 			continue;
 		xwingeom(w);
 		char**argv;
@@ -332,7 +332,7 @@ static void desksave(int dsk,FILE*f){
 #include<execinfo.h>
 static void print_trace(){
 	void*array[10];
-	size_t size=backtrace(array,10);
+	size_t size=backtrace(array,10); //? magicnum
 	char**strings=backtrace_symbols(array,size);
 	fprintf(flog,"Obtained %zd stack frames.\n",size);
 	for(size_t i=0;i<size;i++){
@@ -510,7 +510,7 @@ int main(int argc,char**args){
 				break;
 			case 56://b
 				if(winfocused)
-					xwinbump(winfocused,59);
+					xwinbump(winfocused,59); //? magicnum
 				break;
 			case 12://3
 				togglefullscreen();
@@ -522,7 +522,7 @@ int main(int argc,char**args){
 				togglefullwidth();
 				break;
 			case 15://6
-				xwinbump(winfocused,200);
+				xwinbump(winfocused,200); //? magicnum
 				break;
 			case 16://7
 				system("xii-ide");
