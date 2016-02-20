@@ -13,6 +13,8 @@ cp -rav $HOME/.config/leafpad $SKEL/.config&&
 cp -rav $HOME/.config/lxterminal $SKEL/.config&&
 cp -rav $HOME/.config/Thunar $SKEL/.config&&
 cp -rav $HOME/.config/vlc $SKEL/.config&&
+cp -rav $HOME/.config/gtk-2.0 $SKEL/.config&&
+cp -rav $HOME/.config/gtk-3.0 $SKEL/.config&&
 
 echo done
 
