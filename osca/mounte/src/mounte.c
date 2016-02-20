@@ -26,7 +26,7 @@ char*trim(char*str){
 int main(){
 	puts("mounte");
 	const uid_t uid=getuid();
-	setuid(geteuid());
+	if(setuid(geteuid())){puts("cannot run as root");exit(1);}
 	const int fd=inotify_init();
 	if(fd<0)perror("inotify_init");
 	inotify_add_watch(fd,"/dev",IN_CREATE|IN_DELETE);
@@ -74,7 +74,7 @@ int main(){
 				fclose(f);
 //				const int res2=chown(mntdir,uid,-1);
 //				if(res2){printf("%s:%d  cannot chown\n",__FILE__,__LINE__);perror(0);}
-				(void)chown(mntdir,uid,-1);
+//				if(chown(mntdir,uid,-1)){printf("cannot chown '%s'\n",mntdir);exit(2);}
 			}else if(event->mask&IN_DELETE){
 				printf("umount %s\n",mntdir);
 				const int res2=umount(mntdir);
