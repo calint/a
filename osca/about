@@ -29,49 +29,26 @@
  # 
 
 
-
-
-
-              
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-notes
-
-# runtime ubuntu packages
+# additional ubuntu packages for osca
 sudo apt-get install scrot leafpad alsamixer vlc thunar alsa-utils chromium-browser xbacklight
-# pmount 
 
-# to enable alsamixer
+# enable alsamixer
 sudo addgroup `id -un` audio
 
-# to enable kvm
-sudo adduser `id -un` libvirtd
+# x11 developers
+sudo apt-get install libx11-dev libxft-dev
 
+# gnome developers
+sudo apt-get install gnome-devel
 
+# opengl developers
+sudo apt-get install freeglut3 freeglut3-dev libxmu-dev libxi-dev
 
-OpenGL3
-# to enable opengl
+# enable opengl
 sudo adduser `id -un` video
 
-# opengl devel
-sudo apt-get install freeglut3 freeglut3-dev
-sudo apt-get install libxmu-dev libxi-dev
+# emulatation packages
+sudo apt-get install qemu wine
 
-
-# developer ubuntu packages
-sudo apt-get install libx11-dev libxft-dev gnome-devel
-
-# two finger scroll speed
-synclient VertScrollDelta=-1 HorizScrollDelta=1
+# enable qemu kvm
+sudo adduser `id -un` libvirtd

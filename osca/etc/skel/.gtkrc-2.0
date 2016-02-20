@@ -48,7 +48,6 @@ class "GtkPaned" style "gtkcompactextra"
 gtk-font-name="Sans 7"
 gtk-icon-theme-name="faenza"
 
-/*eclipse arrowkeytreenavigator*/
 binding "gtk-binding-tree-view" {
     bind "j"        { "move-cursor" (display-lines, 1) }
     bind "k"        { "move-cursor" (display-lines, -1) }
