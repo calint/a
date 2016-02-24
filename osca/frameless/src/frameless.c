@@ -332,10 +332,11 @@ static void desksave(int dsk,FILE*f){
 #include<execinfo.h>
 static void print_trace(){
 	void*array[10];
+	size_t i;
 	size_t size=backtrace(array,10); //? magicnum
 	char**strings=backtrace_symbols(array,size);
 	fprintf(flog,"Obtained %zd stack frames.\n",size);
-	for(size_t i=0;i<size;i++){
+	for(i=0;i<size;i++){
 		fprintf(flog,"%s\n",strings[i]);
 	}
 	fflush(flog);
