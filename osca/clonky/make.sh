@@ -1,4 +1,4 @@
-CC=gcc
+CC=cc
 BIN=clonky
 SRC=src/*.c
 #OPTS=-Os
