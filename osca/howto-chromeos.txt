@@ -1,11 +1,8 @@
 ﻿# install base system and change root
-#sudo sh crouton -r sid -t extension
+#sudo sh crouton -r sid -t extension,xorg
 #sudo enter-chroot -n sid
 
-#sudo sh crouton -r trusty -t extension,chrome-dev
-#sudo enter-chroot -n trusty
-
-# in xterm install git and get frameless
+# install git and get osca
 sudo apt-get -y install git
 mkdir ~/w/a
 git clone https://github.com/calint/a.git ~/w/a
