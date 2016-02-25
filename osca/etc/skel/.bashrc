@@ -16,4 +16,3 @@ export PS1=' :: '
 source $HOME/.alias
 # timezone
 export TZ=Europe/Stockholm
-
