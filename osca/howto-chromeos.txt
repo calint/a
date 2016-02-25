@@ -2,6 +2,10 @@
 #sudo sh crouton -r sid -t extension,xorg
 #sudo enter-chroot -n sid
 
+# update and upgrade
+sudo apt-get update
+sudo apt-get -y upgrade
+
 # install git and get osca
 sudo apt-get -y install git
 mkdir ~/w/a
@@ -23,7 +27,7 @@ sh make.sh
 # install iostat, image viewer, screenshot taker, editor, cli, filemanager, icon theme
 sudo apt-get -y install sysstat feh scrot leafpad lxterminal thunar vlc faenza-icon-theme
 
-# copy init files from frameless
+# copy init files from osca
 cp -a ~/w/a/osca/etc/skel/. ~/.
 
 # exit chroot
