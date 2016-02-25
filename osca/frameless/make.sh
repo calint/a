@@ -1,4 +1,5 @@
-CC=cc
+#CC=cc
+CC="cc -std=c99"
 BIN=frameless
 SRC=src/frameless.c
 # ! -Os breaks moving and resizing windows
