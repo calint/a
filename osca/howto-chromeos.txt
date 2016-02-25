@@ -1,28 +1,22 @@
 ﻿# install base system
-sudo sh crouton -t xorg
+#sudo sh crouton -r sid -t x11,keyboard,extension
 
 # enter chroot
-sudo enter-chroot
+#sudo enter-chroot
 
 # validate x11 install
-xinit
+#xinit
 
 # in xterm install git and get frameless
 sudo apt-get install git
-cd
-mkdir w
-git clone https://github.com/calint/a.git w/a
+mkdir ~/w/a
+git clone https://github.com/calint/a.git ~/w/a
 
 # copy init files from frameless
-cd
-cp w/a/osca/etc/skel/.bashrc .
-cp w/a/osca/etc/skel/.alias .
-cp w/a/osca/etc/skel/.xsession .
-cp w/a/osca/etc/skel/.gtkrc-2.0 .
+cp -a ~/w/a/osca/etc/skel/. ~/.
 
 # build frameless window manager
-cd
-cd w/a/osca/frameless/
+cd ~/w/a/osca/frameless/
 sh make.sh
 
 # build clonky system overview
@@ -31,16 +25,19 @@ cd ~/w/a/osca/clonky/
 sh make.sh 
 
 # exit x11
-exit
+#exit
 
 # exit chroot
-exit
+#exit
 
 # re-enter chroot activating the new .bashrc 
-sudo enter-chroot
+#sudo enter-chroot
 
 # start x11
-xinit .xsession
+#xinit .xsession
+
+# init aliases
+alias ~/.aliases
 
 # install iostat
 pki sysstat
@@ -67,7 +64,4 @@ pki lxterminal
 
 # install file manager
 pki thunar
-
-# copy application configs
-cp -rav ~/w/a/osca/etc/skel/.config/* ~/.config/
 
