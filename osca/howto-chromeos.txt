@@ -11,6 +11,12 @@ sudo apt-get -y install git
 mkdir ~/w/a
 git clone https://github.com/calint/a.git ~/w/a
 
+# copy init files from osca
+cp -a ~/w/a/osca/etc/skel/. ~/.
+
+# init shell
+cd && source .bashrc
+
 # build frameless window manager
 cd ~/w/a/osca/frameless/
 sh make.sh
@@ -27,10 +33,14 @@ sh make.sh
 # install iostat, image viewer, screenshot taker, editor, cli, filemanager, icon theme
 sudo apt-get -y install sysstat feh scrot leafpad lxterminal thunar vlc faenza-icon-theme
 
-# copy init files from osca
-cp -a ~/w/a/osca/etc/skel/. ~/.
+# install browsers
+#sudo apt-get -y install chromium-browser firefox
 
+# install htop and killall
 #sudo apt-get -y install htop sysvinit-utils
+
+# start x11
+xinit .xsession
 
 # exit chroot
 #exit
@@ -38,13 +48,10 @@ cp -a ~/w/a/osca/etc/skel/. ~/.
 # re-enter chroot activating the new .bashrc 
 #sudo enter-chroot -n sid
 
-# start x11
-#xinit .xsession
-
-
 # notes
 # incase x11 does not start check
 # https://github.com/dnschneid/crouton/issues/2426
-# shell
-# sudo rm -f /dev/dri/card0
-# sudo mv /dev/dri/card{1,0}
+# in crosh do:
+#   shell
+#   sudo rm -f /dev/dri/card0
+#   sudo mv /dev/dri/card{1,0}
