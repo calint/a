@@ -8,7 +8,7 @@
 #xinit
 
 # in xterm install git and get frameless
-sudo apt-get install git
+sudo apt-get -y install git
 mkdir ~/w/a
 git clone https://github.com/calint/a.git ~/w/a
 
@@ -20,7 +20,7 @@ cd ~/w/a/osca/frameless/
 sh make.sh
 
 # build clonky system overview
-sudo apt-get install libxft-dev
+sudo apt-get -y install libxft-dev
 cd ~/w/a/osca/clonky/
 sh make.sh 
 
@@ -36,32 +36,9 @@ sh make.sh
 # start x11
 #xinit .xsession
 
-# init aliases
-alias ~/.aliases
-
-# install iostat
-pki sysstat
-
-# install browsers
-pki chromium-browser
-pki firefox
-
-# install image viewer
-pki feh
-
-# install screenshot taker
-pki scrot
-
-# install lightweight editor
-pki leafpad
+# install iostat, browsers, image viewer, screenshot taker, editor, cli, filemanager
+sudo apt-get -y install sysstat chromium-browser firefox feh scrot leafpad lxterminal thunar
 
 # build launcher
 cd ~/w/a/osca/menuq/
 sh make.sh 
-
-# install cli
-pki lxterminal
-
-# install file manager
-pki thunar
-
