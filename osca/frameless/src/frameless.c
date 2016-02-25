@@ -25,7 +25,7 @@ static Display*dpy;
 static Window root;
 static xdesk dsk=0;
 static int wincount=0;
-static struct screen{
+static struct{
 	int id,wi,hi;
 }scr;
 //static int scr=0;
@@ -448,7 +448,8 @@ int main(int argc,char**args){
 			case 54://c
 				system("xii-term");
 				break;
-			case 107://sysrq prntscr
+//			case 107://sysrq prntscr
+			case 33://p
 				system("xii-scrsht");
 				break;
 			case 70: {//f4
@@ -539,8 +540,9 @@ int main(int argc,char**args){
 			case 119://del
 				XKillClient(dpy,ev.xkey.subwindow);
 				break;
-			case 118://insert
-			case 127://pause
+//			case 118://insert
+//			case 127://pause
+			case 57://n
 				desksave(dsk,flog);
 				break;
 			case 72://toggle mute

@@ -10,9 +10,10 @@ export XV=
 export XI=firefox
 export XX=
 export XQ=menuq
-
 export PATH=$PATH:$OSCA/sh
 export PATH=$JRE/bin:$PATH
-
 export PS1=' :: '
 source $HOME/.alias
+# timezone
+export TZ=Europe/Stockholm
+
