@@ -791,7 +791,7 @@
 [freetype] # Freetype2 font renderer
 
 # Font (string)
-#freetype-font=Serif Bold
+freetype-font=DejaVu Sans
 
 # Monospace Font (string)
 #freetype-monofont=Monospace
@@ -1698,10 +1698,10 @@
 #sout-x264-stats=x264_2pass.log
 
 # Default preset setting used (string)
-#sout-x264-preset=
+sout-x264-preset=ultrafast
 
 # Default tune setting used (string)
-#sout-x264-tune=
+sout-x264-tune=film
 
 # x264 advanced options. (string)
 #sout-x264-options=
@@ -2772,7 +2772,7 @@ qt-privacy-ask=0
 #avi-interleaved=0
 
 # Force index creation (integer)
-#avi-index=0
+avi-index=3
 
 [ps] # MPEG-PS demuxer
 
@@ -4087,7 +4087,7 @@ vout=any
 #play-and-stop=0
 
 # Play and pause (boolean)
-#play-and-pause=0
+play-and-pause=1
 
 # Auto start (boolean)
 #playlist-autostart=1
