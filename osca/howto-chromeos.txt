@@ -30,6 +30,8 @@ sudo apt-get -y install sysstat feh scrot leafpad lxterminal thunar vlc faenza-i
 # copy init files from osca
 cp -a ~/w/a/osca/etc/skel/. ~/.
 
+#sudo apt-get -y install htop sysvinit-utils
+
 # exit chroot
 #exit
 
@@ -38,3 +40,11 @@ cp -a ~/w/a/osca/etc/skel/. ~/.
 
 # start x11
 #xinit .xsession
+
+
+# notes
+# incase x11 does not start check
+# https://github.com/dnschneid/crouton/issues/2426
+# shell
+# sudo rm -f /dev/dri/card0
+# sudo mv /dev/dri/card{1,0}
