@@ -3,8 +3,10 @@ package a.amazon.ec2;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import a.any.list.el;
+
 import com.amazonaws.services.ec2.model.Instance;
+
+import a.any.list.el;
 
 final public class any_instance implements el{
 	private el pt;

@@ -10,8 +10,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import a.any.list.el;
-import a.any.list.el.visitor;
+
 import b.req;
 import b.session;
 import com.amazonaws.auth.AWSCredentials;
@@ -19,6 +18,9 @@ import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
+
+import a.any.list.el;
+import a.any.list.el.visitor;
 
 final public class any_sessions implements el{
 	private el pt;

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import a.amazon.key;
 import a.any.list.el;
 import b.req;
@@ -46,7 +47,7 @@ final public class any_instances implements el{
 		instances_cache_ts=t;
 		final session s=req.get().session();
 		final String aws_secret_key=tostr(s.get(key.SECRET_KEY),null);
-		if(aws_secret_key==null)throw new Error("amazon key not in session\n try <a href="+uri_to(key.class)+">setting amazon key</a>");
+		if(aws_secret_key==null)throw new Error("amazon key not in session\n <a href=/"+uri_to(a.amazon.key.class)+">setting amazon key</a>");
 		final String aws_access_key_id=tostr(s.get(key.ACCESS_KEY_ID),null);
 //			final long t0=System.currentTimeMillis();
 		final AmazonEC2Client ec=new AmazonEC2Client(new AWSCredentials(){
