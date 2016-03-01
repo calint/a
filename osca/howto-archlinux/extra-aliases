@@ -1,0 +1,1 @@
+alias get-kernel-module-params='systool -vm'

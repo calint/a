@@ -1,0 +1,17 @@
+alias e='leafpad'
+alias f='grep --color=always -i'
+alias l='ls --color -lhF'
+alias ll='ls --color -lAF'
+alias lt='ls --color -lAtF'
+alias p='cat'
+#alias pki='sudo apt-get install' #ubuntu
+alias pki='sudo pacman -S' #archlinux
+alias pkl='dpkg-query -L'
+alias pkq='pacman -Ss' #archlinux 
+#alias pkq='apt-cache search' #ubuntu
+alias pkr='sudo apt-get purge'
+#alias pku='sudo apt-get update && sudo apt-get upgrade' #ubuntu
+alias pku='sudo pacman -Syu' #arch
+alias x-ide='~/downloads/eclipse/eclipse'
+#alias pkf='dpkg -S' #ubuntu
+alias pkf='pacman -Ql' #archlinux
