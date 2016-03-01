@@ -1,2 +1,3 @@
 #!/bin/sh
-exec thunar&
+#exec thunar&
+exec pcmanfm&

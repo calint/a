@@ -1,4 +1,4 @@
-cat <<'EOF' >> ~/.fonts.conf
+cat<<'EOF'>~/.fonts.conf
 <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
 <fontconfig>
 	<match target="font">
