@@ -1,1 +1,1 @@
-sudo gpasswd -a $(whoami) audio
+#sudo gpasswd -a $(whoami) audio
