@@ -1,2 +1,1 @@
-#!/bin/sh
-exec $OSCA/sticky/sticky&
+exec $OSCA/stickyo/stickyo&

@@ -1,4 +1,1 @@
-#!/bin/sh
-#exec chromium-browser&  #ubuntu
-exec chromium& #arch
-#exec firefox&
+exec $XI&
