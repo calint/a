@@ -57,6 +57,28 @@ ui.onkey=function(ev){
 ui.fmtsize=function(num){
 	return num.toString().replace(/\B(?=(\d{3})+\b)/g,",");
 }
+ui.fmt_data_per_second=function(nbytes,ms){
+	var b_per_s=Math.floor(nbytes*1024/ms);
+	if(b_per_s<1024){
+		return b_per_s+' B/s';
+	}
+	b_per_s>>=10;
+	if(b_per_s<1024){
+		return b_per_s+' KB/s';
+	}
+	b_per_s>>=10;
+	if(b_per_s<1024){
+		return b_per_s+' MB/s';
+	}
+	b_per_s>>=10;
+	if(b_per_s<1024){
+		return b_per_s+' GB/s';
+	}
+	b_per_s>>=10;
+	if(b_per_s<1024){
+		return b_per_s+' TB/s';
+	}
+}
 ui._onreadystatechange=function(){
 //	$d(" * stage "+this.readyState);
 	var elsts=$('-ajaxsts');
@@ -85,7 +107,7 @@ ui._onreadystatechange=function(){
 //		$d(new Date().getTime()-this._t0+" * reply code "+this.status);
 		var s=this.responseText.charAt(this.responseText.length-1);
 		var ms=new Date().getTime()-this._t0;
-		$s('-ajaxsts','receiving '+ui.fmtsize(this.responseText.length)+' text '+ui.fmtsize(Math.floor(this.responseText.length/ms))+' k/s');
+		$s('-ajaxsts','received '+ui.fmtsize(this.responseText.length)+' text '+ui.fmt_data_per_second(this.responseText.length,ms));
 //		console.log('receiving '+this.responseText.length+' text');
 		if(s!='\n'){
 //			$d(new Date().getTime()-this._t0+" * not eol "+(this.responseText.length-this._jscodeoffset));
@@ -110,7 +132,7 @@ ui._onreadystatechange=function(){
 			eval(jscode);
 		}
 		this._dt=new Date().getTime()-this._t0;//? var _dt
-		$s('-ajaxsts',this._dt+' ms '+ui.fmtsize(this.responseText.length)+' chars '+ui.fmtsize(Math.floor(this.responseText.length/this._dt))+' k/s');
+		$s('-ajaxsts',this._dt+' ms '+ui.fmtsize(this.responseText.length)+' chars '+ui.fmt_data_per_second(this.responseText.length,this._dt));
 		$d("~~~~~~~ ~~~~~~~ ~~~~~~~ ~~~~~~~ ")
 //		$d("done in "+this._dt+" ms");
 		break;		

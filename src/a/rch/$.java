@@ -38,13 +38,16 @@ public final class $ extends a{
 	long bytecount;
 	long bytestoprocess;
 	public diro dirox;
+	public a ajaxsts;
 	public $() throws IOException{
 		final path inboxpth=req.get().session().path(inbox_dir);
 		dirox.root(inboxpth);
+		ajaxsts.set("idle");
 	}
 	public void to(final xwriter x) throws Throwable{
 //		path inboxpth=req.get().session().path(inbox_dir);
 //		dirox.setRootPath(inboxpth);
+		x.style(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding-left:1em;padding-right:1em;padding-top:.5em;padding-bottom:.5em;border:1px dashed green");
 		final String sessionref=req.get().session().href();
 		x.p("inbox: ").p(inbox_dir).nl();
 		x.p("store: ").p(store_dir).nl();
@@ -57,6 +60,7 @@ public final class $ extends a{
 		x.ax(this,"clrsts"," :: cancel ");
 		x.nl().span(sts).spc();
 		x.nl().r(dirox);
+		x.spanh(ajaxsts);
 	}
 	public void x_clrsts(xwriter x,String q)throws Throwable{
 		sts.set("");
@@ -66,13 +70,13 @@ public final class $ extends a{
 	public void x_va(xwriter x,String q)throws Throwable{
 		dirox.root(req.get().session().path(inbox_dir));
 		dirox.bits_set(diro.BIT_ALLOW_LIST_WHEN_NO_QUERY);
-		x.xreload();
+		x.xuo(dirox);
 	}
 	/** view store dir */
 	public void x_vs(xwriter x,String q)throws Throwable{
 		dirox.root(req.get().session().path(store_dir));
 		dirox.bits_clear(diro.BIT_ALLOW_LIST_WHEN_NO_QUERY);
-		x.xreload();
+		x.xuo(dirox);
 	}
 	private static long path_size_bytes(path p,xsts ps)throws Throwable{
 		ps.setsts("calculating bytes to process: "+p.toString());
@@ -100,14 +104,16 @@ public final class $ extends a{
 	//		String[] duparts=dures.split("\\s");
 	//		return Long.parseLong(duparts[0]);
 	//	}
+	private int inbx_name_len;
 	public void x_rch(final xwriter x,final String q)throws Throwable{
 		final session ses=req.get().session();
 		final xsts stsb=new xsts(x,sts,500);
 		final path inbx=ses.path(inbox_dir);
 		if(!inbx.exists()){
-			inbx.mkdirs();
+//			inbx.mkdirs();
 			return;
 		}
+		inbx_name_len=inbx.fullpath().length();
 		bytestoprocess=path_size_bytes(inbx,stsb);
 //		bytestoprocess=0;
 		final path store=ses.path(store_dir);
@@ -135,7 +141,7 @@ public final class $ extends a{
 		//		if(root.getName().startsWith("."))
 		//			return;
 //		pb.setsts("dir "+root);
-		root.foreach(file->{
+		root.foreach(new path.visitor(){@Override public boolean visit(final path file)throws Throwable{
 			if(file.isdir()){
 				procdir(x,file,store,md,ixps,errps,dupps,pb);
 				if(remove_file_from_inbox_after_archived)
@@ -170,16 +176,25 @@ public final class $ extends a{
 			final String hashstr=hashstr(hash);
 			final String hashfilename=filename_for_hash(hashstr);
 			final path newfile=req.get().session().path(store_dir+hashfilename+(ext.length()==0?"":("."+ext)));
+			final long lastmod=file.lastmod();
 			if(newfile.exists()){
 //				filedups++;
-				dupps.println(dfmt.format(new Date())+": "+hashstr);
-				dupps.flush();
+				dupps.print(hashstr);
+				dupps.print(" ");
+				dupps.print(nfmtlen.format(newfile.size()));
+				dupps.print(" ");
+				dupps.print(dfmt.format(lastmod));
+				dupps.print(" ");
+				dupps.print(ext.length()==0?".":ext);
+				dupps.print(" ");			
+				dupps.print(file.fullpath().substring(inbx_name_len));
+				dupps.println();
+//				dupps.flush();
 				if(remove_file_from_inbox_after_archived)
 					file.rm();
 				//					throw new Error(dfmt.format(new Date())+": could not delete "+file.fullPath());
 				return false;
 			}
-			final long lastmod=file.lastmod();
 			newfile.mkbasedir();
 			if(remove_file_from_inbox_after_archived){
 				if(!file.rename(newfile))
@@ -199,14 +214,14 @@ public final class $ extends a{
 			ixps.print(" ");
 			ixps.print(dfmt.format(lastmod));
 			ixps.print(" ");
-			ixps.print(ext);
-			ixps.print(" ");
-			ixps.print(file.name());
+			ixps.print(ext.length()==0?".":ext);
+			ixps.print(" ");			
+			ixps.print(file.fullpath().substring(inbx_name_len));
 			ixps.println();
-			ixps.flush();
+//			ixps.flush()
 //			filearched++;
 			return false;
-		});
+		}});
 	}
 	private void updatests(final xsts pb)throws Throwable{
 		pb.setsts("processed " + filecount + " files   "
