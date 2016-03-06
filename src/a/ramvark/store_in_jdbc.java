@@ -49,7 +49,7 @@ abstract public class store_in_jdbc implements store{
 			return e;
 		}
 	}
-	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
 		meters.foreaches++;
 		final StringBuilder sb=new StringBuilder();
 		sb.append("select d from b where c=?");

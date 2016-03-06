@@ -2,7 +2,6 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
 
 import b.xwriter;
 
@@ -40,7 +39,13 @@ final public class call_foo extends statement{
 					throw new compiler_error(this,"table '"+table_name+"' from annotation not found","");
 				ispointer=true;
 			}else{
-				final String funcs=x.toc.keySet().stream().filter(s->s.startsWith("table ")).map(s->s.substring("table ".length())).collect(Collectors.toList()).toString();
+//				final String funcs=x.toc.keySet().stream().filter(s->s.startsWith("table ")).map(s->s.substring("table ".length())).collect(Collectors.toList()).toString();
+				final ArrayList<String>ls=new ArrayList<>();
+				for(final String s:x.toc.keySet()){
+					if(!s.startsWith("table "))continue;
+					ls.add(s.substring("table ".length()));
+				}
+				final String funcs=ls.toString();
 				throw new compiler_error(this,"table '"+table_name+"' not found",funcs);
 			}
 		}
@@ -49,13 +54,20 @@ final public class call_foo extends statement{
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
-			tbl.arguments.forEach(col->{
+//			tbl.arguments.forEach(col -> {
+//				final String col_name = col.token;
+//				x.vspc().alloc_var(this, col_name);
+////				allocated_vars.add(col_name);
+//				final expression e = new expression(this, col_name);
+//				args.add(e);
+//			});
+			for(final def_table_col col:tbl.arguments){
 				final String col_name=col.token;
 				x.vspc().alloc_var(this,col_name);
 //				allocated_vars.add(col_name);
 				final expression e=new expression(this,col_name);
-				args.add(e);				
-			});
+				args.add(e);
+			}
 		}else{
 			args=arguments;
 			if(args.size()-1!=tbl.arguments.size()) throw new Error("argument count does not match table: "+table_name);
@@ -89,7 +101,10 @@ final public class call_foo extends statement{
 //		x.tag("dr");
 		arguments.get(0).source_to(x);
 //		x.tage("dr");
-		arguments.subList(1,arguments.size()).forEach(e->e.source_to(x));
+//		arguments.subList(1,arguments.size()).forEach(e -> e.source_to(x));
+		for(final expression e:arguments.subList(1,arguments.size())){
+			e.source_to(x);
+		}
 		x.p(")");
 		x.p(ws_after_expression_closed);
 		loop_code.source_to(x);

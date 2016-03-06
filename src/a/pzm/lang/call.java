@@ -2,7 +2,6 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
 
 import b.xwriter;
 
@@ -38,11 +37,18 @@ public class call extends statement{
 	}
 	@Override public void binary_to(xbin x){
 		final def_func d=(def_func)x.toc.get("func "+token);
-		final String funcs=x.toc.keySet().stream()
-				.filter(s->s.startsWith("func "))
-				.map(s->s.subSequence("func ".length(),s.length()))
-				.collect(Collectors.toList())
-				.toString();
+//		final String funcs=x.toc.keySet().stream()
+//				.filter(s->s.startsWith("func "))
+//				.map(s->s.subSequence("func ".length(),s.length()))
+//				.collect(Collectors.toList())
+//				.toString();
+		final ArrayList<String>ls=new ArrayList<>();
+		for(final String s:x.toc.keySet()){
+			if(!s.startsWith("func "))continue;
+			final String s1=s.substring("func ".length());
+			ls.add(s1);
+		}
+		final String funcs=ls.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
 		if(arguments.size()!=d.params.size())throw new compiler_error(this,"function "+token+" expects "+d.params.size()+" arguments, got "+arguments.size(),"");
 		x.push_func();
@@ -74,7 +80,8 @@ public class call extends statement{
 		x.p(ws_left).p(token).p(ws_after_name);
 //		x.tage(is?"ac":"fc");
 		x.p("(");
-		arguments.forEach(e->e.source_to(x));
+//		arguments.forEach(e->e.source_to(x));
+		for(final expression e:arguments)e.source_to(x);
 		x.p(")").p(ws_trailing);
 	}
 	protected void ensure_arg_count(int i) {

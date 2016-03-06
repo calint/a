@@ -92,7 +92,8 @@ public class statement extends a{
 //	}
 	public void binary_to(xbin x){}
 	public void source_to(xwriter x){
-		if(annotations!=null)annotations.entrySet().forEach(me->x.p('@').p(me.getKey()).p(me.getValue()));
+//		if(annotations!=null)annotations.entrySet().forEach(me->x.p('@').p(me.getKey()).p(me.getValue()));
+		if(annotations!=null)for(final Map.Entry<String,String>me:annotations.entrySet())x.p('@').p(me.getKey()).p(me.getValue());
 	}
 	final @Override public void to(xwriter x) throws Throwable{
 		x.style(this,"border:1px dotted blue");

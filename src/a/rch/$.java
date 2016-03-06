@@ -14,6 +14,7 @@ import a.diro;
 import a.x.xsts;
 import b.a;
 import b.path;
+import b.path.visitor;
 import b.req;
 import b.session;
 import b.xwriter;
@@ -78,7 +79,7 @@ public final class $ extends a{
 		dirox.bits_clear(diro.BIT_ALLOW_LIST_WHEN_NO_QUERY);
 		x.xuo(dirox);
 	}
-	private static long path_size_bytes(path p,xsts ps)throws Throwable{
+	private static long path_size_bytes(final path p,final xsts ps)throws Throwable{
 		ps.setsts("calculating bytes to process: "+p.toString());
 		if(p.isfile())
 			return p.size();
@@ -88,9 +89,12 @@ public final class $ extends a{
 		}
 		class cntr{long c;}
 		final cntr c=new cntr();
-		p.foreach(f->{
-			c.c+=path_size_bytes(f,ps);
-			return false;
+		p.foreach(new visitor() {
+			@Override
+			public boolean visit(path f) throws Throwable {
+				c.c+=path_size_bytes(f,ps);
+				return false;
+			}
 		});
 		return c.c;
 	}

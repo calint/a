@@ -21,7 +21,7 @@ public class puppet extends itm{static final long serialVersionUID=1;
 			final int len=256;
 			final String ss=s.length()<len?s:(s.substring(0,len)+"...");
 			x.p(ss);
-			x.spc().ax(this,"agrclr "+content.nm(),"x");
+			x.spc().ax(this,"agrclr "+content.nm(), "a/x");
 		}
 	}
 }

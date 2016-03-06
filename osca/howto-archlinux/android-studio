@@ -4,5 +4,6 @@
 #Include = /etc/pacman.d/mirrorlist
 # pki lib32-libstdc++5 lib32-zlib libstdc++5
 
+# start adb with sudo before studio
 
 

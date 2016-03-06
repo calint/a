@@ -4,7 +4,7 @@ import b.xwriter;
 final public class rom extends a{
 	public void to(final xwriter x){
 //		x.divo(this,"float panel");
-		x.p("  znxr ci.. aaaaaa dddddd ").ax(this,"clr","x").p("   ").nl();
+		x.p("  znxr ci.. aaaaaa dddddd ").ax(this,"clr", "a/x").p("   ").nl();
 		x.ul();
 		int row=0;
 		final String id=id();

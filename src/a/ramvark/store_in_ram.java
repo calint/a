@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class store_in_ram implements store,Serializable{
@@ -33,19 +34,53 @@ public class store_in_ram implements store,Serializable{
 		e.load(is);
 		return e;
 	}
-	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
 		cstore.meters.foreaches++;
 		final ConcurrentHashMap<String,byte[]>map=maps.get(cls);
 		if(map==null)return;
-		if(q!=null&&!q.isEmpty())
-			map.entrySet().stream().forEach(me->{
-				if(!new String(me.getValue(),0,q.length()).equals(q))return;//? CharSequence wrap of byte[]
-				try{final itm e=cls.newInstance();e.load(new ByteArrayInputStream(me.getValue()));v.visit(e);}catch(Throwable t){throw new Error(t);}
-			});
-		else
-			map.entrySet().stream().forEach(me->{
-				try{final itm e=cls.newInstance();e.load(new ByteArrayInputStream(me.getValue()));v.visit(e);}catch(Throwable t){throw new Error(t);}
-			});
+		if(q!=null&&!q.isEmpty()) {
+//			map.entrySet().stream().forEach(me -> {
+//				if (!new String(me.getValue(), 0, q.length()).equals(q))
+//					return;//? CharSequence wrap of byte[]
+//				try {
+//					final itm e = cls.newInstance();
+//					e.load(new ByteArrayInputStream(me.getValue()));
+//					v.visit(e);
+//				} catch (Throwable t) {
+//					throw new Error(t);
+//				}
+//			});
+			for(final Map.Entry<String,byte[]>me:map.entrySet()){
+				if (!new String(me.getValue(), 0, q.length()).equals(q))
+					return;//? CharSequence wrap of byte[]
+				try {
+					final itm e = cls.newInstance();
+					e.load(new ByteArrayInputStream(me.getValue()));
+					v.visit(e);
+				} catch (Throwable t) {
+					throw new Error(t);
+				}
+			}
+		}else {
+//			map.entrySet().stream().forEach(me -> {
+//				try {
+//					final itm e = cls.newInstance();
+//					e.load(new ByteArrayInputStream(me.getValue()));
+//					v.visit(e);
+//				} catch (Throwable t) {
+//					throw new Error(t);
+//				}
+//			});
+			for(final Map.Entry<String,byte[]>me:map.entrySet()){
+				try {
+					final itm e = cls.newInstance();
+					e.load(new ByteArrayInputStream(me.getValue()));
+					v.visit(e);
+				} catch (Throwable t) {
+					throw new Error(t);
+				}
+			}
+		}
 	}
 	@Override public void delete(final Class<? extends itm>cls,final String did)throws Throwable{
 		cstore.meters.deletes++;

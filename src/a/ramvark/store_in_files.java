@@ -14,7 +14,7 @@ abstract public class store_in_files implements store{
 		final path file=root(cls).get(fn);
 		try(final OutputStream os=file.outputstream(false)){e.save(os);}
 	}
-	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
 		meters.foreaches++;
 		final String[]fns=root(cls).list();//?. stream
 		for(final String fn:fns){

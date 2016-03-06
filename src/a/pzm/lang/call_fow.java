@@ -2,7 +2,6 @@ package a.pzm.lang;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
 
 import b.xwriter;
 
@@ -35,7 +34,14 @@ final public class call_fow extends statement{
 				table_name=annotations.keySet().iterator().next();
 				tbl=(def_table)x.toc.get("table "+table_name);
 			}else{
-				final String funcs=x.toc.keySet().stream().filter(s->s.startsWith("table ")).map(s->s.substring("table ".length())).collect(Collectors.toList()).toString();
+				final ArrayList<String>tbls=new ArrayList<>();
+				for(final String key:x.toc.keySet()){
+					if(key.startsWith("table ")){
+						tbls.add(key);
+					}
+				}
+				//final String funcs=x.toc.keySet().stream().filter(s->s.startsWith("table ")).map(s->s.substring("table ".length())).collect(Collectors.toList()).toString();
+				final String funcs=tbls.toString();
 				throw new compiler_error(this,"table '"+table_name+"' not found",funcs);
 			}
 		}
@@ -98,7 +104,10 @@ final public class call_fow extends statement{
 //		x.tag("dr");
 		arguments.get(0).source_to(x);
 //		x.tage("dr");
-		arguments.subList(1,arguments.size()).forEach(e->e.source_to(x));
+		for(final expression e:arguments.subList(1,arguments.size())){
+			e.source_to(x);
+		}
+//		arguments.subList(1,arguments.size()).forEach(e->e.source_to(x));
 		x.p(")");
 		x.p(ws_after_expression_closed);
 		loop_code.source_to(x);

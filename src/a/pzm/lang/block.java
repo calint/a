@@ -51,7 +51,10 @@ public class block extends statement{
 				s.binary_to(x);
 			}
 			if(vars!=null){
-				vars.forEach(e->x.vspc().free_var(this,e));
+//				vars.forEach(e -> x.vspc().free_var(this, e));
+				for(final String e:vars){
+					x.vspc().free_var(this,e);
+				}
 				vars.clear();
 			}
 		}

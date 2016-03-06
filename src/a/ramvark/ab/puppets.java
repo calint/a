@@ -32,7 +32,7 @@ public @ls(cls=puppet.class)class puppets extends lst{
 //		x.td().p(e.mother);
 //		x.td().p(e.father);		
 		x.td();
-		renddelax(x,ee,"x");
+		renddelax(x,ee, "a/x");
 	}
 	protected void rendlistfoot(final xwriter x){
 		x.nl().table_();

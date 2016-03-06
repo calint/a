@@ -357,7 +357,7 @@ final public class ide extends a{
 		final int nsprites=16;
 		final int ndacs=8;
 
-		x.p(ra.wi).spc().p("x").spc().p(ra.hi).spc().p("pixels display").nl();//\n  12 bit rgb\n  20 bit free");
+		x.p(ra.wi).spc().p("a/x").spc().p(ra.hi).spc().p("pixels display").nl();//\n  12 bit rgb\n  20 bit free");
 		x.p(bits_per_pixel_rgb).p("b").spc().p("rgb color in").spc().p(bits_per_pixel).p("b").spc().p("pixel").nl();
 		x.p(nsprites).spc().p("sprites onscreen collision detection").nl();
 		x.p(ndacs).spc().p("sound tracks").nl();

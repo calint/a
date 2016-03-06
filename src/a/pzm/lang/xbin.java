@@ -99,12 +99,21 @@ public final class xbin{
 		
 		if(vspc.aliases!=null){
 			final ArrayList<String>aliases_names=new ArrayList<>();
-			aliases_names.forEach(nm->vspc.unalias(stmt,nm));
+//			aliases_names.forEach(nm->vspc.unalias(stmt,nm));
+			for(final String nm:aliases_names){
+				vspc.unalias(stmt,nm);
+			}
 		}
 		if(vspc.vars!=null){
 			final ArrayList<String>var_names=new ArrayList<>();
-			vspc.vars.keySet().forEach(name->var_names.add(name));
-			var_names.forEach(nm->vspc.free_var(stmt,nm));
+//			vspc.vars.keySet().forEach(name->var_names.add(name));
+			for(final String name:vspc.vars.keySet()){
+				var_names.add(name);
+			}
+//			var_names.forEach(nm->vspc.free_var(stmt,nm));
+			for(final String nm:var_names){
+				vspc.free_var(stmt,nm);
+			}
 		}
 		return vspc=vspc.pt;
 	}
@@ -158,25 +167,43 @@ public final class xbin{
 		return ix;
 	}
 	public void link(){
-		evals.entrySet().forEach(me->{
+//		evals.entrySet().forEach(me->{
+//			final int pc=me.getKey();
+//			final expression ev=me.getValue();
+//			final int value=ev.eval(this);
+//			data[pc]=value;
+////			pl("eval at "+me.getKey()+" to "+me.getValue());
+//		});
+		for(final Map.Entry<Integer,expression>me:evals.entrySet()){
 			final int pc=me.getKey();
 			final expression ev=me.getValue();
 			final int value=ev.eval(this);
 			data[pc]=value;
-//			pl("eval at "+me.getKey()+" to "+me.getValue());
-		});
-		calls.entrySet().forEach(me->{
+		}
+//		calls.entrySet().forEach(me->{
+//			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
+//			final int addr=defs.get(me.getValue());
+//			data[me.getKey()]|=(addr<<6);
+//			pl("linked call at "+me.getKey()+" to "+me.getValue());
+//		});
+		for(final Map.Entry<Integer,String>me:calls.entrySet()){
 			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 			final int addr=defs.get(me.getValue());
 			data[me.getKey()]|=(addr<<6);
 			pl("linked call at "+me.getKey()+" to "+me.getValue());
-		});
-		lis.entrySet().forEach(me->{
+		}
+//		lis.entrySet().forEach(me->{
+//			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
+//			final int addr=defs.get(me.getValue());
+//			data[me.getKey()]=addr;
+//			pl("linked li at "+me.getKey()+" to "+me.getValue());
+//		});
+		for(final Map.Entry<Integer,String>me:lis.entrySet()){
 			if(!defs.containsKey(me.getValue()))throw new Error("def not found: "+me.getValue());
 			final int addr=defs.get(me.getValue());
 			data[me.getKey()]=addr;
 			pl("linked li at "+me.getKey()+" to "+me.getValue());
-		});
+		}
 	}
 	public xbin linker_add_call(String name){
 		calls.put(ix,name);

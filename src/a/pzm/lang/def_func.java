@@ -38,7 +38,8 @@ final public class def_func extends def{
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
 		x.p("def").p(ws_before_name).p(name).p(ws_after_name).p("(");
-		params.forEach(e->e.source_to(x));
+//		params.forEach(e -> e.source_to(x));
+		for(final def_func_param e:params)e.source_to(x);
 		x.p(")").p(ws_after_params);
 		function_code.source_to(x);
 	}

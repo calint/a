@@ -11,7 +11,7 @@ final public class def_table extends def{
 	final ArrayList<def_table_col>arguments=new ArrayList<>();
 	final private statement data;
 	public def_table(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
-		super(parent,annot);
+		super(parent, annot);
 		nm(name);
 		mark_start_of_source(r);
 		this.ws_before_name=ws_before_name;
@@ -23,9 +23,14 @@ final public class def_table extends def{
 			if(r.is_next_char_struct_close())break;
 			r.set_location_in_source();
 			final def_table_col sf=new def_table_col(this,null,r);
-			if(arguments.stream().filter(e->sf.token.equals(e.token)).findFirst().isPresent()){
-				throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());
+			for(final def_table_col e:arguments){
+				if(sf.token.equals(e.token)){
+					throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());
+				}
 			}
+//			if(arguments.stream().filter(e->sf.token.equals(e.token)).findFirst().isPresent()){
+//				throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());
+//			}
 			arguments.add(sf);
 		}
 		data=statement.read(this,r);
@@ -40,7 +45,10 @@ final public class def_table extends def{
 		super.source_to(x);
 		x.p("def").p(ws_before_name).p(name).p(ws_after_name);
 		x.p("[");
-		arguments.forEach(e->e.source_to(x));
+//		arguments.forEach(e -> e.source_to(x));
+		for(final def_table_col e:arguments){
+			e.source_to(x);
+		}
 		x.p("]");
 		data.source_to(x);
 	}

@@ -32,7 +32,7 @@ public @ls(cls=expense.class)class expenses extends lst{static final long serial
 		sum+=e.price.toint();
 		x.td().r(e.unit);
 		x.td();
-		renddelax(x,ee,"x");
+		renddelax(x,ee, "a/x");
 	}
 	protected void rendlistfoot(final xwriter x){
 		x.nl().tr();

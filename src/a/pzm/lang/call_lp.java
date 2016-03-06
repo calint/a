@@ -42,7 +42,10 @@ final public class call_lp extends statement{
 		super.source_to(x);
 		x.p("(");
 		x.p(ws_after_expression_open);
-		arguments.forEach(e->e.source_to(x));
+//		arguments.forEach(e -> e.source_to(x));
+		for(final expression e:arguments){
+			e.source_to(x);
+		}
 		x.p(")");
 		x.p(ws_after_expression_closed);
 		loop_code.source_to(x);

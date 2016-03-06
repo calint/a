@@ -61,7 +61,7 @@ public final class cstore{
 	}
 	
 	static itm mk(final Class<? extends itm>cls,final itm owner)throws Throwable{
-		cstore.meters.creates++;
+		meters.creates++;
 		final long t0=System.currentTimeMillis();
 		final itm e=cls.newInstance();
 		if(owner!=null)e.pid.set(owner.did);

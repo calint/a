@@ -49,7 +49,7 @@ public class store_in_s3 implements store{
 		final long t1=System.currentTimeMillis();
 		pl(this.getClass().getName()+" save "+e.getClass()+" "+e.did+"  "+(t1-t0)+" ms");
 	}
-	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final store.visitor v)throws Throwable{
+	@Override public void foreach(final Class<? extends itm>cls,final itm owner,final String q,final visitor v)throws Throwable{
 		final AmazonS3Client s3=client();		
 		final long t0=System.currentTimeMillis();
 		final String bucket=cls.getName();

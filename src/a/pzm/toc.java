@@ -41,10 +41,11 @@ public class toc extends a{
 			}
 		}
 		
-		indents.forEach(s->x.p(s));
-		e.annotations(true).keySet().forEach(s->{
+		for(String s:indents)
+			x.p(s);
+		for(String s:e.annotations(true).keySet()){
 			x.p(s).spc();
-		});
+		}
 		final String[]ix=e.location_in_source().split(":");
 		final String[]ixe=e.location_in_source_end().split(":");
 		x.p("<a onmouseenter=\"");
@@ -74,8 +75,11 @@ public class toc extends a{
 		if(e instanceof block){
 			indents.add("  ");
 			final List<statement>ls=((block)e).statements();//? e instanceof block
-			if(ls!=null)ls.forEach(
-					s->rec(x,indents,s));
+			if(ls!=null) {
+				for(final statement s:ls){
+					rec(x,indents,s);
+				}
+			}
 			indents.removeLast();
 			return;
 		}

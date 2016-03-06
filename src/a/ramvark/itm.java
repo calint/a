@@ -115,7 +115,7 @@ public abstract class itm extends an implements $.labeled{
 					final itm m=((ref)e).get();
 					if(m==null)
 						continue;
-					x.p(m.toString()).spc().ax(this,"refclr "+f.getName(),"x");
+					x.p(m.toString()).spc().ax(this,"refclr "+f.getName(), "a/x");
 					continue;
 				}
 				final Class<? extends lst>lscls=annot.lst();
@@ -126,7 +126,7 @@ public abstract class itm extends an implements $.labeled{
 						final Class<? extends itm>ocls=lscls.getAnnotation(ls.class).cls();
 						final itm m=cstore.load(ocls,e.toString());
 						x.p(m.toString());
-						x.spc().ax(this,"agrclr "+f.getName(),"x");
+						x.spc().ax(this,"agrclr "+f.getName(), "a/x");
 					}
 					continue;
 				}
