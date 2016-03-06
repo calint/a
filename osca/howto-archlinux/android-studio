@@ -1,0 +1,8 @@
+# ??? under construction
+# add to /etc/pacman.conf
+#[multilib]
+#Include = /etc/pacman.d/mirrorlist
+# pki lib32-libstdc++5 lib32-zlib libstdc++5
+
+
+
