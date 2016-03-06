@@ -17,11 +17,13 @@ final public class medusa extends glob implements Serializable{
 //		last_update_dt_s=dt;
 		tick++;
 //		players_all.forEach(g->g.tick(dt));
-		players_all.parallelStream().forEach(g->g.tick(dt,m));
+//		players_all.parallelStream().forEach(g->g.tick(dt,m));
+		for(final player g:players_all)g.tick(dt,m);
 	}
 	final@Override public void draw(final screen s,final medusa m){
 		s.clear('.');
-		players_all.forEach(g->g.draw(s,m));
+//		players_all.forEach(g->g.draw(s,m));
+		for(final player g:players_all)g.draw(s,m);
 	}
 	final public player players_get_free_for_play(){if(players_free.isEmpty())return null;return players_free.removeFirst();}
 	final void on_closed_connection(final player p){players_free.add(p);}

@@ -22,7 +22,7 @@ final public class c{
 		for(final Field f:cls.getFields()){
 			final Object o=f.get(null);
 			out.print(f.getName());out.print("=");
-			final Class c=f.getType();
+			final Class<?>c=f.getType();
 			final boolean stdtype=String.class==c||int.class==c||boolean.class==c;
 			if(!stdtype){out.print(f.getType().getName());out.print("(");}
 			out.print(o==null?"":o.toString().replaceAll("\\n","\\\\n"));

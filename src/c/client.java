@@ -21,19 +21,33 @@ public final class client implements AutoCloseable{
 			conn.get(uri,null,oncontent,ongetdone);
 			return;
 		}
-		conn=new conn(this,host,port,()->conn.get(uri,null,oncontent,ongetdone));
+//		conn=new conn(this,host,port,()->conn.get(uri,null,oncontent,ongetdone));
+		conn=new conn(this,host,port,new conn.onconnected(){@Override public void onconnected()throws Throwable{
+			conn.get(uri,null,oncontent,ongetdone);
+		}});
 	}
 	public void cookie(final String cookie){this.cookie=cookie;}
 	public String cookie(){return cookie;}
 	public void websock(final String uri,final client.onwebsockconnect onwebsockconnect)throws Throwable{
-		conn=new conn(this,host,port,()->
-			// after connect	
-			conn.get(uri,new kvps().put("Upgrade","websocket").put("Connection","upgrade").put("Sec-WebSocket-Key","x3JJHMbDL1EzLkh9GBhXDw==").put("Sec-WebSocket-Version","13"),null,()->{
-				// after get done
+//		conn=new conn(this,host,port,()->
+//			// after connect	
+//			conn.get(uri,new kvps().put("Upgrade","websocket").put("Connection","upgrade").put("Sec-WebSocket-Key","x3JJHMbDL1EzLkh9GBhXDw==").put("Sec-WebSocket-Version","13"),null,()->{
+//				// after get done
+//				conn.mode_websock();//? checkrepliedkey
+//				onwebsockconnect.onwebsockconnect();
+//			})
+//		);
+		conn=new conn(this,host,port,new conn.onconnected(){@Override public void onconnected()throws Throwable{
+			conn.get(uri,new kvps().put("Upgrade","websocket").put("Connection","upgrade").put("Sec-WebSocket-Key","x3JJHMbDL1EzLkh9GBhXDw==").put("Sec-WebSocket-Version","13"),null,new conn.ongetdone(){@Override public void ongetdone()throws Throwable{
 				conn.mode_websock();//? checkrepliedkey
 				onwebsockconnect.onwebsockconnect();
-			})
-		);
+			}});
+		}});
+		// after connect	
+		conn.get(uri,new kvps().put("Upgrade","websocket").put("Connection","upgrade").put("Sec-WebSocket-Key","x3JJHMbDL1EzLkh9GBhXDw==").put("Sec-WebSocket-Version","13"),null,new conn.ongetdone(){@Override public void ongetdone()throws Throwable{
+			conn.mode_websock();//? checkrepliedkey
+			onwebsockconnect.onwebsockconnect();			
+		}});
 	}
 	public void recv(final String s,final conn.onwebsock onwebsockframe)throws Throwable{
 		conn.websock_sendframe(s,onwebsockframe);

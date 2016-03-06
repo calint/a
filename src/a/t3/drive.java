@@ -16,7 +16,10 @@ public class drive extends a{
 		if(pt()==null)x.title("drive");
 		x.ajx(this," ");
 		x.p("<!---->[");
-		files.entrySet().forEach((Map.Entry me)->{x.p(me.getKey().toString()).spc().p(((byte[])me.getValue()).length).spc(2);});
+//		files.entrySet().forEach((Map.Entry me)->{x.p(me.getKey().toString()).spc().p(((byte[])me.getValue()).length).spc(2);});
+		for(final Map.Entry<String,byte[]>me:files.entrySet()){
+			x.p(me.getKey().toString()).spc().p(((byte[])me.getValue()).length).spc(2);
+		}
 		x.p("]");
 		x.ajx_();
 	}

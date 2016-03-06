@@ -24,8 +24,10 @@ public final class conn{
 		final String cookie=cl.cookie();
 		if(cookie!=null&&!cookie.isEmpty())
 			bbo.put(b_hk_cookie).put(cookie.getBytes()).put(b_rnl);
+//		if(hd!=null)
+//			hd.foreach(bbo::put);
 		if(hd!=null)
-			hd.foreach(bbo::put);
+			hd.put_in(bbo);
 		bbo.put(b_rnl);
 		bbo.flip();
 		bboa=new ByteBuffer[]{bbo};onwrite();

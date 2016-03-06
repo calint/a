@@ -25,14 +25,22 @@ public class planes implements Serializable{
 		final AtomicInteger inside=new AtomicInteger();//? use accumulator
 		final AtomicInteger outside=new AtomicInteger();
 		final AtomicInteger intersects=new AtomicInteger();
-		list.parallelStream().forEach((pn)->{
+//		list.parallelStream().forEach((pn)->{
+//			final int res=pn.check_collision_with_sphere(sphere_position,sphere_radius);
+//			switch(res){
+//			case 1:inside.incrementAndGet();break;
+//			case 2:outside.incrementAndGet();break;
+//			case 3:intersects.incrementAndGet();break;
+//			}
+//		});
+		for(final plane pn:list){
 			final int res=pn.check_collision_with_sphere(sphere_position,sphere_radius);
 			switch(res){
 			case 1:inside.incrementAndGet();break;
 			case 2:outside.incrementAndGet();break;
 			case 3:intersects.incrementAndGet();break;
-			}
-		});
+			}			
+		}
 		final int nplanes=list.size();
 		if(inside.get()==nplanes)return 1;
 		if(outside.get()==nplanes)return 2;
@@ -49,7 +57,8 @@ public class planes implements Serializable{
 	///textilize
 	public void to(final xwriter x){
 		x.p("pns{[");
-		list.forEach((p)->{p.to(x);});
+//		list.forEach((p)->{p.to(x);});
+		for(final plane p:list)p.to(x);
 		x.p("]}");
 	}
 	

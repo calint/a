@@ -15,6 +15,7 @@ import b.path;
 import b.req;
 import b.xwriter;
 import c.client;
+import c.conn;
 
 final public class ficsgames extends a{
 	public a pl;{pl.set("fics handle");}//player name
@@ -73,7 +74,15 @@ final public class ficsgames extends a{
 			final String uri=sb.toString();
 			
 			final ByteArrayOutputStream bos=new ByteArrayOutputStream(8*K);//? buffer in file, pipe
-			try{c.get(uri,bos::write,c::close);}catch(Throwable t){t.printStackTrace();}
+//			try{c.get(uri,bos::write,c::close);}catch(Throwable t){t.printStackTrace();}
+			try{c.get(uri,
+					new conn.oncontent(){@Override public void oncontent(byte[]data,int offset,int len)throws Throwable {
+						bos.write(data,offset,len);
+					}},new conn.ongetdone(){@Override public void ongetdone()throws Throwable{
+						c.close();
+					}}
+				);
+			}catch(Throwable t){t.printStackTrace();}
 			c.run();
 			
 			final byte[]ba=bos.toByteArray();
