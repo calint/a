@@ -5,22 +5,23 @@ import java.util.*;
 import b.*;
 public class diro extends a{
 	private static final long serialVersionUID=1;
-	public final static int BIT_ALLOW_QUERY=1;
-	public final static int BIT_ALLOW_FILE_LINK=2;
-	public final static int BIT_ALLOW_DIR_ENTER=4;
-	public final static int BIT_ALLOW_DIR_UP=8;
-	public final static int BIT_ALLOW_FILE_OPEN=16;
-	public final static int BIT_ALLOW_FILE_EDIT=32;
-	public final static int BIT_ALLOW_FILE_DELETE=64;
-	public final static int BIT_ALLOW_FILE_CREATE=128;
-	public final static int BIT_ALLOW_DIR_CREATE=256;
-	public final static int BIT_ALLOW_DIR_DELETE=512;
-	public final static int BIT_ALLOW_FILE_MODIFY=1024;
-	public final static int BIT_ALLOW_SELECT=2048;
-	public final static int BIT_ALLOW_MOVE=4096;
-	public final static int BIT_ALLOW_RENAME=8192;
-	public final static int BIT_ALLOW_COPY=16384;
-	public final static int BIT_DISP_PATH=32768;
+	public final static int BIT_ALLOW_QUERY=1<<0;
+	public final static int BIT_ALLOW_FILE_LINK=1<<1;
+	public final static int BIT_ALLOW_DIR_ENTER=1<<2;
+	public final static int BIT_ALLOW_DIR_UP=1<<3;
+	public final static int BIT_ALLOW_FILE_OPEN=1<<4;
+	public final static int BIT_ALLOW_FILE_EDIT=1<<5;
+	public final static int BIT_ALLOW_FILE_DELETE=1<<6;
+	public final static int BIT_ALLOW_FILE_CREATE=1<<7;
+	public final static int BIT_ALLOW_DIR_CREATE=1<<8;
+	public final static int BIT_ALLOW_DIR_DELETE=1<<9;
+	public final static int BIT_ALLOW_FILE_MODIFY=1<<10;
+	public final static int BIT_ALLOW_SELECT=1<<11;
+	public final static int BIT_ALLOW_MOVE=1<<12;
+	public final static int BIT_ALLOW_RENAME=1<<13;
+	public final static int BIT_ALLOW_COPY=1<<15;
+	public final static int BIT_DISP_PATH=1<<16;
+	public final static int BIT_ALLOW_LIST_WHEN_NO_QUERY=1<<17;
 	public final static int BIT_ALL=-1;
 	public a q;
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
@@ -34,18 +35,24 @@ public class diro extends a{
 	public a bd;
 	public final void root(final path root){this.root=root;if(!path.isin(root))path=root;}
 	public final void bits(final int bits){this.bits=bits;}
+	public final void bits_set(final int b){bits|=b;}
+	public final void bits_clear(final int b){bits&=~b;}
 	public final boolean hasbit(final int i){return (bits&i)!=0;}
 	synchronized final public void to(final xwriter x) throws Throwable{
 		x.tago("span").attr("id",id()).tagoe();
 		final String[]files;
 		final boolean isfile=path.isfile();
 		final String query=q.toString();
-		if(b.isempty(query))
-			files=path.list();
-		else
+		if(b.isempty(query)){
+			if(hasbit(BIT_ALLOW_LIST_WHEN_NO_QUERY))
+				files=path.list();
+			else
+				files=new String[0];
+		}else{
 			files=path.list(new FilenameFilter(){public boolean accept(File f,String s){
 				return s.startsWith(query);
 			}});
+		}
 		if(sort)
 			sort(files);
 		if(sort_dirsfirst)

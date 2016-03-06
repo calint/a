@@ -2,12 +2,14 @@ package a.rch;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import a.diro;
 import a.x.xsts;
 import b.a;
@@ -44,41 +46,51 @@ public final class $ extends a{
 //		path inboxpth=req.get().session().path(inbox_dir);
 //		dirox.setRootPath(inboxpth);
 		final String sessionref=req.get().session().href();
-		x.ax(this,"rch"," :: archive");
-		x.ax(this,"store"," :: store");
-		x.br();
-		x.a(sessionref+index_file,"index").spc();
-		x.a(sessionref+err_file,"errors").spc();
-		x.a(sessionref+dup_file,"duplicates").spc();
-		x.br().span(sts);
-		x.ax(this,"clrsts","[·]");
-		x.br().p("inbox: ").p(inbox_dir);
-		x.br().p("store: ").p(store_dir);
-		x.br().r(dirox);
+		x.p("inbox: ").p(inbox_dir).nl();
+		x.p("store: ").p(store_dir).nl();
+		x.ax(this,"va"," :: archive");
+		x.ax(this,"vs"," :: store");
+		x.a(sessionref+index_file," :: index").spc();
+		x.a(sessionref+err_file," :: errors").spc();
+		x.a(sessionref+dup_file," :: duplicates").spc();
+		x.ax(this,"rch"," :: run");
+		x.ax(this,"clrsts"," :: cancel ");
+		x.nl().span(sts).spc();
+		x.nl().r(dirox);
 	}
 	public void x_clrsts(xwriter x,String q)throws Throwable{
 		sts.set("");
 		x.xu(sts);
 	}
-	//	private static long path_size_bytes(path p,long b,progstatus ps) throws IOException{
-	//		if(p.isFile()){
-	//			b+=p.getSize();
-	//			if(ps!=null)
-	//				ps.update("total "+b+" bytes");
-	//			return b;
-	//		}
-	//
-	//		if(ps!=null)
-	//			ps.update("list "+p);
-	//		
-	//		String[] ls=p.list();
-	//		for(String nm:ls){
-	//			path pth=p.getPath(nm);
-	//			b+=path_size_bytes(pth,b,ps);
-	//			continue;
-	//		}
-	//		return b;
-	//	}
+	/** view inbox dir */
+	public void x_va(xwriter x,String q)throws Throwable{
+		dirox.root(req.get().session().path(inbox_dir));
+		dirox.bits_set(diro.BIT_ALLOW_LIST_WHEN_NO_QUERY);
+		x.xreload();
+	}
+	/** view store dir */
+	public void x_vs(xwriter x,String q)throws Throwable{
+		dirox.root(req.get().session().path(store_dir));
+		dirox.bits_clear(diro.BIT_ALLOW_LIST_WHEN_NO_QUERY);
+		x.xreload();
+	}
+	private static long path_size_bytes(path p,xsts ps)throws Throwable{
+		ps.setsts("calculating bytes to process: "+p.toString());
+		if(p.isfile())
+			return p.size();
+		if(!p.isdir()){
+			b.b.log(new Throwable(p.fullpath()+" is neither file nor directory"));
+			return 0;
+		}
+		class cntr{long c;}
+		final cntr c=new cntr();
+		p.foreach(f->{
+			c.c+=path_size_bytes(f,ps);
+			return false;
+		});
+		return c.c;
+	}
+
 	//		ByteArrayOutputStream baos=new ByteArrayOutputStream();
 	//		cli cli=new cli("du -sb "+p.fullPath(),baos);
 	//		cli.wait_for_cli();
@@ -96,8 +108,8 @@ public final class $ extends a{
 			inbx.mkdirs();
 			return;
 		}
-//		bytestoprocess=path_size_bytes(inbx,0,ps);
-		bytestoprocess=0;
+		bytestoprocess=path_size_bytes(inbx,stsb);
+//		bytestoprocess=0;
 		final path store=ses.path(store_dir);
 		store.mkdirs();
 		final path ixfile=ses.path(index_file);
@@ -118,18 +130,18 @@ public final class $ extends a{
 		sts.set("done. "+sts.toString());
 		x.xreload();
 	}
+	private final static boolean remove_file_from_inbox_after_archived=false;
 	private void procdir(final xwriter x,final path root,final path store,final MessageDigest md,final PrintStream ixps,final PrintStream errps,final PrintStream dupps,final xsts pb)throws Throwable{
 		//		if(root.getName().startsWith("."))
 		//			return;
-		pb.setsts("dir "+root);
-		final String[]list=root.list();
-		for(int i=0;i<list.length;i++){
-			final path file=root.get(list[i]);
+//		pb.setsts("dir "+root);
+		root.foreach(file->{
 			if(file.isdir()){
 				procdir(x,file,store,md,ixps,errps,dupps,pb);
-				file.rm();
+				if(remove_file_from_inbox_after_archived)
+					file.rm();
 				//					errps.println(dfmt.format(new Date())+": could not delete "+file.fullPath());
-				continue;
+				return false;
 			}
 			//			if(file.getName().startsWith("."))
 			//				continue;
@@ -141,7 +153,7 @@ public final class $ extends a{
 			}catch(FileNotFoundException e){
 //				fileerrs++;
 				errps.println(dfmt.format(new Date())+": could not open "+file.fullpath());
-				continue;
+				return false;
 			}
 			int c=0;
 			md.reset();
@@ -162,36 +174,44 @@ public final class $ extends a{
 //				filedups++;
 				dupps.println(dfmt.format(new Date())+": "+hashstr);
 				dupps.flush();
-				file.rm();
+				if(remove_file_from_inbox_after_archived)
+					file.rm();
 				//					throw new Error(dfmt.format(new Date())+": could not delete "+file.fullPath());
-				continue;
+				return false;
 			}
 			final long lastmod=file.lastmod();
 			newfile.mkbasedir();
-			if(!file.rename(newfile))
-				throw new Error(dfmt.format(new Date())+": could not mv "+file+" "+newfile);
-			newfile.lastmod(lastmod);
-			newfile.setreadonly();
-//			newfile.setExecutable(false);
+			if(remove_file_from_inbox_after_archived){
+				if(!file.rename(newfile))
+					throw new Error(dfmt.format(new Date())+": could not mv "+file+" "+newfile);
+			}else{
+				// copy file to archive
+				try(InputStream is=file.inputstream();OutputStream os=newfile.outputstream()){
+					b.b.cp(is,os);
+				}
+				newfile.lastmod(lastmod);
+				newfile.setreadonly();
+//				newfile.setExecutable(false);
+			}
 			ixps.print(hashstr);
-			ixps.print("----");
+			ixps.print(" ");
 			ixps.print(nfmtlen.format(newfile.size()));
-			ixps.print("----");
+			ixps.print(" ");
 			ixps.print(dfmt.format(lastmod));
-			ixps.print("----");
-//			ixps.print(dfmt.format(new Date()));
-			ixps.print("----:----:----:---:---:---:");
-			ixps.print("-------------------------------:---------------:-------:---:-::");
+			ixps.print(" ");
 			ixps.print(ext);
+			ixps.print(" ");
+			ixps.print(file.name());
 			ixps.println();
 			ixps.flush();
 //			filearched++;
-		}
+			return false;
+		});
 	}
 	private void updatests(final xsts pb)throws Throwable{
 		pb.setsts("processed " + filecount + " files   "
 				+ nfmtsts.format(bytecount) + " bytes of "
-				+ nfmtsts.format(bytestoprocess)+" bytes");
+				+ nfmtsts.format(bytestoprocess)+" bytes  "+(bytecount*100/bytestoprocess)+"%");
 	}
 	static String filename_for_hash(final String hash){
 		//		StringBuffer sb=new StringBuffer();

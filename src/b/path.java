@@ -16,6 +16,11 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 public final class path implements Serializable{static final long serialVersionUID=1;
 	public static path get1(final String name){return new path(new File(name));}//?
 	private final File file;
@@ -214,7 +219,7 @@ public final class path implements Serializable{static final long serialVersionU
 		writeba(b.tobytes(s));
 		return this;
 	}
-	public interface visitor{boolean visit(final path p)throws Throwable;}
+	public interface visitor{/** @return true to break */boolean visit(final path p)throws Throwable;}
 	public void apply(final visitor v)throws Throwable{
 		if(!exists())return;
 		if(isfile())v.visit(this);
@@ -229,9 +234,21 @@ public final class path implements Serializable{static final long serialVersionU
 		return bb;
 	}
 	public void foreach(final visitor v)throws Throwable{
-		for(final String s:list()){
-			final path pth=get(s);
-			if(v.visit(pth))break;
+//		for(final String s:list()){
+//			final path pth=get(s);
+//			if(v.visit(pth))break;
+//		}
+		if(isfile()){
+			v.visit(this);
+		}
+		try(final DirectoryStream<Path>ds=Files.newDirectoryStream(Paths.get(fullpath()))){
+			for(Iterator<Path>i=ds.iterator();i.hasNext();){
+				final Path jp=i.next();
+				final String nm=jp.getFileName().toString();
+				final path p=new path(new File(file,nm));
+				if(v.visit(p))
+					break;
+			}
 		}
 	}
 }
