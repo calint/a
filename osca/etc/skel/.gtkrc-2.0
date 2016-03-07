@@ -46,7 +46,7 @@ class "GtkToolbar" style "gtkcompactextra"
 class "GtkPaned" style "gtkcompactextra"
 
 gtk-font-name="Sans 7"
-gtk-icon-theme-name="faenza"
+gtk-icon-theme-name="Faenza"
 
 binding "gtk-binding-tree-view" {
     bind "j"        { "move-cursor" (display-lines, 1) }
