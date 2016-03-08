@@ -625,6 +625,15 @@ XButtonEvent buttonevstart;//? decllocation
 				ny=-border_width;
 				nh=scr.hi;
 			}
+			fprintf(flog,"button=%d    btn1msk=%d    btn2msk=%d    btn3msk=%d\n",buttonevstart.button,Button1Mask,Button2Mask,Button3Mask);
+			if(buttonevstart.button==3){
+				if(nw<0)
+					nw=0;
+				if(nh<0)
+					nh=0;
+				xwingeomset(xw,xw->gx,xw->gy,nw,nh);
+				break;
+			}
 			switch(key){
 			default:
 				xwingeomset(xw,nx,ny,xw->gw,xw->gh);
