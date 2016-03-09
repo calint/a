@@ -9,6 +9,7 @@ cp -av $HOME/.profile $SKEL&&
 cp -av $HOME/.bashrc $SKEL&&
 cp -av $HOME/.gtkrc-2.0 $SKEL&&
 cp -av $HOME/.xinitrc $SKEL&&
+cp -av $HOME/.nanorc $SKEL&&
 mkdir $SKEL/.config&&
 cp -rav $HOME/.config/leafpad $SKEL/.config&&
 cp -rav $HOME/.config/libfm $SKEL/.config&&

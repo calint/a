@@ -394,12 +394,12 @@ int main(int argc,char**args){
 			fprintf(flog,"  unhandled event: %s   %p %s  unhandled\n",ix_evnames[ev.type],(void*)ev.xany.window,ev.xany.window==root?"*":"");
 			fflush(flog);
 			break;
-		case ClientMessage:break;
-		case ReparentNotify:break;
-		case CreateNotify:break;
-		case DestroyNotify:break;
-		case ConfigureNotify:break;
-		case MapRequest:break;
+//		case ClientMessage:break;
+//		case ReparentNotify:break;
+//		case CreateNotify:break;
+//		case DestroyNotify:break;
+//		case ConfigureNotify:break;
+//		case MapRequest:break;
 		case MapNotify:
 			fprintf(flog,"mapnotify     %p\n",(void*)ev.xmap.window);fflush(flog);
 			if(ev.xmap.window==root||ev.xmap.window==0||ev.xmap.override_redirect){
