@@ -4,7 +4,6 @@ echo destination: $SKEL
 
 rm -rf $SKEL&&
 mkdir $SKEL&&
-cp -av $HOME/.alias $SKEL&&
 cp -av $HOME/.profile $SKEL&&
 cp -av $HOME/.bashrc $SKEL&&
 cp -av $HOME/.gtkrc-2.0 $SKEL&&
