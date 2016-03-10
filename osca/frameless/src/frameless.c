@@ -355,15 +355,16 @@ static int errorhandler(Display*d,XErrorEvent*e){
 	fflush(flog);
 	return 0;
 }
-int main(int argc,char**args){
+int main(int argc,char**args,char**env){
 	while(argc--)puts(*args++);
+	while(*env)puts(*env++);
 	puts(APP);
 	srand(0);
 //	_Xdebug=1;
 	XSetErrorHandler(errorhandler);
 	int n;
 	//	flog=stdout;
-	flog=fopen(logfile,"a");
+	flog=stdout;//fopen(logfile,"a");
 	if(!flog)exit(1);
 	dpy=XOpenDisplay(NULL);
 	if(!dpy)exit(2);

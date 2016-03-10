@@ -1,4 +1,1 @@
-#!/bin/sh
-#scrot '%Y-%m-%d--%H-%M-%S.jpg' -e 'mkdir -p ~/img/&&mv $f ~/img/&&feh ~/img/$f'&
 scrot '%Y-%m-%d--%H-%M-%S.jpg' -e 'mkdir -p ~/img/&&mv $f ~/img/'&
-#scrot -s

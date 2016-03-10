@@ -1,4 +1,2 @@
-#!/bin/sh
-IDE=~/downloads/eclipse/eclipse
-exec env LIBOVERLAY_SCROLLBAR=1 SWT_GTK3=0 $IDE&
+LIBOVERLAY_SCROLLBAR=1 SWT_GTK3=0 $IDE&
 

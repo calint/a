@@ -1,4 +1,1 @@
-#!/bin/sh
-#exec lxterminal&
-#exec xterm&
-exec $XC&
+$XC&

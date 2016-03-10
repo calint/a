@@ -1,2 +1,1 @@
-#!/bin/sh
-exec xbacklight -inc 10
+xbacklight -inc 10
