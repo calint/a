@@ -10,9 +10,7 @@
 # uncomment:
 # %wheel ALL=(ALL) NOPASSWD: ALL 
 
-# edit /etc/group
-# add user to group %wheel
-
+# sudo gpasswd -a c wheel
 # logout root, login user
 
 # mkdir w &&
