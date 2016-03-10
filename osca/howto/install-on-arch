@@ -1,0 +1,33 @@
+Packages:
+# pacman -S git xorg xterm xorg-xinit pcmanfm faenza-icon-theme ttf-dejavu \
+#          chromium feh scrot sudo mplayer youtube-dl pkgfile alsa-utils
+
+# mkdir /home/c
+# chown -R c.c /home/c
+# useradd -d /home/c
+# passwd c
+
+# edit /etc/sudoers
+# uncomment:
+# %wheel ALL=(ALL) NOPASSWD: ALL 
+
+# edit /etc/group
+# add user to group %wheel
+
+# logout root, login user
+
+# mkdir w &&
+# cd w && 
+# git clone https://github.com/calint/a && 
+# cd a/osca &&
+# sh make-all.sh &&
+# cp -rav etc/skel/. ~/
+
+# exit and login then
+# start-frameless
+ 
+# in a/osca/howto-arch/ run better fonts and copy X11 confs
+
+
+
+
