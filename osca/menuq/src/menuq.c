@@ -6,8 +6,9 @@
 #include<string.h>
 #include<X11/keysym.h>
 #include <X11/Xutil.h>
+#define BORDER_WIDTH 1
 int main(){
-	puts(APP);
+//	puts(APP);
 	Display*dpy=XOpenDisplay(NULL);
 	if(!dpy){
 		//fprintf(stderr, "!!! could not open display\n");
@@ -16,7 +17,7 @@ int main(){
 	const int scr=DefaultScreen(dpy);
 	const int screen_width=DisplayWidth(dpy,scr);
 	const int win_height=23;
-	const Window win=XCreateSimpleWindow(dpy,RootWindow(dpy,scr),0,0,screen_width,win_height,0,BlackPixel(dpy,scr),BlackPixel(dpy,scr));
+	const Window win=XCreateSimpleWindow(dpy,RootWindow(dpy,scr),-BORDER_WIDTH,0,screen_width,win_height,0,BlackPixel(dpy,scr),BlackPixel(dpy,scr));
 //	XSelectInput(dpy,win,ExposureMask|KeyPressMask);
 	XSelectInput(dpy,win,KeyPressMask);
 	XMapWindow(dpy,win);
