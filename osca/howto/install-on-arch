@@ -1,4 +1,3 @@
-Packages:
 # pacman -S git xorg xterm xorg-xinit pcmanfm faenza-icon-theme ttf-dejavu \
 #          chromium feh scrot sudo mplayer youtube-dl pkgfile alsa-utils
 
