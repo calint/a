@@ -2,9 +2,9 @@ INSTALL_TO=/dev/sdb
 IMG=install.img
 BIN=pc.img
 SRC=pc.cc file.cc main.cc
-CC=cc
+CC=g++ -m32 -O0
 CW=-Wall -Wextra -Wfatal-errors
-CF=-nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00 -O1
+CF=-nostdlib -Wl,--oformat,binary -Wl,-Ttext,0x7c00
 
 all:	clean build print display
 
@@ -27,7 +27,7 @@ clean:
 	@rm -f $(IMG) $(BIN)
 
 display:
-	@qemu -m 1 -no-kvm $(IMG)
+	@qemu-system-i386 -m 1 $(IMG)
 	 
 install:
 	sudo dd if=$(IMG) of=$(INSTALL_TO)&&sync
