@@ -1,5 +1,0 @@
-DEST=~/snap/
-FN=$(date +%Y-%m-%d--%H-%M-%S--%N).png
-mkdir -p $DEST &&
-cd $DEST &&
-~/w/a/osca/snap/snap $FN
