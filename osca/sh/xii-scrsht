@@ -1,4 +1,4 @@
-DEST=~/snap/
+DEST=~/xwd.inbox/
 FN=$(date +%Y-%m-%d--%H-%M-%S--%N).png
 mkdir -p $DEST &&
 cd $DEST &&

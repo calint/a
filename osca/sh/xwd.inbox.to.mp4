@@ -1,1 +1,1 @@
-cd ~/xwd.inbox/&&mkdir -p ~/xwd.mp4&&ffmpeg -r 1 -pattern_type glob -i '*.png' -c:v libx264 ~/xwd.mp4/$(date +%Y-%m-%d--%H-%M-%S).mp4
+cd ~/xwd.inbox/&&mkdir -p ~/xwd.mp4&&ffmpeg -r 2 -pattern_type glob -i '*.png' -c:v libx264 ~/xwd.mp4/$(date +%Y-%m-%d--%H-%M-%S).mp4
