@@ -1,0 +1,1 @@
+cd ~/xwd.inbox/&&mkdir -p ~/xwd.archive&&mv * ~/xwd.archive
