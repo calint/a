@@ -1,0 +1,1 @@
+mkdir -p ~/xwd/record/&&for i in $(seq 1 $1);do xwd -root|convert - ~/xwd/record/$(date +%Y-%m-%d--%H-%M-%S--%N).png&& sleep 1;done

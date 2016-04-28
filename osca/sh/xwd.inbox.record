@@ -1,1 +1,0 @@
-mkdir -p ~/xwd.inbox/&&for i in $(seq 1 $1);do xwd -root|convert - ~/xwd.inbox/$(date +%Y-%m-%d--%H-%M-%S--%N).png&& sleep 1;done

@@ -1,5 +1,5 @@
-DEST=~/xwd.inbox/
-FN=$(date +%Y-%m-%d--%H-%M-%S--%N).png
+DEST=~/img/
+FN=$(date +%Y-%m-%d--%H-%M-%S).png
 mkdir -p $DEST &&
 cd $DEST &&
-~/w/a/osca/snap/snap $FN
+$OSCA/snap/snap $FN
