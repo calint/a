@@ -1,1 +1,3 @@
-cd ~/xwd/record/&&mkdir -p ~/xwd/mp4&&ffmpeg -r $1 -pattern_type glob -i '*.png' -c:v libx264 ~/xwd/mp4/$(date +%Y-%m-%d--%H-%M-%S).mp4
+cd ~/xwd/record/&&
+mkdir -p ~/xwd/mp4&&
+cat *|ffmpeg -f image2pipe -c:v png -r 3 -i - ~/xwd/mp4/$(date +%Y-%m-%d--%H-%M-%S).mp4
