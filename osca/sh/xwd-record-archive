@@ -1,1 +1,3 @@
-cd ~/xwd/record/&&mkdir -p ~/xwd/archive&&mv * ~/xwd/archive
+. $OSCA/sh/xwd-env &&
+pl "$0 move snaps from $XWD_PNG to $XWD_ARCHIVE" &&
+mkdir -p $XWD_PNG && cd $XWD_PNG && mkdir -p $XWD_ARCHIVE && mv * $XWD_ARCHIVE 2>/dev/null
