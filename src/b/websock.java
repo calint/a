@@ -21,6 +21,7 @@ public class websock extends a implements sock{static final long serialVersionUI
 		// rfc6455#section-1.3
 		// Opening Handshake
 //		if(!"13".equals(hdrs.get("sec-websocket-version")))throw new Error("sec-websocket-version not 13");
+		System.out.println("@@@@@ 1:   "+hdrs);
 		final String key=hdrs.get("sec-websocket-key");
 		final String s=key+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		final byte[]sha1ed=MessageDigest.getInstance("SHA-1").digest(s.getBytes());
@@ -29,8 +30,10 @@ public class websock extends a implements sock{static final long serialVersionUI
 //		final String prot=hdrs.get("sec-webSocket-protocol");
 		bbo.put("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: ".getBytes());
 		bbo.put(replkey.getBytes());
+//		bbo.put("\r\nSec-WebSocket-Protocol: chat".getBytes());
 		bbo.put("\r\n\r\n".getBytes());
 		bbo.flip();
+		System.out.println("@@@@@ 2:   "+new String(bbo.array(),"utf8"));
 //		System.out.println(hdrs);
 //		System.out.println(new String(bbo.array(),0,bbo.limit()));
 		while(bbo.hasRemaining()&&0!=so.write(bbo));if(bbo.hasRemaining())throw new Error("packetnotfullysent");
