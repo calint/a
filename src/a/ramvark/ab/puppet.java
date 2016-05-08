@@ -2,19 +2,15 @@ package a.ramvark.ab;
 import a.ramvark.an;
 import a.ramvark.in;
 import a.ramvark.itm;
-import a.ramvark.refs;
 import b.xwriter;
 public class puppet extends itm{static final long serialVersionUID=1;
-	@in(type=3)public expenses expenses;
-	@in(type=3)public items items;
-	@in(itm=content.class)public agr content;
-//	@in(lst=puppets.class)public ref father;
-//	@in(lst=puppets.class)public ref mother;
-	@in public an phone;	
-	@in public an email;	
-	@in(lst=ramvark.class)public ref referer;
-//	@in(type=7,lst=ramvark.class)public refn refs;
-	@in(type=3)public refs refs;
+	@in(type=in.TYPE_AGGR_N,cls=expense.class,lst=expenses.class)public expenses expenses;
+	@in(type=in.TYPE_AGGR_N,cls=item.class,lst=items.class)public items items;
+	@in(type=in.TYPE_AGGR_1,cls=content.class)public agr content;
+	@in(type=in.TYPE_STR)public an phone;	
+	@in(type=in.TYPE_STR)public an email;	
+	@in(type=in.TYPE_REF_1,cls=puppet.class,lst=ramvark.class)public ref referer;
+	@in(type=in.TYPE_REF_N,cls=puppet.class,lst=ramvark.class)public refn refs;
 	
 	public final void itm_content_in(final xwriter x)throws Throwable{
 		inputagr(x,content);

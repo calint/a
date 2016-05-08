@@ -31,7 +31,7 @@ public abstract class itm extends an implements $.labeled{
 			if(annot==null)continue;
 			if(f.getType()==agr.class){
 				final agr rf=(agr)f.get(this);
-				rf.cls=annot.itm();
+				rf.cls=annot.cls();
 				rf.owner=this;
 				continue;
 			}
@@ -150,7 +150,7 @@ public abstract class itm extends an implements $.labeled{
 				}
 				final Class<? extends lst>lscls=annot.lst();
 				if(lscls!=lst.class){
-					inputref(x,e);
+					inputagrn(x,e);
 					x.spc();
 					if(!e.isempty()){
 						final Class<? extends itm>ocls=lscls.getAnnotation(ls.class).cls();
@@ -160,7 +160,7 @@ public abstract class itm extends an implements $.labeled{
 					}
 					continue;
 				}
-				if(annot.itm()!=itm.class){
+				if(annot.cls()!=itm.class){
 					inputagr(x,e);
 					continue;
 				}
@@ -212,6 +212,12 @@ public abstract class itm extends an implements $.labeled{
 //		final boolean isitm=e instanceof itm;
 //		if(isitm&&!((itm)e).colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+((itm)e).colr+"\">");
 		x.p("<a href=\"javascript:$x('").p(id()).p(" agr ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
+//		if(isitm&&!((itm)e).colr.isempty())x.spanEnd();
+	}
+	final protected void inputagrn(final xwriter x,final a e) throws Throwable{
+//		final boolean isitm=e instanceof itm;
+//		if(isitm&&!((itm)e).colr.isempty())x.p("<span style=\"border-bottom:3px dotted "+((itm)e).colr+"\">");
+		x.p("<a href=\"javascript:$x('").p(id()).p(" agrn ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
 //		if(isitm&&!((itm)e).colr.isempty())x.spanEnd();
 	}
 	final public synchronized void x_agr(final xwriter x,final String s)throws Throwable{
@@ -369,7 +375,7 @@ public abstract class itm extends an implements $.labeled{
 //		public void rm(final String did);
 //	}
 	
-	public static class ref extends an{
+	final public static class ref extends an{
 		protected Class<? extends itm>cls;
 		public itm get()throws Throwable{
 			if(isempty())return null;
@@ -379,7 +385,7 @@ public abstract class itm extends an implements $.labeled{
 		public void rm(){clr();}
 		static final long serialVersionUID=1;
 	}
-	public static class refn extends an{
+	final public static class refn extends an{
 		@Override public void to(final xwriter x)throws Throwable{
 			x.p("refs:");
 			x.p(str());
@@ -387,19 +393,27 @@ public abstract class itm extends an implements $.labeled{
 		public void rm(){clr();}
 		static final long serialVersionUID=1;
 	}
-	final public static class agr extends ref{
+	final public static class agr extends an{
+		protected Class cls;
 		protected itm owner;
 		public itm get()throws Throwable{
-			final itm m=super.get();
-			if(m!=null)return m;
+			if(isempty()){
+				final itm mm=cstore.create(cls,owner);
+				set(mm.did.toString());
+				return mm;
+			}
+			final itm m=cstore.load(cls,toString());
+			if(m!=null)
+				return m;
 			final itm mm=cstore.create(cls,owner);
 			set(mm.did.toString());
 			return mm;
 		}
 		public void rm(){
 			try{cstore.delete(cls,toString());}catch(final Throwable t){throw new Error(t);}
-			super.clr();
+			clr();
 		}
+		public boolean isnull(){return isempty();}
 		//? ondelete
 //		public void ondelete()throws Throwable{rm();}
 		static final long serialVersionUID=1;
