@@ -30,5 +30,7 @@ done
 cat $OUT|grep '^uri\|^Failed\|^Requests\|^concurrency'>>$SUM
 date>>$OUT
 date>>$SUM
+echo -- - - - ---- ---- - -- - - - -- - 
+cat $SUM|grep '^Failed'|sort -u
 cat $SUM
 echo

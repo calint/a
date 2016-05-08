@@ -129,7 +129,7 @@ public:
 	};
 	virtual void to(xwriter&x)=0;
 	virtual void ax(xwriter&x,char*a[]=0){if(a)x.pk(a[0]);}
-	virtual void on_content(xwriter&x,/*scan*/const char*content,const size_t content_len){};
+	virtual void on_content(xwriter&x,/*local*/const char*content,const size_t content_len){};
 };
 static char*strtrm(char*p,char*e){
 	while(p!=e&&isspace(*p))
@@ -713,9 +713,9 @@ private:
 				ses=sessions.all[session_id];
 				if(!ses){// session not found, reload
 //					printf(" * session not found, recreating: %s\n",session_id);
-					char*sid=(char*)malloc(24);
+					char*sid=(char*)malloc(64);
 //					if(strlen(session_id)>23)throw"cookielen";
-					strncpy(sid,session_id,24);
+					strncpy(sid,session_id,64);
 	//				printf(" * creating session %s\n",session_id);
 					ses=new session(sid);
 					sessions.all.put(sid,ses,false);
@@ -886,11 +886,13 @@ int main(int argc,char**argv){
 		//printf(" epoll_wait\n");
 		const int nn=epoll_wait(epollfd,events,nclients,-1);
 		//printf(" epoll_wait returned %d\n",nn);
+		if(nn==0){
+			puts("epoll 0");
+			continue;
+		}
 		if(nn==-1){
 			perror("epollwait");
-			puts("epoll_wait error");
 			continue;
-//			exit(7);
 		}
 		for(int i=0;i<nn;i++){
 			sock*c=(sock*)events[i].data.ptr;
