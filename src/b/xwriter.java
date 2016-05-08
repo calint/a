@@ -269,11 +269,16 @@ public final class xwriter{
 	public xwriter xfocus(final String id){return p("$f('").p(id).pl("');");}
 	public xwriter xtitle(final String s){return p("$t('").jsstr(b.isempty(s,"")).pl("');");}
 	public xwriter xp(final a e,final String s){return p("$p('").p(e.id()).p("','").jsstr(s).pl("');");}
-	public xwriter el(){return p("<span>");}
-	public xwriter el(final String style){return p("<span style=\"").p(style).p("\">");}
-	public xwriter el(final a e){return p("<span id=").p(e.id()).p(">");}
-	public xwriter el(final a e,final String style){return p("<span id=").p(e.id()).p(" style=\"").p(style).p("\">");}
-	public xwriter el_(){return p("</span>");}
+	public xwriter el(){return p("<div style=display:inline>");}
+//	public xwriter el(){return p("<span>");}
+	public xwriter el(final String style){return p("<div style=\"display:inline;").p(style).p("\">");}
+//	public xwriter el(final String style){return p("<span style=\"").p(style).p("\">");}
+	public xwriter el(final a e){return p("<div style=display:inline id=").p(e.id()).p(">");}
+//	public xwriter el(final a e){return p("<span id=").p(e.id()).p(">");}
+	public xwriter el(final a e,final String style){return p("<div id=").p(e.id()).p(" style=\"display:inline;").p(style).p("\">");}
+//	public xwriter el(final a e,final String style){return p("<span id=").p(e.id()).p(" style=\"").p(style).p("\">");}
+	public xwriter el_(){return p("</div>");}
+//	public xwriter el_(){return p("</span>");}
 	public xwriter r(final a e)throws Throwable{if(e==null)return this;e.to(this);return this;}
 	public xwriter rel(final a e)throws Throwable{
 		if(e==null)return this;

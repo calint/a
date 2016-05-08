@@ -6,7 +6,7 @@ import b.a_ajaxsts;
 import b.xwriter;
 final public class $ extends a{
 	static final long serialVersionUID=1;
-	public static String homepageclass="a.ramvark.ab.puppets";
+	public static String homepageclass="a.ramvark.ab.ramvark";
 	final LinkedList<a>stk=new LinkedList<a>();
 	public a el;
 	public a sts;
@@ -16,6 +16,10 @@ final public class $ extends a{
 		attach(stk.getLast(),"el");
 	}
 	public void to(final xwriter x)throws Throwable{
+		if(pt()==null){
+			x.title("ramvark");
+//			x.p("<body onload=$l>");
+		}
 		x.el(this,"display:block");
 		x.style();
 		x.css("body","font-size:5mm;margin:0em 0 0 2em;color:#000;font:monospace");
@@ -26,18 +30,20 @@ final public class $ extends a{
 		x.css("a","transition: all .4s ease;");
 		x.css("a:focus,a:hover,a:active","color:red;text-shadow:0px 0px 1px rgba(0, 0, 0, 0.5);");
 		x.style_();
-		x.p("ramvark");
+//		x.p("ramvark");
 		final a last=stk.getLast();
 		for(final a e:stk){
-			x.p(" : ");
 			if(e==last)
 				x.tago("span").attr("class","a").tagoe();
 			if(e instanceof labeled){
+//				x.p(e.label()); //? compiler
 				x.p(((labeled)e).label());
 			}else
 				x.p(e.toString());
 			if(e==last)
 				x.tage("span");
+			if(e!=last)
+				x.p(" : ");
 		}
 		x.spc();
 		x.r(el);
@@ -53,8 +59,10 @@ final public class $ extends a{
 			attach(stk.getLast(),"el");
 			x.xuo(this);
 			//? x.focus in axjs workaround
-			if(el instanceof lst)
+			if(el instanceof lst){
+//				x.xfocus(el.qry); //? compiler
 				x.xfocus(((lst)el).qry);
+			}
 			if(cl instanceof itm){
 				final itm m=(itm)cl;
 				if(m.after_close_focus_elem!=null){

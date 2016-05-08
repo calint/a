@@ -3,7 +3,7 @@ import a.ramvark.itm;
 import a.ramvark.ls;
 import a.ramvark.lst;
 import b.xwriter;
-public @ls(cls=puppet.class)class puppets extends lst{
+public @ls(cls=puppet.class)class ramvark extends lst{
 	static final long serialVersionUID=1;
 	protected void rendlisthead(final xwriter x){
 		x.nl().style();
@@ -32,7 +32,7 @@ public @ls(cls=puppet.class)class puppets extends lst{
 //		x.td().p(e.mother);
 //		x.td().p(e.father);		
 		x.td();
-		renddelax(x,ee, "a/x");
+		renddelax(x,ee,"x");
 	}
 	protected void rendlistfoot(final xwriter x){
 		x.nl().table_();

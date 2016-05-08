@@ -7,6 +7,7 @@ import a.ramvark.store;
 import b.xwriter;
 public class expense extends itm{static final long serialVersionUID=1;
 	@in(type=3)public expenses subexpenses;
+	@in(type=1)public an note;
 	@in(type=5)public an unit;
 	@in(type=5)public an amount;
 	@in(type=5)public an price;
@@ -51,8 +52,11 @@ public class expense extends itm{static final long serialVersionUID=1;
 //			s.i+=i*a;
 			s.i+=i;
 		}});
-		price.set(s.i);
-		amount.set(1);
+		if(s.i==0)
+			price.clr();
+		else
+			price.set(s.i);
+		amount.clr();
 		unit.clr();
 	}
 }

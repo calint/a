@@ -19,23 +19,23 @@ static struct dc*dc;
 static struct graph*graphcpu;
 static struct graph*graphmem;
 static struct graphd*graphwifi;
-static char sys_cls_pwr_bat[32];
-static char sys_cls_net_wlan[32];
-static void sysvaluestr(const char*path,char*value,int size){
+static char sys_cls_pwr_bat[64];
+static char sys_cls_net_wlan[64];
+static void sysvaluestr(const char*path,char*value,const int size){
 	FILE*file=fopen(path,"r");
 	if(!file){
 		*value=0;
 		return;
 	}
-	char fmt[16];
-	snprintf(fmt,16,"%%%ds\\n",size);
+	char fmt[32];
+	snprintf(fmt,sizeof fmt,"%%%ds\\n",size);
 	fscanf(file,fmt,value);
+	fclose(file);
 	char*p=value;
 	while(*p){
 		*p=tolower(*p);
 		p++;
 	}
-	fclose(file);
 }
 static int sysvalueint(const char*path){
 	FILE*file=fopen(path,"r");
@@ -187,13 +187,13 @@ static void _rendcpuload(){
 	char bbuf[1024];
 	fscanf(file,"%1024s %d %d %d %d %d %d %d\n",bbuf,&user,&nice,&system,&idle,&iowait,&irq,&softirq);
 	fclose(file);
-	int total=(user+nice+system+idle+iowait+irq+softirq);
-	int usage=total-idle;
-	long long dtotal=total-cpu_total_last;
+	const int total=(user+nice+system+idle+iowait+irq+softirq);
+	const int usage=total-idle;
+	const long long dtotal=total-cpu_total_last;
 	cpu_total_last=total;
-	int dusage=usage-cpu_usage_last;
+	const int dusage=usage-cpu_usage_last;
 	cpu_usage_last=usage;
-	int usagepercent=dusage*100/dtotal;
+	const int usagepercent=dusage*100/dtotal;
 	graphaddvalue(graphcpu,usagepercent);
 	dcyinc(dc,dyhr);
 	dcyinc(dc,default_graph_height);
@@ -332,7 +332,7 @@ static void _rendiostat(){
 	last_kb_wrtn=kb_wrtn;
 }
 static void _renddmsg(){
-	FILE*f=popen("journalctl --lines=10 --no-pager","r");
+	FILE*f=popen("journalctl --lines=15 --no-pager","r");
 //	FILE*f=popen("dmesg -t|tail -n10","r");
 //	FILE*f=popen("tail -n10 /var/log/syslog","r");
 	if(!f)return;
@@ -345,7 +345,8 @@ static void _renddmsg(){
 	pclose(f);
 }
 static void _rendacpi(){
-	FILE*f=popen("acpi -batc|grep -vi 'no state information available'","r");
+//	FILE*f=popen("acpi -batc|grep -vi 'no state information available'","r");
+	FILE*f=popen("acpi -V|grep -vi 'no state information available'","r");
 	if(!f)return;
 	while(1){
 		char bbuf[1024];
@@ -367,14 +368,50 @@ static void _rendacpi(){
 //	}
 //	pclose(f);
 //}
-static void _renddatetime(){
+
+
+
+//-- strbuf ----- - - -- - --  - - - - --- --  - - -- -
+//typedef struct _strb{
+//	char chars[512];
+//	size_t index;
+//}strb;
+//
+////#define strbi(o) o->index=0
+//
+//inline static void strbi(strb*o){
+//	o->index=0;
+//}
+//
+//inline static size_t strbrem(strb*o){
+//	const long long remaining=(long long)((sizeof o->chars)-o->index);
+//	return remaining;
+//}
+//
+///// appends @str to @o  @returns 0 if ok
+//inline static int strbp(strb*o,const char*str){
+//	const size_t remaining=strbrem(o);
+//	const int n=snprintf(o->chars+o->index,remaining,"%s",str);
+//	if(n<0)return-1;
+//	o->index+=n;
+//	const size_t remaining2=strbrem(o);
+//	if(remaining2<1)return-2;
+////	printf("index:%zd  remaining:%zd  string:'%s'\n",o->index,remaining2,o->chars);
+//	return 0;
+//}
+//-- - - -- - - ----- - - -- - --  - - - - --- --  - - -- -
+
+#include"strb.h"
+inline static void _renddatetime(){
 	const time_t t=time(NULL);
-	const struct tm *local=localtime(&t);
-	char bbuf[1024];
-	snprintf(bbuf,sizeof bbuf,"%s",asctime(local));
+	const struct tm*lt=localtime(&t);//? free?
+	strb sb;
+	strbi(&sb);
+	if(strbp(&sb,asctime(lt)))return;
 	dccr(dc);
-	dcdrwstr(dc,bbuf);
+	dcdrwstr(dc,sb.chars);
 }
+
 static void _rendcputhrottles(){
 	FILE*f=fopen("/sys/devices/system/cpu/present","r");
 	if(!f)return;
@@ -382,35 +419,41 @@ static void _rendcputhrottles(){
 	fscanf(f,"%d-%d",&min,&max);
 	fclose(f);
 //	printf(" %d  %d\n",min,max);
-	const int bbl=1024;
-	char bb[bbl];
-	strcpy(bb,"throttle ");
+
+
+	strb sb;strbi(&sb);
+	if(strbp(&sb,"throttle "))return;
+
+//	char bb[1024];
+//	strncpy(bb,"throttle ",sizeof bb);
 	int n;
-	char bbuf[1024];
+	char bbuf[512];
 	for(n=min;n<=max;n++){
 		snprintf(bbuf,sizeof bbuf,"/sys/devices/system/cpu/cpu%d/cpufreq/scaling_max_freq",n);
-		int max_freq=sysvalueint(bbuf);
+		const int max_freq=sysvalueint(bbuf);
 		snprintf(bbuf,sizeof bbuf,"/sys/devices/system/cpu/cpu%d/cpufreq/scaling_cur_freq",n);
-		int cur_freq=sysvalueint(bbuf);
+		const int cur_freq=sysvalueint(bbuf);
 		snprintf(bbuf,sizeof bbuf," %d%%",(cur_freq*100)/max_freq);
-		strcat(bb,bbuf);//? bufferoverrun
+		if(strbp(&sb,bbuf))return;
+//		strcat(bb,bbuf);//? bufferoverrun
 	}
-	pl(bb);
+//	pl(bb);
+	pl(sb.chars);
 }
-static void fmtbytes(long long bytes,char*buf,int buflen){
-	const long long kb=bytes>>10;
-	if(kb==0){
-		snprintf(buf,buflen,"%lld B",bytes);
-		return;
-	}
-	const long long mb=kb>>10;
-	if(mb==0){
-		snprintf(buf,buflen,"%lld KB",kb);
-		return;
-	}
-	snprintf(buf,buflen,"%lld MB",mb);
-	return;
-}
+//static void fmtbytes(long long bytes,char*buf,int buflen){
+//	const long long kb=bytes>>10;
+//	if(kb==0){
+//		snprintf(buf,buflen,"%lld B",bytes);
+//		return;
+//	}
+//	const long long mb=kb>>10;
+//	if(mb==0){
+//		snprintf(buf,buflen,"%lld KB",kb);
+//		return;
+//	}
+//	snprintf(buf,buflen,"%lld MB",mb);
+//	return;
+//}
 static void _rendswaps(){
 	FILE*f=fopen("/proc/swaps","r");
 	if(!f)return;
@@ -422,11 +465,17 @@ static void _rendswaps(){
 	long long size,used;
 	if(!fscanf(f,"%64s %32s %lld %lld",dev,type,&size,&used))return;
 	fclose(f);
-	const int bblen=64;
-	char bb[bblen];
-	fmtbytes(used<<10,bb,bblen);
-	snprintf(bbuf,sizeof bbuf,"swapped %s",bb);
-	pl(bbuf);
+
+	strb sb;strbi(&sb);
+	if(strbp(&sb,"swapped "))return;
+	if(strbfmtbytes(&sb,used<<10))return;
+	pl(sb.chars);
+//
+//	const int bblen=64;
+//	char bb[bblen];
+//	fmtbytes(used<<10,bb,bblen);
+//	snprintf(bbuf,sizeof bbuf,"swapped %s",bb);
+//	pl(bbuf);
 }
 //static int strstartswith(const char*string,const char*prefix){
 //	while(*prefix)if(*prefix++!=*string++)return 0;
@@ -471,10 +520,14 @@ static void autoconfig_bat(){
 	return;
 }
 static int is_wlan_device(const char*sys_cls_net_wlan){
-	char bbuf[1024];
-	snprintf(bbuf,sizeof bbuf,"/sys/class/net/%s/wireless",sys_cls_net_wlan);
+	strb sb;strbi(&sb);
+	if(strbp(&sb,"/sys/class/net/"))return 0;
+	if(strbp(&sb,sys_cls_net_wlan))return 0;
+	if(strbp(&sb,"/wireless"))return 0;
+
+
 	struct stat s;
-	if(stat(bbuf,&s))return 0;
+	if(stat(sb.chars,&s))return 0;
 	return 1;
 }
 static void autoconfig_wifi(){

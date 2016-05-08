@@ -26,7 +26,7 @@ public class diro extends a{
 	public a q;
 	protected final SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS",Locale.US);
 	protected final NumberFormat nf=new DecimalFormat("###,###,###,###");
-	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
+	protected int bits=BIT_DISP_PATH|BIT_ALLOW_QUERY|BIT_ALLOW_LIST_WHEN_NO_QUERY|BIT_ALLOW_FILE_LINK|BIT_ALLOW_DIR_ENTER|BIT_ALLOW_DIR_UP;
 //	protected int bits=BIT_ALL;
 	protected path root=b.path();
 	protected path path=root;

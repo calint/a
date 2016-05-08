@@ -40,6 +40,11 @@ public abstract class itm extends an implements $.labeled{
 				rf.cls=annot.lst().getAnnotation(ls.class).cls();
 				continue;
 			}
+			if(f.getType()==refn.class){
+				final refn rfn=(refn)f.get(this);
+//				rfn.cls=annot.lst().getAnnotation(ls.class).cls();
+				continue;
+			}
 			if(annot.type()==3){
 				final lst ls=(lst)f.get(this);
 				ls.owner=this;
@@ -93,7 +98,32 @@ public abstract class itm extends an implements $.labeled{
 				continue;
 			if(elem_in_focus==null)
 				elem_in_focus=e;
-
+			
+			
+			
+			if(t==7){// refn
+				x.td("lbl").tago("label").attr("for",e.id()).tagoe().p(f.getName()).td();
+				final Class<? extends lst>lscls=annot.lst();
+				if(lscls!=lst.class){
+					inputrefn(x,e);						
+					x.spc();
+					if(!e.isempty()){
+						final Class<? extends itm>ocls=lscls.getAnnotation(ls.class).cls();
+//						final itm m=cstore.load(ocls,e.toString());
+//						if(m==null)continue;
+//						x.p(m.toString()).spc();
+						e.to(x);
+						x.spc().ax(this,"refnclr "+f.getName(),"x");
+					}
+					continue;
+				}
+				continue;
+			}
+			
+			
+			
+			
+			
 			if(t==4)
 				x.td(2);
 			else
@@ -115,7 +145,7 @@ public abstract class itm extends an implements $.labeled{
 					final itm m=((ref)e).get();
 					if(m==null)
 						continue;
-					x.p(m.toString()).spc().ax(this,"refclr "+f.getName(), "a/x");
+					x.p(m.toString()).spc().ax(this,"refclr "+f.getName(),"x");
 					continue;
 				}
 				final Class<? extends lst>lscls=annot.lst();
@@ -125,8 +155,8 @@ public abstract class itm extends an implements $.labeled{
 					if(!e.isempty()){
 						final Class<? extends itm>ocls=lscls.getAnnotation(ls.class).cls();
 						final itm m=cstore.load(ocls,e.toString());
-						x.p(m.toString());
-						x.spc().ax(this,"agrclr "+f.getName(), "a/x");
+						x.p(m.toString()).spc();
+						x.ax(this,"agrclr "+f.getName(),"x");
 					}
 					continue;
 				}
@@ -199,9 +229,19 @@ public abstract class itm extends an implements $.labeled{
 		x.xuo(this);
 		x.xfocus(ra);
 	}
+	final public synchronized void x_refnclr(final xwriter x,final String s)throws Throwable{
+		final Field f=getClass().getField(s);
+		final refn r=(refn)f.get(this);
+		r.rm();
+		x.xuo(this);
+		x.xfocus(r);
+	}
 	//input ref
 	final protected void inputref(final xwriter x,final a e) throws Throwable{
 		x.p("<a href=\"javascript:$x('").p(id()).p(" ref ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
+	}
+	final protected void inputrefn(final xwriter x,final a e) throws Throwable{
+		x.p("<a href=\"javascript:$x('").p(id()).p(" refn ").p(e.nm()).p("')\" id=").p(e.id()).p(">⌾</a>");
 	}
 	//reference select
 	final public synchronized void x_ref(final xwriter x,final String s)throws Throwable{
@@ -209,7 +249,7 @@ public abstract class itm extends an implements $.labeled{
 		final Class<? extends lst>clsls=f.getAnnotation(in.class).lst();
 		final lst ls=clsls.newInstance();
 		final ref rf=(ref)f.get(this);
-		ls.elem_selecting=rf;
+		ls.elem_ref_selecting=rf;
 		final String q;
 		final itm o=rf.get();
 		if(o!=null){
@@ -218,6 +258,23 @@ public abstract class itm extends an implements $.labeled{
 			q="";
 		ls.qry.set(q);
 		ls.label="select "+f.getName();
+		ev(x,this,ls);
+	}
+	//referencen select
+	final public synchronized void x_refn(final xwriter x,final String s)throws Throwable{
+		final Field f=getClass().getField(s);
+		final Class<? extends lst>clsls=f.getAnnotation(in.class).lst();
+		final lst ls=clsls.newInstance();
+		final refn rf=(refn)f.get(this);
+		ls.elem_refn_adding=rf;
+//		final String q;
+//		final itm o=rf.get();
+//		if(o!=null){
+//			q=o.toString();
+//		}else
+//			q="";
+//		ls.qry.set(q);
+		ls.label="add "+f.getName();
 		ev(x,this,ls);
 	}
 	final public synchronized void x_refclr(final xwriter x,final String s)throws Throwable{
@@ -319,6 +376,14 @@ public abstract class itm extends an implements $.labeled{
 			return cstore.load(cls,toString());
 		}
 		final public boolean isnull(){return isempty();}
+		public void rm(){clr();}
+		static final long serialVersionUID=1;
+	}
+	public static class refn extends an{
+		@Override public void to(final xwriter x)throws Throwable{
+			x.p("refs:");
+			x.p(str());
+		}
 		public void rm(){clr();}
 		static final long serialVersionUID=1;
 	}

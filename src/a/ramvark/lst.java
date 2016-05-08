@@ -6,11 +6,12 @@ public abstract class lst extends an implements $.labeled{
 	static final long serialVersionUID=1;
 	public a qry;
 	String label;
-	a elem_selecting;
+	a elem_ref_selecting;
+	a elem_refn_adding;
 	itm owner;
 	private String frstnm;
 	private String frstid;
-	protected boolean is_ref_list;
+//	protected boolean is_ref_list;
 	public String label(){
 		if(label!=null)
 			return label;
@@ -45,9 +46,8 @@ public abstract class lst extends an implements $.labeled{
 			return;
 		}
 //		final Scanner sc=new Scanner(toString());
-		final String[]sa=toString().split(",");
 		final Class<? extends itm>cls=itmcls();
-		for(final String s:sa){
+		for(final String s:toString().split(",")){
 			if(s.length()==0)
 				continue;
 			final itm e=cstore.load(cls,s);
@@ -107,7 +107,9 @@ public abstract class lst extends an implements $.labeled{
 	final public synchronized void x_dl(final xwriter x,final String s)throws Throwable{
 		final String did=s;
 		//. if aggr
-		cstore.delete(itmcls(),did);
+		if(isempty()){
+			cstore.delete(itmcls(),did);
+		}
 		if(owner!=null){
 			final String dide=","+did;
 			final String ix=toString();
@@ -130,10 +132,16 @@ public abstract class lst extends an implements $.labeled{
 	}
 	//load
 	final public synchronized void x_ld(final xwriter x,final String s)throws Throwable{
-		if(elem_selecting!=null){
-			elem_selecting.set(s);
+		if(elem_ref_selecting!=null){
+			elem_ref_selecting.set(s);
 			ev(x,this,"cl");
-			x.xfocus(elem_selecting);
+			x.xfocus(elem_ref_selecting);
+			return;
+		}
+		if(elem_refn_adding!=null){
+			elem_refn_adding.set(elem_refn_adding.str()+","+s);//? append
+			ev(x,this,"cl");
+			x.xfocus(elem_refn_adding);
 			return;
 		}
 		final itm e=cstore.load(itmcls(),s);
@@ -152,10 +160,16 @@ public abstract class lst extends an implements $.labeled{
 			x_cr(x,s);
 			return;
 		}
-		if(elem_selecting!=null){
-			elem_selecting.set(frstid);
+		if(elem_ref_selecting!=null){
+			elem_ref_selecting.set(frstid);
 			ev(x,this,"cl");
-			x.xfocus(elem_selecting);
+			x.xfocus(elem_ref_selecting);
+			return;
+		}
+		if(elem_refn_adding!=null){
+			elem_refn_adding.set(elem_refn_adding.str()+","+frstid);//? append
+			ev(x,this,"cl");
+			x.xfocus(elem_refn_adding);
 			return;
 		}
 		final Class<? extends itm>ocls=getClass().getAnnotation(ls.class).cls();
@@ -180,7 +194,7 @@ public abstract class lst extends an implements $.labeled{
 		final Class<? extends itm>cls=getClass().getAnnotation(ls.class).cls();
 		final itm e=cstore.create(cls,owner);
 		e.set(q);
-		e.after_save_write_did_to_elem=elem_selecting;
+		e.after_save_write_did_to_elem=elem_ref_selecting;
 		e.after_close_focus_elem=qry;
 		if(owner!=null)
 			e.after_save_add_to_list=this;
