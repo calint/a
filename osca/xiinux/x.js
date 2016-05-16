@@ -1,8 +1,4 @@
-<!doctype html><title>post</title>
-<input id=line type=text style=width:40em> <input id=btn type=button value="send" onclick="this.disabled=true;ajax_post('/?typealine',$('line').value,function(r){console.log(r);$('btn').disabled=false;$('line').focus();})">
-<script>
 $=function(eid){return document.getElementById(eid);}
-$("line").focus();
 function ajax_post(uri,data,on_done){
 	console.log("ajax post to "+uri+"\n"+data);
 	var req=new XMLHttpRequest();
@@ -42,4 +38,3 @@ function ajax_post(uri,data,on_done){
 	}
 	req.open('post',uri,true);
 }
-</script>

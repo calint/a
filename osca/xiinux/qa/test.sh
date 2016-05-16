@@ -4,6 +4,27 @@ HTTP=http://localhost:8088
 
 
 echo&&date&&echo coverage tests on $HTTP&&
+
+#NC="nc -w1"
+NC=nc
+#--- - - - - ---  - - - - -- - -- - -- - - -- - 
+echo " * upload small file"&&
+curl -sq -XPUT --header "Content-Type:file" --data-binary @q01.txt $HTTP/upl>/dev/null&&
+curl -s $HTTP/upload/upl>cmp&&
+diff -q cmp q01.txt&&
+rm cmp&&
+rm ../upload/upl&&
+#--- - - - - ---  - - - - -- - -- - -- - - -- - 
+echo " * chained get"&&
+echo $'GET / HTTP/1.1\r\n\r\nGET / HTTP/1.1\r\n\r\n'|nc $HOST $PORT>cmp&&
+diff -q cmp t09.cmp&&
+rm cmp&&
+exit
+
+
+
+
+
 #-- - - -- -- - ------- - - - - -- - - - --- -- 
 echo " * static document"&&
 #curl -si $HTTP/qa/q01.txt>cmp&&
@@ -35,7 +56,7 @@ diff -q cmp t06.cmp&&
 rm cmp&&
 #-- - - -- -- - ------- - - - - -- - - - --- -- 
 echo " * illegal path"&&
-echo $'GET ../../etc HTTP/1.1\r\n\r\n'|nc $HOST $PORT>cmp&&
+echo $'GET ../../etc HTTP/1.1\r\n\r\n'|$NC $HOST $PORT>cmp&&
 diff -q cmp t08.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
@@ -50,12 +71,12 @@ diff -q cmp t04.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
 echo " * chained get"&&
-echo $'GET / HTTP/1.1\r\n\r\nGET / HTTP/1.1\r\n\r\n'|nc $HOST $PORT>cmp&&
+echo $'GET / HTTP/1.1\r\n\r\nGET / HTTP/1.1\r\n\r\n'|$NC $HOST $PORT>cmp&&
 diff -q cmp t09.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
 echo " * post"&&
-# echo $'PUT /upl HTTP/1.1\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nx'|nc $HOST $PORT
+# echo $'PUT /upl HTTP/1.1\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nx'|$NC $HOST $PORT
 curl -s --header "Content-Type:text/plain;charset=utf-8" --data "hello ᐖᐛツ" $HTTP/?typealine>cmp&&
 diff -q cmp t10.cmp&&
 rm cmp&&
@@ -85,7 +106,7 @@ echo " * chained upload"&&
 #echo -e "PUT /upl HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nxPUT /upl2 HTTP/1.1\r\nContent-Type:file\r\nContent-Length:1\r\n\r\ny"|nc $HOST $PORT>cmp&&
 #echo -e "PUT /upl HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nx"|nc $HOST $PORT>cmp&&
 #echo $'PUT /upl HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nx'|nc $HOST $PORT>cmp&&
-echo $'PUT /upl HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nxPUT /upl2 HTTP/1.1\r\nContent-Type:file\r\nContent-Length:1\r\n\r\ny'|nc $HOST $PORT>cmp&&
+echo $'PUT /upl HTTP/1.1\r\nConnection:Keep-Alive\r\nContent-Type:file\r\nContent-Length:1\r\n\r\nxPUT /upl2 HTTP/1.1\r\nContent-Type:file\r\nContent-Length:1\r\n\r\ny'|$NC $HOST $PORT>cmp&&
 diff -q cmp t12.cmp&&
 curl -s $HTTP/upload/upl>cmp&&
 diff -q cmp t13.cmp&&
