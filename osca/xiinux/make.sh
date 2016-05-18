@@ -11,14 +11,19 @@ OPTS=-O3
 WARNINGS="-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wfatal-errors"
 LIB="-pthread -lgcov"
 
+echo > all.src &&
+FILES=$(for f in $(find src);do if [ -f $f ];then cat $f>>all.src;fi;done)
+
 echo &&
 $CC  -o $BIN $SRC $DBG $LIB $OPTS $WARNINGS && 
 echo    "             lines  words   chars" &&
 echo -n "   source:" &&
-cat $SRC|wc &&
+cat all.src|wc &&
 echo -n "   zipped:" &&
-cat $SRC|gzip|wc &&
+cat all.src|gzip|wc &&
 echo && ls -ho --color $BIN &&
+echo &&
+rm all.src &&
 echo
 #valgrind --leak-check=yes --leak-check=full --show-leak-kinds=all ./$BIN
 #valgrind --leak-check=yes ./$BIN

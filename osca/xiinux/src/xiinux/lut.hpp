@@ -1,5 +1,4 @@
-#ifndef lut_hpp
-#define lut_hpp
+#pragma once
 namespace xiinux{
 	template<class T>class lut{
 	private:
@@ -9,7 +8,7 @@ namespace xiinux{
 			char*key{nullptr};
 			T data{nullptr};
 			el*nxt{nullptr};
-			inline el(char*key,T data):key(key),data(data){
+			inline el(char*key,T data):key{key},data{data}{
 	//			printf(" * new lut element %s @ %p\n",key,(void*)this);
 			}
 			inline~el(){
@@ -110,4 +109,3 @@ namespace xiinux{
 		}
 	};
 }
-#endif

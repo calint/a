@@ -1,5 +1,4 @@
-#ifndef lst_hpp
-#define lst_hpp
+#pragma once
 namespace xiinux{
 	template<class T>class lst{
 	private:
@@ -7,7 +6,7 @@ namespace xiinux{
 		public:
 			T ptr{0};
 			el*nxt{nullptr};
-			inline el(T ptr):ptr(ptr),nxt(nullptr){}
+			inline el(T ptr):ptr{ptr}{}
 		};
 		el*first{nullptr};
 		el*last{nullptr};
@@ -102,4 +101,3 @@ namespace xiinux{
 		}
 	};
 }
-#endif
