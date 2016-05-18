@@ -1,6 +1,7 @@
 #ifndef sock_hpp
 #define sock_hpp
-#include"xiinux.hpp"
+#include"../xiinux.hpp"
+#include"args.hpp"
 namespace xiinux{
 	class sock{
 		enum parser_state{method,uri,query,protocol,header_key,header_value,resume_send_file,read_content,upload,next_request};
@@ -562,7 +563,7 @@ namespace xiinux{
 		}
 	};
 	static sock server_socket(0);
-	int main(int argc,char**argv){
+	int main(const int argc,const char**argv){
 	//	lst<const char*>ls;
 	//	ls.to(stdout);
 	////	const char*cc_hello="hello";
@@ -591,7 +592,10 @@ namespace xiinux{
 	//	test_xprinter(sb);
 	//	sb.to(stdout);
 	//	return 0;
-
+		args a(argc,argv);
+		const bool watch_thread=a.hasoption('v');
+		const int port=atoi(a.getoptionvalue('p',"8088"));
+		const bool option_benchmark_mode=a.hasoption('b');
 		printf("%s on port %d\n",APP,port);
 
 		char buf[4*K];
@@ -616,7 +620,6 @@ namespace xiinux{
 		ev.data.ptr=&server_socket;
 		if(epoll_ctl(epollfd,EPOLL_CTL_ADD,server_socket.fd,&ev)<0){perror("epolladd");exit(5);}
 		struct epoll_event events[nclients];
-		const bool watch_thread=argc>1;
 		pthread_t thdwatch;
 		if(watch_thread)if(pthread_create(&thdwatch,nullptr,&thdwatchrun,nullptr)){perror("threadcreate");exit(6);}
 		while(true){
@@ -666,11 +669,13 @@ namespace xiinux{
 						continue;
 	//					exit(11);
 					}
-					int flag=1;
-					if(setsockopt(fda,IPPROTO_TCP,TCP_NODELAY,(void*)&flag,sizeof(int))<0){//? for performance tests
-						perror("optsetTCP_NODELAY");
-						puts("optsetTCP_NODELAY");
-						exit(12);
+					if(option_benchmark_mode){
+						int flag=1;
+						if(setsockopt(fda,IPPROTO_TCP,TCP_NODELAY,(void*)&flag,sizeof(int))<0){//? for performance tests
+							perror("optsetTCP_NODELAY");
+							puts("optsetTCP_NODELAY");
+							return 8;
+						}
 					}
 					continue;
 				}
