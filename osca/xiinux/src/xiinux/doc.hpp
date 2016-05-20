@@ -1,6 +1,5 @@
 #pragma once
 #include"reply.hpp"
-#include"defines.hpp"
 namespace xiinux{
 	class doc{
 		size_t len;
@@ -14,8 +13,9 @@ namespace xiinux{
 			memcpy(buf,data,len);
 		}
 		inline~doc(){
-			dbg("delete doc");
+	//		printf(" * delete doc %p\n",(void*)this);
 			free(buf);
+	//		delete buf;
 		}
 		inline const char*buffer()const{return buf;}
 		inline size_t size_in_bytes()const{return len;}

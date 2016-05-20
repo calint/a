@@ -8,21 +8,21 @@ namespace xiinux{
 		inline static void*thdwatchrun(void*arg){
 			if(arg)
 				puts((const char*)arg);
-			sts.header_to(stdout);
+			sts.printhdr(stdout);
 			while(1){
 				int n=10;
 				while(n--){
 					const int sleep=100000;
 					usleep(sleep);
 					sts.ms+=sleep/1000;//? not really
-					sts.to(stdout);
+					sts.print(stdout);
 				}
 				fprintf(stdout,"\n");
 			}
 			return nullptr;
 		}
 	public:
-		inline static void stop(){sck.close();}
+		inline static void stop(){sck.close();delete homepage;}
 		inline static int start(const int argc,const char**argv){
 			args a(argc,argv);
 			const bool watch_thread=a.hasoption('v');
@@ -32,8 +32,8 @@ namespace xiinux{
 
 			char buf[4*K];
 			// Connection: Keep-Alive for apachebench
-			snprintf(buf,sizeof buf,"HTTP/1.1 200\r\nContent-Length: %zu\r\n\r\n%s",strlen(application_name),application_name);
-			homepage=std::unique_ptr<doc>(new doc(buf));//? does not delete doc at exit
+			snprintf(buf,sizeof buf,"HTTP/1.1 200\r\nContent-Length: %zu\r\n\r\n%s\n",strlen(application_name)+1,application_name);
+			homepage=new doc(buf);
 
 			struct sockaddr_in srv;
 			const ssize_t srvsz=sizeof(srv);
@@ -55,11 +55,13 @@ namespace xiinux{
 			if(watch_thread)if(pthread_create(&thdwatch,nullptr,&thdwatchrun,nullptr)){perror("threadcreate");exit(6);}
 			while(true){
 				const int nn=epoll_wait(epollfd,events,nclients,-1);
-				if(nn==0){
-					perr("epoll 0");
-					continue;
-				}
+//				if(nn==0){
+//					perr("epoll 0");
+//					continue;
+//				}
 				if(nn==-1){
+					if(errno==EINTR)
+						continue;// interrupted system call ok
 					perr("epollwait");
 					continue;
 				}
