@@ -7,7 +7,7 @@ var x=*di
 drw(tick x)
 
 
-def drw(tick p){
+def drw(@const tick p){
   st(0x5020 p)
   st(0x5021 tick)
   var n=4

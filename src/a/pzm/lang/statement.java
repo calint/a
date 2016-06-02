@@ -35,7 +35,7 @@ public class statement extends a{
 	public static statement read(statement parent,reader r)throws Throwable{
 		final String ws_leading=r.next_empty_space();
 		r.set_location_in_source();
-		final LinkedHashMap<String,String>annot=read_annot(r);
+		final LinkedHashMap<String,String>annot=r.read_annotation();
 		if(r.is_next_char_block_open()){
 			final block blk=new block(parent,annot,ws_leading,r);
 			return blk;
@@ -130,19 +130,19 @@ public class statement extends a{
 	public void mark_start_of_source(final reader r){
 		source_location_start=r.location_in_source();
 	}
-	public static LinkedHashMap<String,String>read_annot(reader r){
-		LinkedHashMap<String,String>annot=null;
-		while(true){
-			if(!r.is_next_char_annotation_open())break;
-			final String s=r.next_token();
-			if(s.length()==0)throw new Error("unexpected empty token");
-			final String ws=r.next_empty_space();
-			if(annot==null)
-				annot=new LinkedHashMap<>();
-			annot.put(s,ws);
-		}
-		return annot;
-	}
+//	public static LinkedHashMap<String,String>read_annot(reader r){
+//		LinkedHashMap<String,String>annot=null;
+//		while(true){
+//			if(!r.is_next_char_annotation_open())break;
+//			final String s=r.next_token();
+//			if(s.length()==0)throw new Error("unexpected empty token");
+//			final String ws=r.next_empty_space();
+//			if(annot==null)
+//				annot=new LinkedHashMap<>();
+//			annot.put(s,ws);
+//		}
+//		return annot;
+//	}
 //	public boolean is_register_declared(String register_name){
 //		final boolean yes=declarations.contains(register_name);
 //		if(yes)return true;

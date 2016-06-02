@@ -2,7 +2,7 @@ package a.pzm;
 import b.a;
 import b.xwriter;
 final public class registers extends a{
-	public int[]ints;
+	public/*ref*/int[]ints;
 	public void to(final xwriter x){
 		x.p("registers:").nl();
 		final String pad="00000";

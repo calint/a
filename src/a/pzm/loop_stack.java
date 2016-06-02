@@ -2,7 +2,7 @@ package a.pzm;
 import b.a;
 import b.xwriter;
 final public class loop_stack extends a{
-	public core core;
+	public/*ref*/core core;
 	public void to(final xwriter x){
 		final int ix=core.loop_stack_index;
 		x.p("loop stack:").p(Integer.toHexString(ix)).nl();

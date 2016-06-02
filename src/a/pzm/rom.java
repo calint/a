@@ -70,6 +70,6 @@ final public class rom extends a{
 //		for(int i=0;i<ints.length;i++)ints[i]=0;
 //	}	
 	public int disppagenrows=128;
-	public int[]ints;
+	public/*ref*/int[]ints;
 	private static final long serialVersionUID=1;
 }

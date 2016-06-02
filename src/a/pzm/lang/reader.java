@@ -173,4 +173,16 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
+	public LinkedHashMap<String,String>read_annotation(){
+		LinkedHashMap<String,String>annot=null;
+		while(true){
+			if(!is_next_char_annotation_open())break;
+			final String s=next_token();
+			if(s.length()==0)throw new Error("unexpected empty token");
+			final String ws=next_empty_space();
+			if(annot==null)annot=new LinkedHashMap<>();
+			annot.put(s,ws);
+		}
+		return annot;
+	}
 }

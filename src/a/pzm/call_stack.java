@@ -27,7 +27,7 @@ final public class call_stack extends a{
 	public int top(){
 		return stk[ix-1];
 	}
-	public int[]stk;
+	public/*ref*/int[]stk;
 	private int ix=0;
 	private static final long serialVersionUID=1;
 }
