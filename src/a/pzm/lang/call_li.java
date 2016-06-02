@@ -14,7 +14,7 @@ final public class call_li extends call{
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
 		x.write_op(this,op,0,rdi);
 		final expression imm=arguments.get(1);
-		x.add_at_pre_link_evaluate(imm);
+		x.at_link_eval(imm);
 		x.write(0,imm);
 	}
 }

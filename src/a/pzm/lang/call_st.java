@@ -23,7 +23,7 @@ final public class call_st extends call{
 			allocated_regs.add("$ra");
 //			x.write(0|0x00000|(rai&63)<<14,ra);//li(rai imm20)
 			x.write_op(this,call_li.op,0,rai);
-			x.add_at_pre_link_evaluate(ra);
+			x.at_link_eval(ra);
 			x.write(0,ra);
 		}
 		final expression rd=arguments.get(1);

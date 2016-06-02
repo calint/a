@@ -6,12 +6,11 @@ import b.xwriter;
 
 public class expression extends statement{
 	private static final long serialVersionUID=1;
-	final private String ws_leading,ws_after;
+	final private String ws_leading,ws_trailing;
 	String destreg;
-	boolean is_assign;//? 
+	boolean is_assign; 
 	final boolean is_pointer_dereference;
 	final boolean is_increment_pointer_after_dereference;
-//	final String pointer;
 	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
 		super(parent,annot);
 		destreg=dest_reg;
@@ -38,22 +37,15 @@ public class expression extends statement{
 		mark_end_of_source(r);
 		if(token.length()==0)
 			throw new compiler_error(this,"expression is empty","");
-		ws_after=r.next_empty_space();
+		ws_trailing=r.next_empty_space();
 	}
-//	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
-//		super(pt,nm,annotations,r.next_token(),r,b);
-////		mark_end_of_source(r);
-//		ws_after="";
-//		this.destreg=dest_reg;
-//	}
 	public expression(statement parent,String dest_reg){
 		super(parent,null);
-		ws_after=ws_leading="";
+		ws_trailing=ws_leading="";
 		token=dest_reg;
 		destreg=null;
 		is_pointer_dereference=false;
 		is_increment_pointer_after_dereference=false;
-//		destreg=dest_reg;
 	}
 	@Override public void binary_to(xbin x){
 		if(is_pointer_dereference){// ld or ldc   destreg=*token
@@ -67,7 +59,7 @@ public class expression extends statement{
 			final String reg=x.alloc_register(this);
 			final int regi=x.get_register_index_for_name(reg);
 			x.write_op(this,call_li.op,0,regi);
-			x.add_at_pre_link_evaluate(this);
+			x.at_link_eval(this);
 			x.write(0,this);
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_ld.op,regi,rdi);
@@ -87,12 +79,14 @@ public class expression extends statement{
 		if(destreg!=null){// li
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_li.op,0,rdi);
-			x.add_at_pre_link_evaluate(this);
+			x.at_link_eval(this);
 			x.write(0,this);
 			return;
 		}
+		
+		
 		// constant
-		x.add_at_pre_link_evaluate(this);
+		x.at_link_eval(this);
 		x.write(0,this);
 	}
 	public int eval(xbin b){
@@ -130,13 +124,11 @@ public class expression extends statement{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		if(is_assign){
-			x.p(destreg).p("=");
-		}
+		if(is_assign)x.p(destreg).p("=");
 		x.p(ws_leading);
 		if(is_pointer_dereference)x.p("*");
 		x.p(token);
 		if(is_increment_pointer_after_dereference)x.p("++");
-		x.p(ws_after);
+		x.p(ws_trailing);
 	}
 }
