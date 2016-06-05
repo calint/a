@@ -22,7 +22,8 @@ final public class def_func extends def{
 			if(r.is_next_char_expression_close())break;
 			final def_func_param arg=new def_func_param(this,r);
 			params.add(arg);
-			if(r.is_next_char_comma());
+			if(r.is_next_char_expression_close())break;
+			if(!r.is_next_char_comma())throw new compiler_error(arg,"expected comma after expression",arg.toString());
 		}
 		ws_after_params=r.next_empty_space();
 		function_code=statement.read(this,r);

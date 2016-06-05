@@ -26,7 +26,7 @@ public class expression extends statement{
 	private static final long serialVersionUID=1;
 	final private String ws_leading,ws_trailing;
 	String destreg;
-	boolean is_assign; 
+//	boolean is_assign; 
 	protected expression(statement parent,LinkedHashMap<String,String>annot,String tk,reader r,String dest_reg){
 		super(parent,annot);
 		destreg=dest_reg;
@@ -111,7 +111,6 @@ public class expression extends statement{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		if(is_assign)x.p(destreg).p("=");
 		x.p(ws_leading);
 		x.p(token);
 		x.p(ws_trailing);
