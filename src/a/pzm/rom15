@@ -41,7 +41,9 @@ def loop(tick){
     and(h msk)
     shf(h 16)
     shf(hex -4)
-    var glyph=*font.seek(h)
+
+    var ret font.seek(ret h)
+    var glyph=*ret
     font.drw(di wi hi ln argb glyph)
     sub(di gln)
   }
@@ -50,7 +52,8 @@ def loop(tick){
 @t @txt def b20 [ch]{3   2 0 0xb}
 @v def txt.type(txt di rgb wi hi ln gln){
   @baba foo(txt){
-    var glyph=*font.seek(ch)
+    var chaddr font.seek(chaddr ch)
+    var glyph=*chaddr
     font.drw(di wi hi ln rgb glyph)
     sub(di gln)
   }

@@ -18,7 +18,7 @@ final public class call_lp extends statement{
 		ws_after_expression_open=r.next_empty_space();
 		while(true){
 			if(r.is_next_char_expression_close())break;
-			final expression arg=new expression(this,null,r,null,null);
+			final expression arg=expression.read(this,null,null,r);
 			arguments.add(arg);
 			mark_end_of_source(r);
 		}

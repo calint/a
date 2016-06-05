@@ -17,7 +17,7 @@ final public class call_foo extends statement{
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
-			final expression arg=new expression(this,null,r,"",(String)null);
+			final expression arg=expression.read(this,r.read_annotation(),null,r);
 			arguments.add(arg);
 		}
 		if(arguments.size()<1)throw new compiler_error(this,"expected at least one argument","");

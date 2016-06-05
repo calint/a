@@ -16,16 +16,16 @@ final public class var extends statement{
 		token=r.next_token();
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
-		if(r.is_next_char_assign()){
+		if(r.is_next_char_assign()){// ie  tick=3
 			ws_after_assign=r.next_empty_space();
 			mark_end_of_source(r);
 			r.set_location_in_source();
-			initial_value_expression=new expression(this,null,r,token,null);
+			initial_value_expression=expression.read(parent,r.read_annotation(),token,r);
 			mark_end_of_source_from(initial_value_expression);
-		}else{
-			ws_after_assign="";
-			initial_value_expression=null;
+			return;
 		}
+		ws_after_assign="";
+		initial_value_expression=null;
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);

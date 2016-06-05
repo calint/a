@@ -17,7 +17,7 @@ final public class call_fow extends statement{
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,null,r,null,null);
+			final expression arg=expression.read(this,r.read_annotation(),null,r);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);

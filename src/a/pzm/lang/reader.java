@@ -111,11 +111,15 @@ public final class reader{
 		}
 		return x.toString();
 	}
+//	private final String tokens=" \r\n\t{}()[]=+,";
 	public String next_token(){
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
-			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||ch=='='||ch=='+'){
+			if(ch==-1||Character.isWhitespace(ch)||
+					ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||
+					ch=='='||ch=='+'||ch==','||ch=='>'||ch=='<'||ch=='!'
+			){
 				unread(ch);
 				break;
 			}

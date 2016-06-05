@@ -10,12 +10,6 @@ import b.a;
 import b.xwriter;
 
 public class statement extends a{
-	public statement(){}
-	public statement(final statement parent){super(parent,null,null);}
-	public statement(final statement parent,final LinkedHashMap<String,String>annot){super(parent,null,null);this.annotations=annot;}
-	final public String token(){return token;}
-	final public statement parent_statement(){return (statement)pt();}
-	final public static statement read(final reader r)throws Throwable{return read(null,r);}
 	final public static statement read(final statement parent,final reader r)throws Throwable{
 		final String ws_leading=r.next_empty_space();
 		r.set_location_in_source();
@@ -26,13 +20,13 @@ public class statement extends a{
 		if("def".equals(tk))return def.read(parent,annot,r);
 		if(r.is_next_char_assign()){// ie  tick=3
 //			r.set_location_in_source();
-			final expression e=new expression(parent,null,r,tk,null);
+			final expression e=expression.read(parent,r.read_annotation(),tk,r);
 			e.is_assign=true;
 			return e;
 		}
 		// not function call, ie   0xfada
 		if(!r.is_next_char_expression_open()){
-			final expression e=new expression(parent,annot,r,null,tk);
+			final expression e=new expression(parent,annot,tk,r,null);
 			return e;
 		}
 		//assembler op
@@ -52,6 +46,14 @@ public class statement extends a{
 		final call e=new call(parent,annot,tk,r);
 		return e;
 	}
+	final public static statement read(final reader r)throws Throwable{return read(null,r);}
+
+	
+	public statement(){}
+	public statement(final statement parent){super(parent,null,null);}
+	public statement(final statement parent,final LinkedHashMap<String,String>annot){super(parent,null,null);this.annotations=annot;}
+	final public String token(){return token;}
+	final public statement parent_statement(){return (statement)pt();}
 	public void binary_to(final xbin x){}
 	public void source_to(final xwriter x){
 		if(annotations==null)return;
