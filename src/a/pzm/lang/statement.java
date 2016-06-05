@@ -84,6 +84,6 @@ public class statement extends a{
 	protected LinkedHashMap<String,String>annotations;
 	protected String token;
 	protected ArrayList<String>vars;
-	final private static String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg not and   foo fow";
+	final static String asm="li stc lp inc add addi ldc ldd ld tx sub shf neg not and   foo fow";
 	private static final long serialVersionUID=1;
 }

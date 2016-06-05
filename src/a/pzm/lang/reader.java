@@ -189,4 +189,10 @@ public final class reader{
 		}
 		return annot;
 	}
+	public boolean is_next_char_comma(){
+		final int ch=read();
+		if(ch==',')return true;
+		unread(ch);
+		return false;
+	}
 }

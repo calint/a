@@ -22,6 +22,7 @@ final public class def_func extends def{
 			if(r.is_next_char_expression_close())break;
 			final def_func_param arg=new def_func_param(this,r);
 			params.add(arg);
+			if(r.is_next_char_comma());
 		}
 		ws_after_params=r.next_empty_space();
 		function_code=statement.read(this,r);
@@ -39,7 +40,12 @@ final public class def_func extends def{
 		super.source_to(x);
 		x.p("def").p(ws_before_name).p(name).p(ws_after_name).p("(");
 //		params.forEach(e -> e.source_to(x));
-		for(final def_func_param e:params)e.source_to(x);
+		int i=params.size();
+		for(final def_func_param e:params){
+			e.source_to(x);
+			i--;
+			if(i!=0)x.p(',');
+		}
 		x.p(")").p(ws_after_params);
 		function_code.source_to(x);
 	}
