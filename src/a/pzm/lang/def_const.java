@@ -17,7 +17,7 @@ final public class def_const extends def{
 		token=name;
 		mark_end_of_source(r);
 		this.ws_after_name=ws_after_name;
-		expr=expression.read(this,null,null,r);
+		expr=expression.read(this,r.read_annotation(),null,r);
 		mark_end_of_source_from(expr);
 		ws_trailing=r.next_empty_space();
 		r.toc.put("const "+name,this);
