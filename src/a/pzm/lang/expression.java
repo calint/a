@@ -5,20 +5,20 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 public class expression extends statement{
-	public static expression read(statement parent,LinkedHashMap<String,String>annot,String dest_reg,reader r){
+	public static expression read(statement parent,LinkedHashMap<String,String>annot,String destreg,reader r){
 //		final ArrayList<expression>addition_list=new ArrayList<>();
 //		final String ws_leading=r.next_empty_space();
 		if(r.is_next_char_pointer_dereference()){
-			final expression_dereference e=new expression_dereference(parent,annot,r,dest_reg);
+			final expression_dereference e=new expression_dereference(parent,annot,r,destreg);
 			return e;
 		}
 		final String token=r.next_token();
 		if(r.is_next_char_expression_open()){// function call
-			final call e=new call(parent,annot,token,r,dest_reg);
+			final call e=new call(parent,annot,token,r,destreg);
 			return e;
 		}
 		
-		return new expression(parent,annot,token,r,dest_reg);
+		return new expression(parent,annot,token,r,destreg);
 	}
 	
 	
