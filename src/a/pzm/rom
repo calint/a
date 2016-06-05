@@ -3,8 +3,7 @@ var tick
 inc(tick)
 
 var di=6
-var x=*di
-drw(tick x)
+drw(tick *di)
 
 
 def drw(@const tick p){
@@ -12,10 +11,9 @@ def drw(@const tick p){
   st(0x5021 tick)
   var n=4
   var di=0x4040
-  var p=0
+  var p=1
   lp(n){
-    var h=*p++
-    hex.print(di 4 5 252 0x4fb 0xf00 h)
+    hex.print(di 4 5 252 0x4fb 0xf00 *p++)
     addi(di 1)
   }
 }
@@ -41,8 +39,7 @@ def loop(tick){
     and(h msk)
     shf(h 16)
     shf(hex -4)
-    var glyph=*font.seek(h)
-    font.drw(di wi hi ln argb glyph)
+    font.drw(di wi hi ln argb *font.seek(h))
     sub(di gln)
   }
 }
@@ -50,8 +47,7 @@ def loop(tick){
 @t @txt def b20 [ch]{3   2 0 0xb}
 @v def txt.type(txt di rgb wi hi ln gln){
   @baba foo(txt){
-    var glyph=*font.seek(ch)
-    font.drw(di wi hi ln rgb glyph)
+    font.drw(di wi hi ln rgb *font.seek(ch))
     sub(di gln)
   }
 }
@@ -120,8 +116,7 @@ def loop(tick){
   }
 }
 @* def font.seek(ret record){
-  var temp=font
-  ret=temp
+  ret=font
   inc(ret)
   add(ret record)
 }

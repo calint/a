@@ -8,8 +8,9 @@ import b.xwriter;
 
 public class call extends expression{
 	private static final long serialVersionUID=1;
-	final private String ws_left,ws_after_name,ws_trailing,dest_reg;
+	final private String ws_left,ws_after_name,ws_trailing;
 	final protected ArrayList<expression>arguments=new ArrayList<>();
+	final private boolean dest_reg_was_null;
 	public call(statement parent,LinkedHashMap<String,String>annot,String function_name,reader r,String dest_reg){
 		super(parent,annot,null,dest_reg);
 		ws_left=r.next_empty_space();
@@ -17,9 +18,13 @@ public class call extends expression{
 		token=function_name;
 		mark_end_of_source(r);
 		ws_after_name=r.next_empty_space();
+		destreg=dest_reg;
 		if(dest_reg!=null){// return register first arg
 			arguments.add(new expression(this,dest_reg));
 			mark_end_of_source(r);
+			dest_reg_was_null=false;
+		}else{
+			dest_reg_was_null=true;
 		}
 		while(true){
 			mark_end_of_source(r);
@@ -30,7 +35,6 @@ public class call extends expression{
 		}
 		mark_end_of_source(r);
 		ws_trailing=r.next_empty_space();
-		this.dest_reg=dest_reg;
 	}
 	public call(statement parent,LinkedHashMap<String,String>annot,String function_name,reader r){
 		this(parent,annot,function_name,r,null);
@@ -59,17 +63,21 @@ public class call extends expression{
 		}
 		final String funcs=ls.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
-		if(arguments.size()!=d.params.size())throw new compiler_error(this,"function "+token+" expects "+d.params.size()+" arguments, got "+arguments.size(),"");
+		if(destreg!=null && dest_reg_was_null){// return register first arg
+			arguments.add(0,new expression(this,destreg));
+		}
+		if(arguments.size()!=d.params.size())
+			throw new compiler_error(this,"function "+token+" expects "+d.params.size()+" arguments, got "+arguments.size(),"");
 		int i=0;
 		final LinkedHashMap<String,String>aliases=new LinkedHashMap<>();
 		final ArrayList<String>allocated_vars=new ArrayList<>();
 		for(expression ea:arguments){
 			final def_func_param df=d.params.get(i++);
-			if(ea.destreg!=null)throw new compiler_error(this,"expected destination register to be null",null);
+//			if(ea.destreg!=null)throw new compiler_error(this,"expected destination register to be null",null);
 			if(x.vspc().is_declared(ea.token)){
 				aliases.put(df.token,ea.token);
 			}else{
-				String nm="_"+token+"_"+i;
+				String nm="_"+ea.source_lineno()+"_"+i;
 //				final String reg=x.alloc_register(ea);
 //				ea.destreg=reg;
 				x.vspc().alloc_var(ea,nm);
@@ -86,6 +94,9 @@ public class call extends expression{
 		x.pop(this);
 		for(String varnm:allocated_vars)
 			x.vspc().free_var(this,varnm);
+		if(destreg!=null && dest_reg_was_null){// return register first arg
+			arguments.remove(0);
+		}
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
@@ -97,7 +108,7 @@ public class call extends expression{
 //		x.tage(is?"ac":"fc");
 		x.p("(");
 //		arguments.forEach(e->e.source_to(x));
-		if(dest_reg==null)for(final expression e:arguments)e.source_to(x);
+		if(destreg==null)for(final expression e:arguments)e.source_to(x);
 		else for(final expression e:arguments.subList(1,arguments.size()))e.source_to(x);
 		x.p(")").p(ws_trailing);
 	}
