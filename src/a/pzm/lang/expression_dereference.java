@@ -27,6 +27,14 @@ public class expression_dereference extends expression{
 		ws_trailing=r.next_empty_space();
 	}
 	@Override public void binary_to(xbin x){
+		if(!is_increment_pointer_after_dereference){
+			expr_to_dereference.destreg=destreg;
+			expr_to_dereference.binary_to(x);
+			final int rai=x.vspc().get_register_index(this,expr_to_dereference.destreg);
+			final int rdi=x.vspc().get_register_index(this,destreg);
+			x.write_op(this,call_ld.op,rai,rdi);
+			return;
+		}
 		expr_to_dereference.binary_to(x);
 		final int rai=x.vspc().get_register_index(this,expr_to_dereference.destreg);
 		final int rdi=x.vspc().get_register_index(this,destreg);
