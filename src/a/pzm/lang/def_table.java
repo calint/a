@@ -6,16 +6,11 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 final public class def_table extends def{
-	private static final long serialVersionUID=1;
-	final private String ws_before_name,name,ws_after_name;
-	final ArrayList<def_table_col>arguments=new ArrayList<>();
-	final private statement data;
 	public def_table(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
 		super(parent, annot);
 		nm(name);
 		mark_start_of_source(r);
 		this.ws_before_name=ws_before_name;
-//		mark_start_of_source(r);
 		this.name=name;
 		this.ws_after_name=ws_after_name;
 		while(true){
@@ -52,4 +47,8 @@ final public class def_table extends def{
 		x.p("]");
 		data.source_to(x);
 	}
+	final ArrayList<def_table_col>arguments=new ArrayList<>();
+	final private String ws_before_name,name,ws_after_name;
+	final private statement data;
+	private static final long serialVersionUID=1;
 }

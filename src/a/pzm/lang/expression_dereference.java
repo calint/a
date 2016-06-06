@@ -5,10 +5,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 public class expression_dereference extends expression{
-	private static final long serialVersionUID=1;
-	final private String ws_leading,ws_trailing;
-	expression expr_to_dereference;
-	final boolean is_increment_pointer_after_dereference;
 	public expression_dereference(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg){
 		super(parent,annot,"*",r,dest_reg);
 		ws_leading=r.next_empty_space();
@@ -75,8 +71,13 @@ public class expression_dereference extends expression{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
+		x.p(ws_leading);
 		expr_to_dereference.source_to(x);
 		if(is_increment_pointer_after_dereference)x.p("++");
 		x.p(ws_trailing);
 	}
+	final private String ws_leading,ws_trailing;
+	final private expression expr_to_dereference;
+	final boolean is_increment_pointer_after_dereference;
+	private static final long serialVersionUID=1;
 }

@@ -19,9 +19,6 @@ public class statement extends a{
 		if("var".equals(tk))return new var(parent,annot,r);
 		if("def".equals(tk))return def.read(parent,annot,r);
 		if(r.is_next_char_assign()){// ie  tick=3
-//			r.set_location_in_source();
-//			final expression e=expression.read(parent,r.read_annotation(),tk,r);
-//			e.is_assign=true;
 			final expression_assign e=new expression_assign(parent,annot,tk,r);
 			return e;
 		}

@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 final public class def_data extends def{
-	final private String ws_before_name,name,ws_after_name;
-	final private statement data;
 	public def_data(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
 		super(parent,annot);
 		this.ws_before_name=ws_before_name;
@@ -27,5 +25,7 @@ final public class def_data extends def{
 		x.p("def").p(ws_before_name).p(name).p(ws_after_name);
 		data.source_to(x);
 	}
+	final private String ws_before_name,name,ws_after_name;
+	final private statement data;
 	private static final long serialVersionUID=1;
 }

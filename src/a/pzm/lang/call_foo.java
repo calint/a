@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 final public class call_foo extends statement{
-	private static final long serialVersionUID=1;
 	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
@@ -109,4 +108,5 @@ final public class call_foo extends statement{
 		x.p(ws_after_expression_closed);
 		loop_code.source_to(x);
 	}
+	private static final long serialVersionUID=1;
 }

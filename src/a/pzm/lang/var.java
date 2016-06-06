@@ -5,10 +5,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 final public class var extends statement{
-	private static final long serialVersionUID=1;
-	final private String ws_after_name,ws_after_assign;
-	final private expression initial_value_expression;
-	final private String ws_left;
 	public var(statement parent,LinkedHashMap<String,String>annot,reader r){
 		super(parent,annot);
 		mark_start_of_source(r);
@@ -40,4 +36,8 @@ final public class var extends statement{
 		parent_statement().vars_add(token);
 		if(initial_value_expression!=null)initial_value_expression.binary_to(x);
 	}
+	final private String ws_after_name,ws_after_assign;
+	final private expression initial_value_expression;
+	final private String ws_left;
+	private static final long serialVersionUID=1;
 }

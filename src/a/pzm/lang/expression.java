@@ -23,10 +23,6 @@ public class expression extends statement{
 	
 	
 	
-	private static final long serialVersionUID=1;
-	final private String ws_leading,ws_trailing;
-	String destreg;
-//	boolean is_assign; 
 	protected expression(statement parent,LinkedHashMap<String,String>annot,String tk,reader r,String dest_reg){
 		super(parent,annot);
 		destreg=dest_reg;
@@ -71,7 +67,6 @@ public class expression extends statement{
 			return;
 		}
 		
-		
 		// constant
 		x.at_link_eval(this);
 		x.write(0,this);
@@ -115,4 +110,7 @@ public class expression extends statement{
 		x.p(token);
 		x.p(ws_trailing);
 	}
+	String destreg;
+	final private String ws_leading,ws_trailing;
+	private static final long serialVersionUID=1;
 }

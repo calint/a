@@ -7,31 +7,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 public final class reader{
-	final public LinkedHashMap<String,statement> toc=new LinkedHashMap<>();
-	private PushbackReader r;
-	private int line=1,col=1,prevcol=1,nchar=0;
-	private int bm_line,bm_col,bm_nchar;
-	private int last_read_char;
-//	public final class range{
-//		final public int from_index,to_index,from_line,to_line,from_line_char,to_line_char;
-//		public range(int from_index,int to_index,int from_line,int to_line,int from_line_char,int to_line_char){
-//			super();
-//			this.from_index=from_index;
-//			this.to_index=to_index;
-//			this.from_line=from_line;
-//			this.to_line=to_line;
-//			this.from_line_char=from_line_char;
-//			this.to_line_char=to_line_char;
-//		}
-//		public range(reader r){
-//			from_index=r.bm_nchar;
-//			to_index=r.nchar;
-//			from_line=r.bm_line;
-//			from_line_char=r.bm_col;
-//			to_line=r.line;
-//			to_line_char=r.col;
-//		}
-//	}
 	public reader(Reader r){
 		this.r=new PushbackReader(r,1);
 	}
@@ -195,4 +170,9 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
+	final public LinkedHashMap<String,statement>toc=new LinkedHashMap<>();
+	private PushbackReader r;
+	private int line=1,col=1,prevcol=1,nchar=0;
+	private int bm_line,bm_col,bm_nchar;
+	private int last_read_char;
 }

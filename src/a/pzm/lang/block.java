@@ -6,10 +6,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 public class block extends statement{
-	final String before_annotations;
-	final String ws_after_open_block;
-	final String ws_after_close_block;
-	private ArrayList<statement>statements;
 	public block(statement parent,LinkedHashMap<String,String>annot,String ws_before_annotations,reader r)throws Throwable{
 		super(parent,annot);
 		this.before_annotations=ws_before_annotations;
@@ -59,6 +55,9 @@ public class block extends statement{
 			}
 		}
 	}
-
+	final private String before_annotations;
+	final private String ws_after_open_block;
+	final private String ws_after_close_block;
+	private ArrayList<statement>statements;
 	private static final long serialVersionUID=1;
 }

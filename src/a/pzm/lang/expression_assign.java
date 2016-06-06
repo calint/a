@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 public class expression_assign extends expression{
-	private static final long serialVersionUID=1;
-	private expression expr_to_assign_to_token;
 	protected expression_assign(statement parent,LinkedHashMap<String,String>annot,String varname,reader r){
 		super(parent,annot,varname,r,varname);
 		mark_start_of_source(r);
@@ -41,4 +39,6 @@ public class expression_assign extends expression{
 		x.p("=");
 		expr_to_assign_to_token.source_to(x);
 	}
+	private expression expr_to_assign_to_token;
+	private static final long serialVersionUID=1;
 }

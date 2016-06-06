@@ -5,10 +5,6 @@ import java.util.LinkedHashMap;
 import b.xwriter;
 
 final public class def_const extends def{
-	private static final long serialVersionUID=1;
-	final private String ws_before_name,ws_after_name;
-	final private String ws_trailing;
-	final expression expr;
 	public def_const(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
 		super(parent,annot);
 		nm(name);
@@ -28,4 +24,8 @@ final public class def_const extends def{
 		expr.source_to(x);
 		x.p(ws_trailing);
 	}
+	final private String ws_before_name,ws_after_name;
+	final private String ws_trailing;
+	final private expression expr;
+	private static final long serialVersionUID=1;
 }
