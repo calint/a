@@ -69,7 +69,7 @@ final public class rom extends a{
 //		last_focus_on_binary_location=0;
 //		for(int i=0;i<ints.length;i++)ints[i]=0;
 //	}	
-	public int disppagenrows=128;
+	public int disppagenrows=256;
 	public/*ref*/int[]ints;
 	private static final long serialVersionUID=1;
 }

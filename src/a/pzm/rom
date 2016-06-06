@@ -1,24 +1,20 @@
 @o{
 var tick
 inc(tick)
-
-var di=6
-drw(tick *di)
-
-
+drw(tick *tick++)
+loop(tick)
+st(0x2010 0xff0)
+-1
 def drw(@const tick,p){
   st(0x5020 p)
   st(0x5021 tick)
   var n=4
   var di=0x4040
-  var p=1
   lp(n){
-    hex.print(di 4 5 252 0x4fb 0xf00 *p++)
+    hex.print(di 4 5 252 0x4fb 0xf00 *p)
     addi(di 1)
   }
 }
-st(0x2010 0xff0)
-loop(tick)
 def loop(tick){
   @const var wi=4
   @const var hi=5
@@ -30,7 +26,6 @@ def loop(tick){
   font.drwall1(wi hi ln gnl tick 5)
   labels.upd()
 }
--1
 @v def hex.print(di,wi,hi,ln,gln,argb,hex){
   var msk=0xf0000
   var times=5
@@ -44,7 +39,9 @@ def loop(tick){
   }
 }
 @t @txt def baba[ch]{4   0xb 0xa 0xb 0xa}
+-1
 @t @txt def b20 [ch]{3   2 0 0xb}
+-1
 @v def txt.type(txt,di,rgb,wi,hi,ln,gln){
   @baba foo(txt){
     font.drw(di wi hi ln rgb *font.seek(ch))
@@ -57,6 +54,7 @@ def loop(tick){
   b20   0x7070  0xff0
   b20   0x7080  0xfff
 }
+-1
 @v def labels.drw(wi,hi,ln,gln){
   foo(labels){
     txt.type(txt dest colr wi hi ln gln)
@@ -88,6 +86,7 @@ def loop(tick){
   0       0       0       0
   0       0       0       0
 }
+-1
 @v def font.drwall1(wi,hi,nl,gln,rgb,lines){
   var dil=0x0420
   lp(lines){
@@ -96,7 +95,6 @@ def loop(tick){
     add(dil nl)
   }
 }
--1 -1
 @v def font.drw(di,wi,hi,ln,rgb,bmp){
   lp(hi){
     lp(wi){

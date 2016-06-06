@@ -6,9 +6,10 @@ import b.xwriter;
 final public class line_numbers extends a{
 	public int focus_line=0;
 	/**selected_line_no  0 is none*/public a sln;
+	public int line_numbers=256;
 	@Override public void to(xwriter x) throws Throwable{
 		x.ul();
-		for(int i=1;i<129;i++){
+		for(int i=1;i<=line_numbers;i++){
 			if(i==focus_line){
 				x.divo("","color:#800;font-weight:bold;background:yellow").p(Integer.toString(i)).div_();
 			}else{
