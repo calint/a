@@ -6,14 +6,13 @@ import b.xwriter;
 
 public class block extends statement{
 	public block(statement parent,annotations annot,reader r)throws Throwable{
-		super(parent,annot);
-		mark_start_of_source(r);
+		super(parent,annot,null,r);
 		while(true){
 			if(r.is_next_char_block_close()){
 				mark_end_of_source(r);
 				break;
 			}
-			r.set_location_in_source();
+			r.set_location_cue();
 			final statement d=statement.read(this,r);
 			statements_add(d);
 		}

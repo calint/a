@@ -7,7 +7,7 @@ import b.xwriter;
 
 final public class def_func extends def{
 	public def_func(statement parent,annotations annot,token deftoken,token funcnametoken,reader r)throws Throwable{
-		super(parent,annot,deftoken);
+		super(parent,annot,deftoken,r);
 		funcname=funcnametoken;
 		nm(funcnametoken.name);
 		while(true){

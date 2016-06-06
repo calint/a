@@ -7,14 +7,13 @@ import b.xwriter;
 
 final public class def_table extends def{
 	public def_table(statement parent,annotations annot,token deftkn,token tk,reader r)throws Throwable{
-		super(parent,annot,deftkn);
+		super(parent,annot,deftkn,r);
 		nm(tk.name);
 		identtkn=tk;
-		mark_start_of_source(r);
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_struct_close())break;
-			r.set_location_in_source();
+			r.set_location_cue();
 			final def_table_col tc=new def_table_col(this,null,r);
 			for(final def_table_col e:arguments){
 				if(tc.token.equals(e.token)){

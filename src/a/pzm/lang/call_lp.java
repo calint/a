@@ -8,9 +8,7 @@ import b.xwriter;
 final public class call_lp extends statement{
 	final public static int op=0x100;
 	public call_lp(statement parent,annotations annot,token tk,reader r)throws Throwable{
-		super(parent,annot,tk);
-		mark_start_of_source(r);
-		mark_end_of_source(r);
+		super(parent,annot,tk,r);
 		while(true){
 			if(r.is_next_char_expression_close())break;
 			final expression arg=expression.read(this,new annotations(parent,r),null,r);

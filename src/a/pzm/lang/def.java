@@ -9,7 +9,7 @@ public class def extends statement{
 			return new def_func(parent,annot,deftkn,identtkn,r);
 		
 		if(r.is_next_char_block_open()){
-			r.set_location_in_source();
+			r.set_location_cue();
 			return new def_data(parent,annot,deftkn,identtkn,r);
 		}
 		
@@ -19,6 +19,6 @@ public class def extends statement{
 		return new def_const(parent,annot,deftkn,identtkn,r);
 	}
 
-	public def(statement parent,annotations annot,token tk){super(parent,annot,tk);}
+	public def(statement parent,annotations annot,token tk,reader r){super(parent,annot,tk,r);}
 	private static final long serialVersionUID=1;
 }

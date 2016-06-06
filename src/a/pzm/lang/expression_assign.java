@@ -6,14 +6,13 @@ import b.xwriter;
 public class expression_assign extends expression{
 	protected expression_assign(statement parent,annotations annot,token destvar,reader r){
 		super(parent,annot,destvar,r,destvar.name);
-		mark_start_of_source(r);
-		expr_to_assign_to_token=expression.read(this,new annotations(parent,r),destvar.name,r);
+		expr=expression.read(this,new annotations(parent,r),destvar.name,r);
 		mark_end_of_source(r);
 	}
 	@Override public void binary_to(xbin x){		
-		if(x.vspc().is_declared(expr_to_assign_to_token.token.name)){// tx
+		if(x.vspc().is_declared(expr.token.name)){// tx
 			final int rai=x.vspc().get_register_index(this,token.name);
-			final int rdi=x.vspc().get_register_index(this,expr_to_assign_to_token.token.name);
+			final int rdi=x.vspc().get_register_index(this,expr.token.name);
 			x.write_op(this,call_tx.op,rai,rdi);
 			return;
 		}
@@ -31,13 +30,13 @@ public class expression_assign extends expression{
 		x.write(0,this);
 	}
 	public int eval(xbin b){
-		return expr_to_assign_to_token.eval(b);
+		return expr.eval(b);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
 		x.p("=");
-		expr_to_assign_to_token.source_to(x);
+		expr.source_to(x);
 	}
-	private expression expr_to_assign_to_token;
+	private expression expr;
 	private static final long serialVersionUID=1;
 }

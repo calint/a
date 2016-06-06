@@ -12,9 +12,7 @@ public class call extends expression{
 	final protected ArrayList<expression>arguments=new ArrayList<>();
 	final private boolean dest_reg_was_null;
 	public call(statement parent,annotations annot,token funcname,reader r,String dest_reg){
-		super(parent,annot,funcname,dest_reg);
-		mark_start_of_source(r);
-		mark_end_of_source(r);
+		super(parent,annot,funcname,r,dest_reg);
 		destreg=dest_reg;
 		if(dest_reg!=null){// return register first arg
 			arguments.add(new expression(this,dest_reg));
@@ -26,7 +24,7 @@ public class call extends expression{
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
-			r.set_location_in_source();
+			r.set_location_cue();
 			final expression arg=expression.read(parent,new annotations(parent,r),null,r);
 			arguments.add(arg);
 		}
@@ -60,7 +58,10 @@ public class call extends expression{
 		final String funcs=ls.toString();
 		if(d==null)throw new compiler_error(this,"function '"+token+"' not found",funcs);
 		if(destreg!=null && dest_reg_was_null){// return register first arg
-			arguments.add(0,new expression(this,destreg));
+			final expression e=new expression(this,destreg);
+			e.source_location_start=source_location_start;
+			e.source_location_end=source_location_end;
+			arguments.add(0,e);
 		}
 		if(arguments.size()!=d.params.size())
 			throw new compiler_error(this,"function "+token+" expects "+d.params.size()+" arguments, got "+arguments.size(),"");
@@ -73,6 +74,8 @@ public class call extends expression{
 			if(x.vspc().is_declared(ea.token.name)){
 				aliases.put(df.token.name,ea.token.name);
 			}else{
+				if(ea.source_location_start==null)
+					System.out.println("");
 				String nm="_"+ea.source_lineno()+"_"+i;
 //				final String reg=x.alloc_register(ea);
 //				ea.destreg=reg;

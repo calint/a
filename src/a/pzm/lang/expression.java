@@ -8,32 +8,30 @@ public class expression extends statement{
 //		final String ws_leading=r.next_empty_space();
 		if(r.is_next_char_pointer_dereference()){
 			final expression_dereference e=new expression_dereference(parent,annot,r,destreg);
+			e.mark_end_of_source(r);
 			return e;
 		}
 		final token tk=r.next_token();
 		if(r.is_next_char_expression_open()){// function call
 			final call e=new call(parent,annot,tk,r,destreg);
+			e.mark_end_of_source(r);
 			return e;
 		}
 		
-		return new expression(parent,annot,tk,r,destreg);
+		final expression e=new expression(parent,annot,tk,r,destreg);
+		e.source_location_end=r.token_end_loc.toString();
+		return e;
 	}
 	
 	
-	
+	//------     - --  - - -- - ---- --------- - - -- - - -- - - - - -- - -- - - - -- 	
 	protected expression(statement parent,annotations annot,token tk,reader r,String dest_reg){
-		super(parent,annot,tk==null?r.next_token():tk);
+		super(parent,annot,tk,r);
 		if(token.name.length()==0)throw new compiler_error(this,"expression is empty","");
-		destreg=dest_reg;
-		mark_start_of_source(r);
-		mark_end_of_source(r);
-	}
-	protected expression(statement parent,annotations annot,token tkn,String dest_reg){
-		super(parent,annot,tkn);
 		destreg=dest_reg;
 	}
 	expression(statement parent,String dest_reg){
-		super(parent,null,new token("",dest_reg,""));
+		super(parent,null,new token("",dest_reg,""),null);
 		destreg=null;
 	}
 	@Override public void binary_to(xbin x){		

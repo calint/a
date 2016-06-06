@@ -5,9 +5,8 @@ import b.xwriter;
 
 final public class def_data extends def{
 	public def_data(statement parent,annotations annot,token deftkn,token tkn,reader r)throws Throwable{
-		super(parent,annot,deftkn);
+		super(parent,annot,deftkn,r);
 		nametoken=tkn;
-		mark_start_of_source(r);
 		mark_end_of_source(r);
 		data=statement.read(this,r);
 		mark_end_of_source(r);

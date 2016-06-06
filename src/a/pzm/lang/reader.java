@@ -12,14 +12,6 @@ import b.xwriter;
 
 public final class reader{
 	public reader(Reader r){this.r=new PushbackReader(r,1);}
-	public void set_location_in_source(){
-		bm_line=line;
-		bm_col=col;
-		bm_nchar=nchar;
-	}
-	public String location_in_source(){
-		return bm_line+":"+bm_col+":"+bm_nchar+":"+nchar;
-	}
 	public boolean is_next_char_block_close(){
 		final int ch=read();
 		if(ch=='}') return true;
@@ -88,11 +80,14 @@ public final class reader{
 		}
 		return x.toString();
 	}
+	public void set_location_cue(){bmsrcloc.copy_from(srcloc);}
+	public String location_cue(){return bmsrcloc.toString();}
+	public String location_in_source(){return srcloc.toString();}
 //	private final String tokens=" \r\n\t{}()[]=+,";
 	public token next_token(){
 		final token tk=new token();
 		tk.ws_pre=next_empty_space();
-		set_location_in_source();
+		token_start_loc.copy_from(srcloc);
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
@@ -106,6 +101,7 @@ public final class reader{
 			x.p((char)ch);
 		}
 		tk.name=x.toString();
+		token_end_loc.copy_from(srcloc);
 		tk.ws_post=next_empty_space();
 		return tk;
 	}
@@ -113,14 +109,14 @@ public final class reader{
 		try{
 			final int ch=r.read();
 			last_read_char=ch;
-			nchar++;
+			srcloc.nchar++;
 			if(ch=='\n'){
-				line++;
-				prevcol=col;
-				col=1;
+				srcloc.line++;
+				prvsrcloc.col=srcloc.col;
+				srcloc.col=1;
 				return ch;
 			}
-			col++;
+			srcloc.col++;
 			return ch;
 		}catch(IOException e){
 			throw new Error(e);
@@ -128,14 +124,14 @@ public final class reader{
 	}
 	private void unread(final int ch){
 		try{
-			nchar--;
+			srcloc.nchar--;
 			if(ch!=-1)r.unread(ch);
 			if(ch=='\n'){
-				line--;
-				col=prevcol;
+				srcloc.line--;
+				srcloc.col=prvsrcloc.col;
 				return;
 			}
-			col--;
+			srcloc.col--;
 			//				if(col==0)throw new Error();//?
 		}catch(IOException e){
 			throw new Error(e);
@@ -177,8 +173,27 @@ public final class reader{
 	}
 	final public LinkedHashMap<String,statement>toc=new LinkedHashMap<>();
 	private PushbackReader r;
-	private int line=1,col=1,prevcol=1,nchar=0;
-	private int bm_line,bm_col,bm_nchar;
+//	private int line=1,col=1,prevcol=1;
+
+	public static class source_location{
+		public int line=1,col=1,nchar;
+		public String toString(){return line+":"+col+":"+nchar;}
+		public void copy_from(source_location o){line=o.line;col=o.col;nchar=o.nchar;}
+	}
+	public static final class source_range extends source_location{
+		public int ncharto;
+		public String toString(){return super.toString()+":"+ncharto;}
+	}
+	
+	private source_location bmsrcloc=new source_location();
+	private source_location srcloc=new source_location();
+	private source_location prvsrcloc=new source_location();
+
+	private source_location token_start_loc=new source_location();
+	source_location token_end_loc=new source_location();
+
+//	private int nchar=0;
+//	private int bm_line,bm_col,bm_nchar;
 	private int last_read_char;
 	
 	

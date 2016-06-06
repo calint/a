@@ -7,8 +7,7 @@ import b.xwriter;
 
 final public class call_foo extends statement{
 	public call_foo(statement parent,annotations annot,token tk,reader r)throws Throwable{
-		super(parent,annot,tk);
-		mark_start_of_source(r);
+		super(parent,annot,tk,r);
 		ws_after_expression_open=r.next_empty_space();
 		while(true){
 			mark_end_of_source(r);
@@ -27,8 +26,8 @@ final public class call_foo extends statement{
 		def_table tbl=(def_table)x.toc.get("table "+table_name);
 		boolean ispointer=false;
 		if(tbl==null){
-			if(annotations!=null && annotations.count()!=0){
-				table_name=annotations.get(0).name;
+			if(has_annotations()){
+				table_name=annotations_get(0).name;
 				tbl=(def_table)x.toc.get("table "+table_name);
 				if(tbl==null)
 					throw new compiler_error(this,"table '"+table_name+"' from annotation not found","");

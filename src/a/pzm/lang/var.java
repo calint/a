@@ -5,11 +5,11 @@ import b.xwriter;
 
 final public class var extends statement{
 	public var(statement parent,annotations annot,token vartkn,reader r){
-		super(parent,annot,vartkn);
+		super(parent,annot,vartkn,r);
 		identtkn=r.next_token();
+		mark_end_of_source(r);
 		if(r.is_next_char_assign()){// ie  tick=3
-			mark_end_of_source(r);
-			r.set_location_in_source();
+			r.set_location_cue();
 			initial_value_expression=expression.read(parent,new annotations(parent,r),identtkn.name,r);
 			mark_end_of_source_from(initial_value_expression);
 			return;

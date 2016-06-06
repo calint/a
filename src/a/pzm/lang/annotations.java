@@ -9,13 +9,14 @@ import b.xwriter;
 final public class annotations extends a{
 	public annotations(statement stmt,reader r){
 		ws_pre=r.next_empty_space();
+		r.set_location_cue();
 		ls=r.read_annotation();
+		r.set_location_cue();
 	}
 	@Override public void to(xwriter x){
 		x.p(ws_pre);
 		if(ls!=null)for(token tk:ls){
 			x.p(tk.ws_pre).p('@').p(tk.name).p(tk.ws_post);
-//			tk.to(x);
 		}
 	}
 	private final String ws_pre;
