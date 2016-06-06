@@ -16,7 +16,7 @@ final public class source_editor extends a{
 	public a sts;
 	public line_numbers ln;
 	public boolean ommit_compiling_source_from_disassembler=false;
-	public statement code;
+	private statement code;
 	public toc se;
 	public boolean disp_compile_action=false;
 	public void to(final xwriter x) throws Throwable{
@@ -45,7 +45,8 @@ final public class source_editor extends a{
 		final reader r=new reader(new StringReader(source));
 		try{
 			code=statement.read(r);
-			attach(code,"code");
+			code.pt(this);code.nm("code");
+//			attach(code,"code");
 			se.set_statement(code);
 			se.set_textareaid(src.id());
 			if(!ommit_compiling_source_from_disassembler){

@@ -47,7 +47,7 @@ public class statement extends a{
 	}
 	final public static statement read(final reader r)throws Throwable{return read(null,r);}
 	
-	public statement(){annotations=null;token=null;}
+//	public statement(){annotations=null;token=null;}
 	public statement(final statement parent,final annotations annot){super(parent,null,null);this.annotations=annot;token=null;}
 	public statement(final statement parent,final annotations annot,final token tk){super(parent,null,null);this.annotations=annot;token=tk;}
 	final public token token(){return token;}
