@@ -34,7 +34,7 @@ def hex.print(di,wi,hi,ln,gln,argb,hex){
     and(h msk)
     shf(h 16)
     shf(hex -4)
-    font.drw(di wi hi ln argb *font.seek(h))
+    font.drw(di wi hi ln argb font.seek(h))
     sub(di gln)
   }
 }
@@ -44,7 +44,7 @@ def b20 [ch]{3   2 0 0xb}
 -1
 def txt.type(txt,di,rgb,wi,hi,ln,gln){
   @baba foo(txt){
-    font.drw(di wi hi ln rgb *font.seek(ch))
+    font.drw(di wi hi ln rgb font.seek(ch))
     sub(di gln)
   }
 }
@@ -117,6 +117,7 @@ def font.seek(ret,record){
   ret=font
   inc(ret)
   add(ret record)
+  ld(ret ret)
 }
 def hex.drw(wi,hi,ln,gln,rgb){
   var di=0x2464

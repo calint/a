@@ -80,14 +80,14 @@ public final class reader{
 		}
 		return x.toString();
 	}
-	public void set_location_cue(){bmsrcloc.copy_from(srcloc);}
-	public String location_cue(){return bmsrcloc.toString();}
-	public String location_in_source(){return srcloc.toString();}
+	public void set_location_cue(){sl_bm.copy_from(sl);}
+	public String location_cue(){return sl_bm.toString();}
+	public String location_in_source(){return sl.toString();}
 //	private final String tokens=" \r\n\t{}()[]=+,";
 	public token next_token(){
 		final token tk=new token();
 		tk.ws_pre=next_empty_space();
-		token_start_loc.copy_from(srcloc);
+		sl_token_bgn.copy_from(sl);
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
@@ -101,7 +101,7 @@ public final class reader{
 			x.p((char)ch);
 		}
 		tk.name=x.toString();
-		token_end_loc.copy_from(srcloc);
+		sl_token_end.copy_from(sl);
 		tk.ws_post=next_empty_space();
 		return tk;
 	}
@@ -109,14 +109,14 @@ public final class reader{
 		try{
 			final int ch=r.read();
 			last_read_char=ch;
-			srcloc.nchar++;
+			sl.nchar++;
 			if(ch=='\n'){
-				srcloc.line++;
-				prvsrcloc.col=srcloc.col;
-				srcloc.col=1;
+				sl.line++;
+				sl_prv.col=sl.col;
+				sl.col=1;
 				return ch;
 			}
-			srcloc.col++;
+			sl.col++;
 			return ch;
 		}catch(IOException e){
 			throw new Error(e);
@@ -124,14 +124,14 @@ public final class reader{
 	}
 	private void unread(final int ch){
 		try{
-			srcloc.nchar--;
+			sl.nchar--;
 			if(ch!=-1)r.unread(ch);
 			if(ch=='\n'){
-				srcloc.line--;
-				srcloc.col=prvsrcloc.col;
+				sl.line--;
+				sl.col=sl_prv.col;
 				return;
 			}
-			srcloc.col--;
+			sl.col--;
 			//				if(col==0)throw new Error();//?
 		}catch(IOException e){
 			throw new Error(e);
@@ -175,23 +175,19 @@ public final class reader{
 	private PushbackReader r;
 //	private int line=1,col=1,prevcol=1;
 
-	public static class source_location{
+	private static final class source_location{
 		public int line=1,col=1,nchar;
 		public String toString(){return line+":"+col+":"+nchar;}
 		public void copy_from(source_location o){line=o.line;col=o.col;nchar=o.nchar;}
 	}
-	public static final class source_range extends source_location{
-		public int ncharto;
-		public String toString(){return super.toString()+":"+ncharto;}
-	}
 	
-	private source_location bmsrcloc=new source_location();
-	private source_location srcloc=new source_location();
-	private source_location prvsrcloc=new source_location();
+	private source_location sl_bm=new source_location();
+	private source_location sl_prv=new source_location();
+	private source_location sl=new source_location();
 
-	private source_location token_start_loc=new source_location();
-	source_location token_end_loc=new source_location();
-
+	private source_location sl_token_bgn=new source_location();
+	private source_location sl_token_end=new source_location();
+	public String source_location_token_end(){return sl_token_end.toString();}
 //	private int nchar=0;
 //	private int bm_line,bm_col,bm_nchar;
 	private int last_read_char;

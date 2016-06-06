@@ -13,6 +13,9 @@ final public class call_st extends call{
 		final expression ra=arguments.get(0);
 		final int rai;
 		if(x.vspc().is_declared(ra.token.name)){//alias
+			//? const correctness
+			if(x.vspc().is_var_const(this,ra.token.name))
+				throw new compiler_error(ra,"cannot write to const '"+ra.token.name+"'","");
 			rai=x.vspc().get_register_index(ra,ra.token.name);
 		}else{// load
 			rai=x.vspc().alloc_var(ra,"$ra");

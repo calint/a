@@ -33,7 +33,7 @@ final public class source_editor extends a{
 		x.table().tr();
 		x.td("","text-align:right;padding-right:.5em").el(ln).r(ln).el_();
 		x.td().inptxtarea(src).focus(src);
-		x.td().r(se);
+//		x.td().r(se);
 		//		x.td().spaned(resrc);
 		x.table_();
 //		if(code!=null)

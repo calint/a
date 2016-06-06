@@ -70,7 +70,7 @@ public class statement extends a{
 		source_to(x);
 		x.div_();
 	}
-	final public boolean has_annotation(final String tag){return annots.has_annotation(tag);}
+	final public boolean has_annotation(final String tag){if(annots==null)return false;return annots.has_annotation(tag);}
 	final public String location_in_source(){return source_location_start;}
 	final public int source_lineno(){if(
 		source_location_start==null)
@@ -91,11 +91,6 @@ public class statement extends a{
 	}
 	final public void mark_end_of_source_from(statement e){
 		source_location_end=e.source_location_end;
-	}
-	final public void mark_start_of_source(final reader r){
-		if(r==null)
-			System.out.print(true);
-		source_location_start=r.location_in_source();
 	}
 	final @Override public String toString(){final xwriter x=new xwriter();source_to(x);return x.toString();}
 	final public void vars_add(String name){ensure_vars_exists();vars.add(name);}

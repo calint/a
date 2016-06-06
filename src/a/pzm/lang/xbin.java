@@ -15,6 +15,7 @@ public final class xbin implements Serializable{
 			public String bound_to_register;
 			public int register_index;
 			public String name;
+			public boolean is_const;
 			public String toString(){
 				return name+":"+register_index;
 			}
@@ -35,8 +36,22 @@ public final class xbin implements Serializable{
 			allocated_var.bound_to_register=xb.alloc_register(stmt);
 			allocated_var.name=name;
 			allocated_var.register_index=xb.get_register_index_for_name(allocated_var.bound_to_register);
+			allocated_var.is_const=stmt.has_annotation("const");
 			vars.put(name,allocated_var);
 			return allocated_var.register_index;
+		}
+		public boolean is_var_const(final statement stmt,final String name){
+			final allocated_var var;
+			final String alias=aliases.get(name);
+			if(alias!=null && pt!=null){
+				return pt.is_var_const(stmt,alias);
+			}
+			var=vars.get(name);
+			if(var!=null)
+				return var.is_const;
+			if(pt!=null&&"block".equals(nm))
+				return pt.is_var_const(stmt,name);
+			throw new compiler_error(stmt,"var '"+name+"' not found","");
 		}
 		public int get_register_index(statement stmt,final String name){
 			final String alias=aliases.get(name);

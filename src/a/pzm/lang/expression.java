@@ -19,7 +19,7 @@ public class expression extends statement{
 		}
 		
 		final expression e=new expression(parent,annot,tk,r,destreg);
-		e.source_location_end=r.token_end_loc.toString();
+		e.source_location_end=r.source_location_token_end();
 		return e;
 	}
 	

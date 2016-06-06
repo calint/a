@@ -8,6 +8,8 @@ final public class call_inc extends call{
 	@Override public void binary_to(xbin x){
 		ensure_arg_count(1);
 		final expression rd=arguments.get(0);
+		if(x.vspc().is_var_const(this,rd.toString()))
+			throw new compiler_error(rd,"cannot write to const '"+rd.toString()+"'","");
 		final int rdi=x.vspc().get_register_index(rd,rd.token.name);
 		x.write_op(this,op,0,rdi);
 	}
