@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import a.pzm.lang.block;
+import a.pzm.lang.reader.token;
 import a.pzm.lang.statement;
 import b.a;
 import b.xwriter;
@@ -22,7 +23,7 @@ public class toc extends a{
 		x.inpax(filter,null,this,"",null).nl();
 		x.style(filter,"width:4em");
 		x.focus(filter);
-		rec(x,indents,stmt);
+//		rec(x,indents,stmt);
 		x.el_();
 	}
 	private void rec(xwriter x,LinkedList<String>indents,statement e){
@@ -35,16 +36,16 @@ public class toc extends a{
 		}
 		final String qry=q;
 		if(qry.length()>0){
-			for(String s:e.annotations(true).keySet()){
-				if(!s.startsWith(q))
+			for(token tk:e.annotations().list()){
+				if(!tk.name.startsWith(q))
 					return;
 			}
 		}
 		
 		for(String s:indents)
 			x.p(s);
-		for(String s:e.annotations(true).keySet()){
-			x.p(s).spc();
+		for(token tk:e.annotations().list()){
+			x.p(tk.name).spc();
 		}
 		final String[]ix=e.location_in_source().split(":");
 		final String[]ixe=e.location_in_source_end().split(":");
@@ -55,7 +56,7 @@ public class toc extends a{
 		final String nm=e.nm();
 		if(b.b.isempty(nm)){
 //			e.source_to(x);
-			x.p(e.token());
+			x.p(e.token().name);
 //			x.p(e.toString());
 		}else{
 			x.p(nm);

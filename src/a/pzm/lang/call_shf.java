@@ -1,15 +1,14 @@
 package a.pzm.lang;
 
-import java.util.LinkedHashMap;
-
 import a.pzm.core;
+import a.pzm.lang.reader.token;
 
 final public class call_shf extends call{
 	final public static int op=0x60;
-	public call_shf(statement parent,LinkedHashMap<String,String>annot,reader r){super(parent,annot,"shf",r);}
+	public call_shf(statement parent,annotations annot,token tk,reader r){super(parent,annot,tk,r);}
 	@Override public void binary_to(xbin x){
 		ensure_arg_count(2);
-		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token);
+		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token.name);
 		final expression rd=arguments.get(1);
 		final int imm6=rd.eval(x);
 		if(imm6==0)throw new compiler_error(this,"shift 0 is not allowed",null);

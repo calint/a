@@ -3,13 +3,15 @@ package a.pzm.lang;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+
+import b.a;
 import b.xwriter;
 
 public final class reader{
-	public reader(Reader r){
-		this.r=new PushbackReader(r,1);
-	}
+	public reader(Reader r){this.r=new PushbackReader(r,1);}
 	public void set_location_in_source(){
 		bm_line=line;
 		bm_col=col;
@@ -87,7 +89,10 @@ public final class reader{
 		return x.toString();
 	}
 //	private final String tokens=" \r\n\t{}()[]=+,";
-	public String next_token(){
+	public token next_token(){
+		final token tk=new token();
+		tk.ws_pre=next_empty_space();
+		set_location_in_source();
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
@@ -100,7 +105,9 @@ public final class reader{
 			}
 			x.p((char)ch);
 		}
-		return x.toString();
+		tk.name=x.toString();
+		tk.ws_post=next_empty_space();
+		return tk;
 	}
 	private int read(){
 		try{
@@ -152,15 +159,13 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
-	public LinkedHashMap<String,String>read_annotation(){
-		LinkedHashMap<String,String>annot=null;
+	public List<token>read_annotation(){
+		ArrayList<token>annot=null;
 		while(true){
 			if(!is_next_char_annotation_open())break;
-			final String s=next_token();
-			if(s.length()==0)throw new Error("unexpected empty token");
-			final String ws=next_empty_space();
-			if(annot==null)annot=new LinkedHashMap<>();
-			annot.put(s,ws);
+			final token tk=next_token();
+			if(annot==null)annot=new ArrayList<>();
+			annot.add(tk);
 		}
 		return annot;
 	}
@@ -175,4 +180,15 @@ public final class reader{
 	private int line=1,col=1,prevcol=1,nchar=0;
 	private int bm_line,bm_col,bm_nchar;
 	private int last_read_char;
+	
+	
+	final static public class token extends a{
+		public token(){}
+		public token(String ws_pre, String name, String ws_after){this.ws_pre=ws_pre;this.name=name;this.ws_post=ws_after;}
+		@Override public void to(xwriter x){x.p(ws_pre).p(name).p(ws_post);}
+		@Override public String toString(){xwriter x=new xwriter();to(x);return x.toString();}
+		public String ws_pre,name,ws_post;
+		private static final long serialVersionUID=1;
+	}
+
 }

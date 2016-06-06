@@ -1,20 +1,19 @@
 package a.pzm.lang;
 
-import java.util.LinkedHashMap;
-
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 public class expression_assign extends expression{
-	protected expression_assign(statement parent,LinkedHashMap<String,String>annot,String varname,reader r){
-		super(parent,annot,varname,r,varname);
+	protected expression_assign(statement parent,annotations annot,token destvar,reader r){
+		super(parent,annot,destvar,r,destvar.name);
 		mark_start_of_source(r);
-		expr_to_assign_to_token=expression.read(this,r.read_annotation(),varname,r);
+		expr_to_assign_to_token=expression.read(this,new annotations(parent,r),destvar.name,r);
 		mark_end_of_source(r);
 	}
 	@Override public void binary_to(xbin x){		
-		if(x.vspc().is_declared(expr_to_assign_to_token.token)){// tx
-			final int rai=x.vspc().get_register_index(this,token);
-			final int rdi=x.vspc().get_register_index(this,expr_to_assign_to_token.token);
+		if(x.vspc().is_declared(expr_to_assign_to_token.token.name)){// tx
+			final int rai=x.vspc().get_register_index(this,token.name);
+			final int rdi=x.vspc().get_register_index(this,expr_to_assign_to_token.token.name);
 			x.write_op(this,call_tx.op,rai,rdi);
 			return;
 		}

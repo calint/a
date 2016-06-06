@@ -1,38 +1,34 @@
 package a.pzm.lang;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 final public class call_foo extends statement{
-	final private ArrayList<expression>arguments=new ArrayList<>();
-	final private String ws_after_expression_open,ws_after_expression_closed;
-	final private statement loop_code;
-	public call_foo(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
-		super(parent,annot);
+	public call_foo(statement parent,annotations annot,token tk,reader r)throws Throwable{
+		super(parent,annot,tk);
 		mark_start_of_source(r);
 		ws_after_expression_open=r.next_empty_space();
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
-			final expression arg=expression.read(this,r.read_annotation(),null,r);
+			final expression arg=expression.read(this,new annotations(parent,r),null,r);
 			arguments.add(arg);
 		}
 		if(arguments.size()<1)throw new compiler_error(this,"expected at least one argument","");
-		token=arguments.get(0).token;
 		mark_end_of_source(r);
 		ws_after_expression_closed=r.next_empty_space();
 		loop_code=statement.read(this,r);
 		mark_end_of_source_from(loop_code);
 	}
 	@Override public void binary_to(xbin x){
-		String table_name=arguments.get(0).token;
+		String table_name=arguments.get(0).token.name;
 		def_table tbl=(def_table)x.toc.get("table "+table_name);
 		boolean ispointer=false;
 		if(tbl==null){
-			if(annotations!=null){
-				table_name=annotations.keySet().iterator().next();
+			if(annotations!=null && annotations.count()!=0){
+				table_name=annotations.get(0).name;
 				tbl=(def_table)x.toc.get("table "+table_name);
 				if(tbl==null)
 					throw new compiler_error(this,"table '"+table_name+"' from annotation not found","");
@@ -61,7 +57,7 @@ final public class call_foo extends statement{
 //				args.add(e);
 //			});
 			for(final def_table_col col:tbl.arguments){
-				final String col_name=col.token;
+				final String col_name=col.token.name;
 				x.vspc().alloc_var(this,col_name);
 //				allocated_vars.add(col_name);
 				final expression e=new expression(this,col_name);
@@ -78,13 +74,13 @@ final public class call_foo extends statement{
 			x.linker_add_li(table_name);
 			x.write(0,this);
 		}else{
-			final int ri=x.vspc().get_register_index(this,arguments.get(0).token);
+			final int ri=x.vspc().get_register_index(this,arguments.get(0).token.name);
 			x.write_op(this,call_tx.op,ri,rai);
 		}
 		x.write_op(this,call_ldc.op,rai,rci);
 		x.write_op(this,call_lp.op,0,rci);
 		for(expression e:args.subList(1,args.size())){// read record into registers
-			final int rdi=x.vspc().get_register_index(this,e.token);
+			final int rdi=x.vspc().get_register_index(this,e.token.name);
 			x.write_op(this,call_ldc.op,rai,rdi);
 		}
 		loop_code.binary_to(x);
@@ -94,7 +90,6 @@ final public class call_foo extends statement{
 	
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.p("foo");
 		x.p("(");
 		x.p(ws_after_expression_open);
 //		x.tag("dr");
@@ -108,5 +103,8 @@ final public class call_foo extends statement{
 		x.p(ws_after_expression_closed);
 		loop_code.source_to(x);
 	}
+	final private ArrayList<expression>arguments=new ArrayList<>();
+	final private String ws_after_expression_open,ws_after_expression_closed;
+	final private statement loop_code;
 	private static final long serialVersionUID=1;
 }

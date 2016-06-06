@@ -1,21 +1,16 @@
 package a.pzm.lang;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import b.xwriter;
 
 public class block extends statement{
-	public block(statement parent,LinkedHashMap<String,String>annot,String ws_before_annotations,reader r)throws Throwable{
+	public block(statement parent,annotations annot,reader r)throws Throwable{
 		super(parent,annot);
-		this.before_annotations=ws_before_annotations;
 		mark_start_of_source(r);
-		ws_after_open_block=r.next_empty_space();
 		while(true){
-			if(r.next_empty_space().length()!=0)throw new Error();
 			if(r.is_next_char_block_close()){
 				mark_end_of_source(r);
-				ws_after_close_block=r.next_empty_space();
 				break;
 			}
 			r.set_location_in_source();
@@ -33,13 +28,12 @@ public class block extends statement{
 		statements=new ArrayList<>();
 	}
 	@Override public void source_to(xwriter x){
-		x.p(before_annotations);
 		super.source_to(x);
-		x.p("{").p(ws_after_open_block);
+		x.p("{");
 		if(statements!=null)for(statement s:statements){
 			s.source_to(x);
 		}
-		x.p("}").p(ws_after_close_block);
+		x.p("}");
 	}
 	@Override public void binary_to(xbin x){
 		if(statements!=null){
@@ -55,9 +49,6 @@ public class block extends statement{
 			}
 		}
 	}
-	final private String before_annotations;
-	final private String ws_after_open_block;
-	final private String ws_after_close_block;
 	private ArrayList<statement>statements;
 	private static final long serialVersionUID=1;
 }

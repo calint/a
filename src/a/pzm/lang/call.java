@@ -4,20 +4,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 public class call extends expression{
 	private static final long serialVersionUID=1;
-	final private String ws_left,ws_after_name,ws_trailing;
 	final protected ArrayList<expression>arguments=new ArrayList<>();
 	final private boolean dest_reg_was_null;
-	public call(statement parent,LinkedHashMap<String,String>annot,String function_name,reader r,String dest_reg){
-		super(parent,annot,null,dest_reg);
-		ws_left=r.next_empty_space();
+	public call(statement parent,annotations annot,token funcname,reader r,String dest_reg){
+		super(parent,annot,funcname,dest_reg);
 		mark_start_of_source(r);
-		token=function_name;
 		mark_end_of_source(r);
-		ws_after_name=r.next_empty_space();
 		destreg=dest_reg;
 		if(dest_reg!=null){// return register first arg
 			arguments.add(new expression(this,dest_reg));
@@ -30,13 +27,12 @@ public class call extends expression{
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
 			r.set_location_in_source();
-			final expression arg=expression.read(parent,r.read_annotation(),null,r);
+			final expression arg=expression.read(parent,new annotations(parent,r),null,r);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);
-		ws_trailing=r.next_empty_space();
 	}
-	public call(statement parent,LinkedHashMap<String,String>annot,String function_name,reader r){
+	public call(statement parent,annotations annot,token function_name,reader r){
 		this(parent,annot,function_name,r,null);
 	}
 	protected int apply_znxr_annotations_on_instruction(int i){
@@ -74,8 +70,8 @@ public class call extends expression{
 		for(expression ea:arguments){
 			final def_func_param df=d.params.get(i++);
 //			if(ea.destreg!=null)throw new compiler_error(this,"expected destination register to be null",null);
-			if(x.vspc().is_declared(ea.token)){
-				aliases.put(df.token,ea.token);
+			if(x.vspc().is_declared(ea.token.name)){
+				aliases.put(df.token.name,ea.token.name);
 			}else{
 				String nm="_"+ea.source_lineno()+"_"+i;
 //				final String reg=x.alloc_register(ea);
@@ -83,7 +79,7 @@ public class call extends expression{
 				x.vspc().alloc_var(ea,nm);
 				allocated_vars.add(nm);
 				ea.destreg=nm;
-				aliases.put(df.token,ea.destreg);
+				aliases.put(df.token.name,ea.destreg);
 				ea.binary_to(x);
 			}
 		}
@@ -100,17 +96,10 @@ public class call extends expression{
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-//		final String asm="li add foo fow inc ld ldc li lp st stc tx shf ldd dec  zkp skp";
-//		final boolean is=asm.indexOf(name)!=-1;
-//		x.tag(is?"ac":"fc");
-//		x.p(ws_left).p(token).p(ws_after_name);
-		x.p(ws_after_name);
-//		x.tage(is?"ac":"fc");
 		x.p("(");
-//		arguments.forEach(e->e.source_to(x));
 		if(destreg==null)for(final expression e:arguments)e.source_to(x);
 		else for(final expression e:arguments.subList(1,arguments.size()))e.source_to(x);
-		x.p(")").p(ws_trailing);
+		x.p(")");
 	}
 	protected void ensure_arg_count(int i) {
 		if(arguments!=null&&arguments.size()==i)

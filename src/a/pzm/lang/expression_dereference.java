@@ -1,12 +1,11 @@
 package a.pzm.lang;
 
-import java.util.LinkedHashMap;
-
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 public class expression_dereference extends expression{
-	public expression_dereference(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg){
-		super(parent,annot,"*",r,dest_reg);
+	public expression_dereference(statement parent,annotations annot,reader r,String dest_reg){
+		super(parent,annot,new token("","*",""),r,dest_reg);
 		ws_leading=r.next_empty_space();
 		mark_start_of_source(r);
 		expr_to_dereference=expression.read(parent,annot,dest_reg,r);
@@ -39,33 +38,33 @@ public class expression_dereference extends expression{
 	public int eval(xbin b){
 //		final def_const dc=(def_const)b.toc.get("const "+token);
 //		if(dc!=null){return dc.expr.eval(b); }
-		final def_data dd=(def_data)b.toc.get("data "+token);
-		if(dd!=null){return b.def_location_in_binary_for_name(token); }
-		final def_table dt=(def_table)b.toc.get("table "+token);
-		if(dt!=null){return b.def_location_in_binary_for_name(token); }
-		if(token.startsWith("0x")){
+		final def_data dd=(def_data)b.toc.get("data "+token.name);
+		if(dd!=null){return b.def_location_in_binary_for_name(token.name); }
+		final def_table dt=(def_table)b.toc.get("table "+token.name);
+		if(dt!=null){return b.def_location_in_binary_for_name(token.name); }
+		if(token.name.startsWith("0x")){
 			try{
-				return Integer.parseInt(token.substring(2),16);
+				return Integer.parseInt(token.name.substring(2),16);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not found or not a hex",token);
+				throw new compiler_error(this,"not found or not a hex",token.name);
 			}
-		}else if(token.startsWith("0b")){
+		}else if(token.name.startsWith("0b")){
 			try{
-				return Integer.parseInt(token.substring(2),2);
+				return Integer.parseInt(token.name.substring(2),2);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not found or not a binary",token);
+				throw new compiler_error(this,"not found or not a binary",token.name);
 			}
-		}else if(token.endsWith("h")){
+		}else if(token.name.endsWith("h")){
 			try{
-				return Integer.parseInt(token.substring(0,token.length()-1),16);
+				return Integer.parseInt(token.name.substring(0,token.name.length()-1),16);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not found or not a hex",token);
+				throw new compiler_error(this,"not found or not a hex",token.name);
 			}
 		}else{
 			try{
-				return Integer.parseInt(token);
+				return Integer.parseInt(token.name);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"'"+token+"' not found or not an integer",token);
+				throw new compiler_error(this,"'"+token+"' not found or not an integer",token.name);
 			}
 		}
 	}
