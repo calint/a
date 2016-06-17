@@ -21,7 +21,8 @@ public class expression_dereference extends expression{
 		ws_trailing=r.next_empty_space();
 	}
 	@Override public void binary_to(xbin x){
-		if(destreg==null)throw new compiler_error(this,"expected destionation register",null);
+		if(destreg==null)throw new compiler_error(this,"expected destination register",null);
+		x.vspc().assert_var_writable(this,destreg,null);
 		expr_to_dereference.destreg=destreg;
 		expr_to_dereference.binary_to(x);
 		if(!is_increment_pointer_after_dereference){

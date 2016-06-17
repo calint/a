@@ -8,6 +8,7 @@ final public class call_shf extends call{
 	public call_shf(statement parent,annotations annot,token tk,reader r){super(parent,annot,tk,r);}
 	@Override public void binary_to(xbin x){
 		ensure_arg_count(2);
+		x.vspc().assert_var_writable(this,arguments.get(0).token.name,null);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token.name);
 		final expression rd=arguments.get(1);
 		final int imm6=rd.eval(x);

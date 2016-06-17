@@ -11,6 +11,7 @@ public class expression extends statement{
 			e.mark_end_of_source(r);
 			return e;
 		}
+		if(annot==null)annot=new annotations(parent,r);
 		final token tk=r.next_token();
 		if(r.is_next_char_expression_open()){// function call
 			final call e=new call(parent,annot,tk,r,destreg);
@@ -21,8 +22,7 @@ public class expression extends statement{
 		final expression e=new expression(parent,annot,tk,r,destreg);
 		e.source_location_end=r.source_location_token_end();
 		return e;
-	}
-	
+	}	
 	
 	//------     - --  - - -- - ---- --------- - - -- - - -- - - - - -- - -- - - - -- 	
 	protected expression(statement parent,annotations annot,token tk,reader r,String dest_reg){

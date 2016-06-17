@@ -7,6 +7,7 @@ final public class call_not extends call{
 	public call_not(statement parent,annotations annot,token tk,reader r){super(parent,annot,tk,r);}
 	@Override public void binary_to(xbin x){
 		ensure_arg_count(1);
+		x.vspc().assert_var_writable(this,arguments.get(0).token.name,null);		
 		final String rd=arguments.get(0).token.name;
 		final int rdi=x.vspc().get_register_index(this,rd);
 		x.write_op(this,op,0,rdi);

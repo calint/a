@@ -48,7 +48,7 @@ public class statement extends a{
 	//------     - --  - - -- - ---- --------- - - -- - - -- - - - - -- - -- - - - -- 
 	public statement(final statement parent,final annotations annot,final token tk,final reader r){
 		super(parent,tk!=null?tk.name:null,null);
-		annots=annot;
+		annots=annot==null?new annotations(this,r):annot;
 		token=tk;
 		if(r!=null){
 			source_location_start=source_location_end=r.location_cue();

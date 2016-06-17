@@ -8,6 +8,11 @@ import b.xwriter;
 
 final public class annotations extends a{
 	public annotations(statement stmt,reader r){
+		if(r==null){
+			ws_pre="";
+			ls=null;
+			return;
+		}
 		ws_pre=r.next_empty_space();
 		r.set_location_cue();
 		ls=r.read_annotation();
@@ -18,6 +23,11 @@ final public class annotations extends a{
 		if(ls!=null)for(token tk:ls){
 			x.p(tk.ws_pre).p('@').p(tk.name).p(tk.ws_post);
 		}
+	}
+	@Override public String toString(){
+		final xwriter x=new xwriter();
+		to(x);
+		return x.toString();
 	}
 	private final String ws_pre;
 	private final List<token>ls;

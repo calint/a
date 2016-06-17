@@ -7,9 +7,9 @@ final public class call_sub extends call{
 	public call_sub(statement parent,annotations annot,token tk,reader r){super(parent,annot,tk,r);}
 	@Override public void binary_to(xbin x){
 		ensure_arg_count(2);
-		if(x.vspc().is_var_const(this,arguments.get(0).token.name))
-			throw new compiler_error(arguments.get(0),"cannot write to const '"+arguments.get(0).token.name+"'","");		
-		final int rai=x.vspc().get_register_index(this,arguments.get(0).token.name);
+		final expression ra=arguments.get(0);
+		x.vspc().assert_var_writable(this,ra.token.name,null);
+		final int rai=x.vspc().get_register_index(this,ra.token.name);
 		final int rdi=x.vspc().get_register_index(this,arguments.get(1).token.name);
 		x.write_op(this,op,rai,rdi);
 	}

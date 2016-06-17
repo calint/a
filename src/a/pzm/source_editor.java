@@ -20,7 +20,7 @@ final public class source_editor extends a{
 	public toc se;
 	public boolean disp_compile_action=false;
 	public void to(final xwriter x) throws Throwable{
-//		x.style("def","font-weight:bold");//a name
+		x.style(".fullwidth","width:80em;border-right:dashed grey 0.25em");//a name
 //		x.style("fc","font-style: italic");//function name refered
 //		x.style("fc","font-weight:bold");//a name
 //		x.style("ac","color: gray");//assembler
@@ -32,7 +32,7 @@ final public class source_editor extends a{
 		x.nl();
 		x.table().tr();
 		x.td("","text-align:right;padding-right:.5em").el(ln).r(ln).el_();
-		x.td().inptxtarea(src).focus(src);
+		x.td().inptxtarea(src,"fullwidth").focus(src);
 //		x.td().r(se);
 		//		x.td().spaned(resrc);
 		x.table_();

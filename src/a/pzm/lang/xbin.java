@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import b.xwriter;
@@ -40,19 +41,87 @@ public final class xbin implements Serializable{
 			vars.put(name,allocated_var);
 			return allocated_var.register_index;
 		}
-		public boolean is_var_const(final statement stmt,final String name){
-			final allocated_var var;
-			final String alias=aliases.get(name);
-			if(alias!=null && pt!=null){
-				return pt.is_var_const(stmt,alias);
+		public void assert_var_writable(final statement stmt,final String name,List<String>declarations){
+			if(declarations==null){
+				declarations=new ArrayList<>();
 			}
-			var=vars.get(name);
-			if(var!=null)
-				return var.is_const;
-			if(pt!=null&&"block".equals(nm))
-				return pt.is_var_const(stmt,name);
-			throw new compiler_error(stmt,"var '"+name+"' not found","");
+			final String alias=aliases.get(name);
+			if(alias!=null){// linked to outter varspace through param
+				def_func df=null;
+				statement s=stmt.parent_statement();
+				while(true){
+					if(s==null)break;
+					if(s instanceof def_func){
+						df=(def_func)s;
+						break;
+					}
+					s=s.parent_statement();
+				}
+				if(df!=null){// function call
+					for(def_func_param dfp:df.params){// find argument
+						if(dfp.token.name.equals(name)){// i.e.  inc(@const tick)
+							final boolean isconst=dfp.has_annotation("const");
+							declarations.add("at line "+dfp.source_location_start.split(":")[0]+" "+(isconst?"const":"writable"));
+							if(isconst){
+								throw new compiler_error(stmt,name+" is const",declarations.toString());
+							}else
+								break;
+						}
+					}
+				}
+				if(pt!=null){// recurse
+					pt.assert_var_writable(stmt,alias,declarations);
+					return;
+				}
+			}
+			final allocated_var var=vars.get(name);
+			if(var!=null){
+				if(var.is_const){
+					declarations.add("at line "+var.declared_at.source_location_start.split(":")[0]+" const");
+					throw new compiler_error(stmt,"cannot write to const '"+name+"'",declarations.toString());
+				}
+				return;
+			}
+			if(pt!=null&&"block".equals(nm)){
+				pt.assert_var_writable(stmt,name,declarations);
+			}
 		}
+//		public boolean is_var_const(final statement stmt,final String name){
+//			final allocated_var var;
+//			final String alias=aliases.get(name);
+//			if(alias!=null){// linked to outter varspace through param
+//				statement s=stmt.parent_statement();
+//				def_func df=null;
+//				while(true){
+//					if(s==null)break;
+//					if(s instanceof def_func){
+//						df=(def_func)s;
+//						break;
+//					}
+//					s=s.parent_statement();
+//				}
+//				if(df!=null){// function call
+//					for(def_func_param dfp:df.params){// find argument
+//						if(dfp.token.name.equals(name)){// i.e.  inc(@const tick)
+//							if(dfp.has_annotation("const"))
+//								return true;
+//							else
+//								break;
+//						}
+//					}
+//					
+//				}
+//				if(pt!=null){// recurse
+//					return pt.is_var_const(stmt,alias);
+//				}
+//			}
+//			var=vars.get(name);
+//			if(var!=null)
+//				return var.is_const;
+//			if(pt!=null&&"block".equals(nm))
+//				return pt.is_var_const(stmt,name);
+//			throw new compiler_error(stmt,"var '"+name+"' not found","");
+//		}
 		public int get_register_index(statement stmt,final String name){
 			final String alias=aliases.get(name);
 			if(alias!=null)return pt.get_register_index(stmt,alias);// aliased to previous varspace

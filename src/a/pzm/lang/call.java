@@ -15,7 +15,8 @@ public class call extends expression{
 		super(parent,annot,funcname,r,dest_reg);
 		destreg=dest_reg;
 		if(dest_reg!=null){// return register first arg
-			arguments.add(new expression(this,dest_reg));
+			final expression e=new expression(this,dest_reg);
+			arguments.add(e);
 			mark_end_of_source(r);
 			dest_reg_was_null=false;
 		}else{
@@ -25,7 +26,7 @@ public class call extends expression{
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close())break;
 			r.set_location_cue();
-			final expression arg=expression.read(parent,new annotations(parent,r),null,r);
+			final expression arg=expression.read(this,null,null,r);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);

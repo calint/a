@@ -11,6 +11,7 @@ public class expression_assign extends expression{
 	}
 	@Override public void binary_to(xbin x){		
 		if(x.vspc().is_declared(expr.token.name)){// tx
+			x.vspc().assert_var_writable(this,token.name,null);
 			final int rai=x.vspc().get_register_index(this,token.name);
 			final int rdi=x.vspc().get_register_index(this,expr.token.name);
 			x.write_op(this,call_tx.op,rai,rdi);
@@ -18,6 +19,7 @@ public class expression_assign extends expression{
 		}
 		
 		if(destreg!=null){// li
+			x.vspc().assert_var_writable(this,destreg,null);
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_li.op,0,rdi);
 			x.at_link_eval(this);

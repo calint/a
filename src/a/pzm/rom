@@ -5,7 +5,7 @@ drw(tick *tick++)
 loop(tick)
 st(0x2010 0xff0)
 -1
-def drw(@const tick,p){
+def drw(@const tick,@const p){
   st(0x5020 p)
   st(0x5021 tick)
   var n=4
@@ -15,7 +15,7 @@ def drw(@const tick,p){
     addi(di 1)
   }
 }
-def loop(tick){
+def loop(@const tick){
   @const var wi=4
   @const var hi=5
   @const var ln=252
@@ -26,8 +26,8 @@ def loop(tick){
   font.drwall1(wi hi ln gnl tick 5)
   labels.upd()
 }
-def hex.print(di,wi,hi,ln,gln,argb,hex){
-  var msk=0xf0000
+def hex.print(di,@const wi,@const hi,@const ln,@const gln,@const argb,hex){
+  @const var msk=0xf0000
   var times=5
   lp(times){
     var h=hex
@@ -42,7 +42,7 @@ def baba[ch]{4   0xb 0xa 0xb 0xa}
 -1
 def b20 [ch]{3   2 0 0xb}
 -1
-def txt.type(txt,di,rgb,wi,hi,ln,gln){
+def txt.type(@const txt,di,@const rgb,@const wi,@const hi,@const ln,@const gln){
   @baba foo(txt){
     font.drw(di wi hi ln rgb font.seek(ch))
     sub(di gln)
@@ -55,7 +55,7 @@ def labels
   b20   0x7080  0xfff
 }
 -1
-def labels.drw(wi,hi,ln,gln){
+def labels.drw(@const wi,@const hi,@const ln,@const gln){
   foo(labels){
     txt.type(txt dest colr wi hi ln gln)
   }
@@ -87,7 +87,7 @@ def font[d]{36
   0       0       0       0
 }
 -1
-def font.drwall1(wi,hi,nl,gln,rgb,lines){
+def font.drwall1(@const wi,@const hi,@const nl,@const gln,@const rgb,@const lines){
   var dil=0x0420
   lp(lines){
     var di=dil
@@ -95,7 +95,7 @@ def font.drwall1(wi,hi,nl,gln,rgb,lines){
     add(dil nl)
   }
 }
-def font.drw(di,wi,hi,ln,rgb,bmp){
+def font.drw(di,@const wi,@const hi,@const ln,@const rgb,bmp){
   lp(hi){
     lp(wi){
       shf(bmp -1)
@@ -106,20 +106,20 @@ def font.drw(di,wi,hi,ln,rgb,bmp){
     add(di ln)
   }
 }
-def font.drwall(di,wi,hi,ln,rgb,gln){
+def font.drwall(di,@const wi,@const hi,@const ln,rgb,@const gln){
   foo(font){
     font.drw(di wi hi ln rgb d)
     sub(di gln)
     inc(rgb)
   }
 }
-def font.seek(ret,record){
+def font.seek(ret,@const record){
   ret=font
   inc(ret)
   add(ret record)
   ld(ret ret)
 }
-def hex.drw(wi,hi,ln,gln,rgb){
+def hex.drw(@const wi,@const hi,@const ln,@const gln,@const rgb){
   var di=0x2464
   var h=0xb00b0
   hex.print(di wi hi ln gln rgb h)

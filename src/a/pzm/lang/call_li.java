@@ -8,7 +8,9 @@ final public class call_li extends call{
 	public call_li(a pt,annotations annot,token tkn,reader r,statement b){super(b,annot,tkn,r);}
 	@Override public void binary_to(xbin x){
 		ensure_arg_count(2);
-		final int rdi=x.vspc().get_register_index(this,arguments.get(0).token.name);
+		final expression ra=arguments.get(0);
+		x.vspc().assert_var_writable(this,ra.token.name,null);
+		final int rdi=x.vspc().get_register_index(this,ra.token.name);
 		x.write_op(this,op,0,rdi);
 		final expression imm=arguments.get(1);
 		x.at_link_eval(imm);
