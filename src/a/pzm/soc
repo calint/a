@@ -1,5 +1,6 @@
 bits{1:kernel 2:driver 3:user}
 soc{
+	rover
 	bus{}
 	@read(all)@write(kernel and driver)net{
 		receiver{}

@@ -38,7 +38,7 @@ final public class ide extends a{
 	public display ra;
 	public core_status sy;
 	public registers re;
-	public call_stack ca;
+//	public call_stack ca;
 	public loop_stack lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
@@ -54,7 +54,7 @@ final public class ide extends a{
 		ro.ints=cor.rom;
 		ra.ints=cor.ram;
 		re.ints=cor.registers;
-		ca.stk=cor.call_stack;
+//		ca.stk=cor.call_stack;
 		lo.core=cor;
 		th.set(0);
 	}
@@ -100,37 +100,37 @@ final public class ide extends a{
 					.css(".border","border:1px dotted red").css(".float","display:inline-block").css(".textleft","text-align:left").css(".fontbold","font-weight:bold")
 					.css(".floatclear","clear:both").css(".panel","padding-left:.5em;padding-right:.5em").css(".stp","background-color:#ee0")
 					.css(".brk","background-color:#ee2").css(".nbr","width:3em;border:1px dotted;text-align:right")
-					.css(".laycent","white-space:no-wrap;margin-left:auto;margin-right:auto").css("textarea","line-height:1.4em")
-					.css(ec,"border:1px dashed #ccc")
-					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em")
+					.css(".laycent","white-space:no-wrap;margin-left:auto;margin-right:auto")
+//					.css(ec,"border:1px dashed #ccc")
+//					.css(ec.src,"min-width:40em;min-height:200em;line-height:1.4em")
 //					.css(ec.ln,"box-shadow:0 0 .5em rgba(0,0,0,.5);display:inline-block")
-					.css(ec.ln,"display:inline-block")
-					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-right:1px dashed green")
-					.css(ec.ln,"li.a","background:#ff0")
+//					.css(ec.ln,"display:inline-block")
+//					.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#111;border-right:1px dashed green")
+//					.css(ec.ln,"li.a","background:#ff0")
 					.css(ajaxsts,"box-shadow:0 0 .5em rgba(0,0,0,.5);position:fixed;bottom:0;right:0;padding-left:1em;padding-right:1em;padding-top:.5em;padding-bottom:.5em;border:1px dashed green")
-					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)")
-					.css(ec.se,"background:#eee")
-					.css(ec.se.filter,"background:#ff0");
+					.css(this,"box-shadow:0 0 17px rgba(0,0,0,.5)");
+//					.css(ec.se,"background:#eee")
+//					.css(ec.se.filter,"background:#ff0");
 			switch(th.toint()){
 			case 0:
 				x.css("html","background:#fff;color:#000").css("a","color:#00f").css(".stp","background-color:#ee0").css(".brk","background-color:#0ee");
-				x.css(ec,"border:0");
-				x.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#fff;border-right:1px dashed #ddd");
+//				x.css(ec,"border:0");
+//				x.css(ec.ln,"li","padding:0 .5em 0 .5em;background:#fff;border-right:1px dashed #ddd");
 				break;
 			case 1:
-				x.css("html","background:#111;color:#060").css("a","color:#00a").css(".stp","background-color:#020").css(".brk","background-color:#021");
+				x.css("html","background:#111;color:#060").css("a","color:#055").css(".stp","background-color:#020").css(".brk","background-color:#021");
 				x.css(ec,"border:0");
-				x.css(ec.ln,"li.a","background:#242");
-				x.css(ec.se,"background:#111");
-				x.css(ec.se.filter,"background:#000");
+//				x.css(ec.ln,"li.a","background:#242");
+//				x.css(ec.se,"background:#111");
+//				x.css(ec.se.filter,"background:#000");
 				break;
 			case 2:
 				x.css("html","background:#421;color:#830").css("a","color:#a32").css(".stp","background-color:#a30").css(".brk","background-color:#a30");
 				x.css(ec,"border:0");
-				x.css(ec.ln,"li","background:#421;color:#830;border:1px dashed #720;border-top:0;border-bottom:0");
-				x.css(ec.ln,"li.a","background:#830;color:#430");
-				x.css(ec.se,"background:#421");
-				x.css(ec.se.filter,"background:#310");
+//				x.css(ec.ln,"li","background:#421;color:#830;border:1px dashed #720;border-top:0;border-bottom:0");
+//				x.css(ec.ln,"li.a","background:#830;color:#430");
+//				x.css(ec.se,"background:#421");
+//				x.css(ec.se.filter,"background:#310");
 				x.css(ajaxsts,"background:#421;border:1px dashed #830");
 				break;
 			}
@@ -154,7 +154,8 @@ final public class ide extends a{
 					.div_();
 		x.divo("laycent");
 		x.table().tr();
-		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
+//		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
+		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(lo).div_();
 		if(hasbit(bit_show_rom))x.td().divo(ro,"float panel").r(ro).div_();
 		if(hasbit(bit_show_source_editor))x.td().divh(ec,"float textleft panel");
 		x.table_();
@@ -188,7 +189,8 @@ final public class ide extends a{
 		st.set("reseted");
 		if(x==null) return;
 		xj_update_focus_on_rom(x);
-		x.xu(st,sy,re,ca,lo);
+//		x.xu(st,sy,re,ca,lo);
+		x.xu(st,sy,re,lo);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	/** step */
@@ -202,7 +204,8 @@ final public class ide extends a{
 		x.xu(st.set(cor.meter_instructions));
 		if(hasbit(bit_show_screen)&&refresh_display)
 			ra.xupd(x);
-		x.xu(sy,re,ca,lo);
+//		x.xu(sy,re,ca,lo);
+		x.xu(sy,re,lo);
 		if(hasbit(bit_show_rom))xj_update_focus_on_rom(x);
 	}
 	/** compile */
@@ -270,7 +273,8 @@ final public class ide extends a{
 		y.p_data_size(cor.meter_instructions*1000/dt).spc().p("ips").spc().p_data_size(cor.meter_frames*1000/dt).spc().p("fps");
 		st.set(y.toString());
 		if(x==null) return;
-		x.xu(st,re,ca,lo);
+//		x.xu(st,re,ca,lo);
+		x.xu(st,re,lo);
 		xj_update_focus_on_rom(x);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
@@ -291,7 +295,8 @@ final public class ide extends a{
 			if(!go) break;
 		}
 		if(x==null) return;
-		x.xu(st,sy,re,ca,lo);
+//		x.xu(st,sy,re,ca,lo);
+		x.xu(st,sy,re,lo);
 		xj_update_focus_on_rom(x);
 		ra.xupd(x);
 	}
@@ -301,7 +306,8 @@ final public class ide extends a{
 		step_frame();
 		if(x==null) return;
 		xj_update_focus_on_rom(x);
-		x.xu(st,sy,re,ca,lo);
+//		x.xu(st,sy,re,ca,lo);
+		x.xu(st,sy,re,lo);
 		if(hasbit(bit_show_screen))ra.xupd(x);
 //		if(hasbit(bit_tinitus))ti.xupd(x);
 	}
