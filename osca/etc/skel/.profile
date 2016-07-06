@@ -2,7 +2,7 @@ export WORKSPACE=$HOME/w
 export OSCA=$WORKSPACE/a/osca
 export IDE=$HOME/downloads/eclipse/eclipse
 export XC='xterm -fa mono:size=8 -bg black -fg gray'
-export XF=pcmanfm
+export XF=thunar
 export XE=leafpad
 export XM=vlc
 export XV='xterm -e alsamixer'

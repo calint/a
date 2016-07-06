@@ -4,7 +4,7 @@ import b.xwriter;
 final public class registers extends a{
 	public/*ref*/int[]ints;
 	public void to(final xwriter x){
-		x.p("fast memory:").nl();
+		x.p("registers:").nl();
 		final String pad="00000";
 		for(int i=0;i<ints.length;){
 			final String hex=Integer.toHexString(ints[i++]);

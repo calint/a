@@ -38,7 +38,7 @@ final public class ide extends a{
 	public display ra;
 	public core_status sy;
 	public registers re;
-//	public call_stack ca;
+	public call_stack ca;
 	public loop_stack lo;
 	/**statusline*/public a st;
 	/**coreid*/public a co;
@@ -54,7 +54,7 @@ final public class ide extends a{
 		ro.ints=cor.rom;
 		ra.ints=cor.ram;
 		re.ints=cor.registers;
-//		ca.stk=cor.call_stack;
+		ca.stk=cor.call_stack;
 		lo.core=cor;
 		th.set(0);
 	}
@@ -154,8 +154,8 @@ final public class ide extends a{
 					.div_();
 		x.divo("laycent");
 		x.table().tr();
-//		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
-		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(lo).div_();
+		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(ca).rdiv(lo).div_();
+//		if(hasbit(bit_show_panel))x.td().divo("float panel").spanh(st,"fontbold").rdiv(sy).rdiv(re).rdiv(lo).div_();
 		if(hasbit(bit_show_rom))x.td().divo(ro,"float panel").r(ro).div_();
 		if(hasbit(bit_show_source_editor))x.td().divh(ec,"float textleft panel");
 		x.table_();
@@ -189,8 +189,8 @@ final public class ide extends a{
 		st.set("reseted");
 		if(x==null) return;
 		xj_update_focus_on_rom(x);
-//		x.xu(st,sy,re,ca,lo);
-		x.xu(st,sy,re,lo);
+		x.xu(st,sy,re,ca,lo);
+//		x.xu(st,sy,re,lo);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
 	/** step */
@@ -204,8 +204,8 @@ final public class ide extends a{
 		x.xu(st.set(cor.meter_instructions));
 		if(hasbit(bit_show_screen)&&refresh_display)
 			ra.xupd(x);
-//		x.xu(sy,re,ca,lo);
-		x.xu(sy,re,lo);
+		x.xu(sy,re,ca,lo);
+//		x.xu(sy,re,lo);
 		if(hasbit(bit_show_rom))xj_update_focus_on_rom(x);
 	}
 	/** compile */
@@ -273,8 +273,8 @@ final public class ide extends a{
 		y.p_data_size(cor.meter_instructions*1000/dt).spc().p("ips").spc().p_data_size(cor.meter_frames*1000/dt).spc().p("fps");
 		st.set(y.toString());
 		if(x==null) return;
-//		x.xu(st,re,ca,lo);
-		x.xu(st,re,lo);
+		x.xu(st,re,ca,lo);
+//		x.xu(st,re,lo);
 		xj_update_focus_on_rom(x);
 		if(hasbit(bit_show_screen)) ra.xupd(x);
 	}
