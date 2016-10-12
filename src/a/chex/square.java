@@ -4,10 +4,21 @@ import b.a;
 import b.xwriter;
 
 public final class square extends a{
-	public piece p;
+	private piece p;
+//	{
+//		p=new pawn();
+//	}
 	@Override public void to(xwriter x)throws Throwable{
-		x.p(getClass().toString());
-		p.to(x);
+//		x.p("|");
+		if(p!=null){
+			p.to(x);
+		}else{
+			x.p(". ");
+		}
+//		x.p("]");
 	}
+	public void set_piece(pawn pc){p=pc;}
+	
+	
 	private static final long serialVersionUID=1;
 }
