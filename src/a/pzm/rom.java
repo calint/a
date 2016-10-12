@@ -4,13 +4,12 @@ import b.xwriter;
 final public class rom extends a{
 	public void to(final xwriter x){
 //		x.divo(this,"float panel");
-		x.p("  znxr ci.. aaaaaa dddddd ").ax(this,"clr", "a/x").p("   ").nl();
+		x.p("    znxr ci.. aaaaaa dddddd ").ax(this,"clr", "a/x").p("   ").nl();
 		x.ul();
 		int row=0;
 		final String id=id();
 		for(final int d:ints){
-			x.li();
-			x.p(ide.fld("00",Integer.toHexString(row)));
+			x.li().p(ide.fld("00",Integer.toHexString(row)));
 			x.tag("span",id+"-"+row+"-s").spc().tage("span");
 			for(int k=0,bit=1;k<20;bit<<=1){
 				x.p("<a href=\"javascript:$x('").p(id).p("  ").p(row).p(" ").p(k).p("')\" id=").p(id).p("-").p(row).p("-").p(k).p(">");
@@ -69,7 +68,7 @@ final public class rom extends a{
 //		last_focus_on_binary_location=0;
 //		for(int i=0;i<ints.length;i++)ints[i]=0;
 //	}	
-	public int disppagenrows=128;
-	public int[]ints;
+	public int disppagenrows=256;
+	public/*ref*/int[]ints;
 	private static final long serialVersionUID=1;
 }

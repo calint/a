@@ -1,0 +1,98 @@
+bits{1:kernel 2:driver 3:user}
+soc{
+	rover
+	bus{}
+	@read(all)@write(kernel and driver)net{
+		receiver{}
+		transmitter{}
+		packet{
+			in{}
+			@write(and user)out{}
+		}
+	}
+	gfx{}
+	snd{}
+	store{}
+}
+
+
+rover{
+	cns
+}
+
+cns{
+	wheels
+	cameras
+}
+
+wheels{
+	left{
+		front wheel
+		middle wheel
+		back wheel
+	}
+	right{
+		front wheel
+		middle wheel
+		back wheel
+	}
+}
+
+cameras{
+	camera left
+	camera middle
+	camera right
+	camera top
+	camera rear
+}
+
+wheel{
+	sensor{
+		traction
+	}
+	engine{
+		throttle
+	}
+}
+
+camera{
+	snap():image
+}
+
+image{
+	pixels@size(64KB)
+}
+
+vga{
+	
+	pixels@size(64KB)@at(0xa0000){}
+	dot(y,x,color){
+		var addr=y<<9+x+pixels@at
+		assert_index(addr,pixels)
+		st(addr color)
+		write(pixels,addr,color)
+	}
+	dot2(y,x,color){
+		var index=y<<9+x
+		write_in_range(pixels,index,color){
+			assert_index(pixels,index)
+			assert_(index)_in_(pixels) => assert_index_in_pixels(index,pixels)
+			st(pixels@at+index color)
+		}
+	}
+	dot3(addr,color){
+		write_in_range(pixels,address,color){
+			assert_address_in_range(address,pixels)
+			st(address color)
+		}
+	}
+}
+
+address@size(4B)
+index@size(4B)
+color@size(1B)
+
+rotator{
+	value{0x0000}
+}
+

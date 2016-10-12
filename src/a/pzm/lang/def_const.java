@@ -1,31 +1,23 @@
 package a.pzm.lang;
 
-import java.util.LinkedHashMap;
-
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 final public class def_const extends def{
-	private static final long serialVersionUID=1;
-	final private String ws_before_name,ws_after_name;
-	final private String ws_trailing;
-	final expression expr;
-	public def_const(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
-		super(parent,annot);
-		nm(name);
-		mark_start_of_source(r);
-		this.ws_before_name=ws_before_name;
-		token=name;
-		mark_end_of_source(r);
-		this.ws_after_name=ws_after_name;
-		expr=new expression(this,null,r,null,null);
+	public def_const(statement parent,annotations annot,token deftkn,token tkn,reader r)throws Throwable{
+		super(parent,annot,deftkn,r);
+		nm(tkn.name);
+		nametkn=tkn;
+		expr=expression.read(this,new annotations(parent,r),null,r);
 		mark_end_of_source_from(expr);
-		ws_trailing=r.next_empty_space();
-		r.toc.put("const "+name,this);
+		r.toc.put("const "+tkn.name,this);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.p("def").p(ws_before_name).p(token).p(ws_after_name);
+		nametkn.to(x);
 		expr.source_to(x);
-		x.p(ws_trailing);
 	}
+	final private token nametkn;
+	final private expression expr;
+	private static final long serialVersionUID=1;
 }

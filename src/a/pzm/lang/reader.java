@@ -3,46 +3,15 @@ package a.pzm.lang;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+
+import b.a;
 import b.xwriter;
 
 public final class reader{
-	final public LinkedHashMap<String,statement> toc=new LinkedHashMap<>();
-	private PushbackReader r;
-	private int line=1,col=1,prevcol=1,nchar=0;
-	private int bm_line,bm_col,bm_nchar;
-	private int last_read_char;
-//	public final class range{
-//		final public int from_index,to_index,from_line,to_line,from_line_char,to_line_char;
-//		public range(int from_index,int to_index,int from_line,int to_line,int from_line_char,int to_line_char){
-//			super();
-//			this.from_index=from_index;
-//			this.to_index=to_index;
-//			this.from_line=from_line;
-//			this.to_line=to_line;
-//			this.from_line_char=from_line_char;
-//			this.to_line_char=to_line_char;
-//		}
-//		public range(reader r){
-//			from_index=r.bm_nchar;
-//			to_index=r.nchar;
-//			from_line=r.bm_line;
-//			from_line_char=r.bm_col;
-//			to_line=r.line;
-//			to_line_char=r.col;
-//		}
-//	}
-	public reader(Reader r){
-		this.r=new PushbackReader(r,1);
-	}
-	public void set_location_in_source(){
-		bm_line=line;
-		bm_col=col;
-		bm_nchar=nchar;
-	}
-	public String location_in_source(){
-		return bm_line+":"+bm_col+":"+bm_nchar+":"+nchar;
-	}
+	public reader(Reader r){this.r=new PushbackReader(r,1);}
 	public boolean is_next_char_block_close(){
 		final int ch=read();
 		if(ch=='}') return true;
@@ -111,30 +80,43 @@ public final class reader{
 		}
 		return x.toString();
 	}
-	public String next_token(){
+	public void set_location_cue(){sl_bm.copy_from(sl);}
+	public String location_cue(){return sl_bm.toString();}
+	public String location_in_source(){return sl.toString();}
+//	private final String tokens=" \r\n\t{}()[]=+,";
+	public token next_token(){
+		final token tk=new token();
+		tk.ws_pre=next_empty_space();
+		sl_token_bgn.copy_from(sl);
 		final xwriter x=new xwriter();
 		while(true){
 			final int ch=read();
-			if(ch==-1||Character.isWhitespace(ch)||ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||ch=='='||ch=='+'){
+			if(ch==-1||Character.isWhitespace(ch)||
+					ch=='{'||ch=='}'||ch=='('||ch==')'||ch=='['||ch==']'||
+					ch=='='||ch=='+'||ch==','||ch=='>'||ch=='<'||ch=='!'
+			){
 				unread(ch);
 				break;
 			}
 			x.p((char)ch);
 		}
-		return x.toString();
+		tk.name=x.toString();
+		sl_token_end.copy_from(sl);
+		tk.ws_post=next_empty_space();
+		return tk;
 	}
 	private int read(){
 		try{
 			final int ch=r.read();
 			last_read_char=ch;
-			nchar++;
+			sl.nchar++;
 			if(ch=='\n'){
-				line++;
-				prevcol=col;
-				col=1;
+				sl.line++;
+				sl_prv.col=sl.col;
+				sl.col=1;
 				return ch;
 			}
-			col++;
+			sl.col++;
 			return ch;
 		}catch(IOException e){
 			throw new Error(e);
@@ -142,14 +124,14 @@ public final class reader{
 	}
 	private void unread(final int ch){
 		try{
-			nchar--;
+			sl.nchar--;
 			if(ch!=-1)r.unread(ch);
 			if(ch=='\n'){
-				line--;
-				col=prevcol;
+				sl.line--;
+				sl.col=sl_prv.col;
 				return;
 			}
-			col--;
+			sl.col--;
 			//				if(col==0)throw new Error();//?
 		}catch(IOException e){
 			throw new Error(e);
@@ -173,4 +155,51 @@ public final class reader{
 		unread(ch);
 		return false;
 	}
+	public List<token>read_annotation(){
+		ArrayList<token>annot=null;
+		while(true){
+			if(!is_next_char_annotation_open())break;
+			final token tk=next_token();
+			if(annot==null)annot=new ArrayList<>();
+			annot.add(tk);
+		}
+		return annot;
+	}
+	public boolean is_next_char_comma(){
+		final int ch=read();
+		if(ch==',')return true;
+		unread(ch);
+		return false;
+	}
+	final public LinkedHashMap<String,statement>toc=new LinkedHashMap<>();
+	private PushbackReader r;
+//	private int line=1,col=1,prevcol=1;
+
+	private static final class source_location{
+		public int line=1,col=1,nchar;
+		public String toString(){return line+":"+col+":"+nchar;}
+		public void copy_from(source_location o){line=o.line;col=o.col;nchar=o.nchar;}
+	}
+	
+	private source_location sl_bm=new source_location();
+	private source_location sl_prv=new source_location();
+	private source_location sl=new source_location();
+
+	private source_location sl_token_bgn=new source_location();
+	private source_location sl_token_end=new source_location();
+	public String source_location_token_end(){return sl_token_end.toString();}
+//	private int nchar=0;
+//	private int bm_line,bm_col,bm_nchar;
+	private int last_read_char;
+	
+	
+	final static public class token extends a{
+		public token(){}
+		public token(String ws_pre, String name, String ws_after){this.ws_pre=ws_pre;this.name=name;this.ws_post=ws_after;}
+		@Override public void to(xwriter x){x.p(ws_pre).p(name).p(ws_post);}
+		@Override public String toString(){xwriter x=new xwriter();to(x);return x.toString();}
+		public String ws_pre,name,ws_post;
+		private static final long serialVersionUID=1;
+	}
+
 }

@@ -1,56 +1,24 @@
 package a.pzm.lang;
 
-import java.util.LinkedHashMap;
+import a.pzm.lang.reader.token;
 
 public class def extends statement{
-	public static def read(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
-		final String ws_before_name=r.next_empty_space();
-		final String name=r.next_token();
-		final String ws_after_name=r.next_empty_space();
-		if(r.is_next_char_expression_open()){
-			final def e=new def_func(parent,annot,r,name,ws_before_name,ws_after_name);
-			return e;
-		}else if(r.is_next_char_block_open()){
-			r.unread_last_char();
-			r.set_location_in_source();
-			final def e=new def_data(parent,annot,r,name,ws_before_name,ws_after_name);
-			return e;
-		}else if(r.is_next_char_struct_open()){
-			final def e=new def_table(parent,annot,r,name,ws_before_name,ws_after_name);
-			return e;
-		}else{
-			final def e=new def_const(parent,annot,r,name,ws_before_name,ws_after_name);
-			return e;
+	public static def read(statement parent,annotations annot,token deftkn,reader r)throws Throwable{
+		final token identtkn=r.next_token();
+		if(r.is_next_char_expression_open())
+			return new def_func(parent,annot,deftkn,identtkn,r);
+		
+		if(r.is_next_char_block_open()){
+			r.set_location_cue();
+			return new def_data(parent,annot,deftkn,identtkn,r);
 		}
+		
+		if(r.is_next_char_struct_open())
+			return new def_table(parent,annot,deftkn,identtkn,r);
+		
+		return new def_const(parent,annot,deftkn,identtkn,r);
 	}
-	public def(statement parent,LinkedHashMap<String,String>annot){
-		super(parent,annot);
-	}
+
+	public def(statement parent,annotations annot,token tk,reader r){super(parent,annot,tk,r);}
 	private static final long serialVersionUID=1;
-//	final private String name,ws_after_name;
-//	final private String ws_before_name;
-//	final private statement e;
-//	public def(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
-//		super(parent,annot);
-//		ws_before_name=r.next_empty_space();
-//		r.set_location_in_source();
-//		name=r.next_token();
-//		ws_after_name=r.next_empty_space();
-//		if(r.is_next_char_expression_open()){
-//			r.set_location_in_source();
-//			e=new def_func(this,null,r,name);
-//		}else if(r.is_next_char_block_open()){
-//			r.unread_last_char();
-//			r.set_location_in_source();
-//			e=new def_data(this,null,r,name);
-//		}else if(r.is_next_char_struct_open()){
-//			r.set_location_in_source();
-//			e=new def_table(this,null,r,name);
-//		}else{
-//			r.set_location_in_source();
-//			e=new def_const(this,null,r,name);
-//		}
-//	}
-//	@Override public void binary_to(xbin x){}
-//	@Override public void source_to(xwriter x){}
 }

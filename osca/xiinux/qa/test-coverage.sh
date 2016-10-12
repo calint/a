@@ -3,9 +3,14 @@ PORT=8088
 HTTP=http://$HOST:$PORT
 echo&&date&&echo coverage tests on $HTTP&&
 #-- - - -- -- - ------- - - - - -- - - - --- -- 
-echo " * static document"&&
+echo " * small file"&&
 curl -s $HTTP/qa/q01.txt>cmp&&
 diff -q cmp t01.cmp&&
+rm cmp&&
+#-- - - -- -- - ------- - - - - -- - - - --- -- 
+echo " * larger file 16k"&&
+curl -s $HTTP/qa/ipsum16k.txt>cmp&&
+diff -q cmp ../qa/ipsum16k.txt&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- -
 echo " * if-modified-since"&&
@@ -30,7 +35,7 @@ diff -q cmp t06.cmp&&
 rm cmp&&
 #-- - - -- -- - ------- - - - - -- - - - --- -- 
 echo " * illegal path"&&
-echo $'GET ../../etc HTTP/1.1\r\n\r\n'|nc -w1 $HOST $PORT>cmp&&
+echo -n $'GET ../../etc HTTP/1.1\r\n\r\n'|nc -w1 $HOST $PORT>cmp&&
 diff -q cmp t08.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
@@ -45,7 +50,7 @@ diff -q cmp t04.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 
 echo " * chained get  (deprecated)"&&
-echo $'GET / HTTP/1.1\r\n\r\nGET / HTTP/1.1\r\n\r\n'|nc $HOST $PORT>cmp&&
+echo -n $'GET / HTTP/1.1\r\n\r\nGET / HTTP/1.1\r\n\r\n'|nc $HOST $PORT>cmp&&
 diff -q cmp t09.cmp&&
 rm cmp&&
 #--- - - - - ---  - - - - -- - -- - -- - - -- - 

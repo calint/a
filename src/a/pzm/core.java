@@ -7,6 +7,8 @@ final public class core implements Serializable{
 	public int core_id,program_counter,instruction,flags,loading_register=-1,call_stack_index,loop_stack_index;
 	public int[]registers,call_stack,loop_stack_address,loop_stack_counter,ram,rom;
 	public long meter_instructions,meter_frames;
+	final public static int reg_imm_min=-32;
+	final public static int reg_imm_max=31;
 	// - - - - -  - -  -- - - - - -  -- - - - - - - -  --  - -- - - -  - - - - - - - - - - - - - - -- 	
 	public core(){}
 	public core(final int register_array_size,final int call_stack_size,final int loop_stack_size,final int ram_size,final int rom_size){
@@ -63,7 +65,7 @@ final public class core implements Serializable{
 			return;
 		}
 		in>>=2;// xr ci.. rraaii rrddii
-		final int xr=in&0x3;
+		final int xr=in&3;
 		final boolean invalid_opcode=(in&6)==6;
 		final boolean invalid_opcode2=(in&7)==7;//? 8 free instr(ra rd) without piggy back return
 		if(invalid_opcode2)System.out.println("invalid opcode "+Integer.toHexString(instruction));
@@ -71,9 +73,9 @@ final public class core implements Serializable{
 			final int imm16=in>>4;// .. ...... ......  (imm14)
 			final int znx=flags|((xr&1)<<2);// nxt after ret
 			final int stkentry=(znx<<16)|(program_counter+1);
+			calls_push(stkentry);
 			program_counter=imm16;
 			instruction=rom[imm16];
-			calls_push(stkentry);
 			return;
 		}
 		boolean isnxt=false;
@@ -118,7 +120,7 @@ final public class core implements Serializable{
 		final int rai=in&0x3f;//? magicnum
 		in>>=6;// rrddii
 		final int rdi=in&0x3f;
-		if(!invalid_opcode){// if not both c and r bits r set
+		if(!invalid_opcode){// if not both c and r bit set
 			if(op==0){//load
 				if(rai!=0){//branch
 					if(rai==1){//0x100 lp
@@ -173,14 +175,14 @@ final public class core implements Serializable{
 					final int r;
 					if(a<0)r=registers[rdi]<<-a;
 					else r=registers[rdi]>>a;
-					registers[rdi]=r;
 					evaluate_zn_flags(r);
+					registers[rdi]=r;
 				}
 			}else if(op==4){//0x80 skp
 				if(imm12==0){// free   skp(0)   //? end of frame signal
 					throw new Error("skp(0) not encoded");
 				}
-				if(program_counter_has_been_set)throw new Error("unimplemented");
+				if(program_counter_has_been_set)throw new Error();
 				final int index_in_rom=program_counter+imm12;
 				program_counter=index_in_rom;
 				instruction=rom[index_in_rom];
@@ -194,8 +196,8 @@ final public class core implements Serializable{
 			}else if(op==6){//0xc0 ldc
 				final int a=registers[rai]++;
 				final int d=ram[a];
-				registers[rdi]=d;
 				evaluate_zn_flags(d);
+				registers[rdi]=d;
 //				me.ldc++;
 			}else if(op==7){//0xe0 tx
 				final int a=registers[rai];
@@ -221,13 +223,13 @@ final public class core implements Serializable{
 				final int r=a&d;
 				evaluate_zn_flags(r);
 				registers[rai]=r;				
-			}else if(op==3){//0x78 free
-			}else if(op==4){//0x98 free  
-			}else if(op==5){//0xb8 ldd
+			}else if(op==3){//0x78 free brk(imm12)
+			}else if(op==4){//0x98 free mul(d a)
+			}else if(op==5){//0xb8 ldd  //? div(d a)
 				final int a=--registers[rai];
 				final int d=ram[a];
-				registers[rdi]=d;
 				evaluate_zn_flags(d);
+				registers[rdi]=d;
 			}else if(op==6){//0xd8 st
 				final int d=registers[rdi];
 				final int a=registers[rai];
@@ -236,8 +238,8 @@ final public class core implements Serializable{
 			}else if(op==7){//0xf8 ld
 				final int a=registers[rai];
 				final int d=ram[a];
-				registers[rdi]=d;
 				evaluate_zn_flags(d);
+				registers[rdi]=d;
 //				meters_ld++;
 			}else throw new Error();
 		}

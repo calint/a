@@ -1,126 +1,131 @@
-{
-@inline rects.drw()
-@inline text.drw()
-@inline dots.drw()
+@o{
+var tick
+inc(tick)
+drw(tick *tick++)
+loop(tick)
+st(0x2010 0xff0)
+-1
+def drw(tick@c,p@c){
+  st(0x5020 p)
+  st(0x5021 tick)
+  var@c n=4
+  var@p di=0x4040
+  lp(n){
+    hex.print(di 4 5 252 0x4fb 0xf00 *p)
+    addi(di 1)
+  }
+}
+def loop(tick@c){
+  var@c wi=4
+  var@c hi=5
+  var@c ln=252
+  var@c gnl=0x4fb
+  var@c nl=0x0600
+  labels.drw(wi hi ln gnl)
+  hex.drw(wi hi ln gnl tick)
+  font.drwall1(wi hi ln gnl tick 5)
+  labels.upd()
+}
+def hex.print(di@p,wi@c,hi@c,ln@c,gln@c,argb@c,hex){
+  var@c msk=0xf0000
+  var@c times=5
+  lp(times){
+    var h=hex
+    and(h msk)
+    shf(h 16)
+    shf(hex -4)
+    font.drw(di wi hi ln argb font.seek(h))
+    sub(di gln)
+  }
+}
+def baba@c[ch]{4   0xb 0xa 0xb 0xa}
+-1
+def b20@c[ch]{3   2 0 0xb}
+-1
+def txt.type(txt@cp,di,rgb@c,wi@c,hi@c,ln@c,gln@c){
+  @baba foo(txt){
+    font.drw(di wi hi ln rgb font.seek(ch))
+    sub(di gln)
+  }
+}
+def labels
+[  txt@cp  dest@p   colr  ]{2
+   baba    0x7050   0xffe
+   b20     0x7070   0xff0
+   b20     0x7080   0xfff
+}
+-1
+def labels.drw(wi@c,hi@c,ln@,gln@c){
+  foo(labels){
+    txt.type(txt dest colr wi hi ln gln)
+  }
+}
+def labels.upd(){
+  fow(labels){
+    inc(colr)
+  }
+}
+def font@c[d]{36  
+  0x6ddd6 0x6e66f 0x6f36f 0x6373e 
+  0x37df3 0xece3e 0x6ced6 0xff244 
+  0x66fd6 0x6d724 0x6ddfd 0xedede
+  0x6ccc7 0xeddde 0xfcecf 0xfcecc 
 
-@inline rects.upd()
-@inline dots.upd()
+  0x6cdd7 0xddfdd 0xf666f 0xf666c
+  0xdeddd 0xccccf 0xdfddd 0x9db99
+  0x69996 0xedecc 0x699a5 0xe99a9
+  0x6861e 0xf4444 0x99996 0x99952
 
-eof
-def print_bmp_4x4(d e f g l i){
-  lp(f){
-    lp(e){
-      shf(l -1)
-      @ifn stc(d i)
-      @ifz inc(d)
-      @ifp inc(d)
+  0x99ff6 0x99699 0x99666 0xf24cf
+  0       0       0       0
+  0       0       0       0
+  0       0       0       0
+
+  0       0       0       0
+  0       0       0       0
+  0       0       0       0
+  0       0       0       0
+}
+-1
+def font.drwall1(wi@c,hi@c,nl@c,gln@c,rgb@c,lines@c){
+  var@p dil=0x0420
+  lp(lines){
+    var@p di=dil
+    font.drwall(di wi hi nl rgb gln)
+    add(dil nl)
+  }
+}
+def font.drw(di@p,wi@c,hi@c,ln@c,rgb@c,bmp){
+  lp(hi){
+    lp(wi){
+      shf(bmp -1)
+      @ifn stc(di rgb)
+      @ifz inc(di)
+      @ifp inc(di)
     }
-    add(d g)
+    add(di ln)
   }
 }
-eof
-def dots.drw(){
-  foo(dots){
-    st(yx rgb)
+def font.drwall(di@p,wi@c,hi@c,ln@c,rgb,gln@c){
+  foo(font){
+    font.drw(di wi hi ln rgb d)
+    sub(di gln)
+    inc(rgb)
   }
 }
-def dots
-[   yx    dyx    rgb ]{4
-  0x7840 0x0001 0x800
-  0x7951 0x0002 0x080
-  0x7a62 0x0003 0x008
-  0x7b73 0x0004 0x088
+def font.seek(ret,record@c){
+  ret=font
+  inc(ret)
+  add(ret record)
+  ld(ret ret)
 }
-def rects
-[   yx    rgb   wi    hi   ln     ]{ 3
-  0x1400 0x0ff 256    80  0x24
-  0x1000 0xf00 0x30  0x40 0x24
-  0x5800 0x00f 0x30   50  0x23
+def hex.drw(wi@c,hi@c,ln@c,gln@c,rgb@c){
+  var@p di=0x2464
+  var h=0xb00b0
+  hex.print(di wi hi ln gln rgb h)
 }
-eof
-def rects.drw(){
-  foo(rects){
-    lp(hi){
-      lp(wi){
-        stc(yx rgb)
-      }
-      add(yx ln)
-    }
-  }
-}
-eof
-def text.drw(){
-  foo(texts){
-     @inline pl(
-        dest_addr width height 
-        add_after_line text rgb add_after_glyph
-     )
-  }
-}
-eof
-def texts
-[ dest_addr    width   height   add_after_line   text   rgb   add_after_glyph ]{2
-   0x3040       4        4         252           txt   0xf00       0x3fc   
-   0x3440       4        4         252           os    0xf00       0x3fc   
-} 
-eof
-def txt[u16]{6
-  0xffff 0x0175 0x0767 0x0043 0x0043 0x0252 0x0126
-  0xffff
-}
-eof
-def os[bmp4x4]{1
-   0xffff
-}
-eof
-eof 
-def pl(d e f g h i j){
-  var k
-  ldc(k h)
-  var l
-  lp(k){
-    ldc(l h)
-    @inline print_bmp_4x4(d e f g l i)
-    sub(d j)
-  }
-}
-eof eof eof
-def rects.upd(){
-  var m
-  li(m 0x40)
-  fow(rects d e f g h){
-    inc(h)
-    var p
-    @debug tx(p h)
-    var i
-    tx(i h)
-    sub(i m)
-    @ifp li(h 0x10)
-  }
-}
-def dots.upd(){
-  var g
-  li(g 0x7f00)
-  fow(dots d e f){
-    add(d e)
-    var h
-    tx(h d)
-    sub(h g)
-    @ifp li(d 0x0800)
-  }
-}
-eof
-def dot(a b){st(a b)}
-def line(a b c){
-  lp(c){
-    stc(a b)
-    inc(b)
-  }
-}
-eof
-
-def red 0xf00
-def green 0xf0
-def blue 0xf
-def eof 0xffff
+def rgb.red 0xf00
+def rgb.green 0x0f0
+def rgb.blue 0x00f
+def rgb.yellow 0xff0
 }

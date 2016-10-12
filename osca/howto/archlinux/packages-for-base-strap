@@ -1,0 +1,62 @@
+# utils
+pkgfile
+
+# for osca/make-all.sh
+gcc
+
+# for clonky
+libxft
+acpi
+sysstat
+
+# for stickyo
+pkg-config
+gtk3
+gtk2
+
+# sh ~/w/a/osca/make-all.sh
+
+xorg-init
+xorg
+
+# for frameless
+ttf-dejavu
+xterm
+chromium
+thunar
+
+tumbler # thumbnails for thunar
+ffmpegthumbnailer
+poppler-glib
+libgsf
+libopenraw
+freetype2 
+
+ 
+leafpad
+alsa-utils
+
+# for .gtk2rc and thunar
+faenza-icon-theme
+
+
+# for eclipse
+jre8-openjdk-headless
+make
+
+# other frameless apps
+feh
+scrot
+mplayer
+
+
+# utils
+youtube-dl
+
+# for github.com/calint
+clang
+nasm
+
+# opengl
+glew
+glfw-x11

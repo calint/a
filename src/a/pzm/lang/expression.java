@@ -1,142 +1,92 @@
 package a.pzm.lang;
 
-import java.util.LinkedHashMap;
-
-import b.xwriter;
+import a.pzm.lang.reader.token;
 
 public class expression extends statement{
-	private static final long serialVersionUID=1;
-	final private String ws_leading,ws_after;
-	String destreg;
-	boolean is_assign;//? 
-	final boolean is_pointer_dereference;
-	final boolean is_increment_pointer_after_dereference;
-//	final String pointer;
-	public expression(statement parent,LinkedHashMap<String,String>annot,reader r,String dest_reg,String tk){
-		super(parent,annot);
+	public static expression read(statement parent,annotations annot,String destreg,reader r){
+//		final ArrayList<expression>addition_list=new ArrayList<>();
+//		final String ws_leading=r.next_empty_space();
+		if(r.is_next_char_pointer_dereference()){
+			final expression_dereference e=new expression_dereference(parent,annot,r,destreg);
+			e.mark_end_of_source(r);
+			return e;
+		}
+		if(annot==null)annot=new annotations(parent,r);
+		final token tk=r.next_token();
+		if(r.is_next_char_expression_open()){// function call
+			final call e=new call(parent,annot,tk,r,destreg);
+			e.mark_end_of_source(r);
+			return e;
+		}
+		
+		final expression e=new expression(parent,annot,tk,r,destreg);
+		e.source_location_end=r.source_location_token_end();
+		return e;
+	}	
+	
+	//------     - --  - - -- - ---- --------- - - -- - - -- - - - - -- - -- - - - -- 	
+	protected expression(statement parent,annotations annot,token tk,reader r,String dest_reg){
+		super(parent,annot,tk,r);
+		if(token.name.length()==0)throw new compiler_error(this,"expression is empty","");
 		destreg=dest_reg;
-		mark_start_of_source(r);
-		if(tk==null){
-			ws_leading=r.next_empty_space();
-			is_pointer_dereference=r.is_next_char_pointer_dereference();
-			token=r.next_token();
-			if(r.is_next_char_plus()){// maybe op plus    *ra+3
-				if(r.is_next_char_plus()){// *ra++
-					is_increment_pointer_after_dereference=true;
-				}else{
-					is_increment_pointer_after_dereference=false;
-				}
-			}else{
-				is_increment_pointer_after_dereference=false;
-			}
-		}else{// first token supplied
-			is_pointer_dereference=false;
-			is_increment_pointer_after_dereference=false;
-			ws_leading="";
-			token=tk;
-		}
-		mark_end_of_source(r);
-		if(token.length()==0)
-			throw new compiler_error(this,"expression is empty","");
-		ws_after=r.next_empty_space();
 	}
-//	public expression(a pt,String nm,statement b,LinkedHashMap<String,String>annotations,reader r,String dest_reg){
-//		super(pt,nm,annotations,r.next_token(),r,b);
-////		mark_end_of_source(r);
-//		ws_after="";
-//		this.destreg=dest_reg;
-//	}
-	public expression(statement parent,String dest_reg){
-		super(parent,null);
-		ws_after=ws_leading="";
-		token=dest_reg;
+	expression(statement parent,String dest_reg){
+		super(parent,null,new token("",dest_reg,""),null);
 		destreg=null;
-		is_pointer_dereference=false;
-		is_increment_pointer_after_dereference=false;
-//		destreg=dest_reg;
 	}
-	@Override public void binary_to(xbin x){
-		if(is_pointer_dereference){// ld or ldc   destreg=*token
-			if(x.vspc().is_declared(token)){// ld(ra rd)
-				final int rai=x.vspc().get_register_index(this,token);
-				final int rdi=x.vspc().get_register_index(this,destreg);
-				x.write_op(this,is_increment_pointer_after_dereference?call_ldc.op:call_ld.op,rai,rdi);
-				return;
-			}
-			// ld(0xf00 4)   desreg=*
-			final String reg=x.alloc_register(this);
-			final int regi=x.get_register_index_for_name(reg);
-			x.write_op(this,call_li.op,0,regi);
-			x.add_at_pre_link_evaluate(this);
-			x.write(0,this);
-			final int rdi=x.vspc().get_register_index(this,destreg);
-			x.write_op(this,call_ld.op,regi,rdi);
-			x.free_register(this,reg);
-			return;
-		}
-		
-		
-		if(x.vspc().is_declared(token)){// tx
-			final int rai=x.vspc().get_register_index(this,token);
+	@Override public void binary_to(xbin x){		
+		if(x.vspc().is_declared(token.name)){// tx
+			final int rai=x.vspc().get_register_index(this,token.name);
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_tx.op,rai,rdi);
 			return;
 		}
 		
-		
 		if(destreg!=null){// li
 			final int rdi=x.vspc().get_register_index(this,destreg);
 			x.write_op(this,call_li.op,0,rdi);
-			x.add_at_pre_link_evaluate(this);
+			x.at_link_eval(this);
 			x.write(0,this);
 			return;
 		}
+		
 		// constant
-		x.add_at_pre_link_evaluate(this);
+		x.at_link_eval(this);
 		x.write(0,this);
 	}
 	public int eval(xbin b){
 //		final def_const dc=(def_const)b.toc.get("const "+token);
 //		if(dc!=null){return dc.expr.eval(b); }
-		final def_data dd=(def_data)b.toc.get("data "+token);
-		if(dd!=null){return b.def_location_in_binary_for_name(token); }
-		final def_table dt=(def_table)b.toc.get("table "+token);
-		if(dt!=null){return b.def_location_in_binary_for_name(token); }
-		if(token.startsWith("0x")){
+		final def_data dd=(def_data)b.toc.get("data "+token.name);
+		if(dd!=null){return b.def_location_in_binary_for_name(token.name); }
+		final def_table dt=(def_table)b.toc.get("table "+token.name);
+		if(dt!=null){return b.def_location_in_binary_for_name(token.name); }
+		if(token.name.startsWith("0x")){
 			try{
-				return Integer.parseInt(token.substring(2),16);
+				return Integer.parseInt(token.name.substring(2),16);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not found or not a hex",token);
+				throw new compiler_error(this,"not found or not a hex",token.name);
 			}
-		}else if(token.startsWith("0b")){
+		}else if(token.name.startsWith("0b")){
 			try{
-				return Integer.parseInt(token.substring(2),2);
+				return Integer.parseInt(token.name.substring(2),2);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not found or not a binary",token);
+				throw new compiler_error(this,"not found or not a binary",token.name);
 			}
-		}else if(token.endsWith("h")){
+		}else if(token.name.endsWith("h")){
 			try{
-				return Integer.parseInt(token.substring(0,token.length()-1),16);
+				return Integer.parseInt(token.name.substring(0,token.name.length()-1),16);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"not found or not a hex",token);
+				throw new compiler_error(this,"not found or not a hex",token.name);
 			}
 		}else{
 			try{
-				return Integer.parseInt(token);
+				return Integer.parseInt(token.name);
 			}catch(NumberFormatException e){
-				throw new compiler_error(this,"'"+token+"' not found or not an integer",token);
+				throw new compiler_error(this,"'"+token.name+"' not found or not an integer",token.name);
 			}
 		}
 	}
-	@Override public void source_to(xwriter x){
-		super.source_to(x);
-		if(is_assign){
-			x.p(destreg).p("=");
-		}
-		x.p(ws_leading);
-		if(is_pointer_dereference)x.p("*");
-		x.p(token);
-		if(is_increment_pointer_after_dereference)x.p("++");
-		x.p(ws_after);
-	}
+	String destreg;
+	private static final long serialVersionUID=1;
 }

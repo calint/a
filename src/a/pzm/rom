@@ -1,27 +1,21 @@
 @o{
 var tick
 inc(tick)
-
-var di=6
-var x=*di
-drw(tick x)
-
-
-def drw(tick p){
+drw(tick *tick++)
+loop(tick)
+st(0x2010 0xff0)
+-1
+def drw(@const tick,@const p){
   st(0x5020 p)
   st(0x5021 tick)
-  var n=4
+  @const var n=4
   var di=0x4040
-  var p=0
   lp(n){
-    var h=*p++
-    hex.print(di 4 5 252 0x4fb 0xf00 h)
+    hex.print(di 4 5 252 0x4fb 0xf00 *p)
     addi(di 1)
   }
 }
-st(0x2010 0xff0)
-loop(tick)
-def loop(tick){
+def loop(@const tick){
   @const var wi=4
   @const var hi=5
   @const var ln=252
@@ -32,49 +26,46 @@ def loop(tick){
   font.drwall1(wi hi ln gnl tick 5)
   labels.upd()
 }
--1
-@v def hex.print(di wi hi ln gln argb hex){
-  var msk=0xf0000
-  var times=5
+def hex.print(di,@const wi,@const hi,@const ln,@const gln,@const argb,hex){
+  @const var msk=0xf0000
+  @const var times=5
   lp(times){
     var h=hex
     and(h msk)
     shf(h 16)
     shf(hex -4)
-
-    var ret font.seek(ret h)
-    var glyph=*ret
-    font.drw(di wi hi ln argb glyph)
+    font.drw(di wi hi ln argb font.seek(h))
     sub(di gln)
   }
 }
-@t @txt def baba[ch]{4   0xb 0xa 0xb 0xa}
-@t @txt def b20 [ch]{3   2 0 0xb}
-@v def txt.type(txt di rgb wi hi ln gln){
+def baba[ch]{4   0xb 0xa 0xb 0xa}
+-1
+def b20 [ch]{3   2 0 0xb}
+-1
+def txt.type(@const txt,di,@const rgb,@const wi,@const hi,@const ln,@const gln){
   @baba foo(txt){
-    var chaddr font.seek(chaddr ch)
-    var glyph=*chaddr
-    font.drw(di wi hi ln rgb glyph)
+    font.drw(di wi hi ln rgb font.seek(ch))
     sub(di gln)
   }
 }
-@t def labels
+def labels
 [  txt   dest    colr   ]{2
   baba  0x7050  0xffe         
   b20   0x7070  0xff0
   b20   0x7080  0xfff
 }
-@v def labels.drw(wi hi ln gln){
+-1
+def labels.drw(@const wi,@const hi,@const ln,@const gln){
   foo(labels){
     txt.type(txt dest colr wi hi ln gln)
   }
 }
-@v def labels.upd(){
+def labels.upd(){
   fow(labels){
     inc(colr)
   }
 }
-@t def font[d]{36  
+def font[d]{36  
   0x6ddd6 0x6e66f 0x6f36f 0x6373e 
   0x37df3 0xece3e 0x6ced6 0xff244 
   0x66fd6 0x6d724 0x6ddfd 0xedede
@@ -95,7 +86,8 @@ def loop(tick){
   0       0       0       0
   0       0       0       0
 }
-@v def font.drwall1(wi hi nl gln rgb lines){
+-1
+def font.drwall1(@const wi,@const hi,@const nl,@const gln,@const rgb,@const lines){
   var dil=0x0420
   lp(lines){
     var di=dil
@@ -103,8 +95,7 @@ def loop(tick){
     add(dil nl)
   }
 }
--1 -1
-@v def font.drw(di wi hi ln rgb bmp){
+def font.drw(di,@const wi,@const hi,@const ln,@const rgb,bmp){
   lp(hi){
     lp(wi){
       shf(bmp -1)
@@ -115,26 +106,26 @@ def loop(tick){
     add(di ln)
   }
 }
-@v def font.drwall(di wi hi ln rgb gln){
+def font.drwall(di,@const wi,@const hi,@const ln,rgb,@const gln){
   foo(font){
     font.drw(di wi hi ln rgb d)
     sub(di gln)
     inc(rgb)
   }
 }
-@* def font.seek(ret record){
-  var temp=font
-  ret=temp
+def font.seek(ret,@const record){
+  ret=font
   inc(ret)
   add(ret record)
+  ld(ret ret)
 }
-@v def hex.drw(wi hi ln gln rgb){
+def hex.drw(@const wi,@const hi,@const ln,@const gln,@const rgb){
   var di=0x2464
   var h=0xb00b0
   hex.print(di wi hi ln gln rgb h)
 }
-@c def rgb.red 0xf00
-@c def rgb.green 0x0f0
-@c def rgb.blue 0x00f
-@c def rgb.yellow 0xff0
+def rgb.red 0xf00
+def rgb.green 0x0f0
+def rgb.blue 0x00f
+def rgb.yellow 0xff0
 }

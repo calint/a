@@ -1,55 +1,50 @@
 package a.pzm.lang;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 final public class def_table extends def{
-	private static final long serialVersionUID=1;
-	final private String ws_before_name,name,ws_after_name;
-	final ArrayList<def_table_col>arguments=new ArrayList<>();
-	final private statement data;
-	public def_table(statement parent,LinkedHashMap<String,String>annot,reader r,String name,String ws_before_name,String ws_after_name)throws Throwable{
-		super(parent, annot);
-		nm(name);
-		mark_start_of_source(r);
-		this.ws_before_name=ws_before_name;
-//		mark_start_of_source(r);
-		this.name=name;
-		this.ws_after_name=ws_after_name;
+	public def_table(statement parent,annotations annot,token deftkn,token tk,reader r)throws Throwable{
+		super(parent,annot,deftkn,r);
+		nm(tk.name);
+		identtkn=tk;
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_struct_close())break;
-			r.set_location_in_source();
-			final def_table_col sf=new def_table_col(this,null,r);
+			r.set_location_cue();
+			final def_table_col tc=new def_table_col(this,null,r);
 			for(final def_table_col e:arguments){
-				if(sf.token.equals(e.token)){
-					throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());
+				if(tc.token.equals(e.token)){
+					throw new compiler_error(tc,"column '"+tc.token+"'already exists",token.name+arguments.toString());
 				}
 			}
 //			if(arguments.stream().filter(e->sf.token.equals(e.token)).findFirst().isPresent()){
 //				throw new compiler_error(sf,"column '"+sf.token+"'already exists",name+arguments.toString());
 //			}
-			arguments.add(sf);
+			arguments.add(tc);
 		}
 		data=statement.read(this,r);
 		mark_end_of_source_from(data);
-		r.toc.put("table "+name,this);
+		r.toc.put("table "+identtkn.name,this);
 	}
 	@Override public void binary_to(xbin x){
-		x.def(name);
+		x.def(identtkn.name);
 		data.binary_to(x);
 	}
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.p("def").p(ws_before_name).p(name).p(ws_after_name);
+		identtkn.to(x);
 		x.p("[");
-//		arguments.forEach(e -> e.source_to(x));
 		for(final def_table_col e:arguments){
 			e.source_to(x);
 		}
 		x.p("]");
 		data.source_to(x);
 	}
+	final ArrayList<def_table_col>arguments=new ArrayList<>();
+	final private token identtkn;
+	final private statement data;
+	private static final long serialVersionUID=1;
 }

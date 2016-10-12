@@ -1,8 +1,8 @@
 package a.pzm.lang;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
+import a.pzm.lang.reader.token;
 import b.xwriter;
 
 final public class call_fow extends statement{
@@ -10,14 +10,13 @@ final public class call_fow extends statement{
 	final private ArrayList<expression>arguments=new ArrayList<>();
 	final private String ws_after_expression_open,ws_after_expression_closed;
 	final private statement loop_code;
-	public call_fow(statement parent,LinkedHashMap<String,String>annot,reader r)throws Throwable{
-		super(parent,annot);
-		mark_start_of_source(r);
+	public call_fow(statement parent,annotations annot,token tk,reader r)throws Throwable{
+		super(parent,annot,tk,r);
 		ws_after_expression_open=r.next_empty_space();
 		while(true){
 			mark_end_of_source(r);
 			if(r.is_next_char_expression_close()) break;
-			final expression arg=new expression(this,null,r,null,null);
+			final expression arg=expression.read(this,new annotations(parent,r),null,r);
 			arguments.add(arg);
 		}
 		mark_end_of_source(r);
@@ -27,11 +26,11 @@ final public class call_fow extends statement{
 		mark_end_of_source_from(loop_code);
 	}
 	@Override public void binary_to(xbin x){
-		String table_name=arguments.get(0).token;
+		String table_name=arguments.get(0).token.name;
 		def_table tbl=(def_table)x.toc.get("table "+table_name);
 		if(tbl==null){
-			if(annotations!=null){
-				table_name=annotations.keySet().iterator().next();
+			if(has_annotations()){
+				table_name=annotations_get(0).name;
 				tbl=(def_table)x.toc.get("table "+table_name);
 			}else{
 				final ArrayList<String>tbls=new ArrayList<>();
@@ -50,12 +49,12 @@ final public class call_fow extends statement{
 		if(arguments.size()==1){//select *
 			args=new ArrayList<>();
 			args.addAll(arguments);
-			final String struct_name=args.get(0).token;
+			final String struct_name=args.get(0).token.name;
 			final def_table stc=(def_table)x.toc.get("table "+struct_name);
 			if(stc==null)throw new compiler_error(this,"struct not declared yet",struct_name);
 			for(def_table_col col:stc.arguments){
-				x.vspc().alloc_var(col,col.token);
-				final expression e=new expression(this,col.token);
+				x.vspc().alloc_var(col,col.token.name);
+				final expression e=new expression(this,col.token.name);
 				args.add(e);
 			}
 		}else{
@@ -76,7 +75,7 @@ final public class call_fow extends statement{
 //		x.write(0|0x00e0|(rai&63)<<8|(rbi&63)<<14,this);//tx(b a)
 		x.write_op(this,call_tx.op,rai,rbi);
 		for(expression e:args.subList(1,args.size())){
-			final String reg=e.token;
+			final String reg=e.token.name;
 			final int rdi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
 //			x.write(0|0x00c0|(rai&63)<<8|(regi&63)<<14,this);//ldc(c regi)
 			x.write_op(this,call_ldc.op,rai,rdi);
@@ -85,7 +84,7 @@ final public class call_fow extends statement{
 //		x.write(0|0x00e0|(rbi&63)<<8|(rai&63)<<14,this);//tx(a b)
 		x.write_op(this,call_tx.op,rbi,rai);
 		for(expression e:args.subList(1,args.size())){
-			final String reg=e.token;
+			final String reg=e.token.name;
 			final int rdi=x.vspc().get_register_index(this,reg);//reg.charAt(0)-'a';
 //			x.write(0|0x0040|(rai&63)<<8|(rdi&63)<<14,this);//stc(a reg)
 			x.write_op(this,call_stc.op,rai,rdi);
@@ -98,7 +97,6 @@ final public class call_fow extends statement{
 	
 	@Override public void source_to(xwriter x){
 		super.source_to(x);
-		x.p("fow");
 		x.p("(");
 		x.p(ws_after_expression_open);
 //		x.tag("dr");
