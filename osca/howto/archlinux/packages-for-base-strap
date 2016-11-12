@@ -60,3 +60,6 @@ nasm
 # opengl
 glew
 glfw-x11
+
+
+openssh
