@@ -1,5 +1,4 @@
 package d3;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,14 +6,12 @@ import java.util.List;
 import java.util.Random;
 public final class world extends obj{
 	private static final long serialVersionUID=1L;
-	final ArrayList<grid>grids=new ArrayList<grid>();
-	
 	public double gravity;
-//	private grid[]grds;
+	private grid[] grds;
 	private double grdsz;public double grdsz(){return grdsz;}
 	private int ngrds;
-	private LinkedList<obj>objs;
-	private LinkedList<obj>objsnew;
+	private LinkedList<obj> objs;
+	private LinkedList<obj> objsnew;
 	private player plr;
 	private Random rand=new Random(cfg.rnd_seed);
 	private int rows;public int rows(){return rows;}
@@ -22,9 +19,8 @@ public final class world extends obj{
 	private double xmin;
 	private double ymin;public double ymin(){return ymin;}
 	private double width;public double width(){return width;}
-
 	public world(double xmin0,double ymin0,double width0,int rows0,double gravity0){
-		super(null,new p3(),new p3(),type_scenery,null,new p3(1),0);
+		super(null,new p3(),new p3(),type_scenery,null,new p3(1.0),0);
 		objsnew=new LinkedList<obj>();
 		objs=new LinkedList<obj>();
 		gravity=gravity0;
@@ -33,11 +29,9 @@ public final class world extends obj{
 		ymin=ymin0;
 		width=width0;
 		ngrds=rows*rows;
-//		grds=new grid[ngrds];
-//		for(int n=0;n<ngrds;n++)
-//			grds[n]=new grid();
+		grds=new grid[ngrds];
 		for(int n=0;n<ngrds;n++)
-			grids.add(new grid());
+			grds[n]=new grid();
 		grdsz=width0/rows;
 		objsnew.add(this);
 	}
@@ -97,8 +91,7 @@ public final class world extends obj{
 		int yend=grdy(y+rng);
 		for(int yy=ystart;yy<=yend;yy++)
 			for(int xx=xstart;xx<=xend;xx++)
-				grids.get(yy*rows+xx).q_rng(flags,p,rng,result);
-//				grds[yy*rows+xx].q_rng(flags,p,rng,result);
+				grds[yy*rows+xx].q_rng(flags,p,rng,result);
 	}
 	public final double rand(double e){
 		return e*rand.nextDouble();
@@ -113,16 +106,16 @@ public final class world extends obj{
 //		time+=dt;
 		objs.addAll(objsnew);
 		objsnew.clear();
-		final long t0=System.currentTimeMillis();
+		long t0=System.currentTimeMillis();
 		update_grids();
-		final long t1=System.currentTimeMillis();
+		long t1=System.currentTimeMillis();
 		metrics.wld_updgrds_ms=(int)(t1-t0);
-		update_objects(dt);
-		final long t2=System.currentTimeMillis();
+		for(obj o:objs)
+			o.upd_dt(dt);
+		long t2=System.currentTimeMillis();
 		metrics.wld_upd_ms=(int)(t2-t1);
-		final List<hit>hitls=new LinkedList<hit>();
-//		for(grid g:grds)
-		for(grid g:grids)
+		List<hit> hitls=new LinkedList<hit>();
+		for(grid g:grds)
 			g.coldet(hitls);
 		long t3=System.currentTimeMillis();
 		metrics.wld_coldet_ms=(int)(t3-t2);
@@ -133,29 +126,24 @@ public final class world extends obj{
 		long t4=System.currentTimeMillis();
 		metrics.wld_colhdl_ms=(int)(t4-t3);
 	}
-	final private void update_objects(final double dt){
-		for(obj o:objs)
-			o.upd_dt(dt);
-	}
 	private final void update_grids(){
-		for(final Iterator<obj>i=objs.iterator();i.hasNext();){
-			final obj o=i.next();
+		for(Iterator<obj> i=objs.iterator();i.hasNext();){
+			obj o=i.next();
 			if(!o.upd_grds)
 				continue;
-			grid[]grdsnew=null;
+			grid[] grdsnew=null;
 			if(o.alive){
-				final double r=o.radius();
-				final int xb=grdx(o.pos.x-r);
-				final int xe=grdx(o.pos.x+r);
-				final int yb=grdy(o.pos.z-r);
-				final int ye=grdy(o.pos.z+r);
-				final int ngrds=(xe-xb+1)*(ye-yb+1);
+				double r=o.radius();
+				int xb=grdx(o.pos.x-r);
+				int xe=grdx(o.pos.x+r);
+				int yb=grdy(o.pos.z-r);
+				int ye=grdy(o.pos.z+r);
+				int ngrds=(xe-xb+1)*(ye-yb+1);
 				grdsnew=new grid[ngrds];
 				int k=0;
 				for(int yy=yb;yy<=ye;yy++)
 					for(int xx=xb;xx<=xe;xx++){
-//						grid g=grds[yy*rows+xx];
-						final grid g=grids.get(yy*rows+xx);
+						grid g=grds[yy*rows+xx];
 						grdsnew[k++]=g;
 						boolean found=false;
 						for(int n=0;n<o.grds.length;n++){

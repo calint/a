@@ -1,20 +1,31 @@
-
 package d3;
 import java.util.LinkedList;
 import java.util.List;
 final class grid{
 	static final grid[]emptya=new grid[0];
-	final private LinkedList<obj>bullets=new LinkedList<obj>();
-	final private LinkedList<obj>scenery=new LinkedList<obj>();
-	final private LinkedList<obj>strucms=new LinkedList<obj>();
-	final private LinkedList<obj>strucs=new LinkedList<obj>();
-	final private LinkedList<obj>vehicles=new LinkedList<obj>();
+	private LinkedList<obj>bullets;
+	private LinkedList<obj>scenery;
+	private LinkedList<obj>strucms;
+	private LinkedList<obj>strucs;
+	private LinkedList<obj>vehicles;
+	grid(){
+		strucs=new LinkedList<obj>();
+		strucms=new LinkedList<obj>();
+		scenery=new LinkedList<obj>();
+		vehicles=new LinkedList<obj>();
+		bullets=new LinkedList<obj>();
+	}
 	final void clear(final int flags){
-		if((flags&obj.type_struc)!=0)strucs.clear();
-		if((flags&obj.type_strucm)!=0)strucms.clear();
-		if((flags&obj.type_vehicle)!=0)vehicles.clear();
-		if((flags&obj.type_scenery)!=0)scenery.clear();
-		if((flags&obj.type_bullet)!=0)bullets.clear();
+		if((flags&obj.type_struc)!=0)
+			strucs.clear();
+		if((flags&obj.type_strucm)!=0)
+			strucms.clear();
+		if((flags&obj.type_vehicle)!=0)
+			vehicles.clear();
+		if((flags&obj.type_scenery)!=0)
+			scenery.clear();
+		if((flags&obj.type_bullet)!=0)
+			bullets.clear();
 	}
 	final void coldet(final List<hit>hitls){
 		final int nvehicles=vehicles.size();
