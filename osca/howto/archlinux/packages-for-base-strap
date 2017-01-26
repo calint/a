@@ -19,13 +19,17 @@ gtk2
 xorg-init
 xorg
 
+# synclient for touchpad
+xf86-input-synaptics
+
 # for frameless
 ttf-dejavu
 xterm
 chromium
 thunar
 
-tumbler # thumbnails for thunar
+# thumbnails for thunar
+tumbler
 ffmpegthumbnailer
 poppler-glib
 libgsf
@@ -63,3 +67,5 @@ glfw-x11
 
 
 openssh
+
+
