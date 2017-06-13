@@ -1,0 +1,9 @@
+[Unit]
+Description=baba web server
+
+[Service]
+ExecStart=/a/ba.sh
+
+[Install]
+WantedBy=multi-user.target
+
