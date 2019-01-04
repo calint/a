@@ -101,7 +101,7 @@ public class $ extends world{
 	}
 
 	protected void devineIntervention(double dt){
-		final double s=.0001;
+		final double s=.000001;
 		if(Math.random()*dt<s){
 			int i=(int)(Math.random()*(double)(nsupplies-1));
 			this.add(new supplies(this,Math.random()*150.0,Math.random()*150.0,Math.random()*20.0,(Math.random()*3.141592653589793*2.0)-3.141592653589793,i,supplycolor[i]));

@@ -61,10 +61,17 @@ class ship extends aobjectm{
 	}
 	public void noThrust(){myThrustPolygon.color(Color.black);}
 
+	private final double weapon_fire_rate_s[]=new double[]{1,.1,1,.25,1,1,1,1,1};
+	private final double weapon_last_fire_s[]=new double[9];
+	
 	public void shoot(int i,double dt){
 		if(mySupplies[i]<=0)
 			return;
 		mySupplies[i]-=dt;
+		final double ds=time-weapon_last_fire_s[i];
+		if(ds<weapon_fire_rate_s[i])
+			return;
+		weapon_last_fire_s[i]=time;
 		switch(i){
 		case 1:wld.add(new missile(wld,x,y,50,agl,2.0));break;
 		case 3:wld.add(new shotgunmissile(wld,x,y,80,agl,5,0.39269908169872414));break;
