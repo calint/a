@@ -1,3 +1,7 @@
+// todo: make windows count dynamic
+// todo: when window dimensions equal screen dimensions consider window maximized
+
+
 #define APP "window manager frameless"
 #include<X11/Xlib.h>
 #include<X11/cursorfont.h>
@@ -17,7 +21,7 @@ typedef struct{
 	int desk_x;// x coord of window before folded at desk switch
 	unsigned char bits;// bit 1 means allocated
 }xwin;
-#define xwinsct 128
+#define xwinsct 128 //? hardcoded
 #define border_width 1
 static xwin wins[xwinsct];
 static FILE*flog;
