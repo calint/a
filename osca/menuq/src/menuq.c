@@ -36,7 +36,7 @@ int main(){
 	const int char_width=7;
 	const int char_y_wiggle=3;
 	const int char_y_wiggle_up=-1;
-	const int options_start_x=640;
+	const int options_start_x=(screen_width>>1)+(screen_width>>2);
 	int go=1;
 	XEvent e;
 	while(go){
