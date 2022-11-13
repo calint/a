@@ -3,10 +3,10 @@ package a.pz.foo;
 import b.a;
 import b.xwriter;
 
-final public class var extends statement{
+final public class varx extends statement{
 	private static final long serialVersionUID=1;
 	final private String name,ws_trailing;
-	public var(a pt,String nm,reader r,block b){
+	public varx(a pt,String nm,reader r,block b){
 		super(pt,nm,no_annotations,"var",r,b);
 		name=r.next_token();
 		ws_trailing=r.next_empty_space();

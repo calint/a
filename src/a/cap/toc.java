@@ -21,7 +21,7 @@ import a.cap.vm.set_struct_member;
 import a.cap.vm.stmt;
 import a.cap.vm.str;
 import a.cap.vm.type;
-import a.cap.vm.var;
+import a.cap.vm.varx;
 import a.cap.vm.voidi;
 
 final class toc extends Writer{
@@ -52,7 +52,7 @@ final class toc extends Writer{
 				final type t=new type(clsident);
 				types_add(t);
 //				types.add(t);
-				namespace_add_var(new var(t,"o"));
+				namespace_add_var(new varx(t,"o"));
 				state_push(state_2_in_class_block);
 				break;
 			}
@@ -76,7 +76,7 @@ final class toc extends Writer{
 					final type t=find_type_by_name(slt.type,false);
 					if(t==null)
 						throw new Error("@("+lineno+":"+charno+")  '"+slt.type+"' not defined\n  defined types:\n    "+types);
-					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member					
+					namespace_add_var(new varx(true,t,slt.name));// add variable refering to struct member					
 					structs.peek().slots.push(slt);
 					break;
 				}
@@ -86,7 +86,7 @@ final class toc extends Writer{
 						final struct.slot slt=new struct.slot(ident,false);
 	//					final type t=new type(slt.type);//? lookup in declared types
 						final type t=find_type_by_name_or_break(slt.type);
-						namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member					
+						namespace_add_var(new varx(true,t,slt.name));// add variable refering to struct member					
 						structs.peek().slots.push(slt);
 					}
 					token_clear();// ignore class block content
@@ -99,7 +99,7 @@ final class toc extends Writer{
 					final struct.slot slt=new struct.slot(ident,false);
 //					final type t=new type(slt.type);//? lookup in declared types
 					final type t=find_type_by_name_or_break(slt.type);
-					namespace_add_var(new var(true,t,slt.name));// add variable refering to struct member										
+					namespace_add_var(new varx(true,t,slt.name));// add variable refering to struct member										
 					structs.peek().slots.push(slt);
 					state_push(state_struct_member_default_value);
 					break;
@@ -117,14 +117,14 @@ final class toc extends Writer{
 							if(t==null)
 								throw new Error(source_reader.hr_location_string_from_line_and_col(lineno,charno)+" '"+s+"' not declared\n  declared types "+types);
 							final String snm=suggest_argument_name(t,namespace_stack);
-							final var v=new var(t,snm);
+							final varx v=new varx(t,snm);
 							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
 						}else{//  i.e.  file{to(stream st){}}
 							final String typenm=s.substring(0,i);
 							final String name=s.substring(i+1);
 							final type t=find_type_by_name_or_break(typenm);
-							final var v=new var(t,name);
+							final varx v=new varx(t,name);
 							structs.peek().slots.peek().argsvar.add(v);
 							namespace_add_var(v);
 						}
@@ -244,7 +244,7 @@ final class toc extends Writer{
 		return t.name().charAt(0)+"";
 	}
 	private static boolean is_char_arguments_separator(char ch){return ch==',';}
-	void namespace_add_var(var v){namespace_stack.peek().vars.put(v.code,v);}
+	void namespace_add_var(varx v){namespace_stack.peek().vars.put(v.code,v);}
 	private void token_add(final char ch) {
 		token.append(ch);
 	}
@@ -485,7 +485,7 @@ final class toc extends Writer{
 					final int i1=s.indexOf('.');
 					if(i1==-1){// a=2;
 						final namespace ns=nms.peek();
-						final var lh=ns.vars.get(s);
+						final varx lh=ns.vars.get(s);
 						if(lh==null)throw new Error(r.hrs_location()+" variable '"+s+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						final stmt rh=parse_statement(r,nms,delims);
 						if(!lh.type().equals(rh.type())){
@@ -495,7 +495,7 @@ final class toc extends Writer{
 						return new set(lh,rh);
 					}else{// f.a=2;
 						final String varnm=s.substring(0,i1);
-						final var v=find_var_in_namespace_stack(varnm,nms);
+						final varx v=find_var_in_namespace_stack(varnm,nms);
 						if(v==null)throw new Error(r.hrs_location()+" struct member '"+s+"."+varnm+"' not found in:\n"+namespaces_and_declared_types_to_string(nms));
 						final String accessor=s.substring(i1+1);
 						final source_reader sr=new source_reader(new StringReader(accessor),r.line_number,r.character_number_in_line);
@@ -522,11 +522,11 @@ final class toc extends Writer{
 					final type t=find_type_by_name_or_make_new(type);
 					final String name=s.substring(i+1);
 					final namespace ns=nms.peek();
-					final var v_ns=ns.vars.get(name);//? look in namespaces stack
+					final varx v_ns=ns.vars.get(name);//? look in namespaces stack
 					if(v_ns!=null)throw new Error(r.hrs_location()+" variable '"+s+"' already in "+ns);
-					final var shadow=find_var_in_namespace_stack(name,nms);
+					final varx shadow=find_var_in_namespace_stack(name,nms);
 					if(shadow!=null)throw new Error(r.hrs_location()+" variable '"+name+"' shadows '"+shadow.type()+"'");
-					final var v=new var(t,name);//? add source position for easier error message
+					final varx v=new varx(t,name);//? add source position for easier error message
 					ns.vars.put(name,v);
 					final stmt st=parse_statement(r,nms,delims);
 					if(!v.type().equals(st.type()))throw new Error(r.hrs_location()+"    '"+v+"' is '"+t+"' and '"+st+"' is '"+st.type()+"'\n   try '"+t+" "+v+"="+(v.type()==floati.t?(st+"f"):(t+"("+st+")"))+"'");
@@ -557,9 +557,9 @@ final class toc extends Writer{
 			final type t=find_type_by_name(type,false);
 			if(t==null)
 				throw new Error(r.hrs_location()+"  type '"+type+"' not declared\n  declared types: "+types);
-			final var v=find_var_in_namespace_stack(name, nms);
+			final varx v=find_var_in_namespace_stack(name, nms);
 			if(v!=null)throw new Error(r.hrs_location()+" '"+name+"' already declared '"+v.type()+"' in '"+namespaces_and_declared_types_to_string(nms));
-			final var nv=new var(t,name);
+			final varx nv=new varx(t,name);
 			namespace_add_var(nv);
 			return new let(t,nv,new ctor(t));
 		}
@@ -600,7 +600,7 @@ final class toc extends Writer{
 //		final int i=vnm.lastIndexOf('.');
 //		if(i==-1){// does not refer to struct member
 		if(left_hand_statement==null){//find variable
-			final var v=find_var_in_namespace_stack(vnm,nms);
+			final varx v=find_var_in_namespace_stack(vnm,nms);
 			if(v==null)throw new Error(r.hrs_location()+"   variable '"+vnm+"' not in stack:\n"+namespaces_and_declared_types_to_string(nms));
 			stmt stm=v;
 			if(isaccessor){
@@ -690,7 +690,7 @@ final class toc extends Writer{
 		if(nargs!=func_nargs)throw new Error(r.hrs_location()+" function '"+funcnm+"' in struct '"+s.name+"' requires "+(func_nargs==0?"no":Integer.toString(func_nargs))+" argument"+(func_nargs!=1?"s":"")+"\n  but provided "+nargs+"\n   '"+vm.args_to_string(args)+"'");
 		// check arguments with declaration
 		int arg_i=0;
-		for(var va:func.argsvar){
+		for(varx va:func.argsvar){
 			if(args[arg_i].type().equals(va.type()))continue;
 			final stmt lhx=assert_function_arg_compatibility(r,va.type(),args[arg_i],funcnm,arg_i);
 			args[arg_i]=lhx;
@@ -739,7 +739,7 @@ final class toc extends Writer{
 		for(namespace ns:nms){
 			sb.append(indent).append(ns.name).append("{");
 			if(!ns.vars.isEmpty()){
-				for(var v:ns.vars.values()){
+				for(varx v:ns.vars.values()){
 					sb.append(v.type());
 					if(!v.type().name().equals(v.code))
 						sb.append(" ").append(v.code);
@@ -753,11 +753,11 @@ final class toc extends Writer{
 //		sb.append(indent).append(System.getProperty("os.name"));
 		return sb.toString();
 	}
-	private static var find_var_in_namespace_stack(final String name,final LinkedList<namespace>ls){
+	private static varx find_var_in_namespace_stack(final String name,final LinkedList<namespace>ls){
 		final Iterator<namespace>i=ls.iterator();
 		while(i.hasNext()){
 			final namespace ns=i.next();
-			final var v=ns.vars.get(name);
+			final varx v=ns.vars.get(name);
 			if(v!=null)return v;
 		}
 		return null;

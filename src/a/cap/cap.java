@@ -12,7 +12,7 @@ import a.cap.vm.floati;
 import a.cap.vm.inti;
 import a.cap.vm.str;
 import a.cap.vm.type;
-import a.cap.vm.var;
+import a.cap.vm.varx;
 import a.cap.vm.voidi;
 
 final public class cap{
@@ -37,7 +37,7 @@ final public class cap{
 		cc.types_add(voidi.t);
 //		cc.namespace_add_var(new var(str.t,"meta[0]"));
 		final type t=cc.find_type_by_name_or_break("stream");
-		cc.namespace_add_var(new var(t,"out"));
+		cc.namespace_add_var(new varx(t,"out"));
 		b.b.cp(in,cc,null);
 		cc.namespace_pop();		
 		final PrintWriter out=new PrintWriter(ccode);

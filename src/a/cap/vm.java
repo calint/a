@@ -54,20 +54,20 @@ final class vm{
 		}
 		final static class let extends stmt{
 //			public let(type t,var v){super(t+" "+v);}
-			public let(type t,var v,stmt s){
+			public let(type t,varx v,stmt s){
 				super(t+" "+v+"="+s);
 //				if(!v.t.equals(s.type()))throw new Error(" at yyyy:xx  tried '"+code+"'  but  '"+v+"' is '"+t+"' and '"+s+"' is '"+s.type()+"'     try '"+t+" "+v+"="+t+"("+s+")'");
 			}
 		};
 		static class set extends stmt{
-			public set(var lh,stmt rh){
+			public set(varx lh,stmt rh){
 				super(lh+"="+rh);
 //				if(!lh.t.equals(rh.type()))
 //					throw new Error("at yyyy:xxx tried '"+code+"'  but  '"+lh.code+"' is '"+lh.t+"'  and  '"+rh.code+"' is '"+rh.type()+"'   try: '"+lh.code+"="+lh.type()+"("+rh.code+")'");
 			}
 		};
 		final static class set_struct_member extends stmt{
-			public set_struct_member(var lh,String struct_member_name,stmt rh,toc tc){
+			public set_struct_member(varx lh,String struct_member_name,stmt rh,toc tc){
 				super(lh+"."+struct_member_name+"="+rh);
 //				final type t=tc.find_struct_member_type_or_break(lh.type().toString(),struct_member_name);
 //				if(!t.equals(rh.type()))
@@ -77,16 +77,16 @@ final class vm{
 		static class value extends stmt{public value(String stmt){super(stmt);}};
 		final static class struct_member extends value{
 			private type t;
-			public struct_member(var v,String struct_member_name,toc tc){
+			public struct_member(varx v,String struct_member_name,toc tc){
 				super(v+"."+struct_member_name);
 				t=tc.find_struct_member_type(v.type().name(),struct_member_name,true);
 			}
 			@Override type type(){return t;}
 		};
-		static class var extends stmt{
+		static class varx extends stmt{
 			private boolean sm;
-			public var(type t,String name){super(name);this.t=rht=t;}
-			public var(boolean struct_member,type slot_type,String slot_name){
+			public varx(type t,String name){super(name);this.t=rht=t;}
+			public varx(boolean struct_member,type slot_type,String slot_name){
 				super(slot_name);
 				this.t=slot_type;
 				this.sm=struct_member;
@@ -209,15 +209,15 @@ final class vm{
 			}
 			String end_delim(){return"";}
 		}
-		final static class incn extends op{public incn(var v,stmt rh){super("+=",v,rh);}}
+		final static class incn extends op{public incn(varx v,stmt rh){super("+=",v,rh);}}
 		final static class decn extends op{public decn(stmt v,stmt rh){super("-=",v,rh);}}
 		final static class inc extends stmt{public inc(stmt v){super(v+"++");}}
 		final static class incpre extends stmt{public incpre(stmt v){super("++"+v);}}
 		final static class dec extends stmt{public dec(stmt v){super(v+"--");}}
 		final static class decpre extends stmt{public decpre(stmt v){super("--"+v);}}
 		final static class fcall extends call{
-			public fcall(var o,String funcname,stmt...args){super(o.t+"_"+funcname,o,args);}
-			public fcall(var o,struct s,String funcname,stmt...args){super(s.name+"_"+funcname,o,args);}
+			public fcall(varx o,String funcname,stmt...args){super(o.t+"_"+funcname,o,args);}
+			public fcall(varx o,struct s,String funcname,stmt...args){super(s.name+"_"+funcname,o,args);}
 			public fcall(stmt o,struct s,type return_type,String funcname,stmt...args){
 				super(s.name+"_"+funcname,o,args);
 				t=rht=return_type;
@@ -245,10 +245,10 @@ final class vm{
 		//		final type floating=new type("float");
 				final type file=new type("file");
 				
-				final var a=new var(integer,"a");
-				final var b=new var(integer,"b");//change type for type missmatch error
-				final var f=new var(file,"f");
-				final var d=new var(file,"d");
+				final varx a=new varx(integer,"a");
+				final varx b=new varx(integer,"b");//change type for type missmatch error
+				final varx f=new varx(file,"f");
+				final varx d=new varx(file,"d");
 		//		final var e=new var(floating,"e");
 				final stmt brk=new brk();
 				final stmt cont=new cont();

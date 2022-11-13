@@ -25,7 +25,7 @@ public final class data extends statement{
 			break;
 		}
 		if("var".equals(token)){
-			expr=new var(this,"e",r,b);
+			expr=new varx(this,"e",r,b);
 			return;
 		}
 		if("def".equals(token)){

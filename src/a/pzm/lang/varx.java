@@ -3,8 +3,8 @@ package a.pzm.lang;
 import a.pzm.lang.reader.token;
 import b.xwriter;
 
-final public class var extends statement{
-	public var(statement parent,annotations annot,token vartkn,reader r){
+final public class varx extends statement{
+	public varx(statement parent,annotations annot,token vartkn,reader r){
 		super(parent,annot,vartkn,r);
 		identtkn=r.next_token();
 		mark_end_of_source(r);

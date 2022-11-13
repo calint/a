@@ -245,7 +245,10 @@ public final class xwriter{
 	public xwriter jsstr(final String s){try{new osjsstr(os).write(tobytes(s));return this;}catch(final IOException e){throw new Error(e);}}
 	public xwriter xu(final String id,final String s){return p("$s('").p(id).p("','").jsstr(s).pl("');");}
 	public xwriter xu(final a e,final String s){return xu(e.id(),s);}
-	public xwriter xub(final a e,final boolean inner,final boolean escltgt){p("$").p(inner?"s":"o").p("('").p(e.id()).p("','");return new xwriter(new osjsstr(escltgt?new osltgt(os):os));}
+	public xwriter xub(final a e,final boolean inner,final boolean escltgt){
+		p("$").p(inner?"s":"o").p("('").p(e.id()).p("','");
+		return new xwriter(new osjsstr(escltgt?new osltgt(os):os));
+	}
 	public xwriter xube(){return pl("');");}
 	public xwriter xu(final a e)throws Throwable{e.to(xub(e,true,false));return xube();}
 	public xwriter xu(final a...es)throws Throwable{

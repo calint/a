@@ -19,7 +19,7 @@ public class statement extends a{
 		if(tk.name==null||tk.name.isEmpty())
 			return new statement(parent,annot,null,r);
 		if("var".equals(tk.name))
-			return new var(parent,annot,tk,r);
+			return new varx(parent,annot,tk,r);
 		if("def".equals(tk.name))
 			return def.read(parent,annot,tk,r);
 		if(r.is_next_char_assign())// ie  tick=3

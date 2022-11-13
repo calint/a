@@ -3,7 +3,7 @@ package a.cap;
 import java.util.LinkedList;
 
 import a.cap.vm.stmt;
-import a.cap.vm.var;
+import a.cap.vm.varx;
 
 final public class struct{
 		String name;
@@ -33,7 +33,7 @@ final public class struct{
 			boolean isfunc;
 			boolean isctor;
 			boolean ispointer;
-			final LinkedList<var>argsvar=new LinkedList<>();
+			final LinkedList<varx>argsvar=new LinkedList<>();
 			public slot(String type_and_name,boolean func){tn=type_and_name;isfunc=func;decode_tn();}
 			final public int argument_count(){return argsvar.size();}
 			final public String name(){return name;}
@@ -49,7 +49,7 @@ final public class struct{
 			}
 			final public String args_to_string(){
 				final StringBuilder sb=new StringBuilder();
-				for(var v:argsvar){
+				for(varx v:argsvar){
 					sb.append(v.type()).append(" ").append(v.code).append(",");
 				}
 				final int len=sb.length();
@@ -58,7 +58,7 @@ final public class struct{
 			}
 			final public String args_declaration_to_string(){
 				final StringBuilder sb=new StringBuilder();
-				for(var v:argsvar){
+				for(varx v:argsvar){
 					sb.append(v.type()).append(",");
 				}
 				final int len=sb.length();
