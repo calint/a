@@ -1,0 +1,2 @@
+[ ] bug in eclipse compiler generates code that causes verification error in jre. ok if built with other compiler
+[x]    in debug configurations use -noverify on VM arguments (see ba.launch)
