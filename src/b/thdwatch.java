@@ -71,7 +71,7 @@ final public class thdwatch extends Thread{
 			final String s=f.getName();
 			if(s.startsWith("_"))continue;
 			if(f.getType()!=long.class)continue;
-			try{f.set(null,new Long(0));}catch(final Throwable t){throw new Error(t);}
+			try{f.set(null,Long.valueOf(0));}catch(final Throwable t){throw new Error(t);}
 		}
 	}
 	public static void print_fields_to(final OutputStream os,final String eol)throws IllegalAccessException,IOException{

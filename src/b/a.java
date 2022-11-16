@@ -38,7 +38,7 @@ public class a implements Serializable{
 //				continue;
 			a a=(a)f.get(this);
 			if(a==null){
-				a=(a)f.getType().newInstance();
+				a=(a)f.getType().getConstructor().newInstance();
 				f.set(this,a);
 			}
 			a.nm=f.getName();

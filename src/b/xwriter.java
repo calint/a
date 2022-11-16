@@ -242,6 +242,7 @@ public final class xwriter{
 	public xwriter spc(final int n){for(int i=0;i<n;i++)spc();return this;}
 	public xwriter ul(final String cls){return tago("ul").attr("class",cls).tagoe();}
 	public xwriter cssfont(final String name,final String url){return p("@font-face{font-family:").p(name).p(";src:url(").p(url).p(");}");}
+	@SuppressWarnings("resource") // osjsstr does not need to do any cleanup
 	public xwriter jsstr(final String s){try{new osjsstr(os).write(tobytes(s));return this;}catch(final IOException e){throw new Error(e);}}
 	public xwriter xu(final String id,final String s){return p("$s('").p(id).p("','").jsstr(s).pl("');");}
 	public xwriter xu(final a e,final String s){return xu(e.id(),s);}

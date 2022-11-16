@@ -672,7 +672,7 @@ public final class req{
 				reply(h_http404,null,null,tobytes(x.toString()));
 				return;
 			}}
-			try{e=ecls.newInstance();}catch(Throwable ex){
+			try{e=ecls.getConstructor().newInstance();}catch(Throwable ex){
 				while(ex.getCause()!=null)ex=ex.getCause();
 //				final xwriter x=new xwriter().p(path_s).nl().nl().p(b.stacktraceline(ex)).nl();
 				reply(h_http404,null,null,tobytes(stacktrace(ex)));
